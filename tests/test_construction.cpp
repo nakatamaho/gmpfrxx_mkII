@@ -3,13 +3,14 @@
 #include <cmath>
 #include <iostream>
 
+void testDefaultConstructor() {
+    mpfr_class a;
+    assert(a.to_double() == 0.0);
+    assert(a.get_prec() == mpfr_get_default_prec());
+}
+
 int main() {
-    // Default constructor
-    {
-        mpfr_class a;
-        assert(a.to_double() == 0.0);
-        assert(a.get_prec() == mpfr_get_default_prec());
-    }
+    testDefaultConstructor();
     // prec_tag constructor
     {
         mpfr_class a(prec_tag, 256);
