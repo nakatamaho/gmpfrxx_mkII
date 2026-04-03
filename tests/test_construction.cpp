@@ -11,7 +11,7 @@ void assertDoubleEqual(double actual, double expected, double tolerance = 1e-15)
 
 } // namespace
 
-void testDefaultConstructorMpfrClass() {
+void test_default_constructor_mpfr_class() {
     mpfr_class a;
 
     // Default-constructed mpfr_class should be zero-initialized
@@ -19,20 +19,20 @@ void testDefaultConstructorMpfrClass() {
     assert(mpfr_zero_p(a.get_mpfr_t()) != 0);
     assert(a.get_prec() == mpfr_get_default_prec());
 
-    std::cout << "testDefaultConstructorMpfrClass passed." << std::endl;
+    std::cout << "test_default_constructor_mpfr_class passed." << std::endl;
 }
 
-void testCopyConstructorMpfrClass() {
+void test_copy_constructor_mpfr_class() {
     mpfr_class a("3.14159265358979323846264338327950288", 256);
     mpfr_class b(a);
 
     assert(b.get_prec() == a.get_prec());
     assert(mpfr_cmp(b.get_mpfr_t(), a.get_mpfr_t()) == 0);
 
-    std::cout << "testCopyConstructorMpfrClass passed." << std::endl;
+    std::cout << "test_copy_constructor_mpfr_class passed." << std::endl;
 }
 
-void testCopyAssignmentOperatorMpfrClass() {
+void test_copy_assignment_operator_mpfr_class() {
     mpfr_class a("3.14159265358979323846264338327950288", 256);
     mpfr_class b(prec_tag, 128);
     mpfr_prec_t original_prec = b.get_prec();
@@ -42,10 +42,10 @@ void testCopyAssignmentOperatorMpfrClass() {
     assert(b.get_prec() == original_prec);
     assertDoubleEqual(b.to_double(), a.to_double());
 
-    std::cout << "testCopyAssignmentOperatorMpfrClass passed." << std::endl;
+    std::cout << "test_copy_assignment_operator_mpfr_class passed." << std::endl;
 }
 
-void testValueConstructorsMpfrClass() {
+void test_value_constructors_mpfr_class() {
     {
         mpfr_class a(prec_tag, 256);
         assert(a.get_prec() == 256);
@@ -87,10 +87,10 @@ void testValueConstructorsMpfrClass() {
         assertDoubleEqual(a.to_double(), 1.0 / 3.0);
     }
 
-    std::cout << "testValueConstructorsMpfrClass passed." << std::endl;
+    std::cout << "test_value_constructors_mpfr_class passed." << std::endl;
 }
 
-void testMoveConstructorMpfrClass() {
+void test_move_constructor_mpfr_class() {
     mpfr_class a(2.72, 128);
     double value = a.to_double();
     mpfr_class b(std::move(a));
@@ -98,10 +98,10 @@ void testMoveConstructorMpfrClass() {
     assertDoubleEqual(b.to_double(), value);
     assert(b.get_prec() == 128);
 
-    std::cout << "testMoveConstructorMpfrClass passed." << std::endl;
+    std::cout << "test_move_constructor_mpfr_class passed." << std::endl;
 }
 
-void testMoveAssignmentOperatorMpfrClass() {
+void test_move_assignment_operator_mpfr_class() {
     mpfr_class a("2.71828182845904523536028747135266250", 256);
     mpfr_class b(prec_tag, 128);
 
@@ -110,27 +110,27 @@ void testMoveAssignmentOperatorMpfrClass() {
     assertDoubleEqual(b.to_double(), 2.7182818284590451);
     assert(b.get_prec() == 256);
 
-    std::cout << "testMoveAssignmentOperatorMpfrClass passed." << std::endl;
+    std::cout << "test_move_assignment_operator_mpfr_class passed." << std::endl;
 }
 
-void testDefaultConstructorMpzClass() {
+void test_default_constructor_mpz_class() {
     mpz_class z;
 
     assert(mpz_cmp_si(z.get_mpz_t(), 0) == 0);
 
-    std::cout << "testDefaultConstructorMpzClass passed." << std::endl;
+    std::cout << "test_default_constructor_mpz_class passed." << std::endl;
 }
 
-void testCopyConstructorMpzClass() {
+void test_copy_constructor_mpz_class() {
     mpz_class a("999999999999999999");
     mpz_class b(a);
 
     assert(mpz_cmp(b.get_mpz_t(), a.get_mpz_t()) == 0);
 
-    std::cout << "testCopyConstructorMpzClass passed." << std::endl;
+    std::cout << "test_copy_constructor_mpz_class passed." << std::endl;
 }
 
-void testCopyAssignmentOperatorMpzClass() {
+void test_copy_assignment_operator_mpz_class() {
     mpz_class a("12345678901234567890");
     mpz_class b;
 
@@ -138,27 +138,27 @@ void testCopyAssignmentOperatorMpzClass() {
 
     assert(mpz_cmp(b.get_mpz_t(), a.get_mpz_t()) == 0);
 
-    std::cout << "testCopyAssignmentOperatorMpzClass passed." << std::endl;
+    std::cout << "test_copy_assignment_operator_mpz_class passed." << std::endl;
 }
 
-void testValueConstructorsMpzClass() {
+void test_value_constructors_mpz_class() {
     mpz_class z(123);
 
     assert(mpz_cmp_si(z.get_mpz_t(), 123) == 0);
 
-    std::cout << "testValueConstructorsMpzClass passed." << std::endl;
+    std::cout << "test_value_constructors_mpz_class passed." << std::endl;
 }
 
-void testMoveConstructorMpzClass() {
+void test_move_constructor_mpz_class() {
     mpz_class z(123);
     mpz_class moved(std::move(z));
 
     assert(mpz_cmp_si(moved.get_mpz_t(), 123) == 0);
 
-    std::cout << "testMoveConstructorMpzClass passed." << std::endl;
+    std::cout << "test_move_constructor_mpz_class passed." << std::endl;
 }
 
-void testMoveAssignmentOperatorMpzClass() {
+void test_move_assignment_operator_mpz_class() {
     mpz_class a("12345678901234567890");
     mpz_class b;
     mpz_class expected("12345678901234567890");
@@ -167,27 +167,27 @@ void testMoveAssignmentOperatorMpzClass() {
 
     assert(mpz_cmp(b.get_mpz_t(), expected.get_mpz_t()) == 0);
 
-    std::cout << "testMoveAssignmentOperatorMpzClass passed." << std::endl;
+    std::cout << "test_move_assignment_operator_mpz_class passed." << std::endl;
 }
 
-void testDefaultConstructorMpqClass() {
+void test_default_constructor_mpq_class() {
     mpq_class q;
 
     assert(mpq_sgn(q.get_mpq_t()) == 0);
 
-    std::cout << "testDefaultConstructorMpqClass passed." << std::endl;
+    std::cout << "test_default_constructor_mpq_class passed." << std::endl;
 }
 
-void testCopyConstructorMpqClass() {
+void test_copy_constructor_mpq_class() {
     mpq_class a("7/11");
     mpq_class b(a);
 
     assert(mpq_equal(b.get_mpq_t(), a.get_mpq_t()) != 0);
 
-    std::cout << "testCopyConstructorMpqClass passed." << std::endl;
+    std::cout << "test_copy_constructor_mpq_class passed." << std::endl;
 }
 
-void testCopyAssignmentOperatorMpqClass() {
+void test_copy_assignment_operator_mpq_class() {
     mpq_class a("355/113");
     mpq_class b;
 
@@ -195,27 +195,27 @@ void testCopyAssignmentOperatorMpqClass() {
 
     assert(mpq_equal(b.get_mpq_t(), a.get_mpq_t()) != 0);
 
-    std::cout << "testCopyAssignmentOperatorMpqClass passed." << std::endl;
+    std::cout << "test_copy_assignment_operator_mpq_class passed." << std::endl;
 }
 
-void testValueConstructorsMpqClass() {
+void test_value_constructors_mpq_class() {
     mpq_class q(3, 4);
 
     assert(mpq_cmp_ui(q.get_mpq_t(), 3, 4) == 0);
 
-    std::cout << "testValueConstructorsMpqClass passed." << std::endl;
+    std::cout << "test_value_constructors_mpq_class passed." << std::endl;
 }
 
-void testMoveConstructorMpqClass() {
+void test_move_constructor_mpq_class() {
     mpq_class q(3, 4);
     mpq_class moved(std::move(q));
 
     assert(mpq_cmp_ui(moved.get_mpq_t(), 3, 4) == 0);
 
-    std::cout << "testMoveConstructorMpqClass passed." << std::endl;
+    std::cout << "test_move_constructor_mpq_class passed." << std::endl;
 }
 
-void testMoveAssignmentOperatorMpqClass() {
+void test_move_assignment_operator_mpq_class() {
     mpq_class a("355/113");
     mpq_class b;
     mpq_class expected("355/113");
@@ -224,28 +224,28 @@ void testMoveAssignmentOperatorMpqClass() {
 
     assert(mpq_equal(b.get_mpq_t(), expected.get_mpq_t()) != 0);
 
-    std::cout << "testMoveAssignmentOperatorMpqClass passed." << std::endl;
+    std::cout << "test_move_assignment_operator_mpq_class passed." << std::endl;
 }
 
 int main() {
-    testDefaultConstructorMpfrClass();
-    testCopyConstructorMpfrClass();
-    testCopyAssignmentOperatorMpfrClass();
-    testValueConstructorsMpfrClass();
-    testMoveConstructorMpfrClass();
-    testMoveAssignmentOperatorMpfrClass();
-    testDefaultConstructorMpzClass();
-    testCopyConstructorMpzClass();
-    testCopyAssignmentOperatorMpzClass();
-    testValueConstructorsMpzClass();
-    testMoveConstructorMpzClass();
-    testMoveAssignmentOperatorMpzClass();
-    testDefaultConstructorMpqClass();
-    testCopyConstructorMpqClass();
-    testCopyAssignmentOperatorMpqClass();
-    testValueConstructorsMpqClass();
-    testMoveConstructorMpqClass();
-    testMoveAssignmentOperatorMpqClass();
+    test_default_constructor_mpfr_class();
+    test_copy_constructor_mpfr_class();
+    test_copy_assignment_operator_mpfr_class();
+    test_value_constructors_mpfr_class();
+    test_move_constructor_mpfr_class();
+    test_move_assignment_operator_mpfr_class();
+    test_default_constructor_mpz_class();
+    test_copy_constructor_mpz_class();
+    test_copy_assignment_operator_mpz_class();
+    test_value_constructors_mpz_class();
+    test_move_constructor_mpz_class();
+    test_move_assignment_operator_mpz_class();
+    test_default_constructor_mpq_class();
+    test_copy_constructor_mpq_class();
+    test_copy_assignment_operator_mpq_class();
+    test_value_constructors_mpq_class();
+    test_move_constructor_mpq_class();
+    test_move_assignment_operator_mpq_class();
 
     std::cout << "test_construction: ALL PASSED" << std::endl;
     return 0;
