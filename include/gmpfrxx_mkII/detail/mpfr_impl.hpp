@@ -2,6 +2,7 @@
 #define GMPFRXX_MKII_DETAIL_MPFR_IMPL_HPP
 
 #include <gmpfrxx_mkII/detail/expr.hpp>
+#include <gmpfrxx_mkII/detail/eval_context.hpp>
 #include <gmpfrxx_mkII/detail/integer_conversion.hpp>
 #include <gmpfrxx_mkII/detail/zq_impl.hpp>
 
@@ -21,7 +22,9 @@ public:
     mpfr_class(const mpfr_class& other)
     {
         mpfr_init2(value_, other.precision());
-        mpfr_set(value_, other.value_, default_rounding());
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(other.precision());
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set(value_, other.value_, context.rounding_mode);
     }
 
     mpfr_class(mpfr_class&& other) noexcept
@@ -44,7 +47,9 @@ public:
     mpfr_class& operator=(const mpfr_class& other)
     {
         if (this != &other) {
-            mpfr_set(value_, other.value_, default_rounding());
+            const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
+            const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+            mpfr_set(value_, other.value_, context.rounding_mode);
         }
         return *this;
     }
@@ -66,7 +71,9 @@ public:
     static mpfr_class with_precision(mpfr_prec_t precision, double value)
     {
         mpfr_class result = with_precision(precision);
-        mpfr_set_d(result.value_, value, default_rounding());
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set_d(result.value_, value, context.rounding_mode);
         return result;
     }
 
@@ -87,7 +94,9 @@ public:
 
     void set(double value)
     {
-        mpfr_set_d(value_, value, default_rounding());
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set_d(value_, value, context.rounding_mode);
     }
 
     const mpfr_t& mpfr_data() const noexcept
@@ -100,14 +109,14 @@ public:
         return value_;
     }
 
-    static constexpr mpfr_prec_t default_precision() noexcept
+    static mpfr_prec_t default_precision() noexcept
     {
-        return 53;
+        return default_precision_bits();
     }
 
-    static constexpr mpfr_rnd_t default_rounding() noexcept
+    static mpfr_rnd_t default_rounding() noexcept
     {
-        return MPFR_RNDN;
+        return default_rounding_mode();
     }
 
 private:
@@ -116,7 +125,9 @@ private:
     mpfr_class(precision_tag, mpfr_prec_t precision)
     {
         mpfr_init2(value_, precision);
-        mpfr_set_ui(value_, 0, default_rounding());
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set_ui(value_, 0, context.rounding_mode);
     }
 
     mpfr_t value_;
@@ -466,14 +477,18 @@ mpfr_class::mpfr_class(const Expr& expr)
 {
     const mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_expression_precision(expr);
     mpfr_init2(value_, precision);
-    gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, default_rounding());
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+    gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, context.rounding_mode);
 }
 
 template <typename Expr, typename>
 mpfr_class& mpfr_class::operator=(const Expr& expr)
 {
     const mpfr_prec_t precision = this->precision();
-    gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, default_rounding());
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+    gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, context.rounding_mode);
     return *this;
 }
 

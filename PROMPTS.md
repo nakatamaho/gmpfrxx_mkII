@@ -375,13 +375,15 @@ Add explicit MPFR default and environment handling.
 
 Add an MPFR defaults API in `namespace mpfrxx`.
 
+The initial wrapper-owned MPFR default precision is 512 bits.
+
 Environment variables:
 
 ```text
-GMPFRXX_MKII_MPFR_DEFAULT_PRECISION_BITS
-GMPFRXX_MKII_MPFR_EMIN
-GMPFRXX_MKII_MPFR_EMAX
-GMPFRXX_MKII_MPFR_ROUNDING
+MPFRXX_DEFAULT_PRECISION_BITS
+MPFRXX_EMIN
+MPFRXX_EMAX
+MPFRXX_ROUNDING_MODE
 ```
 
 Required tests:
@@ -576,6 +578,14 @@ gmpxx::mpf_class
 It must not include `<mpfr.h>` or `<mpc.h>`.
 
 Implement `gmpxx::mpf_class` as RAII wrapper around `mpf_t`.
+
+The initial wrapper-owned GMP `mpf_class` default precision is 512 bits.
+
+Environment variable:
+
+```text
+MPFXX_DEFAULT_PREC_BITS
+```
 
 Rules:
 

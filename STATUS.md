@@ -131,7 +131,7 @@ Pass/fail result:
 
 Known issues:
 - Phase 1 intentionally does not implement scalar expression operands, bool/long double/__int128 rejection tests, MPFR environment variables, MPFR exponent-range handling, exact mpz/mpq wrappers beyond Phase 0 shells, MPC arithmetic, MPF arithmetic, comparisons, streaming, or math functions.
-- mpfrxx::mpfr_class currently uses fixed Phase 1 defaults: 53-bit default precision and MPFR_RNDN rounding.
+- mpfrxx::mpfr_class currently uses fixed Phase 1 defaults recorded at that time; Phase 3 replaces the precision default with a configurable 512-bit wrapper-owned default.
 
 Phase 2 status:
 DONE
@@ -216,3 +216,143 @@ Pass/fail result:
 Known issues:
 - Phase 2 intentionally does not implement direct scalar constructors for mpfrxx::mpfr_class.
 - Phase 2 intentionally does not implement MPFR environment variables, rounding configuration beyond fixed MPFR_RNDN, exponent-range handling, mpz/mpq mixed expressions, MPC arithmetic, MPF arithmetic, comparisons, streaming, or math functions.
+
+Phase 3 status:
+DONE
+
+Implemented features:
+- Added MPFR defaults API in namespace mpfrxx:
+  - mpfrxx::default_options()
+  - mpfrxx::default_precision_bits()
+  - mpfrxx::set_default_precision_bits()
+  - mpfrxx::default_rounding_mode()
+  - mpfrxx::set_default_rounding_mode()
+  - mpfrxx::default_emin()
+  - mpfrxx::default_emax()
+  - mpfrxx::set_default_exponent_range()
+  - mpfrxx::reload_mpfr_defaults_from_environment()
+- Added MPFR environment loading from:
+  - MPFRXX_DEFAULT_PRECISION_BITS
+  - MPFRXX_EMIN
+  - MPFRXX_EMAX
+  - MPFRXX_ROUNDING_MODE
+- Renamed the Phase 3 MPFR environment variables in AGENTS.md and PROMPTS.md from the previous long project-prefixed MPFR names to the shorter MPFRXX_* names.
+- Set the initial wrapper-owned MPFR default precision to 512 bits.
+- Documented that the initial wrapper-owned GMP mpf_class default precision is also 512 bits for the later MPF phase.
+- Added rounding string parsing for RNDN, RNDZ, RNDU, RNDD, RNDA, RNDF and their MPFR_* spellings.
+- Replaced fixed MPFR_RNDN evaluation with the current wrapper-owned MPFR rounding mode.
+- Added MPFR exponent-range defaults and a guard that applies MPFR emin/emax during wrapper evaluation, then restores the previous MPFR global range.
+- Extended eval_context to carry precision, rounding mode, emin, and emax.
+
+Missing features:
+- None for Phase 3.
+
+Tests added:
+- tests/test_mpfr_defaults.cpp
+- tests/test_mpfr_environment.cpp
+- tests/test_mpfr_environment_invalid.cpp
+
+Exact commands run:
+- rg -n for previous long project-prefixed MPFR env names and MPFRXX names in AGENTS.md PROMPTS.md STATUS.md docs include tests CMakeLists.txt cmake
+- git status --short
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/environment.hpp
+- sed -n '1,120p' include/gmpfrxx_mkII/detail/eval_context.hpp
+- sed -n '1,540p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,90p' tests/CMakeLists.txt
+- rg -n "default precision|DEFAULT_PRECISION|53|512|MPF_DEFAULT|MPFRXX_DEFAULT" AGENTS.md PROMPTS.md docs include tests STATUS.md
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- rg -n "friend\\s+mpfrxx::mpfr_class\\s+operator|mpfr_class\\s+operator\\+|mpfr_class\\s+operator-|mpfr_class\\s+operator\\*|mpfr_class\\s+operator/" include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>" include tests CMakeLists.txt cmake
+- rg -n for previous long project-prefixed MPFR env names and obsolete short rounding env spelling in AGENTS.md PROMPTS.md STATUS.md docs include tests CMakeLists.txt cmake
+
+Pass/fail result:
+- CMake configure: PASS
+- cmake --build build -j: PASS
+- ctest --test-dir build --output-on-failure: PASS, 24/24 tests passed
+- Eager MPFR operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h>: PASS, no matches
+- Source scan for old MPFR env var names and obsolete short rounding env spelling: PASS, no matches
+
+Known issues:
+- Phase 3 intentionally does not implement direct scalar constructors for mpfrxx::mpfr_class.
+- Phase 3 intentionally does not implement mpz/mpq mixed expressions, MPC arithmetic, MPF arithmetic, comparisons, streaming, or math functions.
+- MPFR exponent-range guards use MPFR's process-global exponent range during the guarded operation and restore the previous values afterward.
+
+Schedule-change MPF status:
+DONE
+
+Implemented features:
+- Implemented gmpxx::mpf_class as an RAII wrapper around mpf_t.
+- Added wrapper-owned GMP MPF default precision API:
+  - gmpxx::default_mpf_precision_bits()
+  - gmpxx::set_default_mpf_precision_bits()
+  - gmpxx::reload_default_mpf_precision_bits_from_environment()
+- Set the initial wrapper-owned GMP MPF default precision to 512 bits.
+- Added MPF default precision environment loading from MPFXX_DEFAULT_PREC_BITS.
+- Used mpf_init2() for wrapper-owned MPF construction.
+- Did not call mpf_set_default_prec().
+- Added MPF expression-template operators for +, -, *, /, unary +, and unary -.
+- Public MPF arithmetic operators return expression nodes, not eager gmpxx::mpf_class objects.
+- Added MPF scalar expression operands for signed and unsigned standard integrals except bool, plus float and double.
+- Normalized MPF scalar leaves to std::int64_t, std::uint64_t, or double.
+- Evaluated integral MPF scalar leaves through gmpxx::mpz_class temporaries and mpf_set_z().
+- New MPF expression materialization uses the maximum effective precision of MPF object leaves.
+- Assignment into existing MPF objects preserves destination effective precision.
+- Added alias-safe MPF expression assignment using temporaries when the destination appears in the source expression.
+- Added compile-fail tests for forbidden MPF/MPFR and MPF/MPC mixed-family operations.
+
+Missing features:
+- Full mpz/mpq + mpf mixed exact promotion is not implemented yet.
+- MPF environment variable handling is not implemented yet.
+
+Tests added:
+- tests/test_et_contract_mpf.cpp
+- tests/test_mpf_basic.cpp
+- tests/test_mpf_precision_policy.cpp
+- tests/test_mpf_aliasing.cpp
+- tests/compile_fail/test_mpf_plus_mpfr.cpp
+- tests/compile_fail/test_mpfr_plus_mpf.cpp
+- tests/compile_fail/test_mpf_plus_mpc.cpp
+- tests/compile_fail/test_mpc_plus_mpf.cpp
+
+Exact commands run:
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1,540p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,120p' include/gmpxx_mkII.h
+- sed -n '1,130p' tests/CMakeLists.txt
+- git status --short
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- ./build/tests/test_mpf_precision_policy
+- gdb -batch -ex run -ex bt --args ./build/tests/test_mpf_precision_policy
+- nl -ba tests/test_mpf_precision_policy.cpp
+- gdb -batch -ex 'break tests/test_mpf_precision_policy.cpp:13' -ex run -ex 'print default_value.precision()' --args ./build/tests/test_mpf_precision_policy
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- rg -n "friend\\s+gmpxx::mpf_class\\s+operator|mpf_class\\s+operator\\+|mpf_class\\s+operator-|mpf_class\\s+operator\\*|mpf_class\\s+operator/" include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests CMakeLists.txt cmake
+- git diff --stat
+
+Pass/fail result:
+- CMake configure: PASS
+- Initial cmake --build build -j after MPF implementation: PASS
+- Initial ctest --test-dir build --output-on-failure after MPF implementation: FAIL, test_mpf_precision_policy aborted.
+- Root cause: GMP mpf_init2(160) reports an effective precision of 192 via mpf_get_prec() because GMP rounds precision to its internal limb allocation. This does not change the requested wrapper default, which is 512 unless set explicitly or loaded from MPFXX_DEFAULT_PREC_BITS.
+- Fixed the MPF precision test to compare effective precision and destination preservation instead of requiring exact requested precision from mpf_get_prec().
+- Final cmake --build build -j: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 32/32 tests passed
+- Eager MPF operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- MPF scalar constructors are intentionally not implemented; value construction currently uses with_precision(bits, value) or set(value).
+- GMP may report effective MPF precision greater than the requested value through mpf_get_prec().
+- MPFXX_DEFAULT_PREC_BITS controls the requested wrapper default precision; mpf_get_prec() reports GMP's effective precision.
+- mpz/mpq + mpf mixed-family promotion remains for the later exact-wrapper phase.

@@ -233,13 +233,15 @@ __int128
 
 `mpfrxx::mpfr_class` uses MPFR precision, exponent range, and rounding.
 
+The initial wrapper-owned MPFR default precision is 512 bits.
+
 Environment variables:
 
 ```text
-GMPFRXX_MKII_MPFR_DEFAULT_PRECISION_BITS
-GMPFRXX_MKII_MPFR_EMIN
-GMPFRXX_MKII_MPFR_EMAX
-GMPFRXX_MKII_MPFR_ROUNDING
+MPFRXX_DEFAULT_PRECISION_BITS
+MPFRXX_EMIN
+MPFRXX_EMAX
+MPFRXX_ROUNDING_MODE
 ```
 
 Allowed rounding strings:
@@ -274,12 +276,14 @@ MPC environment variables must not affect `gmpxx::mpfc_class`.
 
 `gmpxx::mpf_class` uses wrapper-owned default precision, not GMP's process-global default precision.
 
+The initial wrapper-owned GMP `mpf_class` default precision is 512 bits.
+
 Do not call `mpf_set_default_prec()` from this library.
 
 Environment variable:
 
 ```text
-GMPFRXX_MKII_MPF_DEFAULT_PRECISION_BITS
+MPFXX_DEFAULT_PREC_BITS
 ```
 
 Existing-object assignment preserves destination precision. New expression materialization uses max leaf precision.
