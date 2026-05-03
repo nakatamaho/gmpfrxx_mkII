@@ -1,5 +1,5 @@
 
-# PROMPTS.md — Header-role corrected / Namespace-split / Scratch / ET-first Plan
+# PROMPTS.md — MPFR/MPC in mpfrxx_mkII / Namespace-split / Scratch / ET-first Plan
 
 This prompt set rebuilds `gmpfrxx_mkII` from scratch.
 
@@ -22,8 +22,8 @@ Header roles:
 
 ```text
 gmpxx_mkII.h    = GMP only
-mpfrxx_mkII.h   = GMP + MPFR only
-gmpfrxx_mkII.h  = GMP + MPFR + MPC full stack
+mpfrxx_mkII.h   = GMP + MPFR + MPC
+gmpfrxx_mkII.h  = full combined aggregator
 ```
 
 This means:
@@ -39,11 +39,11 @@ mpfrxx_mkII.h:
   mpfrxx::mpz_class  // alias to gmpxx::mpz_class
   mpfrxx::mpq_class  // alias to gmpxx::mpq_class
   mpfrxx::mpfr_class
-  no mpc_class
+  mpfrxx::mpc_class
 
 gmpfrxx_mkII.h:
-  all current public types
-  includes mpfrxx::mpc_class
+  full aggregator
+  includes gmpxx_mkII.h and mpfrxx_mkII.h
 ```
 
 Implementation order:
@@ -55,9 +55,9 @@ Phase 2    MPFR scalar leaves and portable integer conversion
 Phase 3    MPFR defaults, environment, rounding, emin/emax
 Phase 4    Minimal gmpxx::mpz_class / gmpxx::mpq_class exact wrappers
 Phase 5    mpz/mpq + mpfr mixed ET evaluation
-Phase 6    Scratch gmpxx_mkII.h: mpz/mpq/mpf ET implementation
-Phase 7    Aggregator gmpfrxx_mkII.h and mpfrxx::mpc_class ET core
-Phase 8    MPC scalar/mixed mpfr/mpz/mpq support and environment
+Phase 6    mpfrxx::mpc_class ET core
+Phase 7    MPC scalar/mixed mpfr/mpz/mpq support and environment
+Phase 8    Scratch gmpxx_mkII.h: mpz/mpq/mpf ET implementation
 Phase 9    Cross-header coexistence and forbidden mixed-family ops
 Phase 10   Optional GMP-only gmpxx::mpfc_class
 Phase 11   GMP-only mpfc_class math, if mpfc_class is kept
@@ -100,8 +100,8 @@ Do not use public namespace gmpfrxx.
 
 Respect header roles:
   gmpxx_mkII.h    = GMP only
-  mpfrxx_mkII.h   = GMP + MPFR only
-  gmpfrxx_mkII.h  = GMP + MPFR + MPC full stack
+  mpfrxx_mkII.h   = GMP + MPFR + MPC
+  gmpfrxx_mkII.h  = full combined aggregator
 
 Do not bridge to an existing gmpxx_mkII.h implementation.
 Generate the current phase from scratch inside this repository.
@@ -163,8 +163,6 @@ Do not implement eager arithmetic.
 
 Do not implement real `gmpxx::mpf_class`.
 
-Do not expose MPC through `mpfrxx_mkII.h`.
-
 Required layout:
 
 ```text
@@ -194,7 +192,6 @@ tests/
 ├─ test_header_boundaries.cpp
 ├─ test_integer_model_diagnostics.cpp
 └─ compile_fail/
-   ├─ mpfr_header_must_not_expose_mpc.cpp
    ├─ mpfr_header_must_not_expose_mpf.cpp
    ├─ mpfr_header_must_not_expose_mpfc.cpp
    └─ gmp_header_must_not_expose_mpfr_or_mpc.cpp
@@ -216,17 +213,17 @@ Requirements:
    - `mpfrxx::mpz_class` as alias to `gmpxx::mpz_class`
    - `mpfrxx::mpq_class` as alias to `gmpxx::mpq_class`
    - `mpfrxx::mpfr_class`
-5. `mpfrxx_mkII.h` includes `<gmp.h>` and `<mpfr.h>`.
-6. `mpfrxx_mkII.h` must not include `<mpc.h>`.
-7. `mpfrxx_mkII.h` must not expose `mpc_class`, `mpf_class`, or `mpfc_class`.
-8. `gmpxx_mkII.h` must not include `<mpfr.h>` or `<mpc.h>`.
-9. `gmpfrxx_mkII.h` may include both public headers and may include MPC-specific placeholders.
-10. Define CMake interface targets:
+   - `mpfrxx::mpc_class`
+5. `mpfrxx_mkII.h` includes `<gmp.h>`, `<mpfr.h>`, and `<mpc.h>`.
+6. `mpfrxx_mkII.h` must not expose `gmpxx::mpf_class` or `gmpxx::mpfc_class`.
+7. `gmpxx_mkII.h` must not include `<mpfr.h>` or `<mpc.h>`.
+8. `gmpfrxx_mkII.h` may include both public headers.
+9. Define CMake interface targets:
     - `gmpxx_mkII` links GMP only.
-    - `mpfrxx_mkII` links GMP and MPFR only.
+    - `mpfrxx_mkII` links GMP, MPFR, and MPC.
     - `gmpfrxx_mkII` links GMP, MPFR, and MPC.
-11. Add compile-fail tests proving header boundaries.
-12. Add namespace tests proving:
+10. Add compile-fail tests proving header boundaries.
+11. Add namespace tests proving:
     - `std::is_same_v<mpfrxx::mpz_class, gmpxx::mpz_class>`
     - `std::is_same_v<mpfrxx::mpq_class, gmpxx::mpq_class>`
 
@@ -244,7 +241,7 @@ Implement `mpfrxx::mpfr_class` as the first real numeric class.
 
 Do not implement `gmpxx::mpf_class`.
 
-Do not implement `mpfrxx::mpc_class`.
+Do not implement full `mpfrxx::mpc_class` arithmetic yet.
 
 Required expression infrastructure:
 
@@ -403,7 +400,7 @@ Do not proceed to Phase 4.
 
 Goal:
 
-Add exact `gmpxx::mpz_class` and `gmpxx::mpq_class` wrappers so `mpfrxx_mkII.h` exposes `mpz/mpq/mpfr`.
+Add exact `gmpxx::mpz_class` and `gmpxx::mpq_class` wrappers so `mpfrxx_mkII.h` exposes `mpz/mpq/mpfr/mpc`.
 
 Expose them in `mpfrxx` by alias only:
 
@@ -473,63 +470,13 @@ Do not proceed to Phase 6.
 
 ---
 
-# Phase 6 — Scratch `gmpxx_mkII.h`: GMP-only mpz/mpq/mpf ET
+# Phase 6 — `mpfrxx::mpc_class` ET Core
 
 Goal:
 
-Generate `gmpxx_mkII.h` from scratch.
+Implement MPC-backed `mpfrxx::mpc_class`.
 
-It must expose:
-
-```text
-gmpxx::mpz_class
-gmpxx::mpq_class
-gmpxx::mpf_class
-```
-
-It must not include `<mpfr.h>` or `<mpc.h>`.
-
-Implement `gmpxx::mpf_class` as RAII wrapper around `mpf_t`.
-
-Rules:
-
-1. Wrapper-owned default precision.
-2. Do not call `mpf_set_default_prec()`.
-3. Existing-object assignment preserves destination precision.
-4. New expression materialization uses max precision of `mpf_class` leaves.
-5. Integral construction uses `gmpxx::mpz_class` then `mpf_set_z`.
-6. All public arithmetic returns expression nodes.
-
-Forbidden:
-
-```text
-gmpxx::mpf + mpfrxx::mpfr
-mpfrxx::mpfr + gmpxx::mpf
-```
-
-Required tests:
-
-```text
-tests/test_et_contract_mpf.cpp
-tests/test_mpf_basic.cpp
-tests/test_mpf_precision_policy.cpp
-tests/test_mpf_environment.cpp
-tests/test_mixed_zq_mpf_promotion.cpp
-tests/compile_fail/test_mpf_plus_mpfr.cpp
-tests/compile_fail/test_mpfr_plus_mpf.cpp
-```
-
-Do not proceed to Phase 7.
-
----
-
-# Phase 7 — Aggregator `gmpfrxx_mkII.h` and MPC-backed `mpfrxx::mpc_class`
-
-Goal:
-
-Make `gmpfrxx_mkII.h` include both public headers and add MPC support.
-
-`mpfrxx::mpc_class` is exposed by `gmpfrxx_mkII.h`, but not by `mpfrxx_mkII.h` or `gmpxx_mkII.h`.
+`mpc_class` belongs to `mpfrxx_mkII.h` and `gmpfrxx_mkII.h`.
 
 Wrap `mpc_t`.
 
@@ -549,19 +496,17 @@ mpfr + mpc
 Required tests:
 
 ```text
-tests/test_aggregator_coexistence.cpp
 tests/test_et_contract_mpc.cpp
 tests/test_mpc_basic.cpp
 tests/test_mpc_precision_policy.cpp
 tests/test_mpc_aliasing.cpp
-tests/test_header_boundary_compile_fail.cpp
 ```
 
-Do not proceed to Phase 8.
+Do not proceed to Phase 7.
 
 ---
 
-# Phase 8 — MPC Scalar/Mixed mpz/mpq/mpfr Support and Environment
+# Phase 7 — MPC Scalar/Mixed mpz/mpq/mpfr Support and Environment
 
 Goal:
 
@@ -610,6 +555,60 @@ tests/compile_fail/test_mpc_plus_mpf.cpp
 tests/compile_fail/test_mpf_plus_mpc.cpp
 ```
 
+Do not proceed to Phase 8.
+
+---
+
+# Phase 8 — Scratch `gmpxx_mkII.h`: GMP-only mpz/mpq/mpf ET
+
+Goal:
+
+Generate `gmpxx_mkII.h` from scratch.
+
+It must expose:
+
+```text
+gmpxx::mpz_class
+gmpxx::mpq_class
+gmpxx::mpf_class
+```
+
+It must not include `<mpfr.h>` or `<mpc.h>`.
+
+Implement `gmpxx::mpf_class` as RAII wrapper around `mpf_t`.
+
+Rules:
+
+1. Wrapper-owned default precision.
+2. Do not call `mpf_set_default_prec()`.
+3. Existing-object assignment preserves destination precision.
+4. New expression materialization uses max precision of `mpf_class` leaves.
+5. Integral construction uses `gmpxx::mpz_class` then `mpf_set_z`.
+6. All public arithmetic returns expression nodes.
+
+Forbidden:
+
+```text
+gmpxx::mpf + mpfrxx::mpfr
+mpfrxx::mpfr + gmpxx::mpf
+gmpxx::mpf + mpfrxx::mpc
+mpfrxx::mpc + gmpxx::mpf
+```
+
+Required tests:
+
+```text
+tests/test_et_contract_mpf.cpp
+tests/test_mpf_basic.cpp
+tests/test_mpf_precision_policy.cpp
+tests/test_mpf_environment.cpp
+tests/test_mixed_zq_mpf_promotion.cpp
+tests/compile_fail/test_mpf_plus_mpfr.cpp
+tests/compile_fail/test_mpfr_plus_mpf.cpp
+tests/compile_fail/test_mpf_plus_mpc.cpp
+tests/compile_fail/test_mpc_plus_mpf.cpp
+```
+
 Do not proceed to Phase 9.
 
 ---
@@ -627,7 +626,8 @@ include <mpfrxx_mkII.h> alone:
   mpfrxx::mpz_class
   mpfrxx::mpq_class
   mpfrxx::mpfr_class
-  no mpc/mpf/mpfc exposure
+  mpfrxx::mpc_class
+  no mpf/mpfc exposure
 
 include <gmpxx_mkII.h> alone:
   gmpxx::mpz_class
@@ -653,7 +653,6 @@ Required tests:
 ```text
 tests/test_cross_header_coexistence.cpp
 tests/test_cross_family_forbidden_ops.cpp
-tests/compile_fail/test_mpfr_header_exposes_mpc.cpp
 tests/compile_fail/test_gmp_header_exposes_mpfr.cpp
 tests/compile_fail/test_gmp_header_exposes_mpc.cpp
 ```
@@ -672,7 +671,7 @@ This is optional and separate from `mpfrxx::mpc_class`.
 
 It is not MPC.
 
-It belongs to `gmpxx_mkII.h` and `gmpfrxx_mkII.h`, not `mpfrxx_mkII.h`.
+It belongs to `gmpxx_mkII.h` and `gmpfrxx_mkII.h`.
 
 Required tests:
 
@@ -733,13 +732,13 @@ no gmpxx.h
 no libgmpxx
 header roles:
   gmpxx_mkII.h    = GMP only
-  mpfrxx_mkII.h   = GMP + MPFR only
-  gmpfrxx_mkII.h  = GMP + MPFR + MPC full stack
+  mpfrxx_mkII.h   = GMP + MPFR + MPC
+  gmpfrxx_mkII.h  = full combined aggregator
 namespace split:
   gmpxx
   mpfrxx
 internal namespace:
   gmpfrxx_mkII::detail
-mpfrxx::mpc_class is MPC-backed and exposed by gmpfrxx_mkII.h
+mpfrxx::mpc_class is MPC-backed and exposed by mpfrxx_mkII.h
 gmpxx::mpfc_class, if present, is GMP-only and separate from mpfrxx::mpc_class
 ```

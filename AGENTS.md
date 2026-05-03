@@ -45,22 +45,27 @@ gmpxx_mkII.h
     mpc_t
 
 mpfrxx_mkII.h
-  MPFR-only header.
+  MPFR/MPC header.
   Exposes:
     mpfrxx::mpz_class  // alias to gmpxx::mpz_class
     mpfrxx::mpq_class  // alias to gmpxx::mpq_class
     mpfrxx::mpfr_class
-  Depends on:
-    GMP + MPFR
-  Must not expose:
     mpfrxx::mpc_class
+  Depends on:
+    GMP + MPFR + MPC
+  Must not expose:
     gmpxx::mpf_class
     gmpxx::mpfc_class
   Must not include:
     gmpxx_mkII.h
-    <mpc.h>
     gmpfrxx_mkII/detail/mpf_impl.hpp
     gmpfrxx_mkII/detail/mpfc_impl.hpp
+  May include:
+    <gmp.h>
+    <mpfr.h>
+    <mpc.h>
+    gmpfrxx_mkII/detail/zq_impl.hpp
+    gmpfrxx_mkII/detail/mpfr_impl.hpp
     gmpfrxx_mkII/detail/mpc_impl.hpp
 
 gmpfrxx_mkII.h
@@ -97,7 +102,7 @@ namespace mpfrxx {
     using ::gmpxx::mpz_class;
     using ::gmpxx::mpq_class;
     class mpfr_class;
-    class mpc_class; // exposed only by gmpfrxx_mkII.h
+    class mpc_class;
 }
 ```
 
@@ -248,7 +253,7 @@ Existing-object assignment preserves destination precision. New expression mater
 
 ### MPC
 
-`mpfrxx::mpc_class` is MPC-backed and exposed only by `gmpfrxx_mkII.h`.
+`mpfrxx::mpc_class` is MPC-backed and exposed by `mpfrxx_mkII.h` and `gmpfrxx_mkII.h`.
 
 Environment variables:
 
@@ -334,7 +339,7 @@ Required interface targets:
 
 ```text
 gmpxx_mkII       -> GMP only
-mpfrxx_mkII      -> GMP + MPFR only
+mpfrxx_mkII      -> GMP + MPFR + MPC
 gmpfrxx_mkII     -> GMP + MPFR + MPC
 ```
 
@@ -359,9 +364,8 @@ ctest --test-dir build --output-on-failure
 At minimum:
 
 ```text
-mpfrxx_mkII.h must not expose mpfrxx::mpc_class
-mpfrxx_mkII.h must not expose mpfrxx::mpf_class
-mpfrxx_mkII.h must not expose mpfrxx::mpfc_class
+mpfrxx_mkII.h must not expose gmpxx::mpf_class
+mpfrxx_mkII.h must not expose gmpxx::mpfc_class
 gmpxx_mkII.h must not expose mpfrxx::mpfr_class
 gmpxx_mkII.h must not expose mpfrxx::mpc_class
 
@@ -385,19 +389,18 @@ Production code for `gmpxx_mkII.h` must not contain:
 #include <mpc.h>
 ```
 
-Production code for `mpfrxx_mkII.h` must not contain:
-
-```cpp
-#include <mpc.h>
-```
-
 Production code must not contain:
 
 ```cpp
 #include <gmpxx.h>
 ```
 
-`mpc_*` symbols are allowed only in MPC-specific implementation files included by `gmpfrxx_mkII.h`.
+`mpc_*` symbols are allowed only in MPC-specific implementation files such as:
+
+```text
+include/gmpfrxx_mkII/detail/mpc_impl.hpp
+include/gmpfrxx_mkII/detail/math_mpc.hpp
+```
 
 ## Status Discipline
 
