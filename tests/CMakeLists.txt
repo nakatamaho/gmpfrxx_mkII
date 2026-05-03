@@ -1,0 +1,36 @@
+function(add_phase0_test name target)
+    add_executable(${name} ${name}.cpp)
+    target_link_libraries(${name} PRIVATE ${target})
+    add_test(NAME ${name} COMMAND ${name})
+endfunction()
+
+add_phase0_test(test_gmp_header_smoke gmpxx_mkII)
+add_phase0_test(test_mpfr_header_smoke mpfrxx_mkII)
+add_phase0_test(test_aggregator_header_smoke gmpfrxx_mkII)
+add_phase0_test(test_namespace_aliases mpfrxx_mkII)
+add_phase0_test(test_header_boundaries gmpfrxx_mkII)
+target_compile_definitions(test_header_boundaries PRIVATE
+    GMPFRXX_MKII_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+)
+add_phase0_test(test_integer_model_diagnostics gmpxx_mkII)
+
+function(add_compile_fail_test name target)
+    set(source "${CMAKE_CURRENT_SOURCE_DIR}/compile_fail/${name}.cpp")
+    set(output "${CMAKE_CURRENT_BINARY_DIR}/${name}.o")
+    add_test(
+        NAME compile_fail_${name}
+        COMMAND ${CMAKE_CXX_COMPILER}
+            -std=c++17
+            -I${CMAKE_SOURCE_DIR}/include
+            -I${GMP_INCLUDE_DIR}
+            -I${MPFR_INCLUDE_DIR}
+            -I${MPC_INCLUDE_DIR}
+            -c "${source}"
+            -o "${output}"
+    )
+    set_tests_properties(compile_fail_${name} PROPERTIES WILL_FAIL TRUE)
+endfunction()
+
+add_compile_fail_test(mpfr_header_must_not_expose_mpf mpfrxx_mkII)
+add_compile_fail_test(mpfr_header_must_not_expose_mpfc mpfrxx_mkII)
+add_compile_fail_test(gmp_header_must_not_expose_mpfr_or_mpc gmpxx_mkII)
