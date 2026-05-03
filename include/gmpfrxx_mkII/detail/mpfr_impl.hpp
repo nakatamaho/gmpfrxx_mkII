@@ -182,10 +182,24 @@ using normalized_mpfr_scalar_t = typename normalized_mpfr_scalar<std::remove_cv_
 template <>
 struct is_mpfr_expression_operand<mpfrxx::mpfr_class> : std::true_type {};
 
+template <>
+struct is_mpfr_expression_operand<gmpxx::mpz_class> : std::true_type {};
+
+template <>
+struct is_mpfr_expression_operand<gmpxx::mpq_class> : std::true_type {};
+
 template <typename T>
 struct is_mpfr_expression_operand<
     T,
     std::enable_if_t<is_expression_node_v<T> && std::is_same_v<typename T::result_type, mpfrxx::mpfr_class>>>
+    : std::true_type {};
+
+template <typename T>
+struct is_mpfr_expression_operand<
+    T,
+    std::enable_if_t<is_expression_node_v<T> &&
+                     (std::is_same_v<typename T::result_type, gmpxx::mpz_class> ||
+                      std::is_same_v<typename T::result_type, gmpxx::mpq_class>)>>
     : std::true_type {};
 
 template <typename T>
@@ -218,6 +232,16 @@ inline object_leaf<mpfrxx::mpfr_class> make_mpfr_operand(const mpfrxx::mpfr_clas
     return object_leaf<mpfrxx::mpfr_class>(value);
 }
 
+inline object_leaf<gmpxx::mpz_class> make_mpfr_operand(const gmpxx::mpz_class& value)
+{
+    return object_leaf<gmpxx::mpz_class>(value);
+}
+
+inline object_leaf<gmpxx::mpq_class> make_mpfr_operand(const gmpxx::mpq_class& value)
+{
+    return object_leaf<gmpxx::mpq_class>(value);
+}
+
 template <typename Expr, typename = std::enable_if_t<is_expression_node_v<std::decay_t<Expr>>>>
 std::decay_t<Expr> make_mpfr_operand(Expr&& expr)
 {
@@ -234,6 +258,16 @@ auto make_mpfr_operand(Scalar value)
 inline mpfr_prec_t mpfr_expression_precision(const object_leaf<mpfrxx::mpfr_class>& expr)
 {
     return expr.get().precision();
+}
+
+inline mpfr_prec_t mpfr_expression_precision(const object_leaf<gmpxx::mpz_class>&)
+{
+    return 0;
+}
+
+inline mpfr_prec_t mpfr_expression_precision(const object_leaf<gmpxx::mpq_class>&)
+{
+    return 0;
 }
 
 template <typename T, typename Result>
@@ -263,6 +297,24 @@ inline void mpfr_evaluate(
     mpfr_set(dest, expr.get().mpfr_data(), rnd);
 }
 
+inline void mpfr_evaluate(
+    mpfr_t dest,
+    const object_leaf<gmpxx::mpz_class>& expr,
+    mpfr_prec_t,
+    mpfr_rnd_t rnd)
+{
+    mpfr_set_z(dest, expr.get().mpz_data(), rnd);
+}
+
+inline void mpfr_evaluate(
+    mpfr_t dest,
+    const object_leaf<gmpxx::mpq_class>& expr,
+    mpfr_prec_t,
+    mpfr_rnd_t rnd)
+{
+    mpfr_set_q(dest, expr.get().mpq_data(), rnd);
+}
+
 template <typename T, typename Result>
 void mpfr_evaluate(
     mpfr_t dest,
@@ -287,6 +339,16 @@ inline bool mpfr_expression_references(
 {
     return static_cast<const void*>(&target[0]) ==
            static_cast<const void*>(&expr.get().mpfr_data()[0]);
+}
+
+inline bool mpfr_expression_references(const mpfr_t, const object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
+inline bool mpfr_expression_references(const mpfr_t, const object_leaf<gmpxx::mpq_class>&)
+{
+    return false;
 }
 
 template <typename T, typename Result>

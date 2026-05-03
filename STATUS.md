@@ -356,3 +356,66 @@ Known issues:
 - GMP may report effective MPF precision greater than the requested value through mpf_get_prec().
 - MPFXX_DEFAULT_PREC_BITS controls the requested wrapper default precision; mpf_get_prec() reports GMP's effective precision.
 - mpz/mpq + mpf mixed-family promotion remains for the later exact-wrapper phase.
+
+Phase 4 status:
+DONE
+
+Implemented features:
+- Implemented gmpxx::mpq_class as an RAII wrapper around mpq_t.
+- Extended gmpxx::mpz_class and gmpxx::mpq_class with construction and assignment from expression nodes.
+- Added exact GMP-only expression-template arithmetic for mpz/mpq:
+  - mpz + mpz -> gmpxx::mpz_class
+  - mpz/mpq combinations -> gmpxx::mpq_class
+  - mpq + mpq -> gmpxx::mpq_class
+  - division produces gmpxx::mpq_class
+- Added mpq canonicalization for construction and expression materialization.
+- Preserved mpfrxx::mpz_class and mpfrxx::mpq_class as aliases to the gmpxx exact classes.
+- Added MPFR mixed exact operand support:
+  - mpz/mpq + mpfr -> mpfrxx::mpfr_class expression nodes
+  - mpfr + mpz/mpq -> mpfrxx::mpfr_class expression nodes
+- Exact mpz/mpq leaves do not contribute MPFR precision; mixed exact/MPFR materialization keeps the MPFR leaf precision.
+- Kept exact mpz/mpq implementation in zq_impl.hpp, with no MPFR/MPC references in GMP-only headers.
+
+Missing features:
+- Stronger exact/MPFR mixed expression evaluation from Phase 5 is not implemented yet.
+- mpz/mpq + mpf promotion remains to be completed with the GMP-only mixed MPF phase.
+
+Tests added:
+- tests/test_et_contract_zq_mpfr.cpp
+- tests/test_mpz_basic.cpp
+- tests/test_mpq_basic.cpp
+- tests/test_mpq_canonicalization.cpp
+- tests/test_mixed_zq_mpfr_promotion.cpp
+
+Exact commands run:
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1,540p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,120p' tests/CMakeLists.txt
+- git status --short
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- gdb -batch -ex run -ex bt --args ./build/tests/test_mixed_zq_mpfr_promotion
+- nl -ba tests/test_mixed_zq_mpfr_promotion.cpp
+- cmake --build build -j && ctest --test-dir build --output-on-failure -R test_mixed_zq_mpfr_promotion
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpz/mpq/mpfr/mpf arithmetic operators in include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests CMakeLists.txt cmake
+- git diff --stat
+
+Pass/fail result:
+- CMake configure: PASS
+- cmake --build build -j: PASS
+- Initial ctest --test-dir build --output-on-failure: FAIL, test_mixed_zq_mpfr_promotion aborted.
+- Root cause: exact mpz/mpq leaves were initially counted as MPFR default-precision leaves, so z + r(160) materialized at 512 bits instead of preserving the MPFR leaf precision.
+- Fixed exact mpz/mpq leaves to contribute zero MPFR precision in mixed exact/MPFR expressions.
+- Focused mixed promotion test rerun: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 37/37 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- Phase 5 still needs to strengthen mixed exact/MPFR evaluation policy.
+- Exact expression division by zero is not given a wrapper-specific diagnostic yet; it follows GMP behavior.
