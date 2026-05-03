@@ -419,3 +419,54 @@ Pass/fail result:
 Known issues:
 - Phase 5 still needs to strengthen mixed exact/MPFR evaluation policy.
 - Exact expression division by zero is not given a wrapper-specific diagnostic yet; it follows GMP behavior.
+
+Phase 5 status:
+DONE
+
+Implemented features:
+- Strengthened mixed exact/MPFR evaluation for exact-only subexpressions embedded in MPFR expressions.
+- Exact mpz-result subexpressions are now evaluated with the GMP exact mpz evaluator and converted to MPFR once with mpfr_set_z().
+- Exact mpq-result subexpressions are now evaluated with the GMP exact mpq evaluator and converted to MPFR once with mpfr_set_q().
+- Kept public arithmetic expression-template based; no eager public mpz/mpq/mpfr/mpf arithmetic operators were added.
+- Kept GMP-only headers free of MPFR/MPC includes and symbols.
+
+Missing features:
+- mpz/mpq + mpf promotion remains to be completed with the GMP-only mixed MPF phase.
+- MPC arithmetic is still a later phase.
+- Exact expression division by zero still follows GMP behavior without a wrapper-specific diagnostic.
+
+Tests added:
+- tests/test_mixed_zq_mpfr_exact_subexpression.cpp
+
+Exact commands run:
+- git status --short
+- tail -120 STATUS.md
+- rg -n "TODO|Phase 5|missing|mpf|mpq|mpz|mpfr_set_q|mpf_set_q|result_type|promot" include tests STATUS.md
+- sed -n '1,620p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,470p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1,220p' tests/test_mixed_zq_mpfr_promotion.cpp
+- sed -n '1,180p' tests/CMakeLists.txt
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/expr.hpp
+- sed -n '1,220p' tests/test_et_contract_zq_mpfr.cpp
+- rg -n "mpfr_evaluate\\(|mpq_evaluate\\(|mpz_evaluate\\(" include/gmpfrxx_mkII/detail tests
+- temporary /tmp MPFR probe to find a compact exact-subexpression rounding regression
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_mixed_zq_mpfr_exact_subexpression
+- rg -n for eager mpz/mpq/mpfr/mpf arithmetic operators in include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests CMakeLists.txt cmake
+- ctest --test-dir build --output-on-failure
+- git diff -- include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/CMakeLists.txt tests/test_mixed_zq_mpfr_exact_subexpression.cpp
+- git status --short
+
+Pass/fail result:
+- cmake --build build -j: PASS
+- New exact-subexpression regression test: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 38/38 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- mpz/mpq + mpf mixed-family promotion remains for the GMP-only mixed MPF phase.
+- MPC arithmetic is not implemented yet.

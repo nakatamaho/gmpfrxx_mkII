@@ -429,6 +429,22 @@ void mpfr_evaluate(
     mpfr_prec_t eval_precision,
     mpfr_rnd_t rnd)
 {
+    if constexpr (std::is_same_v<Result, gmpxx::mpz_class>) {
+        mpz_t exact;
+        mpz_init(exact);
+        mpz_evaluate(exact, expr);
+        mpfr_set_z(dest, exact, rnd);
+        mpz_clear(exact);
+        return;
+    } else if constexpr (std::is_same_v<Result, gmpxx::mpq_class>) {
+        mpq_t exact;
+        mpq_init(exact);
+        mpq_evaluate(exact, expr);
+        mpfr_set_q(dest, exact, rnd);
+        mpq_clear(exact);
+        return;
+    }
+
     if (mpfr_expression_references(dest, expr)) {
         mpfr_t lhs;
         mpfr_t rhs;

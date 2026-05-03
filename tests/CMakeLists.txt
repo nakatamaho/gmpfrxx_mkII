@@ -34,6 +34,7 @@ add_phase0_test(test_mpz_basic gmpxx_mkII)
 add_phase0_test(test_mpq_basic gmpxx_mkII)
 add_phase0_test(test_mpq_canonicalization gmpxx_mkII)
 add_phase0_test(test_mixed_zq_mpfr_promotion mpfrxx_mkII)
+add_phase0_test(test_mixed_zq_mpfr_exact_subexpression mpfrxx_mkII)
 
 function(add_compile_fail_test name target)
     set(source "${CMAKE_CURRENT_SOURCE_DIR}/compile_fail/${name}.cpp")
