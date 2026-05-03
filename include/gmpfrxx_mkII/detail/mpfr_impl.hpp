@@ -2,8 +2,11 @@
 #define GMPFRXX_MKII_DETAIL_MPFR_IMPL_HPP
 
 #include <gmpfrxx_mkII/detail/expr.hpp>
+#include <gmpfrxx_mkII/detail/integer_conversion.hpp>
+#include <gmpfrxx_mkII/detail/zq_impl.hpp>
 
 #include <algorithm>
+#include <cstdint>
 #include <type_traits>
 #include <utility>
 
@@ -127,6 +130,44 @@ namespace detail {
 template <typename T, typename = void>
 struct is_mpfr_expression_operand : std::false_type {};
 
+template <typename T>
+struct is_supported_mpfr_scalar
+    : std::bool_constant<is_supported_expression_integral_v<T> ||
+                         std::is_same_v<std::remove_cv_t<T>, float> ||
+                         std::is_same_v<std::remove_cv_t<T>, double>> {};
+
+template <typename T>
+inline constexpr bool is_supported_mpfr_scalar_v =
+    is_supported_mpfr_scalar<std::remove_cv_t<T>>::value;
+
+template <typename T, typename = void>
+struct normalized_mpfr_scalar;
+
+template <typename T>
+struct normalized_mpfr_scalar<T, std::enable_if_t<is_supported_expression_integral_v<T> &&
+                                                  std::is_signed_v<std::remove_cv_t<T>>>> {
+    using type = std::int64_t;
+};
+
+template <typename T>
+struct normalized_mpfr_scalar<T, std::enable_if_t<is_supported_expression_integral_v<T> &&
+                                                  std::is_unsigned_v<std::remove_cv_t<T>>>> {
+    using type = std::uint64_t;
+};
+
+template <>
+struct normalized_mpfr_scalar<float> {
+    using type = double;
+};
+
+template <>
+struct normalized_mpfr_scalar<double> {
+    using type = double;
+};
+
+template <typename T>
+using normalized_mpfr_scalar_t = typename normalized_mpfr_scalar<std::remove_cv_t<T>>::type;
+
 template <>
 struct is_mpfr_expression_operand<mpfrxx::mpfr_class> : std::true_type {};
 
@@ -137,8 +178,29 @@ struct is_mpfr_expression_operand<
     : std::true_type {};
 
 template <typename T>
+struct is_mpfr_expression_operand<T, std::enable_if_t<is_supported_mpfr_scalar_v<T>>> : std::true_type {};
+
+template <typename T>
 inline constexpr bool is_mpfr_expression_operand_v =
     is_mpfr_expression_operand<std::decay_t<T>>::value;
+
+template <typename T, typename = void>
+struct is_mpfr_object_or_node : std::false_type {};
+
+template <typename T>
+struct is_mpfr_object_or_node<
+    T,
+    std::enable_if_t<std::is_same_v<std::decay_t<T>, mpfrxx::mpfr_class>>> : std::true_type {};
+
+template <typename T>
+struct is_mpfr_object_or_node<
+    T,
+    std::enable_if_t<is_expression_node_v<std::decay_t<T>> &&
+                     std::is_same_v<typename std::decay_t<T>::result_type, mpfrxx::mpfr_class>>>
+    : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpfr_object_or_node_v = is_mpfr_object_or_node<T>::value;
 
 inline object_leaf<mpfrxx::mpfr_class> make_mpfr_operand(const mpfrxx::mpfr_class& value)
 {
@@ -149,6 +211,13 @@ template <typename Expr, typename = std::enable_if_t<is_expression_node_v<std::d
 std::decay_t<Expr> make_mpfr_operand(Expr&& expr)
 {
     return std::forward<Expr>(expr);
+}
+
+template <typename Scalar, typename = std::enable_if_t<is_supported_mpfr_scalar_v<Scalar>>>
+auto make_mpfr_operand(Scalar value)
+{
+    using storage_type = normalized_mpfr_scalar_t<Scalar>;
+    return scalar_leaf<storage_type, mpfrxx::mpfr_class>(static_cast<storage_type>(value));
 }
 
 inline mpfr_prec_t mpfr_expression_precision(const object_leaf<mpfrxx::mpfr_class>& expr)
@@ -184,7 +253,69 @@ inline void mpfr_evaluate(
 }
 
 template <typename T, typename Result>
-void mpfr_evaluate(mpfr_t, const scalar_leaf<T, Result>&, mpfr_prec_t, mpfr_rnd_t) = delete;
+void mpfr_evaluate(
+    mpfr_t dest,
+    const scalar_leaf<T, Result>& expr,
+    mpfr_prec_t,
+    mpfr_rnd_t rnd)
+{
+    if constexpr (std::is_same_v<T, double>) {
+        mpfr_set_d(dest, expr.value(), rnd);
+    } else if constexpr (std::is_same_v<T, std::int64_t> ||
+                         std::is_same_v<T, std::uint64_t>) {
+        const gmpxx::mpz_class integer(expr.value());
+        mpfr_set_z(dest, integer.mpz_data(), rnd);
+    } else {
+        static_assert(std::is_same_v<T, double>, "unsupported MPFR scalar leaf");
+    }
+}
+
+inline bool mpfr_expression_references(
+    const mpfr_t target,
+    const object_leaf<mpfrxx::mpfr_class>& expr)
+{
+    return static_cast<const void*>(&target[0]) ==
+           static_cast<const void*>(&expr.get().mpfr_data()[0]);
+}
+
+template <typename T, typename Result>
+bool mpfr_expression_references(const mpfr_t, const scalar_leaf<T, Result>&)
+{
+    return false;
+}
+
+template <typename Op, typename Expr, typename Result>
+bool mpfr_expression_references(
+    const mpfr_t target,
+    const unary_expr<Op, Expr, Result>& expr)
+{
+    return mpfr_expression_references(target, expr.expr());
+}
+
+template <typename Op, typename Lhs, typename Rhs, typename Result>
+bool mpfr_expression_references(
+    const mpfr_t target,
+    const binary_expr<Op, Lhs, Rhs, Result>& expr)
+{
+    return mpfr_expression_references(target, expr.lhs()) ||
+           mpfr_expression_references(target, expr.rhs());
+}
+
+template <typename Op>
+void mpfr_apply_binary(mpfr_t dest, const mpfr_t lhs, const mpfr_t rhs, mpfr_rnd_t rnd)
+{
+    if constexpr (std::is_same_v<Op, add_op>) {
+        mpfr_add(dest, lhs, rhs, rnd);
+    } else if constexpr (std::is_same_v<Op, sub_op>) {
+        mpfr_sub(dest, lhs, rhs, rnd);
+    } else if constexpr (std::is_same_v<Op, mul_op>) {
+        mpfr_mul(dest, lhs, rhs, rnd);
+    } else if constexpr (std::is_same_v<Op, div_op>) {
+        mpfr_div(dest, lhs, rhs, rnd);
+    } else {
+        static_assert(std::is_same_v<Op, add_op>, "unsupported MPFR expression operation");
+    }
+}
 
 template <typename Expr, typename Result>
 void mpfr_evaluate(
@@ -207,6 +338,17 @@ void mpfr_evaluate(
     mpfr_neg(dest, dest, rnd);
 }
 
+template <typename Expr>
+void mpfr_evaluate_to_temporary(
+    mpfr_t temp,
+    const Expr& expr,
+    mpfr_prec_t eval_precision,
+    mpfr_rnd_t rnd)
+{
+    mpfr_init2(temp, eval_precision);
+    mpfr_evaluate(temp, expr, eval_precision, rnd);
+}
+
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpfr_evaluate(
     mpfr_t dest,
@@ -214,33 +356,41 @@ void mpfr_evaluate(
     mpfr_prec_t eval_precision,
     mpfr_rnd_t rnd)
 {
-    mpfr_t lhs;
-    mpfr_t rhs;
-    mpfr_init2(lhs, eval_precision);
-    mpfr_init2(rhs, eval_precision);
-
-    mpfr_evaluate(lhs, expr.lhs(), eval_precision, rnd);
-    mpfr_evaluate(rhs, expr.rhs(), eval_precision, rnd);
-
-    if constexpr (std::is_same_v<Op, add_op>) {
-        mpfr_add(dest, lhs, rhs, rnd);
-    } else if constexpr (std::is_same_v<Op, sub_op>) {
-        mpfr_sub(dest, lhs, rhs, rnd);
-    } else if constexpr (std::is_same_v<Op, mul_op>) {
-        mpfr_mul(dest, lhs, rhs, rnd);
-    } else if constexpr (std::is_same_v<Op, div_op>) {
-        mpfr_div(dest, lhs, rhs, rnd);
-    } else {
-        static_assert(std::is_same_v<Op, add_op>, "unsupported MPFR expression operation");
+    if (mpfr_expression_references(dest, expr)) {
+        mpfr_t lhs;
+        mpfr_t rhs;
+        mpfr_evaluate_to_temporary(lhs, expr.lhs(), eval_precision, rnd);
+        mpfr_evaluate_to_temporary(rhs, expr.rhs(), eval_precision, rnd);
+        mpfr_apply_binary<Op>(dest, lhs, rhs, rnd);
+        mpfr_clear(rhs);
+        mpfr_clear(lhs);
+        return;
     }
 
-    mpfr_clear(rhs);
-    mpfr_clear(lhs);
+    if constexpr (std::is_same_v<Lhs, object_leaf<mpfrxx::mpfr_class>> &&
+                  std::is_same_v<Rhs, object_leaf<mpfrxx::mpfr_class>>) {
+        mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+    } else if constexpr (std::is_same_v<Rhs, object_leaf<mpfrxx::mpfr_class>>) {
+        mpfr_evaluate(dest, expr.lhs(), eval_precision, rnd);
+        mpfr_apply_binary<Op>(dest, dest, expr.rhs().get().mpfr_data(), rnd);
+    } else if constexpr (std::is_same_v<Lhs, object_leaf<mpfrxx::mpfr_class>> &&
+                         (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
+        mpfr_evaluate(dest, expr.rhs(), eval_precision, rnd);
+        mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), dest, rnd);
+    } else {
+        mpfr_t rhs;
+        mpfr_evaluate(dest, expr.lhs(), eval_precision, rnd);
+        mpfr_evaluate_to_temporary(rhs, expr.rhs(), eval_precision, rnd);
+        mpfr_apply_binary<Op>(dest, dest, rhs, rnd);
+        mpfr_clear(rhs);
+    }
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
                                     is_mpfr_expression_operand_v<Lhs> &&
-                                        is_mpfr_expression_operand_v<Rhs>,
+                                        is_mpfr_expression_operand_v<Rhs> &&
+                                        (is_mpfr_object_or_node_v<Lhs> ||
+                                         is_mpfr_object_or_node_v<Rhs>),
                                     int> = 0>
 auto operator+(Lhs&& lhs, Rhs&& rhs)
 {
@@ -252,7 +402,9 @@ auto operator+(Lhs&& lhs, Rhs&& rhs)
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
                                     is_mpfr_expression_operand_v<Lhs> &&
-                                        is_mpfr_expression_operand_v<Rhs>,
+                                        is_mpfr_expression_operand_v<Rhs> &&
+                                        (is_mpfr_object_or_node_v<Lhs> ||
+                                         is_mpfr_object_or_node_v<Rhs>),
                                     int> = 0>
 auto operator-(Lhs&& lhs, Rhs&& rhs)
 {
@@ -264,7 +416,9 @@ auto operator-(Lhs&& lhs, Rhs&& rhs)
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
                                     is_mpfr_expression_operand_v<Lhs> &&
-                                        is_mpfr_expression_operand_v<Rhs>,
+                                        is_mpfr_expression_operand_v<Rhs> &&
+                                        (is_mpfr_object_or_node_v<Lhs> ||
+                                         is_mpfr_object_or_node_v<Rhs>),
                                     int> = 0>
 auto operator*(Lhs&& lhs, Rhs&& rhs)
 {
@@ -276,7 +430,9 @@ auto operator*(Lhs&& lhs, Rhs&& rhs)
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
                                     is_mpfr_expression_operand_v<Lhs> &&
-                                        is_mpfr_expression_operand_v<Rhs>,
+                                        is_mpfr_expression_operand_v<Rhs> &&
+                                        (is_mpfr_object_or_node_v<Lhs> ||
+                                         is_mpfr_object_or_node_v<Rhs>),
                                     int> = 0>
 auto operator/(Lhs&& lhs, Rhs&& rhs)
 {

@@ -132,3 +132,87 @@ Pass/fail result:
 Known issues:
 - Phase 1 intentionally does not implement scalar expression operands, bool/long double/__int128 rejection tests, MPFR environment variables, MPFR exponent-range handling, exact mpz/mpq wrappers beyond Phase 0 shells, MPC arithmetic, MPF arithmetic, comparisons, streaming, or math functions.
 - mpfrxx::mpfr_class currently uses fixed Phase 1 defaults: 53-bit default precision and MPFR_RNDN rounding.
+
+Phase 2 status:
+DONE
+
+Implemented features:
+- Added MPFR scalar expression operands for signed and unsigned standard integral types except bool.
+- Added MPFR scalar expression operands for float and double.
+- Rejected bool, long double, __int128, and unsigned __int128 as MPFR expression scalar leaves.
+- Normalized MPFR scalar leaves to ABI-stable storage:
+  - signed integrals -> std::int64_t
+  - unsigned integrals -> std::uint64_t
+  - float and double -> double
+- Preserved the scalar/scalar boundary: expression-template operators require at least one MPFR object or MPFR expression operand.
+- Added minimal RAII storage and exact integral construction for gmpxx::mpz_class.
+- Implemented integral-to-MPFR scalar evaluation through a gmpxx::mpz_class temporary and mpfr_set_z().
+- Implemented float/double scalar evaluation through mpfr_set_d().
+- Verified std::uint64_t max and std::int64_t min convert exactly without negating the signed minimum value.
+- Ported the allocation-count test from the sibling gmpxx_mkII repository as tests/test_mpfr_alloc_count.cpp.
+- Added allocation-aware MPFR expression evaluation for non-aliasing destinations:
+  - simple leaf-only assignments such as dst = a + b allocate zero times
+  - left-associated addition chains such as dst = a + b + c + d allocate zero times
+  - compound two-sided expressions such as dst = (a + b) * (c + d) use one temporary mpfr_t
+- Kept aliasing assignments on the safe temporary path.
+
+Missing features:
+- None for Phase 2.
+
+Tests added:
+- tests/test_et_contract_mpfr_scalar.cpp
+- tests/test_mpfr_scalar_eval.cpp
+- tests/test_mpfr_long_width_dispatch.cpp
+- tests/test_mpfr_alloc_count.cpp
+- tests/compile_fail/test_bool_scalar.cpp
+- tests/compile_fail/test_long_double_scalar.cpp
+- tests/compile_fail/test_int128_scalar.cpp
+- tests/compile_fail/test_scalar_scalar_et_operator.cpp
+
+Exact commands run:
+- sed -n '1,260p' include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1,420p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,220p' tests/CMakeLists.txt
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- rg -n "friend\\s+mpfrxx::mpfr_class\\s+operator|mpfr_class\\s+operator\\+|mpfr_class\\s+operator-|mpfr_class\\s+operator\\*|mpfr_class\\s+operator/" include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>" include tests CMakeLists.txt cmake
+- git diff --stat
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_alloc_count.cpp
+- rg -n "alloc_count|mp_set_memory_functions|allocation" ../gmpxx_mkII/tests ../gmpxx_mkII/include 2>/dev/null
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- cmake --build build -j && ctest --test-dir build --output-on-failure -R test_mpfr_alloc_count
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- rg -n "friend\\s+mpfrxx::mpfr_class\\s+operator|mpfr_class\\s+operator\\+|mpfr_class\\s+operator-|mpfr_class\\s+operator\\*|mpfr_class\\s+operator/" include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- git diff --stat
+
+Pass/fail result:
+- CMake configure: PASS
+- Initial build: FAIL because is_mpfr_object_or_node_v referenced result_type for non-expression operands during SFINAE substitution.
+- Fixed is_mpfr_object_or_node with partial specializations instead of a variable-template boolean expression.
+- Build after trait fix: PASS
+- Initial source scan: FAIL because generic integer_conversion.hpp contained MPFR-specific trait names and is included by gmpxx_mkII.h.
+- Moved MPFR scalar trait names into mpfr_impl.hpp, leaving integer_conversion.hpp generic.
+- Final cmake --build build -j: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 20/20 tests passed
+- Eager MPFR operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h>: PASS, no matches
+- Initial migrated allocation-count test: FAIL because the first allocation-aware implementation evaluated both sides of (a + b) * (c + d) into separate temporary mpfr_t objects.
+- Updated compound non-aliasing evaluation to evaluate the left side directly into the destination and only the right side into one temporary mpfr_t.
+- Restored the migrated allocation-count expectation for (a + b) * (c + d) to 1; simple addition chains still assert zero allocations.
+- Final ctest --test-dir build --output-on-failure after the migrated allocation-count test: PASS, 21/21 tests passed
+- Final eager MPFR operator scan after allocation-aware evaluation: PASS, no matches
+- Final source scan for forbidden GMP-header MPFR/MPC includes and symbols after allocation-aware evaluation: PASS, no matches
+
+Known issues:
+- Phase 2 intentionally does not implement direct scalar constructors for mpfrxx::mpfr_class.
+- Phase 2 intentionally does not implement MPFR environment variables, rounding configuration beyond fixed MPFR_RNDN, exponent-range handling, mpz/mpq mixed expressions, MPC arithmetic, MPF arithmetic, comparisons, streaming, or math functions.
