@@ -13,6 +13,10 @@ target_compile_definitions(test_header_boundaries PRIVATE
     GMPFRXX_MKII_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 )
 add_phase0_test(test_integer_model_diagnostics gmpxx_mkII)
+add_phase0_test(test_et_contract_mpfr mpfrxx_mkII)
+add_phase0_test(test_mpfr_expression_eval mpfrxx_mkII)
+add_phase0_test(test_mpfr_precision_policy mpfrxx_mkII)
+add_phase0_test(test_mpfr_aliasing mpfrxx_mkII)
 
 function(add_compile_fail_test name target)
     set(source "${CMAKE_CURRENT_SOURCE_DIR}/compile_fail/${name}.cpp")

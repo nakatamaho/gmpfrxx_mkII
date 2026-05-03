@@ -4,7 +4,9 @@
 namespace gmpfrxx_mkII {
 namespace detail {
 
-struct eval_context_phase0_placeholder {};
+struct eval_context {
+    unsigned long precision_bits;
+};
 
 } // namespace detail
 } // namespace gmpfrxx_mkII
