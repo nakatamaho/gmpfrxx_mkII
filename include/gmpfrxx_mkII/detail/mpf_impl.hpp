@@ -9,11 +9,73 @@
 #include <cerrno>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <limits>
+#include <ostream>
+#include <stdexcept>
+#include <string>
 #include <type_traits>
 #include <utility>
 
 #include <gmp.h>
+
+namespace gmpfrxx_mkII {
+namespace detail {
+
+class gmp_allocated_string {
+public:
+    explicit gmp_allocated_string(char* value) noexcept : value_(value) {}
+
+    ~gmp_allocated_string()
+    {
+        reset();
+    }
+
+    gmp_allocated_string(const gmp_allocated_string&) = delete;
+    gmp_allocated_string& operator=(const gmp_allocated_string&) = delete;
+
+    gmp_allocated_string(gmp_allocated_string&& other) noexcept : value_(other.value_)
+    {
+        other.value_ = nullptr;
+    }
+
+    gmp_allocated_string& operator=(gmp_allocated_string&& other) noexcept
+    {
+        if (this != &other) {
+            reset();
+            value_ = other.value_;
+            other.value_ = nullptr;
+        }
+        return *this;
+    }
+
+    const char* c_str() const noexcept
+    {
+        return value_;
+    }
+
+    explicit operator bool() const noexcept
+    {
+        return value_ != nullptr;
+    }
+
+private:
+    void reset() noexcept
+    {
+        if (value_ == nullptr) {
+            return;
+        }
+        void (*free_function)(void*, std::size_t) = nullptr;
+        mp_get_memory_functions(nullptr, nullptr, &free_function);
+        free_function(value_, std::strlen(value_) + 1);
+        value_ = nullptr;
+    }
+
+    char* value_;
+};
+
+} // namespace detail
+} // namespace gmpfrxx_mkII
 
 namespace gmpxx {
 
@@ -86,6 +148,20 @@ public:
         mpf_swap(value_, other.value_);
     }
 
+    mpf_class(const char* value, mp_bitcnt_t precision, int base = 10)
+    {
+        mpf_init2(value_, precision);
+        if (value == nullptr || mpf_set_str(value_, value, base) != 0) {
+            mpf_clear(value_);
+            throw std::invalid_argument("invalid mpf_class decimal string");
+        }
+    }
+
+    mpf_class(const std::string& value, mp_bitcnt_t precision, int base = 10)
+        : mpf_class(value.c_str(), precision, base)
+    {
+    }
+
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
@@ -146,6 +222,91 @@ public:
         mpf_set_d(value_, value);
     }
 
+    void set(const char* value)
+    {
+        if (set_str(value) != 0) {
+            throw std::invalid_argument("invalid mpf_class decimal string");
+        }
+    }
+
+    void set(const std::string& value)
+    {
+        set(value.c_str());
+    }
+
+    std::string get_str() const
+    {
+        return to_string();
+    }
+
+    std::string get_str(mp_exp_t& exponent, int base = 10, std::size_t n_digits = 0) const
+    {
+        gmpfrxx_mkII::detail::gmp_allocated_string raw_digits(
+            mpf_get_str(nullptr, &exponent, base, n_digits, value_));
+        if (!raw_digits) {
+            throw std::runtime_error("mpf_get_str failed");
+        }
+        return std::string(raw_digits.c_str());
+    }
+
+    int set_str(const char* value, int base = 10)
+    {
+        if (value == nullptr) {
+            return -1;
+        }
+
+        mpf_t temp;
+        mpf_init2(temp, precision());
+        const int rc = mpf_set_str(temp, value, base);
+        if (rc == 0) {
+            mpf_set(value_, temp);
+        }
+        mpf_clear(temp);
+        return rc;
+    }
+
+    int set_str(const std::string& value, int base = 10)
+    {
+        return set_str(value.c_str(), base);
+    }
+
+    std::string to_string(std::size_t n_digits = 0) const
+    {
+        mp_exp_t exponent = 0;
+        std::string digits = get_str(exponent, 10, n_digits);
+
+        bool negative = false;
+        if (!digits.empty() && digits.front() == '-') {
+            negative = true;
+            digits.erase(digits.begin());
+        }
+
+        if (digits == "0") {
+            return "0";
+        }
+
+        std::string result;
+        if (negative) {
+            result.push_back('-');
+        }
+
+        if (exponent <= 0) {
+            result += "0.";
+            result.append(static_cast<std::size_t>(-exponent), '0');
+            result += digits;
+        } else if (static_cast<std::size_t>(exponent) >= digits.size()) {
+            result += digits;
+            result.append(static_cast<std::size_t>(exponent) - digits.size(), '0');
+        } else {
+            const auto split = static_cast<std::size_t>(exponent);
+            result += digits.substr(0, split);
+            result.push_back('.');
+            result += digits.substr(split);
+        }
+
+        return result;
+    }
+
     const mpf_t& mpf_data() const noexcept
     {
         return value_;
@@ -167,6 +328,66 @@ private:
 
     mpf_t value_;
 };
+
+inline std::ostream& operator<<(std::ostream& out, const mpf_class& value)
+{
+    try {
+        char conversion = 'g';
+        const auto floatfield = out.flags() & std::ios_base::floatfield;
+        if (floatfield == std::ios_base::fixed) {
+            conversion = 'f';
+        } else if (floatfield == std::ios_base::scientific) {
+            conversion = 'e';
+        }
+        if (out.flags() & std::ios_base::uppercase) {
+            conversion = static_cast<char>(conversion - 'a' + 'A');
+        }
+
+        std::string format = (out.flags() & std::ios_base::showpoint) ? "%#.*F" : "%.*F";
+        format.push_back(conversion);
+
+        std::streamsize stream_precision = out.precision();
+        if (stream_precision < 0) {
+            stream_precision = 6;
+        }
+        if (stream_precision > static_cast<std::streamsize>(std::numeric_limits<int>::max())) {
+            stream_precision = std::numeric_limits<int>::max();
+        }
+
+        char* raw = nullptr;
+        const int count = gmp_asprintf(
+            &raw, format.c_str(), static_cast<int>(stream_precision), value.mpf_data());
+        gmpfrxx_mkII::detail::gmp_allocated_string formatted(raw);
+        if (count < 0 || !formatted) {
+            out.setstate(std::ios_base::badbit);
+            return out;
+        }
+
+        std::string text(formatted.c_str());
+        if ((out.flags() & std::ios_base::showpos) && mpf_sgn(value.mpf_data()) >= 0) {
+            text.insert(0, "+");
+        }
+
+        const std::streamsize width = out.width();
+        if (static_cast<std::streamsize>(text.size()) < width) {
+            const auto fill_count = static_cast<std::size_t>(width - static_cast<std::streamsize>(text.size()));
+            if (out.flags() & std::ios_base::left) {
+                text.append(fill_count, out.fill());
+            } else if (out.flags() & std::ios_base::internal) {
+                std::size_t pos = (!text.empty() && (text[0] == '-' || text[0] == '+')) ? 1 : 0;
+                text.insert(pos, fill_count, out.fill());
+            } else {
+                text.insert(0, fill_count, out.fill());
+            }
+        }
+
+        out << text;
+        out.width(0);
+    } catch (...) {
+        out.setstate(std::ios_base::badbit);
+    }
+    return out;
+}
 
 } // namespace gmpxx
 

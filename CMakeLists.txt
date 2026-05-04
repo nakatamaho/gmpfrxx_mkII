@@ -38,6 +38,8 @@ target_include_directories(gmpfrxx_mkII INTERFACE
 target_link_libraries(gmpfrxx_mkII INTERFACE GMP::GMP MPFR::MPFR MPC::MPC)
 target_compile_features(gmpfrxx_mkII INTERFACE cxx_std_17)
 
+add_subdirectory(examples)
+
 if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()

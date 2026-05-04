@@ -657,3 +657,66 @@ Pass/fail result:
 Known issues:
 - MPC math functions, comparisons, and streaming remain for later phases.
 - mpc_class::precision() returns the common precision when real and imaginary precision match, otherwise the smaller component precision; use real_precision() and imag_precision() for exact component values.
+
+Phase 9 status:
+DONE
+
+Implemented features:
+- Added gmpxx::mpf_class construction from decimal strings with explicit precision:
+  - mpf_class(const char*, mp_bitcnt_t)
+  - mpf_class(const std::string&, mp_bitcnt_t)
+- Added gmpxx::mpf_class::set(const char*) and set(const std::string&).
+- Added gmpxx::mpf_class::get_str() and get_str(exp, base, digits) for decimal/string formatting.
+- Added gmpxx::mpf_class::set_str(const char*, base) and set_str(const std::string&, base), preserving the destination value when parsing fails.
+- Added std::ostream output for gmpxx::mpf_class using gmp_asprintf() and basic ostream formatting flags.
+- Added internal GMP-allocated string RAII cleanup for strings returned by GMP formatting functions.
+- Added examples/example01.cpp demonstrating explicit-precision MPF construction, expression-template addition, and stream output.
+- Added examples/CMakeLists.txt and wired examples into the top-level CMake build.
+
+Missing features:
+- MPF stream input is not implemented yet.
+- Stream output does not yet fully emulate every gmpxx.h formatting edge case.
+- String constructors are currently MPF-only; mpz/mpq/mpfr/mpc string constructors remain for later phases.
+
+Tests added:
+- tests/test_mpf_string_io.cpp
+- CTest entry for example01
+
+Exact commands run:
+- sed -n '1,190p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1,220p' CMakeLists.txt
+- git status --short
+- sed -n '1,120p' README.md
+- rg -n "Copyright|All rights reserved|Redistribution" tests include docs README.md | head -40
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_mpf_string_io|example01"
+- ./build/examples/example01
+- rg -n for eager mpc/mpfr/mpf/mpz/mpq arithmetic operators in include tests examples
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples CMakeLists.txt cmake
+- ctest --test-dir build --output-on-failure
+- rg -n "mpf_class|mpf_get_str|mpf_set_str|operator<<|get_str|void set\\(|set_str|string" ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '617,1015p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '2280,2675p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '4180,4235p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_mpf_string_io|example01"
+- ./build/examples/example01
+- nm -C build/examples/example01 | rg "gmp_allocated_string|set_str|get_str|to_string|operator<<|gmp_asprintf|__gmpf_set_str|__gmpf_get_str"
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpf/mpz/mpq arithmetic operators in include tests examples
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples CMakeLists.txt cmake
+
+Pass/fail result:
+- cmake --build build -j: PASS
+- New MPF string I/O and example tests: PASS
+- example01 output: 1.5 + 2.5 = 4
+- Final ctest --test-dir build --output-on-failure: PASS, 49/49 tests passed
+- Final ctest after gmpxx_mkII.h.in refinement: PASS, 49/49 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- MPF output formatting now covers basic ostream precision, fixed/scientific, uppercase, showpoint, showpos, width, fill, and alignment flags, but is still not a complete gmpxx.h stream-format clone.
