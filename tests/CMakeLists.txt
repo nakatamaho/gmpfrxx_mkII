@@ -14,6 +14,7 @@ target_compile_definitions(test_header_boundaries PRIVATE
 )
 add_phase0_test(test_integer_model_diagnostics gmpxx_mkII)
 add_phase0_test(test_abi_fingerprint gmpfrxx_mkII)
+add_phase0_test(test_alias_safety gmpfrxx_mkII)
 add_phase0_test(test_et_contract_mpfr mpfrxx_mkII)
 add_phase0_test(test_mpfr_expression_eval mpfrxx_mkII)
 add_phase0_test(test_mpfr_precision_policy mpfrxx_mkII)

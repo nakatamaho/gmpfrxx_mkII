@@ -1094,3 +1094,39 @@ Pass/fail result:
 
 Known issues:
 - The upstream test's C++20 concepts, std::common_type, and std::numeric_limits checks were adapted to current C++17/detail contracts rather than copied verbatim.
+
+Post-phase alias safety test migration status:
+DONE
+
+Implemented features:
+- Ported ../gmpxx_mkII/tests/test_alias_safety.cpp into tests/test_alias_safety.cpp.
+- Added destructive alias-assignment coverage for gmpxx::mpf_class and mpfrxx::mpfr_class.
+- Covered direct self-reference cases a=a+b, a=a-a, a=a*a, a=a/a, nested reuse a=(a+b)*a, and repeated destination reuse a=(a-b)/(a+b).
+- Added mixed precision alias coverage where destination precision is lower than another expression leaf and must be preserved.
+- Registered test_alias_safety with CTest via the gmpfrxx_mkII interface target.
+
+Tests added:
+- tests/test_alias_safety.cpp
+
+Exact commands run:
+- sed -n '1,320p' ../gmpxx_mkII/tests/test_alias_safety.cpp
+- sed -n '1,220p' tests/test_mpf_aliasing.cpp
+- sed -n '1,220p' tests/test_mpfr_aliasing.cpp
+- sed -n '1,120p' tests/CMakeLists.txt
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_alias_safety
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpfc/mpf/mpz/mpq arithmetic operators in include tests examples benchmarks
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples benchmarks CMakeLists.txt cmake
+
+Pass/fail result:
+- Final cmake --build build -j: PASS
+- Migrated test_alias_safety: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 64/64 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- None for this migration.
