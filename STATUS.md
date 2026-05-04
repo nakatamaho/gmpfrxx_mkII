@@ -1886,6 +1886,7 @@ Normal tests:
 | test_integer_model_diagnostics | gmpxx_mkII | Platform integer assumptions | Checks standard integer widths and signedness assumptions used by exact integer conversion paths. |
 | test_abi_fingerprint | gmpfrxx_mkII | Internal ET/scalar ABI shape | Static-asserts normalized scalar leaf types, supported operand traits, expression node shape, operation tags, and result type traits. |
 | test_alias_safety | gmpfrxx_mkII | Cross-type alias-safe assignment | Compares aliased MPF and MPFR assignments against independently computed expected values while preserving destination precision. |
+| test_random | gmpxx_mkII | GMP random state API | Checks gmp_randclass construction, seeding, integer/float generation, precision behavior, error paths, and mean/variance smoke statistics. |
 | test_et_contract_mpfr | mpfrxx_mkII | MPFR expression-template contract | Static-asserts arithmetic operators return expression nodes, not eager mpfr_class values. |
 | test_mpfr_expression_eval | mpfrxx_mkII | MPFR expression evaluation | Evaluates nested arithmetic expressions and compares materialized double values. |
 | test_mpfr_precision_policy | mpfrxx_mkII | MPFR expression precision policy | Checks new materialization uses max leaf precision and assignment preserves destination precision. |
@@ -1968,7 +1969,58 @@ Exact commands run:
 
 Pass/fail result:
 - cmake --build build -j: PASS.
-- ctest --test-dir build --output-on-failure: PASS, 69/69 tests passed.
+- ctest --test-dir build --output-on-failure: PASS, 70/70 tests passed.
 
 Known issues:
 - The catalog summarizes test intent at the file level; it does not enumerate every individual assertion inside large smoke tests.
+
+Post-phase GMP random API:
+DONE
+
+Implemented features:
+- Added gmpxx::gmp_randclass as a GMP-only RAII wrapper around gmp_randstate_t.
+- Added default, gmp_randinit_default, gmp_randinit_mt, gmp_randinit_lc_2exp_size, gmp_randinit_lc_2exp, and obsolete gmp_randalg_t constructor forms.
+- Added seed(unsigned long) and seed(const gmpxx::mpz_class&).
+- Added get_z_bits(mp_bitcnt_t), get_z_bits(const gmpxx::mpz_class&), and get_z_range(const gmpxx::mpz_class&).
+- Added gmpxx::random_mpf_expr and get_f(), get_f(mp_bitcnt_t), get_f(const gmpxx::mpf_class&).
+- Integrated random_mpf_expr with MPF expression materialization so construction uses the requested/default precision and assignment preserves the destination precision.
+- Kept the implementation in the GMP-only path; no MPFR/MPC dependency was introduced.
+
+Design notes:
+- The API follows the GMP C++ binding shape documented for gmp_randclass: state object, seed overloads, get_z_bits, get_z_range, and get_f.
+- The implementation uses the GMP C API underneath: gmp_randinit_*, gmp_randseed*, mpz_urandomb, mpz_urandomm, and mpf_urandomb.
+- get_f() returns a small expression node so that assignment can generate at the destination precision, matching GMP C++ binding semantics.
+
+Tests added:
+- tests/test_random.cpp
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- tests/CMakeLists.txt
+- STATUS.md
+
+Test coverage:
+- Compile-time surface checks for construction and non-copyable/non-movable state ownership.
+- Deterministic sequence checks for unsigned-long and mpz_class seeds.
+- Range checks for get_z_bits, get_z_range, and get_f.
+- Precision behavior checks for get_f(), get_f(precision), get_f(prototype), construction, and assignment.
+- Constructor coverage for default, MT, LC size, LC parameter, and obsolete gmp_randalg_t forms.
+- Error checks for negative bit counts, non-positive range limits, and too-large LC table size.
+- Statistical smoke checks for get_z_range(1000) and get_f(256): sample mean and variance are checked against uniform-distribution expectations.
+
+Exact commands run:
+- GMP manual review: C++ Interface Random Numbers, Random Number Functions, Integer Random Numbers, Random State Initialization, Random State Seeding, and Miscellaneous Float Functions.
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_random.cpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build --target test_random -j
+- ctest --test-dir build -R test_random --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- test_random: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 70/70 tests passed.
+
+Known issues:
+- Statistical checks are smoke tests with conservative tolerances; they are intended to catch gross range/distribution wiring errors, not certify random quality.
