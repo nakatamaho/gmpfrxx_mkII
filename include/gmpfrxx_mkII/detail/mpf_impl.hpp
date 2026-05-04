@@ -19,64 +19,6 @@
 
 #include <gmp.h>
 
-namespace gmpfrxx_mkII {
-namespace detail {
-
-class gmp_allocated_string {
-public:
-    explicit gmp_allocated_string(char* value) noexcept : value_(value) {}
-
-    ~gmp_allocated_string()
-    {
-        reset();
-    }
-
-    gmp_allocated_string(const gmp_allocated_string&) = delete;
-    gmp_allocated_string& operator=(const gmp_allocated_string&) = delete;
-
-    gmp_allocated_string(gmp_allocated_string&& other) noexcept : value_(other.value_)
-    {
-        other.value_ = nullptr;
-    }
-
-    gmp_allocated_string& operator=(gmp_allocated_string&& other) noexcept
-    {
-        if (this != &other) {
-            reset();
-            value_ = other.value_;
-            other.value_ = nullptr;
-        }
-        return *this;
-    }
-
-    const char* c_str() const noexcept
-    {
-        return value_;
-    }
-
-    explicit operator bool() const noexcept
-    {
-        return value_ != nullptr;
-    }
-
-private:
-    void reset() noexcept
-    {
-        if (value_ == nullptr) {
-            return;
-        }
-        void (*free_function)(void*, std::size_t) = nullptr;
-        mp_get_memory_functions(nullptr, nullptr, &free_function);
-        free_function(value_, std::strlen(value_) + 1);
-        value_ = nullptr;
-    }
-
-    char* value_;
-};
-
-} // namespace detail
-} // namespace gmpfrxx_mkII
-
 namespace gmpxx {
 
 inline mp_bitcnt_t builtin_default_mpf_precision_bits() noexcept

@@ -720,3 +720,49 @@ Pass/fail result:
 
 Known issues:
 - MPF output formatting now covers basic ostream precision, fixed/scientific, uppercase, showpoint, showpos, width, fill, and alignment flags, but is still not a complete gmpxx.h stream-format clone.
+
+Phase 10 status:
+DONE
+
+Implemented features:
+- Added gmpxx::mpz_class construction from const char* and std::string with explicit base.
+- Added gmpxx::mpz_class::get_str(), to_string(), set_str(), and throwing set() string APIs.
+- Added gmpxx::mpq_class construction from const char* and std::string with explicit base.
+- Added gmpxx::mpq_class::get_str(), to_string(), set_str(), and throwing set() string APIs.
+- mpq string construction and set canonicalize successful parses.
+- set_str() parses into a temporary object first, preserving the destination value when parsing fails.
+- Added std::ostream output for gmpxx::mpz_class and gmpxx::mpq_class with decimal/hex/octal base selection, showbase, uppercase, showpos, width, fill, and alignment support.
+- Moved the GMP-allocated string RAII helper into the shared z/q implementation path for reuse by mpf string formatting.
+
+Missing features:
+- Stream input for mpz/mpq is not implemented yet.
+- Stream output does not fully emulate every gmpxx.h formatting edge case.
+- mpfr/mpc string constructors and stream output remain for later phases.
+
+Tests added:
+- tests/test_zq_string_io.cpp
+
+Exact commands run:
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_zq_string_io
+- git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/CMakeLists.txt tests/test_zq_string_io.cpp
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpf/mpz/mpq arithmetic operators in include tests examples
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples CMakeLists.txt cmake
+- tail -n 120 STATUS.md
+- git status --short
+
+Pass/fail result:
+- Initial cmake --build build -j: PASS
+- Initial test_zq_string_io: FAIL, test reused hex/showbase/uppercase stream flags after clear().
+- Fixed the test to reset stream formatting flags between independent output cases.
+- Final cmake --build build -j: PASS
+- Final test_zq_string_io: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 50/50 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- z/q stream output is intentionally basic and may need refinement for obscure iostream formatting combinations.

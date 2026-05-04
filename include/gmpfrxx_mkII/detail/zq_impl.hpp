@@ -7,9 +7,72 @@
 #include <gmp.h>
 
 #include <algorithm>
+#include <cctype>
 #include <cstdint>
+#include <cstring>
+#include <ostream>
+#include <stdexcept>
+#include <string>
 #include <type_traits>
 #include <utility>
+
+namespace gmpfrxx_mkII {
+namespace detail {
+
+class gmp_allocated_string {
+public:
+    explicit gmp_allocated_string(char* value) noexcept : value_(value) {}
+
+    ~gmp_allocated_string()
+    {
+        reset();
+    }
+
+    gmp_allocated_string(const gmp_allocated_string&) = delete;
+    gmp_allocated_string& operator=(const gmp_allocated_string&) = delete;
+
+    gmp_allocated_string(gmp_allocated_string&& other) noexcept : value_(other.value_)
+    {
+        other.value_ = nullptr;
+    }
+
+    gmp_allocated_string& operator=(gmp_allocated_string&& other) noexcept
+    {
+        if (this != &other) {
+            reset();
+            value_ = other.value_;
+            other.value_ = nullptr;
+        }
+        return *this;
+    }
+
+    const char* c_str() const noexcept
+    {
+        return value_;
+    }
+
+    explicit operator bool() const noexcept
+    {
+        return value_ != nullptr;
+    }
+
+private:
+    void reset() noexcept
+    {
+        if (value_ == nullptr) {
+            return;
+        }
+        void (*free_function)(void*, std::size_t) = nullptr;
+        mp_get_memory_functions(nullptr, nullptr, &free_function);
+        free_function(value_, std::strlen(value_) + 1);
+        value_ = nullptr;
+    }
+
+    char* value_;
+};
+
+} // namespace detail
+} // namespace gmpfrxx_mkII
 
 namespace gmpxx {
 
@@ -29,6 +92,20 @@ public:
     {
         mpz_init(value_);
         mpz_swap(value_, other.value_);
+    }
+
+    explicit mpz_class(const char* value, int base = 10)
+    {
+        mpz_init(value_);
+        if (value == nullptr || mpz_set_str(value_, value, base) != 0) {
+            mpz_clear(value_);
+            throw std::invalid_argument("invalid mpz_class string");
+        }
+    }
+
+    explicit mpz_class(const std::string& value, int base = 10)
+        : mpz_class(value.c_str(), base)
+    {
     }
 
     template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
@@ -83,6 +160,52 @@ public:
         return value_;
     }
 
+    std::string get_str(int base = 10) const
+    {
+        gmpfrxx_mkII::detail::gmp_allocated_string raw(mpz_get_str(nullptr, base, value_));
+        if (!raw) {
+            throw std::runtime_error("mpz_get_str failed");
+        }
+        return std::string(raw.c_str());
+    }
+
+    std::string to_string(int base = 10) const
+    {
+        return get_str(base);
+    }
+
+    int set_str(const char* value, int base = 10)
+    {
+        if (value == nullptr) {
+            return -1;
+        }
+        mpz_t temp;
+        mpz_init(temp);
+        const int rc = mpz_set_str(temp, value, base);
+        if (rc == 0) {
+            mpz_swap(value_, temp);
+        }
+        mpz_clear(temp);
+        return rc;
+    }
+
+    int set_str(const std::string& value, int base = 10)
+    {
+        return set_str(value.c_str(), base);
+    }
+
+    void set(const char* value, int base = 10)
+    {
+        if (set_str(value, base) != 0) {
+            throw std::invalid_argument("invalid mpz_class string");
+        }
+    }
+
+    void set(const std::string& value, int base = 10)
+    {
+        set(value.c_str(), base);
+    }
+
 private:
     void set_unsigned(std::uint64_t value)
     {
@@ -133,6 +256,21 @@ public:
     {
         mpq_init(value_);
         mpq_swap(value_, other.value_);
+    }
+
+    explicit mpq_class(const char* value, int base = 10)
+    {
+        mpq_init(value_);
+        if (value == nullptr || mpq_set_str(value_, value, base) != 0) {
+            mpq_clear(value_);
+            throw std::invalid_argument("invalid mpq_class string");
+        }
+        mpq_canonicalize(value_);
+    }
+
+    explicit mpq_class(const std::string& value, int base = 10)
+        : mpq_class(value.c_str(), base)
+    {
     }
 
     explicit mpq_class(const mpz_class& numerator)
@@ -199,9 +337,165 @@ public:
         return value_;
     }
 
+    std::string get_str(int base = 10) const
+    {
+        gmpfrxx_mkII::detail::gmp_allocated_string raw(mpq_get_str(nullptr, base, value_));
+        if (!raw) {
+            throw std::runtime_error("mpq_get_str failed");
+        }
+        return std::string(raw.c_str());
+    }
+
+    std::string to_string(int base = 10) const
+    {
+        return get_str(base);
+    }
+
+    int set_str(const char* value, int base = 10)
+    {
+        if (value == nullptr) {
+            return -1;
+        }
+        mpq_t temp;
+        mpq_init(temp);
+        const int rc = mpq_set_str(temp, value, base);
+        if (rc == 0) {
+            mpq_canonicalize(temp);
+            mpq_swap(value_, temp);
+        }
+        mpq_clear(temp);
+        return rc;
+    }
+
+    int set_str(const std::string& value, int base = 10)
+    {
+        return set_str(value.c_str(), base);
+    }
+
+    void set(const char* value, int base = 10)
+    {
+        if (set_str(value, base) != 0) {
+            throw std::invalid_argument("invalid mpq_class string");
+        }
+    }
+
+    void set(const std::string& value, int base = 10)
+    {
+        set(value.c_str(), base);
+    }
+
 private:
     mpq_t value_;
 };
+
+inline int stream_integer_base(const std::ios_base& out)
+{
+    const auto basefield = out.flags() & std::ios_base::basefield;
+    if (basefield == std::ios_base::hex) {
+        return 16;
+    }
+    if (basefield == std::ios_base::oct) {
+        return 8;
+    }
+    return 10;
+}
+
+inline void uppercase_if_requested(std::string& text, const std::ios_base& out)
+{
+    if (!(out.flags() & std::ios_base::uppercase)) {
+        return;
+    }
+    std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) {
+        return static_cast<char>(std::toupper(c));
+    });
+}
+
+inline std::string mpz_stream_text(mpz_srcptr value, const std::ios_base& out)
+{
+    const int base = stream_integer_base(out);
+    gmpfrxx_mkII::detail::gmp_allocated_string raw(mpz_get_str(nullptr, base, value));
+    if (!raw) {
+        throw std::runtime_error("mpz_get_str failed");
+    }
+
+    std::string text(raw.c_str());
+    const bool negative = !text.empty() && text.front() == '-';
+    if (negative) {
+        text.erase(text.begin());
+    }
+
+    if ((out.flags() & std::ios_base::showbase) && mpz_sgn(value) != 0) {
+        if (base == 16) {
+            text.insert(0, (out.flags() & std::ios_base::uppercase) ? "0X" : "0x");
+        } else if (base == 8 && text.front() != '0') {
+            text.insert(0, "0");
+        }
+    }
+
+    if (negative) {
+        text.insert(0, "-");
+    } else if (out.flags() & std::ios_base::showpos) {
+        text.insert(0, "+");
+    }
+
+    uppercase_if_requested(text, out);
+    return text;
+}
+
+inline void apply_stream_padding(std::string& text, std::ostream& out)
+{
+    const std::streamsize width = out.width();
+    if (static_cast<std::streamsize>(text.size()) >= width) {
+        out.width(0);
+        return;
+    }
+
+    const auto fill_count = static_cast<std::size_t>(width - static_cast<std::streamsize>(text.size()));
+    if (out.flags() & std::ios_base::left) {
+        text.append(fill_count, out.fill());
+    } else if (out.flags() & std::ios_base::internal) {
+        std::size_t pos = (!text.empty() && (text[0] == '-' || text[0] == '+')) ? 1 : 0;
+        if (text.size() > pos + 1 && text[pos] == '0' && (text[pos + 1] == 'x' || text[pos + 1] == 'X')) {
+            pos += 2;
+        }
+        text.insert(pos, fill_count, out.fill());
+    } else {
+        text.insert(0, fill_count, out.fill());
+    }
+    out.width(0);
+}
+
+inline std::ostream& operator<<(std::ostream& out, const mpz_class& value)
+{
+    try {
+        std::string text = mpz_stream_text(value.mpz_data(), out);
+        apply_stream_padding(text, out);
+        out << text;
+    } catch (...) {
+        out.setstate(std::ios_base::badbit);
+    }
+    return out;
+}
+
+inline std::ostream& operator<<(std::ostream& out, const mpq_class& value)
+{
+    try {
+        std::string text = mpz_stream_text(mpq_numref(value.mpq_data()), out);
+        if (mpz_cmp_ui(mpq_denref(value.mpq_data()), 1) != 0) {
+            std::string denominator = mpz_stream_text(mpq_denref(value.mpq_data()), out);
+            if (!denominator.empty() && denominator.front() == '+') {
+                denominator.erase(denominator.begin());
+            }
+            text += "/";
+            text += denominator;
+        }
+        apply_stream_padding(text, out);
+        out << text;
+    } catch (...) {
+        out.setstate(std::ios_base::badbit);
+    }
+    return out;
+}
 
 } // namespace gmpxx
 
