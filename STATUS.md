@@ -1834,3 +1834,33 @@ Pass/fail result:
 
 Known issues:
 - The generated Git hash is captured at CMake configure time; rerun cmake -S . -B build to refresh it after new commits.
+
+Post-phase MPF allocation-count parity test:
+DONE
+
+Implemented features:
+- Added an MPF allocation-count regression test parallel to the existing MPFR allocation-count test.
+- Covered non-aliasing ET assignment fast paths for simple addition chains.
+- Covered the current one-temporary behavior for compound two-sided expressions.
+
+Tests added:
+- tests/test_mpf_alloc_count.cpp
+
+Tests updated:
+- tests/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build --target test_mpf_alloc_count -j
+- ctest --test-dir build -R test_mpf_alloc_count --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- test_mpf_alloc_count: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 69/69 tests passed.
+
+Known issues:
+- This test intentionally mirrors the existing MPFR allocation-count surface first; it does not yet cover scalar, aliasing, IO, parser, or transcendent-function allocation behavior.
