@@ -470,3 +470,51 @@ Pass/fail result:
 Known issues:
 - mpz/mpq + mpf mixed-family promotion remains for the GMP-only mixed MPF phase.
 - MPC arithmetic is not implemented yet.
+
+Phase 6 status:
+DONE
+
+Implemented features:
+- Implemented GMP-only mixed exact/MPF expression promotion.
+- Added mpz/mpq object leaves as valid MPF expression operands.
+- Added exact mpz/mpq expression leaves as valid MPF expression operands when at least one side of a binary expression is MPF.
+- Added mpz/mpq + mpf, mpf + mpz/mpq, and exact-subexpression + mpf support for +, -, *, and /.
+- Exact mpz leaves are converted to MPF through mpf_set_z().
+- Exact mpq leaves and mpq-result subexpressions are converted by evaluating numerator and denominator as MPF values and dividing, because GMP MPF has no mpf_set_q().
+- Exact mpz/mpq leaves do not contribute MPF precision; mixed exact/MPF materialization keeps the MPF leaf precision.
+- Kept MPF/MPFR and MPF/MPC mixed-family operations forbidden.
+- Kept public arithmetic expression-template based; no eager public mpz/mpq/mpf arithmetic operators were added.
+- Kept GMP-only headers free of MPFR/MPC includes and symbols.
+
+Missing features:
+- MPC arithmetic is still a later phase.
+- Exact expression division by zero still follows GMP behavior without a wrapper-specific diagnostic.
+- MPQ-to-MPF conversion currently uses two temporary mpf_t values for numerator and denominator.
+
+Tests added:
+- tests/test_et_contract_zq_mpf.cpp
+- tests/test_mixed_zq_mpf_promotion.cpp
+
+Exact commands run:
+- sed -n '1,620p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1,260p' tests/test_et_contract_mpf.cpp
+- sed -n '1,260p' tests/test_mpf_basic.cpp
+- git status --short
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_et_contract_zq_mpf|test_mixed_zq_mpf_promotion"
+- rg -n for eager mpz/mpq/mpfr/mpf arithmetic operators in include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests CMakeLists.txt cmake
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j: PASS
+- New mixed exact/MPF tests: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 40/40 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- MPC arithmetic is not implemented yet.
+- MPQ-to-MPF conversion allocates temporary MPF numerator and denominator storage.

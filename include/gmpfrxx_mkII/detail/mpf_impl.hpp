@@ -217,10 +217,24 @@ struct is_mpf_expression_operand : std::false_type {};
 template <>
 struct is_mpf_expression_operand<gmpxx::mpf_class> : std::true_type {};
 
+template <>
+struct is_mpf_expression_operand<gmpxx::mpz_class> : std::true_type {};
+
+template <>
+struct is_mpf_expression_operand<gmpxx::mpq_class> : std::true_type {};
+
 template <typename T>
 struct is_mpf_expression_operand<
     T,
     std::enable_if_t<is_expression_node_v<T> && std::is_same_v<typename T::result_type, gmpxx::mpf_class>>>
+    : std::true_type {};
+
+template <typename T>
+struct is_mpf_expression_operand<
+    T,
+    std::enable_if_t<is_expression_node_v<T> &&
+                     (std::is_same_v<typename T::result_type, gmpxx::mpz_class> ||
+                      std::is_same_v<typename T::result_type, gmpxx::mpq_class>)>>
     : std::true_type {};
 
 template <typename T>
@@ -253,6 +267,16 @@ inline object_leaf<gmpxx::mpf_class> make_mpf_operand(const gmpxx::mpf_class& va
     return object_leaf<gmpxx::mpf_class>(value);
 }
 
+inline object_leaf<gmpxx::mpz_class> make_mpf_operand(const gmpxx::mpz_class& value)
+{
+    return object_leaf<gmpxx::mpz_class>(value);
+}
+
+inline object_leaf<gmpxx::mpq_class> make_mpf_operand(const gmpxx::mpq_class& value)
+{
+    return object_leaf<gmpxx::mpq_class>(value);
+}
+
 template <typename Expr, typename = std::enable_if_t<is_expression_node_v<std::decay_t<Expr>>>>
 std::decay_t<Expr> make_mpf_operand(Expr&& expr)
 {
@@ -269,6 +293,16 @@ auto make_mpf_operand(Scalar value)
 inline mp_bitcnt_t mpf_expression_precision(const object_leaf<gmpxx::mpf_class>& expr)
 {
     return expr.get().precision();
+}
+
+inline mp_bitcnt_t mpf_expression_precision(const object_leaf<gmpxx::mpz_class>&)
+{
+    return 0;
+}
+
+inline mp_bitcnt_t mpf_expression_precision(const object_leaf<gmpxx::mpq_class>&)
+{
+    return 0;
 }
 
 template <typename T, typename Result>
@@ -294,6 +328,29 @@ inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpf_class>& expr, 
     mpf_set(dest, expr.get().mpf_data());
 }
 
+inline void mpf_set_q_exact(mpf_t dest, const mpq_t value, mp_bitcnt_t eval_precision)
+{
+    mpf_t numerator;
+    mpf_t denominator;
+    mpf_init2(numerator, eval_precision);
+    mpf_init2(denominator, eval_precision);
+    mpf_set_z(numerator, mpq_numref(value));
+    mpf_set_z(denominator, mpq_denref(value));
+    mpf_div(dest, numerator, denominator);
+    mpf_clear(denominator);
+    mpf_clear(numerator);
+}
+
+inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpz_class>& expr, mp_bitcnt_t)
+{
+    mpf_set_z(dest, expr.get().mpz_data());
+}
+
+inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpq_class>& expr, mp_bitcnt_t eval_precision)
+{
+    mpf_set_q_exact(dest, expr.get().mpq_data(), eval_precision);
+}
+
 template <typename T, typename Result>
 void mpf_evaluate(mpf_t dest, const scalar_leaf<T, Result>& expr, mp_bitcnt_t)
 {
@@ -312,6 +369,16 @@ inline bool mpf_expression_references(const mpf_t target, const object_leaf<gmpx
 {
     return static_cast<const void*>(&target[0]) ==
            static_cast<const void*>(&expr.get().mpf_data()[0]);
+}
+
+inline bool mpf_expression_references(const mpf_t, const object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
+inline bool mpf_expression_references(const mpf_t, const object_leaf<gmpxx::mpq_class>&)
+{
+    return false;
 }
 
 template <typename T, typename Result>
@@ -372,6 +439,22 @@ void mpf_evaluate_to_temporary(mpf_t temp, const Expr& expr, mp_bitcnt_t eval_pr
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_bitcnt_t eval_precision)
 {
+    if constexpr (std::is_same_v<Result, gmpxx::mpz_class>) {
+        mpz_t exact;
+        mpz_init(exact);
+        mpz_evaluate(exact, expr);
+        mpf_set_z(dest, exact);
+        mpz_clear(exact);
+        return;
+    } else if constexpr (std::is_same_v<Result, gmpxx::mpq_class>) {
+        mpq_t exact;
+        mpq_init(exact);
+        mpq_evaluate(exact, expr);
+        mpf_set_q_exact(dest, exact, eval_precision);
+        mpq_clear(exact);
+        return;
+    }
+
     if (mpf_expression_references(dest, expr)) {
         mpf_t lhs;
         mpf_t rhs;
