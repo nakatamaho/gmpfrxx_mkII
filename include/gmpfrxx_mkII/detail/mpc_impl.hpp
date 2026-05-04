@@ -17,17 +17,22 @@ namespace mpfrxx {
 
 class mpc_class {
 public:
-    mpc_class() : mpc_class(precision_tag{}, mpfrxx::default_precision_bits()) {}
+    mpc_class()
+        : mpc_class(precision_tag{},
+                    mpfrxx::default_mpc_real_precision_bits(),
+                    mpfrxx::default_mpc_imag_precision_bits())
+    {
+    }
 
     mpc_class(const mpc_class& other)
     {
-        mpc_init2(value_, other.precision());
+        mpc_init3(value_, other.real_precision(), other.imag_precision());
         mpc_set(value_, other.value_, default_rounding());
     }
 
     mpc_class(mpc_class&& other) noexcept
     {
-        mpc_init2(value_, other.precision());
+        mpc_init3(value_, other.real_precision(), other.imag_precision());
         mpc_swap(value_, other.value_);
     }
 
@@ -66,7 +71,12 @@ public:
 
     static mpc_class with_precision(mpfr_prec_t precision)
     {
-        return mpc_class(precision_tag{}, precision);
+        return mpc_class(precision_tag{}, precision, precision);
+    }
+
+    static mpc_class with_precision(mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
+    {
+        return mpc_class(precision_tag{}, real_precision, imag_precision);
     }
 
     static mpc_class with_precision(mpfr_prec_t precision, double real, double imag)
@@ -76,9 +86,34 @@ public:
         return result;
     }
 
+    static mpc_class with_precision(mpfr_prec_t real_precision, mpfr_prec_t imag_precision, double real, double imag)
+    {
+        mpc_class result = with_precision(real_precision, imag_precision);
+        mpc_set_d_d(result.value_, real, imag, default_rounding());
+        return result;
+    }
+
     mpfr_prec_t precision() const noexcept
     {
-        return mpc_get_prec(value_);
+        const mpfr_prec_t real = real_precision();
+        const mpfr_prec_t imag = imag_precision();
+        return real == imag ? real : std::min(real, imag);
+    }
+
+    mpfr_prec_t real_precision() const noexcept
+    {
+        mpfr_prec_t real = 0;
+        mpfr_prec_t imag = 0;
+        mpc_get_prec2(&real, &imag, value_);
+        return real;
+    }
+
+    mpfr_prec_t imag_precision() const noexcept
+    {
+        mpfr_prec_t real = 0;
+        mpfr_prec_t imag = 0;
+        mpc_get_prec2(&real, &imag, value_);
+        return imag;
     }
 
     double real_to_double() const
@@ -103,15 +138,15 @@ public:
 
     static mpc_rnd_t default_rounding() noexcept
     {
-        return MPC_RNDNN;
+        return mpfrxx::default_mpc_rounding_mode();
     }
 
 private:
     struct precision_tag {};
 
-    mpc_class(precision_tag, mpfr_prec_t precision)
+    mpc_class(precision_tag, mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
     {
-        mpc_init2(value_, precision);
+        mpc_init3(value_, real_precision, imag_precision);
         mpc_set_ui(value_, 0, default_rounding());
     }
 
@@ -122,6 +157,21 @@ private:
 
 namespace gmpfrxx_mkII {
 namespace detail {
+
+struct mpc_expression_precision_bits {
+    mpfr_prec_t real;
+    mpfr_prec_t imag;
+};
+
+inline mpc_expression_precision_bits max_mpc_precision(
+    mpc_expression_precision_bits lhs,
+    mpc_expression_precision_bits rhs)
+{
+    return mpc_expression_precision_bits{
+        std::max(lhs.real, rhs.real),
+        std::max(lhs.imag, rhs.imag),
+    };
+}
 
 template <typename T>
 struct is_supported_mpc_scalar
@@ -244,66 +294,86 @@ auto make_mpc_operand(Scalar value)
     return scalar_leaf<storage_type, mpfrxx::mpc_class>(static_cast<storage_type>(value));
 }
 
-inline mpfr_prec_t mpc_expression_precision(const object_leaf<mpfrxx::mpc_class>& expr)
+inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<mpfrxx::mpc_class>& expr)
 {
-    return expr.get().precision();
+    return mpc_expression_precision_bits{expr.get().real_precision(), expr.get().imag_precision()};
 }
 
-inline mpfr_prec_t mpc_expression_precision(const object_leaf<mpfrxx::mpfr_class>& expr)
+inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<mpfrxx::mpfr_class>& expr)
 {
-    return expr.get().precision();
+    return mpc_expression_precision_bits{expr.get().precision(), 0};
 }
 
-inline mpfr_prec_t mpc_expression_precision(const object_leaf<gmpxx::mpz_class>&)
+inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<gmpxx::mpz_class>&)
 {
-    return 0;
+    return mpc_expression_precision_bits{0, 0};
 }
 
-inline mpfr_prec_t mpc_expression_precision(const object_leaf<gmpxx::mpq_class>&)
+inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<gmpxx::mpq_class>&)
 {
-    return 0;
+    return mpc_expression_precision_bits{0, 0};
 }
 
 template <typename T, typename Result>
-mpfr_prec_t mpc_expression_precision(const scalar_leaf<T, Result>&)
+mpc_expression_precision_bits mpc_expression_precision(const scalar_leaf<T, Result>&)
 {
-    return mpfrxx::default_precision_bits();
+    return mpc_expression_precision_bits{mpfrxx::default_mpc_real_precision_bits(), 0};
 }
 
 template <typename Op, typename Expr, typename Result>
-mpfr_prec_t mpc_expression_precision(const unary_expr<Op, Expr, Result>& expr)
+mpc_expression_precision_bits mpc_expression_precision(const unary_expr<Op, Expr, Result>& expr)
 {
     return mpc_expression_precision(expr.expr());
 }
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
-mpfr_prec_t mpc_expression_precision(const binary_expr<Op, Lhs, Rhs, Result>& expr)
+mpc_expression_precision_bits mpc_expression_precision(const binary_expr<Op, Lhs, Rhs, Result>& expr)
 {
-    return std::max(mpc_expression_precision(expr.lhs()), mpc_expression_precision(expr.rhs()));
+    return max_mpc_precision(mpc_expression_precision(expr.lhs()), mpc_expression_precision(expr.rhs()));
 }
 
-inline void mpc_evaluate(mpc_t dest, const object_leaf<mpfrxx::mpc_class>& expr, mpfr_prec_t, mpc_rnd_t rnd)
+inline void mpc_evaluate(
+    mpc_t dest,
+    const object_leaf<mpfrxx::mpc_class>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
 {
     mpc_set(dest, expr.get().mpc_data(), rnd);
 }
 
-inline void mpc_evaluate(mpc_t dest, const object_leaf<mpfrxx::mpfr_class>& expr, mpfr_prec_t, mpc_rnd_t rnd)
+inline void mpc_evaluate(
+    mpc_t dest,
+    const object_leaf<mpfrxx::mpfr_class>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
 {
     mpc_set_fr(dest, expr.get().mpfr_data(), rnd);
 }
 
-inline void mpc_evaluate(mpc_t dest, const object_leaf<gmpxx::mpz_class>& expr, mpfr_prec_t, mpc_rnd_t rnd)
+inline void mpc_evaluate(
+    mpc_t dest,
+    const object_leaf<gmpxx::mpz_class>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
 {
     mpc_set_z(dest, expr.get().mpz_data(), rnd);
 }
 
-inline void mpc_evaluate(mpc_t dest, const object_leaf<gmpxx::mpq_class>& expr, mpfr_prec_t, mpc_rnd_t rnd)
+inline void mpc_evaluate(
+    mpc_t dest,
+    const object_leaf<gmpxx::mpq_class>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
 {
     mpc_set_q(dest, expr.get().mpq_data(), rnd);
 }
 
 template <typename T, typename Result>
-void mpc_evaluate(mpc_t dest, const scalar_leaf<T, Result>& expr, mpfr_prec_t, mpc_rnd_t rnd)
+void mpc_evaluate(
+    mpc_t dest,
+    const scalar_leaf<T, Result>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
 {
     if constexpr (std::is_same_v<T, double>) {
         mpc_set_d(dest, expr.value(), rnd);
@@ -373,28 +443,67 @@ void mpc_apply_binary(mpc_t dest, const mpc_t lhs, const mpc_t rhs, mpc_rnd_t rn
 }
 
 template <typename Expr, typename Result>
-void mpc_evaluate(mpc_t dest, const unary_expr<pos_op, Expr, Result>& expr, mpfr_prec_t eval_precision, mpc_rnd_t rnd)
+void mpc_evaluate(
+    mpc_t dest,
+    const unary_expr<pos_op, Expr, Result>& expr,
+    mpc_expression_precision_bits eval_precision,
+    mpc_rnd_t rnd)
 {
     mpc_evaluate(dest, expr.expr(), eval_precision, rnd);
 }
 
 template <typename Expr, typename Result>
-void mpc_evaluate(mpc_t dest, const unary_expr<neg_op, Expr, Result>& expr, mpfr_prec_t eval_precision, mpc_rnd_t rnd)
+void mpc_evaluate(
+    mpc_t dest,
+    const unary_expr<neg_op, Expr, Result>& expr,
+    mpc_expression_precision_bits eval_precision,
+    mpc_rnd_t rnd)
 {
     mpc_evaluate(dest, expr.expr(), eval_precision, rnd);
     mpc_neg(dest, dest, rnd);
 }
 
 template <typename Expr>
-void mpc_evaluate_to_temporary(mpc_t temp, const Expr& expr, mpfr_prec_t eval_precision, mpc_rnd_t rnd)
+void mpc_evaluate_to_temporary(
+    mpc_t temp,
+    const Expr& expr,
+    mpc_expression_precision_bits eval_precision,
+    mpc_rnd_t rnd)
 {
-    mpc_init2(temp, eval_precision);
+    mpc_init3(temp, eval_precision.real, eval_precision.imag);
     mpc_evaluate(temp, expr, eval_precision, rnd);
 }
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
-void mpc_evaluate(mpc_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mpfr_prec_t eval_precision, mpc_rnd_t rnd)
+void mpc_evaluate(
+    mpc_t dest,
+    const binary_expr<Op, Lhs, Rhs, Result>& expr,
+    mpc_expression_precision_bits eval_precision,
+    mpc_rnd_t rnd)
 {
+    if constexpr (std::is_same_v<Result, mpfrxx::mpfr_class>) {
+        mpfr_t real;
+        mpfr_init2(real, eval_precision.real);
+        mpfr_evaluate(real, expr, eval_precision.real, MPC_RND_RE(rnd));
+        mpc_set_fr(dest, real, rnd);
+        mpfr_clear(real);
+        return;
+    } else if constexpr (std::is_same_v<Result, gmpxx::mpz_class>) {
+        mpz_t exact;
+        mpz_init(exact);
+        mpz_evaluate(exact, expr);
+        mpc_set_z(dest, exact, rnd);
+        mpz_clear(exact);
+        return;
+    } else if constexpr (std::is_same_v<Result, gmpxx::mpq_class>) {
+        mpq_t exact;
+        mpq_init(exact);
+        mpq_evaluate(exact, expr);
+        mpc_set_q(dest, exact, rnd);
+        mpq_clear(exact);
+        return;
+    }
+
     if (mpc_expression_references(dest, expr)) {
         mpc_t lhs;
         mpc_t rhs;
@@ -507,15 +616,18 @@ namespace mpfrxx {
 template <typename Expr, typename>
 mpc_class::mpc_class(const Expr& expr)
 {
-    const mpfr_prec_t precision = gmpfrxx_mkII::detail::mpc_expression_precision(expr);
-    mpc_init2(value_, precision);
+    const auto precision = gmpfrxx_mkII::detail::mpc_expression_precision(expr);
+    mpc_init3(value_, precision.real, precision.imag);
     gmpfrxx_mkII::detail::mpc_evaluate(value_, expr, precision, default_rounding());
 }
 
 template <typename Expr, typename>
 mpc_class& mpc_class::operator=(const Expr& expr)
 {
-    const mpfr_prec_t precision = this->precision();
+    const gmpfrxx_mkII::detail::mpc_expression_precision_bits precision{
+        this->real_precision(),
+        this->imag_precision(),
+    };
     gmpfrxx_mkII::detail::mpc_evaluate(value_, expr, precision, default_rounding());
     return *this;
 }

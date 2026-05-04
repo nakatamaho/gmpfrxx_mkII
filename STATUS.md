@@ -579,3 +579,81 @@ Known issues:
 - MPC environment variables remain for a later phase.
 - MPC uses MPC_RNDNN directly in Phase 7.
 - MPC real and imaginary component precision are currently the same.
+
+Phase 8 status:
+DONE
+
+Implemented features:
+- Renamed planned MPC environment variables from long GMPFRXX_MKII_MPC_* names to shorter MPFRXX_MPC_* names in AGENTS.md and PROMPTS.md:
+  - MPFRXX_MPC_DEFAULT_PRECISION_BITS
+  - MPFRXX_MPC_REAL_PRECISION_BITS
+  - MPFRXX_MPC_IMAG_PRECISION_BITS
+  - MPFRXX_MPC_ROUNDING_MODE
+  - MPFRXX_MPC_REAL_ROUNDING_MODE
+  - MPFRXX_MPC_IMAG_ROUNDING_MODE
+- Added MPC default options API in namespace mpfrxx:
+  - mpfrxx::default_mpc_options()
+  - mpfrxx::default_mpc_precision_bits()
+  - mpfrxx::default_mpc_real_precision_bits()
+  - mpfrxx::default_mpc_imag_precision_bits()
+  - mpfrxx::set_default_mpc_precision_bits(bits)
+  - mpfrxx::set_default_mpc_precision_bits(real_bits, imag_bits)
+  - mpfrxx::default_mpc_rounding_mode()
+  - mpfrxx::default_mpc_real_rounding_mode()
+  - mpfrxx::default_mpc_imag_rounding_mode()
+  - mpfrxx::set_default_mpc_rounding_mode(rounding)
+  - mpfrxx::set_default_mpc_rounding_mode(real_rounding, imag_rounding)
+  - mpfrxx::reload_mpc_defaults_from_environment()
+- MPC defaults inherit current MPFR defaults unless MPFRXX_MPC_* variables are set.
+- MPC default precision can be configured independently for real and imaginary components.
+- MPC default rounding can be configured independently for real and imaginary components.
+- Updated mpc_class construction and expression materialization to use mpc_init3(real_precision, imag_precision).
+- Added mpc_class::real_precision() and mpc_class::imag_precision().
+- Existing-object MPC expression assignment preserves destination real and imaginary precision.
+- New MPC expression materialization uses max real and max imaginary precision across leaves.
+
+Missing features:
+- MPC math functions, comparisons, and streaming are not implemented yet.
+- Exact expression division by zero still follows GMP behavior without a wrapper-specific diagnostic.
+
+Tests added:
+- tests/test_mpc_defaults.cpp
+- tests/test_mpc_environment.cpp
+- tests/test_mpc_environment_invalid.cpp
+- tests/test_mpc_precision_policy.cpp
+
+Exact commands run:
+- rg -n "#define MPC_RND|MPC_RND\\(|MPC_RND_RE|MPC_RND_IM|typedef.*mpc_rnd_t|mpc_rnd_t" /usr/include/mpc.h
+- sed -n '1,260p' include/gmpfrxx_mkII/detail/environment.hpp
+- sed -n '1,180p' tests/test_mpfr_environment.cpp
+- sed -n '1,620p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- git status --short
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_mpc_defaults|test_mpc_environment|test_mpc_environment_invalid|test_mpc_precision_policy|test_mpc_basic|test_mpc_aliasing"
+- rg -n "GMPFRXX_MKII_MPC|MPFRXX_MPC" AGENTS.md PROMPTS.md STATUS.md include tests docs README.md
+- rg -n for eager mpc/mpfr/mpf/mpz/mpq arithmetic operators in include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_mpc_defaults|test_mpc_environment|test_mpc_environment_invalid|test_mpc_precision_policy|test_mpc_basic|test_mpc_aliasing"
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests CMakeLists.txt cmake
+- ctest --test-dir build --output-on-failure
+- rg -n "GMPFRXX_MKII_MPC" AGENTS.md PROMPTS.md STATUS.md include tests docs README.md
+- rg -n for eager mpc/mpfr/mpf/mpz/mpq arithmetic operators in include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests CMakeLists.txt cmake
+
+Pass/fail result:
+- Initial cmake --build build -j: PASS
+- Initial new/affected MPC tests: FAIL, test_mpc_environment_invalid expected precision "1" to be invalid, but MPFR_PREC_MIN is 1 in this environment.
+- Fixed invalid precision test value from "1" to "0".
+- Final cmake --build build -j: PASS
+- Final new/affected MPC tests: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 47/47 tests passed
+- Old long MPC environment variable scan: PASS, no matches in tracked files scanned
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- MPC math functions, comparisons, and streaming remain for later phases.
+- mpc_class::precision() returns the common precision when real and imaginary precision match, otherwise the smaller component precision; use real_precision() and imag_precision() for exact component values.
