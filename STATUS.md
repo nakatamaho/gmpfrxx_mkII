@@ -1891,6 +1891,7 @@ Normal tests:
 | test_mpfr_expression_eval | mpfrxx_mkII | MPFR expression evaluation | Evaluates nested arithmetic expressions and compares materialized double values. |
 | test_mpfr_precision_policy | mpfrxx_mkII | MPFR expression precision policy | Checks new materialization uses max leaf precision and assignment preserves destination precision. |
 | test_mpfr_aliasing | mpfrxx_mkII | Basic MPFR self-assignment alias safety | Assigns expressions involving the destination back into itself and checks numeric results. |
+| test_mpfr_random | mpfrxx_mkII | MPFR random state API | Checks MPFR random state construction, seeding, integer/uniform/normal/exponential generation, precision behavior, error paths, and mean/variance smoke statistics. |
 | test_et_contract_mpfr_scalar | mpfrxx_mkII | MPFR scalar ET operands | Static-asserts supported scalar leaves, rejected scalar leaves, and expression node result types. |
 | test_mpfr_scalar_eval | mpfrxx_mkII | MPFR scalar expression evaluation | Evaluates MPFR expressions mixed with integral and floating scalar operands. |
 | test_mpfr_long_width_dispatch | mpfrxx_mkII | Exact 64-bit integer conversion into MPFR | Verifies uint64 max, int64 min, and int64 max are represented exactly through the integer conversion path. |
@@ -1969,7 +1970,7 @@ Exact commands run:
 
 Pass/fail result:
 - cmake --build build -j: PASS.
-- ctest --test-dir build --output-on-failure: PASS, 70/70 tests passed.
+- ctest --test-dir build --output-on-failure: PASS, 71/71 tests passed.
 
 Known issues:
 - The catalog summarizes test intent at the file level; it does not enumerate every individual assertion inside large smoke tests.
@@ -2021,6 +2022,61 @@ Pass/fail result:
 - test_random: PASS.
 - Final cmake --build build -j: PASS.
 - Final ctest --test-dir build --output-on-failure: PASS, 70/70 tests passed.
+
+Known issues:
+- Statistical checks are smoke tests with conservative tolerances; they are intended to catch gross range/distribution wiring errors, not certify random quality.
+
+Post-phase MPFR random API:
+DONE
+
+Implemented features:
+- Added mpfrxx::gmp_randclass as an MPFR-side RAII wrapper around gmp_randstate_t.
+- Added default, gmp_randinit_default, gmp_randinit_mt, gmp_randinit_lc_2exp_size, gmp_randinit_lc_2exp, and obsolete gmp_randalg_t constructor forms.
+- Added seed(unsigned long) and seed(const gmpxx::mpz_class&).
+- Added get_z_bits(mp_bitcnt_t), get_z_bits(const gmpxx::mpz_class&), and get_z_range(const gmpxx::mpz_class&), returning mpfrxx::mpz_class aliases.
+- Added mpfrxx::random_mpfr_expr and get_fr(), get_fr(mpfr_prec_t), get_fr(const mpfrxx::mpfr_class&).
+- Added MPFR-specific random distributions: get_fr_uniform(), get_fr_normal(), and get_fr_exponential(), each with default and explicit precision overloads.
+- Added MPFR C API name aliases: get_fr_urandomb(), get_fr_urandom(), get_fr_nrandom(), and get_fr_erandom().
+- Integrated random_mpfr_expr with MPFR expression materialization so construction uses the requested/default precision and assignment preserves destination precision.
+
+Design notes:
+- MPFR random generation uses GMP random states, as documented by MPFR.
+- get_fr() maps to mpfr_urandomb for the closest MPF-style [0, 1) random float behavior.
+- get_fr_uniform()/get_fr_urandom() maps to mpfr_urandom, get_fr_normal()/get_fr_nrandom() maps to mpfr_nrandom, and get_fr_exponential()/get_fr_erandom() maps to mpfr_erandom.
+- mpfr_urandom/mpfr_nrandom/mpfr_erandom return ternary rounding information; non-zero return values are not treated as failures.
+
+Tests added:
+- tests/test_mpfr_random.cpp
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- tests/CMakeLists.txt
+- STATUS.md
+
+Test coverage:
+- Compile-time surface checks for construction and non-copyable/non-movable state ownership.
+- Deterministic sequence checks for unsigned-long and mpz_class seeds.
+- Range checks for get_z_bits, get_z_range, get_fr, and get_fr_uniform.
+- Deterministic alias checks for get_fr_urandomb, get_fr_urandom, get_fr_nrandom, and get_fr_erandom.
+- Precision behavior checks for get_fr(), get_fr(precision), get_fr(prototype), construction, and assignment.
+- Constructor coverage for default, MT, LC size, LC parameter, and obsolete gmp_randalg_t forms.
+- Error checks for negative bit counts, non-positive range limits, and too-large LC table size.
+- Statistical smoke checks for get_z_range(1000), get_fr(256), get_fr_normal(256), and get_fr_exponential(256): sample mean and variance are checked against the expected distributions.
+
+Exact commands run:
+- MPFR manual review: current MPFR random functions covering mpfr_urandomb, mpfr_urandom, mpfr_nrandom, mpfr_grandom, and mpfr_erandom.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build --target test_mpfr_random -j
+- ctest --test-dir build -R test_mpfr_random --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial test_mpfr_random build: FAIL because implementation used mpz_class before the mpfrxx alias declaration; fixed by using gmpxx::mpz_class internally.
+- Initial test_mpfr_random run: FAIL because mpfr_urandom non-zero ternary return was treated as failure; fixed to treat it as rounding information.
+- test_mpfr_random: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 71/71 tests passed.
 
 Known issues:
 - Statistical checks are smoke tests with conservative tolerances; they are intended to catch gross range/distribution wiring errors, not certify random quality.

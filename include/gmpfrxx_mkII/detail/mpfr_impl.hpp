@@ -42,6 +42,7 @@
 #include <limits>
 #include <locale>
 #include <ostream>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -650,10 +651,251 @@ inline std::istream& operator>>(std::istream& in, mpfr_class& value)
     return in;
 }
 
+class gmp_randclass;
+
+enum class random_mpfr_distribution {
+    urandomb,
+    uniform,
+    normal,
+    exponential
+};
+
+class random_mpfr_expr {
+public:
+    using result_type = mpfr_class;
+
+    random_mpfr_expr(
+        gmp_randclass& state,
+        random_mpfr_distribution distribution,
+        mpfr_prec_t requested_precision,
+        bool has_requested_precision) noexcept
+        : state_(&state),
+          distribution_(distribution),
+          requested_precision_(requested_precision),
+          has_requested_precision_(has_requested_precision)
+    {
+    }
+
+    mpfr_prec_t materialization_precision() const noexcept
+    {
+        return has_requested_precision_ ? requested_precision_ : mpfr_class::default_precision();
+    }
+
+    void generate(mpfr_t dest, mpfr_rnd_t rnd) const;
+
+private:
+    gmp_randclass* state_;
+    random_mpfr_distribution distribution_;
+    mpfr_prec_t requested_precision_;
+    bool has_requested_precision_;
+};
+
+class gmp_randclass {
+public:
+    gmp_randclass()
+    {
+        gmp_randinit_default(state_);
+    }
+
+    explicit gmp_randclass(void (*randinit)(gmp_randstate_t))
+    {
+        randinit(state_);
+    }
+
+    gmp_randclass(int (*randinit)(gmp_randstate_t, mp_bitcnt_t), mp_bitcnt_t size)
+    {
+        if (randinit(state_, size) == 0) {
+            throw std::length_error("gmp_randinit_lc_2exp_size failed");
+        }
+    }
+
+    gmp_randclass(
+        void (*randinit)(gmp_randstate_t, const mpz_t, unsigned long, mp_bitcnt_t),
+        const gmpxx::mpz_class& a,
+        unsigned long c,
+        mp_bitcnt_t m2exp)
+    {
+        randinit(state_, a.mpz_data(), c, m2exp);
+    }
+
+    gmp_randclass(gmp_randalg_t alg, mp_bitcnt_t size)
+    {
+        if (alg == GMP_RAND_ALG_DEFAULT || alg == GMP_RAND_ALG_LC ||
+            alg == static_cast<gmp_randalg_t>(0)) {
+            if (gmp_randinit_lc_2exp_size(state_, size) == 0) {
+                throw std::length_error("gmp_randinit_lc_2exp_size failed");
+            }
+        } else {
+            throw std::invalid_argument("unsupported GMP random algorithm");
+        }
+    }
+
+    ~gmp_randclass()
+    {
+        gmp_randclear(state_);
+    }
+
+    gmp_randclass(const gmp_randclass&) = delete;
+    gmp_randclass& operator=(const gmp_randclass&) = delete;
+    gmp_randclass(gmp_randclass&&) = delete;
+    gmp_randclass& operator=(gmp_randclass&&) = delete;
+
+    void seed(unsigned long value)
+    {
+        gmp_randseed_ui(state_, value);
+    }
+
+    void seed(const gmpxx::mpz_class& value)
+    {
+        gmp_randseed(state_, value.mpz_data());
+    }
+
+    gmpxx::mpz_class get_z_bits(mp_bitcnt_t bits)
+    {
+        gmpxx::mpz_class result;
+        mpz_urandomb(result.mpz_data(), state_, bits);
+        return result;
+    }
+
+    gmpxx::mpz_class get_z_bits(const gmpxx::mpz_class& bits)
+    {
+        if (mpz_sgn(bits.mpz_data()) < 0) {
+            throw std::invalid_argument("random bit count must be non-negative");
+        }
+        if (mpz_fits_ulong_p(bits.mpz_data()) == 0) {
+            throw std::length_error("random bit count does not fit mp_bitcnt_t");
+        }
+        return get_z_bits(static_cast<mp_bitcnt_t>(mpz_get_ui(bits.mpz_data())));
+    }
+
+    gmpxx::mpz_class get_z_range(const gmpxx::mpz_class& limit)
+    {
+        if (mpz_sgn(limit.mpz_data()) <= 0) {
+            throw std::invalid_argument("random range limit must be positive");
+        }
+        gmpxx::mpz_class result;
+        mpz_urandomm(result.mpz_data(), state_, limit.mpz_data());
+        return result;
+    }
+
+    random_mpfr_expr get_fr() noexcept
+    {
+        return random_mpfr_expr(*this, random_mpfr_distribution::urandomb, 0, false);
+    }
+
+    random_mpfr_expr get_fr(mpfr_prec_t precision) noexcept
+    {
+        return random_mpfr_expr(*this, random_mpfr_distribution::urandomb, precision, true);
+    }
+
+    random_mpfr_expr get_fr(const mpfr_class& prototype) noexcept
+    {
+        return get_fr(prototype.precision());
+    }
+
+    random_mpfr_expr get_fr_urandomb() noexcept
+    {
+        return get_fr();
+    }
+
+    random_mpfr_expr get_fr_urandomb(mpfr_prec_t precision) noexcept
+    {
+        return get_fr(precision);
+    }
+
+    random_mpfr_expr get_fr_uniform() noexcept
+    {
+        return random_mpfr_expr(*this, random_mpfr_distribution::uniform, 0, false);
+    }
+
+    random_mpfr_expr get_fr_uniform(mpfr_prec_t precision) noexcept
+    {
+        return random_mpfr_expr(*this, random_mpfr_distribution::uniform, precision, true);
+    }
+
+    random_mpfr_expr get_fr_urandom() noexcept
+    {
+        return get_fr_uniform();
+    }
+
+    random_mpfr_expr get_fr_urandom(mpfr_prec_t precision) noexcept
+    {
+        return get_fr_uniform(precision);
+    }
+
+    random_mpfr_expr get_fr_normal() noexcept
+    {
+        return random_mpfr_expr(*this, random_mpfr_distribution::normal, 0, false);
+    }
+
+    random_mpfr_expr get_fr_normal(mpfr_prec_t precision) noexcept
+    {
+        return random_mpfr_expr(*this, random_mpfr_distribution::normal, precision, true);
+    }
+
+    random_mpfr_expr get_fr_nrandom() noexcept
+    {
+        return get_fr_normal();
+    }
+
+    random_mpfr_expr get_fr_nrandom(mpfr_prec_t precision) noexcept
+    {
+        return get_fr_normal(precision);
+    }
+
+    random_mpfr_expr get_fr_exponential() noexcept
+    {
+        return random_mpfr_expr(*this, random_mpfr_distribution::exponential, 0, false);
+    }
+
+    random_mpfr_expr get_fr_exponential(mpfr_prec_t precision) noexcept
+    {
+        return random_mpfr_expr(*this, random_mpfr_distribution::exponential, precision, true);
+    }
+
+    random_mpfr_expr get_fr_erandom() noexcept
+    {
+        return get_fr_exponential();
+    }
+
+    random_mpfr_expr get_fr_erandom(mpfr_prec_t precision) noexcept
+    {
+        return get_fr_exponential(precision);
+    }
+
+private:
+    friend class random_mpfr_expr;
+
+    gmp_randstate_t state_;
+};
+
+inline void random_mpfr_expr::generate(mpfr_t dest, mpfr_rnd_t rnd) const
+{
+    switch (distribution_) {
+    case random_mpfr_distribution::urandomb:
+        if (mpfr_urandomb(dest, state_->state_) != 0) {
+            throw std::runtime_error("mpfr_urandomb failed");
+        }
+        break;
+    case random_mpfr_distribution::uniform:
+        mpfr_urandom(dest, state_->state_, rnd);
+        break;
+    case random_mpfr_distribution::normal:
+        mpfr_nrandom(dest, state_->state_, rnd);
+        break;
+    case random_mpfr_distribution::exponential:
+        mpfr_erandom(dest, state_->state_, rnd);
+        break;
+    }
+}
+
 } // namespace mpfrxx
 
 namespace gmpfrxx_mkII {
 namespace detail {
+
+template <>
+struct is_expression_node<mpfrxx::random_mpfr_expr> : std::true_type {};
 
 template <typename T, typename = void>
 struct is_mpfr_expression_operand : std::false_type {};
@@ -787,6 +1029,11 @@ inline mpfr_prec_t mpfr_expression_precision(const object_leaf<gmpxx::mpq_class>
     return 0;
 }
 
+inline mpfr_prec_t mpfr_expression_precision(const mpfrxx::random_mpfr_expr& expr)
+{
+    return expr.materialization_precision();
+}
+
 template <typename T, typename Result>
 mpfr_prec_t mpfr_expression_precision(const scalar_leaf<T, Result>&)
 {
@@ -832,6 +1079,15 @@ inline void mpfr_evaluate(
     mpfr_set_q(dest, expr.get().mpq_data(), rnd);
 }
 
+inline void mpfr_evaluate(
+    mpfr_t dest,
+    const mpfrxx::random_mpfr_expr& expr,
+    mpfr_prec_t,
+    mpfr_rnd_t rnd)
+{
+    expr.generate(dest, rnd);
+}
+
 template <typename T, typename Result>
 void mpfr_evaluate(
     mpfr_t dest,
@@ -864,6 +1120,11 @@ inline bool mpfr_expression_references(const mpfr_t, const object_leaf<gmpxx::mp
 }
 
 inline bool mpfr_expression_references(const mpfr_t, const object_leaf<gmpxx::mpq_class>&)
+{
+    return false;
+}
+
+inline bool mpfr_expression_references(const mpfr_t, const mpfrxx::random_mpfr_expr&)
 {
     return false;
 }
