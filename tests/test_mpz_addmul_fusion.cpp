@@ -26,7 +26,7 @@
  *
  */
 
-#include <gmpxx_mkII.h>
+#include <mpfrxx_mkII.h>
 
 #include <cassert>
 #include <cstdint>
@@ -35,39 +35,39 @@
 
 namespace {
 
-void assert_equal(const gmpxx::mpz_class& got, const mpz_t expected)
+void assert_equal(const mpfrxx::mpz_class& got, const mpz_t expected)
 {
     assert(mpz_cmp(got.get_mpz_t(), expected) == 0);
 }
 
-void check_addmul(const gmpxx::mpz_class& a0, const gmpxx::mpz_class& b, const gmpxx::mpz_class& c)
+void check_addmul(const mpfrxx::mpz_class& a0, const mpfrxx::mpz_class& b, const mpfrxx::mpz_class& c)
 {
     mpz_t ref;
     mpz_init_set(ref, a0.get_mpz_t());
     mpz_addmul(ref, b.get_mpz_t(), c.get_mpz_t());
 
-    gmpxx::mpz_class a = a0;
+    mpfrxx::mpz_class a = a0;
     a += b * c;
     assert_equal(a, ref);
     mpz_clear(ref);
 }
 
-void check_submul(const gmpxx::mpz_class& a0, const gmpxx::mpz_class& b, const gmpxx::mpz_class& c)
+void check_submul(const mpfrxx::mpz_class& a0, const mpfrxx::mpz_class& b, const mpfrxx::mpz_class& c)
 {
     mpz_t ref;
     mpz_init_set(ref, a0.get_mpz_t());
     mpz_submul(ref, b.get_mpz_t(), c.get_mpz_t());
 
-    gmpxx::mpz_class a = a0;
+    mpfrxx::mpz_class a = a0;
     a -= b * c;
     assert_equal(a, ref);
     mpz_clear(ref);
 }
 
 template <typename Scalar>
-void check_scalar(const gmpxx::mpz_class& a0, const gmpxx::mpz_class& b, Scalar scalar)
+void check_scalar(const mpfrxx::mpz_class& a0, const mpfrxx::mpz_class& b, Scalar scalar)
 {
-    gmpxx::mpz_class scalar_z(scalar);
+    mpfrxx::mpz_class scalar_z(scalar);
     mpz_t add_ref;
     mpz_t sub_ref;
     mpz_init_set(add_ref, a0.get_mpz_t());
@@ -75,7 +75,7 @@ void check_scalar(const gmpxx::mpz_class& a0, const gmpxx::mpz_class& b, Scalar 
     mpz_addmul(add_ref, b.get_mpz_t(), scalar_z.get_mpz_t());
     mpz_submul(sub_ref, b.get_mpz_t(), scalar_z.get_mpz_t());
 
-    gmpxx::mpz_class a = a0;
+    mpfrxx::mpz_class a = a0;
     a += b * scalar;
     assert_equal(a, add_ref);
 
@@ -97,8 +97,8 @@ void check_scalar(const gmpxx::mpz_class& a0, const gmpxx::mpz_class& b, Scalar 
 
 void check_alias_cases()
 {
-    gmpxx::mpz_class a0("123456789012345678901234567890");
-    gmpxx::mpz_class b("-98765432109876543210987654321");
+    mpfrxx::mpz_class a0("123456789012345678901234567890");
+    mpfrxx::mpz_class b("-98765432109876543210987654321");
 
     check_addmul(a0, a0, b);
     check_addmul(a0, b, a0);
@@ -108,7 +108,7 @@ void check_alias_cases()
     mpz_t ref;
     mpz_init_set(ref, a0.get_mpz_t());
     mpz_addmul_ui(ref, a0.get_mpz_t(), 5UL);
-    gmpxx::mpz_class a = a0;
+    mpfrxx::mpz_class a = a0;
     a += a * 5LL;
     assert_equal(a, ref);
     mpz_clear(ref);
@@ -116,14 +116,14 @@ void check_alias_cases()
 
 void check_non_fused_shapes_still_evaluate()
 {
-    gmpxx::mpz_class a0("12345");
-    gmpxx::mpz_class b("23");
-    gmpxx::mpz_class c("-31");
-    gmpxx::mpz_class d("7");
+    mpfrxx::mpz_class a0("12345");
+    mpfrxx::mpz_class b("23");
+    mpfrxx::mpz_class c("-31");
+    mpfrxx::mpz_class d("7");
 
-    gmpxx::mpz_class expected = a0;
+    mpfrxx::mpz_class expected = a0;
     expected += b * c * d;
-    gmpxx::mpz_class a = a0;
+    mpfrxx::mpz_class a = a0;
     a += b * c * d;
     assert(a == expected);
 
@@ -144,13 +144,13 @@ void check_non_fused_shapes_still_evaluate()
 
 int main()
 {
-    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<decltype(std::declval<gmpxx::mpz_class>() * 5LL)>);
-    static_assert(std::is_same_v<typename decltype(std::declval<gmpxx::mpz_class>() * 5LL)::result_type,
-                                 gmpxx::mpz_class>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<decltype(std::declval<mpfrxx::mpz_class>() * 5LL)>);
+    static_assert(std::is_same_v<typename decltype(std::declval<mpfrxx::mpz_class>() * 5LL)::result_type,
+                                 mpfrxx::mpz_class>);
 
-    gmpxx::mpz_class a("123456789012345678901234567890");
-    gmpxx::mpz_class b("-98765432109876543210987654321");
-    gmpxx::mpz_class c("1122334455667788990011223344556677889900");
+    mpfrxx::mpz_class a("123456789012345678901234567890");
+    mpfrxx::mpz_class b("-98765432109876543210987654321");
+    mpfrxx::mpz_class c("1122334455667788990011223344556677889900");
 
     check_addmul(a, b, c);
     check_submul(a, b, c);

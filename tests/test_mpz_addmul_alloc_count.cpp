@@ -26,7 +26,7 @@
  *
  */
 
-#include <gmpxx_mkII.h>
+#include <mpfrxx_mkII.h>
 
 #include <atomic>
 #include <cassert>
@@ -58,10 +58,10 @@ int main()
 {
     mp_set_memory_functions(count_alloc, count_realloc, count_free);
 
-    gmpxx::mpz_class a("1000");
-    gmpxx::mpz_class b("12345678901234567890");
-    gmpxx::mpz_class c("-98765432109876543210");
-    gmpxx::mpz_class expected;
+    mpfrxx::mpz_class a("1000");
+    mpfrxx::mpz_class b("12345678901234567890");
+    mpfrxx::mpz_class c("-98765432109876543210");
+    mpfrxx::mpz_class expected;
 
     mpz_set(expected.mpz_data(), a.mpz_data());
     mpz_addmul(expected.mpz_data(), b.mpz_data(), c.mpz_data());

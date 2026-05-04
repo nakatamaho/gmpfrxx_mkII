@@ -433,6 +433,55 @@ inline void swap(mpfr_class& lhs, mpfr_class& rhs) noexcept
 namespace gmpfrxx_mkII {
 namespace detail {
 
+class mpfr_allocated_string {
+public:
+    explicit mpfr_allocated_string(char* value) noexcept : value_(value) {}
+
+    ~mpfr_allocated_string()
+    {
+        reset();
+    }
+
+    mpfr_allocated_string(const mpfr_allocated_string&) = delete;
+    mpfr_allocated_string& operator=(const mpfr_allocated_string&) = delete;
+
+    mpfr_allocated_string(mpfr_allocated_string&& other) noexcept : value_(other.value_)
+    {
+        other.value_ = nullptr;
+    }
+
+    mpfr_allocated_string& operator=(mpfr_allocated_string&& other) noexcept
+    {
+        if (this != &other) {
+            reset();
+            value_ = other.value_;
+            other.value_ = nullptr;
+        }
+        return *this;
+    }
+
+    const char* c_str() const noexcept
+    {
+        return value_;
+    }
+
+    explicit operator bool() const noexcept
+    {
+        return value_ != nullptr;
+    }
+
+private:
+    void reset() noexcept
+    {
+        if (value_ != nullptr) {
+            mpfr_free_str(value_);
+            value_ = nullptr;
+        }
+    }
+
+    char* value_;
+};
+
 inline int mpfr_stream_input_base(const std::ios_base& stream) noexcept
 {
     const auto basefield = stream.flags() & std::ios_base::basefield;
@@ -588,13 +637,20 @@ inline std::ostream& operator<<(std::ostream& out, const mpfr_class& value)
         char* raw = nullptr;
         const int count = mpfr_asprintf(
             &raw, format.c_str(), static_cast<int>(stream_precision), value.mpfr_data());
-        if (count < 0 || raw == nullptr) {
+        gmpfrxx_mkII::detail::mpfr_allocated_string formatted(raw);
+        if (count < 0 || !formatted) {
             out.setstate(std::ios_base::badbit);
             return out;
         }
 
-        std::string text(raw);
-        mpfr_free_str(raw);
+        std::string text(formatted.c_str());
+        const char decimal_point = gmpfrxx_mkII::detail::mpfr_stream_decimal_point(out);
+        if (decimal_point != '.') {
+            const std::size_t point = text.find('.');
+            if (point != std::string::npos) {
+                text[point] = decimal_point;
+            }
+        }
         if ((out.flags() & std::ios_base::showpos) && mpfr_sgn(value.mpfr_data()) >= 0) {
             text.insert(0, "+");
         }

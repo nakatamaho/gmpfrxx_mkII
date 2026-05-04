@@ -26,16 +26,16 @@
  *
  */
 
-#include <gmpxx_mkII.h>
+#include <mpfrxx_mkII.h>
 
 #include <cassert>
 
 int main()
 {
-    gmpxx::mpz_class za("10");
-    gmpxx::mpz_class zb("20");
-    gmpxx::mpz_class zc("30");
-    gmpxx::mpz_class zdst;
+    mpfrxx::mpz_class za("10");
+    mpfrxx::mpz_class zb("20");
+    mpfrxx::mpz_class zc("30");
+    mpfrxx::mpz_class zdst;
 
     zdst = za + zb;
     assert(zdst == 30);
@@ -49,18 +49,18 @@ int main()
     za += zb + zc;
     assert(za == 80);
 
-    gmpxx::mpq_class qa("1/3");
-    gmpxx::mpq_class qb("2/5");
-    gmpxx::mpq_class qdst;
+    mpfrxx::mpq_class qa("1/3");
+    mpfrxx::mpq_class qb("2/5");
+    mpfrxx::mpq_class qdst;
 
     qdst = qa * qb;
-    assert(qdst == gmpxx::mpq_class("2/15"));
+    assert(qdst == mpfrxx::mpq_class("2/15"));
 
     qdst += 1;
-    assert(qdst == gmpxx::mpq_class("17/15"));
+    assert(qdst == mpfrxx::mpq_class("17/15"));
 
     qdst = qa + 2;
-    assert(qdst == gmpxx::mpq_class("7/3"));
+    assert(qdst == mpfrxx::mpq_class("7/3"));
 
     return 0;
 }

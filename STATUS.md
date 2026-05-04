@@ -2231,3 +2231,107 @@ Pass/fail result:
 
 Known issues:
 - Statistical checks are smoke tests with conservative tolerances; they are intended to catch gross range/distribution wiring errors, not certify random quality.
+
+Post-phase MPFR adaptations for addmul/allocation and complex I/O:
+DONE
+
+Implemented features:
+- Made tests/test_mpz_addmul_fusion.cpp build through mpfrxx_mkII.h and use mpfrxx::mpz_class aliases, confirming the mpfrxx header exposes the exact integer ET/addmul behavior through aliases.
+- Made tests/test_mpz_addmul_alloc_count.cpp build through mpfrxx_mkII.h and link against mpfrxx_mkII while preserving the zero-allocation fused addmul checks.
+- Made tests/test_mpz_mpq_alloc_count.cpp build through mpfrxx_mkII.h and use mpfrxx::mpz_class/mpq_class aliases.
+- Added stream insertion and extraction for mpfrxx::mpc_class, including expression output, precision-preserving input, failure preserving old values, and locale decimal-point handling for complex component output/input.
+
+Missing features:
+- gmpxx::mpfc_class remains GMP/MPF-only and is intentionally not exposed by mpfrxx_mkII.h.
+- mpfrxx::mpfr_class standalone output still has its existing locale behavior; the new locale adaptation is scoped to mpc_class complex formatting.
+
+Tests added:
+- tests/test_mpc_io.cpp
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- tests/CMakeLists.txt
+- tests/test_mpz_addmul_fusion.cpp
+- tests/test_mpz_addmul_alloc_count.cpp
+- tests/test_mpz_mpq_alloc_count.cpp
+- STATUS.md
+
+Exact commands run:
+- rg --files
+- git status --short
+- rg -n "test_mpfc_io|test_mpz_addmul_alloc_count|test_mpz_addmul_fusion|test_mpz_mpq_alloc_count|mpfc|addmul|alloc_count" .
+- sed -n '1,220p' tests/test_mpfc_io.cpp
+- sed -n '1,240p' tests/test_mpz_addmul_alloc_count.cpp
+- sed -n '1,260p' tests/test_mpz_addmul_fusion.cpp
+- sed -n '1,260p' tests/test_mpz_mpq_alloc_count.cpp
+- sed -n '1,260p' tests/test_mpfr_string_io.cpp
+- sed -n '1,260p' tests/test_mpc_basic.cpp
+- sed -n '1,260p' tests/CMakeLists.txt
+- rg -n "operator<<|operator>>|mpc_class|mpfr_class|addmul|fused|compound" include/gmpfrxx_mkII/detail include/mpfrxx_mkII.h include/gmpfrxx_mkII.h tests
+- sed -n '1,240p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '240,720p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '540,670p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '200,260p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp
+- rg -n "gmpxx::|#include <gmpxx_mkII.h>" tests/test_mpz_addmul_fusion.cpp tests/test_mpz_addmul_alloc_count.cpp tests/test_mpz_mpq_alloc_count.cpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial ctest --test-dir build --output-on-failure: FAIL, test_mpc_io locale output assertion failed.
+- Fixed mpc_class component formatting to apply the stream locale decimal point.
+- Final cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 82/82 tests passed.
+
+Known issues:
+- The mpc_class stream format intentionally mirrors gmpxx::mpfc_class as "(real,imag)" for the local wrapper API.
+
+Post-phase MPFR real I/O alignment with MPF:
+DONE
+
+Implemented features:
+- Aligned mpfrxx::mpfr_class stream output more closely with gmpxx::mpf_class output.
+- Added an MPFR-owned allocated string RAII helper so mpfr_asprintf results are freed on all paths.
+- Added locale decimal-point replacement to mpfrxx::mpfr_class output, matching the existing gmpxx::mpf_class behavior.
+- Kept existing MPFR-specific formatting via mpfr_asprintf and %R conversions.
+
+Missing features:
+- No remaining known mpf_class/mpfr_class stream I/O behavior gap from the currently tested surface.
+
+Tests added:
+- Added mpfrxx::mpfr_class locale decimal-point output coverage to tests/test_mpfr_string_io.cpp.
+- Added mpfrxx::mpfr_class expression locale output coverage to tests/test_mpfr_string_io.cpp.
+- Added mpfrxx::mpfr_class locale decimal-point input coverage to tests/test_mpfr_string_io.cpp.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- tests/test_mpfr_string_io.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,220p' tests/test_mpf_string_io.cpp
+- sed -n '1,220p' tests/test_mpfr_string_io.cpp
+- sed -n '421,520p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '563,650p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '28,50p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "class gmp_allocated_string|struct gmp_allocated_string|gmp_stream_decimal_point" include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '45,75p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '75,105p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- cmake --build build --target test_mpfr_string_io -j
+- ctest --test-dir build -R test_mpfr_string_io --output-on-failure
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Focused cmake --build build --target test_mpfr_string_io -j: PASS.
+- Focused ctest --test-dir build -R test_mpfr_string_io --output-on-failure: PASS.
+- Final cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 82/82 tests passed.
+
+Known issues:
+- mpfrxx::mpfr_class still uses MPFR formatting primitives, not GMP MPF primitives; this is intentional for MPFR correctness.

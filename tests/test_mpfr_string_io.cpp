@@ -30,11 +30,23 @@
 
 #include <cassert>
 #include <iomanip>
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 
 namespace {
+
+class test_numpunct : public std::numpunct<char> {
+public:
+    explicit test_numpunct(char decimal_point) : decimal_point_(decimal_point) {}
+
+protected:
+    char do_decimal_point() const override { return decimal_point_; }
+
+private:
+    char decimal_point_;
+};
 
 void assert_equal(const mpfrxx::mpfr_class& got, const mpfrxx::mpfr_class& expected)
 {
@@ -95,6 +107,17 @@ void require_stream_output()
     std::ostringstream expr_stream;
     expr_stream << std::fixed << std::setprecision(2) << (a + b);
     assert(expr_stream.str() == "3.75");
+
+    std::locale comma_locale(std::locale::classic(), new test_numpunct(','));
+    std::ostringstream locale_fixed;
+    locale_fixed.imbue(comma_locale);
+    locale_fixed << std::fixed << std::setprecision(2) << value;
+    assert(locale_fixed.str() == "1,25");
+
+    std::ostringstream locale_expr;
+    locale_expr.imbue(comma_locale);
+    locale_expr << std::fixed << std::setprecision(2) << (a + b);
+    assert(locale_expr.str() == "3,75");
 }
 
 void require_stream_input()
@@ -121,6 +144,15 @@ void require_stream_input()
     invalid_input >> value;
     assert(invalid_input.fail());
     assert_equal(value, before);
+
+    std::locale comma_locale(std::locale::classic(), new test_numpunct(','));
+    std::istringstream locale_input(" -2,75 rest");
+    locale_input.imbue(comma_locale);
+    locale_input >> value;
+    assert_equal(value, mpfrxx::mpfr_class("-2.75", 192));
+
+    locale_input >> rest;
+    assert(rest == "rest");
 }
 
 } // namespace

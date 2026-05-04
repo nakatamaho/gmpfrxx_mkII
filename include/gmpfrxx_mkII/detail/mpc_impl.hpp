@@ -36,6 +36,9 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <locale>
+#include <sstream>
+#include <string>
 #include <type_traits>
 #include <utility>
 
@@ -664,6 +667,72 @@ using ::gmpfrxx_mkII::detail::operator+;
 using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
+
+namespace detail {
+
+inline std::string mpc_format_component(std::ostream& out, const mpfr_class& value)
+{
+    std::ostringstream component;
+    component.imbue(out.getloc());
+    component.flags(out.flags());
+    component.precision(out.precision());
+    component.fill(out.fill());
+    component << value;
+
+    std::string text = component.str();
+    const char decimal_point = std::use_facet<std::numpunct<char>>(out.getloc()).decimal_point();
+    if (decimal_point != '.') {
+        std::replace(text.begin(), text.end(), '.', decimal_point);
+    }
+    return text;
+}
+
+} // namespace detail
+
+inline std::ostream& operator<<(std::ostream& out, const mpc_class& value)
+{
+    out.width(0);
+    const mpfr_class real(mpc_realref(value.mpc_data()), value.real_precision());
+    const mpfr_class imag(mpc_imagref(value.mpc_data()), value.imag_precision());
+    out << '(' << detail::mpc_format_component(out, real) << ','
+        << detail::mpc_format_component(out, imag) << ')';
+    return out;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                         std::is_same_v<typename std::decay_t<Expr>::result_type, mpc_class>,
+                     int> = 0>
+inline std::ostream& operator<<(std::ostream& out, const Expr& expr)
+{
+    return out << mpc_class(expr);
+}
+
+inline std::istream& operator>>(std::istream& in, mpc_class& value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    mpfr_class real = mpfr_class::with_precision(value.real_precision());
+    mpfr_class imag = mpfr_class::with_precision(value.imag_precision());
+    char open = '\0';
+    char comma = '\0';
+    char close = '\0';
+
+    if ((in >> open) && open == '(' &&
+        (in >> real) &&
+        (in >> comma) && comma == ',' &&
+        (in >> imag) &&
+        (in >> close) && close == ')') {
+        mpc_set_fr_fr(value.mpc_data(), real.mpfr_data(), imag.mpfr_data(), mpc_class::default_rounding());
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
+}
 
 } // namespace mpfrxx
 
