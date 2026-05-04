@@ -8,5 +8,6 @@
 #include <gmpfrxx_mkII/detail/type_traits.hpp>
 #include <gmpfrxx_mkII/detail/zq_impl.hpp>
 #include <gmpfrxx_mkII/detail/mpf_impl.hpp>
+#include <gmpfrxx_mkII/detail/mpfc_impl.hpp>
 
 #endif // GMPXX_MKII_H

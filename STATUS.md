@@ -766,3 +766,78 @@ Pass/fail result:
 
 Known issues:
 - z/q stream output is intentionally basic and may need refinement for obscure iostream formatting combinations.
+
+Phase 11 prerequisite status:
+DONE
+
+Implemented features:
+- Added optional GMP-only gmpxx::mpfc_class core backed by two gmpxx::mpf_class components.
+- Exposed mpfc_class from gmpxx_mkII.h and therefore from the combined gmpfrxx_mkII.h aggregator.
+- Kept mpfc_class out of mpfrxx_mkII.h.
+- Added mpfc_class::with_precision() factories for common and per-component precision.
+- Added real()/imag() component accessors and real_precision()/imag_precision()/precision().
+- Added expression-template arithmetic for mpfc + mpfc, mpfc + mpf, mpf + mpfc, and supported real scalars.
+- Added expression-template unary plus/minus for mpfc expressions.
+- New mpfc expression materialization uses max leaf component precision.
+- Existing-object mpfc expression assignment preserves destination component precision.
+- Added basic equality comparison and ostream output for mpfc_class.
+- Added compile-fail coverage forbidding mpfc mixed arithmetic with mpfr_class and mpc_class.
+
+Missing features:
+- Phase 11 complex math functions are not implemented yet:
+  sqrt, exp, log, sin, cos, tan, sinh, cosh, tanh, pow, gamma.
+- mpfc stream input is not implemented.
+- mpfc string constructors are not implemented.
+- mpfc is currently limited to GMP MPF component arithmetic and does not use MPC or MPFR.
+
+Tests added:
+- tests/test_et_contract_mpfc.cpp
+- tests/test_mpfc_basic.cpp
+- tests/test_mpfc_precision_policy.cpp
+- tests/test_mpfc_header_boundary.cpp
+- tests/compile_fail/test_mpfc_plus_mpfr.cpp
+- tests/compile_fail/test_mpfr_plus_mpfc.cpp
+- tests/compile_fail/test_mpfc_plus_mpc.cpp
+- tests/compile_fail/test_mpc_plus_mpfc.cpp
+
+Exact commands run:
+- rg -n "mpfc_class|mpfc|complex" ../gmpxx_mkII/include/gmpxx_mkII.h.in include tests CMakeLists.txt
+- rg -n "class mpc_class|class mpf_class|OpPlus|eval_into|result_type|precision_policy" include/gmpfrxx_mkII/detail/*.hpp
+- git status --short
+- sed -n '1,220p' include/gmpxx_mkII.h
+- sed -n '1,220p' include/gmpfrxx_mkII.h
+- sed -n '1,520p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '6849,7318p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '520,760p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '7335,7628p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- rg -n "inline mpf_class (sqrt|exp|log|sin|cos|tan|sinh|cosh|tanh|gamma|pow|abs|atan2)|const_pi|gamma_spouge|transcendent" include ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '1,130p' tests/CMakeLists.txt
+- sed -n '1,110p' include/mpfrxx_mkII.h
+- sed -n '1,130p' include/gmpfrxx_mkII/detail/expr.hpp
+- sed -n '1,130p' include/gmpfrxx_mkII/detail/type_traits.hpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "mpfc"
+- gdb -batch -ex run -ex bt ./build/tests/test_mpfc_precision_policy
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpfc/mpf/mpz/mpq arithmetic operators in include tests examples
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples CMakeLists.txt cmake
+- git diff --stat
+- tail -n 70 STATUS.md
+
+Pass/fail result:
+- Initial cmake --build build -j: PASS before adding mpfc tests.
+- Initial mpfc test build: FAIL due ambiguous with_precision(precision, value) overload versus per-component precision overload.
+- Fixed value-initializing with_precision overload to require real and imaginary values explicitly.
+- Initial test_mpfc_precision_policy: FAIL because tests compared requested precision bits instead of actual GMP mpf component precision.
+- Fixed test expectations to compare actual leaf/destination precision, matching existing MPF precision policy tests.
+- Final cmake --build build -j: PASS
+- Final ctest --test-dir build --output-on-failure -R "mpfc": PASS, 9/9 tests passed
+- Final ctest --test-dir build --output-on-failure: PASS, 58/58 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- Phase 11 math still depends on adding GMP-only MPF transcendentals or porting the required helpers from gmpxx_mkII.h.in.
+- mpfc arithmetic currently favors correctness and header separation over allocation-count optimization.
