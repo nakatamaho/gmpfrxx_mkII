@@ -39,14 +39,28 @@ void require_pi_prefix(const gmpxx::mpf_class& value, std::size_t digits)
 void require_log_two_prefix(const gmpxx::mpf_class& value, std::size_t digits)
 {
     mp_exp_t exponent = 0;
-    const std::string got = value.get_str(exponent, 10, digits);
+    const std::string got = value.get_str(exponent, 10, digits + 8);
+    // Reference: WolframAlpha N[ln(2), 1000], also mirrored in the upstream gmpxx_mkII tests.
     const std::string expected =
-        "6931471805599453094172321214581765680755001343602552541206800094";
+        "6931471805599453094172321214581765680755001343602552541206800094933936219696947156058633269964186875"
+        "42001481020570685733685520235758130557032670751635075961930727570828371435190307038623891673471123350"
+        "11536449795523912047517268157493206515552473413952588295045300709532636664265410423915781495204374043"
+        "03855008019441706416715186447128399681717845469570262716310645461502572074024816377733896385506952606"
+        "68341137273873722928956493547025762652098859693201965058554764703306793654432547632744951250406069438"
+        "14710468994650622016772042452452961268794654619316517468139267250410380254625965686914419287160829380"
+        "31727143677826548775664850856740776484514644399404614226031930967354025744460703080960850474866385231"
+        "38181676751438667476647890881437141985494231519973548803751658612753529166100071053558249879414729509"
+        "29311389715599820565439287170007218085761025236889213244971389320378439353088774825970171559107088236"
+        "83627589842589185353024363421436706118923678919237231467232172053401649256872747782344535348";
 
     if (exponent != 0) {
+        std::cerr << "unexpected log_two exponent: got " << exponent << '\n';
         std::abort();
     }
     if (got.size() < digits || got.substr(0, digits) != expected.substr(0, digits)) {
+        std::cerr << "unexpected log_two digits at " << digits << " digits\n";
+        std::cerr << "got      " << got << '\n';
+        std::cerr << "expected " << expected.substr(0, digits) << '\n';
         std::abort();
     }
 }
@@ -64,6 +78,13 @@ void require_same_value(const gmpxx::mpf_class& lhs, const gmpxx::mpf_class& rhs
 }
 
 std::size_t pi_reference_digits_for_precision(mp_bitcnt_t precision)
+{
+    const std::size_t decimal_digits = static_cast<std::size_t>((precision * 30103) / 100000);
+    const std::size_t stable_digits = decimal_digits > 8 ? decimal_digits - 8 : decimal_digits;
+    return stable_digits < 998 ? stable_digits : 998;
+}
+
+std::size_t log_two_reference_digits_for_precision(mp_bitcnt_t precision)
 {
     const std::size_t decimal_digits = static_cast<std::size_t>((precision * 30103) / 100000);
     const std::size_t stable_digits = decimal_digits > 8 ? decimal_digits - 8 : decimal_digits;
@@ -146,6 +167,31 @@ int main()
         std::abort();
     }
     require_log_two_prefix(default_log_two, 56);
+    if (gmpxx::default_mpf_precision_bits() == 512) {
+        require_same_value(default_log_two, gmpxx::log_two(static_cast<mp_bitcnt_t>(512)));
+    }
+
+    gmpxx::mpf_class log_two_512_before = gmpxx::mpf_class::with_precision(512);
+    gmpxx::mpf_class log_two_1024_before = gmpxx::mpf_class::with_precision(1024);
+    gmpxx::mpf_class log_two_2048_before = gmpxx::mpf_class::with_precision(2048);
+    for (mp_bitcnt_t precision : std::array<mp_bitcnt_t, 4>{{512, 1024, 2048, 4096}}) {
+        const auto value = gmpxx::log_two(precision);
+        if (value.precision() < precision) {
+            std::abort();
+        }
+        require_log_two_prefix(value, log_two_reference_digits_for_precision(precision));
+        if (precision == 512) {
+            log_two_512_before = value;
+        } else if (precision == 1024) {
+            log_two_1024_before = value;
+        } else if (precision == 2048) {
+            log_two_2048_before = value;
+        }
+    }
+
+    require_same_value(gmpxx::log_two(static_cast<mp_bitcnt_t>(2048)), log_two_2048_before);
+    require_same_value(gmpxx::log_two(static_cast<mp_bitcnt_t>(1024)), log_two_1024_before);
+    require_same_value(gmpxx::log_two(static_cast<mp_bitcnt_t>(512)), log_two_512_before);
 
     return 0;
 }
