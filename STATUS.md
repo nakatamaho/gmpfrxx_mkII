@@ -2026,6 +2026,50 @@ Pass/fail result:
 Known issues:
 - Statistical checks are smoke tests with conservative tolerances; they are intended to catch gross range/distribution wiring errors, not certify random quality.
 
+Post-phase exact/MPFC upstream test migration:
+DONE
+
+Implemented features:
+- Added exact scalar leaves for mpz/mpq expression-template operands, with integral scalars materialized through the existing exact integer conversion policy.
+- Added exact unary expression support for mpz/mpq operands.
+- Added mpz/mpq arithmetic compound assignment support for supported exact expression operands.
+- Added direct `mpz_addmul`/`mpz_submul` compound-assignment overloads for `mpz_class += mpz*mpz`, `mpz_class -= mpz*mpz`, and object/scalar variants that can use `mpz_addmul_ui` or `mpz_submul_ui`.
+- Added `gmpxx::mpfc_class` stream extraction for `(real,imag)` values, preserving old value and component precision on parse failure.
+- Added `gmpxx::mpfc_class` expression stream insertion by materializing the expression for output.
+- Updated MPF stream insertion to honor the active C++ locale decimal point, which also makes MPFC output locale-aware through its components.
+
+Tests added:
+- tests/test_mpfc_io.cpp
+- tests/test_mpz_addmul_fusion.cpp
+- tests/test_mpz_addmul_alloc_count.cpp
+- tests/test_mpz_mpq_alloc_count.cpp
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- include/gmpfrxx_mkII/detail/mpfc_impl.hpp
+- tests/test_abi_fingerprint.cpp
+- tests/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- nl -ba tests/test_mpz_addmul_alloc_count.cpp
+- rg -n "mpz_addmul|operator\\+=|is_mpz_addmul" include/gmpfrxx_mkII/detail/zq_impl.hpp
+- nl -ba include/gmpfrxx_mkII/detail/zq_impl.hpp | sed -n '1280,1468p'
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_mpfc_io|test_mpz_addmul_alloc_count|test_mpz_addmul_fusion|test_mpz_mpq_alloc_count"
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial focused CTest: FAIL because generic `operator+=` was preferred for `mpz_class += b*c`; fixed by excluding direct addmul expressions from the generic compound overload.
+- Focused CTest after fix: PASS, 4/4 tests passed.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 81/81 tests passed.
+
+Known issues:
+- `test_mpz_mpq_alloc_count.cpp` is migrated as functional exact ET/compound coverage. The upstream-style wrapper instrumentation counters are not present in this repository, so strict wrapper allocation-count parity is not claimed.
+- `test_mpz_addmul_fusion.cpp` verifies expression shape, behavior, alias cases, and direct overload routing through allocator-count regression coverage, but there is no public diagnostic fusion-counter API.
+
 Post-phase upstream gmpxx_mkII test migration tracker:
 IN PROGRESS
 
@@ -2057,13 +2101,13 @@ Migration table:
 | test_mpf_math_functions.cpp | tests/test_mpf_pi.cpp, tests/test_mpf_compute_log.cpp | Partial | TODO if applicable | Function list may exceed current tests; MPFR equivalents may not be wrapped. | Port missing MPF math tests; decide MPFR API additions from failures. |
 | test_mpf_transcendent_functions.cpp | tests/test_mpf_compute_log.cpp | Partial | TODO if applicable | Some upstream ULP/reference checks were not fully imported as a file. | Port test cases into local dedicated file or extend current compute_log test. |
 | test_mpfc_arithmetic.cpp | tests/test_mpfc_basic.cpp, tests/test_et_contract_mpfc.cpp | Partial | N/A for MPFR; MPC analog exists separately | Full mpfc arithmetic matrix and alias/precision cases may be missing. | Port missing mpfc arithmetic cases to GMP-only tests. |
-| test_mpfc_io.cpp | tests/test_mpfc_basic.cpp output only | TODO | N/A for MPFR; MPC IO not tracked here | mpfc stream input/string formatting likely missing. | Port mpfc IO; add APIs if current mpfc only supports output. |
+| test_mpfc_io.cpp | tests/test_mpfc_io.cpp | Done | N/A for MPFR; MPC IO not tracked here | None known for current MPFC `(real,imag)` stream format. | Keep migrated; add MPC IO separately if a public MPC parser/formatter parity test is requested. |
 | test_mpfc_transcendent_functions.cpp | tests/test_mpfc_math.cpp | Partial | N/A for MPFR; MPC math exists separately | Full complex transcendent coverage may be missing. | Port missing mpfc transcendental cases; consider MPC parallel later. |
 | test_mpq_arithmetic.cpp | tests/test_mpq_basic.cpp, tests/test_mpq_canonicalization.cpp | Partial | mpfrxx aliases use same exact types | Full rational arithmetic/scalar/shift matrix may be incomplete. | Port upstream mpq arithmetic cases into focused exact-type test. |
-| test_mpz_addmul_alloc_count.cpp | None | TODO | N/A | addmul/submul allocation/fusion APIs likely absent. | Port test, add addmul/submul/fused APIs as required. |
-| test_mpz_addmul_fusion.cpp | None | TODO | N/A | Expression fusion for mpz addmul/submul likely absent. | Port after addmul API exists. |
+| test_mpz_addmul_alloc_count.cpp | tests/test_mpz_addmul_alloc_count.cpp | Done for direct mpz addmul/submul paths | N/A | No upstream wrapper instrumentation counters; local test checks GMP allocator count for preallocated direct paths. | Keep as direct-path regression coverage. |
+| test_mpz_addmul_fusion.cpp | tests/test_mpz_addmul_fusion.cpp | Done | N/A | No diagnostic fusion counter API; behavior and direct overload routing are covered. | Keep migrated; add counters only if instrumentation becomes public policy. |
 | test_mpz_arithmetic.cpp | tests/test_mpz_basic.cpp | Partial | mpfrxx aliases use same exact types | Full integer arithmetic, bit ops, shifts, inc/dec likely incomplete. | Port upstream mpz arithmetic and add missing exact APIs. |
-| test_mpz_mpq_alloc_count.cpp | None | TODO | N/A | Exact-type ET allocation fast paths not measured. | Port alloc-count test after exact arithmetic API parity is improved. |
+| test_mpz_mpq_alloc_count.cpp | tests/test_mpz_mpq_alloc_count.cpp | Done for functional exact ET/compound coverage | N/A | Exact wrapper allocation-count parity is not available without upstream instrumentation hooks. | Keep functional coverage; add allocator-specific assertions only for stable no-allocation paths. |
 | test_numeric_equivalence.cpp | Various numeric smoke tests | TODO | TODO | Cross-check against GMP C API/MPFR C API not centralized. | Port as equivalence tests for mpf and adapt mpfr against MPFR C API. |
 | test_power_of_two_fusion.cpp | None | TODO | TODO if MPFR has analogous optimization | Power-of-two multiply/divide fusion likely absent. | Port MPF test; add MPFR adaptation if expression optimizer is shared/natural. |
 | test_precision_policy.cpp | tests/test_mpf_precision_policy.cpp, tests/test_mpfr_precision_policy.cpp | Partial | Partial | Upstream precision-policy matrix may be broader than local tests. | Port missing cases into existing MPF/MPFR precision tests. |

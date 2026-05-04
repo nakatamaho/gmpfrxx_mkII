@@ -118,7 +118,8 @@ void compile_time_fingerprint()
 
     static_assert(gmpfrxx_mkII::detail::is_zq_expression_operand_v<gmpxx::mpz_class>);
     static_assert(gmpfrxx_mkII::detail::is_zq_expression_operand_v<gmpxx::mpq_class>);
-    static_assert(!gmpfrxx_mkII::detail::is_zq_expression_operand_v<int>);
+    static_assert(gmpfrxx_mkII::detail::is_zq_expression_operand_v<int>);
+    static_assert(!gmpfrxx_mkII::detail::is_zq_expression_operand_v<double>);
     static_assert(!gmpfrxx_mkII::detail::is_zq_expression_operand_v<gmpxx::mpf_class>);
 
     static_assert(gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<mpfrxx::mpfr_class>);

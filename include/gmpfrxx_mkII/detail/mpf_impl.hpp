@@ -453,6 +453,13 @@ inline std::ostream& operator<<(std::ostream& out, const mpf_class& value)
         }
 
         std::string text(formatted.c_str());
+        const char decimal_point = gmpfrxx_mkII::detail::gmp_stream_decimal_point(out);
+        if (decimal_point != '.') {
+            const std::size_t point = text.find('.');
+            if (point != std::string::npos) {
+                text[point] = decimal_point;
+            }
+        }
         if ((out.flags() & std::ios_base::showpos) && mpf_sgn(value.mpf_data()) >= 0) {
             text.insert(0, "+");
         }
@@ -1045,14 +1052,14 @@ auto operator/(Lhs&& lhs, Rhs&& rhs)
         std::move(left), std::move(right));
 }
 
-template <typename Expr, std::enable_if_t<is_mpf_expression_operand_v<Expr>, long> = 0>
+template <typename Expr, std::enable_if_t<is_mpf_expression_operand_v<Expr> && is_mpf_object_or_node_v<Expr>, long> = 0>
 auto operator+(Expr&& expr)
 {
     auto operand = make_mpf_operand(std::forward<Expr>(expr));
     return unary_expr<pos_op, decltype(operand), gmpxx::mpf_class>(std::move(operand));
 }
 
-template <typename Expr, std::enable_if_t<is_mpf_expression_operand_v<Expr>, long> = 0>
+template <typename Expr, std::enable_if_t<is_mpf_expression_operand_v<Expr> && is_mpf_object_or_node_v<Expr>, long> = 0>
 auto operator-(Expr&& expr)
 {
     auto operand = make_mpf_operand(std::forward<Expr>(expr));

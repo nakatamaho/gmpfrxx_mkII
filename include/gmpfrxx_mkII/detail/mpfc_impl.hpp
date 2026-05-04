@@ -33,6 +33,7 @@
 #include <gmpfrxx_mkII/detail/mpf_impl.hpp>
 
 #include <algorithm>
+#include <istream>
 #include <ostream>
 #include <type_traits>
 #include <utility>
@@ -217,6 +218,42 @@ inline std::ostream& operator<<(std::ostream& out, const mpfc_class& value)
     out.width(0);
     out << '(' << value.real() << ',' << value.imag() << ')';
     return out;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                         std::is_same_v<typename std::decay_t<Expr>::result_type, mpfc_class>,
+                     int> = 0>
+inline std::ostream& operator<<(std::ostream& out, const Expr& expr)
+{
+    return out << mpfc_class(expr);
+}
+
+inline std::istream& operator>>(std::istream& in, mpfc_class& value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    mpf_class real = mpf_class::with_precision(value.real_precision());
+    mpf_class imag = mpf_class::with_precision(value.imag_precision());
+    char open = '\0';
+    char comma = '\0';
+    char close = '\0';
+
+    if ((in >> open) && open == '(' &&
+        (in >> real) &&
+        (in >> comma) && comma == ',' &&
+        (in >> imag) &&
+        (in >> close) && close == ')') {
+        value.real(real);
+        value.imag(imag);
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
 }
 
 inline void swap(mpfc_class& lhs, mpfc_class& rhs) noexcept

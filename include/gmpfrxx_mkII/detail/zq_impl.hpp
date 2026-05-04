@@ -40,6 +40,7 @@
 #include <cstring>
 #include <istream>
 #include <locale>
+#include <limits>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -909,12 +910,41 @@ template <>
 struct is_zq_expression_operand<gmpxx::mpq_class> : std::true_type {};
 
 template <typename T>
+struct is_zq_scalar_operand
+    : std::bool_constant<is_supported_expression_integral_v<T>> {};
+
+template <typename T>
+inline constexpr bool is_zq_scalar_operand_v =
+    is_zq_scalar_operand<std::remove_cv_t<T>>::value;
+
+template <typename T, typename = void>
+struct normalized_zq_scalar;
+
+template <typename T>
+struct normalized_zq_scalar<T, std::enable_if_t<is_zq_scalar_operand_v<T> &&
+                                                std::is_signed_v<std::remove_cv_t<T>>>> {
+    using type = std::int64_t;
+};
+
+template <typename T>
+struct normalized_zq_scalar<T, std::enable_if_t<is_zq_scalar_operand_v<T> &&
+                                                std::is_unsigned_v<std::remove_cv_t<T>>>> {
+    using type = std::uint64_t;
+};
+
+template <typename T>
+using normalized_zq_scalar_t = typename normalized_zq_scalar<std::remove_cv_t<T>>::type;
+
+template <typename T>
 struct is_zq_expression_operand<
     T,
     std::enable_if_t<is_expression_node_v<T> &&
                      (std::is_same_v<typename T::result_type, gmpxx::mpz_class> ||
                       std::is_same_v<typename T::result_type, gmpxx::mpq_class>)>>
     : std::true_type {};
+
+template <typename T>
+struct is_zq_expression_operand<T, std::enable_if_t<is_zq_scalar_operand_v<T>>> : std::true_type {};
 
 template <typename T>
 inline constexpr bool is_zq_expression_operand_v =
@@ -981,6 +1011,13 @@ template <typename Expr, typename = std::enable_if_t<is_expression_node_v<std::d
 std::decay_t<Expr> make_zq_operand(Expr&& expr)
 {
     return std::forward<Expr>(expr);
+}
+
+template <typename Scalar, typename = std::enable_if_t<is_zq_scalar_operand_v<Scalar>>>
+auto make_zq_operand(Scalar value)
+{
+    using storage_type = normalized_zq_scalar_t<Scalar>;
+    return scalar_leaf<storage_type, gmpxx::mpz_class>(static_cast<storage_type>(value));
 }
 
 inline gmpxx::mpq_class zq_comparison_value(const gmpxx::mpz_class& value)
@@ -1084,6 +1121,26 @@ inline void mpz_evaluate(mpz_t dest, const object_leaf<gmpxx::mpz_class>& expr)
     mpz_set(dest, expr.get().mpz_data());
 }
 
+template <typename T, typename Result>
+void mpz_evaluate(mpz_t dest, const scalar_leaf<T, Result>& expr)
+{
+    const gmpxx::mpz_class value(expr.value());
+    mpz_set(dest, value.mpz_data());
+}
+
+template <typename Expr, typename Result>
+void mpz_evaluate(mpz_t dest, const unary_expr<pos_op, Expr, Result>& expr)
+{
+    mpz_evaluate(dest, expr.expr());
+}
+
+template <typename Expr, typename Result>
+void mpz_evaluate(mpz_t dest, const unary_expr<neg_op, Expr, Result>& expr)
+{
+    mpz_evaluate(dest, expr.expr());
+    mpz_neg(dest, dest);
+}
+
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpz_evaluate(mpz_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
 {
@@ -1117,6 +1174,26 @@ inline void mpq_evaluate(mpq_t dest, const object_leaf<gmpxx::mpz_class>& expr)
 inline void mpq_evaluate(mpq_t dest, const object_leaf<gmpxx::mpq_class>& expr)
 {
     mpq_set(dest, expr.get().mpq_data());
+}
+
+template <typename T, typename Result>
+void mpq_evaluate(mpq_t dest, const scalar_leaf<T, Result>& expr)
+{
+    const gmpxx::mpz_class value(expr.value());
+    mpq_set_z(dest, value.mpz_data());
+}
+
+template <typename Expr, typename Result>
+void mpq_evaluate(mpq_t dest, const unary_expr<pos_op, Expr, Result>& expr)
+{
+    mpq_evaluate(dest, expr.expr());
+}
+
+template <typename Expr, typename Result>
+void mpq_evaluate(mpq_t dest, const unary_expr<neg_op, Expr, Result>& expr)
+{
+    mpq_evaluate(dest, expr.expr());
+    mpq_neg(dest, dest);
 }
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
@@ -1198,6 +1275,127 @@ auto operator/(Lhs&& lhs, Rhs&& rhs)
         std::move(left), std::move(right));
 }
 
+template <typename Expr, std::enable_if_t<is_zq_expression_operand_v<Expr> && is_zq_object_or_node_v<Expr>, int> = 0>
+auto operator+(Expr&& expr)
+{
+    auto operand = make_zq_operand(std::forward<Expr>(expr));
+    using result_type = typename decltype(operand)::result_type;
+    return unary_expr<pos_op, decltype(operand), result_type>(std::move(operand));
+}
+
+template <typename Expr, std::enable_if_t<is_zq_expression_operand_v<Expr> && is_zq_object_or_node_v<Expr>, int> = 0>
+auto operator-(Expr&& expr)
+{
+    auto operand = make_zq_operand(std::forward<Expr>(expr));
+    using result_type = typename decltype(operand)::result_type;
+    return unary_expr<neg_op, decltype(operand), result_type>(std::move(operand));
+}
+
+template <typename T>
+struct is_mpz_object_leaf : std::false_type {};
+
+template <>
+struct is_mpz_object_leaf<object_leaf<gmpxx::mpz_class>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpz_object_leaf_v = is_mpz_object_leaf<std::decay_t<T>>::value;
+
+template <typename T>
+struct is_mpz_scalar_leaf : std::false_type {};
+
+template <typename T>
+struct is_mpz_scalar_leaf<scalar_leaf<T, gmpxx::mpz_class>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpz_scalar_leaf_v = is_mpz_scalar_leaf<std::decay_t<T>>::value;
+
+template <typename Lhs, typename Rhs>
+inline constexpr bool is_mpz_addmul_direct_v =
+    (is_mpz_object_leaf_v<Lhs> && is_mpz_object_leaf_v<Rhs>) ||
+    (is_mpz_object_leaf_v<Lhs> && is_mpz_scalar_leaf_v<Rhs>) ||
+    (is_mpz_scalar_leaf_v<Lhs> && is_mpz_object_leaf_v<Rhs>);
+
+template <typename T>
+struct is_mpz_addmul_direct_expr : std::false_type {};
+
+template <typename Lhs, typename Rhs>
+struct is_mpz_addmul_direct_expr<binary_expr<mul_op, Lhs, Rhs, gmpxx::mpz_class>>
+    : std::bool_constant<is_mpz_addmul_direct_v<Lhs, Rhs>> {};
+
+template <typename T>
+inline constexpr bool is_mpz_addmul_direct_expr_v =
+    is_mpz_addmul_direct_expr<std::decay_t<T>>::value;
+
+inline void mpz_addmul_apply(
+    mpz_t dest,
+    const object_leaf<gmpxx::mpz_class>& lhs,
+    const object_leaf<gmpxx::mpz_class>& rhs,
+    bool subtract)
+{
+    if (subtract) {
+        mpz_submul(dest, lhs.get().mpz_data(), rhs.get().mpz_data());
+    } else {
+        mpz_addmul(dest, lhs.get().mpz_data(), rhs.get().mpz_data());
+    }
+}
+
+template <typename T>
+void mpz_addmul_apply_object_scalar(
+    mpz_t dest,
+    const object_leaf<gmpxx::mpz_class>& object,
+    const scalar_leaf<T, gmpxx::mpz_class>& scalar,
+    bool subtract)
+{
+    if constexpr (std::is_unsigned_v<T>) {
+        if (scalar.value() <= static_cast<T>(std::numeric_limits<unsigned long>::max())) {
+            if (subtract) {
+                mpz_submul_ui(dest, object.get().mpz_data(), static_cast<unsigned long>(scalar.value()));
+            } else {
+                mpz_addmul_ui(dest, object.get().mpz_data(), static_cast<unsigned long>(scalar.value()));
+            }
+            return;
+        }
+    } else {
+        if (scalar.value() >= 0 &&
+            static_cast<std::uint64_t>(scalar.value()) <=
+                static_cast<std::uint64_t>(std::numeric_limits<unsigned long>::max())) {
+            if (subtract) {
+                mpz_submul_ui(dest, object.get().mpz_data(), static_cast<unsigned long>(scalar.value()));
+            } else {
+                mpz_addmul_ui(dest, object.get().mpz_data(), static_cast<unsigned long>(scalar.value()));
+            }
+            return;
+        }
+    }
+
+    const gmpxx::mpz_class scalar_value(scalar.value());
+    if (subtract) {
+        mpz_submul(dest, object.get().mpz_data(), scalar_value.mpz_data());
+    } else {
+        mpz_addmul(dest, object.get().mpz_data(), scalar_value.mpz_data());
+    }
+}
+
+template <typename T>
+void mpz_addmul_apply(
+    mpz_t dest,
+    const object_leaf<gmpxx::mpz_class>& lhs,
+    const scalar_leaf<T, gmpxx::mpz_class>& rhs,
+    bool subtract)
+{
+    mpz_addmul_apply_object_scalar(dest, lhs, rhs, subtract);
+}
+
+template <typename T>
+void mpz_addmul_apply(
+    mpz_t dest,
+    const scalar_leaf<T, gmpxx::mpz_class>& lhs,
+    const object_leaf<gmpxx::mpz_class>& rhs,
+    bool subtract)
+{
+    mpz_addmul_apply_object_scalar(dest, rhs, lhs, subtract);
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -1231,6 +1429,104 @@ mpq_class& mpq_class::operator=(const Expr& expr)
     gmpfrxx_mkII::detail::mpq_evaluate(value_, expr);
     mpq_canonicalize(value_);
     return *this;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<
+        gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+            !gmpfrxx_mkII::detail::is_mpz_addmul_direct_expr_v<Rhs>,
+        int> = 0>
+inline mpz_class& operator+=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs + std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpz_addmul_direct_v<Lhs, Rhs>, int> = 0>
+inline mpz_class& operator+=(
+    mpz_class& lhs,
+    const gmpfrxx_mkII::detail::binary_expr<
+        gmpfrxx_mkII::detail::mul_op,
+        Lhs,
+        Rhs,
+        mpz_class>& rhs)
+{
+    gmpfrxx_mkII::detail::mpz_addmul_apply(lhs.mpz_data(), rhs.lhs(), rhs.rhs(), false);
+    return lhs;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<
+        gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+            !gmpfrxx_mkII::detail::is_mpz_addmul_direct_expr_v<Rhs>,
+        int> = 0>
+inline mpz_class& operator-=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs - std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpz_addmul_direct_v<Lhs, Rhs>, int> = 0>
+inline mpz_class& operator-=(
+    mpz_class& lhs,
+    const gmpfrxx_mkII::detail::binary_expr<
+        gmpfrxx_mkII::detail::mul_op,
+        Lhs,
+        Rhs,
+        mpz_class>& rhs)
+{
+    gmpfrxx_mkII::detail::mpz_addmul_apply(lhs.mpz_data(), rhs.lhs(), rhs.rhs(), true);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>, int> = 0>
+inline mpz_class& operator*=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs * std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>, int> = 0>
+inline mpz_class& operator/=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs / std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>, int> = 0>
+inline mpq_class& operator+=(mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs + std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>, int> = 0>
+inline mpq_class& operator-=(mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs - std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>, int> = 0>
+inline mpq_class& operator*=(mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs * std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>, int> = 0>
+inline mpq_class& operator/=(mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs / std::forward<Rhs>(rhs);
+    return lhs;
 }
 
 using ::gmpfrxx_mkII::detail::operator+;
