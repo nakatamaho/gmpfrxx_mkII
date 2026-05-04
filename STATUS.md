@@ -1647,3 +1647,65 @@ Pass/fail result:
 Known issues:
 - Gamma uses a bounded-term Spouge-style approximation, so the current high-precision known-value tests use a conservative 128-bit tolerance.
 - Random pow/gamma/reciprocal_gamma smoke tests are double-reference smoke coverage only; high-precision independent references for random values remain pending.
+
+Post-phase MPF transcendent test coverage port:
+DONE
+
+Implemented features:
+- Reviewed ../gmpxx_mkII/tests/test_mpf_transcendent_functions.cpp and ported missing coverage into the existing tests/test_mpf_compute_log.cpp.
+- Did not add tests/test_mpf_transcendent_functions.cpp to this repository, per request.
+- Added ULP helpers and decimal literal parsing helpers adapted to this repository's C++17 and mpf_class API.
+- Added fixed high-precision decimal reference checks for log1p, log, log2, log10, exp, expm1, sin, cos, tan, atan, atan2, and pow.
+- Added precision-doubling checks for pi, log_two, log1p, log, log2, log10, exp, expm1, sin, cos, tan, atan, atan2, and pow.
+- Kept the upstream ULP tolerances for the ported reference-literal and precision-doubling checks; no relaxed tolerance was needed for the current implementation.
+- Added explicit precision policy checks for representative unary and binary transcendental functions.
+- Added atan2 expression overloads for atan2(mpf_class, expr), atan2(expr, mpf_class), and atan2(expr, expr), then covered them with static assertions.
+- Added atan2 axis checks for (0, 1), (0, -1), (1, 0), (-1, 0), and (0, 0).
+
+Tests updated:
+- tests/test_mpf_compute_log.cpp
+- include/gmpfrxx_mkII/detail/math_mpf.hpp
+
+Exact commands run:
+- sed -n '1,220p' ../gmpxx_mkII/tests/test_mpf_transcendent_functions.cpp
+- sed -n '220,520p' ../gmpxx_mkII/tests/test_mpf_transcendent_functions.cpp
+- sed -n '520,760p' ../gmpxx_mkII/tests/test_mpf_transcendent_functions.cpp
+- nl -ba tests/test_mpf_compute_log.cpp | sed -n '1,700p'
+- cmake --build build --target test_mpf_compute_log -j
+- ctest --test-dir build -R test_mpf_compute_log --output-on-failure
+- ctest --test-dir build -R test_mpf_compute_log --output-on-failure
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- test_mpf_compute_log: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 66/66 tests passed.
+
+Known issues:
+- The upstream test uses C++20 concepts and local gmpxx_mkII helper APIs; the port keeps this repository's C++17 style and integrates into the existing test target instead of copying the file verbatim.
+- Gamma reference-literal coverage from the upstream file was not present there; current Gamma coverage remains the existing known-value and double-reference smoke coverage.
+
+Post-phase MPF Gamma Spouge precision policy:
+DONE
+
+Implemented features:
+- Replaced the fixed 128-term Spouge cap with a precision-derived term count.
+- The Spouge term count now targets the requested result bits plus log guard bits and a 32-bit margin using the log2(2*pi) decay factor, while preserving the 24-term minimum.
+- Increased Gamma's internal work precision by the selected Spouge term count to cover cancellation in the alternating coefficient sum.
+- Tightened the existing Gamma known-value checks back to the same precision - 32 bit tolerance used by the other high-precision MPF transcendental checks.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/math_mpf.hpp
+- tests/test_mpf_compute_log.cpp
+
+Exact commands run:
+- cmake --build build --target test_mpf_compute_log -j
+- ctest --test-dir build -R test_mpf_compute_log --output-on-failure
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial cap-removal-only attempt: FAIL at the 1024-bit Gamma known-value tolerance, showing that term growth without extra work precision was insufficient.
+- After adding term-count-proportional work precision: test_mpf_compute_log PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 66/66 tests passed.
+
+Known issues:
+- Gamma still uses a finite Spouge approximation rather than an independently rounded MPFR-backed oracle; random Gamma coverage remains double-reference smoke coverage.

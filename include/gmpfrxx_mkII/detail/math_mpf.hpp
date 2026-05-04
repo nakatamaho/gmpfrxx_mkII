@@ -1069,13 +1069,12 @@ inline mpf_class compute_pow(const mpf_class& x_input, const mpf_class& y_input,
 
 inline int gamma_spouge_terms(mp_bitcnt_t precision)
 {
-    int decimal_digits = static_cast<int>(static_cast<double>(precision) * 0.30103) + 1;
-    int terms = decimal_digits + 16;
+    constexpr long double log2_two_pi = 2.6514961294723187820171016809L;
+    const long double requested_bits = static_cast<long double>(normalize_target_precision(precision)) +
+                                       static_cast<long double>(guard_bits_for_log(precision)) + 32.0L;
+    int terms = static_cast<int>(std::ceil(requested_bits / log2_two_pi));
     if (terms < 24) {
         terms = 24;
-    }
-    if (terms > 128) {
-        terms = 128;
     }
     return terms;
 }
@@ -1113,8 +1112,8 @@ inline bool gamma_real_pole(const mpf_class& x)
 inline mpf_class gamma_spouge_positive(const mpf_class& x, mp_bitcnt_t target_precision)
 {
     const mp_bitcnt_t target = normalize_target_precision(target_precision);
-    const mp_bitcnt_t work = target + guard_bits_for_log(target) + 32;
     const int a = gamma_spouge_terms(target);
+    const mp_bitcnt_t work = target + guard_bits_for_log(target) + 32 + static_cast<mp_bitcnt_t>(a);
     const mpf_class x_work = set_prec_copy(x, work);
     const mpf_class half("0.5", work);
     const mpf_class base = add(x_work, make_ui(static_cast<unsigned long>(a - 1), work), work);
@@ -1611,6 +1610,36 @@ template <
 inline mpf_class atan(const Expr& expr)
 {
     return atan(mpf_class(expr));
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
+inline mpf_class atan2(const mpf_class& y, const Expr& x)
+{
+    return atan2(y, mpf_class(x));
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
+inline mpf_class atan2(const Expr& y, const mpf_class& x)
+{
+    return atan2(mpf_class(y), x);
+}
+
+template <
+    typename YExpr,
+    typename XExpr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<YExpr>> &&
+                                gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<XExpr>> &&
+                                std::is_same_v<typename std::decay_t<YExpr>::result_type, mpf_class> &&
+                                std::is_same_v<typename std::decay_t<XExpr>::result_type, mpf_class>>>
+inline mpf_class atan2(const YExpr& y, const XExpr& x)
+{
+    return atan2(mpf_class(y), mpf_class(x));
 }
 
 template <
