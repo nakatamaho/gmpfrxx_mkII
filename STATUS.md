@@ -1864,3 +1864,111 @@ Pass/fail result:
 
 Known issues:
 - This test intentionally mirrors the existing MPFR allocation-count surface first; it does not yet cover scalar, aliasing, IO, parser, or transcendent-function allocation behavior.
+
+Post-phase test suite catalog:
+DONE
+
+Implemented features:
+- Added a consolidated catalog of the tests under tests/.
+- Documented what each test verifies and how it verifies it.
+- Split normal compile-and-run tests from expected compile-fail contract tests.
+
+Normal tests:
+
+| Test | Target | What it tests | How it tests |
+| --- | --- | --- | --- |
+| test_gmp_header_smoke | gmpxx_mkII | GMP-only public header basics | Includes gmpxx_mkII.h and static-asserts default constructibility of mpz_class, mpq_class, and mpf_class. |
+| test_mpfr_header_smoke | mpfrxx_mkII | MPFR/MPC public header basics | Includes mpfrxx_mkII.h and static-asserts default constructibility of mpz/mpq aliases, mpfr_class, and mpc_class. |
+| test_aggregator_header_smoke | gmpfrxx_mkII | Full aggregator header basics | Includes gmpfrxx_mkII.h and static-asserts the combined GMP and MPFR/MPC public types. |
+| test_namespace_aliases | mpfrxx_mkII | mpfrxx exact-type alias policy | Static-asserts mpfrxx::mpz_class and mpfrxx::mpq_class are the same types as gmpxx::mpz_class and gmpxx::mpq_class. |
+| test_header_boundaries | gmpfrxx_mkII | Header dependency boundaries | Scans source headers at runtime for forbidden includes and forbidden MPFR/MPC symbols in GMP-only paths. |
+| test_version_info | gmpfrxx_mkII | Generated Git commit hash API | Checks hash API return types, non-empty values, macro consistency, and stream-print helpers. |
+| test_integer_model_diagnostics | gmpxx_mkII | Platform integer assumptions | Checks standard integer widths and signedness assumptions used by exact integer conversion paths. |
+| test_abi_fingerprint | gmpfrxx_mkII | Internal ET/scalar ABI shape | Static-asserts normalized scalar leaf types, supported operand traits, expression node shape, operation tags, and result type traits. |
+| test_alias_safety | gmpfrxx_mkII | Cross-type alias-safe assignment | Compares aliased MPF and MPFR assignments against independently computed expected values while preserving destination precision. |
+| test_et_contract_mpfr | mpfrxx_mkII | MPFR expression-template contract | Static-asserts arithmetic operators return expression nodes, not eager mpfr_class values. |
+| test_mpfr_expression_eval | mpfrxx_mkII | MPFR expression evaluation | Evaluates nested arithmetic expressions and compares materialized double values. |
+| test_mpfr_precision_policy | mpfrxx_mkII | MPFR expression precision policy | Checks new materialization uses max leaf precision and assignment preserves destination precision. |
+| test_mpfr_aliasing | mpfrxx_mkII | Basic MPFR self-assignment alias safety | Assigns expressions involving the destination back into itself and checks numeric results. |
+| test_et_contract_mpfr_scalar | mpfrxx_mkII | MPFR scalar ET operands | Static-asserts supported scalar leaves, rejected scalar leaves, and expression node result types. |
+| test_mpfr_scalar_eval | mpfrxx_mkII | MPFR scalar expression evaluation | Evaluates MPFR expressions mixed with integral and floating scalar operands. |
+| test_mpfr_long_width_dispatch | mpfrxx_mkII | Exact 64-bit integer conversion into MPFR | Verifies uint64 max, int64 min, and int64 max are represented exactly through the integer conversion path. |
+| test_mpfr_alloc_count | mpfrxx_mkII | MPFR non-aliasing allocation fast paths | Installs GMP allocation hooks and checks addition chains allocate zero times while a two-sided compound expression allocates one temporary. |
+| test_mpfr_defaults | mpfrxx_mkII | MPFR built-in defaults and runtime setters | Clears environment, checks 512-bit default precision, runtime precision setter, and rounding behavior. |
+| test_mpfr_environment | mpfrxx_mkII | Valid MPFR environment configuration | Sets MPFRXX_* variables, reloads defaults, checks precision/exponent/rounding values and rounding behavior. |
+| test_mpfr_environment_invalid | mpfrxx_mkII | Invalid MPFR environment fallback | Sets invalid MPFRXX_* variables and checks fallback defaults, then checks valid prefixed rounding strings. |
+| test_mpfr_string_io | mpfrxx_mkII | MPFR string and stream I/O | Checks set_str/get_str, invalid input preservation, base parsing, stream formatting, expression output, and stream extraction. |
+| test_et_contract_mpf | gmpxx_mkII | MPF expression-template contract | Static-asserts MPF arithmetic returns expression nodes with expected result types. |
+| test_mpf_basic | gmpxx_mkII | Basic MPF arithmetic evaluation | Evaluates MPF arithmetic with object and scalar operands and compares double results. |
+| test_mpf_precision_policy | gmpxx_mkII | MPF default and expression precision policy | Checks MPFXX_DEFAULT_PREC_BITS, runtime default setter, max leaf precision materialization, and assignment precision preservation. |
+| test_mpf_aliasing | gmpxx_mkII | Basic MPF self-assignment alias safety | Assigns expressions involving the destination back into itself and checks numeric results. |
+| test_mpf_string_io | gmpxx_mkII | MPF string and stream I/O | Checks set/get string APIs, formatting flags, stream extraction, invalid input handling, and expression output. |
+| test_mpf_alloc_count | gmpxx_mkII | MPF non-aliasing allocation fast paths | Installs GMP allocation hooks and mirrors MPFR allocation expectations for addition chains and one compound expression. |
+| test_mpf_pi | gmpxx_mkII | MPF pi/log_two constants and caches | Checks precision, decimal prefixes, hardcoded 512/1024/2048-bit constants, default precision behavior, and cache regression across precision changes. |
+| test_mpf_compute_log | gmpxx_mkII | MPF logarithm and transcendental functions | Checks log/log2/log10/log1p/exp family, trig/hyperbolic/inverse functions, pow, gamma, and reciprocal gamma with deterministic and random smoke comparisons. |
+| test_construction_copy | gmpfrxx_mkII | Construction, copy, move, assignment APIs | Static-asserts constructors and assignment traits, then checks values and precision preservation for GMP exact, MPF, and MPFR classes. |
+| test_et_contract_mpfc | gmpxx_mkII | MPFC expression-template contract | Static-asserts MPFC arithmetic returns expression nodes and keeps MPFC separate from MPC. |
+| test_mpfc_basic | gmpxx_mkII | Basic MPFC arithmetic evaluation | Evaluates complex MPF-backed arithmetic and compares real/imaginary double values. |
+| test_mpfc_precision_policy | gmpxx_mkII | MPFC precision propagation | Checks real/imag precision propagation, assignment preservation, and mixed MPF/MPFC precision rules. |
+| test_mpfc_header_boundary | gmpxx_mkII | MPFC availability in GMP-only header | Constructs mpfc_class through gmpxx_mkII.h and checks real/imag precision without MPFR/MPC exposure. |
+| test_mpfc_math | gmpxx_mkII | MPFC math functions | Checks sqrt, exp, log, trig, hyperbolic, pow, gamma, and expression materialization against double-level expectations. |
+| test_et_contract_zq_mpf | gmpxx_mkII | z/q/MPF mixed ET contract | Static-asserts mpz/mpq/mpf mixed arithmetic returns expression nodes with the required promoted result types. |
+| test_mixed_zq_mpf_promotion | gmpxx_mkII | z/q to MPF promotion behavior | Evaluates mixed exact/MPF expressions and checks promoted MPF numeric results. |
+| test_et_contract_zq_mpfr | mpfrxx_mkII | z/q/MPFR mixed ET contract | Static-asserts mpz/mpq/mpfr mixed arithmetic returns expression nodes with MPFR result types. |
+| test_mpz_basic | gmpxx_mkII | Basic mpz arithmetic | Evaluates integer addition, subtraction, multiplication, division, and nested expressions against GMP integer results. |
+| test_mpq_basic | gmpxx_mkII | Basic mpq arithmetic | Evaluates rational arithmetic and checks numerator/denominator results. |
+| test_mpq_canonicalization | gmpxx_mkII | mpq canonical form | Checks reduction, sign normalization, and arithmetic canonicalization. |
+| test_zq_string_io | gmpxx_mkII | mpz/mpq string and stream I/O | Checks set/get string APIs, base parsing, stream formatting, stream extraction, invalid input preservation, and zero-denominator rejection. |
+| test_mixed_zq_mpfr_promotion | mpfrxx_mkII | z/q to MPFR promotion behavior | Evaluates mixed exact/MPFR expressions and checks promoted MPFR numeric results. |
+| test_mixed_zq_mpfr_exact_subexpression | mpfrxx_mkII | Exact subexpression before MPFR promotion | Verifies exact mpz/mpq subexpressions are evaluated before conversion to MPFR. |
+| test_et_contract_mpc | mpfrxx_mkII | MPC expression-template contract | Static-asserts MPC arithmetic and mixed MPC/MPFR/exact/scalar operands produce expression nodes with MPC results. |
+| test_mpc_basic | mpfrxx_mkII | Basic MPC arithmetic evaluation | Evaluates complex arithmetic and compares real/imaginary double values. |
+| test_mpc_aliasing | mpfrxx_mkII | Basic MPC self-assignment alias safety | Assigns expressions involving the destination back into itself and checks real/imaginary results. |
+| test_mpc_defaults | mpfrxx_mkII | MPC built-in defaults and rounding inheritance | Checks MPC default precision/rounding behavior and inheritance from MPFR defaults. |
+| test_mpc_environment | mpfrxx_mkII | Valid MPC environment configuration | Sets MPC-related environment variables and checks real/imag precision plus rounding behavior. |
+| test_mpc_environment_invalid | mpfrxx_mkII | Invalid MPC environment fallback | Sets invalid MPC environment values and checks fallback/inheritance behavior. |
+| test_mpc_precision_policy | mpfrxx_mkII | MPC precision propagation | Checks real/imag precision propagation, mixed operand precision, and assignment precision preservation. |
+
+Expected compile-fail tests:
+
+| Test | Header/target | What must fail | How it tests |
+| --- | --- | --- | --- |
+| compile_fail_mpfr_header_must_not_expose_mpf | mpfrxx_mkII | mpfrxx_mkII.h must not expose gmpxx::mpf_class | Attempts to name gmpxx::mpf_class after including only mpfrxx_mkII.h. |
+| compile_fail_mpfr_header_must_not_expose_mpfc | mpfrxx_mkII | mpfrxx_mkII.h must not expose gmpxx::mpfc_class | Attempts to name gmpxx::mpfc_class after including only mpfrxx_mkII.h. |
+| compile_fail_gmp_header_must_not_expose_mpfr_or_mpc | gmpxx_mkII | gmpxx_mkII.h must not expose MPFR/MPC public types | Attempts to name mpfrxx::mpfr_class and mpfrxx::mpc_class after including only gmpxx_mkII.h. |
+| compile_fail_test_bool_scalar | mpfrxx_mkII | bool scalar leaves are rejected | Attempts to form an MPFR expression with x + true. |
+| compile_fail_test_long_double_scalar | mpfrxx_mkII | long double scalar leaves are rejected | Attempts to form an MPFR expression with x + 1.0L. |
+| compile_fail_test_int128_scalar | mpfrxx_mkII | __int128 scalar leaves are rejected | Attempts to form an MPFR expression with x + __int128. |
+| compile_fail_test_scalar_scalar_et_operator | mpfrxx_mkII | scalar/scalar ET operators are not public API | Attempts to call the detail operator on two scalar operands. |
+| compile_fail_test_mpf_plus_mpfr | gmpfrxx_mkII | MPF and MPFR must not mix | Attempts gmpxx::mpf_class + mpfrxx::mpfr_class. |
+| compile_fail_test_mpfr_plus_mpf | gmpfrxx_mkII | MPFR and MPF must not mix | Attempts mpfrxx::mpfr_class + gmpxx::mpf_class. |
+| compile_fail_test_mpf_plus_mpc | gmpfrxx_mkII | MPF and MPC must not mix | Attempts gmpxx::mpf_class + mpfrxx::mpc_class. |
+| compile_fail_test_mpc_plus_mpf | gmpfrxx_mkII | MPC and MPF must not mix | Attempts mpfrxx::mpc_class + gmpxx::mpf_class. |
+| compile_fail_test_mpfc_plus_mpfr | gmpfrxx_mkII | MPFC and MPFR must not mix | Attempts gmpxx::mpfc_class + mpfrxx::mpfr_class. |
+| compile_fail_test_mpfr_plus_mpfc | gmpfrxx_mkII | MPFR and MPFC must not mix | Attempts mpfrxx::mpfr_class + gmpxx::mpfc_class. |
+| compile_fail_test_mpfc_plus_mpc | gmpfrxx_mkII | MPFC and MPC must not mix | Attempts gmpxx::mpfc_class + mpfrxx::mpc_class. |
+| compile_fail_test_mpc_plus_mpfc | gmpfrxx_mkII | MPC and MPFC must not mix | Attempts mpfrxx::mpc_class + gmpxx::mpfc_class. |
+
+Test execution model:
+- Normal tests are registered with add_phase0_test(), built as standalone executables, linked to the relevant interface target, and run by CTest.
+- Compile-fail tests invoke the C++ compiler directly under CTest and are marked WILL_FAIL TRUE.
+- test_mpfr_alloc_count and test_mpf_alloc_count are marked RUN_SERIAL because GMP memory allocators are process-global.
+
+Tests updated:
+- STATUS.md
+
+Exact commands run:
+- rg --files tests
+- sed -n '1,220p' tests/CMakeLists.txt
+- ls tests
+- for f in tests/*.cpp; do ... assertion scan ...; done
+- for f in tests/compile_fail/*.cpp; do ... source scan ...; done
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 69/69 tests passed.
+
+Known issues:
+- The catalog summarizes test intent at the file level; it does not enumerate every individual assertion inside large smoke tests.
