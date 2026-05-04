@@ -959,3 +959,95 @@ Pass/fail result:
 
 Known issues:
 - Documentation and examples are now current, but README intentionally records the Phase 11 MPF transcendental accuracy limitation.
+
+Post-phase construction/copy test migration status:
+DONE
+
+Implemented features:
+- Ported ../gmpxx_mkII/tests/test_construction_copy.cpp into tests/test_construction_copy.cpp using the current gmpxx namespace API.
+- Added mpf_class value constructors for supported non-bool integral values and double values.
+- Added mpf_class explicit-precision constructors for supported non-bool integral values, double values, expression nodes, raw mpf_t values, and copy-with-precision.
+- Added mpf_class scalar and string assignment while preserving destination precision.
+- Added mpf_class swap member/free function and compatibility accessors get_prec()/get_mpf_t().
+- Expanded mpf_class migrated construction/copy coverage for double-with-precision, string-with-precision, and zero-with-explicit-precision construction.
+- Added mpz_class and mpq_class swap member/free functions, equality comparisons, and non-bool integral assignment.
+- Added mpq_class non-bool integral numerator/denominator construction.
+- Kept bool rejected for direct mpf/mpz/mpq construction in this repo's policy-aligned migrated test.
+
+Tests added:
+- tests/test_construction_copy.cpp
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_construction_copy.cpp
+- sed -n '260,620p' ../gmpxx_mkII/tests/test_construction_copy.cpp
+- g++ -std=c++17 -Iinclude -I../gmpxx_mkII/include ../gmpxx_mkII/tests/test_construction_copy.cpp -lgmp -o /tmp/test_construction_copy_gmpfrxx
+- sed -n '1,260p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1,360p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- rg -n "operator==|operator<=|swap\\(|mpf_class\\(|mpz_class\\(|mpq_class\\(" include/gmpfrxx_mkII/detail tests/test_*basic.cpp tests/test_*precision*.cpp
+- sed -n '260,760p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1,130p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,120p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_construction_copy
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpfc/mpf/mpz/mpq arithmetic operators in include tests examples benchmarks
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples benchmarks CMakeLists.txt cmake
+
+Pass/fail result:
+- Direct compile of original ../gmpxx_mkII/tests/test_construction_copy.cpp against this repo: FAIL, source assumes unqualified legacy API and helper namespaces.
+- Migrated test_construction_copy: PASS
+- Final cmake --build build -j: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 62/62 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- The migrated test intentionally follows this repo's bool rejection policy instead of the older gmpxx_mkII bool-constructor surface.
+
+Post-phase MPFR construction/copy test migration status:
+DONE
+
+Implemented features:
+- Extended tests/test_construction_copy.cpp with mpfrxx::mpfr_class coverage modeled after ../gmpxx_mkII/tests/test_construction_copy.cpp.
+- Added mpfr_class value constructors for supported non-bool integral values, double values, string values, raw mpfr_t values, and copy-with-precision.
+- Added mpfr_class explicit-precision constructors for supported non-bool integral values, double values, string values, expression nodes, raw mpfr_t values, and copy-with-precision.
+- Added mpfr_class scalar and string assignment while preserving destination precision.
+- Changed mpfr_class move assignment to preserve destination precision when source and destination precisions differ.
+- Added mpfr_class swap member/free function and compatibility accessors get_prec()/get_mpfr_t().
+- Retargeted test_construction_copy to gmpfrxx_mkII because it now covers both GMP-only and MPFR APIs.
+
+Tests added:
+- mpfr_class construction/copy/move/assignment/swap cases in tests/test_construction_copy.cpp
+
+Exact commands run:
+- sed -n '1,360p' tests/test_construction_copy.cpp
+- sed -n '1,420p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "mpfr_class\\(|precision\\(|mpfr_data\\(|get_mpfr_t|get_prec|swap\\(|operator=|mpfr_evaluate" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests
+- sed -n '1,220p' tests/CMakeLists.txt
+- sed -n '420,620p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/environment.hpp
+- sed -n '1,180p' include/gmpfrxx_mkII.h
+- rg -n "default_precision_bits|default_rounding_mode|mpfr_exponent_range_guard|current_eval_context" include/gmpfrxx_mkII/detail
+- sed -n '1,80p' include/mpfrxx_mkII.h
+- sed -n '1,220p' include/gmpxx_mkII.h
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_construction_copy
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpfc/mpf/mpz/mpq arithmetic operators in include tests examples benchmarks
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples benchmarks CMakeLists.txt cmake
+- git diff --stat
+- tail -n 90 STATUS.md
+
+Pass/fail result:
+- Final cmake --build build -j: PASS
+- Migrated test_construction_copy with mpfr_class coverage: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 62/62 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- The migrated MPFR test follows this repo's bool rejection policy instead of the older gmpxx_mkII bool-constructor surface.

@@ -90,6 +90,53 @@ public:
         mpf_swap(value_, other.value_);
     }
 
+    explicit mpf_class(double value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    {
+        mpf_set_d(value_, value);
+    }
+
+    mpf_class(double value, mp_bitcnt_t precision) : mpf_class(precision_tag{}, precision)
+    {
+        mpf_set_d(value_, value);
+    }
+
+    mpf_class(bool) = delete;
+    mpf_class(bool, mp_bitcnt_t) = delete;
+
+    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
+                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
+                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    explicit mpf_class(T value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    {
+        set_integral(value);
+    }
+
+    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
+                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
+                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    mpf_class(T value, mp_bitcnt_t precision) : mpf_class(precision_tag{}, precision)
+    {
+        set_integral(value);
+    }
+
+    explicit mpf_class(mpf_srcptr value)
+    {
+        mpf_init2(value_, mpf_get_prec(value));
+        mpf_set(value_, value);
+    }
+
+    mpf_class(mpf_srcptr value, mp_bitcnt_t precision)
+    {
+        mpf_init2(value_, precision);
+        mpf_set(value_, value);
+    }
+
+    mpf_class(const mpf_class& other, mp_bitcnt_t precision)
+    {
+        mpf_init2(value_, precision);
+        mpf_set(value_, other.value_);
+    }
+
     mpf_class(const char* value, mp_bitcnt_t precision, int base = 10)
     {
         mpf_init2(value_, precision);
@@ -110,6 +157,12 @@ public:
                                     std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
     mpf_class(const Expr& expr);
 
+    template <
+        typename Expr,
+        typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
+    mpf_class(const Expr& expr, mp_bitcnt_t precision);
+
     ~mpf_class()
     {
         mpf_clear(value_);
@@ -126,7 +179,11 @@ public:
     mpf_class& operator=(mpf_class&& other) noexcept
     {
         if (this != &other) {
-            mpf_swap(value_, other.value_);
+            if (precision() == other.precision()) {
+                mpf_swap(value_, other.value_);
+            } else {
+                mpf_set(value_, other.value_);
+            }
         }
         return *this;
     }
@@ -136,6 +193,35 @@ public:
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
                                     std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
     mpf_class& operator=(const Expr& expr);
+
+    mpf_class& operator=(double value)
+    {
+        mpf_set_d(value_, value);
+        return *this;
+    }
+
+    mpf_class& operator=(bool) = delete;
+
+    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
+                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
+                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    mpf_class& operator=(T value)
+    {
+        set_integral(value);
+        return *this;
+    }
+
+    mpf_class& operator=(const char* value)
+    {
+        set(value);
+        return *this;
+    }
+
+    mpf_class& operator=(const std::string& value)
+    {
+        set(value);
+        return *this;
+    }
 
     static mpf_class with_precision(mp_bitcnt_t precision)
     {
@@ -152,6 +238,11 @@ public:
     mp_bitcnt_t precision() const noexcept
     {
         return mpf_get_prec(value_);
+    }
+
+    mp_bitcnt_t get_prec() const noexcept
+    {
+        return precision();
     }
 
     double to_double() const
@@ -259,6 +350,21 @@ public:
         return value_;
     }
 
+    const mpf_t& get_mpf_t() const noexcept
+    {
+        return value_;
+    }
+
+    mpf_t& get_mpf_t() noexcept
+    {
+        return value_;
+    }
+
+    void swap(mpf_class& other) noexcept
+    {
+        mpf_swap(value_, other.value_);
+    }
+
 private:
     struct precision_tag {};
 
@@ -268,8 +374,20 @@ private:
         mpf_set_ui(value_, 0);
     }
 
+    template <typename T>
+    void set_integral(T value)
+    {
+        const mpz_class integer(value);
+        mpf_set_z(value_, integer.mpz_data());
+    }
+
     mpf_t value_;
 };
+
+inline void swap(mpf_class& lhs, mpf_class& rhs) noexcept
+{
+    lhs.swap(rhs);
+}
 
 inline std::ostream& operator<<(std::ostream& out, const mpf_class& value)
 {
@@ -727,6 +845,13 @@ template <typename Expr, typename>
 mpf_class::mpf_class(const Expr& expr)
 {
     const mp_bitcnt_t precision = gmpfrxx_mkII::detail::mpf_expression_precision(expr);
+    mpf_init2(value_, precision);
+    gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+}
+
+template <typename Expr, typename>
+mpf_class::mpf_class(const Expr& expr, mp_bitcnt_t precision)
+{
     mpf_init2(value_, precision);
     gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
 }

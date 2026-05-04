@@ -160,6 +160,30 @@ public:
         return value_;
     }
 
+    const mpz_t& get_mpz_t() const noexcept
+    {
+        return value_;
+    }
+
+    mpz_t& get_mpz_t() noexcept
+    {
+        return value_;
+    }
+
+    void swap(mpz_class& other) noexcept
+    {
+        mpz_swap(value_, other.value_);
+    }
+
+    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
+                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
+                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    mpz_class& operator=(T value)
+    {
+        set_integral(value);
+        return *this;
+    }
+
     std::string get_str(int base = 10) const
     {
         gmpfrxx_mkII::detail::gmp_allocated_string raw(mpz_get_str(nullptr, base, value_));
@@ -287,6 +311,20 @@ public:
         mpq_canonicalize(value_);
     }
 
+    template <
+        typename Numerator,
+        typename Denominator,
+        typename = std::enable_if_t<std::is_integral_v<Numerator> &&
+                                    std::is_integral_v<Denominator> &&
+                                    !std::is_same_v<std::remove_cv_t<Numerator>, bool> &&
+                                    !std::is_same_v<std::remove_cv_t<Denominator>, bool> &&
+                                    (sizeof(Numerator) <= sizeof(std::uint64_t)) &&
+                                    (sizeof(Denominator) <= sizeof(std::uint64_t))>>
+    mpq_class(Numerator numerator, Denominator denominator)
+        : mpq_class(mpz_class(numerator), mpz_class(denominator))
+    {
+    }
+
     template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
                                                       !std::is_same_v<std::remove_cv_t<T>, bool> &&
                                                       (sizeof(T) <= sizeof(std::uint64_t))>>
@@ -335,6 +373,31 @@ public:
     mpq_t& mpq_data() noexcept
     {
         return value_;
+    }
+
+    const mpq_t& get_mpq_t() const noexcept
+    {
+        return value_;
+    }
+
+    mpq_t& get_mpq_t() noexcept
+    {
+        return value_;
+    }
+
+    void swap(mpq_class& other) noexcept
+    {
+        mpq_swap(value_, other.value_);
+    }
+
+    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
+                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
+                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    mpq_class& operator=(T value)
+    {
+        const mpz_class integer(value);
+        mpq_set_z(value_, integer.mpz_data());
+        return *this;
     }
 
     std::string get_str(int base = 10) const
@@ -495,6 +558,36 @@ inline std::ostream& operator<<(std::ostream& out, const mpq_class& value)
         out.setstate(std::ios_base::badbit);
     }
     return out;
+}
+
+inline void swap(mpz_class& lhs, mpz_class& rhs) noexcept
+{
+    lhs.swap(rhs);
+}
+
+inline void swap(mpq_class& lhs, mpq_class& rhs) noexcept
+{
+    lhs.swap(rhs);
+}
+
+inline bool operator==(const mpz_class& lhs, const mpz_class& rhs)
+{
+    return mpz_cmp(lhs.mpz_data(), rhs.mpz_data()) == 0;
+}
+
+inline bool operator!=(const mpz_class& lhs, const mpz_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator==(const mpq_class& lhs, const mpq_class& rhs)
+{
+    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) == 0;
+}
+
+inline bool operator!=(const mpq_class& lhs, const mpq_class& rhs)
+{
+    return !(lhs == rhs);
 }
 
 } // namespace gmpxx
