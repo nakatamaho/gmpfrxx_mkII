@@ -135,6 +135,12 @@ void require_stream_input()
     exponent_input >> value;
     assert_equal(value, mpfrxx::mpfr_class("125", 192));
 
+    std::istringstream tail_input("1.25tail");
+    tail_input >> value;
+    assert(!tail_input.fail());
+    assert_equal(value, mpfrxx::mpfr_class("1.25", 192));
+    assert(tail_input.tellg() == std::streampos(4));
+
     std::istringstream hex_input("f.f@1");
     hex_input >> std::hex >> value;
     assert_equal(value, mpfrxx::mpfr_class("f.f@1", 192, 16));
@@ -153,6 +159,41 @@ void require_stream_input()
 
     locale_input >> rest;
     assert(rest == "rest");
+
+    value = mpfrxx::mpfr_class(9.0, 192);
+    std::istringstream invalid_mantissa_input(".e123");
+    invalid_mantissa_input >> value;
+    assert(invalid_mantissa_input.fail());
+    invalid_mantissa_input.clear();
+    assert(invalid_mantissa_input.tellg() == std::streampos(1));
+    assert_equal(value, mpfrxx::mpfr_class(9.0, 192));
+
+    value = mpfrxx::mpfr_class(9.0, 192);
+    std::istringstream invalid_exponent_input("123e+");
+    invalid_exponent_input >> value;
+    assert(invalid_exponent_input.fail());
+    invalid_exponent_input.clear();
+    assert(invalid_exponent_input.tellg() == std::streampos(5));
+    assert_equal(value, mpfrxx::mpfr_class(9.0, 192));
+
+    const char decimal_points[] = {'.', ',', 'x'};
+    for (char point : decimal_points) {
+        std::locale loc(std::locale::classic(), new test_numpunct(point));
+
+        std::string text = std::string("-1") + point + "5e1 rest";
+        std::istringstream table_input(text);
+        table_input.imbue(loc);
+        table_input >> value;
+        assert(!table_input.fail());
+        assert_equal(value, mpfrxx::mpfr_class("-15", 192));
+        table_input >> rest;
+        assert(rest == "rest");
+
+        std::ostringstream table_output;
+        table_output.imbue(loc);
+        table_output << mpfrxx::mpfr_class("1.5", 192);
+        assert(table_output.str() == std::string("1") + point + "5");
+    }
 }
 
 } // namespace

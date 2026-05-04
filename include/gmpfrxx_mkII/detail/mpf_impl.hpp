@@ -35,6 +35,8 @@
 
 #include <algorithm>
 #include <cerrno>
+#include <cctype>
+#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -418,25 +420,262 @@ inline void swap(mpf_class& lhs, mpf_class& rhs) noexcept
     lhs.swap(rhs);
 }
 
-inline std::ostream& operator<<(std::ostream& out, const mpf_class& value)
+inline std::string mpf_get_str_abs(mpf_srcptr value, mp_exp_t& exponent, int base, std::size_t digits)
 {
-    try {
+    mpf_t magnitude;
+    mpf_init2(magnitude, mpf_get_prec(value));
+    mpf_abs(magnitude, value);
+    gmpfrxx_mkII::detail::gmp_allocated_string raw(mpf_get_str(nullptr, &exponent, base, digits, magnitude));
+    mpf_clear(magnitude);
+    if (!raw) {
+        throw std::bad_alloc();
+    }
+    return std::string(raw.c_str());
+}
+
+inline void mpf_uppercase_if_requested(std::string& text, std::ios_base::fmtflags flags)
+{
+    if (!(flags & std::ios_base::uppercase)) {
+        return;
+    }
+    std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) {
+        return static_cast<char>(std::toupper(c));
+    });
+}
+
+inline void add_mpf_base_prefix(std::string& text, mpf_srcptr value, int base, std::ios_base::fmtflags flags)
+{
+    if (!(flags & std::ios_base::showbase)) {
+        return;
+    }
+    if (base == 16) {
+        text.insert(0, "0x");
+    } else if (base == 8 && mpf_sgn(value) != 0) {
+        text.insert(0, "0");
+    }
+}
+
+inline bool mpf_formatted_has_nonzero_digit(const std::string& text)
+{
+    return std::any_of(text.begin(), text.end(), [](unsigned char c) {
+        return std::isdigit(c) && c != '0';
+    });
+}
+
+inline void add_mpf_sign(std::string& text, mpf_srcptr value)
+{
+    if (mpf_sgn(value) < 0) {
+        text.insert(0, "-");
+    }
+}
+
+inline mp_exp_t integral_digits_in_base(mpf_srcptr value, int base)
+{
+    if (mpf_sgn(value) == 0) {
+        return 1;
+    }
+
+    signed long exponent = 0;
+    mpf_get_d_2exp(&exponent, value);
+    if (exponent <= 0) {
+        return 1;
+    }
+
+    switch (base) {
+    case 16:
+        return static_cast<mp_exp_t>((exponent + 3) / 4);
+    case 8:
+        return static_cast<mp_exp_t>((exponent + 2) / 3);
+    case 10:
+        return static_cast<mp_exp_t>(std::floor(exponent / std::log2(10.0)) + 1);
+    case 2:
+        return static_cast<mp_exp_t>(exponent);
+    default:
+        return 0;
+    }
+}
+
+inline std::size_t effective_mpf_base_precision(std::streamsize precision)
+{
+    return static_cast<std::size_t>(precision == 0 ? 6 : precision);
+}
+
+inline std::string mpf_to_base_string_default(
+    mpf_srcptr value,
+    int base,
+    std::ios_base::fmtflags flags,
+    std::streamsize precision)
+{
+    if (mpf_sgn(value) == 0) {
+        std::string text = (flags & std::ios_base::showpoint) ? "0." : "0";
+        add_mpf_base_prefix(text, value, base, flags);
+        mpf_uppercase_if_requested(text, flags);
+        return text;
+    }
+
+    const std::size_t effective_precision = effective_mpf_base_precision(precision);
+    mp_exp_t exponent = 0;
+    std::string digits = mpf_get_str_abs(value, exponent, base, effective_precision);
+    if (digits.empty()) {
+        digits = "0";
+    }
+
+    std::string text;
+    if (exponent <= 0) {
+        text = "0.";
+        text.append(static_cast<std::size_t>(-exponent), '0');
+        text += digits;
+    } else if (static_cast<std::size_t>(exponent) > digits.size()) {
+        text = digits.substr(0, 1);
+        if (digits.size() > 1 || (flags & std::ios_base::showpoint)) {
+            text += ".";
+            if (digits.size() > 1) {
+                text += digits.substr(1);
+            }
+        }
+        const mp_exp_t adjusted_exponent = exponent - 1;
+        text += (base == 16) ? "@" : "e";
+        text += adjusted_exponent >= 0 ? "+" : "-";
+        const mp_exp_t absolute_exponent = adjusted_exponent >= 0 ? adjusted_exponent : -adjusted_exponent;
+        if (absolute_exponent < 10) {
+            text += "0";
+        }
+        text += std::to_string(absolute_exponent);
+    } else {
+        text = digits.substr(0, static_cast<std::size_t>(exponent));
+        if (exponent < static_cast<mp_exp_t>(digits.size())) {
+            text += ".";
+            text += digits.substr(static_cast<std::size_t>(exponent));
+        }
+    }
+
+    if ((flags & std::ios_base::showpoint) && text.find('.') == std::string::npos) {
+        text += ".";
+    }
+    if (!(flags & std::ios_base::showpoint) && !text.empty() && text.back() == '.') {
+        text.pop_back();
+    }
+    if (base != 8 || !(flags & std::ios_base::showbase) || mpf_formatted_has_nonzero_digit(text)) {
+        add_mpf_base_prefix(text, value, base, flags);
+    }
+    add_mpf_sign(text, value);
+    mpf_uppercase_if_requested(text, flags);
+    return text;
+}
+
+inline std::string mpf_to_base_string_fixed(
+    mpf_srcptr value,
+    int base,
+    std::ios_base::fmtflags flags,
+    std::streamsize precision)
+{
+    const std::size_t effective_precision = effective_mpf_base_precision(precision);
+    mp_exp_t exponent = 0;
+    const std::size_t digits_wanted =
+        static_cast<std::size_t>(integral_digits_in_base(value, base)) + effective_precision + 1;
+    std::string digits = mpf_get_str_abs(value, exponent, base, digits_wanted);
+    if (digits.empty()) {
+        digits = "0";
+    }
+
+    std::string text;
+    if (exponent <= 0) {
+        text = "0";
+        if (effective_precision > 0 || (flags & std::ios_base::showpoint)) {
+            text += ".";
+            std::string fraction(static_cast<std::size_t>(-exponent), '0');
+            fraction += digits;
+            fraction.resize(effective_precision, '0');
+            text += fraction;
+        }
+    } else {
+        if (static_cast<std::size_t>(exponent) >= digits.size()) {
+            text = digits;
+            text.append(static_cast<std::size_t>(exponent) - digits.size(), '0');
+        } else {
+            text = digits.substr(0, static_cast<std::size_t>(exponent));
+        }
+        if (effective_precision > 0 || (flags & std::ios_base::showpoint)) {
+            text += ".";
+            std::string fraction;
+            if (static_cast<std::size_t>(exponent) < digits.size()) {
+                fraction = digits.substr(static_cast<std::size_t>(exponent));
+            }
+            fraction.resize(effective_precision, '0');
+            text += fraction;
+        }
+    }
+
+    if (base != 8 || !(flags & std::ios_base::showbase) || mpf_formatted_has_nonzero_digit(text)) {
+        add_mpf_base_prefix(text, value, base, flags);
+    }
+    add_mpf_sign(text, value);
+    mpf_uppercase_if_requested(text, flags);
+    return text;
+}
+
+inline std::string mpf_to_base_string_scientific(
+    mpf_srcptr value,
+    int base,
+    std::ios_base::fmtflags flags,
+    std::streamsize precision)
+{
+    const std::size_t effective_precision = effective_mpf_base_precision(precision);
+    mp_exp_t exponent = 0;
+    std::string digits = mpf_get_str_abs(value, exponent, base, effective_precision + 1);
+    if (digits.empty()) {
+        digits = "0";
+    }
+
+    std::string text;
+    text += digits[0];
+    text += ".";
+    if (digits.size() > 1) {
+        text += digits.substr(1, effective_precision);
+    }
+    if (text.size() < effective_precision + 2) {
+        text.append(effective_precision + 2 - text.size(), '0');
+    }
+
+    const mp_exp_t adjusted_exponent = mpf_sgn(value) == 0 ? 0 : exponent - 1;
+    text += (base == 16) ? "@" : "e";
+    text += adjusted_exponent >= 0 ? "+" : "-";
+    const mp_exp_t absolute_exponent = adjusted_exponent >= 0 ? adjusted_exponent : -adjusted_exponent;
+    if (absolute_exponent < 10) {
+        text += "0";
+    }
+    text += std::to_string(absolute_exponent);
+
+    add_mpf_base_prefix(text, value, base, flags);
+    add_mpf_sign(text, value);
+    mpf_uppercase_if_requested(text, flags);
+    return text;
+}
+
+inline std::string mpf_stream_text(mpf_srcptr value, const std::ios_base& out)
+{
+    const auto flags = out.flags();
+    const auto basefield = flags & std::ios_base::basefield;
+    if (basefield != std::ios_base::hex && basefield != std::ios_base::oct) {
         char conversion = 'g';
-        const auto floatfield = out.flags() & std::ios_base::floatfield;
+        const auto floatfield = flags & std::ios_base::floatfield;
         if (floatfield == std::ios_base::fixed) {
             conversion = 'f';
         } else if (floatfield == std::ios_base::scientific) {
             conversion = 'e';
         }
-        if (out.flags() & std::ios_base::uppercase) {
+        if (flags & std::ios_base::uppercase) {
             conversion = static_cast<char>(conversion - 'a' + 'A');
         }
 
-        std::string format = (out.flags() & std::ios_base::showpoint) ? "%#.*F" : "%.*F";
+        std::string format = (flags & std::ios_base::showpoint) ? "%#.*F" : "%.*F";
         format.push_back(conversion);
 
         std::streamsize stream_precision = out.precision();
         if (stream_precision < 0) {
+            stream_precision = 6;
+        }
+        if (stream_precision == 0 && (flags & std::ios_base::floatfield) != std::ios_base::fixed) {
             stream_precision = 6;
         }
         if (stream_precision > static_cast<std::streamsize>(std::numeric_limits<int>::max())) {
@@ -444,12 +683,10 @@ inline std::ostream& operator<<(std::ostream& out, const mpf_class& value)
         }
 
         char* raw = nullptr;
-        const int count = gmp_asprintf(
-            &raw, format.c_str(), static_cast<int>(stream_precision), value.mpf_data());
+        const int count = gmp_asprintf(&raw, format.c_str(), static_cast<int>(stream_precision), value);
         gmpfrxx_mkII::detail::gmp_allocated_string formatted(raw);
         if (count < 0 || !formatted) {
-            out.setstate(std::ios_base::badbit);
-            return out;
+            return {};
         }
 
         std::string text(formatted.c_str());
@@ -460,28 +697,43 @@ inline std::ostream& operator<<(std::ostream& out, const mpf_class& value)
                 text[point] = decimal_point;
             }
         }
-        if ((out.flags() & std::ios_base::showpos) && mpf_sgn(value.mpf_data()) >= 0) {
+        return text;
+    }
+
+    const int base = basefield == std::ios_base::hex ? 16 : 8;
+    const auto floatfield = flags & std::ios_base::floatfield;
+    if (floatfield == std::ios_base::fixed) {
+        return mpf_to_base_string_fixed(value, base, flags, out.precision());
+    }
+    if (floatfield == std::ios_base::scientific) {
+        return mpf_to_base_string_scientific(value, base, flags, out.precision());
+    }
+    return mpf_to_base_string_default(value, base, flags, out.precision());
+}
+
+inline void print_mpf(std::ostream& out, mpf_srcptr value)
+{
+    try {
+        std::string text = mpf_stream_text(value, out);
+        if (text.empty()) {
+            out.setstate(std::ios_base::badbit);
+            return;
+        }
+
+        if ((out.flags() & std::ios_base::showpos) && mpf_sgn(value) >= 0) {
             text.insert(0, "+");
         }
 
-        const std::streamsize width = out.width();
-        if (static_cast<std::streamsize>(text.size()) < width) {
-            const auto fill_count = static_cast<std::size_t>(width - static_cast<std::streamsize>(text.size()));
-            if (out.flags() & std::ios_base::left) {
-                text.append(fill_count, out.fill());
-            } else if (out.flags() & std::ios_base::internal) {
-                std::size_t pos = (!text.empty() && (text[0] == '-' || text[0] == '+')) ? 1 : 0;
-                text.insert(pos, fill_count, out.fill());
-            } else {
-                text.insert(0, fill_count, out.fill());
-            }
-        }
-
+        apply_stream_padding(text, out);
         out << text;
-        out.width(0);
     } catch (...) {
         out.setstate(std::ios_base::badbit);
     }
+}
+
+inline std::ostream& operator<<(std::ostream& out, const mpf_class& value)
+{
+    print_mpf(out, value.mpf_data());
     return out;
 }
 
@@ -662,6 +914,42 @@ inline void random_mpf_expr::generate(mpf_t dest, mp_bitcnt_t destination_precis
 }
 
 } // namespace gmpxx
+
+inline void print_mpf(std::ostream& out, mpf_srcptr value)
+{
+    gmpxx::print_mpf(out, value);
+}
+
+inline std::ostream& operator<<(std::ostream& out, mpf_srcptr value)
+{
+    print_mpf(out, value);
+    return out;
+}
+
+inline std::istream& operator>>(std::istream& in, mpf_ptr value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    int base = gmpfrxx_mkII::detail::gmp_stream_input_base(in);
+    if (base == 0) {
+        base = 10;
+    }
+
+    std::string token;
+    const bool parsed_token = gmpfrxx_mkII::detail::gmp_read_float_token(in, token, base);
+    const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
+
+    gmpxx::mpf_class tmp = gmpxx::mpf_class::with_precision(mpf_get_prec(value));
+    if (parsed_token && tmp.set_str(parse_token, base) == 0) {
+        mpf_set(value, tmp.get_mpf_t());
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
+}
 
 namespace gmpfrxx_mkII {
 namespace detail {

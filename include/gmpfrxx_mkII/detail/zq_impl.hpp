@@ -731,7 +731,7 @@ inline std::string mpz_stream_text(mpz_srcptr value, const std::ios_base& out)
         text.erase(text.begin());
     }
 
-    if ((out.flags() & std::ios_base::showbase) && mpz_sgn(value) != 0) {
+    if (out.flags() & std::ios_base::showbase) {
         if (base == 16) {
             text.insert(0, (out.flags() & std::ios_base::uppercase) ? "0X" : "0x");
         } else if (base == 8 && text.front() != '0') {
@@ -772,24 +772,23 @@ inline void apply_stream_padding(std::string& text, std::ostream& out)
     out.width(0);
 }
 
-inline std::ostream& operator<<(std::ostream& out, const mpz_class& value)
+inline void print_mpz(std::ostream& out, mpz_srcptr value)
 {
     try {
-        std::string text = mpz_stream_text(value.mpz_data(), out);
+        std::string text = mpz_stream_text(value, out);
         apply_stream_padding(text, out);
         out << text;
     } catch (...) {
         out.setstate(std::ios_base::badbit);
     }
-    return out;
 }
 
-inline std::ostream& operator<<(std::ostream& out, const mpq_class& value)
+inline void print_mpq(std::ostream& out, mpq_srcptr value)
 {
     try {
-        std::string text = mpz_stream_text(mpq_numref(value.mpq_data()), out);
-        if (mpz_cmp_ui(mpq_denref(value.mpq_data()), 1) != 0) {
-            std::string denominator = mpz_stream_text(mpq_denref(value.mpq_data()), out);
+        std::string text = mpz_stream_text(mpq_numref(value), out);
+        if (mpz_cmp_ui(mpq_denref(value), 1) != 0) {
+            std::string denominator = mpz_stream_text(mpq_denref(value), out);
             if (!denominator.empty() && denominator.front() == '+') {
                 denominator.erase(denominator.begin());
             }
@@ -801,6 +800,17 @@ inline std::ostream& operator<<(std::ostream& out, const mpq_class& value)
     } catch (...) {
         out.setstate(std::ios_base::badbit);
     }
+}
+
+inline std::ostream& operator<<(std::ostream& out, const mpz_class& value)
+{
+    print_mpz(out, value.mpz_data());
+    return out;
+}
+
+inline std::ostream& operator<<(std::ostream& out, const mpq_class& value)
+{
+    print_mpq(out, value.mpq_data());
     return out;
 }
 
@@ -896,6 +906,70 @@ inline bool operator!=(const mpq_class& lhs, const mpq_class& rhs)
 }
 
 } // namespace gmpxx
+
+inline void print_mpz(std::ostream& out, mpz_srcptr value)
+{
+    gmpxx::print_mpz(out, value);
+}
+
+inline void print_mpq(std::ostream& out, mpq_srcptr value)
+{
+    gmpxx::print_mpq(out, value);
+}
+
+inline std::ostream& operator<<(std::ostream& out, mpz_srcptr value)
+{
+    print_mpz(out, value);
+    return out;
+}
+
+inline std::ostream& operator<<(std::ostream& out, mpq_srcptr value)
+{
+    print_mpq(out, value);
+    return out;
+}
+
+inline std::istream& operator>>(std::istream& in, mpz_ptr value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    std::string token;
+    const int base = gmpfrxx_mkII::detail::gmp_stream_input_base(in);
+    const bool parsed_token = gmpfrxx_mkII::detail::gmp_read_integer_token(in, token, base);
+    const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
+
+    gmpxx::mpz_class tmp;
+    if (parsed_token && tmp.set_str(parse_token, base) == 0) {
+        mpz_set(value, tmp.get_mpz_t());
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
+}
+
+inline std::istream& operator>>(std::istream& in, mpq_ptr value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    const int base = gmpfrxx_mkII::detail::gmp_stream_input_base(in);
+    std::string token;
+    const bool parsed_token = gmpfrxx_mkII::detail::gmp_read_rational_token(in, token, base);
+    const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
+
+    gmpxx::mpq_class tmp;
+    if (parsed_token && tmp.set_str(parse_token, base) == 0) {
+        mpq_set(value, tmp.get_mpq_t());
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
+}
 
 namespace gmpfrxx_mkII {
 namespace detail {

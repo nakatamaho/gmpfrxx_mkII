@@ -30,9 +30,41 @@
 
 #include <cstdlib>
 #include <iomanip>
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
+#include <utility>
+
+static_assert(std::is_same_v<decltype(std::declval<std::ostream&>() << std::declval<mpf_srcptr>()),
+                             std::ostream&>);
+static_assert(std::is_same_v<decltype(std::declval<std::istream&>() >> std::declval<mpf_ptr>()),
+                             std::istream&>);
+static_assert(std::is_same_v<decltype(print_mpf(std::declval<std::ostream&>(), std::declval<mpf_srcptr>())),
+                             void>);
+
+namespace {
+
+class test_numpunct : public std::numpunct<char> {
+public:
+    explicit test_numpunct(char decimal_point) : decimal_point_(decimal_point) {}
+
+protected:
+    char do_decimal_point() const override { return decimal_point_; }
+
+private:
+    char decimal_point_;
+};
+
+void assert_equal(const gmpxx::mpf_class& lhs, const gmpxx::mpf_class& rhs)
+{
+    if (mpf_cmp(lhs.get_mpf_t(), rhs.get_mpf_t()) != 0) {
+        std::abort();
+    }
+}
+
+} // namespace
 
 int main()
 {
@@ -72,6 +104,94 @@ int main()
     out << std::noshowpos << std::right << std::setfill(' ') << std::fixed << std::setprecision(2)
         << (lhs + rhs);
     if (out.str() != "4.00") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out << std::defaultfloat << std::noshowpos << std::noshowbase << std::nouppercase
+        << std::hex << std::showbase << std::setprecision(4) << gmpxx::mpf_class(1.25, 128);
+    if (out.str().rfind("0x", 0) != 0) {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out << std::defaultfloat << std::noshowpos << std::noshowbase << std::nouppercase
+        << std::hex << std::showbase << std::scientific << std::setprecision(4)
+        << gmpxx::mpf_class(1.25, 128);
+    if (out.str().rfind("0x", 0) != 0 || out.str().find('@') == std::string::npos) {
+        std::abort();
+    }
+
+    gmpxx::mpf_class zero("0", 128);
+    out.str("");
+    out.clear();
+    out.precision(0);
+    out << std::dec << std::defaultfloat << std::noshowbase << std::nouppercase << std::showpoint << zero;
+    if (out.str() != "0.00000") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out.precision(0);
+    out << std::dec << std::fixed << std::showpoint << zero;
+    if (out.str() != "0.") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out.precision(0);
+    out << std::dec << std::scientific << std::noshowpoint << zero;
+    if (out.str() != "0.000000e+00") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out.precision(0);
+    out << std::defaultfloat << std::noshowbase << std::hex << zero;
+    if (out.str() != "0") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out.precision(0);
+    out << std::showbase << std::hex << zero;
+    if (out.str() != "0x0") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out.precision(2);
+    out << std::showbase << std::fixed << std::oct << gmpxx::mpf_class(".03125", 128);
+    if (out.str() != "00.02") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out.precision(2);
+    out << std::showbase << std::fixed << std::oct << gmpxx::mpf_class(".001953125", 128);
+    if (out.str() != "0.00") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    out << std::dec << std::defaultfloat << std::noshowbase << std::noshowpos << result.get_mpf_t();
+    if (out.str() != "4") {
+        std::abort();
+    }
+
+    out.str("");
+    out.clear();
+    print_mpf(out << std::showpos, result.get_mpf_t());
+    if (out.str() != "+4") {
         std::abort();
     }
 
@@ -117,6 +237,13 @@ int main()
         std::abort();
     }
 
+    std::istringstream tail_input("1.25tail");
+    tail_input >> result;
+    if (tail_input.fail() || result.get_str() != "1.25" ||
+        tail_input.tellg() != std::streampos(4)) {
+        std::abort();
+    }
+
     std::istringstream hex_input("f.f@1");
     hex_input >> std::hex >> result;
     if (result.get_str() != "255") {
@@ -128,6 +255,85 @@ int main()
     invalid_input >> result;
     if (!invalid_input.fail() || result.get_str() != stream_before) {
         std::abort();
+    }
+
+    mpf_t raw_f;
+    mpf_init2(raw_f, 192);
+    mpf_set_ui(raw_f, 7);
+    std::istringstream raw_decimal_input("  -2.5 rest");
+    raw_decimal_input >> raw_f;
+    if (mpf_cmp(raw_f, gmpxx::mpf_class("-2.5", 192).get_mpf_t()) != 0 ||
+        mpf_get_prec(raw_f) != 192) {
+        std::abort();
+    }
+    raw_decimal_input >> rest;
+    if (rest != "rest") {
+        std::abort();
+    }
+
+    std::istringstream raw_hex_input("f.f@1");
+    raw_hex_input >> std::hex >> raw_f;
+    if (mpf_cmp(raw_f, gmpxx::mpf_class("255", 192).get_mpf_t()) != 0 ||
+        mpf_get_prec(raw_f) != 192) {
+        std::abort();
+    }
+
+    std::istringstream invalid_raw_input("not-a-number");
+    invalid_raw_input >> raw_f;
+    if (!invalid_raw_input.fail() ||
+        mpf_cmp(raw_f, gmpxx::mpf_class("255", 192).get_mpf_t()) != 0 ||
+        mpf_get_prec(raw_f) != 192) {
+        std::abort();
+    }
+    mpf_clear(raw_f);
+
+    result = gmpxx::mpf_class(9.0, static_cast<mp_bitcnt_t>(128));
+    std::istringstream invalid_mantissa_input(".e123");
+    invalid_mantissa_input >> result;
+    if (!invalid_mantissa_input.fail()) {
+        std::abort();
+    }
+    invalid_mantissa_input.clear();
+    if (invalid_mantissa_input.tellg() != std::streampos(1) ||
+        result.get_str() != "9") {
+        std::abort();
+    }
+
+    result = gmpxx::mpf_class(9.0, static_cast<mp_bitcnt_t>(128));
+    std::istringstream invalid_exponent_input("123e+");
+    invalid_exponent_input >> result;
+    if (!invalid_exponent_input.fail()) {
+        std::abort();
+    }
+    invalid_exponent_input.clear();
+    if (invalid_exponent_input.tellg() != std::streampos(5) ||
+        result.get_str() != "9") {
+        std::abort();
+    }
+
+    const char decimal_points[] = {'.', ',', 'x'};
+    for (char point : decimal_points) {
+        std::locale loc(std::locale::classic(), new test_numpunct(point));
+
+        std::string text = std::string("-1") + point + "5e1 rest";
+        std::istringstream locale_input(text);
+        locale_input.imbue(loc);
+        locale_input >> result;
+        if (locale_input.fail()) {
+            std::abort();
+        }
+        assert_equal(result, gmpxx::mpf_class(-15.0, result.precision()));
+        locale_input >> rest;
+        if (rest != "rest") {
+            std::abort();
+        }
+
+        std::ostringstream locale_output;
+        locale_output.imbue(loc);
+        locale_output << gmpxx::mpf_class(1.5, static_cast<mp_bitcnt_t>(128));
+        if (locale_output.str() != std::string("1") + point + "5") {
+            std::abort();
+        }
     }
 
     bool threw = false;

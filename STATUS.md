@@ -2094,7 +2094,7 @@ Migration table:
 | test_exception_support.cpp | tests/test_exception_support.cpp, tests/test_mpfr_exception_support.cpp | Done | Done | MPFC/MPC currently have limited direct invalid-string surfaces; tests cover exception propagation through component construction and valid complex construction neutrality. | Keep migrated; add direct MPFC/MPC parser exception cases when their IO/string APIs are implemented. |
 | test_gmpxx_mkII.cpp | Header smoke/basic arithmetic tests | Partial | N/A or aggregator smoke | Legacy monolithic smoke may overlap many local tests. | Read and split only missing assertions into focused tests. |
 | test_headers.cpp | tests/test_header_boundaries.cpp, compile_fail header tests | Partial/Done | Partial/Done | May require source-scan parity with upstream header expectations. | Merge any missing include-boundary scans into test_header_boundaries.cpp. |
-| test_io_and_strings.cpp | tests/test_zq_string_io.cpp, tests/test_mpf_string_io.cpp, tests/test_mpfr_string_io.cpp | Partial | Partial | mpfc IO is likely incomplete; formatting edge cases may be missing. | Port missing GMP IO/string cases; adapt matching MPFR formatting/parsing cases. |
+| test_io_and_strings.cpp | tests/test_zq_string_io.cpp, tests/test_mpf_string_io.cpp, tests/test_mpfr_string_io.cpp, tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done for current GMP I/O surface | Done for current MPFR/MPC policy | Upstream class-API string/I/O cases have been compared and the natural missing cases were added, including MPF non-decimal ostream base formatting and raw GMP pointer I/O helpers. MPFR uses MPFR formatting primitives intentionally. | Keep current focused coverage; extend only if upstream adds new I/O cases or MPFR/MPC policy changes. |
 | test_long_width_dispatch.cpp | tests/test_mpfr_long_width_dispatch.cpp, construction tests | Partial | Done for MPFR scalar eval | Dedicated MPF long-width exactness test is missing. | Add tests/test_mpf_long_width_dispatch.cpp; extend exact types if upstream has additional cases. |
 | test_mixed_type_arithmetic.cpp | tests/test_mixed_zq_mpf_promotion.cpp, tests/test_mixed_zq_mpfr_promotion.cpp | Partial | Partial | Full mixed mpz/mpq/mpf scalar matrix may be incomplete; mpfr natural matrix should mirror z/q/scalar promotion. | Port matrix in two files: GMP and MPFR. |
 | test_mpf_extended_transcendent_functions.cpp | tests/test_mpf_compute_log.cpp | Partial | TODO if applicable | Need verify all extended functions and tolerances; MPFR has native MPFR math but wrapper coverage may be missing. | Read upstream and add missing MPF cases; adapt to MPFR math API where present. |
@@ -2335,3 +2335,149 @@ Pass/fail result:
 
 Known issues:
 - mpfrxx::mpfr_class still uses MPFR formatting primitives, not GMP MPF primitives; this is intentional for MPFR correctness.
+
+Post-phase upstream test_io_and_strings.cpp comparison:
+DONE
+
+Implemented features:
+- Compared ../gmpxx_mkII/tests/test_io_and_strings.cpp against the current focused I/O tests.
+- Added upstream exact-type stream formatting regression cases for hex showbase zero, uppercase rational output, and internal padding with hex prefixes.
+- Added upstream legacy exact input prefix/spacing cases for mpz_class and mpq_class, including partial decimal consumption, noskipws failure preservation, automatic-base negative hex, rational whitespace boundaries, and automatic-base hex rationals.
+- Added upstream MPF parser edge cases for partial float consumption and invalid mantissa/exponent rollback.
+- Added MPF locale decimal-point input/output table coverage and matching MPFR adaptations.
+- Added matching MPFR parser edge cases for partial float consumption and invalid mantissa/exponent rollback.
+- Adjusted exact integer/rational hex showbase formatting so zero is formatted as 0x0/0X0, matching the upstream regression case.
+
+Intentional deltas:
+- Raw pointer stream APIs and print helpers from upstream were initially left out, then added in the later raw GMP pointer I/O phase.
+
+Tests added:
+- Expanded tests/test_zq_string_io.cpp.
+- Expanded tests/test_mpf_string_io.cpp.
+- Expanded tests/test_mpfr_string_io.cpp.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- tests/test_zq_string_io.cpp
+- tests/test_mpf_string_io.cpp
+- tests/test_mpfr_string_io.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_io_and_strings.cpp
+- sed -n '260,560p' ../gmpxx_mkII/tests/test_io_and_strings.cpp
+- sed -n '560,920p' ../gmpxx_mkII/tests/test_io_and_strings.cpp
+- sed -n '1,180p' tests/test_zq_string_io.cpp
+- sed -n '1,180p' tests/test_mpf_string_io.cpp
+- wc -l ../gmpxx_mkII/tests/test_io_and_strings.cpp tests/test_zq_string_io.cpp tests/test_mpf_string_io.cpp tests/test_mpfr_string_io.cpp tests/test_mpfc_io.cpp tests/test_mpc_io.cpp
+- rg -n "print_mpz|print_mpq|print_mpf|operator<<\\(std::ostream&.*mpz_srcptr|operator>>\\(std::istream&.*mpz_ptr|operator<<\\(std::ostream&.*mpq_srcptr|operator>>\\(std::istream&.*mpq_ptr|operator<<\\(std::ostream&.*mpf_srcptr|operator>>\\(std::istream&.*mpf_ptr" include/gmpfrxx_mkII/detail
+- sed -n '760,855p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '180,360p' tests/test_zq_string_io.cpp
+- sed -n '690,760p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- cmake --build build --target test_zq_string_io test_mpf_string_io test_mpfr_string_io -j
+- ctest --test-dir build -R "test_zq_string_io|test_mpf_string_io|test_mpfr_string_io" --output-on-failure
+- ./build/tests/test_zq_string_io
+- gdb -batch -ex run -ex bt --args ./build/tests/test_zq_string_io
+- nl -ba tests/test_zq_string_io.cpp | sed -n '100,120p'
+- cmake --build build --target test_zq_string_io -j && ctest --test-dir build -R test_zq_string_io --output-on-failure
+- gdb -batch -ex run -ex bt --args ./build/tests/test_zq_string_io
+- nl -ba tests/test_zq_string_io.cpp | sed -n '120,132p'
+- ctest --test-dir build -R "test_zq_string_io|test_mpf_string_io|test_mpfr_string_io|test_mpfc_io|test_mpc_io" --output-on-failure
+
+Pass/fail result:
+- Initial focused I/O run: FAIL in test_zq_string_io because hex showbase zero did not match upstream; fixed in zq_impl.hpp.
+- Second focused zq run: FAIL due test stream flags carrying uppercase into the internal-padding case; fixed test setup.
+- Final focused ctest --test-dir build -R "test_zq_string_io|test_mpf_string_io|test_mpfr_string_io|test_mpfc_io|test_mpc_io" --output-on-failure: PASS, 5/5 tests passed.
+- Final cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 82/82 tests passed.
+
+Known issues:
+- None known for the current GMP class and raw pointer I/O cases covered by upstream test_io_and_strings.cpp.
+
+Post-phase MPF non-decimal stream formatting:
+DONE
+
+Implemented features:
+- Ported the upstream GMP-only MPF non-decimal ostream formatter into gmpxx::mpf_class.
+- Added std::hex and std::oct MPF output for defaultfloat, fixed, and scientific modes.
+- Added showbase prefixes for hex/octal MPF output, uppercase conversion, sign handling, and exponent marker selection matching the upstream policy.
+- Aligned decimal precision-zero defaultfloat/showpoint behavior with upstream test_io_and_strings.cpp.
+
+Tests added:
+- Added std::hex/std::oct MPF stream output regression cases to tests/test_mpf_string_io.cpp, including zero, showbase, scientific hex exponent marker, fixed octal fractions, and precision-zero cases.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- tests/test_mpf_string_io.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "mpf_stream_string|format_mpf|print_mpf|showbase.*mpf|oct_showbase|hex_showbase" ../gmpxx_mkII/include/gmpxx_mkII.h.in ../gmpxx_mkII/tests/test_io_and_strings.cpp include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/test_mpf_string_io.cpp
+- sed -n '4100,4195p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '210,330p' ../gmpxx_mkII/tests/test_io_and_strings.cpp
+- sed -n '2280,2345p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '2640,2665p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '2345,2645p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- cmake --build build --target test_mpf_string_io -j
+- ctest --test-dir build -R test_mpf_string_io --output-on-failure
+- gdb -batch -ex run -ex bt --args ./build/tests/test_mpf_string_io
+- nl -ba tests/test_mpf_string_io.cpp | sed -n '116,130p'
+- ctest --test-dir build -R "test_zq_string_io|test_mpf_string_io|test_mpfr_string_io|test_mpfc_io|test_mpc_io" --output-on-failure
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial focused test_mpf_string_io run: FAIL because a reused stream still had std::hex set for a decimal zero/showpoint assertion; fixed test setup.
+- Focused ctest --test-dir build -R "test_zq_string_io|test_mpf_string_io|test_mpfr_string_io|test_mpfc_io|test_mpc_io" --output-on-failure: PASS, 5/5 tests passed.
+- Final cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 82/82 tests passed.
+
+Known issues:
+- None known for MPF non-decimal stream formatting.
+
+Post-phase raw GMP pointer I/O helpers:
+DONE
+
+Implemented features:
+- Added print_mpz, print_mpq, and print_mpf helpers.
+- Added stream insertion for mpz_srcptr, mpq_srcptr, and mpf_srcptr.
+- Added stream extraction for mpz_ptr, mpq_ptr, and mpf_ptr.
+- Reused existing class-formatting and token-parsing paths so raw pointer I/O follows the same base, showbase, uppercase, locale, precision, rollback, and failbit behavior as the wrapper classes.
+- Kept wrapper class stream insertion routed through the same print helpers.
+
+Tests added:
+- Added compile-time signature checks for raw pointer stream insertion/extraction and print helpers.
+- Added runtime print/helper and raw stream insertion cases for mpz, mpq, and mpf.
+- Added runtime raw stream extraction cases including base autodetection, hex float input, precision preservation, and invalid-input value preservation.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- tests/test_zq_string_io.cpp
+- tests/test_mpf_string_io.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "print_mpz|print_mpq|print_mpf|operator<<\\(std::ostream&.*mp[zqf]_srcptr|operator>>\\(std::istream&.*mp[zqf]_ptr|mpz_ptr|mpq_ptr|mpf_ptr" ../gmpxx_mkII/include ../gmpxx_mkII/tests/test_io_and_strings.cpp
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_io_and_strings.cpp
+- sed -n '4140,4305p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '720,880p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '650,790p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- cmake --build build --target test_zq_string_io test_mpf_string_io -j
+- ctest --test-dir build -R "test_zq_string_io|test_mpf_string_io" --output-on-failure
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial focused ctest --test-dir build -R "test_zq_string_io|test_mpf_string_io" --output-on-failure: FAIL because a new raw mpq print assertion inherited std::hex/showbase stream flags; fixed test setup.
+- Focused cmake --build build --target test_zq_string_io test_mpf_string_io -j: PASS.
+- Focused ctest --test-dir build -R "test_zq_string_io|test_mpf_string_io" --output-on-failure: PASS, 2/2 tests passed.
+- Final cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 82/82 tests passed.
+
+Known issues:
+- None known for raw GMP pointer I/O helpers.
