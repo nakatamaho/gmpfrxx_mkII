@@ -1092,6 +1092,120 @@ using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
 
+template <typename T>
+struct is_mpf_comparison_non_scalar
+    : std::bool_constant<
+          std::is_same_v<std::decay_t<T>, mpf_class> ||
+          std::is_same_v<std::decay_t<T>, mpz_class> ||
+          std::is_same_v<std::decay_t<T>, mpq_class> ||
+          gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<T>>> {};
+
+template <typename Lhs, typename Rhs>
+struct is_mpf_comparison_pair
+    : std::bool_constant<
+          gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Lhs> &&
+          gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+          !gmpfrxx_mkII::detail::is_zq_comparison_pair_v<Lhs, Rhs> &&
+          (is_mpf_comparison_non_scalar<Lhs>::value ||
+           is_mpf_comparison_non_scalar<Rhs>::value)> {};
+
+template <typename Expr>
+inline void mpf_compare_evaluate(
+    mpf_t dest,
+    const Expr& expr,
+    mp_bitcnt_t precision)
+{
+    gmpfrxx_mkII::detail::mpf_evaluate(dest, expr, precision);
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline int cmp(Lhs&& lhs, Rhs&& rhs)
+{
+    auto left = gmpfrxx_mkII::detail::make_mpf_operand(std::forward<Lhs>(lhs));
+    auto right = gmpfrxx_mkII::detail::make_mpf_operand(std::forward<Rhs>(rhs));
+    mp_bitcnt_t precision = std::max(
+        gmpfrxx_mkII::detail::mpf_expression_precision(left),
+        gmpfrxx_mkII::detail::mpf_expression_precision(right));
+    if (precision == 0) {
+        precision = default_mpf_precision_bits();
+    }
+
+    mpf_t lhs_value;
+    mpf_t rhs_value;
+    mpf_init2(lhs_value, precision);
+    mpf_init2(rhs_value, precision);
+    mpf_compare_evaluate(lhs_value, left, precision);
+    mpf_compare_evaluate(rhs_value, right, precision);
+    const int result = mpf_cmp(lhs_value, rhs_value);
+    mpf_clear(rhs_value);
+    mpf_clear(lhs_value);
+    return result;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator==(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) == 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator!=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) != 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator<(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) < 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator<=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) <= 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator>(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) > 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) >= 0;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
+inline mpf_class& operator+=(mpf_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs + std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
+inline mpf_class& operator-=(mpf_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs - std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
+inline mpf_class& operator*=(mpf_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs * std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
+inline mpf_class& operator/=(mpf_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs / std::forward<Rhs>(rhs);
+    return lhs;
+}
+
 } // namespace gmpxx
 
 #endif // GMPFRXX_MKII_DETAIL_MPF_IMPL_HPP

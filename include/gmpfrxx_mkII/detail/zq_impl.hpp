@@ -916,6 +916,33 @@ struct is_zq_object_or_node<
 template <typename T>
 inline constexpr bool is_zq_object_or_node_v = is_zq_object_or_node<T>::value;
 
+template <typename T>
+struct is_zq_comparison_scalar
+    : std::bool_constant<is_supported_expression_integral_v<T>> {};
+
+template <typename T>
+inline constexpr bool is_zq_comparison_scalar_v =
+    is_zq_comparison_scalar<std::remove_cv_t<T>>::value;
+
+template <typename T>
+struct is_zq_comparison_operand
+    : std::bool_constant<is_zq_expression_operand_v<T> || is_zq_comparison_scalar_v<T>> {};
+
+template <typename T>
+inline constexpr bool is_zq_comparison_operand_v =
+    is_zq_comparison_operand<std::decay_t<T>>::value;
+
+template <typename Lhs, typename Rhs>
+struct is_zq_comparison_pair
+    : std::bool_constant<is_zq_comparison_operand_v<Lhs> &&
+                         is_zq_comparison_operand_v<Rhs> &&
+                         (is_zq_object_or_node_v<Lhs> ||
+                          is_zq_object_or_node_v<Rhs>)> {};
+
+template <typename Lhs, typename Rhs>
+inline constexpr bool is_zq_comparison_pair_v =
+    is_zq_comparison_pair<Lhs, Rhs>::value;
+
 inline object_leaf<gmpxx::mpz_class> make_zq_operand(const gmpxx::mpz_class& value)
 {
     return object_leaf<gmpxx::mpz_class>(value);
@@ -930,6 +957,86 @@ template <typename Expr, typename = std::enable_if_t<is_expression_node_v<std::d
 std::decay_t<Expr> make_zq_operand(Expr&& expr)
 {
     return std::forward<Expr>(expr);
+}
+
+inline gmpxx::mpq_class zq_comparison_value(const gmpxx::mpz_class& value)
+{
+    return gmpxx::mpq_class(value);
+}
+
+inline gmpxx::mpq_class zq_comparison_value(const gmpxx::mpq_class& value)
+{
+    return value;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<is_expression_node_v<std::decay_t<Expr>> &&
+                         std::is_same_v<typename std::decay_t<Expr>::result_type, gmpxx::mpz_class>,
+                     int> = 0>
+inline gmpxx::mpq_class zq_comparison_value(const Expr& expr)
+{
+    return gmpxx::mpq_class(gmpxx::mpz_class(expr));
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<is_expression_node_v<std::decay_t<Expr>> &&
+                         std::is_same_v<typename std::decay_t<Expr>::result_type, gmpxx::mpq_class>,
+                     int> = 0>
+inline gmpxx::mpq_class zq_comparison_value(const Expr& expr)
+{
+    return gmpxx::mpq_class(expr);
+}
+
+template <typename T, std::enable_if_t<is_zq_comparison_scalar_v<T>, int> = 0>
+inline gmpxx::mpq_class zq_comparison_value(T value)
+{
+    return gmpxx::mpq_class(gmpxx::mpz_class(value));
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
+inline int cmp(Lhs&& lhs, Rhs&& rhs)
+{
+    const gmpxx::mpq_class left = zq_comparison_value(std::forward<Lhs>(lhs));
+    const gmpxx::mpq_class right = zq_comparison_value(std::forward<Rhs>(rhs));
+    return mpq_cmp(left.mpq_data(), right.mpq_data());
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
+inline bool operator==(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) == 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
+inline bool operator!=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) != 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
+inline bool operator<(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) < 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
+inline bool operator<=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) <= 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
+inline bool operator>(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) > 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
+inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) >= 0;
 }
 
 template <typename Op, typename LhsResult, typename RhsResult>
@@ -1106,6 +1213,13 @@ using ::gmpfrxx_mkII::detail::operator+;
 using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
+using ::gmpfrxx_mkII::detail::cmp;
+using ::gmpfrxx_mkII::detail::operator==;
+using ::gmpfrxx_mkII::detail::operator!=;
+using ::gmpfrxx_mkII::detail::operator<;
+using ::gmpfrxx_mkII::detail::operator<=;
+using ::gmpfrxx_mkII::detail::operator>;
+using ::gmpfrxx_mkII::detail::operator>=;
 
 } // namespace gmpxx
 

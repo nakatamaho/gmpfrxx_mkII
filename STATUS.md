@@ -2026,6 +2026,103 @@ Pass/fail result:
 Known issues:
 - Statistical checks are smoke tests with conservative tolerances; they are intended to catch gross range/distribution wiring errors, not certify random quality.
 
+Post-phase upstream gmpxx_mkII test migration tracker:
+IN PROGRESS
+
+Scope:
+- Track every C++ test currently present in ../gmpxx_mkII/tests.
+- Port the GMP-facing coverage to this repository's gmpxx::mpf_class/mpz_class/mpq_class/mpfc_class APIs.
+- Add natural mpfrxx::mpfr_class adaptations where the test exercises behavior that should also exist for MPFR.
+- Add missing public APIs when the upstream test exposes a real compatibility or behavior gap.
+- Keep MPFR/MPC dependencies out of gmpxx_mkII.h.
+
+Migration table:
+
+| Upstream test | Current local coverage | MPF/GMP status | MPFR adaptation status | Missing API / risk | Next action |
+| --- | --- | --- | --- | --- | --- |
+| test_abi_fingerprint.cpp | tests/test_abi_fingerprint.cpp | Partial | Partial | Upstream has broader std::common_type/numeric_limits/legacy trait shape; local ABI intentionally differs in bool rejection. | Add compatibility-focused assertions that match this repo's policy for both mpf and mpfr. |
+| test_alias_safety.cpp | tests/test_alias_safety.cpp, tests/test_mpf_aliasing.cpp, tests/test_mpfr_aliasing.cpp | Done for core MPF alias cases | Done for core MPFR alias cases | None known for core arithmetic; upstream may have extra precision stress cases. | Compare upstream case list and add any missing mixed-precision alias cases. |
+| test_alloc_count.cpp | tests/test_mpf_alloc_count.cpp, tests/test_mpfr_alloc_count.cpp | Done | Done | None for current object-object ET fast path. | Keep as migrated; extend only if scalar alloc-count migration requires shared helpers. |
+| test_comparisons.cpp | tests/test_comparisons.cpp, tests/test_mpfr_comparisons.cpp | Done | Done | Upstream C++20 concept checks were rewritten as C++17 detection/static_assert checks; bool and long double remain rejected by policy. | Keep migrated; extend only if later scalar/type-conversion phases expose comparison gaps. |
+| test_compound_assign.cpp | tests/test_compound_assign.cpp, tests/test_mpfr_compound_assign.cpp | Done for MPF arithmetic compound surface | Done for MPFR arithmetic compound surface | Upstream legacy exact-type bitwise/shift compound surface is not included in the MPF/MPFR adaptation yet. | Track exact-type legacy operators under mpz/mpq arithmetic rows. |
+| test_construction_copy.cpp | tests/test_construction_copy.cpp | Done for current policy | Done | Upstream expects bool constructors; this repo intentionally rejects bool. | Keep migrated; add only missing constructor forms discovered by other tests. |
+| test_defaults_policy.cpp | tests/test_mpf_precision_policy.cpp, tests/test_mpfr_defaults.cpp, tests/test_mpfr_environment*.cpp | Partial | Partial | Upstream thread-local/default snapshot semantics may not exist; this repo uses explicit reload/set APIs and env names. | Add current-policy defaults/thread tests for MPF and MPFR without changing env naming back. |
+| test_exception_support.cpp | Domain-error tests scattered in math tests | TODO | TODO | Exception types/messages and invalid construction behavior are not centrally tested. | Port as policy-compatible exception test for mpf and mpfr constructors/math domains. |
+| test_gmpxx_mkII.cpp | Header smoke/basic arithmetic tests | Partial | N/A or aggregator smoke | Legacy monolithic smoke may overlap many local tests. | Read and split only missing assertions into focused tests. |
+| test_headers.cpp | tests/test_header_boundaries.cpp, compile_fail header tests | Partial/Done | Partial/Done | May require source-scan parity with upstream header expectations. | Merge any missing include-boundary scans into test_header_boundaries.cpp. |
+| test_io_and_strings.cpp | tests/test_zq_string_io.cpp, tests/test_mpf_string_io.cpp, tests/test_mpfr_string_io.cpp | Partial | Partial | mpfc IO is likely incomplete; formatting edge cases may be missing. | Port missing GMP IO/string cases; adapt matching MPFR formatting/parsing cases. |
+| test_long_width_dispatch.cpp | tests/test_mpfr_long_width_dispatch.cpp, construction tests | Partial | Done for MPFR scalar eval | Dedicated MPF long-width exactness test is missing. | Add tests/test_mpf_long_width_dispatch.cpp; extend exact types if upstream has additional cases. |
+| test_mixed_type_arithmetic.cpp | tests/test_mixed_zq_mpf_promotion.cpp, tests/test_mixed_zq_mpfr_promotion.cpp | Partial | Partial | Full mixed mpz/mpq/mpf scalar matrix may be incomplete; mpfr natural matrix should mirror z/q/scalar promotion. | Port matrix in two files: GMP and MPFR. |
+| test_mpf_extended_transcendent_functions.cpp | tests/test_mpf_compute_log.cpp | Partial | TODO if applicable | Need verify all extended functions and tolerances; MPFR has native MPFR math but wrapper coverage may be missing. | Read upstream and add missing MPF cases; adapt to MPFR math API where present. |
+| test_mpf_math_functions.cpp | tests/test_mpf_pi.cpp, tests/test_mpf_compute_log.cpp | Partial | TODO if applicable | Function list may exceed current tests; MPFR equivalents may not be wrapped. | Port missing MPF math tests; decide MPFR API additions from failures. |
+| test_mpf_transcendent_functions.cpp | tests/test_mpf_compute_log.cpp | Partial | TODO if applicable | Some upstream ULP/reference checks were not fully imported as a file. | Port test cases into local dedicated file or extend current compute_log test. |
+| test_mpfc_arithmetic.cpp | tests/test_mpfc_basic.cpp, tests/test_et_contract_mpfc.cpp | Partial | N/A for MPFR; MPC analog exists separately | Full mpfc arithmetic matrix and alias/precision cases may be missing. | Port missing mpfc arithmetic cases to GMP-only tests. |
+| test_mpfc_io.cpp | tests/test_mpfc_basic.cpp output only | TODO | N/A for MPFR; MPC IO not tracked here | mpfc stream input/string formatting likely missing. | Port mpfc IO; add APIs if current mpfc only supports output. |
+| test_mpfc_transcendent_functions.cpp | tests/test_mpfc_math.cpp | Partial | N/A for MPFR; MPC math exists separately | Full complex transcendent coverage may be missing. | Port missing mpfc transcendental cases; consider MPC parallel later. |
+| test_mpq_arithmetic.cpp | tests/test_mpq_basic.cpp, tests/test_mpq_canonicalization.cpp | Partial | mpfrxx aliases use same exact types | Full rational arithmetic/scalar/shift matrix may be incomplete. | Port upstream mpq arithmetic cases into focused exact-type test. |
+| test_mpz_addmul_alloc_count.cpp | None | TODO | N/A | addmul/submul allocation/fusion APIs likely absent. | Port test, add addmul/submul/fused APIs as required. |
+| test_mpz_addmul_fusion.cpp | None | TODO | N/A | Expression fusion for mpz addmul/submul likely absent. | Port after addmul API exists. |
+| test_mpz_arithmetic.cpp | tests/test_mpz_basic.cpp | Partial | mpfrxx aliases use same exact types | Full integer arithmetic, bit ops, shifts, inc/dec likely incomplete. | Port upstream mpz arithmetic and add missing exact APIs. |
+| test_mpz_mpq_alloc_count.cpp | None | TODO | N/A | Exact-type ET allocation fast paths not measured. | Port alloc-count test after exact arithmetic API parity is improved. |
+| test_numeric_equivalence.cpp | Various numeric smoke tests | TODO | TODO | Cross-check against GMP C API/MPFR C API not centralized. | Port as equivalence tests for mpf and adapt mpfr against MPFR C API. |
+| test_power_of_two_fusion.cpp | None | TODO | TODO if MPFR has analogous optimization | Power-of-two multiply/divide fusion likely absent. | Port MPF test; add MPFR adaptation if expression optimizer is shared/natural. |
+| test_precision_policy.cpp | tests/test_mpf_precision_policy.cpp, tests/test_mpfr_precision_policy.cpp | Partial | Partial | Upstream precision-policy matrix may be broader than local tests. | Port missing cases into existing MPF/MPFR precision tests. |
+| test_random.cpp | tests/test_random.cpp, tests/test_mpfr_random.cpp | Done | Done | Statistical tests are smoke checks only. | Keep migrated; update if random API expands. |
+| test_scalar_alloc_count.cpp | None | TODO | TODO | Scalar ET allocation expectations differ by scalar type; integer scalars may allocate through mpz. | Port MPF scalar alloc-count carefully; add MPFR counterpart with explicit expected allocations. |
+| test_scalar_arithmetic.cpp | tests/test_mpf_basic.cpp, tests/test_mpfr_scalar_eval.cpp | Partial | Partial | Full scalar matrix, assignment, inc/dec, exact scalar interactions missing. | Port MPF scalar arithmetic matrix; adapt to MPFR. |
+| test_thread_safety.cpp | None | TODO | TODO | Default precision/environment state thread semantics may be missing or intentionally different. | Define current thread policy, then port tests for MPF and MPFR. |
+| test_type_conversions.cpp | construction/string tests cover subset | TODO | TODO | get_d/get_ui/get_si, raw pointer accessors, conversions among mpz/mpq/mpf/mpfr may be incomplete. | Port conversion tests; add policy-compatible APIs as needed. |
+| test_unary_minus_simplification.cpp | ET contract unary tests and alias tests | TODO | TODO | Unary simplification shape may differ; behavioral double-negation tests are needed. | Add behavior-first tests for mpf/mpfr; only assert node shape if it matches current ET policy. |
+| test_user_defined_literals.cpp | None | TODO | TODO if mpfr literals are natural | User-defined literals for mpz/mpq/mpf are likely absent; MPFR literals may be a natural extension. | Port GMP literals if API is desired; add mpfr literals only after naming policy decision. |
+
+Execution policy:
+- Do not copy upstream C++20 concept tests verbatim; rewrite to C++17 and this repository's public namespaces.
+- When upstream behavior conflicts with this repository's policy, keep this repository's policy and document the divergence in this table.
+- For every migrated source test, add or update a local CTest target.
+- For every MPF-facing migration, add a matching MPFR adaptation when the behavior naturally applies to mpfrxx::mpfr_class.
+- Run at least the focused test target and then full CTest before marking a row Done.
+
+Tests updated:
+- STATUS.md
+- tests/test_comparisons.cpp
+- tests/test_mpfr_comparisons.cpp
+- tests/test_compound_assign.cpp
+- tests/test_mpfr_compound_assign.cpp
+- tests/CMakeLists.txt
+
+Exact commands run:
+- ls ../gmpxx_mkII/tests/*cpp
+- ls tests/*cpp
+- sed -n '1,220p' tests/CMakeLists.txt
+- for f in ../gmpxx_mkII/tests/*cpp; do ... assertion scan ...; done
+- for f in tests/*cpp; do ... assertion scan ...; done
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_comparisons.cpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_comparisons|test_mpfr_comparisons"
+- ctest --test-dir build --output-on-failure
+- sed -n '1,280p' ../gmpxx_mkII/tests/test_compound_assign.cpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_compound_assign|test_mpfr_compound_assign"
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- PASS: cmake --build build -j
+- PASS: ctest --test-dir build --output-on-failure -R "test_comparisons|test_mpfr_comparisons" (2/2)
+- PASS: ctest --test-dir build --output-on-failure -R "test_compound_assign|test_mpfr_compound_assign" (2/2)
+- PASS: ctest --test-dir build --output-on-failure (75/75)
+
+Known issues:
+- The table is intentionally conservative: several rows marked Partial may already have some behavior covered by smaller local tests, but remain open until compared line-by-line with the upstream source test.
+
+Comparison migration details:
+- Added strict mpz/mpq comparison support through cmp() and relational operators using exact mpq materialization and mpq_cmp.
+- Added gmpxx::mpf_class comparison support for mpf/exact/scalar/expression operands, preserving exact-only comparisons on the mpq_cmp path.
+- Added mpfrxx::mpfr_class comparison support for mpfr/exact/scalar/expression operands using MPFR evaluation context and mpfr_cmp.
+- Added tests/test_comparisons.cpp as the C++17 MPF/GMP adaptation of upstream test_comparisons.cpp.
+- Added tests/test_mpfr_comparisons.cpp as the natural MPFR adaptation.
+- Added gmpxx::mpf_class and mpfrxx::mpfr_class operator+=, operator-=, operator*=, and operator/= for supported expression/scalar operands.
+- Added tests/test_compound_assign.cpp and tests/test_mpfr_compound_assign.cpp for destination-precision preservation, scalar RHS, wider RHS precision, exact RHS, self-aliasing, and expression RHS.
+
 Post-phase MPFR random API:
 DONE
 

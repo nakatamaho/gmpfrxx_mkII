@@ -1362,6 +1362,114 @@ using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
 
+template <typename T>
+struct is_mpfr_comparison_non_scalar
+    : std::bool_constant<
+          std::is_same_v<std::decay_t<T>, mpfr_class> ||
+          std::is_same_v<std::decay_t<T>, gmpxx::mpz_class> ||
+          std::is_same_v<std::decay_t<T>, gmpxx::mpq_class> ||
+          gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<T>>> {};
+
+template <typename Lhs, typename Rhs>
+struct is_mpfr_comparison_pair
+    : std::bool_constant<
+          gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Lhs> &&
+          gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+          !gmpfrxx_mkII::detail::is_zq_comparison_pair_v<Lhs, Rhs> &&
+          (is_mpfr_comparison_non_scalar<Lhs>::value ||
+           is_mpfr_comparison_non_scalar<Rhs>::value)> {};
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline int cmp(Lhs&& lhs, Rhs&& rhs)
+{
+    auto left = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Lhs>(lhs));
+    auto right = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Rhs>(rhs));
+    mpfr_prec_t precision = std::max(
+        gmpfrxx_mkII::detail::mpfr_expression_precision(left),
+        gmpfrxx_mkII::detail::mpfr_expression_precision(right));
+    if (precision == 0) {
+        precision = mpfr_class::default_precision();
+    }
+
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+
+    mpfr_t lhs_value;
+    mpfr_t rhs_value;
+    mpfr_init2(lhs_value, precision);
+    mpfr_init2(rhs_value, precision);
+    gmpfrxx_mkII::detail::mpfr_evaluate(lhs_value, left, precision, context.rounding_mode);
+    gmpfrxx_mkII::detail::mpfr_evaluate(rhs_value, right, precision, context.rounding_mode);
+    const int result = mpfr_cmp(lhs_value, rhs_value);
+    mpfr_clear(rhs_value);
+    mpfr_clear(lhs_value);
+    return result;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator==(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) == 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator!=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) != 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator<(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) < 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator<=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) <= 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator>(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) > 0;
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
+{
+    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) >= 0;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+inline mpfr_class& operator+=(mpfr_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs + std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+inline mpfr_class& operator-=(mpfr_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs - std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+inline mpfr_class& operator*=(mpfr_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs * std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+inline mpfr_class& operator/=(mpfr_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs / std::forward<Rhs>(rhs);
+    return lhs;
+}
+
 } // namespace mpfrxx
 
 #endif // GMPFRXX_MKII_DETAIL_MPFR_IMPL_HPP
