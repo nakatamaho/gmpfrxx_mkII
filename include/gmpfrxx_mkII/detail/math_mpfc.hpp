@@ -1,0 +1,340 @@
+#ifndef GMPFRXX_MKII_DETAIL_MATH_MPFC_HPP
+#define GMPFRXX_MKII_DETAIL_MATH_MPFC_HPP
+
+#include <gmpfrxx_mkII/detail/math_mpf.hpp>
+#include <gmpfrxx_mkII/detail/mpfc_impl.hpp>
+
+#include <complex>
+#include <cstdint>
+#include <type_traits>
+
+namespace gmpxx {
+
+namespace mpfc_math_detail {
+
+inline mpf_class zero(mp_bitcnt_t precision)
+{
+    return mpf_class::with_precision(precision);
+}
+
+inline mpf_class one(mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_set_ui(result.mpf_data(), 1);
+    return result;
+}
+
+inline mpf_class half(mp_bitcnt_t precision)
+{
+    mpf_class result = one(precision);
+    mpf_div_2exp(result.mpf_data(), result.mpf_data(), 1);
+    return result;
+}
+
+inline bool is_negative(const mpf_class& value)
+{
+    return mpf_sgn(value.mpf_data()) < 0;
+}
+
+inline bool is_zero(const mpf_class& value)
+{
+    return mpf_sgn(value.mpf_data()) == 0;
+}
+
+inline mpfc_class from_complex_double(std::complex<double> value, mp_bitcnt_t precision)
+{
+    return mpfc_class(
+        mpf_math_detail::make_from_double(value.real(), precision),
+        mpf_math_detail::make_from_double(value.imag(), precision));
+}
+
+inline std::complex<double> to_complex_double(const mpfc_class& value)
+{
+    return {value.real().to_double(), value.imag().to_double()};
+}
+
+inline std::complex<double> gamma_lanczos(std::complex<double> z)
+{
+    static constexpr double coefficients[] = {
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.13857109526572012,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7,
+    };
+    static constexpr double pi = 3.141592653589793238462643383279502884;
+
+    if (z.real() < 0.5) {
+        return pi / (std::sin(pi * z) * gamma_lanczos(1.0 - z));
+    }
+
+    z -= 1.0;
+    std::complex<double> x = 0.99999999999980993;
+    for (std::size_t i = 0; i < sizeof(coefficients) / sizeof(coefficients[0]); ++i) {
+        x += coefficients[i] / (z + static_cast<double>(i + 1));
+    }
+    const std::complex<double> t = z + 7.5;
+    return std::sqrt(2.0 * pi) * std::pow(t, z + 0.5) * std::exp(-t) * x;
+}
+
+template <typename Expr>
+using enable_mpfc_expr_t = std::enable_if_t<
+    gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+    std::is_same_v<typename std::decay_t<Expr>::result_type, mpfc_class>>;
+
+} // namespace mpfc_math_detail
+
+inline mpfc_class conj(const mpfc_class& value)
+{
+    return mpfc_class(value.real(), -value.imag());
+}
+
+inline mpf_class real(const mpfc_class& value)
+{
+    return value.real();
+}
+
+inline mpf_class imag(const mpfc_class& value)
+{
+    return value.imag();
+}
+
+inline mpf_class norm(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    mpf_class result = mpf_class::with_precision(precision);
+    result = value.real() * value.real() + value.imag() * value.imag();
+    return result;
+}
+
+inline mpf_class abs(const mpfc_class& value)
+{
+    return sqrt(norm(value));
+}
+
+inline mpf_class arg(const mpfc_class& value)
+{
+    return atan2(value.imag(), value.real());
+}
+
+inline mpfc_class polar(const mpf_class& radius, const mpf_class& angle)
+{
+    const mp_bitcnt_t precision = std::max(radius.precision(), angle.precision());
+    return mpfc_class(
+        mpf_class(radius * cos(angle)),
+        mpf_class(radius * sin(angle)));
+}
+
+inline mpfc_class sqrt(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    const mpf_class zero = mpfc_math_detail::zero(precision);
+
+    if (mpfc_math_detail::is_zero(value.imag())) {
+        if (mpfc_math_detail::is_negative(value.real())) {
+            return mpfc_class(zero, sqrt(-value.real()));
+        }
+        return mpfc_class(sqrt(value.real()), zero);
+    }
+
+    const mpf_class half = mpfc_math_detail::half(precision);
+    const mpf_class magnitude = abs(value);
+    mpf_class real_part = sqrt((magnitude + value.real()) * half);
+    mpf_class imag_part = sqrt((magnitude - value.real()) * half);
+    if (mpfc_math_detail::is_negative(value.imag())) {
+        imag_part = -imag_part;
+    }
+    return mpfc_class(real_part, imag_part);
+}
+
+inline mpfc_class exp(const mpfc_class& value)
+{
+    const mpf_class real_exp = exp(value.real());
+    return mpfc_class(real_exp * cos(value.imag()), real_exp * sin(value.imag()));
+}
+
+inline mpfc_class log(const mpfc_class& value)
+{
+    return mpfc_class(log(abs(value)), atan2(value.imag(), value.real()));
+}
+
+inline mpfc_class sin(const mpfc_class& value)
+{
+    return mpfc_class(
+        sin(value.real()) * cosh(value.imag()),
+        cos(value.real()) * sinh(value.imag()));
+}
+
+inline mpfc_class cos(const mpfc_class& value)
+{
+    return mpfc_class(
+        cos(value.real()) * cosh(value.imag()),
+        -sin(value.real()) * sinh(value.imag()));
+}
+
+inline mpfc_class tan(const mpfc_class& value)
+{
+    return sin(value) / cos(value);
+}
+
+inline mpfc_class sinh(const mpfc_class& value)
+{
+    return mpfc_class(
+        sinh(value.real()) * cos(value.imag()),
+        cosh(value.real()) * sin(value.imag()));
+}
+
+inline mpfc_class cosh(const mpfc_class& value)
+{
+    return mpfc_class(
+        cosh(value.real()) * cos(value.imag()),
+        sinh(value.real()) * sin(value.imag()));
+}
+
+inline mpfc_class tanh(const mpfc_class& value)
+{
+    return sinh(value) / cosh(value);
+}
+
+inline mpfc_class pow(const mpfc_class& base, std::uint64_t exponent)
+{
+    const mp_bitcnt_t precision = base.precision();
+    mpfc_class result(mpfc_math_detail::one(precision), mpfc_math_detail::zero(precision));
+    mpfc_class factor = base;
+
+    while (exponent != 0) {
+        if ((exponent & 1U) != 0) {
+            result = result * factor;
+        }
+        exponent >>= 1U;
+        if (exponent != 0) {
+            factor = factor * factor;
+        }
+    }
+
+    return result;
+}
+
+inline mpfc_class pow(const mpfc_class& base, std::int64_t exponent)
+{
+    if (exponent >= 0) {
+        return pow(base, static_cast<std::uint64_t>(exponent));
+    }
+    const std::uint64_t magnitude = static_cast<std::uint64_t>(-(exponent + 1)) + 1U;
+    const mp_bitcnt_t precision = base.precision();
+    const mpfc_class one(mpfc_math_detail::one(precision), mpfc_math_detail::zero(precision));
+    return one / pow(base, magnitude);
+}
+
+template <
+    typename I,
+    typename = std::enable_if_t<std::is_integral_v<std::remove_cv_t<I>> &&
+                                std::is_unsigned_v<std::remove_cv_t<I>> &&
+                                !std::is_same_v<std::remove_cv_t<I>, bool> &&
+                                !std::is_same_v<std::remove_cv_t<I>, std::uint64_t>>>
+inline mpfc_class pow(const mpfc_class& base, I exponent)
+{
+    return pow(base, static_cast<std::uint64_t>(exponent));
+}
+
+template <
+    typename I,
+    typename = std::enable_if_t<std::is_integral_v<std::remove_cv_t<I>> &&
+                                std::is_signed_v<std::remove_cv_t<I>> &&
+                                !std::is_same_v<std::remove_cv_t<I>, bool> &&
+                                !std::is_same_v<std::remove_cv_t<I>, std::int64_t>>,
+    typename = void>
+inline mpfc_class pow(const mpfc_class& base, I exponent)
+{
+    return pow(base, static_cast<std::int64_t>(exponent));
+}
+
+inline mpfc_class pow(const mpfc_class& base, const mpf_class& exponent)
+{
+    const mp_bitcnt_t precision = std::max(base.precision(), exponent.precision());
+    return exp(mpfc_class(mpf_class(exponent), mpfc_math_detail::zero(precision)) * log(base));
+}
+
+inline mpfc_class pow(const mpfc_class& base, const mpfc_class& exponent)
+{
+    return exp(exponent * log(base));
+}
+
+inline mpfc_class pow(const mpf_class& base, const mpfc_class& exponent)
+{
+    const mp_bitcnt_t precision = std::max(base.precision(), exponent.precision());
+    return pow(mpfc_class(mpf_class(base), mpfc_math_detail::zero(precision)), exponent);
+}
+
+inline mpfc_class gamma(const mpfc_class& value)
+{
+    return mpfc_math_detail::from_complex_double(
+        mpfc_math_detail::gamma_lanczos(mpfc_math_detail::to_complex_double(value)), value.precision());
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class sqrt(const Expr& expr)
+{
+    return sqrt(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class exp(const Expr& expr)
+{
+    return exp(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class log(const Expr& expr)
+{
+    return log(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class sin(const Expr& expr)
+{
+    return sin(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class cos(const Expr& expr)
+{
+    return cos(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class tan(const Expr& expr)
+{
+    return tan(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class sinh(const Expr& expr)
+{
+    return sinh(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class cosh(const Expr& expr)
+{
+    return cosh(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class tanh(const Expr& expr)
+{
+    return tanh(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class gamma(const Expr& expr)
+{
+    return gamma(mpfc_class(expr));
+}
+
+} // namespace gmpxx
+
+#endif // GMPFRXX_MKII_DETAIL_MATH_MPFC_HPP

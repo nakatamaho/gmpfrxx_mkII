@@ -841,3 +841,52 @@ Pass/fail result:
 Known issues:
 - Phase 11 math still depends on adding GMP-only MPF transcendentals or porting the required helpers from gmpxx_mkII.h.in.
 - mpfc arithmetic currently favors correctness and header separation over allocation-count optimization.
+
+Phase 11 status:
+DONE
+
+Implemented features:
+- Added GMP-only math_mpf.hpp with the MPF scalar math needed by mpfc_class:
+  sqrt, abs, exp, log, sin, cos, tan, sinh, cosh, tanh, atan2, pow, gamma.
+- Added GMP-only math_mpfc.hpp with required mpfc_class math:
+  sqrt, exp, log, sin, cos, tan, sinh, cosh, tanh, pow, gamma.
+- Added mpfc helpers:
+  conj, real, imag, norm, abs, arg, polar.
+- Added expression overloads for mpfc math functions so documented eager math functions can materialize mpfc expression nodes.
+- Hooked math_mpf.hpp and math_mpfc.hpp into gmpxx_mkII.h.
+- Kept all mpfc math out of mpfrxx_mkII.h.
+- Implemented complex gamma with a double Lanczos path converted back into MPF components.
+
+Missing features:
+- The MPF transcendentals are currently GMP-only but double-backed approximations, not the full arbitrary-precision algorithms from ../gmpxx_mkII/include/gmpxx_mkII.h.in.
+- Complex gamma is also double-backed through the internal Lanczos helper.
+- mpfc inverse trig/hyperbolic functions from the source gmpxx_mkII.h.in implementation remain unported because they are outside the Phase 11 required list.
+
+Tests added:
+- tests/test_mpfc_math.cpp
+
+Exact commands run:
+- ls include/gmpfrxx_mkII/detail
+- nl -ba include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp
+- sed -n '4826,6608p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '7335,7812p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- git status --short
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "mpfc_math|mpfc"
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpfc/mpf/mpz/mpq arithmetic operators in include tests examples
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples CMakeLists.txt cmake
+- git diff --stat
+- tail -n 110 STATUS.md
+
+Pass/fail result:
+- cmake --build build -j: PASS
+- ctest --test-dir build --output-on-failure -R "mpfc_math|mpfc": PASS, 10/10 tests passed
+- Final ctest --test-dir build --output-on-failure: PASS, 59/59 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- Phase 11 API is present and tested, but high-precision MPF transcendental accuracy still requires porting the full algorithms from gmpxx_mkII.h.in.

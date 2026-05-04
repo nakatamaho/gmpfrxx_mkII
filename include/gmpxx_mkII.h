@@ -9,5 +9,7 @@
 #include <gmpfrxx_mkII/detail/zq_impl.hpp>
 #include <gmpfrxx_mkII/detail/mpf_impl.hpp>
 #include <gmpfrxx_mkII/detail/mpfc_impl.hpp>
+#include <gmpfrxx_mkII/detail/math_mpf.hpp>
+#include <gmpfrxx_mkII/detail/math_mpfc.hpp>
 
 #endif // GMPXX_MKII_H
