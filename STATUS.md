@@ -1051,3 +1051,46 @@ Pass/fail result:
 
 Known issues:
 - The migrated MPFR test follows this repo's bool rejection policy instead of the older gmpxx_mkII bool-constructor surface.
+
+Post-phase ABI fingerprint test migration status:
+DONE
+
+Implemented features:
+- Ported ../gmpxx_mkII/tests/test_abi_fingerprint.cpp into tests/test_abi_fingerprint.cpp using the current C++17 detail API.
+- Added compile-time fingerprint coverage for scalar normalization, supported scalar rejection, operand trait classification, expression-node recognition, operation tags, leaf storage types, and result_type promotion.
+- Covered GMP-only, MPFR/MPC, and MPFC expression families through the gmpfrxx_mkII aggregate header.
+- Kept bool and long double rejected according to this repo's scalar policy.
+- Registered test_abi_fingerprint with CTest via the gmpfrxx_mkII interface target.
+
+Tests added:
+- tests/test_abi_fingerprint.cpp
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_abi_fingerprint.cpp
+- rg -n "abi|fingerprint|typeid|sizeof|is_standard_layout|is_trivially|nothrow|constructible" tests include/gmpfrxx_mkII/detail
+- sed -n '1,220p' tests/CMakeLists.txt
+- git status --short
+- sed -n '1,260p' include/gmpfrxx_mkII/detail/expr.hpp
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/type_traits.hpp
+- rg -n "result_type|common_type|numeric_limits|is_.*operand|promot|value_kind|kind_of|scalar_leaf|object_leaf|binary_expr|unary_expr" include/gmpfrxx_mkII/detail tests/test_et_contract* tests/test_mixed*
+- sed -n '580,820p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '480,850p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '850,940p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '800,880p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_abi_fingerprint
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpfc/mpf/mpz/mpq arithmetic operators in include tests examples benchmarks
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples benchmarks CMakeLists.txt cmake
+
+Pass/fail result:
+- Final cmake --build build -j: PASS
+- Migrated test_abi_fingerprint: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 63/63 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- The upstream test's C++20 concepts, std::common_type, and std::numeric_limits checks were adapted to current C++17/detail contracts rather than copied verbatim.
