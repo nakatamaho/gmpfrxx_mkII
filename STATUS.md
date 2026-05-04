@@ -1709,3 +1709,37 @@ Pass/fail result:
 
 Known issues:
 - Gamma still uses a finite Spouge approximation rather than an independently rounded MPFR-backed oracle; random Gamma coverage remains double-reference smoke coverage.
+
+Post-phase MPFR string and stream IO:
+DONE
+
+Implemented features:
+- Added mpfrxx::mpfr_class::set_str(const char*, int) and set_str(const std::string&, int), preserving the existing value on parse failure.
+- Added mpfrxx::mpfr_class::get_str(), get_str(mpfr_exp_t&, int, std::size_t), and to_string().
+- Added mpfrxx::mpfr_class string set() validation that throws std::invalid_argument on invalid decimal input.
+- Added std::ostream operator<< for mpfrxx::mpfr_class using MPFR formatting and honoring fixed/scientific/defaultfloat, precision, uppercase, showpoint, showpos, width, fill, left, and internal alignment.
+- Added std::ostream operator<< for MPFR expression nodes by materializing to mpfr_class.
+- Added std::istream operator>> for mpfrxx::mpfr_class using stream base flags, locale decimal point, exponent parsing, and value-preserving failure semantics.
+
+Tests added:
+- tests/test_mpfr_string_io.cpp
+
+Tests updated:
+- tests/CMakeLists.txt
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- STATUS.md
+
+Exact commands run:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build --target test_mpfr_string_io -j
+- ctest --test-dir build -R test_mpfr_string_io --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- test_mpfr_string_io: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 67/67 tests passed.
+
+Known issues:
+- MPFR stream input currently covers finite numeric tokens; infinities and NaNs are not specially tokenized by the custom extractor.

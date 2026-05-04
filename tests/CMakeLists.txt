@@ -27,6 +27,7 @@ set_tests_properties(test_mpfr_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS all
 add_phase0_test(test_mpfr_defaults mpfrxx_mkII)
 add_phase0_test(test_mpfr_environment mpfrxx_mkII)
 add_phase0_test(test_mpfr_environment_invalid mpfrxx_mkII)
+add_phase0_test(test_mpfr_string_io mpfrxx_mkII)
 add_phase0_test(test_et_contract_mpf gmpxx_mkII)
 add_phase0_test(test_mpf_basic gmpxx_mkII)
 add_phase0_test(test_mpf_precision_policy gmpxx_mkII)
