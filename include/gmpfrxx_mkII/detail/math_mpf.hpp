@@ -6,15 +6,33 @@
 #include <algorithm>
 #include <cmath>
 #include <mutex>
+#include <stdexcept>
 #include <type_traits>
 
 namespace gmpxx {
 
 namespace mpf_math_detail {
 
+inline constexpr mp_bitcnt_t minimum_target_precision = 32;
+inline constexpr mp_bitcnt_t log_cancellation_probe_guard_bits = 32;
+
 inline mp_bitcnt_t normalize_target_precision(mp_bitcnt_t precision)
 {
-    return std::max<mp_bitcnt_t>(precision, 32);
+    return std::max(precision, minimum_target_precision);
+}
+
+inline unsigned long ceil_log2_precision(mp_bitcnt_t value)
+{
+    if (value <= 1) {
+        return 0;
+    }
+    --value;
+    unsigned long bits = 0;
+    while (value != 0) {
+        value >>= 1;
+        ++bits;
+    }
+    return bits;
 }
 
 inline mpf_class make_from_double(double value, mp_bitcnt_t precision)
@@ -114,6 +132,37 @@ inline mp_bitcnt_t working_precision_for_pi(mp_bitcnt_t target_precision)
     return normalize_target_precision(target_precision) + 96;
 }
 
+inline const char* pi_decimal_literal()
+{
+    return "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679"
+           "82148086513282306647093844609550582231725359408128481117450284102701938521105559644622948954930381964"
+           "42881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372"
+           "45870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330"
+           "57270365759591953092186117381932611793105118548074462379962749567351885752724891227938183011949129833"
+           "67336244065664308602139494639522473719070217986094370277053921717629317675238467481846766940513200056"
+           "81271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199"
+           "56112129021960864034418159813629774771309960518707211349999998372978049951059731732816096318595024459"
+           "45534690830264252230825334468503526193118817101000313783875288658753320838142061717766914730359825349"
+           "0428755468731159562863882353787593751957781857780532171226806613001927876611195909216420199";
+}
+
+inline bool has_hardcoded_pi(mp_bitcnt_t target_precision)
+{
+    switch (target_precision) {
+    case 512:
+    case 1024:
+    case 2048:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline mpf_class hardcoded_pi(mp_bitcnt_t target_precision)
+{
+    return mpf_class(pi_decimal_literal(), target_precision);
+}
+
 inline mpf_class compute_pi_gauss_legendre(mp_bitcnt_t target_precision)
 {
     const mp_bitcnt_t target = normalize_target_precision(target_precision);
@@ -176,6 +225,10 @@ inline pi_cache_state& pi_cache()
 inline mpf_class pi(mp_bitcnt_t target_precision)
 {
     const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    if (has_hardcoded_pi(target)) {
+        return hardcoded_pi(target);
+    }
+
     pi_cache_state& cache = pi_cache();
     std::lock_guard<std::mutex> lock(cache.mutex);
     if (!cache.initialized || cache.cached_precision < target) {
@@ -293,6 +346,183 @@ inline mpf_class log_two(mp_bitcnt_t target_precision)
         cache.initialized = true;
     }
     return set_prec_copy(cache.cached_value, target);
+}
+
+inline mp_bitcnt_t guard_bits_for_log1p(mp_bitcnt_t)
+{
+    return 160;
+}
+
+inline mp_bitcnt_t working_precision_for_log1p(mp_bitcnt_t target_precision)
+{
+    return normalize_target_precision(target_precision) + guard_bits_for_log1p(target_precision);
+}
+
+inline mpf_class log1p_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
+{
+    mpf_class epsilon = make_ui(1, precision);
+    mpf_div_2exp(epsilon.mpf_data(), epsilon.mpf_data(), precision);
+
+    mpf_class sum = set_prec_copy(x, precision);
+    mpf_class power = set_prec_copy(x, precision);
+
+    for (unsigned long k = 2;; ++k) {
+        power = mul(power, x, precision);
+        mpf_class term = div(power, make_ui(k, precision), precision);
+        if ((k & 1ul) == 0ul) {
+            term = sub(make_ui(0, precision), term, precision);
+        }
+        sum = add(sum, term, precision);
+        if (mpf_cmp(abs_prec(term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
+            break;
+        }
+    }
+    return sum;
+}
+
+inline mpf_class log1p_atanh_series(const mpf_class& x, mp_bitcnt_t precision)
+{
+    mpf_class epsilon = make_ui(1, precision);
+    mpf_div_2exp(epsilon.mpf_data(), epsilon.mpf_data(), precision);
+
+    mpf_class two = make_ui(2, precision);
+    mpf_class y = div(x, add(two, x, precision), precision);
+    mpf_class y2 = sqr(y, precision);
+
+    mpf_class sum = set_prec_copy(y, precision);
+    mpf_class term = set_prec_copy(y, precision);
+
+    for (unsigned long k = 1;; ++k) {
+        term = mul(term, y2, precision);
+        const unsigned long denominator = 2ul * k + 1ul;
+        mpf_class contribution = div(term, make_ui(denominator, precision), precision);
+        sum = add(sum, contribution, precision);
+        if (mpf_cmp(abs_prec(contribution, precision).mpf_data(), epsilon.mpf_data()) < 0) {
+            break;
+        }
+    }
+    return mul_ui(sum, 2ul, precision);
+}
+
+inline mpf_class compute_log1p(const mpf_class& x_input, mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    const mp_bitcnt_t work = working_precision_for_log1p(target);
+    const mpf_class x = set_prec_copy(x_input, work);
+    const mpf_class zero = make_ui(0, work);
+    const mpf_class one = make_ui(1, work);
+    const mpf_class one_plus_x = add(one, x, work);
+
+    if (mpf_cmp(one_plus_x.mpf_data(), zero.mpf_data()) == 0) {
+        throw std::domain_error("log1p(x) pole at x = -1");
+    }
+    if (mpf_cmp(one_plus_x.mpf_data(), zero.mpf_data()) < 0) {
+        throw std::domain_error("log1p(x) is undefined for x < -1");
+    }
+    if (mpf_cmp(x.mpf_data(), zero.mpf_data()) == 0) {
+        return make_ui(0, target);
+    }
+
+    mpf_class small_threshold = make_ui(1, work);
+    mpf_div_2exp(small_threshold.mpf_data(), small_threshold.mpf_data(), work / 2);
+
+    mpf_class result = make_ui(0, work);
+    if (mpf_cmp(abs_prec(x, work).mpf_data(), small_threshold.mpf_data()) <= 0) {
+        result = log1p_taylor_small(x, work);
+    } else {
+        result = log1p_atanh_series(x, work);
+    }
+    return set_prec_copy(result, target);
+}
+
+inline mp_bitcnt_t guard_bits_for_log(mp_bitcnt_t)
+{
+    return 96;
+}
+
+inline mp_bitcnt_t log_cancellation_bits(const mpf_class& x_input, mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    const mp_bitcnt_t probe_precision = target + log_cancellation_probe_guard_bits;
+    const mpf_class one = make_ui(1, probe_precision);
+    const mpf_class x = set_prec_copy(x_input, probe_precision);
+    const mpf_class delta = abs_prec(sub(x, one, probe_precision), probe_precision);
+
+    if (mpf_cmp(delta.mpf_data(), make_ui(0, probe_precision).mpf_data()) == 0) {
+        return target;
+    }
+
+    mp_exp_t delta_exponent = 0;
+    mpf_get_d_2exp(&delta_exponent, delta.mpf_data());
+    const long numerator_bits = static_cast<long>(ceil_log2_precision(target)) + 1;
+    const long estimate = numerator_bits - delta_exponent + 2;
+    return estimate > 0 ? static_cast<mp_bitcnt_t>(estimate) : 0;
+}
+
+inline mp_bitcnt_t working_precision_for_log(const mpf_class& x_input, mp_bitcnt_t target_precision)
+{
+    return normalize_target_precision(target_precision) +
+           guard_bits_for_log(target_precision) +
+           log_cancellation_bits(x_input, target_precision);
+}
+
+inline mpf_class mul_signed_exp(const mpf_class& value, mp_exp_t multiplier, mp_bitcnt_t precision)
+{
+    if (multiplier == 0) {
+        return make_ui(0, precision);
+    }
+    const unsigned long magnitude_ui =
+        static_cast<unsigned long>(multiplier > 0 ? multiplier : -multiplier);
+    mpf_class magnitude = mul_ui(value, magnitude_ui, precision);
+    if (multiplier < 0) {
+        return sub(make_ui(0, precision), magnitude, precision);
+    }
+    return magnitude;
+}
+
+inline mpf_class compute_log(const mpf_class& x_input, mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    const mp_bitcnt_t work = working_precision_for_log(x_input, target);
+    const mpf_class x = set_prec_copy(x_input, work);
+    const mpf_class zero = make_ui(0, work);
+    const mpf_class one = make_ui(1, work);
+    const mpf_class two = make_ui(2, work);
+
+    if (mpf_cmp(x.mpf_data(), zero.mpf_data()) == 0) {
+        throw std::domain_error("log(x) pole at x = 0");
+    }
+    if (mpf_cmp(x.mpf_data(), zero.mpf_data()) < 0) {
+        throw std::domain_error("log(x) is undefined for x < 0");
+    }
+    if (mpf_cmp(x.mpf_data(), one.mpf_data()) == 0) {
+        return make_ui(0, target);
+    }
+
+    const mpf_class delta = sub(x, one, work);
+    mpf_class near_one_threshold = make_ui(1, work);
+    mpf_div_2exp(near_one_threshold.mpf_data(), near_one_threshold.mpf_data(), 1);
+    if (mpf_cmp(abs_prec(delta, work).mpf_data(), near_one_threshold.mpf_data()) < 0) {
+        return compute_log1p(delta, target);
+    }
+
+    mp_exp_t x_exponent = 0;
+    mpf_get_d_2exp(&x_exponent, x.mpf_data());
+    const mp_exp_t desired_exponent = static_cast<mp_exp_t>(work / 2 + 16);
+    const mp_exp_t exponent = desired_exponent - x_exponent + 1;
+
+    mpf_class s = set_prec_copy(x, work);
+    if (exponent >= 0) {
+        mpf_mul_2exp(s.mpf_data(), s.mpf_data(), static_cast<mp_bitcnt_t>(exponent));
+    } else {
+        mpf_div_2exp(s.mpf_data(), s.mpf_data(), static_cast<mp_bitcnt_t>(-exponent));
+    }
+
+    mpf_class b = div(make_ui(4, work), s, work);
+    mpf_class agm_value = agm_converged(one, b, work);
+    mpf_class leading = div(pi(work), mul(two, agm_value, work), work);
+    mpf_class correction = mul_signed_exp(log_two(work), exponent, work);
+    return set_prec_copy(sub(leading, correction, work), target);
 }
 
 template <typename Function>

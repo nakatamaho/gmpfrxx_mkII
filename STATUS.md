@@ -1224,3 +1224,137 @@ Pass/fail result:
 
 Known issues:
 - Most existing MPF transcendental functions are still double-backed; high-precision ports remain pending.
+
+Post-phase MPF compute_log port status:
+DONE
+
+Implemented features:
+- Ported the GMP-only compute_log support stack from ../gmpxx_mkII/include/gmpxx_mkII.h.in into include/gmpfrxx_mkII/detail/math_mpf.hpp.
+- Added precision helpers for logarithms: minimum target precision, ceil_log2_precision, log cancellation probe guard bits, guard_bits_for_log1p, working_precision_for_log1p, guard_bits_for_log, log_cancellation_bits, and working_precision_for_log.
+- Added compute_log1p with both small Taylor and atanh-series paths, including domain errors for x = -1 and x < -1.
+- Added mul_signed_exp and AGM-based compute_log, including log(0), log(x < 0), log(1), near-one, and scaled AGM paths.
+- Kept public gmpxx::log() unchanged for now; it is still the existing double-backed wrapper until the public logarithm phase connects these helpers.
+
+Tests updated:
+- Added tests/test_mpf_compute_log.cpp.
+- Registered test_mpf_compute_log in tests/CMakeLists.txt.
+
+Exact commands run:
+- sed -n '1,260p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- sed -n '5140,5265p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- rg -n "log2|compute_log|log1p|const_log2|log_two" include tests STATUS.md
+- sed -n '5265,5335p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '260,380p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- rg -n "ceil_log2_precision|log_cancellation_probe_guard_bits|domain_error|operator<=|operator<\\(" include/gmpfrxx_mkII/detail include
+- rg -n "friend bool operator|operator<|operator==|mpf_cmp|precision_type|log_cancellation_probe_guard_bits|ceil_log2" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/*.hpp
+- sed -n '1,140p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '140,340p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '340,460p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- rg -n "using precision_type|typedef.*precision_type|precision_type" ../gmpxx_mkII/include/gmpxx_mkII.h.in include/gmpfrxx_mkII/detail
+- rg -n "log2\\(|log1p\\(|log\\(" ../gmpxx_mkII/tests include tests
+- sed -n '380,470p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- sed -n '130,260p' ../gmpxx_mkII/tests/test_mpf_transcendent_functions.cpp
+- rg -n "test_mpf_pi|add_executable|add_test" CMakeLists.txt tests/CMakeLists.txt
+- sed -n '1,80p' tests/CMakeLists.txt
+- sed -n '1,130p' tests/test_mpf_pi.cpp
+- git status --short
+- cmake --build build -j
+- ctest --test-dir build -R test_mpf_compute_log --output-on-failure
+- git diff -- include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_compute_log.cpp tests/CMakeLists.txt
+- gdb -batch -ex run -ex bt --args build/tests/test_mpf_compute_log
+- cmake --build build --target test_mpf_compute_log -j
+- ctest --test-dir build -R test_mpf_compute_log --output-on-failure
+- ctest --test-dir build --output-on-failure
+- tail -n 80 STATUS.md
+
+Pass/fail result:
+- Initial test_mpf_compute_log: FAIL, prefix checks asserted rounded boundary digits.
+- Adjusted prefix lengths: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 66/66 tests passed.
+
+Known issues:
+- Public gmpxx::log(), gmpxx::log1p(), and gmpxx::log2() have not yet been connected to these high-precision helpers.
+- gmpxx::log() remains double-backed until the next public API wiring step.
+
+Post-phase MPF compute_log high-precision test extension:
+DONE
+
+Implemented features:
+- Extended tests/test_mpf_compute_log.cpp to exercise compute_log at 512-bit, 1024-bit, and 2048-bit precision.
+- Added high-precision checks for log(2), log(4), log(1/2), and the near-one compute_log path against compute_log1p.
+
+Tests updated:
+- tests/test_mpf_compute_log.cpp
+
+Exact commands run:
+- sed -n '1,220p' tests/test_mpf_compute_log.cpp
+- cmake --build build --target test_mpf_compute_log -j
+- ctest --test-dir build -R test_mpf_compute_log --output-on-failure
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- test_mpf_compute_log: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 66/66 tests passed.
+
+Known issues:
+- Public gmpxx::log(), gmpxx::log1p(), and gmpxx::log2() remain disconnected from the high-precision helpers.
+
+Post-phase MPF pi high-precision test extension:
+DONE
+
+Implemented features:
+- Extended tests/test_mpf_pi.cpp to compute pi at 512-bit, 1024-bit, 2048-bit, and 4096-bit precision.
+- Added a 1000-decimal-place pi reference literal from the upstream gmpxx_mkII WolframAlpha-backed test comment.
+- Checked high-precision pi results against the reference literal with guard digits to avoid false failures at rounded decimal boundaries.
+- Added cache regression checks that compute 4096-bit pi first, then request 2048-bit, 1024-bit, and 512-bit pi again and require exact equality with the values captured before the 4096-bit cache raise.
+
+Tests updated:
+- tests/test_mpf_pi.cpp
+
+Exact commands run:
+- sed -n '1,150p' tests/test_mpf_pi.cpp
+- rg -n "314159265358979|pi_digits|reference.*pi|const_pi" ../gmpxx_mkII tests include
+- sed -n '2300,2380p' ../gmpxx_mkII/tests/test_gmpxx_mkII.cpp
+- sed -n '180,230p' ../gmpxx_mkII/tests/test_mpf_transcendent_functions.cpp
+- sed -n '2245,2325p' ../gmpxx_mkII/tests/test_gmpxx_mkII.cpp
+- cmake --build build --target test_mpf_pi -j
+- ctest --test-dir build -R test_mpf_pi --output-on-failure
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial high-precision prefix checks: FAIL, decimal boundary rounded the final checked digit.
+- Adjusted pi prefix checks to request guard digits and compare only stable leading digits: PASS.
+- Initial cache regression storage: FAIL, default-constructed mpf_class preserved 512-bit precision on assignment.
+- Fixed storage objects to use explicit 512/1024/2048-bit precision: PASS.
+- Final test_mpf_pi: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 66/66 tests passed.
+
+Known issues:
+- The 4096-bit result is checked against the available 1000-decimal-place reference prefix, not a full 4096-bit-length decimal reference.
+
+Post-phase MPF hardcoded pi constants:
+DONE
+
+Implemented features:
+- Added a hardcoded pi decimal literal in include/gmpfrxx_mkII/detail/math_mpf.hpp.
+- Routed gmpxx::pi(512), gmpxx::pi(1024), and gmpxx::pi(2048) through hardcoded constants instead of the AGM cache.
+- Kept non-hardcoded precision requests on the existing Gauss-Legendre AGM plus precision cache path.
+- gmpxx::const_pi() continues to call pi(default_mpf_precision_bits()), so the default 512-bit precision now uses the hardcoded pi path.
+
+Tests updated:
+- tests/test_mpf_pi.cpp
+
+Exact commands run:
+- sed -n '1,190p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- sed -n '190,235p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- cmake --build build --target test_mpf_pi -j
+- ctest --test-dir build -R test_mpf_pi --output-on-failure
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- test_mpf_pi: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 66/66 tests passed.
+
+Known issues:
+- Only 512-bit, 1024-bit, and 2048-bit pi use hardcoded constants. Other requested precisions still compute through AGM and cache.
