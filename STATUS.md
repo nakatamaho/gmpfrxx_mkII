@@ -1178,3 +1178,49 @@ Pass/fail result:
 
 Known issues:
 - Existing MPF transcendental functions other than pi still use double-backed implementations.
+
+Post-phase MPF log_two special function status:
+DONE
+
+Implemented features:
+- Confirmed gmpxx::pi(mp_bitcnt_t) and gmpxx::const_pi() use a mutex-protected precision cache.
+- Added gmpxx::log_two(mp_bitcnt_t), gmpxx::const_log2(), and gmpxx::const_log2(mp_bitcnt_t) for gmpxx::mpf_class.
+- Implemented log_two with a GMP-only Jacobi theta series plus AGM algorithm adapted from ../gmpxx_mkII/include/gmpxx_mkII.h.in.
+- Added a mutex-protected precision cache for log_two.
+- Extended tests/test_mpf_pi.cpp to cover log_two requested precision, default precision, lower-precision cache reuse, and decimal prefix accuracy.
+
+MPF special function implementation status:
+- pi / const_pi: implemented with Gauss-Legendre AGM and precision cache.
+- log_two / const_log2: implemented with Jacobi theta series plus AGM and precision cache.
+- sqrt / abs: implemented directly with GMP mpf_sqrt/mpf_abs.
+- exp / log / sin / cos / tan / sinh / cosh / tanh / atan2 / pow / gamma: currently present as double-backed implementations except where noted above.
+- log10 / log1p / exp2 / exp10 / expm1 / asin / acos / atan / asinh / acosh / atanh / reciprocal_gamma: not yet implemented as high-precision MPF special functions in this repo.
+
+Tests updated:
+- tests/test_mpf_pi.cpp
+
+Exact commands run:
+- sed -n '1,260p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- sed -n '5028,5138p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- rg -n "const_log2|log_two|log2\\(|const_pi|test_mpf_pi|special function|MPF .*function" include tests STATUS.md README.md
+- git status --short
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_mpf_pi
+- ctest --test-dir build --output-on-failure
+- temporary /tmp/check_log_two and /tmp/check_mpf_constants_test* programs to inspect decimal output and rounding boundary
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_mpf_pi
+- ctest --test-dir build --output-on-failure
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples benchmarks CMakeLists.txt cmake
+
+Pass/fail result:
+- Initial extended test_mpf_pi: FAIL, log_two decimal prefix tests asserted rounded boundary digits.
+- Adjusted log_two prefix tests: PASS
+- Final cmake --build build -j: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 65/65 tests passed
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- Most existing MPF transcendental functions are still double-backed; high-precision ports remain pending.

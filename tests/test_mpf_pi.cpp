@@ -20,6 +20,21 @@ void require_pi_prefix(const gmpxx::mpf_class& value, std::size_t digits)
     }
 }
 
+void require_log_two_prefix(const gmpxx::mpf_class& value, std::size_t digits)
+{
+    mp_exp_t exponent = 0;
+    const std::string got = value.get_str(exponent, 10, digits);
+    const std::string expected =
+        "6931471805599453094172321214581765680755001343602552541206800094";
+
+    if (exponent != 0) {
+        std::abort();
+    }
+    if (got.size() < digits || got.substr(0, digits) != expected.substr(0, digits)) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main()
@@ -47,6 +62,30 @@ int main()
         std::abort();
     }
     require_pi_prefix(default_pi, 60);
+
+    const auto log_two_128 = gmpxx::log_two(static_cast<mp_bitcnt_t>(128));
+    if (log_two_128.precision() < 128) {
+        std::abort();
+    }
+    require_log_two_prefix(log_two_128, 26);
+
+    const auto log_two_256 = gmpxx::const_log2(static_cast<mp_bitcnt_t>(256));
+    if (log_two_256.precision() < 256) {
+        std::abort();
+    }
+    require_log_two_prefix(log_two_256, 56);
+
+    const auto log_two_96_again = gmpxx::log_two(static_cast<mp_bitcnt_t>(96));
+    if (log_two_96_again.precision() < 96) {
+        std::abort();
+    }
+    require_log_two_prefix(log_two_96_again, 25);
+
+    const auto default_log_two = gmpxx::const_log2();
+    if (default_log_two.precision() < gmpxx::default_mpf_precision_bits()) {
+        std::abort();
+    }
+    require_log_two_prefix(default_log_two, 56);
 
     return 0;
 }

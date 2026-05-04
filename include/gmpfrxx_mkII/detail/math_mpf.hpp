@@ -59,6 +59,13 @@ inline mpf_class mul(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t pre
     return result;
 }
 
+inline mpf_class mul_ui(const mpf_class& lhs, unsigned long rhs, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_mul_ui(result.mpf_data(), lhs.mpf_data(), rhs);
+    return result;
+}
+
 inline mpf_class sqr(const mpf_class& value, mp_bitcnt_t precision)
 {
     return mul(value, value, precision);
@@ -180,6 +187,114 @@ inline mpf_class pi(mp_bitcnt_t target_precision)
     return set_prec_copy(cache.cached_value, target);
 }
 
+inline mp_bitcnt_t working_precision_for_log_two(mp_bitcnt_t target_precision)
+{
+    return normalize_target_precision(target_precision) + 128;
+}
+
+inline mpf_class theta_series_threshold(mp_bitcnt_t precision)
+{
+    mpf_class threshold = make_ui(1, precision);
+    mpf_div_2exp(threshold.mpf_data(), threshold.mpf_data(), precision);
+    return threshold;
+}
+
+inline mpf_class agm_converged(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
+{
+    mpf_class a = set_prec_copy(lhs, precision);
+    mpf_class b = set_prec_copy(rhs, precision);
+    mpf_class epsilon = make_ui(1, precision);
+    mpf_div_2exp(epsilon.mpf_data(), epsilon.mpf_data(), precision);
+
+    while (true) {
+        mpf_class a_next = average(a, b, precision);
+        mpf_class b_next = sqrt_prec(mul(a, b, precision), precision);
+        if (mpf_cmp(abs_prec(sub(a_next, b_next, precision), precision).mpf_data(), epsilon.mpf_data()) < 0) {
+            return average(a_next, b_next, precision);
+        }
+        a = a_next;
+        b = b_next;
+    }
+}
+
+inline mpf_class theta3_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t precision)
+{
+    const mpf_class threshold = theta_series_threshold(precision);
+    mpf_class sum = make_ui(1, precision);
+    mpf_class term = make_ui(1, precision);
+    mpf_div_2exp(term.mpf_data(), term.mpf_data(), q_exponent);
+
+    for (unsigned long k = 1;; ++k) {
+        mpf_class contribution = mul_ui(term, 2ul, precision);
+        if (mpf_cmp(contribution.mpf_data(), threshold.mpf_data()) < 0) {
+            break;
+        }
+        sum = add(sum, contribution, precision);
+        mpf_div_2exp(term.mpf_data(), term.mpf_data(), q_exponent * (2ul * k + 1ul));
+    }
+    return sum;
+}
+
+inline mpf_class theta2_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t precision)
+{
+    const mpf_class threshold = theta_series_threshold(precision);
+    mpf_class q = make_ui(1, precision);
+    mpf_div_2exp(q.mpf_data(), q.mpf_data(), q_exponent);
+    mpf_class term = sqrt_prec(sqrt_prec(q, precision), precision);
+    mpf_class sum = make_ui(0, precision);
+
+    for (unsigned long k = 0;; ++k) {
+        mpf_class contribution = mul_ui(term, 2ul, precision);
+        if (mpf_cmp(contribution.mpf_data(), threshold.mpf_data()) < 0) {
+            break;
+        }
+        sum = add(sum, contribution, precision);
+        mpf_div_2exp(term.mpf_data(), term.mpf_data(), q_exponent * (2ul * k + 2ul));
+    }
+    return sum;
+}
+
+inline mpf_class compute_log_two_theta_agm(mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    const mp_bitcnt_t work = working_precision_for_log_two(target);
+    const mp_bitcnt_t q_exponent = (work / 2) - 2;
+
+    mpf_class theta2 = theta2_from_power_of_two_q(q_exponent, work);
+    mpf_class theta3 = theta3_from_power_of_two_q(q_exponent, work);
+    mpf_class agm_value = agm_converged(sqr(theta2, work), sqr(theta3, work), work);
+    mpf_class q_scale = make_ui(static_cast<unsigned long>(q_exponent), work);
+    mpf_class denominator = mul(q_scale, agm_value, work);
+    return set_prec_copy(div(pi(work), denominator, work), target);
+}
+
+struct log_two_cache_state {
+    std::mutex mutex;
+    mp_bitcnt_t cached_precision{0};
+    mpf_class cached_value;
+    bool initialized{false};
+};
+
+inline log_two_cache_state& log_two_cache()
+{
+    static log_two_cache_state cache;
+    return cache;
+}
+
+inline mpf_class log_two(mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    log_two_cache_state& cache = log_two_cache();
+    std::lock_guard<std::mutex> lock(cache.mutex);
+    if (!cache.initialized || cache.cached_precision < target) {
+        mpf_class computed = compute_log_two_theta_agm(target);
+        cache.cached_value.swap(computed);
+        cache.cached_precision = target;
+        cache.initialized = true;
+    }
+    return set_prec_copy(cache.cached_value, target);
+}
+
 template <typename Function>
 inline mpf_class apply_unary(const mpf_class& value, Function function)
 {
@@ -201,6 +316,21 @@ inline mpf_class const_pi()
 inline mpf_class const_pi(mp_bitcnt_t target_precision)
 {
     return pi(target_precision);
+}
+
+inline mpf_class log_two(mp_bitcnt_t target_precision)
+{
+    return mpf_math_detail::log_two(target_precision);
+}
+
+inline mpf_class const_log2()
+{
+    return log_two(default_mpf_precision_bits());
+}
+
+inline mpf_class const_log2(mp_bitcnt_t target_precision)
+{
+    return log_two(target_precision);
 }
 
 inline mpf_class sqrt(const mpf_class& value)
