@@ -2047,7 +2047,7 @@ Migration table:
 | test_compound_assign.cpp | tests/test_compound_assign.cpp, tests/test_mpfr_compound_assign.cpp | Done for MPF arithmetic compound surface | Done for MPFR arithmetic compound surface | Upstream legacy exact-type bitwise/shift compound surface is not included in the MPF/MPFR adaptation yet. | Track exact-type legacy operators under mpz/mpq arithmetic rows. |
 | test_construction_copy.cpp | tests/test_construction_copy.cpp | Done for current policy | Done | Upstream expects bool constructors; this repo intentionally rejects bool. | Keep migrated; add only missing constructor forms discovered by other tests. |
 | test_defaults_policy.cpp | tests/test_mpf_precision_policy.cpp, tests/test_mpfr_defaults.cpp, tests/test_mpfr_environment*.cpp | Partial | Partial | Upstream thread-local/default snapshot semantics may not exist; this repo uses explicit reload/set APIs and env names. | Add current-policy defaults/thread tests for MPF and MPFR without changing env naming back. |
-| test_exception_support.cpp | Domain-error tests scattered in math tests | TODO | TODO | Exception types/messages and invalid construction behavior are not centrally tested. | Port as policy-compatible exception test for mpf and mpfr constructors/math domains. |
+| test_exception_support.cpp | tests/test_exception_support.cpp, tests/test_mpfr_exception_support.cpp | Done | Done | MPFC/MPC currently have limited direct invalid-string surfaces; tests cover exception propagation through component construction and valid complex construction neutrality. | Keep migrated; add direct MPFC/MPC parser exception cases when their IO/string APIs are implemented. |
 | test_gmpxx_mkII.cpp | Header smoke/basic arithmetic tests | Partial | N/A or aggregator smoke | Legacy monolithic smoke may overlap many local tests. | Read and split only missing assertions into focused tests. |
 | test_headers.cpp | tests/test_header_boundaries.cpp, compile_fail header tests | Partial/Done | Partial/Done | May require source-scan parity with upstream header expectations. | Merge any missing include-boundary scans into test_header_boundaries.cpp. |
 | test_io_and_strings.cpp | tests/test_zq_string_io.cpp, tests/test_mpf_string_io.cpp, tests/test_mpfr_string_io.cpp | Partial | Partial | mpfc IO is likely incomplete; formatting edge cases may be missing. | Port missing GMP IO/string cases; adapt matching MPFR formatting/parsing cases. |
@@ -2088,6 +2088,8 @@ Tests updated:
 - tests/test_mpfr_comparisons.cpp
 - tests/test_compound_assign.cpp
 - tests/test_mpfr_compound_assign.cpp
+- tests/test_exception_support.cpp
+- tests/test_mpfr_exception_support.cpp
 - tests/CMakeLists.txt
 
 Exact commands run:
@@ -2104,12 +2106,17 @@ Exact commands run:
 - cmake --build build -j
 - ctest --test-dir build --output-on-failure -R "test_compound_assign|test_mpfr_compound_assign"
 - ctest --test-dir build --output-on-failure
+- sed -n '1,320p' ../gmpxx_mkII/tests/test_exception_support.cpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_exception_support|test_mpfr_exception_support"
+- ctest --test-dir build --output-on-failure
 
 Pass/fail result:
 - PASS: cmake --build build -j
 - PASS: ctest --test-dir build --output-on-failure -R "test_comparisons|test_mpfr_comparisons" (2/2)
 - PASS: ctest --test-dir build --output-on-failure -R "test_compound_assign|test_mpfr_compound_assign" (2/2)
-- PASS: ctest --test-dir build --output-on-failure (75/75)
+- PASS: ctest --test-dir build --output-on-failure -R "test_exception_support|test_mpfr_exception_support" (2/2)
+- PASS: ctest --test-dir build --output-on-failure (77/77)
 
 Known issues:
 - The table is intentionally conservative: several rows marked Partial may already have some behavior covered by smaller local tests, but remain open until compared line-by-line with the upstream source test.
@@ -2122,6 +2129,9 @@ Comparison migration details:
 - Added tests/test_mpfr_comparisons.cpp as the natural MPFR adaptation.
 - Added gmpxx::mpf_class and mpfrxx::mpfr_class operator+=, operator-=, operator*=, and operator/= for supported expression/scalar operands.
 - Added tests/test_compound_assign.cpp and tests/test_mpfr_compound_assign.cpp for destination-precision preservation, scalar RHS, wider RHS precision, exact RHS, self-aliasing, and expression RHS.
+- Added centralized exception support tests for exact string construction, MPF/MPFR invalid string construction and assignment, random argument validation, MPF domain errors, and MPFC/MPC component exception propagation.
+- Changed mpfrxx::mpfr_class string construction and string assignment to throw std::invalid_argument on invalid input, matching MPF behavior; set_str() remains nonthrowing and preserves the old value on failure.
+- Changed gmpxx::mpq_class string construction and set_str() to reject zero denominators before canonicalization.
 
 Post-phase MPFR random API:
 DONE

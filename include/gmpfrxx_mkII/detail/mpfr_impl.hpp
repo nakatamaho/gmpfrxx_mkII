@@ -107,8 +107,9 @@ public:
         mpfr_init2(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
         const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
-        if (mpfr_set_str(value_, text, base, context.rounding_mode) != 0) {
-            mpfr_set_ui(value_, 0, context.rounding_mode);
+        if (text == nullptr || mpfr_set_str(value_, text, base, context.rounding_mode) != 0) {
+            mpfr_clear(value_);
+            throw std::invalid_argument("invalid mpfr_class decimal string");
         }
     }
 
@@ -203,10 +204,8 @@ public:
 
     mpfr_class& operator=(const char* text)
     {
-        const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
-        if (mpfr_set_str(value_, text, 10, context.rounding_mode) != 0) {
-            mpfr_set_ui(value_, 0, context.rounding_mode);
+        if (set_str(text) != 0) {
+            throw std::invalid_argument("invalid mpfr_class decimal string");
         }
         return *this;
     }

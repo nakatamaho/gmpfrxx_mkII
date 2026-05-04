@@ -290,6 +290,25 @@ inline std::string gmp_strip_leading_plus(std::string token)
     return token;
 }
 
+inline bool gmp_rational_has_zero_denominator(const char* value, int base)
+{
+    if (value == nullptr) {
+        return false;
+    }
+    const std::string text(value);
+    const std::size_t slash = text.find('/');
+    if (slash == std::string::npos) {
+        return false;
+    }
+
+    mpz_t denominator;
+    mpz_init(denominator);
+    const int rc = mpz_set_str(denominator, text.substr(slash + 1).c_str(), base);
+    const bool result = rc == 0 && mpz_sgn(denominator) == 0;
+    mpz_clear(denominator);
+    return result;
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -504,7 +523,9 @@ public:
     explicit mpq_class(const char* value, int base = 10)
     {
         mpq_init(value_);
-        if (value == nullptr || mpq_set_str(value_, value, base) != 0) {
+        if (value == nullptr ||
+            gmpfrxx_mkII::detail::gmp_rational_has_zero_denominator(value, base) ||
+            mpq_set_str(value_, value, base) != 0) {
             mpq_clear(value_);
             throw std::invalid_argument("invalid mpq_class string");
         }
@@ -636,6 +657,9 @@ public:
     int set_str(const char* value, int base = 10)
     {
         if (value == nullptr) {
+            return -1;
+        }
+        if (gmpfrxx_mkII::detail::gmp_rational_has_zero_denominator(value, base)) {
             return -1;
         }
         mpq_t temp;
