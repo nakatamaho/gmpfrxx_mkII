@@ -518,3 +518,64 @@ Pass/fail result:
 Known issues:
 - MPC arithmetic is not implemented yet.
 - MPQ-to-MPF conversion allocates temporary MPF numerator and denominator storage.
+
+Phase 7 status:
+DONE
+
+Implemented features:
+- Implemented mpfrxx::mpc_class as an MPC-backed RAII wrapper around mpc_t.
+- Added copy construction, move construction, copy assignment, move assignment, and destruction for mpfrxx::mpc_class.
+- Added with_precision(bits), with_precision(bits, real, imag), precision(), real_to_double(), imag_to_double(), and mpc_data() helpers.
+- Added MPC expression-template arithmetic for +, -, *, /, unary +, and unary -.
+- Added type promotion to mpc_class when at least one operand is an MPC object or MPC expression node.
+- Added mixed MPC operands for mpfr_class, mpz_class, mpq_class, and supported scalar leaves.
+- Converted MPFR operands through mpc_set_fr(), exact mpz operands through mpc_set_z(), and exact mpq operands through mpc_set_q().
+- Kept mpfr + mpfr as MPFR arithmetic and exact-only arithmetic as exact arithmetic; MPC promotion requires an MPC operand.
+- Kept MPF/MPFR and MPF/MPC mixed-family operations forbidden.
+- Kept public arithmetic expression-template based; no eager public mpc/mpfr/mpf/mpz/mpq arithmetic operators were added.
+- Kept GMP-only headers free of MPFR/MPC includes and symbols.
+
+Missing features:
+- MPC default precision and rounding environment variables are not implemented yet.
+- MPC real/imag independent precision support is not implemented yet; Phase 7 uses same precision for both components.
+- MPC math functions, comparisons, and streaming are not implemented yet.
+- Exact expression division by zero still follows GMP behavior without a wrapper-specific diagnostic.
+
+Tests added:
+- tests/test_et_contract_mpc.cpp
+- tests/test_mpc_basic.cpp
+- tests/test_mpc_aliasing.cpp
+
+Exact commands run:
+- sed -n '1,260p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '1,140p' include/mpfrxx_mkII.h
+- sed -n '1,180p' tests/CMakeLists.txt
+- tail -90 STATUS.md
+- git status --short
+- rg -n "mpc_(init|set|add|sub|mul|div|real|imag|get|clear|swap|neg|conj|set_.*fr|set_.*q|set_.*z)" /usr/include /usr/local/include
+- sed -n '1,220p' tests/test_aggregator_header_smoke.cpp
+- sed -n '1,80p' include/gmpfrxx_mkII.h
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_et_contract_mpc|test_mpc_basic|test_mpc_aliasing"
+- rg -n for eager mpc/mpfr/mpf/mpz/mpq arithmetic operators in include tests
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests CMakeLists.txt cmake
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "test_et_contract_mpc|test_mpc_basic|test_mpc_aliasing"
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial cmake --build build -j: PASS
+- Initial new MPC tests: FAIL, test_mpc_aliasing expected the wrong imaginary result.
+- Fixed test_mpc_aliasing expectation for (1+2i)*(3-i)+(1+2i) from 10i to 7i.
+- Final cmake --build build -j: PASS
+- Final new MPC tests: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 43/43 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- MPC environment variables remain for a later phase.
+- MPC uses MPC_RNDNN directly in Phase 7.
+- MPC real and imaginary component precision are currently the same.
