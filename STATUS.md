@@ -1743,3 +1743,36 @@ Pass/fail result:
 
 Known issues:
 - MPFR stream input currently covers finite numeric tokens; infinities and NaNs are not specially tokenized by the custom extractor.
+
+Post-phase GMP string and stream IO:
+DONE
+
+Implemented features:
+- Added shared GMP stream token helpers for integer, rational, and floating-point extraction.
+- Added std::istream operator>> for gmpxx::mpz_class, preserving the old value on parse failure.
+- Added std::istream operator>> for gmpxx::mpq_class, including zero-denominator rejection and value-preserving failure semantics.
+- Added std::istream operator>> for gmpxx::mpf_class, preserving destination precision and old value on parse failure.
+- Added std::ostream operator<< for GMP expression nodes returning mpz_class, mpq_class, and mpf_class by materializing before output.
+- Kept GMP-only implementation paths in gmpxx_mkII.h; no MPFR or MPC dependency was introduced.
+
+Tests updated:
+- tests/test_zq_string_io.cpp
+- tests/test_mpf_string_io.cpp
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- STATUS.md
+
+Exact commands run:
+- cmake --build build --target test_zq_string_io test_mpf_string_io -j
+- ctest --test-dir build -R "test_(zq|mpf)_string_io" --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- test_zq_string_io: PASS.
+- test_mpf_string_io: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 67/67 tests passed.
+
+Known issues:
+- GMP stream input covers finite numeric tokens; it does not add special spelling support beyond GMP's numeric parsers.

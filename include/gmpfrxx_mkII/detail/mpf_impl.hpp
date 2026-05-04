@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <istream>
 #include <limits>
 #include <ostream>
 #include <stdexcept>
@@ -447,6 +448,41 @@ inline std::ostream& operator<<(std::ostream& out, const mpf_class& value)
         out.setstate(std::ios_base::badbit);
     }
     return out;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                         std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>,
+                     int> = 0>
+inline std::ostream& operator<<(std::ostream& out, const Expr& expr)
+{
+    return out << mpf_class(expr);
+}
+
+inline std::istream& operator>>(std::istream& in, mpf_class& value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    int base = gmpfrxx_mkII::detail::gmp_stream_input_base(in);
+    if (base == 0) {
+        base = 10;
+    }
+
+    std::string token;
+    const bool parsed_token = gmpfrxx_mkII::detail::gmp_read_float_token(in, token, base);
+    const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
+
+    mpf_class tmp = mpf_class::with_precision(value.precision());
+    if (parsed_token && tmp.set_str(parse_token, base) == 0) {
+        value.swap(tmp);
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
 }
 
 } // namespace gmpxx

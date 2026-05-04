@@ -10,6 +10,8 @@
 #include <cctype>
 #include <cstdint>
 #include <cstring>
+#include <istream>
+#include <locale>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -70,6 +72,195 @@ private:
 
     char* value_;
 };
+
+inline int gmp_stream_input_base(const std::ios_base& stream) noexcept
+{
+    const auto basefield = stream.flags() & std::ios_base::basefield;
+    if (basefield == std::ios_base::hex) {
+        return 16;
+    }
+    if (basefield == std::ios_base::oct) {
+        return 8;
+    }
+    if (basefield == std::ios_base::dec) {
+        return 10;
+    }
+    return 0;
+}
+
+inline int gmp_digit_value(char c) noexcept
+{
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    }
+    if (c >= 'a' && c <= 'z') {
+        return c - 'a' + 10;
+    }
+    if (c >= 'A' && c <= 'Z') {
+        return c - 'A' + 10;
+    }
+    return -1;
+}
+
+inline bool gmp_is_digit_for_base(char c, int base) noexcept
+{
+    const int value = gmp_digit_value(c);
+    return value >= 0 && value < base;
+}
+
+inline bool gmp_stream_peek_char(std::istream& in, char& c)
+{
+    const auto next = in.rdbuf()->sgetc();
+    if (next == std::char_traits<char>::eof()) {
+        in.setstate(std::ios_base::eofbit);
+        return false;
+    }
+    c = static_cast<char>(next);
+    return true;
+}
+
+inline void gmp_stream_get_char(std::istream& in, std::string& token)
+{
+    const auto next = in.rdbuf()->sbumpc();
+    if (next == std::char_traits<char>::eof()) {
+        in.setstate(std::ios_base::eofbit | std::ios_base::failbit);
+        return;
+    }
+    token.push_back(static_cast<char>(next));
+}
+
+inline void gmp_read_optional_sign(std::istream& in, std::string& token)
+{
+    char c = '\0';
+    if (gmp_stream_peek_char(in, c) && (c == '+' || c == '-')) {
+        gmp_stream_get_char(in, token);
+    }
+}
+
+inline bool gmp_read_digits_for_base(std::istream& in, std::string& token, int base)
+{
+    bool saw_digit = false;
+    char c = '\0';
+    while (gmp_stream_peek_char(in, c) && gmp_is_digit_for_base(c, base)) {
+        gmp_stream_get_char(in, token);
+        saw_digit = true;
+    }
+    return saw_digit;
+}
+
+inline bool gmp_read_integer_token(std::istream& in, std::string& token, int base)
+{
+    token.clear();
+    gmp_read_optional_sign(in, token);
+
+    if (base != 0) {
+        return gmp_read_digits_for_base(in, token, base);
+    }
+
+    char c = '\0';
+    if (!gmp_stream_peek_char(in, c) || !std::isdigit(static_cast<unsigned char>(c))) {
+        return false;
+    }
+
+    if (c != '0') {
+        return gmp_read_digits_for_base(in, token, 10);
+    }
+
+    gmp_stream_get_char(in, token);
+    char prefix = '\0';
+    if (gmp_stream_peek_char(in, prefix) && (prefix == 'x' || prefix == 'X')) {
+        in.rdbuf()->sbumpc();
+        char first_hex = '\0';
+        if (gmp_stream_peek_char(in, first_hex) && gmp_is_digit_for_base(first_hex, 16)) {
+            token.push_back(prefix);
+            gmp_read_digits_for_base(in, token, 16);
+            return true;
+        }
+        if (in.rdbuf()->sputbackc(prefix) == std::char_traits<char>::eof()) {
+            in.setstate(std::ios_base::badbit);
+        }
+    }
+
+    gmp_read_digits_for_base(in, token, 8);
+    return true;
+}
+
+inline bool gmp_read_rational_token(std::istream& in, std::string& token, int base)
+{
+    token.clear();
+    std::string numerator;
+    if (!gmp_read_integer_token(in, numerator, base)) {
+        return false;
+    }
+    token = numerator;
+
+    char c = '\0';
+    if (!gmp_stream_peek_char(in, c) || c != '/') {
+        return true;
+    }
+
+    gmp_stream_get_char(in, token);
+    std::string denominator;
+    if (!gmp_read_integer_token(in, denominator, base)) {
+        return false;
+    }
+    token += denominator;
+    return true;
+}
+
+inline char gmp_stream_decimal_point(const std::ios_base& stream)
+{
+    return std::use_facet<std::numpunct<char>>(stream.getloc()).decimal_point();
+}
+
+inline bool gmp_read_float_token(std::istream& in, std::string& token, int base)
+{
+    token.clear();
+    gmp_read_optional_sign(in, token);
+    const char decimal_point = gmp_stream_decimal_point(in);
+
+    bool saw_mantissa_digit = false;
+    saw_mantissa_digit |= gmp_read_digits_for_base(in, token, base);
+
+    char c = '\0';
+    if (gmp_stream_peek_char(in, c) && c == decimal_point) {
+        in.rdbuf()->sbumpc();
+        token.push_back('.');
+        saw_mantissa_digit |= gmp_read_digits_for_base(in, token, base);
+    }
+
+    if (!saw_mantissa_digit) {
+        return false;
+    }
+
+    const char exponent_marker = base == 10 ? 'e' : '@';
+    if (!gmp_stream_peek_char(in, c) ||
+        (c != exponent_marker && !(base == 10 && c == 'E'))) {
+        return true;
+    }
+
+    gmp_stream_get_char(in, token);
+    gmp_read_optional_sign(in, token);
+
+    bool saw_exponent_digit = false;
+    while (gmp_stream_peek_char(in, c) && std::isdigit(static_cast<unsigned char>(c))) {
+        gmp_stream_get_char(in, token);
+        saw_exponent_digit = true;
+    }
+    return saw_exponent_digit;
+}
+
+inline std::string gmp_strip_leading_plus(std::string token)
+{
+    if (!token.empty() && token.front() == '+') {
+        token.erase(token.begin());
+    }
+    const std::size_t slash = token.find('/');
+    if (slash != std::string::npos && slash + 1 < token.size() && token[slash + 1] == '+') {
+        token.erase(token.begin() + static_cast<std::ptrdiff_t>(slash + 1));
+    }
+    return token;
+}
 
 } // namespace detail
 } // namespace gmpfrxx_mkII
@@ -558,6 +749,67 @@ inline std::ostream& operator<<(std::ostream& out, const mpq_class& value)
         out.setstate(std::ios_base::badbit);
     }
     return out;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                         (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class> ||
+                          std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>),
+                     int> = 0>
+inline std::ostream& operator<<(std::ostream& out, const Expr& expr)
+{
+    return out << typename std::decay_t<Expr>::result_type(expr);
+}
+
+inline std::istream& operator>>(std::istream& in, mpz_class& value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    std::string token;
+    const int base = gmpfrxx_mkII::detail::gmp_stream_input_base(in);
+    const bool parsed_token = gmpfrxx_mkII::detail::gmp_read_integer_token(in, token, base);
+    const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
+
+    mpz_class tmp;
+    if (parsed_token && tmp.set_str(parse_token, base) == 0) {
+        value.swap(tmp);
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
+}
+
+inline std::istream& operator>>(std::istream& in, mpq_class& value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    const int base = gmpfrxx_mkII::detail::gmp_stream_input_base(in);
+    std::string token;
+    const bool parsed_token = gmpfrxx_mkII::detail::gmp_read_rational_token(in, token, base);
+    const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
+
+    mpq_class tmp;
+    bool zero_denominator = false;
+    const std::size_t slash = parse_token.find('/');
+    if (slash != std::string::npos) {
+        mpz_class denominator;
+        zero_denominator = denominator.set_str(parse_token.substr(slash + 1), base) == 0 &&
+                           mpz_sgn(denominator.mpz_data()) == 0;
+    }
+
+    if (parsed_token && !zero_denominator && tmp.set_str(parse_token, base) == 0) {
+        value.swap(tmp);
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
 }
 
 inline void swap(mpz_class& lhs, mpz_class& rhs) noexcept
