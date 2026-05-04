@@ -1799,3 +1799,38 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+Post-phase generated Git commit hash API:
+DONE
+
+Implemented features:
+- Added CMake Git detection and configure-time generation of build/generated/gmpfrxx_mkII/detail/version.hpp.
+- Added include/gmpfrxx_mkII/detail/version.hpp.in as the source template for GMPFRXX_MKII_GIT_COMMIT_HASH.
+- Added generated include directory to gmpxx_mkII, mpfrxx_mkII, and gmpfrxx_mkII interface targets.
+- Added direct-include fallback in config.hpp so non-CMake source-tree includes report "unknown" when no generated version header is present.
+- Added gmpxx::git_commit_hash(), mpfrxx::git_commit_hash(), gmpxx::print_git_commit_hash(std::ostream&), and mpfrxx::print_git_commit_hash(std::ostream&).
+
+Tests added:
+- tests/test_version_info.cpp
+
+Tests updated:
+- CMakeLists.txt
+- tests/CMakeLists.txt
+- include/gmpfrxx_mkII/detail/config.hpp
+- include/gmpfrxx_mkII/detail/version.hpp.in
+- STATUS.md
+
+Exact commands run:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build --target test_version_info -j
+- ctest --test-dir build -R test_version_info --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- test_version_info: PASS.
+- Final cmake --build build -j: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 68/68 tests passed.
+
+Known issues:
+- The generated Git hash is captured at CMake configure time; rerun cmake -S . -B build to refresh it after new commits.

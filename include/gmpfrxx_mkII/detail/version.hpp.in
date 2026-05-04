@@ -26,15 +26,10 @@
  *
  */
 
-#ifndef GMPFRXX_MKII_DETAIL_CONFIG_HPP
-#define GMPFRXX_MKII_DETAIL_CONFIG_HPP
+#ifndef GMPFRXX_MKII_DETAIL_VERSION_HPP
+#define GMPFRXX_MKII_DETAIL_VERSION_HPP
 
-#include <ostream>
-
-#if __has_include(<gmpfrxx_mkII/detail/version.hpp>)
-#include <gmpfrxx_mkII/detail/version.hpp>
-#else
-#define GMPFRXX_MKII_GIT_COMMIT_HASH "unknown"
+#define GMPFRXX_MKII_GIT_COMMIT_HASH "@GMPFRXX_MKII_GIT_COMMIT_HASH@"
 
 namespace gmpfrxx_mkII {
 namespace detail {
@@ -43,48 +38,5 @@ inline constexpr const char* git_commit_hash = GMPFRXX_MKII_GIT_COMMIT_HASH;
 
 } // namespace detail
 } // namespace gmpfrxx_mkII
-#endif
 
-namespace gmpfrxx_mkII {
-namespace detail {
-
-struct build_options {
-#ifdef GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
-    static constexpr bool assume_fixed_precision_fastpath = true;
-#else
-    static constexpr bool assume_fixed_precision_fastpath = false;
-#endif
-};
-
-} // namespace detail
-} // namespace gmpfrxx_mkII
-
-namespace gmpxx {
-
-inline constexpr const char* git_commit_hash() noexcept
-{
-    return ::gmpfrxx_mkII::detail::git_commit_hash;
-}
-
-inline std::ostream& print_git_commit_hash(std::ostream& out)
-{
-    return out << git_commit_hash();
-}
-
-} // namespace gmpxx
-
-namespace mpfrxx {
-
-inline constexpr const char* git_commit_hash() noexcept
-{
-    return ::gmpfrxx_mkII::detail::git_commit_hash;
-}
-
-inline std::ostream& print_git_commit_hash(std::ostream& out)
-{
-    return out << git_commit_hash();
-}
-
-} // namespace mpfrxx
-
-#endif // GMPFRXX_MKII_DETAIL_CONFIG_HPP
+#endif // GMPFRXX_MKII_DETAIL_VERSION_HPP
