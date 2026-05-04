@@ -890,3 +890,72 @@ Pass/fail result:
 
 Known issues:
 - Phase 11 API is present and tested, but high-precision MPF transcendental accuracy still requires porting the full algorithms from gmpxx_mkII.h.in.
+
+Phase 12 status:
+DONE
+
+Implemented features:
+- Rewrote README.md to match the current public API:
+  gmpxx namespace, mpfrxx namespace, and gmpfrxx_mkII::detail internals.
+- Documented the from-scratch implementation boundary:
+  no gmpxx.h, no libgmpxx, no bridge to an existing C++ wrapper.
+- Documented header roles:
+  gmpxx_mkII.h is GMP-only, mpfrxx_mkII.h is GMP+MPFR+MPC, and gmpfrxx_mkII.h is the combined aggregator.
+- Documented mpfrxx::mpz_class/mpq_class aliasing to gmpxx::mpz_class/mpq_class.
+- Documented mpfrxx::mpc_class as MPC-backed.
+- Documented gmpxx::mpfc_class as GMP-only and separate from mpfrxx::mpc_class.
+- Documented expression-template materialization and precision policy.
+- Documented runtime environment variables and compile-time fixed-precision fast-path option.
+- Added MPFR/MPC example program:
+  examples/example02_mpfr_mpc.cpp.
+- Added MPFC math example program:
+  examples/example03_mpfc_math.cpp.
+- Added benchmark build directory and two local benchmark programs:
+  benchmarks/bench_gmp_arithmetic.cpp
+  benchmarks/bench_mpfr_mpc_arithmetic.cpp.
+- Hooked examples and benchmarks into CMake.
+
+Missing features:
+- Phase plan in PROMPTS.md ends at Phase 12; no Phase 13+ is currently defined.
+- Benchmarks are simple local timing executables, not a full benchmark framework.
+- README documents the current double-backed MPF transcendental limitation.
+
+Tests added:
+- CTest entries for example02_mpfr_mpc and example03_mpfc_math.
+- Build targets for bench_gmp_arithmetic and bench_mpfr_mpc_arithmetic.
+
+Exact commands run:
+- git status --short
+- ls -la
+- find . -maxdepth 2 -type f | sort | sed -n '1,160p'
+- sed -n '1,240p' README.md
+- sed -n '1,220p' CMakeLists.txt
+- sed -n '1,220p' examples/CMakeLists.txt
+- wc -l README.md
+- rg -n "with_precision|to_double|real\\(|imag\\(" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp examples tests/test_mpc_basic.cpp tests/test_mpfr_expression_eval.cpp
+- sed -n '1,180p' examples/example01.cpp
+- sed -n '1,180p' tests/test_mpc_basic.cpp
+- sed -n '1,140p' tests/test_mpfr_expression_eval.cpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R "example|mpfc_math"
+- ./build/benchmarks/bench_gmp_arithmetic
+- ./build/benchmarks/bench_mpfr_mpc_arithmetic
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpfc/mpf/mpz/mpq arithmetic operators in include tests examples benchmarks
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples benchmarks CMakeLists.txt cmake
+- git diff --stat
+- tail -n 90 STATUS.md
+
+Pass/fail result:
+- cmake --build build -j: PASS
+- Added examples plus mpfc math focused CTest: PASS, 4/4 tests passed
+- bench_gmp_arithmetic execution: PASS
+- bench_mpfr_mpc_arithmetic execution: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 61/61 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- Documentation and examples are now current, but README intentionally records the Phase 11 MPF transcendental accuracy limitation.

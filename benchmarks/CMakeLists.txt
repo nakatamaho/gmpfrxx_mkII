@@ -1,0 +1,5 @@
+add_executable(bench_gmp_arithmetic bench_gmp_arithmetic.cpp)
+target_link_libraries(bench_gmp_arithmetic PRIVATE gmpxx_mkII)
+
+add_executable(bench_mpfr_mpc_arithmetic bench_mpfr_mpc_arithmetic.cpp)
+target_link_libraries(bench_mpfr_mpc_arithmetic PRIVATE mpfrxx_mkII)
