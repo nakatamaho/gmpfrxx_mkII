@@ -1130,3 +1130,51 @@ Pass/fail result:
 
 Known issues:
 - None for this migration.
+
+Post-phase MPF pi special function status:
+DONE
+
+Implemented features:
+- Added gmpxx::pi(mp_bitcnt_t), gmpxx::const_pi(), and gmpxx::const_pi(mp_bitcnt_t) for gmpxx::mpf_class.
+- Implemented pi with a GMP-only Gauss-Legendre iteration adapted from ../gmpxx_mkII/include/gmpxx_mkII.h.in.
+- Added internal working precision guard bits and a mutex-protected precision cache in math_mpf.hpp.
+- Preserved the GMP-only header boundary: implementation uses GMP mpf_* APIs only and does not include or reference MPFR/MPC.
+- Added tests for requested precision, default precision, cache reuse from lower precision, and decimal prefix accuracy.
+
+Tests added:
+- tests/test_mpf_pi.cpp
+
+Exact commands run:
+- rg -n "pi\\(|const_pi|acos|atan|special|math" ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '1,260p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- rg -n "pi\\(|math_mpf|sqrt\\(|sin\\(|cos\\(|tan\\(" tests examples README.md STATUS.md include
+- git status --short
+- sed -n '4920,5035p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '5035,5055p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '5990,6030p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- rg -n "set_prec_copy|sqrt_prec|add\\(|sub\\(|mul\\(|div\\(|precision_type" ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- sed -n '4820,4925p' ../gmpxx_mkII/include/gmpxx_mkII.h.in
+- rg -n "operator<|operator==|mpf_cmp|to_double|with_precision|precision\\(" include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/test_mpf*
+- sed -n '220,430p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1,120p' tests/test_mpf_string_io.cpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure -R test_mpf_pi
+- ctest --test-dir build --output-on-failure
+- temporary /tmp/check_pi and /tmp/check_pi_test programs to inspect pi decimal output
+- ctest --test-dir build --output-on-failure -R test_mpf_pi
+- ctest --test-dir build --output-on-failure
+- rg -n for eager mpc/mpfr/mpfc/mpf/mpz/mpq arithmetic operators in include tests examples benchmarks
+- rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp
+- rg -n "#include <gmpxx\\.h>|mpf_set_default_prec" include tests examples benchmarks CMakeLists.txt cmake
+
+Pass/fail result:
+- Initial test_mpf_pi: FAIL, 128-bit test asserted one rounded decimal digit too many.
+- Adjusted test_mpf_pi: PASS
+- Final cmake --build build -j: PASS
+- Final ctest --test-dir build --output-on-failure: PASS, 65/65 tests passed
+- Eager arithmetic operator scan: PASS, no matches
+- Source scan for forbidden GMP-header MPFR/MPC includes and symbols: PASS, no matches
+- Source scan for #include <gmpxx.h> and mpf_set_default_prec: PASS, no matches
+
+Known issues:
+- Existing MPF transcendental functions other than pi still use double-backed implementations.

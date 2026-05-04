@@ -5,17 +5,179 @@
 
 #include <algorithm>
 #include <cmath>
+#include <mutex>
 #include <type_traits>
 
 namespace gmpxx {
 
 namespace mpf_math_detail {
 
+inline mp_bitcnt_t normalize_target_precision(mp_bitcnt_t precision)
+{
+    return std::max<mp_bitcnt_t>(precision, 32);
+}
+
 inline mpf_class make_from_double(double value, mp_bitcnt_t precision)
 {
     mpf_class result = mpf_class::with_precision(precision);
     mpf_set_d(result.mpf_data(), value);
     return result;
+}
+
+inline mpf_class make_ui(unsigned long value, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_set_ui(result.mpf_data(), value);
+    return result;
+}
+
+inline mpf_class set_prec_copy(const mpf_class& value, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_set(result.mpf_data(), value.mpf_data());
+    return result;
+}
+
+inline mpf_class add(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_add(result.mpf_data(), lhs.mpf_data(), rhs.mpf_data());
+    return result;
+}
+
+inline mpf_class sub(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_sub(result.mpf_data(), lhs.mpf_data(), rhs.mpf_data());
+    return result;
+}
+
+inline mpf_class mul(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_mul(result.mpf_data(), lhs.mpf_data(), rhs.mpf_data());
+    return result;
+}
+
+inline mpf_class sqr(const mpf_class& value, mp_bitcnt_t precision)
+{
+    return mul(value, value, precision);
+}
+
+inline mpf_class div(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_div(result.mpf_data(), lhs.mpf_data(), rhs.mpf_data());
+    return result;
+}
+
+inline mpf_class sqrt_prec(const mpf_class& value, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_sqrt(result.mpf_data(), value.mpf_data());
+    return result;
+}
+
+inline mpf_class abs_prec(const mpf_class& value, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_abs(result.mpf_data(), value.mpf_data());
+    return result;
+}
+
+inline mpf_class average(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
+{
+    mpf_class result = add(lhs, rhs, precision);
+    mpf_div_2exp(result.mpf_data(), result.mpf_data(), 1);
+    return result;
+}
+
+inline mpf_class inv_sqrt_ui(unsigned long value, mp_bitcnt_t precision)
+{
+    mpf_class denominator = make_ui(value, precision);
+    mpf_sqrt(denominator.mpf_data(), denominator.mpf_data());
+
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_ui_div(result.mpf_data(), 1ul, denominator.mpf_data());
+    return result;
+}
+
+inline mp_bitcnt_t working_precision_for_pi(mp_bitcnt_t target_precision)
+{
+    return normalize_target_precision(target_precision) + 96;
+}
+
+inline mpf_class compute_pi_gauss_legendre(mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    const mp_bitcnt_t work = working_precision_for_pi(target);
+
+    mpf_class zero = make_ui(0, work);
+    mpf_class one = make_ui(1, work);
+    mpf_class two = make_ui(2, work);
+    mpf_class four = make_ui(4, work);
+    mpf_class quarter = set_prec_copy(one, work);
+    mpf_div_2exp(quarter.mpf_data(), quarter.mpf_data(), 2);
+
+    mpf_class a = one;
+    mpf_class b = inv_sqrt_ui(2, work);
+    mpf_class t = quarter;
+    mpf_class p = one;
+    mpf_class epsilon = make_ui(1, work);
+    mpf_div_2exp(epsilon.mpf_data(), epsilon.mpf_data(), work);
+    mpf_class pi_previous = zero;
+    mpf_class pi_current = zero;
+
+    while (true) {
+        mpf_class a_next = average(a, b, work);
+        mpf_class b_next = sqrt_prec(mul(a, b, work), work);
+        mpf_class diff = sub(a, a_next, work);
+        mpf_class t_next = sub(t, mul(p, sqr(diff, work), work), work);
+
+        a = a_next;
+        b = b_next;
+        t = t_next;
+        p = mul(p, two, work);
+
+        mpf_class sum = add(a, b, work);
+        mpf_class numerator = sqr(sum, work);
+        mpf_class denominator = mul(t, four, work);
+
+        pi_previous = pi_current;
+        pi_current = div(numerator, denominator, work);
+        if (mpf_cmp(abs_prec(sub(pi_current, pi_previous, work), work).mpf_data(), epsilon.mpf_data()) < 0) {
+            break;
+        }
+    }
+
+    return set_prec_copy(pi_current, target);
+}
+
+struct pi_cache_state {
+    std::mutex mutex;
+    mp_bitcnt_t cached_precision{0};
+    mpf_class cached_value;
+    bool initialized{false};
+};
+
+inline pi_cache_state& pi_cache()
+{
+    static pi_cache_state cache;
+    return cache;
+}
+
+inline mpf_class pi(mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    pi_cache_state& cache = pi_cache();
+    std::lock_guard<std::mutex> lock(cache.mutex);
+    if (!cache.initialized || cache.cached_precision < target) {
+        mpf_class computed = compute_pi_gauss_legendre(target);
+        cache.cached_value.swap(computed);
+        cache.cached_precision = target;
+        cache.initialized = true;
+    }
+    return set_prec_copy(cache.cached_value, target);
 }
 
 template <typename Function>
@@ -25,6 +187,21 @@ inline mpf_class apply_unary(const mpf_class& value, Function function)
 }
 
 } // namespace mpf_math_detail
+
+inline mpf_class pi(mp_bitcnt_t target_precision)
+{
+    return mpf_math_detail::pi(target_precision);
+}
+
+inline mpf_class const_pi()
+{
+    return pi(default_mpf_precision_bits());
+}
+
+inline mpf_class const_pi(mp_bitcnt_t target_precision)
+{
+    return pi(target_precision);
+}
 
 inline mpf_class sqrt(const mpf_class& value)
 {
