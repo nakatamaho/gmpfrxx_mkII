@@ -1716,6 +1716,32 @@ inline mpf_class& operator>>=(mpf_class& value, unsigned long bits)
     return value;
 }
 
+inline mpf_class& operator++(mpf_class& value)
+{
+    value += 1;
+    return value;
+}
+
+inline mpf_class operator++(mpf_class& value, int)
+{
+    mpf_class old(value);
+    ++value;
+    return old;
+}
+
+inline mpf_class& operator--(mpf_class& value)
+{
+    value -= 1;
+    return value;
+}
+
+inline mpf_class operator--(mpf_class& value, int)
+{
+    mpf_class old(value);
+    --value;
+    return old;
+}
+
 namespace literals {
 
 inline mpf_class operator"" _mpf(long double value)

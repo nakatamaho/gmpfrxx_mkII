@@ -1577,6 +1577,32 @@ inline mpfr_class& operator/=(mpfr_class& lhs, Rhs&& rhs)
     return lhs;
 }
 
+inline mpfr_class& operator++(mpfr_class& value)
+{
+    value += 1;
+    return value;
+}
+
+inline mpfr_class operator++(mpfr_class& value, int)
+{
+    mpfr_class old(value);
+    ++value;
+    return old;
+}
+
+inline mpfr_class& operator--(mpfr_class& value)
+{
+    value -= 1;
+    return value;
+}
+
+inline mpfr_class operator--(mpfr_class& value, int)
+{
+    mpfr_class old(value);
+    --value;
+    return old;
+}
+
 namespace detail {
 
 template <typename Expr>
