@@ -3770,3 +3770,56 @@ Pass/fail result:
 
 Known issues:
 - Remaining MPFR math API candidates still include special functions, rounding/remainder helpers, scaling helpers, and vector-like helpers (`sum`, `dot`).
+
+Post-phase MPFR special functions:
+DONE
+
+Implemented features:
+- Added MPFR unary special-function wrappers:
+  - `mpfrxx::erf`
+  - `mpfrxx::erfc`
+  - `mpfrxx::gamma`
+  - `mpfrxx::lngamma`
+  - `mpfrxx::digamma`
+  - `mpfrxx::zeta`
+  - `mpfrxx::j0`
+  - `mpfrxx::j1`
+  - `mpfrxx::y0`
+  - `mpfrxx::y1`
+  - `mpfrxx::ai`
+- Added MPFR special-function wrappers with additional arguments:
+  - `mpfrxx::lgamma`, returning `std::pair<mpfr_class, int>` for value plus sign.
+  - `mpfrxx::zeta_ui`, with default-precision and explicit-precision overloads.
+  - `mpfrxx::fac_ui`, with default-precision and explicit-precision overloads.
+  - `mpfrxx::jn`
+  - `mpfrxx::yn`
+  - `mpfrxx::gamma_inc`
+  - `mpfrxx::beta`
+- Wrappers accept MPFR wrapper values and expression operands where natural, preserve operand/max precision policy, and delegate to the corresponding MPFR C APIs.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_math.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,220p' tests/test_mpfr_math.cpp
+- sed -n '220,760p' tests/test_mpfr_math.cpp
+- sed -n '1600,2495p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- cmake --build build -j --target test_mpfr_math
+- ctest --test-dir build -R '^test_mpfr_math$' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_math: PASS.
+- ctest --test-dir build -R '^test_mpfr_math$' --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 101/101 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- Remaining MPFR math API candidates now exclude special functions. Remaining groups include rounding/remainder helpers, scaling helpers, additional comparison/conversion helpers, and vector-like helpers (`sum`, `dot`).
