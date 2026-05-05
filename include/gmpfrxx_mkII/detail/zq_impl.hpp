@@ -1820,6 +1820,13 @@ inline mpz_class abs(const mpz_class& value)
     return result;
 }
 
+inline mpz_class operator~(const mpz_class& value)
+{
+    mpz_class result;
+    mpz_com(result.mpz_data(), value.mpz_data());
+    return result;
+}
+
 inline mpq_class abs(const mpq_class& value)
 {
     mpq_class result;
@@ -2000,24 +2007,24 @@ using ::gmpfrxx_mkII::detail::operator>=;
 
 namespace literals {
 
-inline mpz_class operator"" _mpz(unsigned long long value)
+inline mpz_class operator"" _mpz(const char* value)
 {
-    return mpz_class(value);
+    return mpz_class(value, 0);
 }
 
 inline mpz_class operator"" _mpz(const char* value, std::size_t)
 {
-    return mpz_class(value);
+    return mpz_class(value, 0);
 }
 
-inline mpq_class operator"" _mpq(unsigned long long value)
+inline mpq_class operator"" _mpq(const char* value)
 {
-    return mpq_class(value);
+    return mpq_class(value, 0);
 }
 
 inline mpq_class operator"" _mpq(const char* value, std::size_t)
 {
-    return mpq_class(value);
+    return mpq_class(value, 0);
 }
 
 } // namespace literals

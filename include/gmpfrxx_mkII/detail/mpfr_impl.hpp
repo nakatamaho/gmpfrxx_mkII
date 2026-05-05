@@ -1364,14 +1364,18 @@ auto operator/(Lhs&& lhs, Rhs&& rhs)
         std::move(left), std::move(right));
 }
 
-template <typename Expr, std::enable_if_t<is_mpfr_expression_operand_v<Expr>, int> = 0>
+template <typename Expr, std::enable_if_t<is_mpfr_expression_operand_v<Expr> &&
+                                              is_mpfr_object_or_node_v<Expr>,
+                                          int> = 0>
 auto operator+(Expr&& expr)
 {
     auto operand = make_mpfr_operand(std::forward<Expr>(expr));
     return unary_expr<pos_op, decltype(operand), mpfrxx::mpfr_class>(std::move(operand));
 }
 
-template <typename Expr, std::enable_if_t<is_mpfr_expression_operand_v<Expr>, int> = 0>
+template <typename Expr, std::enable_if_t<is_mpfr_expression_operand_v<Expr> &&
+                                              is_mpfr_object_or_node_v<Expr>,
+                                          int> = 0>
 auto operator-(Expr&& expr)
 {
     auto operand = make_mpfr_operand(std::forward<Expr>(expr));
@@ -1524,6 +1528,25 @@ inline mpfr_class& operator/=(mpfr_class& lhs, Rhs&& rhs)
     lhs = lhs / std::forward<Rhs>(rhs);
     return lhs;
 }
+
+namespace literals {
+
+inline mpfr_class operator"" _mpfr(long double value)
+{
+    return mpfr_class(static_cast<double>(value));
+}
+
+inline mpfr_class operator"" _mpfr(const char* value)
+{
+    return mpfr_class(value, mpfr_class::default_precision(), 0);
+}
+
+inline mpfr_class operator"" _mpfr(const char* value, std::size_t)
+{
+    return mpfr_class(value, mpfr_class::default_precision(), 0);
+}
+
+} // namespace literals
 
 } // namespace mpfrxx
 

@@ -734,6 +734,32 @@ inline std::istream& operator>>(std::istream& in, mpc_class& value)
     return in;
 }
 
+namespace literals {
+
+inline mpc_class operator"" _mpc_i(long double value)
+{
+    return mpc_class::with_precision(
+        default_mpc_real_precision_bits(),
+        default_mpc_imag_precision_bits(),
+        0.0,
+        static_cast<double>(value));
+}
+
+inline mpc_class operator"" _mpc_i(const char* value, std::size_t)
+{
+    const mpfr_prec_t real_precision = default_mpc_real_precision_bits();
+    const mpfr_prec_t imag_precision = default_mpc_imag_precision_bits();
+    mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    mpfr_class imag(value, imag_precision, 0);
+    mpc_set_fr_fr(result.mpc_data(),
+                  mpfr_class::with_precision(real_precision).mpfr_data(),
+                  imag.mpfr_data(),
+                  mpc_class::default_rounding());
+    return result;
+}
+
+} // namespace literals
+
 } // namespace mpfrxx
 
 #endif // GMPFRXX_MKII_DETAIL_MPC_IMPL_HPP

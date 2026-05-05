@@ -702,6 +702,23 @@ inline mpfc_class& operator/=(mpfc_class& lhs, Rhs&& rhs)
     return lhs;
 }
 
+namespace literals {
+
+inline mpfc_class operator"" _mpfc_i(long double value)
+{
+    return mpfc_class(mpf_class::with_precision(default_mpf_precision_bits()),
+                      mpf_class(static_cast<double>(value)));
+}
+
+inline mpfc_class operator"" _mpfc_i(const char* value, std::size_t)
+{
+    const mp_bitcnt_t precision = default_mpf_precision_bits();
+    return mpfc_class(mpf_class::with_precision(precision),
+                      mpf_class(value, precision, 10));
+}
+
+} // namespace literals
+
 } // namespace gmpxx
 
 #endif // GMPFRXX_MKII_DETAIL_MPFC_IMPL_HPP

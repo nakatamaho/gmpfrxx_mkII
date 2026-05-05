@@ -116,6 +116,18 @@ struct is_expression_node<unary_expr<Op, Expr, Result>> : std::true_type {};
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 struct is_expression_node<binary_expr<Op, Lhs, Rhs, Result>> : std::true_type {};
 
+template <typename Expr, typename Result>
+inline auto operator-(const unary_expr<neg_op, Expr, Result>& expr)
+{
+    return unary_expr<pos_op, Expr, Result>(expr.expr());
+}
+
+template <typename Expr, typename Result>
+inline auto operator-(unary_expr<neg_op, Expr, Result>&& expr)
+{
+    return unary_expr<pos_op, Expr, Result>(std::move(expr).expr());
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
