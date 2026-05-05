@@ -30,9 +30,31 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <type_traits>
+#include <utility>
+
+namespace {
+
+void require_mpf_equal(const gmpxx::mpf_class& got, mpf_srcptr expected)
+{
+    if (mpf_cmp(got.mpf_data(), expected) != 0) {
+        std::abort();
+    }
+}
+
+} // namespace
 
 int main()
 {
+    static_assert(std::is_same<decltype(std::declval<gmpxx::mpf_class&>().set_prec(
+                                    std::declval<mp_bitcnt_t>())),
+                               void>::value,
+                  "");
+    static_assert(std::is_same<decltype(std::declval<gmpxx::mpf_class&>().set_prec_raw(
+                                    std::declval<mp_bitcnt_t>())),
+                               void>::value,
+                  "");
+
     unsetenv("MPFXX_DEFAULT_PREC_BITS");
     gmpxx::reload_default_mpf_precision_bits_from_environment();
 
@@ -91,6 +113,86 @@ int main()
     destination = high + materialized;
     if (destination.precision() != destination_precision) {
         std::abort();
+    }
+
+    {
+        gmpxx::mpf_class a("1.0", 64);
+        gmpxx::mpf_class b("2.0", 1024);
+        gmpxx::mpf_class r = a + b;
+        if (r.get_prec() != std::max(a.get_prec(), b.get_prec())) {
+            std::abort();
+        }
+
+        gmpxx::mpf_class assigned("0.0", 128);
+        const mp_bitcnt_t old_prec = assigned.get_prec();
+        assigned = a + b;
+        mpf_t ref;
+        mpf_init2(ref, old_prec);
+        mpf_add(ref, a.mpf_data(), b.mpf_data());
+        if (assigned.get_prec() != old_prec) {
+            std::abort();
+        }
+        require_mpf_equal(assigned, ref);
+        mpf_clear(ref);
+
+        auto evaluated = (a + b).eval();
+        if (evaluated.get_prec() != std::max(a.get_prec(), b.get_prec())) {
+            std::abort();
+        }
+    }
+
+    {
+        gmpxx::mpf_class a("1.0", 64);
+        gmpxx::mpf_class b("2.0", 1024);
+        gmpxx::mpf_class r("1.0", 128);
+        const mp_bitcnt_t old_prec = r.get_prec();
+
+        mpf_t ref;
+        mpf_init2(ref, old_prec);
+        mpf_add(ref, a.mpf_data(), b.mpf_data());
+        mpf_add(ref, r.mpf_data(), ref);
+
+        r += a + b;
+
+        if (r.get_prec() != old_prec) {
+            std::abort();
+        }
+        require_mpf_equal(r, ref);
+        mpf_clear(ref);
+    }
+
+    {
+        gmpxx::mpf_class value("1.234567890123456789", 256);
+        mpf_t ref;
+        mpf_init2(ref, value.get_prec());
+        mpf_set(ref, value.mpf_data());
+
+        value.set_prec(64);
+        mpf_set_prec(ref, 64);
+
+        if (value.get_prec() != mpf_get_prec(ref)) {
+            std::abort();
+        }
+        require_mpf_equal(value, ref);
+        mpf_clear(ref);
+    }
+
+    {
+        gmpxx::mpf_class value("1.25", 256);
+        const mp_bitcnt_t allocated_prec = value.get_prec();
+
+        value.set_prec_raw(64);
+        if (value.get_prec() != 64) {
+            std::abort();
+        }
+        value = "1.5";
+        gmpxx::mpf_class expected("1.5", value.get_prec());
+        require_mpf_equal(value, expected.mpf_data());
+
+        value.set_prec_raw(allocated_prec);
+        if (value.get_prec() != allocated_prec) {
+            std::abort();
+        }
     }
 
     return 0;

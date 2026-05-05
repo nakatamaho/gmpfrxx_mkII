@@ -28,10 +28,29 @@
 
 #include <mpfrxx_mkII.h>
 
+#include <algorithm>
 #include <cstdlib>
+#include <type_traits>
+#include <utility>
+
+namespace {
+
+void require_mpfr_equal(const mpfrxx::mpfr_class& got, mpfr_srcptr expected)
+{
+    if (mpfr_cmp(got.mpfr_data(), expected) != 0) {
+        std::abort();
+    }
+}
+
+} // namespace
 
 int main()
 {
+    static_assert(std::is_same<decltype(std::declval<mpfrxx::mpfr_class&>().set_prec(
+                                    std::declval<mpfr_prec_t>())),
+                               void>::value,
+                  "");
+
     const auto low = mpfrxx::mpfr_class::with_precision(80);
     const auto high = mpfrxx::mpfr_class::with_precision(192);
 
@@ -49,6 +68,68 @@ int main()
     mpfrxx::mpfr_class unary = -high;
     if (unary.precision() != 192) {
         std::abort();
+    }
+
+    {
+        mpfrxx::mpfr_class a("1.0", 64);
+        mpfrxx::mpfr_class b("2.0", 1024);
+        mpfrxx::mpfr_class r = a + b;
+        if (r.get_prec() != std::max(a.get_prec(), b.get_prec())) {
+            std::abort();
+        }
+
+        mpfrxx::mpfr_class assigned("0.0", 128);
+        const mpfr_prec_t old_prec = assigned.get_prec();
+        assigned = a + b;
+        mpfr_t ref;
+        mpfr_init2(ref, old_prec);
+        mpfr_add(ref, a.mpfr_data(), b.mpfr_data(), mpfrxx::mpfr_class::default_rounding());
+        if (assigned.get_prec() != old_prec) {
+            std::abort();
+        }
+        require_mpfr_equal(assigned, ref);
+        mpfr_clear(ref);
+
+        auto evaluated = (a + b).eval();
+        if (evaluated.get_prec() != std::max(a.get_prec(), b.get_prec())) {
+            std::abort();
+        }
+    }
+
+    {
+        mpfrxx::mpfr_class a("1.0", 64);
+        mpfrxx::mpfr_class b("2.0", 1024);
+        mpfrxx::mpfr_class r("1.0", 128);
+        const mpfr_prec_t old_prec = r.get_prec();
+
+        mpfr_t ref;
+        mpfr_init2(ref, old_prec);
+        mpfr_add(ref, a.mpfr_data(), b.mpfr_data(), mpfrxx::mpfr_class::default_rounding());
+        mpfr_add(ref, r.mpfr_data(), ref, mpfrxx::mpfr_class::default_rounding());
+
+        r += a + b;
+
+        if (r.get_prec() != old_prec) {
+            std::abort();
+        }
+        require_mpfr_equal(r, ref);
+        mpfr_clear(ref);
+    }
+
+    {
+        mpfrxx::mpfr_class value("1.234567890123456789", 256);
+        mpfr_t ref;
+        mpfr_init2(ref, value.get_prec());
+        mpfr_set(ref, value.mpfr_data(), mpfrxx::mpfr_class::default_rounding());
+
+        value.set_prec(64);
+        mpfr_prec_round(ref, 64, mpfrxx::mpfr_class::default_rounding());
+
+        if (value.get_prec() != mpfr_get_prec(ref)) {
+            std::abort();
+        }
+        require_mpfr_equal(value, ref);
+        mpfr_clear(ref);
     }
 
     return 0;

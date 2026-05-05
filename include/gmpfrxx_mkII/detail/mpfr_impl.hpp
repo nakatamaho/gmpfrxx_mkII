@@ -286,6 +286,13 @@ public:
         return mpfr_get_d(value_, default_rounding());
     }
 
+    void set_prec(mpfr_prec_t precision)
+    {
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_prec_round(value_, precision, context.rounding_mode);
+    }
+
     explicit operator bool() const noexcept
     {
         return mpfr_zero_p(value_) == 0;

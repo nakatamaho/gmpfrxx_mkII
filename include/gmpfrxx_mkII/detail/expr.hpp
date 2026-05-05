@@ -88,6 +88,8 @@ public:
 
     const Expr& expr() const noexcept { return expr_; }
 
+    Result eval() const { return Result(*this); }
+
 private:
     Expr expr_;
 };
@@ -104,6 +106,8 @@ public:
 
     const Lhs& lhs() const noexcept { return lhs_; }
     const Rhs& rhs() const noexcept { return rhs_; }
+
+    Result eval() const { return Result(*this); }
 
 private:
     Lhs lhs_;

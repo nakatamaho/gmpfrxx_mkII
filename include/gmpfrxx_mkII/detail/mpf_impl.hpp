@@ -332,6 +332,16 @@ public:
         return mpf_get_si(value_);
     }
 
+    void set_prec(mp_bitcnt_t precision)
+    {
+        mpf_set_prec(value_, precision);
+    }
+
+    void set_prec_raw(mp_bitcnt_t precision)
+    {
+        mpf_set_prec_raw(value_, precision);
+    }
+
     bool fits_sint_p() const
     {
         return mpf_fits_sint_p(value_) != 0;
