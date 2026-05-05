@@ -352,6 +352,11 @@ public:
     {
     }
 
+    explicit mpz_class(mpz_srcptr value)
+    {
+        mpz_init_set(value_, value);
+    }
+
     explicit mpz_class(double value)
     {
         mpz_init(value_);
@@ -417,6 +422,21 @@ public:
         mpz_set_d(value_, value);
         return *this;
     }
+
+    mpz_class& operator=(const char* value)
+    {
+        set(value);
+        return *this;
+    }
+
+    mpz_class& operator=(const std::string& value)
+    {
+        set(value);
+        return *this;
+    }
+
+    mpz_class& operator=(const mpf_class& value);
+    mpz_class& operator=(const mpq_class& value);
 
 #if defined(__SIZEOF_INT128__)
     mpz_class& operator=(__int128_t value)
@@ -552,6 +572,11 @@ public:
         return mpz_get_si(value_);
     }
 
+    explicit operator bool() const noexcept
+    {
+        return mpz_sgn(value_) != 0;
+    }
+
     void set(const char* value, int base = 10)
     {
         if (set_str(value, base) != 0) {
@@ -659,6 +684,13 @@ public:
     {
     }
 
+    explicit mpq_class(mpq_srcptr value)
+    {
+        mpq_init(value_);
+        mpq_set(value_, value);
+        mpq_canonicalize(value_);
+    }
+
     mpq_class(const mpz_class& numerator)
     {
         mpq_init(value_);
@@ -736,6 +768,42 @@ public:
         mpq_canonicalize(value_);
         return *this;
     }
+
+    mpq_class& operator=(const char* value)
+    {
+        set(value);
+        return *this;
+    }
+
+    mpq_class& operator=(const std::string& value)
+    {
+        set(value);
+        return *this;
+    }
+
+    mpq_class& operator=(const mpz_class& value)
+    {
+        mpq_set_z(value_, value.mpz_data());
+        return *this;
+    }
+
+    mpq_class& operator=(const mpf_class& value);
+
+#if defined(__SIZEOF_INT128__)
+    mpq_class& operator=(__int128_t value)
+    {
+        const mpz_class integer(value);
+        mpq_set_z(value_, integer.mpz_data());
+        return *this;
+    }
+
+    mpq_class& operator=(__uint128_t value)
+    {
+        const mpz_class integer(value);
+        mpq_set_z(value_, integer.mpz_data());
+        return *this;
+    }
+#endif
 
     template <
         typename Expr,
@@ -824,6 +892,11 @@ public:
     double get_d() const
     {
         return mpq_get_d(value_);
+    }
+
+    explicit operator bool() const noexcept
+    {
+        return mpq_sgn(value_) != 0;
     }
 
     mpz_class get_num() const
@@ -1255,7 +1328,12 @@ inline constexpr bool is_zq_mpz_expression_operand_v = is_zq_mpz_expression_oper
 
 template <typename T>
 struct is_zq_comparison_scalar
-    : std::bool_constant<is_supported_expression_integral_v<T>> {};
+    : std::bool_constant<is_supported_expression_integral_v<T>
+#if defined(__SIZEOF_INT128__)
+                         || std::is_same_v<std::remove_cv_t<T>, __int128_t>
+                         || std::is_same_v<std::remove_cv_t<T>, __uint128_t>
+#endif
+                         > {};
 
 template <typename T>
 inline constexpr bool is_zq_comparison_scalar_v =

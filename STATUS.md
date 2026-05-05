@@ -1801,6 +1801,86 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase type conversion and comparison focused migration:
+DONE
+
+Implemented features:
+- Added focused GMP/MPF type-conversion coverage for raw `mpz_srcptr` and
+  `mpq_srcptr` construction, string assignment, invalid-input preservation,
+  exact int64_t/uint64_t and int128 paths, wrapper-to-wrapper conversions,
+  explicit bool conversion, fit/accessor queries, and MPF destination precision
+  preservation.
+- Added `mpz_class`/`mpq_class` raw pointer constructors, string assignment
+  operators, explicit bool conversion, and wrapper conversion assignment
+  operators needed by the policy-compatible upstream conversion matrix.
+- Added MPF precision constructors from `mpz_class` and `mpq_class`.
+- Added MPFR natural conversion coverage for exact integer/rational aliases,
+  raw `mpfr_srcptr` construction, string assignment with invalid-input
+  preservation, destination precision preservation, and explicit bool
+  conversion.
+- Added `mpfr_class` construction and assignment from `gmpxx::mpz_class` and
+  `gmpxx::mpq_class`, plus explicit bool conversion.
+- Extended GMP and MPFR comparison tests with conversion-backed exact integer,
+  rational, MPF, and MPFR cases, including int64_t/uint64_t edge values.
+- Updated the upstream migration table rows for `test_type_conversions.cpp` and
+  `test_comparisons.cpp` from Partial/follow-up to Done for current policy.
+
+Missing features:
+- None for the current type-conversion and comparison migration policy.
+- Intentional differences remain documented in the migration table: bool
+  construction is rejected, `mpfrxx_mkII.h` does not expose `gmpxx::mpf_class`,
+  and MPFR does not mirror GMP-only MPF conversion forms.
+
+Tests added:
+- tests/test_type_conversions.cpp
+- tests/test_mpfr_type_conversions.cpp
+
+Tests updated:
+- tests/CMakeLists.txt
+- tests/test_comparisons.cpp
+- tests/test_mpfr_comparisons.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "class mpfr_class|explicit operator bool|mpfr_srcptr|mpfr_data|default_rounding_mode|get_str|add_phase0_test\\(test_.*mpfr|test_type_conversions|test_comparisons" include tests STATUS.md
+- git diff -- include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/test_type_conversions.cpp tests/test_comparisons.cpp tests/CMakeLists.txt
+- rg -n "\\| test_.*\\|.*(Partial|TODO|未|partial|todo)|TODO|Partial|未完|follow-up" STATUS.md
+- git status --short
+- sed -n '1,260p' tests/test_type_conversions.cpp
+- sed -n '1,280p' tests/test_comparisons.cpp
+- sed -n '1,120p' tests/CMakeLists.txt
+- sed -n '2260,2345p' STATUS.md
+- sed -n '260,560p' tests/test_type_conversions.cpp
+- sed -n '40,240p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "operator==|cmp\\(|is_mpfr_comparison|mpfr_cmp|comparison" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_comparisons.cpp
+- rg -n "get_d\\(|get_ui\\(|get_si\\(|fits_.*_p|set\\(const char|set_str|operator=\\(const char|operator=\\(const std::string" include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '80,160p' tests/test_mpfr_comparisons.cpp
+- sed -n '232,310p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "static mpfr_prec_t default_precision|default_precision\\(" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/environment.hpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target test_type_conversions test_mpfr_type_conversions test_comparisons test_mpfr_comparisons
+- sed -n '488,512p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- cmake --build build -j --target test_type_conversions test_mpfr_type_conversions test_comparisons test_mpfr_comparisons
+- ctest --test-dir build -R 'test_type_conversions|test_mpfr_type_conversions|test_comparisons|test_mpfr_comparisons' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- tail -n 80 STATUS.md
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Initial focused build: FAIL because `mpfr_class` did not yet expose explicit
+  bool conversion; added it and rebuilt.
+- cmake --build build -j --target test_type_conversions
+  test_mpfr_type_conversions test_comparisons test_mpfr_comparisons: PASS.
+- ctest --test-dir build -R
+  'test_type_conversions|test_mpfr_type_conversions|test_comparisons|test_mpfr_comparisons'
+  --output-on-failure: PASS, 4/4 tests passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 117/117 tests passed.
+
+Known issues:
+- None for this phase.
+
 Post-phase arithmetic matrix ET coverage:
 DONE
 
@@ -2294,7 +2374,7 @@ Migration table:
 | test_abi_fingerprint.cpp | tests/test_abi_fingerprint.cpp | Done for current ABI policy | Done for current ABI policy | Upstream has std::common_type/numeric_limits specializations and legacy concept names; this repo intentionally keeps C++17 local detail traits, rejects bool/long double scalar leaves, and has no std trait specializations. | Keep current-policy ABI fingerprint; revisit only if public standard trait specializations are added. |
 | test_alias_safety.cpp | tests/test_alias_safety.cpp, tests/test_mpf_aliasing.cpp, tests/test_mpfr_aliasing.cpp | Done for upstream assertion-list parity | Done for MPFR natural adaptation | The upstream MPF alias case list has been compared line-by-line; local coverage includes all seven upstream alias stress cases plus matching MPFR adaptations. | Keep migrated; add only if upstream adds new alias stress cases. |
 | test_alloc_count.cpp | tests/test_mpf_alloc_count.cpp, tests/test_mpfr_alloc_count.cpp | Done | Done | None for current object-object ET fast path; scalar allocation behavior is tracked separately in test_scalar_alloc_count.cpp. | Keep as migrated; add new allocation TODOs only if alias, parser, IO, or transcendent-function allocation counts become public policy. |
-| test_comparisons.cpp | tests/test_comparisons.cpp, tests/test_mpfr_comparisons.cpp | Done | Done | Upstream C++20 concept checks were rewritten as C++17 detection/static_assert checks; bool and long double remain rejected by policy. Conversion-backed comparison matrices may expand after type-conversion work. | TODO after test_type_conversions.cpp: add any comparison cases that depend on newly supported conversions. |
+| test_comparisons.cpp | tests/test_comparisons.cpp, tests/test_mpfr_comparisons.cpp | Done | Done | Upstream C++20 concept checks were rewritten as C++17 detection/static_assert checks; bool and long double remain rejected by policy. Conversion-backed exact integer, rational, MPF, and MPFR comparison cases now cover the newly supported conversion APIs, including int64_t/uint64_t edge values. | Keep migrated; add only if future conversion APIs introduce new comparison operand families. |
 | test_compound_assign.cpp | tests/test_compound_assign.cpp, tests/test_mpfr_compound_assign.cpp | Done for MPF arithmetic compound surface | Done for MPFR arithmetic compound surface | Upstream legacy exact-type bitwise/shift compound surface is not included in the MPF/MPFR adaptation yet. | Track exact-type legacy operators under mpz/mpq arithmetic rows. |
 | test_construction_copy.cpp | tests/test_construction_copy.cpp | Done for current policy | Done | Upstream expects bool constructors; this repo intentionally rejects bool. | Keep migrated; add only missing constructor forms discovered by other tests. |
 | test_defaults_policy.cpp | tests/test_mpf_precision_policy.cpp, tests/test_mpfr_defaults.cpp, tests/test_mpfr_environment*.cpp, tests/test_mpf_thread_safety.cpp, tests/test_mpfr_thread_safety.cpp | Done for current defaults policy | Done for current defaults policy | Upstream thread-local/default snapshot and default-base APIs are intentionally not mirrored; this repo uses process-global wrapper defaults, explicit reload/set APIs, and fixed string parse bases unless a base is specified. | Keep current-policy defaults coverage; revisit only if thread-local defaults or default-base APIs become policy. |
@@ -2322,7 +2402,7 @@ Migration table:
 | test_scalar_alloc_count.cpp | tests/test_mpf_scalar_alloc_count.cpp, tests/test_mpfr_scalar_alloc_count.cpp | Done for current policy | Done for current policy | Current MPF/MPFR scalar evaluation converts int64_t/uint64_t leaves through gmpxx::mpz_class to preserve exactness, so integer scalar paths allocate; compound/nested scalar expressions can also allocate evaluation temporaries. | TODO: add exact scalar fast paths for values that safely fit GMP/MPFR C APIs, with fallback to mpz for full int64_t/uint64_t correctness. |
 | test_scalar_arithmetic.cpp | tests/test_mpf_basic.cpp, tests/test_mpfr_scalar_eval.cpp | Partial | Partial | Full scalar matrix, assignment, inc/dec, exact scalar interactions missing. | Port MPF scalar arithmetic matrix; adapt to MPFR. |
 | test_thread_safety.cpp | tests/test_mpf_thread_safety.cpp, tests/test_mpfr_thread_safety.cpp | Done for current global-default policy | Done for current global-default policy | This repo exposes process-global wrapper defaults, not upstream thread-snapshot default semantics. Tests cover concurrent default construction, isolation from GMP/MPFR global defaults, and parallel expression materialization with per-thread objects. | Keep current-policy tests; revisit only if defaults become thread-local. |
-| test_type_conversions.cpp | construction/string tests plus tests/test_gmpxx_mkII.cpp and tests/test_mpfrxx_mkII.cpp cover a broad subset | Partial | Partial | Basic get_d/get_ui/get_si, raw pointer accessors, int64/uint64/int128 exact paths, and mpfr string comparisons are now covered by monolithic smoke tests; a dedicated upstream conversion matrix is still not ported line-by-line. | Port remaining conversion matrix into focused tests; add only policy-compatible APIs as needed. |
+| test_type_conversions.cpp | tests/test_type_conversions.cpp, tests/test_mpfr_type_conversions.cpp, tests/test_gmpxx_mkII.cpp, tests/test_mpfrxx_mkII.cpp | Done for policy-compatible focused matrix | Done for natural MPFR adaptation | Focused tests now cover raw GMP/MPFR pointer construction, exact int64_t/uint64_t and int128 construction/assignment, string assignment and invalid-input preservation, wrapper-to-wrapper conversions, explicit bool conversion, accessors, fit predicates, and destination-precision preservation. Upstream APIs that conflict with local policy remain intentional differences: bool construction is rejected, `mpfrxx_mkII.h` does not expose `gmpxx::mpf_class`, and MPFR does not mirror GMP-only MPF conversion forms. | Keep migrated; extend only if upstream adds a new policy-compatible conversion assertion or local conversion policy changes. |
 | test_unary_minus_simplification.cpp | tests/test_unary_minus_simplification.cpp | Done for GMP plus MPFR adaptation | Done for MPFR unary expression adaptation | None known for current unary simplification policy. Double-negative MPF/MPFR expressions now simplify to `pos_op`; MPZ/MPQ behavior and MPZ complement are covered. | Keep migrated; extend only if MPC/MPFC unary node-shape simplification becomes policy. |
 | test_user_defined_literals.cpp | tests/test_user_defined_literals.cpp, tests/test_mpfr_user_defined_literals.cpp | Done for GMP literal surface plus MPFC imaginary literal extension | Done for MPFR `_mpfr` and MPC imaginary literal extensions | GMP `_mpz/_mpq/_mpf` literals are covered, including exact auto-base string/raw integer parsing. MPFC `_mpfc_i` follows `std::complex_literals` as an imaginary-only suffix. MPFR `_mpfr` and MPC `_mpc_i` are public under `mpfrxx::literals` and covered for floating, string, auto-base/default-precision behavior where applicable. | Keep migrated; add real-only complex literals only if a future API policy explicitly wants them. |
 

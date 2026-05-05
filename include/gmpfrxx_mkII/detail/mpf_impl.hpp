@@ -166,6 +166,16 @@ public:
         mpf_set_q(value_, value.mpq_data());
     }
 
+    mpf_class(const mpz_class& value, mp_bitcnt_t precision) : mpf_class(precision_tag{}, precision)
+    {
+        mpf_set_z(value_, value.mpz_data());
+    }
+
+    mpf_class(const mpq_class& value, mp_bitcnt_t precision) : mpf_class(precision_tag{}, precision)
+    {
+        mpf_set_q(value_, value.mpq_data());
+    }
+
     mpf_class(mpf_srcptr value, mp_bitcnt_t precision)
     {
         mpf_init2(value_, precision);
@@ -350,6 +360,11 @@ public:
     bool fits_ushort_p() const
     {
         return mpf_fits_ushort_p(value_) != 0;
+    }
+
+    explicit operator bool() const noexcept
+    {
+        return mpf_sgn(value_) != 0;
     }
 
     void div_2exp(mp_bitcnt_t bits)
@@ -900,11 +915,30 @@ inline mpz_class::mpz_class(const mpq_class& value)
     mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
 }
 
+inline mpz_class& mpz_class::operator=(const mpf_class& value)
+{
+    mpz_set_f(value_, value.mpf_data());
+    return *this;
+}
+
+inline mpz_class& mpz_class::operator=(const mpq_class& value)
+{
+    mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
+    return *this;
+}
+
 inline mpq_class::mpq_class(const mpf_class& value)
 {
     mpq_init(value_);
     mpq_set_f(value_, value.mpf_data());
     mpq_canonicalize(value_);
+}
+
+inline mpq_class& mpq_class::operator=(const mpf_class& value)
+{
+    mpq_set_f(value_, value.mpf_data());
+    mpq_canonicalize(value_);
+    return *this;
 }
 
 class gmp_randclass {

@@ -30,6 +30,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <limits>
 #include <type_traits>
 
 namespace {
@@ -131,6 +132,41 @@ void test_scalar_comparisons()
     check_consistency(2.5, q);
     check_consistency(f, 5.5);
     check_consistency(5.5, f);
+
+    const std::int64_t min_i = std::numeric_limits<std::int64_t>::min();
+    const std::int64_t max_i = std::numeric_limits<std::int64_t>::max();
+    const std::uint64_t max_u = std::numeric_limits<std::uint64_t>::max();
+    gmpxx::mpz_class min_z(min_i);
+    gmpxx::mpz_class max_z(max_i);
+    gmpxx::mpz_class max_u_z(max_u);
+    assert(min_z == min_i);
+    assert(min_i == min_z);
+    assert(max_z == max_i);
+    assert(max_i == max_z);
+    assert(max_u_z == max_u);
+    assert(max_u == max_u_z);
+    check_consistency(min_z, min_i);
+    check_consistency(max_i, max_z);
+    check_consistency(max_u_z, max_u);
+
+#if defined(__SIZEOF_INT128__)
+    const __int128_t wide =
+        static_cast<__int128_t>(0x0123456789ABCDEFULL) *
+        static_cast<__int128_t>(0x0FEDCBA987654321ULL);
+    const __uint128_t unsigned_wide =
+        static_cast<__uint128_t>(0xFEDCBA9876543210ULL) *
+        static_cast<__uint128_t>(0xFFFFFFFFFFFFFFFFULL);
+    gmpxx::mpz_class wide_z(wide);
+    gmpxx::mpq_class unsigned_wide_q{gmpxx::mpz_class(unsigned_wide)};
+    assert(wide_z == wide);
+    assert(wide == wide_z);
+    assert(unsigned_wide_q == unsigned_wide);
+    assert(unsigned_wide == unsigned_wide_q);
+    check_consistency(wide_z, wide);
+    check_consistency(wide, wide_z);
+    check_consistency(unsigned_wide_q, unsigned_wide);
+    check_consistency(unsigned_wide, unsigned_wide_q);
+#endif
 }
 
 } // namespace

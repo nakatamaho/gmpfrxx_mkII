@@ -30,6 +30,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <limits>
 #include <type_traits>
 
 namespace {
@@ -78,6 +79,28 @@ void test_mpfr_objects_and_exact_operands()
     check_consistency(z1, f);
     check_consistency(f, three_halves);
     check_consistency(three_halves, f);
+
+    const std::int64_t min_i = std::numeric_limits<std::int64_t>::min();
+    const std::uint64_t max_u = std::numeric_limits<std::uint64_t>::max();
+    mpfrxx::mpz_class min_z(min_i);
+    mpfrxx::mpz_class max_u_z(max_u);
+    mpfrxx::mpfr_class min_f(min_z, 256);
+    mpfrxx::mpfr_class max_u_f(max_u_z, 256);
+    assert(min_f == min_z);
+    assert(min_z == min_f);
+    assert(max_u_f == max_u_z);
+    assert(max_u_z == max_u_f);
+    check_consistency(min_f, min_z);
+    check_consistency(min_z, min_f);
+    check_consistency(max_u_f, max_u_z);
+    check_consistency(max_u_z, max_u_f);
+
+    mpfrxx::mpq_class rational("355/113");
+    mpfrxx::mpfr_class rational_f(rational, 512);
+    assert(rational_f == rational);
+    assert(rational == rational_f);
+    check_consistency(rational_f, rational);
+    check_consistency(rational, rational_f);
 }
 
 void test_mpfr_expression_comparisons()

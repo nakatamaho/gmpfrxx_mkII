@@ -79,6 +79,26 @@ public:
         mpfr_set_d(value_, value, context.rounding_mode);
     }
 
+    explicit mpfr_class(const gmpxx::mpz_class& value) : mpfr_class(value, default_precision()) {}
+
+    explicit mpfr_class(const gmpxx::mpq_class& value) : mpfr_class(value, default_precision()) {}
+
+    mpfr_class(const gmpxx::mpz_class& value, mpfr_prec_t precision)
+    {
+        mpfr_init2(value_, precision);
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set_z(value_, value.mpz_data(), context.rounding_mode);
+    }
+
+    mpfr_class(const gmpxx::mpq_class& value, mpfr_prec_t precision)
+    {
+        mpfr_init2(value_, precision);
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
+    }
+
     template <
         typename T,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
@@ -191,6 +211,22 @@ public:
         return *this;
     }
 
+    mpfr_class& operator=(const gmpxx::mpz_class& value)
+    {
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set_z(value_, value.mpz_data(), context.rounding_mode);
+        return *this;
+    }
+
+    mpfr_class& operator=(const gmpxx::mpq_class& value)
+    {
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
+        return *this;
+    }
+
     template <
         typename T,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
@@ -248,6 +284,11 @@ public:
     double to_double() const
     {
         return mpfr_get_d(value_, default_rounding());
+    }
+
+    explicit operator bool() const noexcept
+    {
+        return mpfr_zero_p(value_) == 0;
     }
 
     void set(double value)
