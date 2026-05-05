@@ -54,9 +54,38 @@ int main()
         std::abort();
     }
 
+    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "384", 1);
+    setenv("MPFRXX_ROUNDING_MODE", "MPFR_RNDA", 1);
+    setenv("MPFRXX_EMIN", "-30", 1);
+    setenv("MPFRXX_EMAX", "30", 1);
+    mpfrxx::reload_mpfr_defaults_from_environment();
+    if (mpfrxx::default_precision_bits() != 384 ||
+        mpfrxx::default_rounding_mode() != MPFR_RNDA ||
+        mpfrxx::default_emin() != -30 ||
+        mpfrxx::default_emax() != 30) {
+        std::abort();
+    }
+
+    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "0", 1);
+    setenv("MPFRXX_ROUNDING_MODE", "invalid-rounding", 1);
+    setenv("MPFRXX_EMIN", "40", 1);
+    setenv("MPFRXX_EMAX", "-40", 1);
+    mpfrxx::reload_mpfr_defaults_from_environment();
+    if (mpfrxx::default_precision_bits() != 512 ||
+        mpfrxx::default_rounding_mode() != MPFR_RNDN ||
+        mpfrxx::default_emin() == 40 ||
+        mpfrxx::default_emax() == -40) {
+        std::abort();
+    }
+
     mpfrxx::set_default_precision_bits(113);
     mpfrxx::mpfr_class default_prec_value;
     if (default_prec_value.precision() != 113) {
+        std::abort();
+    }
+
+    mpfrxx::set_default_precision_bits(0);
+    if (mpfrxx::default_precision_bits() != 113) {
         std::abort();
     }
 

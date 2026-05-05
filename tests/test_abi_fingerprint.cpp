@@ -30,6 +30,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <type_traits>
 #include <typeinfo>
 #include <utility>
@@ -81,6 +82,24 @@ template <typename T>
 struct has_mpfc_plus<
     T,
     std::void_t<decltype(std::declval<const gmpxx::mpfc_class&>() + std::declval<T>())>>
+    : std::true_type {};
+
+template <typename T, typename = void>
+struct has_common_type_with_mpf : std::false_type {};
+
+template <typename T>
+struct has_common_type_with_mpf<
+    T,
+    std::void_t<typename std::common_type<gmpxx::mpf_class, T>::type>>
+    : std::true_type {};
+
+template <typename T, typename = void>
+struct has_common_type_with_mpfr : std::false_type {};
+
+template <typename T>
+struct has_common_type_with_mpfr<
+    T,
+    std::void_t<typename std::common_type<mpfrxx::mpfr_class, T>::type>>
     : std::true_type {};
 
 void compile_time_fingerprint()
@@ -176,6 +195,20 @@ void compile_time_fingerprint()
     static_assert(std::is_same_v<typename decltype(-std::declval<const gmpxx::mpf_class&>())::op_type, neg_op>);
     static_assert(!is_expression_node_v<gmpxx::mpf_class>);
     static_assert(!is_expression_node_v<int>);
+
+    static_assert(!std::numeric_limits<gmpxx::mpz_class>::is_specialized);
+    static_assert(!std::numeric_limits<gmpxx::mpq_class>::is_specialized);
+    static_assert(!std::numeric_limits<gmpxx::mpf_class>::is_specialized);
+    static_assert(!std::numeric_limits<mpfrxx::mpfr_class>::is_specialized);
+    static_assert(!std::numeric_limits<mpfrxx::mpc_class>::is_specialized);
+    static_assert(!std::numeric_limits<gmpxx::mpfc_class>::is_specialized);
+
+    static_assert(!has_common_type_with_mpf<gmpxx::mpz_class>::value);
+    static_assert(!has_common_type_with_mpf<gmpxx::mpq_class>::value);
+    static_assert(!has_common_type_with_mpf<double>::value);
+    static_assert(!has_common_type_with_mpfr<gmpxx::mpz_class>::value);
+    static_assert(!has_common_type_with_mpfr<gmpxx::mpq_class>::value);
+    static_assert(!has_common_type_with_mpfr<double>::value);
 
     static_assert(has_mpf_plus<int>::value);
     static_assert(has_mpf_plus<double>::value);

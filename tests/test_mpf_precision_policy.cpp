@@ -61,9 +61,20 @@ int main()
         std::abort();
     }
 
+    setenv("MPFXX_DEFAULT_PREC_BITS", "not-a-number", 1);
+    gmpxx::reload_default_mpf_precision_bits_from_environment();
+    if (gmpxx::default_mpf_precision_bits() != 512) {
+        std::abort();
+    }
+
     gmpxx::set_default_mpf_precision_bits(160);
     gmpxx::mpf_class default_value;
     if (default_value.precision() < 160) {
+        std::abort();
+    }
+
+    gmpxx::set_default_mpf_precision_bits(0);
+    if (gmpxx::default_mpf_precision_bits() != 160) {
         std::abort();
     }
 
