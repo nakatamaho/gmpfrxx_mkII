@@ -91,6 +91,7 @@ add_phase0_test(test_mpc_environment mpfrxx_mkII)
 add_phase0_test(test_mpc_environment_invalid mpfrxx_mkII)
 add_phase0_test(test_mpc_precision_policy mpfrxx_mkII)
 add_phase0_test(test_mpc_io mpfrxx_mkII)
+add_phase0_test(test_mpc_math mpfrxx_mkII)
 
 function(add_compile_fail_test name target)
     set(source "${CMAKE_CURRENT_SOURCE_DIR}/compile_fail/${name}.cpp")

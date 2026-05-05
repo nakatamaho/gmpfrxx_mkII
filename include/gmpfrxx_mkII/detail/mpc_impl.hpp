@@ -670,6 +670,343 @@ using ::gmpfrxx_mkII::detail::operator/;
 
 namespace detail {
 
+template <typename Expr>
+inline mpc_class materialize_mpc_math_operand(const Expr& expr)
+{
+    if constexpr (std::is_same_v<std::decay_t<Expr>, mpc_class>) {
+        return expr;
+    } else {
+        return mpc_class(expr);
+    }
+}
+
+template <typename Expr, typename Function>
+inline mpc_class unary_mpc_math(const Expr& expr, Function function)
+{
+    const mpc_class operand = materialize_mpc_math_operand(expr);
+    mpc_class result = mpc_class::with_precision(operand.real_precision(), operand.imag_precision());
+    function(result.mpc_data(), operand.mpc_data(), mpc_class::default_rounding());
+    return result;
+}
+
+template <typename Expr, typename Function>
+inline mpfr_class unary_mpc_real_math(const Expr& expr, mpfr_prec_t precision, Function function)
+{
+    const mpc_class operand = materialize_mpc_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(precision);
+    function(result.mpfr_data(), operand.mpc_data(), mpfrxx::default_rounding_mode());
+    return result;
+}
+
+template <typename Lhs, typename Rhs, typename Function>
+inline mpc_class binary_mpc_math(const Lhs& lhs, const Rhs& rhs, Function function)
+{
+    const mpc_class left = materialize_mpc_math_operand(lhs);
+    const mpc_class right = materialize_mpc_math_operand(rhs);
+    const mpfr_prec_t real_precision = std::max(left.real_precision(), right.real_precision());
+    const mpfr_prec_t imag_precision = std::max(left.imag_precision(), right.imag_precision());
+    mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    function(result.mpc_data(), left.mpc_data(), right.mpc_data(), mpc_class::default_rounding());
+    return result;
+}
+
+template <typename A, typename B, typename C, typename Function>
+inline mpc_class ternary_mpc_math(const A& a, const B& b, const C& c, Function function)
+{
+    const mpc_class first = materialize_mpc_math_operand(a);
+    const mpc_class second = materialize_mpc_math_operand(b);
+    const mpc_class third = materialize_mpc_math_operand(c);
+    const mpfr_prec_t real_precision = std::max({first.real_precision(),
+                                                 second.real_precision(),
+                                                 third.real_precision()});
+    const mpfr_prec_t imag_precision = std::max({first.imag_precision(),
+                                                 second.imag_precision(),
+                                                 third.imag_precision()});
+    mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    function(result.mpc_data(), first.mpc_data(), second.mpc_data(), third.mpc_data(), mpc_class::default_rounding());
+    return result;
+}
+
+} // namespace detail
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpc_class sqrt(const Expr& expr)
+{
+    return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+        mpc_sqrt(rop, op, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpc_class exp(const Expr& expr)
+{
+    return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+        mpc_exp(rop, op, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpc_class log(const Expr& expr)
+{
+    return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+        mpc_log(rop, op, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpc_class log10(const Expr& expr)
+{
+    return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+        mpc_log10(rop, op, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpc_class sqr(const Expr& expr)
+{
+    return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+        mpc_sqr(rop, op, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpc_class conj(const Expr& expr)
+{
+    return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+        mpc_conj(rop, op, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpc_class proj(const Expr& expr)
+{
+    return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+        mpc_proj(rop, op, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class real(const Expr& expr)
+{
+    const mpc_class operand = detail::materialize_mpc_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.real_precision());
+    mpc_real(result.mpfr_data(), operand.mpc_data(), mpfrxx::default_rounding_mode());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class imag(const Expr& expr)
+{
+    const mpc_class operand = detail::materialize_mpc_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.imag_precision());
+    mpc_imag(result.mpfr_data(), operand.mpc_data(), mpfrxx::default_rounding_mode());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class abs(const Expr& expr)
+{
+    const mpc_class operand = detail::materialize_mpc_math_operand(expr);
+    return detail::unary_mpc_real_math(operand,
+                                       std::max(operand.real_precision(), operand.imag_precision()),
+                                       [](mpfr_t rop, const mpc_t op, mpfr_rnd_t rnd) {
+                                           mpc_abs(rop, op, rnd);
+                                       });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class norm(const Expr& expr)
+{
+    const mpc_class operand = detail::materialize_mpc_math_operand(expr);
+    return detail::unary_mpc_real_math(operand,
+                                       std::max(operand.real_precision(), operand.imag_precision()),
+                                       [](mpfr_t rop, const mpc_t op, mpfr_rnd_t rnd) {
+                                           mpc_norm(rop, op, rnd);
+                                       });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class arg(const Expr& expr)
+{
+    const mpc_class operand = detail::materialize_mpc_math_operand(expr);
+    return detail::unary_mpc_real_math(operand,
+                                       std::max(operand.real_precision(), operand.imag_precision()),
+                                       [](mpfr_t rop, const mpc_t op, mpfr_rnd_t rnd) {
+                                           mpc_arg(rop, op, rnd);
+                                       });
+}
+
+#define GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(name) \
+    template < \
+        typename Expr, \
+        std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> && \
+                             gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>, \
+                         int> = 0> \
+    inline mpc_class name(const Expr& expr) \
+    { \
+        return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) { \
+            mpc_##name(rop, op, rnd); \
+        }); \
+    }
+
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(sin)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(cos)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(tan)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(sinh)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(cosh)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(tanh)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(asin)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(acos)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(atan)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(asinh)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(acosh)
+GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION(atanh)
+
+#undef GMPFRXX_MKII_DEFINE_MPC_UNARY_FUNCTION
+
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Lhs> &&
+                         gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs> &&
+                         (gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Lhs> ||
+                          gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Rhs>),
+                     int> = 0>
+inline mpc_class pow(const Lhs& lhs, const Rhs& rhs)
+{
+    return detail::binary_mpc_math(lhs, rhs, [](mpc_t rop, const mpc_t op1, const mpc_t op2, mpc_rnd_t rnd) {
+        mpc_pow(rop, op1, op2, rnd);
+    });
+}
+
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Lhs> &&
+                         gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs> &&
+                         (gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Lhs> ||
+                          gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Rhs>),
+                     int> = 0>
+inline mpc_class agm(const Lhs& lhs, const Rhs& rhs)
+{
+    return detail::binary_mpc_math(lhs, rhs, [](mpc_t rop, const mpc_t op1, const mpc_t op2, mpc_rnd_t rnd) {
+        mpc_agm(rop, op1, op2, rnd);
+    });
+}
+
+template <
+    typename A,
+    typename B,
+    typename C,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<A> &&
+                         gmpfrxx_mkII::detail::is_mpc_expression_operand_v<B> &&
+                         gmpfrxx_mkII::detail::is_mpc_expression_operand_v<C> &&
+                         (gmpfrxx_mkII::detail::is_mpc_object_or_node_v<A> ||
+                          gmpfrxx_mkII::detail::is_mpc_object_or_node_v<B> ||
+                          gmpfrxx_mkII::detail::is_mpc_object_or_node_v<C>),
+                     int> = 0>
+inline mpc_class fma(const A& a, const B& b, const C& c)
+{
+    return detail::ternary_mpc_math(a, b, c, [](mpc_t rop,
+                                                const mpc_t op1,
+                                                const mpc_t op2,
+                                                const mpc_t op3,
+                                                mpc_rnd_t rnd) {
+        mpc_fma(rop, op1, op2, op3, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
+inline std::pair<mpc_class, mpc_class> sin_cos(const Expr& expr)
+{
+    const mpc_class operand = detail::materialize_mpc_math_operand(expr);
+    mpc_class sine = mpc_class::with_precision(operand.real_precision(), operand.imag_precision());
+    mpc_class cosine = mpc_class::with_precision(operand.real_precision(), operand.imag_precision());
+    mpc_sin_cos(sine.mpc_data(),
+                cosine.mpc_data(),
+                operand.mpc_data(),
+                mpc_class::default_rounding(),
+                mpc_class::default_rounding());
+    return {std::move(sine), std::move(cosine)};
+}
+
+inline mpc_class rootofunity(unsigned long order,
+                             unsigned long index,
+                             mpfr_prec_t real_precision,
+                             mpfr_prec_t imag_precision)
+{
+    mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    mpc_rootofunity(result.mpc_data(), order, index, mpc_class::default_rounding());
+    return result;
+}
+
+inline mpc_class rootofunity(unsigned long order, unsigned long index, mpfr_prec_t precision)
+{
+    return rootofunity(order, index, precision, precision);
+}
+
+inline mpc_class rootofunity(unsigned long order, unsigned long index)
+{
+    return rootofunity(order,
+                       index,
+                       mpfrxx::default_mpc_real_precision_bits(),
+                       mpfrxx::default_mpc_imag_precision_bits());
+}
+
+namespace detail {
+
 inline std::string mpc_format_component(std::ostream& out, const mpfr_class& value)
 {
     std::ostringstream component;

@@ -2102,7 +2102,7 @@ Migration table:
 | test_mpf_transcendent_functions.cpp | tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream assertion list is now mirrored in the focused MPF compute-log/transcendent test, adapted to C++17 and local helper names. MPFR wrapper math parity remains tracked under broader MPFR math policy work. | Keep as migrated; add MPFR equivalents only when public MPFR math wrapper APIs become policy. |
 | test_mpfc_arithmetic.cpp | tests/test_mpfc_basic.cpp, tests/test_et_contract_mpfc.cpp | Done for upstream arithmetic/precision focused coverage | N/A for MPFR; MPC analog exists separately | None known for the GMP-only MPFC arithmetic surface; upstream compound, swap/precision, mixed real operand, and random arithmetic matrix cases are now mirrored locally. | Keep as migrated; add MPC analogs only as separate MPC policy work. |
 | test_mpfc_io.cpp | tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done | MPC analog covered separately | None known for the current local complex `(real,imag)` stream format; this is local-policy parity, not a direct upstream MPC test. | Keep migrated; add only if upstream gains an MPC-specific I/O parity matrix or local complex-format policy changes. |
-| test_mpfc_transcendent_functions.cpp | tests/test_mpfc_math.cpp | Done for upstream complex math focused coverage | N/A for MPFR; MPC math exists separately | Local MPFC gamma/reciprocal_gamma are still double-backed, so the gamma known-value tolerance is intentionally double-level rather than high-precision MPF-level. | Keep as migrated; improve tolerance only if MPFC gamma is later replaced with a high-precision implementation. |
+| test_mpfc_transcendent_functions.cpp | tests/test_mpfc_math.cpp, tests/test_mpc_math.cpp | Done for upstream complex math focused coverage | MPC analog covered separately with MPC 1.3.1 C API references | Local MPFC gamma/reciprocal_gamma are still double-backed, so the gamma known-value tolerance is intentionally double-level rather than high-precision MPF-level. MPC wrappers now cover MPC 1.3.1 sqrt/exp/log/log10/trig/hyperbolic/inverse/pow functions against direct `mpc_*` references; MPC gamma is not part of MPC 1.3.1. | Keep as migrated; improve MPFC gamma tolerance only if MPFC gamma is later replaced with a high-precision implementation. |
 | test_mpq_arithmetic.cpp | tests/test_mpq_basic.cpp, tests/test_mpq_canonicalization.cpp | Partial | mpfrxx aliases use same exact types | Full rational arithmetic/scalar/shift matrix may be incomplete. | Port upstream mpq arithmetic cases into focused exact-type test. |
 | test_mpz_addmul_alloc_count.cpp | tests/test_mpz_addmul_alloc_count.cpp | Done for direct mpz addmul/submul paths | N/A | No upstream wrapper instrumentation counters; local test checks GMP allocator count for preallocated direct paths. | Keep as direct-path regression coverage. |
 | test_mpz_addmul_fusion.cpp | tests/test_mpz_addmul_fusion.cpp | Done | N/A | No diagnostic fusion counter API; behavior and direct overload routing are covered. | Keep migrated; add counters only if instrumentation becomes public policy. |
@@ -3078,7 +3078,7 @@ Pass/fail result:
 
 Known issues:
 - MPF math/transcendent focused tests do not yet have true MPFR focused counterparts. `test_mpfrxx_mkII.cpp` has MPFR C API smoke coverage for log/exp/trig/pow-related behavior, but this repository currently does not expose MPFR free-function wrappers parallel to `gmpxx::log`, `gmpxx::exp`, `gmpxx::sin`, `gmpxx::gamma`, etc.
-- MPFC complex math focused coverage does not yet have a true MPC focused counterpart. There is no `test_mpc_math.cpp`, and `mpc_class` currently has basic arithmetic, aliasing, precision, I/O, defaults/environment, and literal tests rather than MPC-backed complex transcendent wrappers parallel to `gmpxx::mpfc_class`.
+- This audit was later updated by "Post-phase MPC math wrappers": MPC now has `tests/test_mpc_math.cpp` covering MPC 1.3.1 sqrt/exp/log/log10/trig/hyperbolic/inverse/pow wrappers against direct `mpc_*` C API references.
 - `test_mpfc_basic.cpp` is broader than `test_mpc_basic.cpp`; the MPC side covers basic arithmetic and aliasing, but does not mirror the full MPFC arithmetic matrix, swap/accessor/helper surface, and std::complex comparison matrix line-by-line.
 
 Post-phase alias safety and monolithic TODO restoration:
@@ -3174,3 +3174,129 @@ Pass/fail result:
 
 Known issues:
 - `tests/test_mpfrxx_mkII.cpp` remains an MPFR/MPC adaptation rather than a literal copy because `mpfrxx_mkII.h` intentionally does not expose `gmpxx::mpf_class`, and MPFR math free-function wrappers parallel to GMP-only MPF helpers are not yet public API.
+
+Post-phase MPC math wrappers:
+DONE
+
+Implemented features:
+- Read GNU MPC 1.3.1 manual sections for:
+  - GNU MPC basics, rounding modes, return values, branch cuts, and complex-function precision semantics.
+  - Power functions and logarithm.
+  - Trigonometric, hyperbolic, inverse trigonometric, and inverse hyperbolic functions.
+- Cross-checked the installed MPC 1.3.1 headers for available C API functions.
+- Added public `mpfrxx::mpc_class` math wrappers:
+  - `sqrt`
+  - `exp`
+  - `log`
+  - `log10`
+  - `sin`
+  - `cos`
+  - `tan`
+  - `sinh`
+  - `cosh`
+  - `tanh`
+  - `asin`
+  - `acos`
+  - `atan`
+  - `asinh`
+  - `acosh`
+  - `atanh`
+  - `pow`
+- Added expression-input overload coverage for unary MPC math and `pow`.
+- Added `tests/test_mpc_math.cpp`, comparing each wrapper directly against the corresponding MPC 1.3.1 `mpc_*` C API at the same destination precision and rounding mode.
+- Updated the upstream migration table row for `test_mpfc_transcendent_functions.cpp` to record the separate MPC analog.
+
+Tests added:
+- tests/test_mpc_math.cpp
+
+Tests updated:
+- tests/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- rg -n "mpc_(sqrt|exp|log|sin|cos|tan|sinh|cosh|tanh|asin|acos|atan|asinh|acosh|atanh|pow|gamma|root|proj|conj|norm|abs)" /usr/include /usr/local/include
+- rg -n "mpc_(sqrt|exp|log|sin|cos|tan|sinh|cosh|tanh|asin|acos|atan|asinh|acosh|atanh|pow)" include tests
+- find /usr/share/doc /usr/local/share/doc -iname '*mpc*' -o -iname '*libmpc*'
+- dpkg -l | rg "libmpc|mpc"
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '620,725p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '360,545p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '545,625p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build --target test_mpc_math -j
+- ctest --test-dir build -R test_mpc_math --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+- rg -n "TODO|FIXME|XXX" tests/test_mpc_math.cpp include/gmpfrxx_mkII/detail/mpc_impl.hpp STATUS.md
+- git status --short
+- tail -n 120 STATUS.md
+- rg -n "test_mpfc_transcendent_functions|test_mpc_math|MPC complex math|test_mpfc_math|test_mpc_basic|Post-phase MPF/MPFC counterpart audit" STATUS.md
+
+Pass/fail result:
+- cmake --build build --target test_mpc_math -j: PASS.
+- ctest --test-dir build -R test_mpc_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 98/98 tests passed.
+- git diff --check: PASS.
+- rg -n "TODO|FIXME|XXX" tests/test_mpc_math.cpp include/gmpfrxx_mkII/detail/mpc_impl.hpp STATUS.md: PASS, no matches in the touched source/test files.
+
+Known issues:
+- MPC 1.3.1 does not provide `mpc_gamma` or `mpc_rgamma`, so gamma/reciprocal_gamma remain MPFC-only in this repository.
+- The new MPC math wrappers are eager public math helpers, matching the existing MPF/MPFC math-helper pattern rather than expression-template arithmetic operators.
+
+Post-phase MPC additional math wrappers:
+DONE
+
+Implemented features:
+- Re-scanned the installed MPC 1.3.1 header for math-like APIs beyond sqrt/exp/log/trig/hyperbolic/inverse/pow.
+- Added public `mpfrxx::mpc_class` math/helper wrappers for the natural next API group:
+  - `conj`
+  - `real`
+  - `imag`
+  - `abs`
+  - `norm`
+  - `arg`
+  - `proj`
+  - `sqr`
+  - `fma`
+  - `agm`
+  - `rootofunity`
+  - `sin_cos`
+- `real`, `imag`, `abs`, `norm`, and `arg` return `mpfrxx::mpfr_class`; the others return `mpfrxx::mpc_class` except `sin_cos`, which returns `std::pair<mpc_class, mpc_class>`.
+- Added object and expression-input coverage for the added wrappers where applicable.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpc_math.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "^__MPC_DECLSPEC.*mpc_[a-zA-Z0-9_]+|^int mpc_[a-zA-Z0-9_]+|mpc_[a-zA-Z0-9_]+ \\(" /usr/include/mpc.h
+- rg -n "mpc_(sqrt|exp|log|log10|sin|cos|tan|sinh|cosh|tanh|asin|acos|atan|asinh|acosh|atanh|pow|arg|abs|norm|conj|proj|rootofunity|mul_i|div|add|sub|mul|fma|sqr|rec|neg)" /usr/include/mpc.h include/gmpfrxx_mkII/detail/mpc_impl.hpp tests/test_mpc_math.cpp
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '80,180p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '1,230p' tests/test_mpc_math.cpp
+- rg -n "with_precision|mpfr_data|default_rounding_mode" include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '220,385p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '560,805p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- rg -n "\\b(abs|norm|arg|real|imag|conj|proj|sqr|fma|agm|rootofunity|sin_cos|sum|dot)\\b" include tests
+- cmake --build build --target test_mpc_math -j
+- ctest --test-dir build -R test_mpc_math --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake --build build --target test_mpc_math -j: PASS.
+- ctest --test-dir build -R test_mpc_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 98/98 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- `mpc_sum` and `mpc_dot` remain unwrapped. They are vector/array reduction APIs rather than scalar unary/binary math helpers, so they need a separate public container/API policy.
+- Specialized `mpc_pow_fr`, `mpc_pow_d`, `mpc_pow_si`, `mpc_pow_ui`, and `mpc_pow_z` remain unwrapped as fast paths. Current public `pow` materializes operands to `mpc_class` and calls `mpc_pow`.
+- `mpc_mul_i`, `mpc_mul_2ui`, `mpc_div_2ui`, `mpc_mul_2si`, and `mpc_div_2si` remain covered by general arithmetic/scalar expression routes rather than public named wrappers.
