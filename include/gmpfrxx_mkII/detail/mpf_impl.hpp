@@ -156,6 +156,16 @@ public:
         mpf_set(value_, value);
     }
 
+    explicit mpf_class(const mpz_class& value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    {
+        mpf_set_z(value_, value.mpz_data());
+    }
+
+    explicit mpf_class(const mpq_class& value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    {
+        mpf_set_q(value_, value.mpq_data());
+    }
+
     mpf_class(mpf_srcptr value, mp_bitcnt_t precision)
     {
         mpf_init2(value_, precision);
@@ -177,10 +187,14 @@ public:
         }
     }
 
+    mpf_class(const char* value) : mpf_class(value, default_mpf_precision_bits(), 10) {}
+
     mpf_class(const std::string& value, mp_bitcnt_t precision, int base = 10)
         : mpf_class(value.c_str(), precision, base)
     {
     }
+
+    mpf_class(const std::string& value) : mpf_class(value.c_str(), default_mpf_precision_bits(), 10) {}
 
     template <
         typename Expr,
@@ -228,6 +242,18 @@ public:
     mpf_class& operator=(double value)
     {
         mpf_set_d(value_, value);
+        return *this;
+    }
+
+    mpf_class& operator=(const mpz_class& value)
+    {
+        mpf_set_z(value_, value.mpz_data());
+        return *this;
+    }
+
+    mpf_class& operator=(const mpq_class& value)
+    {
+        mpf_set_q(value_, value.mpq_data());
         return *this;
     }
 
@@ -279,6 +305,67 @@ public:
     double to_double() const
     {
         return mpf_get_d(value_);
+    }
+
+    double get_d() const
+    {
+        return mpf_get_d(value_);
+    }
+
+    unsigned long get_ui() const
+    {
+        return mpf_get_ui(value_);
+    }
+
+    signed long get_si() const
+    {
+        return mpf_get_si(value_);
+    }
+
+    bool fits_sint_p() const
+    {
+        return mpf_fits_sint_p(value_) != 0;
+    }
+
+    bool fits_slong_p() const
+    {
+        return mpf_fits_slong_p(value_) != 0;
+    }
+
+    bool fits_sshort_p() const
+    {
+        return mpf_fits_sshort_p(value_) != 0;
+    }
+
+    bool fits_uint_p() const
+    {
+        return mpf_fits_uint_p(value_) != 0;
+    }
+
+    bool fits_ulong_p() const
+    {
+        return mpf_fits_ulong_p(value_) != 0;
+    }
+
+    bool fits_ushort_p() const
+    {
+        return mpf_fits_ushort_p(value_) != 0;
+    }
+
+    void div_2exp(mp_bitcnt_t bits)
+    {
+        mpf_div_2exp(value_, value_, bits);
+    }
+
+    void mul_2exp(mp_bitcnt_t bits)
+    {
+        mpf_mul_2exp(value_, value_, bits);
+    }
+
+    void set_epsilon()
+    {
+        mpf_set_ui(value_, 1);
+        mpf_div_2exp(value_, value_, precision());
     }
 
     void set(double value)
@@ -797,6 +884,25 @@ private:
     mp_bitcnt_t requested_precision_;
     bool has_requested_precision_;
 };
+
+inline mpz_class::mpz_class(const mpf_class& value)
+{
+    mpz_init(value_);
+    mpz_set_f(value_, value.mpf_data());
+}
+
+inline mpz_class::mpz_class(const mpq_class& value)
+{
+    mpz_init(value_);
+    mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
+}
+
+inline mpq_class::mpq_class(const mpf_class& value)
+{
+    mpq_init(value_);
+    mpq_set_f(value_, value.mpf_data());
+    mpq_canonicalize(value_);
+}
 
 class gmp_randclass {
 public:
@@ -1500,6 +1606,25 @@ inline mpf_class& operator/=(mpf_class& lhs, Rhs&& rhs)
     lhs = lhs / std::forward<Rhs>(rhs);
     return lhs;
 }
+
+namespace literals {
+
+inline mpf_class operator"" _mpf(long double value)
+{
+    return mpf_class(static_cast<double>(value));
+}
+
+inline mpf_class operator"" _mpf(unsigned long long value)
+{
+    return mpf_class(value);
+}
+
+inline mpf_class operator"" _mpf(const char* value, std::size_t)
+{
+    return mpf_class(value);
+}
+
+} // namespace literals
 
 } // namespace gmpxx
 

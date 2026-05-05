@@ -1213,6 +1213,61 @@ inline mpf_class abs(const mpf_class& value)
     return result;
 }
 
+inline mpf_class neg(const mpf_class& value)
+{
+    mpf_class result = mpf_class::with_precision(value.precision());
+    mpf_neg(result.mpf_data(), value.mpf_data());
+    return result;
+}
+
+inline mpf_class ceil(const mpf_class& value)
+{
+    mpf_class result = mpf_class::with_precision(value.precision());
+    mpf_ceil(result.mpf_data(), value.mpf_data());
+    return result;
+}
+
+inline mpf_class floor(const mpf_class& value)
+{
+    mpf_class result = mpf_class::with_precision(value.precision());
+    mpf_floor(result.mpf_data(), value.mpf_data());
+    return result;
+}
+
+inline mpf_class trunc(const mpf_class& value)
+{
+    mpf_class result = mpf_class::with_precision(value.precision());
+    mpf_trunc(result.mpf_data(), value.mpf_data());
+    return result;
+}
+
+inline int sgn(const mpf_class& value)
+{
+    return mpf_sgn(value.mpf_data());
+}
+
+inline mpf_class hypot(const mpf_class& lhs, const mpf_class& rhs)
+{
+    const mp_bitcnt_t precision = std::max(lhs.precision(), rhs.precision());
+    return sqrt(mpf_math_detail::add(mpf_math_detail::sqr(lhs, precision),
+                                     mpf_math_detail::sqr(rhs, precision),
+                                     precision));
+}
+
+inline mpf_class mpf_remainder(const mpf_class& lhs, const mpf_class& rhs, mpz_class* quotient)
+{
+    if (mpf_sgn(rhs.mpf_data()) == 0) {
+        throw std::domain_error("mpf_remainder division by zero");
+    }
+    const mp_bitcnt_t precision = std::max(lhs.precision(), rhs.precision());
+    mpf_class qf = mpf_math_detail::div(lhs, rhs, precision);
+    mpz_class q(qf);
+    if (quotient != nullptr) {
+        *quotient = q;
+    }
+    return mpf_math_detail::sub(lhs, mpf_math_detail::mul(mpf_class(q), rhs, precision), precision);
+}
+
 inline mpf_class exp(const mpf_class& value)
 {
     return mpf_math_detail::compute_exp(value, value.precision());

@@ -315,6 +315,9 @@ inline bool gmp_rational_has_zero_denominator(const char* value, int base)
 
 namespace gmpxx {
 
+class mpf_class;
+class mpq_class;
+
 class mpz_class {
 public:
     mpz_class()
@@ -333,7 +336,9 @@ public:
         mpz_swap(value_, other.value_);
     }
 
-    explicit mpz_class(const char* value, int base = 10)
+    mpz_class(bool) = delete;
+
+    mpz_class(const char* value, int base = 10)
     {
         mpz_init(value_);
         if (value == nullptr || mpz_set_str(value_, value, base) != 0) {
@@ -342,15 +347,38 @@ public:
         }
     }
 
-    explicit mpz_class(const std::string& value, int base = 10)
+    mpz_class(const std::string& value, int base = 10)
         : mpz_class(value.c_str(), base)
     {
     }
 
+    explicit mpz_class(double value)
+    {
+        mpz_init(value_);
+        mpz_set_d(value_, value);
+    }
+
+#if defined(__SIZEOF_INT128__)
+    mpz_class(__int128_t value)
+    {
+        mpz_init(value_);
+        set_int128(value);
+    }
+
+    mpz_class(__uint128_t value)
+    {
+        mpz_init(value_);
+        set_uint128(value);
+    }
+#endif
+
+    explicit mpz_class(const mpf_class& value);
+    explicit mpz_class(const mpq_class& value);
+
     template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
                                                       !std::is_same_v<std::remove_cv_t<T>, bool> &&
                                                       (sizeof(T) <= sizeof(std::uint64_t))>>
-    explicit mpz_class(T value)
+    mpz_class(T value)
     {
         mpz_init(value_);
         set_integral(value);
@@ -359,7 +387,8 @@ public:
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
-                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class>>>
+                                    (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>)>>
     mpz_class(const Expr& expr);
 
     ~mpz_class()
@@ -383,10 +412,31 @@ public:
         return *this;
     }
 
+    mpz_class& operator=(double value)
+    {
+        mpz_set_d(value_, value);
+        return *this;
+    }
+
+#if defined(__SIZEOF_INT128__)
+    mpz_class& operator=(__int128_t value)
+    {
+        set_int128(value);
+        return *this;
+    }
+
+    mpz_class& operator=(__uint128_t value)
+    {
+        set_uint128(value);
+        return *this;
+    }
+#endif
+
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
-                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class>>>
+                                    (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>)>>
     mpz_class& operator=(const Expr& expr);
 
     const mpz_t& mpz_data() const noexcept
@@ -457,6 +507,51 @@ public:
         return set_str(value.c_str(), base);
     }
 
+    bool fits_sint_p() const
+    {
+        return mpz_fits_sint_p(value_) != 0;
+    }
+
+    bool fits_slong_p() const
+    {
+        return mpz_fits_slong_p(value_) != 0;
+    }
+
+    bool fits_sshort_p() const
+    {
+        return mpz_fits_sshort_p(value_) != 0;
+    }
+
+    bool fits_uint_p() const
+    {
+        return mpz_fits_uint_p(value_) != 0;
+    }
+
+    bool fits_ulong_p() const
+    {
+        return mpz_fits_ulong_p(value_) != 0;
+    }
+
+    bool fits_ushort_p() const
+    {
+        return mpz_fits_ushort_p(value_) != 0;
+    }
+
+    double get_d() const
+    {
+        return mpz_get_d(value_);
+    }
+
+    unsigned long get_ui() const
+    {
+        return mpz_get_ui(value_);
+    }
+
+    signed long get_si() const
+    {
+        return mpz_get_si(value_);
+    }
+
     void set(const char* value, int base = 10)
     {
         if (set_str(value, base) != 0) {
@@ -499,6 +594,30 @@ private:
         }
     }
 
+#if defined(__SIZEOF_INT128__)
+    void set_uint128(__uint128_t value)
+    {
+        if (value == 0) {
+            mpz_set_ui(value_, 0);
+            return;
+        }
+        mpz_import(value_, 1, -1, sizeof(value), 0, 0, &value);
+    }
+
+    void set_int128(__int128_t value)
+    {
+        const bool negative = value < 0;
+        __uint128_t magnitude = static_cast<__uint128_t>(value);
+        if (negative) {
+            magnitude = ~magnitude + __uint128_t{1};
+        }
+        set_uint128(magnitude);
+        if (negative) {
+            mpz_neg(value_, value_);
+        }
+    }
+#endif
+
     mpz_t value_;
 };
 
@@ -521,7 +640,9 @@ public:
         mpq_swap(value_, other.value_);
     }
 
-    explicit mpq_class(const char* value, int base = 10)
+    mpq_class(bool) = delete;
+
+    mpq_class(const char* value, int base = 10)
     {
         mpq_init(value_);
         if (value == nullptr ||
@@ -533,12 +654,12 @@ public:
         mpq_canonicalize(value_);
     }
 
-    explicit mpq_class(const std::string& value, int base = 10)
+    mpq_class(const std::string& value, int base = 10)
         : mpq_class(value.c_str(), base)
     {
     }
 
-    explicit mpq_class(const mpz_class& numerator)
+    mpq_class(const mpz_class& numerator)
     {
         mpq_init(value_);
         mpq_set_z(value_, numerator.mpz_data());
@@ -566,10 +687,19 @@ public:
     {
     }
 
+    explicit mpq_class(double value)
+    {
+        mpq_init(value_);
+        mpq_set_d(value_, value);
+        mpq_canonicalize(value_);
+    }
+
+    explicit mpq_class(const mpf_class& value);
+
     template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
                                                       !std::is_same_v<std::remove_cv_t<T>, bool> &&
                                                       (sizeof(T) <= sizeof(std::uint64_t))>>
-    explicit mpq_class(T value) : mpq_class(mpz_class(value))
+    mpq_class(T value) : mpq_class(mpz_class(value))
     {
     }
 
@@ -597,6 +727,13 @@ public:
         if (this != &other) {
             mpq_swap(value_, other.value_);
         }
+        return *this;
+    }
+
+    mpq_class& operator=(double value)
+    {
+        mpq_set_d(value_, value);
+        mpq_canonicalize(value_);
         return *this;
     }
 
@@ -677,6 +814,50 @@ public:
     int set_str(const std::string& value, int base = 10)
     {
         return set_str(value.c_str(), base);
+    }
+
+    void canonicalize()
+    {
+        mpq_canonicalize(value_);
+    }
+
+    double get_d() const
+    {
+        return mpq_get_d(value_);
+    }
+
+    mpz_class get_num() const
+    {
+        mpz_class result;
+        mpq_get_num(result.mpz_data(), value_);
+        return result;
+    }
+
+    mpz_class get_den() const
+    {
+        mpz_class result;
+        mpq_get_den(result.mpz_data(), value_);
+        return result;
+    }
+
+    mpz_srcptr get_num_mpz_t() const noexcept
+    {
+        return mpq_numref(value_);
+    }
+
+    mpz_ptr get_num_mpz_t() noexcept
+    {
+        return mpq_numref(value_);
+    }
+
+    mpz_srcptr get_den_mpz_t() const noexcept
+    {
+        return mpq_denref(value_);
+    }
+
+    mpz_ptr get_den_mpz_t() noexcept
+    {
+        return mpq_denref(value_);
     }
 
     void set(const char* value, int base = 10)
@@ -1479,13 +1660,23 @@ template <typename Expr, typename>
 mpz_class::mpz_class(const Expr& expr)
 {
     mpz_init(value_);
-    gmpfrxx_mkII::detail::mpz_evaluate(value_, expr);
+    if constexpr (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class>) {
+        gmpfrxx_mkII::detail::mpz_evaluate(value_, expr);
+    } else {
+        mpq_class temp(expr);
+        mpz_tdiv_q(value_, mpq_numref(temp.mpq_data()), mpq_denref(temp.mpq_data()));
+    }
 }
 
 template <typename Expr, typename>
 mpz_class& mpz_class::operator=(const Expr& expr)
 {
-    gmpfrxx_mkII::detail::mpz_evaluate(value_, expr);
+    if constexpr (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class>) {
+        gmpfrxx_mkII::detail::mpz_evaluate(value_, expr);
+    } else {
+        mpq_class temp(expr);
+        mpz_tdiv_q(value_, mpq_numref(temp.mpq_data()), mpq_denref(temp.mpq_data()));
+    }
     return *this;
 }
 
@@ -1568,7 +1759,26 @@ inline mpz_class& operator*=(mpz_class& lhs, Rhs&& rhs)
     return lhs;
 }
 
-template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>, int> = 0>
+inline mpz_class& operator/=(mpz_class& lhs, const mpz_class& rhs)
+{
+    mpz_tdiv_q(lhs.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<std::is_integral_v<std::decay_t<Rhs>> &&
+                               !std::is_same_v<std::remove_cv_t<std::decay_t<Rhs>>, bool> &&
+                               (sizeof(std::decay_t<Rhs>) <= sizeof(std::uint64_t)),
+                           int> = 0>
+inline mpz_class& operator/=(mpz_class& lhs, Rhs rhs)
+{
+    return lhs /= mpz_class(rhs);
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !std::is_integral_v<std::decay_t<Rhs>>,
+                           int> = 0>
 inline mpz_class& operator/=(mpz_class& lhs, Rhs&& rhs)
 {
     lhs = lhs / std::forward<Rhs>(rhs);
@@ -1603,6 +1813,179 @@ inline mpq_class& operator/=(mpq_class& lhs, Rhs&& rhs)
     return lhs;
 }
 
+inline mpz_class abs(const mpz_class& value)
+{
+    mpz_class result;
+    mpz_abs(result.mpz_data(), value.mpz_data());
+    return result;
+}
+
+inline mpq_class abs(const mpq_class& value)
+{
+    mpq_class result;
+    mpq_abs(result.mpq_data(), value.mpq_data());
+    return result;
+}
+
+inline int sgn(const mpz_class& value)
+{
+    return mpz_sgn(value.mpz_data());
+}
+
+inline int sgn(const mpq_class& value)
+{
+    return mpq_sgn(value.mpq_data());
+}
+
+inline mpz_class sqrt(const mpz_class& value)
+{
+    mpz_class result;
+    mpz_sqrt(result.mpz_data(), value.mpz_data());
+    return result;
+}
+
+inline mpz_class gcd(const mpz_class& lhs, const mpz_class& rhs)
+{
+    mpz_class result;
+    mpz_gcd(result.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
+    return result;
+}
+
+inline mpz_class lcm(const mpz_class& lhs, const mpz_class& rhs)
+{
+    mpz_class result;
+    mpz_lcm(result.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
+    return result;
+}
+
+inline unsigned long mpz_to_ulong_checked(const mpz_class& value, const char* name)
+{
+    if (!value.fits_ulong_p()) {
+        throw std::overflow_error(name);
+    }
+    return value.get_ui();
+}
+
+inline mpz_class factorial(const mpz_class& value)
+{
+    mpz_class result;
+    mpz_fac_ui(result.mpz_data(), mpz_to_ulong_checked(value, "factorial input does not fit unsigned long"));
+    return result;
+}
+
+inline mpz_class primorial(const mpz_class& value)
+{
+    mpz_class result;
+    mpz_primorial_ui(result.mpz_data(), mpz_to_ulong_checked(value, "primorial input does not fit unsigned long"));
+    return result;
+}
+
+inline mpz_class fibonacci(const mpz_class& value)
+{
+    mpz_class result;
+    mpz_fib_ui(result.mpz_data(), mpz_to_ulong_checked(value, "fibonacci input does not fit unsigned long"));
+    return result;
+}
+
+inline mpz_class operator+(const mpz_class& lhs, double rhs)
+{
+    mpz_class result;
+    mpz_add(result.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
+    return result;
+}
+
+inline mpz_class operator+(double lhs, const mpz_class& rhs)
+{
+    mpz_class result;
+    mpz_add(result.mpz_data(), mpz_class(lhs).mpz_data(), rhs.mpz_data());
+    return result;
+}
+
+inline mpz_class operator-(const mpz_class& lhs, double rhs)
+{
+    mpz_class result;
+    mpz_sub(result.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
+    return result;
+}
+
+inline mpz_class operator-(double lhs, const mpz_class& rhs)
+{
+    mpz_class result;
+    mpz_sub(result.mpz_data(), mpz_class(lhs).mpz_data(), rhs.mpz_data());
+    return result;
+}
+
+inline mpz_class operator*(const mpz_class& lhs, double rhs)
+{
+    mpz_class result;
+    mpz_mul(result.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
+    return result;
+}
+
+inline mpz_class operator*(double lhs, const mpz_class& rhs)
+{
+    mpz_class result;
+    mpz_mul(result.mpz_data(), mpz_class(lhs).mpz_data(), rhs.mpz_data());
+    return result;
+}
+
+inline mpz_class operator/(const mpz_class& lhs, double rhs)
+{
+    mpz_class result;
+    mpz_tdiv_q(result.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
+    return result;
+}
+
+inline mpz_class operator/(double lhs, const mpz_class& rhs)
+{
+    mpz_class result;
+    mpz_tdiv_q(result.mpz_data(), mpz_class(lhs).mpz_data(), rhs.mpz_data());
+    return result;
+}
+
+inline mpz_class operator%(const mpz_class& lhs, const mpz_class& rhs)
+{
+    mpz_class result;
+    mpz_tdiv_r(result.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
+    return result;
+}
+
+template <typename Rhs,
+          std::enable_if_t<std::is_integral_v<std::decay_t<Rhs>> &&
+                               !std::is_same_v<std::remove_cv_t<std::decay_t<Rhs>>, bool> &&
+                               (sizeof(std::decay_t<Rhs>) <= sizeof(std::uint64_t)),
+                           int> = 0>
+inline mpz_class operator%(const mpz_class& lhs, Rhs rhs)
+{
+    return lhs % mpz_class(rhs);
+}
+
+template <typename Lhs,
+          std::enable_if_t<std::is_integral_v<std::decay_t<Lhs>> &&
+                               !std::is_same_v<std::remove_cv_t<std::decay_t<Lhs>>, bool> &&
+                               (sizeof(std::decay_t<Lhs>) <= sizeof(std::uint64_t)),
+                           int> = 0>
+inline mpz_class operator%(Lhs lhs, const mpz_class& rhs)
+{
+    return mpz_class(lhs) % rhs;
+}
+
+inline mpz_class& operator%=(mpz_class& lhs, const mpz_class& rhs)
+{
+    mpz_tdiv_r(lhs.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<std::is_integral_v<std::decay_t<Rhs>> &&
+                               !std::is_same_v<std::remove_cv_t<std::decay_t<Rhs>>, bool> &&
+                               (sizeof(std::decay_t<Rhs>) <= sizeof(std::uint64_t)),
+                           int> = 0>
+inline mpz_class& operator%=(mpz_class& lhs, Rhs rhs)
+{
+    return lhs %= mpz_class(rhs);
+}
+
 using ::gmpfrxx_mkII::detail::operator+;
 using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
@@ -1614,6 +1997,30 @@ using ::gmpfrxx_mkII::detail::operator<;
 using ::gmpfrxx_mkII::detail::operator<=;
 using ::gmpfrxx_mkII::detail::operator>;
 using ::gmpfrxx_mkII::detail::operator>=;
+
+namespace literals {
+
+inline mpz_class operator"" _mpz(unsigned long long value)
+{
+    return mpz_class(value);
+}
+
+inline mpz_class operator"" _mpz(const char* value, std::size_t)
+{
+    return mpz_class(value);
+}
+
+inline mpq_class operator"" _mpq(unsigned long long value)
+{
+    return mpq_class(value);
+}
+
+inline mpq_class operator"" _mpq(const char* value, std::size_t)
+{
+    return mpq_class(value);
+}
+
+} // namespace literals
 
 } // namespace gmpxx
 
