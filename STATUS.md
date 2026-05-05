@@ -3499,3 +3499,80 @@ Pass/fail result:
 
 Known issues:
 - This smoke test checks numerical agreement with platform `std::*` functions and simple reciprocal/unit/pi formulas within a double tolerance; it is not a substitute for the existing exact MPFR C API parity checks.
+
+Post-phase MPFR power/root and log/exp wrappers:
+DONE
+
+Implemented features:
+- Added `mpfrxx::mpfr_class` wrappers for MPFR power/root APIs:
+  - `pow`
+  - `powr`
+  - `pow_si`
+  - `pow_ui`
+  - `pow_z`
+  - `pow_sj`
+  - `pow_uj`
+  - `ui_pow`
+  - `ui_pow_ui`
+  - `compound_si`
+  - `cbrt`
+  - `rootn_ui`
+  - `rootn_si`
+- Added `mpfrxx::mpfr_class` wrappers for MPFR log/exp APIs:
+  - `log`
+  - `log2`
+  - `log10`
+  - `log1p`
+  - `log2p1`
+  - `log10p1`
+  - `log_ui`
+  - `exp`
+  - `exp2`
+  - `exp10`
+  - `expm1`
+  - `exp2m1`
+  - `exp10m1`
+  - `eint`
+  - `li2`
+- Result precision follows the existing math-wrapper policy: unary wrappers preserve operand precision, binary wrappers use max operand precision, and scalar-only constructors such as `ui_pow_ui` and `log_ui` provide explicit-precision and default-precision overloads.
+- `mpfr_root` was intentionally not exposed because it is deprecated in MPFR; `rootn_ui` and `rootn_si` are the supported root wrappers.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_math.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "MPFRXX_DEFINE|sqrt_ui|rec_sqrt|agm|fma|sin_cos|test_mpfr|log2p1|powr" include tests STATUS.md
+- sed -n '1540,1885p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,260p' tests/test_mpfr_math.cpp
+- sed -n '260,470p' tests/test_mpfr_math.cpp
+- rg -n "mpfr_(powr|compound_si|rootn_si|log2p1|exp2m1)" /usr/include/mpfr.h
+- tail -n 90 STATUS.md
+- rg -n "mpz_data\\(|mpq_data\\(|class mpz_class|class mpfr_class|is_mpfr_expression_operand_v|is_mpfr_object_or_node_v" include/gmpfrxx_mkII/detail include/*.h
+- rg -n "mpfr_(pow|pow_ui|pow_si|pow_z|pow_sj|pow_uj|ui_pow|ui_pow_ui|root|rootn_ui|cbrt|log|exp|li2)" /usr/include/mpfr.h
+- sed -n '1,80p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "mpfr_eint" /usr/include/mpfr.h
+- cmake --build build --target test_mpfr_math -j
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- git diff -- include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp
+- rg -n "powr|pow_si|pow_ui|pow_z|pow_sj|pow_uj|ui_pow|ui_pow_ui|compound_si|cbrt|rootn|log2p1|exp2m1|eint|li2" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp
+- cmake --build build -j
+- rg -n "\\broot\\(|mpfr_root\\b|rootn_ui|rootn_si" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp
+- git diff --check
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial cmake --build build --target test_mpfr_math -j: FAIL because `pow_z` used the `mpfrxx::mpz_class` alias before the alias declaration; fixed by using `::gmpxx::mpz_class` in the implementation.
+- Focused cmake --build build --target test_mpfr_math -j: PASS.
+- Focused ctest --test-dir build -R test_mpfr_math --output-on-failure: PASS, 1/1 test passed.
+- git diff --check: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 99/99 tests passed.
+
+Known issues:
+- `mpfr_root` is intentionally not wrapped because MPFR marks it deprecated; use `rootn_ui` or `rootn_si`.
+- Remaining MPFR math API candidates include fused/misc arithmetic (`fms`, `fmma`, `fmms`, `min`, `max`, `dim`, `hypot`), special functions, constants, rounding/remainder helpers, scaling/sign/next/comparison helpers, and vector-like helpers (`sum`, `dot`).

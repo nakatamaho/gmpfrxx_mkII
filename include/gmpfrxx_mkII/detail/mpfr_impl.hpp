@@ -1664,8 +1664,164 @@ GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(tanpi)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(asinpi)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(acospi)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(atanpi)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(cbrt)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log2)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log10)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log1p)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log2p1)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log10p1)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp2)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp10)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(expm1)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp2m1)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp10m1)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(eint)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(li2)
 
 #undef GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION
+
+inline mpfr_class log_ui(unsigned long value, mpfr_prec_t precision)
+{
+    mpfr_class result = mpfr_class::with_precision(precision);
+    mpfr_log_ui(result.mpfr_data(), value, mpfr_class::default_rounding());
+    return result;
+}
+
+inline mpfr_class log_ui(unsigned long value)
+{
+    return log_ui(value, mpfr_class::default_precision());
+}
+
+inline mpfr_class ui_pow_ui(unsigned long base, unsigned long exponent, mpfr_prec_t precision)
+{
+    mpfr_class result = mpfr_class::with_precision(precision);
+    mpfr_ui_pow_ui(result.mpfr_data(), base, exponent, mpfr_class::default_rounding());
+    return result;
+}
+
+inline mpfr_class ui_pow_ui(unsigned long base, unsigned long exponent)
+{
+    return ui_pow_ui(base, exponent, mpfr_class::default_precision());
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class pow_si(const Expr& expr, long exponent)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_pow_si(result.mpfr_data(), operand.mpfr_data(), exponent, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class pow_ui(const Expr& expr, unsigned long exponent)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_pow_ui(result.mpfr_data(), operand.mpfr_data(), exponent, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class pow_sj(const Expr& expr, intmax_t exponent)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_pow_sj(result.mpfr_data(), operand.mpfr_data(), exponent, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class pow_uj(const Expr& expr, uintmax_t exponent)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_pow_uj(result.mpfr_data(), operand.mpfr_data(), exponent, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class pow_z(const Expr& expr, const ::gmpxx::mpz_class& exponent)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_pow_z(result.mpfr_data(), operand.mpfr_data(), exponent.mpz_data(), mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class ui_pow(unsigned long base, const Expr& exponent)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(exponent);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_ui_pow(result.mpfr_data(), base, operand.mpfr_data(), mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class compound_si(const Expr& expr, long exponent)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_compound_si(result.mpfr_data(), operand.mpfr_data(), exponent, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class rootn_ui(const Expr& expr, unsigned long root_index)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_rootn_ui(result.mpfr_data(), operand.mpfr_data(), root_index, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class rootn_si(const Expr& expr, long root_index)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_rootn_si(result.mpfr_data(), operand.mpfr_data(), root_index, mpfr_class::default_rounding());
+    return result;
+}
 
 template <
     typename Expr,
@@ -1757,6 +1913,36 @@ inline mpfr_class agm(const Lhs& lhs, const Rhs& rhs)
 {
     return detail::binary_mpfr_math(lhs, rhs, [](mpfr_t rop, mpfr_srcptr op1, mpfr_srcptr op2, mpfr_rnd_t rnd) {
         mpfr_agm(rop, op1, op2, rnd);
+    });
+}
+
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Lhs> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         (gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Lhs> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Rhs>),
+                     int> = 0>
+inline mpfr_class pow(const Lhs& lhs, const Rhs& rhs)
+{
+    return detail::binary_mpfr_math(lhs, rhs, [](mpfr_t rop, mpfr_srcptr op1, mpfr_srcptr op2, mpfr_rnd_t rnd) {
+        mpfr_pow(rop, op1, op2, rnd);
+    });
+}
+
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Lhs> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         (gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Lhs> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Rhs>),
+                     int> = 0>
+inline mpfr_class powr(const Lhs& lhs, const Rhs& rhs)
+{
+    return detail::binary_mpfr_math(lhs, rhs, [](mpfr_t rop, mpfr_srcptr op1, mpfr_srcptr op2, mpfr_rnd_t rnd) {
+        mpfr_powr(rop, op1, op2, rnd);
     });
 }
 
