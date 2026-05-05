@@ -1239,7 +1239,9 @@ struct is_zq_expression_operand<gmpxx::mpq_class> : std::true_type {};
 
 template <typename T>
 struct is_zq_scalar_operand
-    : std::bool_constant<is_supported_expression_integral_v<T>> {};
+    : std::bool_constant<is_supported_expression_integral_v<T> ||
+                         (std::is_floating_point_v<std::remove_cv_t<T>> &&
+                          !std::is_same_v<std::remove_cv_t<T>, long double>)> {};
 
 template <typename T>
 inline constexpr bool is_zq_scalar_operand_v =
@@ -1250,14 +1252,22 @@ struct normalized_zq_scalar;
 
 template <typename T>
 struct normalized_zq_scalar<T, std::enable_if_t<is_zq_scalar_operand_v<T> &&
+                                                std::is_integral_v<std::remove_cv_t<T>> &&
                                                 std::is_signed_v<std::remove_cv_t<T>>>> {
     using type = std::int64_t;
 };
 
 template <typename T>
 struct normalized_zq_scalar<T, std::enable_if_t<is_zq_scalar_operand_v<T> &&
+                                                std::is_integral_v<std::remove_cv_t<T>> &&
                                                 std::is_unsigned_v<std::remove_cv_t<T>>>> {
     using type = std::uint64_t;
+};
+
+template <typename T>
+struct normalized_zq_scalar<T, std::enable_if_t<is_zq_scalar_operand_v<T> &&
+                                                std::is_floating_point_v<std::remove_cv_t<T>>>> {
+    using type = double;
 };
 
 template <typename T>
@@ -1329,6 +1339,8 @@ inline constexpr bool is_zq_mpz_expression_operand_v = is_zq_mpz_expression_oper
 template <typename T>
 struct is_zq_comparison_scalar
     : std::bool_constant<is_supported_expression_integral_v<T>
+                         || (std::is_floating_point_v<std::remove_cv_t<T>> &&
+                             !std::is_same_v<std::remove_cv_t<T>, long double>)
 #if defined(__SIZEOF_INT128__)
                          || std::is_same_v<std::remove_cv_t<T>, __int128_t>
                          || std::is_same_v<std::remove_cv_t<T>, __uint128_t>
@@ -1414,7 +1426,11 @@ inline gmpxx::mpq_class zq_comparison_value(const Expr& expr)
 template <typename T, std::enable_if_t<is_zq_comparison_scalar_v<T>, int> = 0>
 inline gmpxx::mpq_class zq_comparison_value(T value)
 {
-    return gmpxx::mpq_class(gmpxx::mpz_class(value));
+    if constexpr (std::is_floating_point_v<std::remove_cv_t<T>>) {
+        return gmpxx::mpq_class(static_cast<double>(value));
+    } else {
+        return gmpxx::mpq_class(gmpxx::mpz_class(value));
+    }
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
@@ -1565,8 +1581,13 @@ inline void mpq_evaluate(mpq_t dest, const object_leaf<gmpxx::mpq_class>& expr)
 template <typename T, typename Result>
 void mpq_evaluate(mpq_t dest, const scalar_leaf<T, Result>& expr)
 {
-    const gmpxx::mpz_class value(expr.value());
-    mpq_set_z(dest, value.mpz_data());
+    if constexpr (std::is_floating_point_v<T>) {
+        const gmpxx::mpq_class value(expr.value());
+        mpq_set(dest, value.mpq_data());
+    } else {
+        const gmpxx::mpz_class value(expr.value());
+        mpq_set_z(dest, value.mpz_data());
+    }
 }
 
 template <typename Expr, typename Result>
@@ -2162,11 +2183,33 @@ inline mpz_class gcd(const mpz_class& lhs, const mpz_class& rhs)
     return result;
 }
 
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<!std::is_same_v<std::decay_t<Lhs>, mpz_class> ||
+                         !std::is_same_v<std::decay_t<Rhs>, mpz_class>,
+                     int> = 0>
+inline mpz_class gcd(const Lhs& lhs, const Rhs& rhs)
+{
+    return gcd(mpz_class(lhs), mpz_class(rhs));
+}
+
 inline mpz_class lcm(const mpz_class& lhs, const mpz_class& rhs)
 {
     mpz_class result;
     mpz_lcm(result.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
     return result;
+}
+
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<!std::is_same_v<std::decay_t<Lhs>, mpz_class> ||
+                         !std::is_same_v<std::decay_t<Rhs>, mpz_class>,
+                     int> = 0>
+inline mpz_class lcm(const Lhs& lhs, const Rhs& rhs)
+{
+    return lcm(mpz_class(lhs), mpz_class(rhs));
 }
 
 inline unsigned long mpz_to_ulong_checked(const mpz_class& value, const char* name)
@@ -2179,6 +2222,9 @@ inline unsigned long mpz_to_ulong_checked(const mpz_class& value, const char* na
 
 inline mpz_class factorial(const mpz_class& value)
 {
+    if (mpz_sgn(value.mpz_data()) < 0) {
+        throw std::domain_error("factorial input must be non-negative");
+    }
     mpz_class result;
     mpz_fac_ui(result.mpz_data(), mpz_to_ulong_checked(value, "factorial input does not fit unsigned long"));
     return result;
@@ -2186,6 +2232,9 @@ inline mpz_class factorial(const mpz_class& value)
 
 inline mpz_class primorial(const mpz_class& value)
 {
+    if (mpz_sgn(value.mpz_data()) < 0) {
+        throw std::domain_error("primorial input must be non-negative");
+    }
     mpz_class result;
     mpz_primorial_ui(result.mpz_data(), mpz_to_ulong_checked(value, "primorial input does not fit unsigned long"));
     return result;
@@ -2193,6 +2242,15 @@ inline mpz_class primorial(const mpz_class& value)
 
 inline mpz_class fibonacci(const mpz_class& value)
 {
+    if (mpz_sgn(value.mpz_data()) < 0) {
+        mpz_class magnitude;
+        mpz_abs(magnitude.mpz_data(), value.mpz_data());
+        mpz_class result = fibonacci(magnitude);
+        if (mpz_odd_p(magnitude.mpz_data()) == 0) {
+            mpz_neg(result.mpz_data(), result.mpz_data());
+        }
+        return result;
+    }
     mpz_class result;
     mpz_fib_ui(result.mpz_data(), mpz_to_ulong_checked(value, "fibonacci input does not fit unsigned long"));
     return result;
@@ -2220,62 +2278,6 @@ inline mpz_class& operator/=(mpz_class& lhs, double rhs)
 {
     mpz_tdiv_q(lhs.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
     return lhs;
-}
-
-inline mpz_class operator+(const mpz_class& lhs, double rhs)
-{
-    mpz_class result;
-    mpz_add(result.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
-    return result;
-}
-
-inline mpz_class operator+(double lhs, const mpz_class& rhs)
-{
-    mpz_class result;
-    mpz_add(result.mpz_data(), mpz_class(lhs).mpz_data(), rhs.mpz_data());
-    return result;
-}
-
-inline mpz_class operator-(const mpz_class& lhs, double rhs)
-{
-    mpz_class result;
-    mpz_sub(result.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
-    return result;
-}
-
-inline mpz_class operator-(double lhs, const mpz_class& rhs)
-{
-    mpz_class result;
-    mpz_sub(result.mpz_data(), mpz_class(lhs).mpz_data(), rhs.mpz_data());
-    return result;
-}
-
-inline mpz_class operator*(const mpz_class& lhs, double rhs)
-{
-    mpz_class result;
-    mpz_mul(result.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
-    return result;
-}
-
-inline mpz_class operator*(double lhs, const mpz_class& rhs)
-{
-    mpz_class result;
-    mpz_mul(result.mpz_data(), mpz_class(lhs).mpz_data(), rhs.mpz_data());
-    return result;
-}
-
-inline mpz_class operator/(const mpz_class& lhs, double rhs)
-{
-    mpz_class result;
-    mpz_tdiv_q(result.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
-    return result;
-}
-
-inline mpz_class operator/(double lhs, const mpz_class& rhs)
-{
-    mpz_class result;
-    mpz_tdiv_q(result.mpz_data(), mpz_class(lhs).mpz_data(), rhs.mpz_data());
-    return result;
 }
 
 inline mpz_class operator%(const mpz_class& lhs, const mpz_class& rhs)

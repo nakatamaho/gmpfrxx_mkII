@@ -50,6 +50,13 @@ void require_mpq_equal(const gmpxx::mpq_class& value, const gmpxx::mpq_class& ex
     }
 }
 
+void require_mpz_equal(const gmpxx::mpz_class& value, const gmpxx::mpz_class& expected)
+{
+    if (mpz_cmp(value.mpz_data(), expected.mpz_data()) != 0) {
+        std::abort();
+    }
+}
+
 void check_binary(const gmpxx::mpq_class& a, const gmpxx::mpq_class& b)
 {
     mpq_t ref;
@@ -129,6 +136,53 @@ void check_shift_increment_and_mixed_zq()
     require_mpq_equal(d, gmpxx::mpq_class("-1/2"));
 }
 
+void check_accessors_nested_compound_and_unary()
+{
+    {
+        gmpxx::mpq_class x("3/6");
+        require_mpz_equal(x.get_num(), gmpxx::mpz_class(1));
+        require_mpz_equal(x.get_den(), gmpxx::mpz_class(2));
+    }
+
+    {
+        gmpxx::mpq_class a("1/3");
+        gmpxx::mpq_class b("2/5");
+        gmpxx::mpq_class c("-7/11");
+        gmpxx::mpq_class got = (a + b) * c;
+        mpq_t tmp;
+        mpq_t ref;
+        mpq_init(tmp);
+        mpq_init(ref);
+        mpq_add(tmp, a.mpq_data(), b.mpq_data());
+        mpq_mul(ref, tmp, c.mpq_data());
+        require_mpq_raw(got, ref);
+        mpq_clear(ref);
+        mpq_clear(tmp);
+    }
+
+    {
+        gmpxx::mpq_class a("1/3");
+        gmpxx::mpq_class b("2/5");
+        gmpxx::mpq_class c("7/11");
+        mpq_t ref;
+        mpq_t tmp;
+        mpq_init(ref);
+        mpq_init(tmp);
+        mpq_set(ref, a.mpq_data());
+        mpq_add(tmp, b.mpq_data(), c.mpq_data());
+        mpq_add(ref, ref, tmp);
+        a += b + c;
+        require_mpq_raw(a, ref);
+        mpq_clear(tmp);
+        mpq_clear(ref);
+    }
+
+    if (gmpxx::sgn(gmpxx::mpq_class(-gmpxx::mpq_class("1/3"))) >= 0 ||
+        gmpxx::sgn(gmpxx::mpq_class(+gmpxx::mpq_class("1/3"))) <= 0) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main()
@@ -139,7 +193,11 @@ int main()
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
                   decltype(std::declval<const gmpxx::mpq_class&>() - 5LL)>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
+                  decltype(std::declval<const gmpxx::mpq_class&>() + 0.5)>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
                   decltype(5LL * std::declval<const gmpxx::mpq_class&>())>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
+                  decltype(0.5 * std::declval<const gmpxx::mpq_class&>())>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
                   decltype(std::declval<const gmpxx::mpq_class&>() << 3u)>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
@@ -171,6 +229,8 @@ int main()
     check_scalar(third);
     check_scalar(neg_large);
     check_shift_increment_and_mixed_zq();
+    check_accessors_nested_compound_and_unary();
+    require_mpq_equal(third + 0.5, gmpxx::mpq_class("5/6"));
 
     return 0;
 }

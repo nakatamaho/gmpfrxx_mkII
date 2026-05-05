@@ -1801,6 +1801,88 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase exact arithmetic matrix focused migration:
+DONE
+
+Implemented features:
+- Completed the focused migration rows for `test_mixed_type_arithmetic.cpp`,
+  `test_mpq_arithmetic.cpp`, and `test_mpz_arithmetic.cpp`.
+- Extended exact Z/Q scalar expression support to `float`/`double` while
+  keeping `long double`, `bool`, and `__int128` rejected as expression scalar
+  leaves by policy.
+- Removed eager `mpz_class op double` binary overloads so exact double scalar
+  arithmetic now forms expression nodes and materializes only at construction,
+  assignment, comparison, or explicit evaluation boundaries.
+- Evaluates exact floating scalar leaves as truncated integers for MPZ-result
+  expressions and as exact GMP rationals for MPQ-result expressions and exact
+  Z/Q comparisons.
+- Added upstream-style MPZ coverage for double scalar ET, bitwise double
+  operands, shifts, inc/dec, nested expression shapes, and integer helper
+  functions.
+- Added upstream-style MPQ coverage for double scalar ET, shifts, inc/dec,
+  mixed exact promotion, accessors, nested expressions, compound assignment,
+  and unary signs.
+- Added upstream-style mixed MPF/MPFR coverage for exact operands, negative
+  rational cases, exact Z/Q double scalar leaves, DBL edge smoke checks,
+  precision-preserving assignment, and power-of-two shifts.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mixed_type_arithmetic.cpp
+- tests/test_mpq_arithmetic.cpp
+- tests/test_mpz_arithmetic.cpp
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_mixed_type_arithmetic.cpp
+- sed -n '1,320p' ../gmpxx_mkII/tests/test_mpq_arithmetic.cpp
+- sed -n '1,360p' ../gmpxx_mkII/tests/test_mpz_arithmetic.cpp
+- sed -n '1,320p' tests/test_mixed_type_arithmetic.cpp
+- sed -n '1,360p' tests/test_mpq_arithmetic.cpp
+- sed -n '1,420p' tests/test_mpz_arithmetic.cpp
+- rg -n "gcd\\(|lcm\\(|factorial|primorial|fibonacci|operator%|operator&|operator\\^|operator\\||operator<<|operator>>|operator\\+\\+|operator--" include/gmpfrxx_mkII/detail/zq_impl.hpp tests
+- rg -n "double|long double|is_supported_expression_integral|is_zq_scalar|is_zq.*scalar" include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/type_traits.hpp tests/compile_fail
+- sed -n '1210,1460p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1460,1820p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '2180,2280p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- rg -n "operator[=!<>]=?\\(.*double|double.*operator[=!<>]|cmp\\(.*double|double.*cmp" include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- rg -n "comparison|cmp\\(|operator==|is_mpf_comparison" include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1560,1628p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '2140,2205p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- rg -n "mpz_class\\(const Expr|mpz_class\\(.*Expr|template <.*Expr" include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '380,405p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1908,1925p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- rg -n "static mpz_class (factorial|primorial|fibonacci)|class mpz_class" include/gmpfrxx_mkII/detail/zq_impl.hpp
+- cmake --build build -j --target test_mpz_arithmetic test_mpq_arithmetic test_mixed_type_arithmetic
+- cmake --build build -j --target test_mpz_arithmetic test_mpq_arithmetic test_mixed_type_arithmetic
+- ctest --test-dir build -R 'test_mpz_arithmetic|test_mpq_arithmetic|test_mixed_type_arithmetic' --output-on-failure
+- tail -n 110 STATUS.md
+- cmake --build build -j
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial focused build: FAIL because helper code used nonexistent member
+  `mpz_class::sgn()`; changed it to `mpz_sgn`.
+- Second focused build: FAIL because MPQ unary sign tests used nonexistent
+  member `mpq_class::sgn()`; changed them to `gmpxx::sgn`.
+- cmake --build build -j --target test_mpz_arithmetic test_mpq_arithmetic
+  test_mixed_type_arithmetic: PASS.
+- ctest --test-dir build -R
+  'test_mpz_arithmetic|test_mpq_arithmetic|test_mixed_type_arithmetic'
+  --output-on-failure: PASS, 3/3 tests passed.
+- Initial full build: FAIL because `test_abi_fingerprint.cpp` still expected
+  `double` not to be an exact Z/Q expression scalar; updated the ABI
+  fingerprint to the new ET policy.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 117/117 tests passed.
+
+Known issues:
+- None for this phase.
+
 Post-phase type conversion and comparison focused migration:
 DONE
 
@@ -2383,17 +2465,17 @@ Migration table:
 | test_headers.cpp | tests/test_header_boundaries.cpp, compile_fail header tests | Done for current header-role policy | Done for current header-role policy | Upstream is an include-only smoke test; local coverage now adds public header include expectations, `gmpxx.h` exclusion, GMP-only source scans, MPFR/MPC header boundary checks, and compile-fail public namespace boundary tests. | Keep current-policy header scan coverage; extend only if header roles change. |
 | test_io_and_strings.cpp | tests/test_zq_string_io.cpp, tests/test_mpf_string_io.cpp, tests/test_mpfr_string_io.cpp, tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done for current GMP I/O surface | Done for current MPFR/MPC policy | Upstream class-API string/I/O cases have been compared and the natural missing cases were added, including MPF non-decimal ostream base formatting and raw GMP pointer I/O helpers. MPFR uses MPFR formatting primitives intentionally. | Keep current focused coverage; extend only if upstream adds new I/O cases or MPFR/MPC policy changes. |
 | test_long_width_dispatch.cpp | tests/test_mpf_long_width_dispatch.cpp, tests/test_mpfr_long_width_dispatch.cpp, construction tests | Done | Done for MPFR scalar eval | MPF and MPFR now both cover exact uint64 max, int64 min, and int64 max expression-scalar dispatch through the full-width integer conversion path. | Keep migrated; extend exact types only if upstream adds additional long-width cases. |
-| test_mixed_type_arithmetic.cpp | tests/test_mixed_zq_mpf_promotion.cpp, tests/test_mixed_zq_mpfr_promotion.cpp | Partial | Partial | Full mixed mpz/mpq/mpf scalar matrix may be incomplete; mpfr natural matrix should mirror z/q/scalar promotion. | Port matrix in two files: GMP and MPFR. |
+| test_mixed_type_arithmetic.cpp | tests/test_mixed_type_arithmetic.cpp, tests/test_mixed_zq_mpf_promotion.cpp, tests/test_mixed_zq_mpfr_promotion.cpp | Done | Done | Upstream mixed mpz/mpq/mpf scalar matrix is now mirrored for current policy, including MPF with exact operands, exact Z/Q with double scalar leaves, denormal/DBL edge smoke checks, precision-preserving assignment, and power-of-two shifts. MPFR has the natural mpz/mpq/scalar adaptation for the MPFR expression surface. | Keep migrated; extend only if upstream adds new mixed operand families. |
 | test_mpf_extended_transcendent_functions.cpp | tests/test_mpf_extended_transcendent_functions.cpp, tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream extended MPF constants, inverse trig, hyperbolic, inverse hyperbolic, exp-base variants, gamma, expression-overload, and precision-policy assertions are now mirrored in a focused C++17 test. MPFR has native MPFR math but public wrapper parity remains a separate policy decision. | Keep as migrated; add MPFR equivalents only when public MPFR math wrapper APIs become policy. |
 | test_mpf_math_functions.cpp | tests/test_mpf_math_functions.cpp, tests/test_mpf_pi.cpp, tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream MPF sqrt/abs/neg/ceil/floor/trunc/remainder/epsilon/hypot/scaling/sign/exact helper assertions are now mirrored in a focused C++17 test. MPFR equivalents may not map 1:1 to public wrapper APIs. | Keep as migrated; decide MPFR API additions separately from GMP-only upstream parity. |
 | test_mpf_transcendent_functions.cpp | tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream assertion list is now mirrored in the focused MPF compute-log/transcendent test, adapted to C++17 and local helper names. MPFR wrapper math parity remains tracked under broader MPFR math policy work. | Keep as migrated; add MPFR equivalents only when public MPFR math wrapper APIs become policy. |
 | test_mpfc_arithmetic.cpp | tests/test_mpfc_basic.cpp, tests/test_et_contract_mpfc.cpp | Done for upstream arithmetic/precision focused coverage | N/A for MPFR; MPC analog exists separately | None known for the GMP-only MPFC arithmetic surface; upstream compound, swap/precision, mixed real operand, and random arithmetic matrix cases are now mirrored locally. | Keep as migrated; add MPC analogs only as separate MPC policy work. |
 | test_mpfc_io.cpp | tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done | MPC analog covered separately | None known for the current local complex `(real,imag)` stream format; this is local-policy parity, not a direct upstream MPC test. | Keep migrated; add only if upstream gains an MPC-specific I/O parity matrix or local complex-format policy changes. |
 | test_mpfc_transcendent_functions.cpp | tests/test_mpfc_math.cpp, tests/test_mpc_math.cpp | Done for upstream complex math focused coverage | MPC analog covered separately with MPC 1.3.1 C API references | Local MPFC gamma/reciprocal_gamma are still double-backed, so the gamma known-value tolerance is intentionally double-level rather than high-precision MPF-level. MPC wrappers now cover MPC 1.3.1 sqrt/exp/log/log10/trig/hyperbolic/inverse/pow functions against direct `mpc_*` references; MPC gamma is not part of MPC 1.3.1. | Keep as migrated; improve MPFC gamma tolerance only if MPFC gamma is later replaced with a high-precision implementation. |
-| test_mpq_arithmetic.cpp | tests/test_mpq_basic.cpp, tests/test_mpq_canonicalization.cpp | Partial | mpfrxx aliases use same exact types | Full rational arithmetic/scalar/shift matrix may be incomplete. | Port upstream mpq arithmetic cases into focused exact-type test. |
+| test_mpq_arithmetic.cpp | tests/test_mpq_arithmetic.cpp, tests/test_mpq_basic.cpp, tests/test_mpq_canonicalization.cpp | Done | mpfrxx aliases use same exact types | Upstream rational binary/scalar/shift, mixed exact promotion, accessor, nested expression, compound assignment, unary, and ET contract cases are covered under the shared exact type. | Keep migrated; add only if upstream expands rational-specific arithmetic coverage. |
 | test_mpz_addmul_alloc_count.cpp | tests/test_mpz_addmul_alloc_count.cpp | Done for direct mpz addmul/submul paths | N/A | No upstream wrapper instrumentation counters; local test checks GMP allocator count for preallocated direct paths. | Keep as direct-path regression coverage. |
 | test_mpz_addmul_fusion.cpp | tests/test_mpz_addmul_fusion.cpp | Done | N/A | No diagnostic fusion counter API; behavior and direct overload routing are covered. | Keep migrated; add counters only if instrumentation becomes public policy. |
-| test_mpz_arithmetic.cpp | tests/test_mpz_basic.cpp | Partial | mpfrxx aliases use same exact types | Full integer arithmetic, bit ops, shifts, inc/dec likely incomplete. | Port upstream mpz arithmetic and add missing exact APIs. |
+| test_mpz_arithmetic.cpp | tests/test_mpz_arithmetic.cpp, tests/test_mpz_basic.cpp | Done | mpfrxx aliases use same exact types | Upstream integer binary/scalar arithmetic, double scalar ET, bit ops, shifts, inc/dec, nested addmul-style expression shapes, and gcd/lcm/factorial/primorial/fibonacci helper cases are covered under the shared exact type. | Keep migrated; add only if upstream expands integer-specific arithmetic coverage. |
 | test_mpz_mpq_alloc_count.cpp | tests/test_mpz_mpq_alloc_count.cpp | Done for functional exact ET/compound coverage | N/A | Exact wrapper allocation-count parity is not available without upstream instrumentation hooks. | Keep functional coverage; add allocator-specific assertions only for stable no-allocation paths. |
 | test_numeric_equivalence.cpp | tests/test_mpf_numeric_equivalence.cpp, tests/test_mpfr_numeric_equivalence.cpp | Done | Done | None known for arithmetic expression value/precision equivalence against GMP/MPFR C API. | Keep migrated; extend if scalar arithmetic matrix exposes additional expression shapes. |
 | test_power_of_two_fusion.cpp | tests/test_mpf_power_of_two_fusion.cpp, tests/test_mpfr_power_of_two_fusion.cpp | Done for behavior | Done for natural MPFR behavior | No diagnostic fusion counter API; tests verify power-of-two scalar multiply/divide behavior and destination precision preservation. | Add counters only if optimizer instrumentation becomes public policy. |

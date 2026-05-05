@@ -31,6 +31,8 @@
 #include <cstdint>
 #include <cstdlib>
 #include <limits>
+#include <new>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 
@@ -116,6 +118,7 @@ void check_bitwise_and_shifts()
     require_mpz_equal(a ^ b, gmpxx::mpz_class(0x7411));
     require_mpz_equal(a & -0xbeef, gmpxx::mpz_class(0x4010));
     require_mpz_equal(a | -0xbeef, gmpxx::mpz_class(-0x3401));
+    require_mpz_equal(a ^ 48879.0, gmpxx::mpz_class(0x7411));
     require_mpz_equal(0xcafeL & b, gmpxx::mpz_class(0x8aee));
     require_mpz_equal(0xcafeL | b, gmpxx::mpz_class(0xfeff));
     require_mpz_equal(0xcafeL ^ b, gmpxx::mpz_class(0x7411));
@@ -146,20 +149,86 @@ void check_increment_decrement()
 
 void check_nested_shapes()
 {
-    gmpxx::mpz_class a(17), b(-5), c(9), d;
-    d = a + b * c;
-    require_mpz_equal(d, gmpxx::mpz_class(-28));
-    d = a - b * c;
-    require_mpz_equal(d, gmpxx::mpz_class(62));
+    {
+        gmpxx::mpz_class a(17), b(-5), c(9), d;
+        d = a + b * c;
+        require_mpz_equal(d, gmpxx::mpz_class(-28));
+        d = a - b * c;
+        require_mpz_equal(d, gmpxx::mpz_class(62));
+    }
+    {
+        gmpxx::mpz_class a(-14), b(6), c(-8), e;
+        double d = 2.0;
+        e = a + b * (c + d);
+        require_mpz_equal(e, gmpxx::mpz_class(-50));
+        e = a - b * (c + d);
+        require_mpz_equal(e, gmpxx::mpz_class(22));
+    }
+    {
+        gmpxx::mpz_class a(23), b(-11), e;
+        unsigned int c = 4, d = 7;
+        e = a + (b + c) * d;
+        require_mpz_equal(e, gmpxx::mpz_class(-26));
+        e = a - (b + c) * d;
+        require_mpz_equal(e, gmpxx::mpz_class(72));
+    }
+    {
+        gmpxx::mpz_class a(-31), b(12), c(-6), f;
+        signed int d = -3, e = 10;
+        f = a + (b - d) * (c + e);
+        require_mpz_equal(f, gmpxx::mpz_class(29));
+        f = a - (b - d) * (c + e);
+        require_mpz_equal(f, gmpxx::mpz_class(-91));
+    }
+    {
+        gmpxx::mpz_class a(-7), b(-13), c(29), d;
+        d = a * b + c;
+        require_mpz_equal(d, gmpxx::mpz_class(120));
+        d = a * b - c;
+        require_mpz_equal(d, gmpxx::mpz_class(62));
+    }
+    {
+        gmpxx::mpz_class a(19), b(-17), e;
+        double c = -3.0, d = 4.0;
+        e = c * (a + d) + b;
+        require_mpz_equal(e, gmpxx::mpz_class(-86));
+        e = c * (a + d) - b;
+        require_mpz_equal(e, gmpxx::mpz_class(-52));
+    }
+    {
+        gmpxx::mpz_class a(-4), b(15), c(-9), f;
+        unsigned int d = 6, e = 20;
+        f = a * (b - d) + (c + e);
+        require_mpz_equal(f, gmpxx::mpz_class(-25));
+        f = a * (b - d) - (c + e);
+        require_mpz_equal(f, gmpxx::mpz_class(-47));
+    }
+    {
+        gmpxx::mpz_class a(8), b(-12), c(5), g;
+        double d = -15.0, e = 3.0, f = -21.0;
+        g = (a + d) * (b - e) + (c + f);
+        require_mpz_equal(g, gmpxx::mpz_class(89));
+        g = (a + d) * (b - e) - (c + f);
+        require_mpz_equal(g, gmpxx::mpz_class(121));
+    }
+}
 
-    gmpxx::mpz_class e;
-    e = gmpxx::mpz_class(-14) + gmpxx::mpz_class(6) * (gmpxx::mpz_class(-8) + 2);
-    require_mpz_equal(e, gmpxx::mpz_class(-50));
-    e = gmpxx::mpz_class(23) + (gmpxx::mpz_class(-11) + 4u) * 7u;
-    require_mpz_equal(e, gmpxx::mpz_class(-26));
-    e = (gmpxx::mpz_class(8) + -15) * (gmpxx::mpz_class(-12) - 3) +
-        (gmpxx::mpz_class(5) + -21);
-    require_mpz_equal(e, gmpxx::mpz_class(89));
+void check_integer_helpers()
+{
+    require_mpz_equal(gmpxx::gcd(gmpxx::mpz_class(6), gmpxx::mpz_class(8)), gmpxx::mpz_class(2));
+    require_mpz_equal(gmpxx::gcd(-gmpxx::mpz_class(6), gmpxx::mpz_class(8)), gmpxx::mpz_class(2));
+    require_mpz_equal(gmpxx::gcd(static_cast<long>(-6), gmpxx::mpz_class(5) + 3), gmpxx::mpz_class(2));
+    require_mpz_equal(gmpxx::lcm(gmpxx::mpz_class(6), gmpxx::mpz_class(8)), gmpxx::mpz_class(24));
+    require_mpz_equal(gmpxx::lcm(-gmpxx::mpz_class(6), -gmpxx::mpz_class(8)), gmpxx::mpz_class(24));
+    require_mpz_equal(gmpxx::lcm(-6.0, gmpxx::mpz_class(5) + 3), gmpxx::mpz_class(24));
+
+    require_mpz_equal(gmpxx::factorial(gmpxx::mpz_class(3)), gmpxx::mpz_class(6));
+    require_mpz_equal(gmpxx::factorial(gmpxx::mpz_class(5) - 1), gmpxx::mpz_class(24));
+    require_mpz_equal(gmpxx::primorial(gmpxx::mpz_class(5)), gmpxx::mpz_class(30));
+    require_mpz_equal(gmpxx::primorial(gmpxx::mpz_class(2) * 2), gmpxx::mpz_class(6));
+    require_mpz_equal(gmpxx::fibonacci(gmpxx::mpz_class(6)), gmpxx::mpz_class(8));
+    require_mpz_equal(gmpxx::fibonacci(gmpxx::mpz_class(2) * 2), gmpxx::mpz_class(3));
+    require_mpz_equal(gmpxx::fibonacci(-gmpxx::mpz_class(6)), gmpxx::mpz_class(-8));
 }
 
 } // namespace
@@ -172,10 +241,16 @@ int main()
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
                   decltype(std::declval<const gmpxx::mpz_class&>() - 5LL)>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
+                  decltype(std::declval<const gmpxx::mpz_class&>() + 0.5)>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
+                  decltype(2.0 * std::declval<const gmpxx::mpz_class&>())>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
                   decltype(5LL * std::declval<const gmpxx::mpz_class&>())>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
                   decltype(std::declval<const gmpxx::mpz_class&>() &
                            std::declval<const gmpxx::mpz_class&>())>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
+                  decltype(std::declval<const gmpxx::mpz_class&>() ^ 1.0)>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
                   decltype(~std::declval<const gmpxx::mpz_class&>())>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
@@ -204,7 +279,10 @@ int main()
     check_scalar(neg_huge);
     check_bitwise_and_shifts();
     check_increment_decrement();
+    check_integer_helpers();
     check_nested_shapes();
+
+    require_mpz_equal(gmpxx::mpz_class(huge + 0.75), huge);
 
     return 0;
 }

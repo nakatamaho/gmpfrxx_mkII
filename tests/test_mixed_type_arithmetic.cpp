@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cstdlib>
+#include <limits>
 #include <type_traits>
 #include <utility>
 
@@ -101,6 +102,37 @@ void check_mpf_matrix()
             gmpxx::mpf_class::with_precision(128, -0.75)) {
             std::abort();
         }
+
+        gmpxx::mpf_class lhs2 = gmpxx::mpf_class::with_precision(128, -5.5);
+        gmpxx::mpq_class rhs2("-9/4");
+        if (gmpxx::mpf_class(lhs2 + rhs2) != gmpxx::mpf_class::with_precision(128, -7.75)) {
+            std::abort();
+        }
+        if (gmpxx::mpf_class(lhs2 - rhs2) != gmpxx::mpf_class::with_precision(128, -3.25)) {
+            std::abort();
+        }
+        if (gmpxx::mpf_class(lhs2 * rhs2) != gmpxx::mpf_class::with_precision(128, 12.375)) {
+            std::abort();
+        }
+        if (gmpxx::mpf_class(gmpxx::mpf_class::with_precision(128, -5.25) / gmpxx::mpq_class("-1/2")) !=
+            gmpxx::mpf_class::with_precision(128, 10.5)) {
+            std::abort();
+        }
+    }
+
+    {
+        gmpxx::mpq_class got = z + q;
+        mpq_t ref;
+        mpq_t tmp;
+        mpq_init(ref);
+        mpq_init(tmp);
+        mpq_set_z(tmp, z.mpz_data());
+        mpq_add(ref, tmp, q.mpq_data());
+        if (mpq_equal(got.mpq_data(), ref) == 0) {
+            std::abort();
+        }
+        mpq_clear(tmp);
+        mpq_clear(ref);
     }
 
     {
@@ -129,6 +161,51 @@ void check_mpf_matrix()
         mpf_div_2exp(ref, ref, 2);
         require_mpf_equal(shifted, ref);
         mpf_clear(ref);
+
+        if ((gmpxx::mpf_class(6) << 2) != gmpxx::mpf_class(24) ||
+            (gmpxx::mpf_class(6) >> 2) != gmpxx::mpf_class("1.5") ||
+            (gmpxx::mpq_class(6) << 2) != gmpxx::mpq_class(24) ||
+            (gmpxx::mpq_class(6) >> 2) != gmpxx::mpq_class("3/2") ||
+            (gmpxx::mpf_class(-13) << 2) != gmpxx::mpf_class(-52) ||
+            (gmpxx::mpf_class(-13) >> 2) != gmpxx::mpf_class("-3.25") ||
+            (gmpxx::mpq_class(-13) << 2) != gmpxx::mpq_class(-52) ||
+            (gmpxx::mpq_class(-13) >> 2) != gmpxx::mpq_class("-13/4")) {
+            std::abort();
+        }
+    }
+
+    {
+        gmpxx::mpz_class got = z + 0.75;
+        if (got != z) {
+            std::abort();
+        }
+
+        gmpxx::mpq_class rational = q + 0.5;
+        if (rational != gmpxx::mpq_class("51/14")) {
+            std::abort();
+        }
+    }
+
+    {
+        const mp_bitcnt_t denorm_prec =
+            static_cast<mp_bitcnt_t>(DBL_MANT_DIG - DBL_MIN_EXP + 42);
+        const double denorm = std::numeric_limits<double>::denorm_min();
+        gmpxx::mpf_class one(1, denorm_prec);
+        if (!(one + DBL_MAX > gmpxx::mpf_class(2, denorm_prec)) ||
+            !(one + DBL_MIN > one) ||
+            !(one + DBL_MIN < gmpxx::mpf_class("1.001", denorm_prec)) ||
+            !(one + denorm > one) ||
+            !(one + denorm < gmpxx::mpf_class("1.001", denorm_prec))) {
+            std::abort();
+        }
+
+        if (!(gmpxx::mpq_class(1) + DBL_MAX > 2) ||
+            !(gmpxx::mpq_class(1) + DBL_MIN > 1) ||
+            !(gmpxx::mpq_class(1) + DBL_MIN < gmpxx::mpq_class("1001/1000")) ||
+            !(gmpxx::mpq_class(1) + denorm > 1) ||
+            !(gmpxx::mpq_class(1) + denorm < gmpxx::mpq_class("1001/1000"))) {
+            std::abort();
+        }
     }
 }
 
@@ -181,6 +258,22 @@ void check_mpfr_matrix()
         }
         if (mpfrxx::mpfr_class(lhs / mpfrxx::mpq_class(-2)) !=
             mpfrxx::mpfr_class::with_precision(128, -0.75)) {
+            std::abort();
+        }
+
+        mpfrxx::mpfr_class lhs2 = mpfrxx::mpfr_class::with_precision(128, -5.5);
+        mpfrxx::mpq_class rhs2("-9/4");
+        if (mpfrxx::mpfr_class(lhs2 + rhs2) != mpfrxx::mpfr_class::with_precision(128, -7.75)) {
+            std::abort();
+        }
+        if (mpfrxx::mpfr_class(lhs2 - rhs2) != mpfrxx::mpfr_class::with_precision(128, -3.25)) {
+            std::abort();
+        }
+        if (mpfrxx::mpfr_class(lhs2 * rhs2) != mpfrxx::mpfr_class::with_precision(128, 12.375)) {
+            std::abort();
+        }
+        if (mpfrxx::mpfr_class(mpfrxx::mpfr_class::with_precision(128, -5.25) / mpfrxx::mpq_class("-1/2")) !=
+            mpfrxx::mpfr_class::with_precision(128, 10.5)) {
             std::abort();
         }
     }
@@ -236,6 +329,16 @@ int main()
                            std::declval<const gmpxx::mpf_class&>())>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
                   decltype(std::declval<const gmpxx::mpf_class&>() << 2u)>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
+                  decltype(std::declval<const gmpxx::mpz_class&>() + 0.5)>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<
+                  decltype(std::declval<const gmpxx::mpq_class&>() + 0.5)>);
+    static_assert(std::is_same_v<
+                  typename decltype(std::declval<const gmpxx::mpz_class&>() + 0.5)::result_type,
+                  gmpxx::mpz_class>);
+    static_assert(std::is_same_v<
+                  typename decltype(std::declval<const gmpxx::mpq_class&>() + 0.5)::result_type,
+                  gmpxx::mpq_class>);
     static_assert(!std::is_same_v<
                   decltype(std::declval<const gmpxx::mpf_class&>() +
                            std::declval<const gmpxx::mpz_class&>()),
