@@ -572,6 +572,12 @@ void test_mpfr_class_constructor_precision()
     assert(result.get_prec() == 256);
     x += y;
     assert(x.get_prec() == 64);
+
+    mpfrxx::mpfr_class copied(y);
+    assert(copied.get_prec() == 256);
+    mpfrxx::mpfr_class assigned;
+    assigned = y;
+    assert(assigned.get_prec() == mpfrxx::default_precision_bits());
     std::cout << "test_mpfr_class_constructor_precision passed." << std::endl;
 }
 
@@ -884,8 +890,22 @@ void testMathFunctions_mpz_class()
     std::cout << "testMathFunctions_mpz_class passed." << std::endl;
 }
 
+template <class A, class B>
+auto test_func(const A& a, const B& b)
+{
+    using expression_type = std::decay_t<decltype(a * b)>;
+    using result_type = typename expression_type::result_type;
+    return result_type(a * b);
+}
+
 void test_mpz_class_extention()
 {
+    mpfrxx::mpz_class f(2), g(1), h(3);
+    mpfrxx::mpz_class result;
+    result = test_func(f * h, g);
+    std::cout << "The result of test_func(f * h, g) is: " << result << std::endl;
+    assert(result == 6);
+
     assert(gmpxx::factorial(mpfrxx::mpz_class(5)) == 120);
     assert(gmpxx::primorial(mpfrxx::mpz_class(5)) == 30);
     assert(gmpxx::fibonacci(mpfrxx::mpz_class(10)) == 55);
@@ -946,6 +966,12 @@ void test_mpz_class_addition()
     mpfrxx::mpz_class a(3);
     mpfrxx::mpz_class b(4);
     assert(mpfrxx::mpz_class(a + b) == 7);
+    double d = 2.0;
+    mpfrxx::mpz_class c(-1);
+    assert(mpfrxx::mpz_class(c + d) == 1);
+    assert(mpfrxx::mpz_class(d + c) == 1);
+    c += d;
+    assert(c == 1);
     std::cout << "test_mpz_class_addition passed." << std::endl;
 }
 
@@ -954,6 +980,12 @@ void test_mpz_class_subtraction()
     mpfrxx::mpz_class a(10);
     mpfrxx::mpz_class b(4);
     assert(mpfrxx::mpz_class(a - b) == 6);
+    double d = 2.0;
+    mpfrxx::mpz_class c(-1);
+    assert(mpfrxx::mpz_class(c - d) == -3);
+    assert(mpfrxx::mpz_class(d - c) == 3);
+    c -= d;
+    assert(c == -3);
     std::cout << "test_mpz_class_subtraction passed." << std::endl;
 }
 
@@ -962,6 +994,12 @@ void test_mpz_class_multiplication()
     mpfrxx::mpz_class a(10);
     mpfrxx::mpz_class b(4);
     assert(mpfrxx::mpz_class(a * b) == 40);
+    double d = -2.0;
+    mpfrxx::mpz_class c(3);
+    assert(mpfrxx::mpz_class(c * d) == -6);
+    assert(mpfrxx::mpz_class(d * c) == -6);
+    c *= d;
+    assert(c == -6);
     std::cout << "test_mpz_class_multiplication passed." << std::endl;
 }
 
@@ -970,6 +1008,12 @@ void test_mpz_class_division()
     mpfrxx::mpz_class a(10);
     mpfrxx::mpz_class b(4);
     assert(mpfrxx::mpz_class(a / b) == 2);
+    double d = -2.0;
+    mpfrxx::mpz_class c(7);
+    assert(mpfrxx::mpz_class(c / d) == -3);
+    assert(mpfrxx::mpz_class(-18.0 / c) == -2);
+    c /= d;
+    assert(c == -3);
     std::cout << "test_mpz_class_division passed." << std::endl;
 }
 
@@ -1331,6 +1375,12 @@ void test_reminder()
 
 void test_mpfr_class_extention()
 {
+    mpfrxx::mpfr_class f(2), g(1), h(3);
+    mpfrxx::mpfr_class result;
+    result = test_func(f * h, g);
+    std::cout << "The result of test_func(f * h, g) is: " << result << std::endl;
+    require_mpfr_close(result, "6");
+
     mpfrxx::mpfr_class value("16", 192);
     mpfrxx::mpfr_class root = mpfrxx::mpfr_class::with_precision(192);
     mpfr_sqrt(root.mpfr_data(), value.mpfr_data(), MPFR_RNDN);

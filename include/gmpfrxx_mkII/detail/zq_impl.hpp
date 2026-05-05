@@ -1894,6 +1894,30 @@ inline mpz_class fibonacci(const mpz_class& value)
     return result;
 }
 
+inline mpz_class& operator+=(mpz_class& lhs, double rhs)
+{
+    mpz_add(lhs.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
+    return lhs;
+}
+
+inline mpz_class& operator-=(mpz_class& lhs, double rhs)
+{
+    mpz_sub(lhs.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
+    return lhs;
+}
+
+inline mpz_class& operator*=(mpz_class& lhs, double rhs)
+{
+    mpz_mul(lhs.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
+    return lhs;
+}
+
+inline mpz_class& operator/=(mpz_class& lhs, double rhs)
+{
+    mpz_tdiv_q(lhs.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
+    return lhs;
+}
+
 inline mpz_class operator+(const mpz_class& lhs, double rhs)
 {
     mpz_class result;

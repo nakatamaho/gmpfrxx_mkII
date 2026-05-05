@@ -40,6 +40,7 @@
 #include <algorithm>
 #include <thread>
 #include <optional>
+#include <type_traits>
 
 #include "gmpxx_mkII.h"
 using namespace gmpxx;
@@ -771,10 +772,7 @@ void test_mpf_class_constructor_precision() {
     assert(f7_1.get_prec() == 1024);
     mpf_class f7_2;
     f7_2 = y;
-#if 0
-    // TODO: Review legacy copy-assignment precision expectation.
-    assert(f7_2.get_prec() == mpf_get_default_prec());
-#endif
+    assert(f7_2.get_prec() == gmpxx_defaults::get_default_prec());
     std::cout << "test_mpf_class_constructor_precision passed." << std::endl;
 #endif
 }
@@ -1287,29 +1285,32 @@ void testMathFunctions_mpz_class() {
 
     std::cout << "testMathFunctions_mpz_class passed." << std::endl;
 }
-template <class T> T test_func(const T& a, const T& b) { return a * b; }
+template <class A, class B>
+auto test_func(const A& a, const B& b)
+{
+    using expression_type = std::decay_t<decltype(a * b)>;
+    using result_type = typename expression_type::result_type;
+    return result_type(a * b);
+}
 void test_mpf_class_extention() {
-#if 0
-    // TODO: Restore after this legacy helper is adapted to expression nodes.
     mpf_class f(2), g(1), h(3);
 
     mpf_class result;
     result = test_func(f * h, g);
 
     std::cout << "The result of test_func(f * h, g) is: " << result << std::endl;
-#endif
+    assert(result == 6);
+    std::cout << "test_mpf_class_extention passed." << std::endl;
 }
 void test_mpz_class_extention() {
-#if 0
-    // TODO: Restore after this legacy helper is adapted to expression nodes.
     mpz_class f(2), g(1), h(3);
 
     mpz_class result;
     result = test_func(f * h, g);
 
     std::cout << "The result of test_func(f * h, g) is: " << result << std::endl;
+    assert(result == 6);
     std::cout << "test_mpz_class_extention passed." << std::endl;
-#endif
 }
 void test_set_str_mpz_class() {
     mpz_class a, b, c, d, e, f;
@@ -1504,11 +1505,8 @@ void test_mpz_class_addition() {
         assert(Is_mpz_class_Equals(c, expectedValue, true));
         c = b + a;
         assert(Is_mpz_class_Equals(c, expectedValue));
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a += b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     std::cout << "test_mpz_class_addition passed." << std::endl;
 }
@@ -1523,11 +1521,8 @@ void test_mpz_class_subtraction() {
         assert(Is_mpz_class_Equals(c, expectedValue));
         c = b - a;
         assert(Is_mpz_class_Equals(c, expectedValue1));
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a -= b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     {
         mpz_class a(-1), c;
@@ -1539,11 +1534,8 @@ void test_mpz_class_subtraction() {
         assert(Is_mpz_class_Equals(c, expectedValue));
         c = b - a;
         assert(Is_mpz_class_Equals(c, expectedValue1));
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a -= b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     {
         mpz_class a(1), c;
@@ -1555,11 +1547,8 @@ void test_mpz_class_subtraction() {
         assert(Is_mpz_class_Equals(c, expectedValue));
         c = b - a;
         assert(Is_mpz_class_Equals(c, expectedValue1));
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a -= b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     {
         mpz_class a(1), c;
@@ -1610,11 +1599,8 @@ void test_mpz_class_subtraction() {
         assert(Is_mpz_class_Equals(c, expectedValue));
         c = b - a;
         assert(Is_mpz_class_Equals(c, expectedValue1));
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a -= b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     std::cout << "test_mpz_class_subtraction passed." << std::endl;
 }
@@ -1628,11 +1614,8 @@ void test_mpz_class_multiplication() {
         assert(Is_mpz_class_Equals(c, expectedValue));
         c = b * a;
         assert(Is_mpz_class_Equals(c, expectedValue));
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a *= b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     {
         mpz_class a(3), c;
@@ -1703,11 +1686,8 @@ void test_mpz_class_multiplication() {
         assert(Is_mpz_class_Equals(c, expectedValue));
         c = b * a;
         assert(Is_mpz_class_Equals(c, expectedValue));
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a *= b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     std::cout << "test_mpz_class_multiplication passed." << std::endl;
 }
@@ -1724,11 +1704,8 @@ void test_mpz_class_division() {
         d = b / a;
         assert(Is_mpz_class_Equals(d, expectedValue1));
         b = -2;
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a /= b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     {
         mpz_class a(6), c, d;
@@ -1826,11 +1803,8 @@ void test_mpz_class_division() {
         d = b / a;
         assert(Is_mpz_class_Equals(d, expectedValue1));
         b = -2;
-#if 0
-        // TODO: Restore after mpz_class compound assignment with double is supported.
         a /= b;
         assert(Is_mpz_class_Equals(a, expectedValue));
-#endif
     }
     std::cout << "test_mpz_class_division passed." << std::endl;
 }
