@@ -1529,6 +1529,342 @@ inline mpfr_class& operator/=(mpfr_class& lhs, Rhs&& rhs)
     return lhs;
 }
 
+namespace detail {
+
+template <typename Expr>
+inline mpfr_class materialize_mpfr_math_operand(const Expr& expr)
+{
+    if constexpr (std::is_same_v<std::decay_t<Expr>, mpfr_class>) {
+        return expr;
+    } else {
+        return mpfr_class(expr);
+    }
+}
+
+template <typename Expr, typename Function>
+inline mpfr_class unary_mpfr_math(const Expr& expr, Function function)
+{
+    const mpfr_class operand = materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    function(result.mpfr_data(), operand.mpfr_data(), mpfr_class::default_rounding());
+    return result;
+}
+
+template <typename Lhs, typename Rhs, typename Function>
+inline mpfr_class binary_mpfr_math(const Lhs& lhs, const Rhs& rhs, Function function)
+{
+    const mpfr_class left = materialize_mpfr_math_operand(lhs);
+    const mpfr_class right = materialize_mpfr_math_operand(rhs);
+    const mpfr_prec_t precision = std::max(left.precision(), right.precision());
+    mpfr_class result = mpfr_class::with_precision(precision);
+    function(result.mpfr_data(), left.mpfr_data(), right.mpfr_data(), mpfr_class::default_rounding());
+    return result;
+}
+
+template <typename A, typename B, typename C, typename Function>
+inline mpfr_class ternary_mpfr_math(const A& a, const B& b, const C& c, Function function)
+{
+    const mpfr_class first = materialize_mpfr_math_operand(a);
+    const mpfr_class second = materialize_mpfr_math_operand(b);
+    const mpfr_class third = materialize_mpfr_math_operand(c);
+    const mpfr_prec_t precision = std::max({first.precision(), second.precision(), third.precision()});
+    mpfr_class result = mpfr_class::with_precision(precision);
+    function(result.mpfr_data(),
+             first.mpfr_data(),
+             second.mpfr_data(),
+             third.mpfr_data(),
+             mpfr_class::default_rounding());
+    return result;
+}
+
+} // namespace detail
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class sqrt(const Expr& expr)
+{
+    return detail::unary_mpfr_math(expr, [](mpfr_t rop, mpfr_srcptr op, mpfr_rnd_t rnd) {
+        mpfr_sqrt(rop, op, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class sqr(const Expr& expr)
+{
+    return detail::unary_mpfr_math(expr, [](mpfr_t rop, mpfr_srcptr op, mpfr_rnd_t rnd) {
+        mpfr_sqr(rop, op, rnd);
+    });
+}
+
+inline mpfr_class sqrt_ui(unsigned long value, mpfr_prec_t precision)
+{
+    mpfr_class result = mpfr_class::with_precision(precision);
+    mpfr_sqrt_ui(result.mpfr_data(), value, mpfr_class::default_rounding());
+    return result;
+}
+
+inline mpfr_class sqrt_ui(unsigned long value)
+{
+    return sqrt_ui(value, mpfr_class::default_precision());
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class rec_sqrt(const Expr& expr)
+{
+    return detail::unary_mpfr_math(expr, [](mpfr_t rop, mpfr_srcptr op, mpfr_rnd_t rnd) {
+        mpfr_rec_sqrt(rop, op, rnd);
+    });
+}
+
+#define GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(name) \
+    template < \
+        typename Expr, \
+        std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> && \
+                             gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>, \
+                         int> = 0> \
+    inline mpfr_class name(const Expr& expr) \
+    { \
+        return detail::unary_mpfr_math(expr, [](mpfr_t rop, mpfr_srcptr op, mpfr_rnd_t rnd) { \
+            mpfr_##name(rop, op, rnd); \
+        }); \
+    }
+
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(sin)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(cos)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(tan)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(asin)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(acos)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(atan)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(sinh)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(cosh)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(tanh)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(asinh)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(acosh)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(atanh)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(sec)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(csc)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(cot)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(sech)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(csch)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(coth)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(sinpi)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(cospi)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(tanpi)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(asinpi)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(acospi)
+GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(atanpi)
+
+#undef GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class sinu(const Expr& expr, unsigned long unit)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_sinu(result.mpfr_data(), operand.mpfr_data(), unit, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class cosu(const Expr& expr, unsigned long unit)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_cosu(result.mpfr_data(), operand.mpfr_data(), unit, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class tanu(const Expr& expr, unsigned long unit)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_tanu(result.mpfr_data(), operand.mpfr_data(), unit, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class asinu(const Expr& expr, unsigned long unit)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_asinu(result.mpfr_data(), operand.mpfr_data(), unit, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class acosu(const Expr& expr, unsigned long unit)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_acosu(result.mpfr_data(), operand.mpfr_data(), unit, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class atanu(const Expr& expr, unsigned long unit)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_atanu(result.mpfr_data(), operand.mpfr_data(), unit, mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Lhs,
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Lhs> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         (gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Lhs> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Rhs>),
+                     int> = 0>
+inline mpfr_class agm(const Lhs& lhs, const Rhs& rhs)
+{
+    return detail::binary_mpfr_math(lhs, rhs, [](mpfr_t rop, mpfr_srcptr op1, mpfr_srcptr op2, mpfr_rnd_t rnd) {
+        mpfr_agm(rop, op1, op2, rnd);
+    });
+}
+
+template <
+    typename Y,
+    typename X,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Y> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<X> &&
+                         (gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Y> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<X>),
+                     int> = 0>
+inline mpfr_class atan2(const Y& y, const X& x)
+{
+    return detail::binary_mpfr_math(y, x, [](mpfr_t rop, mpfr_srcptr op1, mpfr_srcptr op2, mpfr_rnd_t rnd) {
+        mpfr_atan2(rop, op1, op2, rnd);
+    });
+}
+
+template <
+    typename Y,
+    typename X,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Y> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<X> &&
+                         (gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Y> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<X>),
+                     int> = 0>
+inline mpfr_class atan2pi(const Y& y, const X& x)
+{
+    return detail::binary_mpfr_math(y, x, [](mpfr_t rop, mpfr_srcptr op1, mpfr_srcptr op2, mpfr_rnd_t rnd) {
+        mpfr_atan2pi(rop, op1, op2, rnd);
+    });
+}
+
+template <
+    typename Y,
+    typename X,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Y> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<X> &&
+                         (gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Y> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<X>),
+                     int> = 0>
+inline mpfr_class atan2u(const Y& y, const X& x, unsigned long unit)
+{
+    const mpfr_class left = detail::materialize_mpfr_math_operand(y);
+    const mpfr_class right = detail::materialize_mpfr_math_operand(x);
+    const mpfr_prec_t precision = std::max(left.precision(), right.precision());
+    mpfr_class result = mpfr_class::with_precision(precision);
+    mpfr_atan2u(result.mpfr_data(),
+                left.mpfr_data(),
+                right.mpfr_data(),
+                unit,
+                mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename A,
+    typename B,
+    typename C,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<A> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<B> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<C> &&
+                         (gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<A> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<B> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<C>),
+                     int> = 0>
+inline mpfr_class fma(const A& a, const B& b, const C& c)
+{
+    return detail::ternary_mpfr_math(a, b, c, [](mpfr_t rop,
+                                                 mpfr_srcptr op1,
+                                                 mpfr_srcptr op2,
+                                                 mpfr_srcptr op3,
+                                                 mpfr_rnd_t rnd) {
+        mpfr_fma(rop, op1, op2, op3, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline std::pair<mpfr_class, mpfr_class> sin_cos(const Expr& expr)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class sine = mpfr_class::with_precision(operand.precision());
+    mpfr_class cosine = mpfr_class::with_precision(operand.precision());
+    mpfr_sin_cos(sine.mpfr_data(), cosine.mpfr_data(), operand.mpfr_data(), mpfr_class::default_rounding());
+    return {std::move(sine), std::move(cosine)};
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline std::pair<mpfr_class, mpfr_class> sinh_cosh(const Expr& expr)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class hyperbolic_sine = mpfr_class::with_precision(operand.precision());
+    mpfr_class hyperbolic_cosine = mpfr_class::with_precision(operand.precision());
+    mpfr_sinh_cosh(hyperbolic_sine.mpfr_data(),
+                   hyperbolic_cosine.mpfr_data(),
+                   operand.mpfr_data(),
+                   mpfr_class::default_rounding());
+    return {std::move(hyperbolic_sine), std::move(hyperbolic_cosine)};
+}
+
 namespace literals {
 
 inline mpfr_class operator"" _mpfr(long double value)

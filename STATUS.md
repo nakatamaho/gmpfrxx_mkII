@@ -3300,3 +3300,202 @@ Known issues:
 - `mpc_sum` and `mpc_dot` remain unwrapped. They are vector/array reduction APIs rather than scalar unary/binary math helpers, so they need a separate public container/API policy.
 - Specialized `mpc_pow_fr`, `mpc_pow_d`, `mpc_pow_si`, `mpc_pow_ui`, and `mpc_pow_z` remain unwrapped as fast paths. Current public `pow` materializes operands to `mpc_class` and calls `mpc_pow`.
 - `mpc_mul_i`, `mpc_mul_2ui`, `mpc_div_2ui`, `mpc_mul_2si`, and `mpc_div_2si` remain covered by general arithmetic/scalar expression routes rather than public named wrappers.
+
+Post-phase MPFR initial math wrappers:
+DONE
+
+Implemented features:
+- Redirected the initial MPFR API parity work to `mpfrxx::mpfr_class`; no new `gmpxx::mpf_class` math APIs were kept in this phase.
+- Added public eager MPFR math wrappers:
+  - `sqrt`
+  - `sqr`
+  - `sqrt_ui`
+  - `rec_sqrt`
+  - `agm`
+  - `fma`
+  - `sin_cos`
+  - `sinh_cosh`
+- Object and expression operands are supported where the API accepts MPFR operands.
+- Result precision policy:
+  - Unary functions preserve operand precision.
+  - `sqrt_ui(value, precision)` uses the explicit destination precision; `sqrt_ui(value)` uses the wrapper default precision.
+  - Binary and ternary functions use the maximum operand precision.
+  - Pair-return functions return both values at the materialized operand precision.
+
+Tests added:
+- tests/test_mpfr_math.cpp
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- tests/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- git status --short
+- git diff -- include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_math_functions.cpp
+- rg -n "math_mpfr|mpfr_class.*sqrt|mpfr_(sqrt|sqr|agm|sin_cos|sinh_cosh|fma)|namespace mpfrxx" include tests
+- sed -n '610,960p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1380,1565p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "is_mpfr_object|object_or_node|mpfr_expression_precision\\(" include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1018,1120p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,120p' tests/CMakeLists.txt
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build --target test_mpfr_math -j
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake --build build --target test_mpfr_math -j: PASS.
+- ctest --test-dir build -R test_mpfr_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 99/99 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- Remaining MPFR math API candidates include `fms`, `fmma`, `fmms`, `min`, `max`, `dim`, `cbrt`, root variants, log/exp variants, trig `pi`/`u` variants, special functions, and remainder/rounding variants.
+- MPFR vector APIs such as `mpfr_sum` and `mpfr_dot` remain unwrapped pending a public container/API policy.
+
+Post-phase MPFR trig and hyperbolic wrappers:
+DONE
+
+Implemented features:
+- Added public `mpfrxx::mpfr_class` trig/hyperbolic wrappers:
+  - `sin`
+  - `cos`
+  - `tan`
+  - `asin`
+  - `acos`
+  - `atan`
+  - `atan2`
+  - `sinh`
+  - `cosh`
+  - `tanh`
+  - `asinh`
+  - `acosh`
+  - `atanh`
+  - `sec`
+  - `csc`
+  - `cot`
+  - `sech`
+  - `csch`
+  - `coth`
+  - `sinu`
+  - `cosu`
+  - `tanu`
+  - `asinu`
+  - `acosu`
+  - `atanu`
+  - `atan2u`
+  - `sinpi`
+  - `cospi`
+  - `tanpi`
+  - `asinpi`
+  - `acospi`
+  - `atanpi`
+  - `atan2pi`
+- Object and expression operands are supported where the API accepts MPFR operands.
+- Unary result precision preserves the materialized operand precision; binary result precision uses the maximum operand precision.
+- Extended `tests/test_mpfr_math.cpp` to compare each wrapper against the corresponding MPFR 4.2.2 `mpfr_*` C API at the same precision and rounding mode.
+
+Tests added:
+- None.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- tests/test_mpfr_math.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '34,48p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1560,1710p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,260p' tests/test_mpfr_math.cpp
+- cmake --build build --target test_mpfr_math -j
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- rg -n "inline mpfr_class (sin|cos|tan|asin|acos|atan|atan2|sinh|cosh|tanh|asinh|acosh|atanh|sec|csc|cot|sech|csch|coth|sinu|cosu|tanu|asinu|acosu|atanu|atan2u|sinpi|cospi|tanpi|asinpi|acospi|atanpi|atan2pi)\\b|mpfr_(sin|cos|tan|asin|acos|atan|atan2|sinh|cosh|tanh|asinh|acosh|atanh|sec|csc|cot|sech|csch|coth|sinu|cosu|tanu|asinu|acosu|atanu|atan2u|sinpi|cospi|tanpi|asinpi|acospi|atanpi|atan2pi)" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+- rg -n "gmpfrxx_mKII|TODO|FIXME|XXX" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp
+
+Pass/fail result:
+- cmake --build build --target test_mpfr_math -j: PASS.
+- ctest --test-dir build -R test_mpfr_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 99/99 tests passed.
+- git diff --check: PASS.
+- rg -n "gmpfrxx_mKII|TODO|FIXME|XXX" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp: PASS, no matches.
+
+Known issues:
+- Remaining MPFR math API candidates now exclude the trig/hyperbolic group covered in this phase.
+- Non-trig remaining candidates include `fms`, `fmma`, `fmms`, `min`, `max`, `dim`, `hypot`, `cbrt`, root variants, log/exp variants, pow variants, special functions, and remainder/rounding variants.
+
+Post-phase MPFR double trig/hyperbolic smoke:
+DONE
+
+Implemented features:
+- Added deterministic random smoke coverage comparing `mpfrxx` trig/hyperbolic wrappers on `mpfr_class(double, 192)` inputs against double formulas for 64 generated cases.
+- Covered:
+  - `sin`
+  - `cos`
+  - `tan`
+  - `asin`
+  - `acos`
+  - `atan`
+  - `atan2`
+  - `sinh`
+  - `cosh`
+  - `tanh`
+  - `asinh`
+  - `acosh`
+  - `atanh`
+  - `sec`
+  - `csc`
+  - `cot`
+  - `sech`
+  - `csch`
+  - `coth`
+  - `sinu`
+  - `cosu`
+  - `tanu`
+  - `asinu`
+  - `acosu`
+  - `atanu`
+  - `atan2u`
+  - `sinpi`
+  - `cospi`
+  - `tanpi`
+  - `asinpi`
+  - `acospi`
+  - `atanpi`
+  - `atan2pi`
+- Kept this as a smoke test, separate from the exact MPFR C API parity checks.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_math.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "mpfrxx::(sin|cos|tan|asin|acos|atan|atan2|sinh|cosh|tanh|asinh|acosh|atanh|sec|csc|cot|sech|csch|coth|sinu|cosu|tanu|asinu|acosu|atanu|atan2u|sinpi|cospi|tanpi|asinpi|acospi|atanpi|atan2pi)\\([^\\n]*(double|0\\.|1\\.|2\\.|3\\.|4\\.|5\\.|6\\.|7\\.|8\\.|9\\.|[0-9]+\\))|double .*mpfrxx::|static_cast<double|mpfr_class\\([^,]+\\.[0-9]" tests/test_mpfr_math.cpp tests/test_mpfr*.cpp
+- sed -n '90,230p' tests/test_mpfr_math.cpp
+- cmake --build build --target test_mpfr_math -j
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- rg -n "test_double_sin_random_smoke|std::sin|mt19937" tests/test_mpfr_math.cpp
+- rg -n "test_double_trig_hyperbolic_random_smoke|assert_double_close|std::(sin|cos|tan|asin|acos|atan|atan2|sinh|cosh|tanh|asinh|acosh|atanh)" tests/test_mpfr_math.cpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake --build build --target test_mpfr_math -j: PASS.
+- ctest --test-dir build -R test_mpfr_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 99/99 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- This smoke test checks numerical agreement with platform `std::*` functions and simple reciprocal/unit/pi formulas within a double tolerance; it is not a substitute for the existing exact MPFR C API parity checks.
