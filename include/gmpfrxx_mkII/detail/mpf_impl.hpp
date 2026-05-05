@@ -365,7 +365,10 @@ public:
     void set_epsilon()
     {
         mpf_set_ui(value_, 1);
-        mpf_div_2exp(value_, value_, precision());
+        const mp_bitcnt_t bits = precision();
+        if (bits > 0) {
+            mpf_div_2exp(value_, value_, bits - 1);
+        }
     }
 
     void set(double value)

@@ -1199,6 +1199,84 @@ inline mpf_class const_log2(mp_bitcnt_t target_precision)
     return log_two(target_precision);
 }
 
+inline mpf_class e(mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = mpf_math_detail::normalize_target_precision(target_precision);
+    return mpf_math_detail::compute_exp(mpf_class(1, target), target);
+}
+
+inline mpf_class const_e()
+{
+    return e(default_mpf_precision_bits());
+}
+
+inline mpf_class const_e(mp_bitcnt_t target_precision)
+{
+    return e(target_precision);
+}
+
+inline mpf_class inv_log_two(mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = mpf_math_detail::normalize_target_precision(target_precision);
+    return mpf_math_detail::div(mpf_class(1, target), log_two(target), target);
+}
+
+inline mpf_class inv_log_two()
+{
+    return inv_log_two(default_mpf_precision_bits());
+}
+
+inline mpf_class log_ten(mp_bitcnt_t target_precision)
+{
+    return mpf_math_detail::log_ten(target_precision);
+}
+
+inline mpf_class const_log10()
+{
+    return log_ten(default_mpf_precision_bits());
+}
+
+inline mpf_class const_log10(mp_bitcnt_t target_precision)
+{
+    return log_ten(target_precision);
+}
+
+inline mpf_class pi_over_two(mp_bitcnt_t target_precision)
+{
+    mpf_class result = pi(target_precision);
+    mpf_div_2exp(result.mpf_data(), result.mpf_data(), 1);
+    return result;
+}
+
+inline mpf_class pi_over_two()
+{
+    return pi_over_two(default_mpf_precision_bits());
+}
+
+inline mpf_class pi_over_four(mp_bitcnt_t target_precision)
+{
+    mpf_class result = pi(target_precision);
+    mpf_div_2exp(result.mpf_data(), result.mpf_data(), 2);
+    return result;
+}
+
+inline mpf_class pi_over_four()
+{
+    return pi_over_four(default_mpf_precision_bits());
+}
+
+inline mpf_class two_pi(mp_bitcnt_t target_precision)
+{
+    mpf_class result = pi(target_precision);
+    mpf_mul_2exp(result.mpf_data(), result.mpf_data(), 1);
+    return result;
+}
+
+inline mpf_class two_pi()
+{
+    return two_pi(default_mpf_precision_bits());
+}
+
 inline mpf_class sqrt(const mpf_class& value)
 {
     mpf_class result = mpf_class::with_precision(value.precision());
@@ -1254,6 +1332,20 @@ inline mpf_class hypot(const mpf_class& lhs, const mpf_class& rhs)
                                      precision));
 }
 
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<Rhs>, int> = 0>
+inline mpf_class hypot(const mpf_class& lhs, Rhs rhs)
+{
+    return hypot(lhs, mpf_class(rhs, lhs.precision()));
+}
+
+template <typename Lhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<Lhs>, int> = 0>
+inline mpf_class hypot(Lhs lhs, const mpf_class& rhs)
+{
+    return hypot(mpf_class(lhs, rhs.precision()), rhs);
+}
+
 inline mpf_class mpf_remainder(const mpf_class& lhs, const mpf_class& rhs, mpz_class* quotient)
 {
     if (mpf_sgn(rhs.mpf_data()) == 0) {
@@ -1261,11 +1353,17 @@ inline mpf_class mpf_remainder(const mpf_class& lhs, const mpf_class& rhs, mpz_c
     }
     const mp_bitcnt_t precision = std::max(lhs.precision(), rhs.precision());
     mpf_class qf = mpf_math_detail::div(lhs, rhs, precision);
+    mpf_floor(qf.mpf_data(), qf.mpf_data());
     mpz_class q(qf);
     if (quotient != nullptr) {
         *quotient = q;
     }
     return mpf_math_detail::sub(lhs, mpf_math_detail::mul(mpf_class(q), rhs, precision), precision);
+}
+
+inline mpf_class mpf_remainder(const mpf_class& lhs, const mpf_class& rhs)
+{
+    return mpf_remainder(lhs, rhs, nullptr);
 }
 
 inline mpf_class exp(const mpf_class& value)
