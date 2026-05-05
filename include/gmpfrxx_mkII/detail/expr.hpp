@@ -43,6 +43,12 @@ struct mul_op {};
 struct div_op {};
 struct neg_op {};
 struct pos_op {};
+struct com_op {};
+struct bit_and_op {};
+struct bit_or_op {};
+struct bit_xor_op {};
+struct shl_op {};
+struct shr_op {};
 
 template <typename T>
 class object_leaf {

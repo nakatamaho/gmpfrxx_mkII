@@ -1225,6 +1225,34 @@ struct is_zq_object_or_node<
 template <typename T>
 inline constexpr bool is_zq_object_or_node_v = is_zq_object_or_node<T>::value;
 
+template <typename T, typename = void>
+struct is_zq_mpz_object_or_node
+    : std::bool_constant<std::is_same_v<std::decay_t<T>, gmpxx::mpz_class>> {};
+
+template <typename T>
+struct is_zq_mpz_object_or_node<
+    T,
+    std::enable_if_t<is_expression_node_v<std::decay_t<T>>>>
+    : std::bool_constant<std::is_same_v<typename std::decay_t<T>::result_type, gmpxx::mpz_class>> {};
+
+template <typename T>
+inline constexpr bool is_zq_mpz_object_or_node_v = is_zq_mpz_object_or_node<T>::value;
+
+template <typename T, typename = void>
+struct is_zq_mpz_expression_operand
+    : std::bool_constant<
+          std::is_same_v<std::decay_t<T>, gmpxx::mpz_class> ||
+          is_zq_scalar_operand_v<std::decay_t<T>>> {};
+
+template <typename T>
+struct is_zq_mpz_expression_operand<
+    T,
+    std::enable_if_t<is_expression_node_v<std::decay_t<T>>>>
+    : std::bool_constant<std::is_same_v<typename std::decay_t<T>::result_type, gmpxx::mpz_class>> {};
+
+template <typename T>
+inline constexpr bool is_zq_mpz_expression_operand_v = is_zq_mpz_expression_operand<T>::value;
+
 template <typename T>
 struct is_zq_comparison_scalar
     : std::bool_constant<is_supported_expression_integral_v<T>> {};
@@ -1371,6 +1399,14 @@ using zq_binary_result_t = typename zq_binary_result<
     typename std::decay_t<Lhs>::result_type,
     typename std::decay_t<Rhs>::result_type>::type;
 
+inline unsigned long zq_shift_count_from_mpz(const mpz_t value)
+{
+    if (mpz_sgn(value) < 0 || mpz_fits_ulong_p(value) == 0) {
+        throw std::overflow_error("shift count does not fit unsigned long");
+    }
+    return mpz_get_ui(value);
+}
+
 inline void mpz_evaluate(mpz_t dest, const object_leaf<gmpxx::mpz_class>& expr)
 {
     mpz_set(dest, expr.get().mpz_data());
@@ -1396,6 +1432,13 @@ void mpz_evaluate(mpz_t dest, const unary_expr<neg_op, Expr, Result>& expr)
     mpz_neg(dest, dest);
 }
 
+template <typename Expr, typename Result>
+void mpz_evaluate(mpz_t dest, const unary_expr<com_op, Expr, Result>& expr)
+{
+    mpz_evaluate(dest, expr.expr());
+    mpz_com(dest, dest);
+}
+
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpz_evaluate(mpz_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
 {
@@ -1413,6 +1456,16 @@ void mpz_evaluate(mpz_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
         mpz_sub(dest, lhs, rhs);
     } else if constexpr (std::is_same_v<Op, mul_op>) {
         mpz_mul(dest, lhs, rhs);
+    } else if constexpr (std::is_same_v<Op, bit_and_op>) {
+        mpz_and(dest, lhs, rhs);
+    } else if constexpr (std::is_same_v<Op, bit_or_op>) {
+        mpz_ior(dest, lhs, rhs);
+    } else if constexpr (std::is_same_v<Op, bit_xor_op>) {
+        mpz_xor(dest, lhs, rhs);
+    } else if constexpr (std::is_same_v<Op, shl_op>) {
+        mpz_mul_2exp(dest, lhs, zq_shift_count_from_mpz(rhs));
+    } else if constexpr (std::is_same_v<Op, shr_op>) {
+        mpz_fdiv_q_2exp(dest, lhs, zq_shift_count_from_mpz(rhs));
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPZ expression operation");
     }
@@ -1454,28 +1507,47 @@ void mpq_evaluate(mpq_t dest, const unary_expr<neg_op, Expr, Result>& expr)
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpq_evaluate(mpq_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
 {
-    mpq_t lhs;
-    mpq_t rhs;
-    mpq_init(lhs);
-    mpq_init(rhs);
-    mpq_evaluate(lhs, expr.lhs());
-    mpq_evaluate(rhs, expr.rhs());
-
-    if constexpr (std::is_same_v<Op, add_op>) {
-        mpq_add(dest, lhs, rhs);
-    } else if constexpr (std::is_same_v<Op, sub_op>) {
-        mpq_sub(dest, lhs, rhs);
-    } else if constexpr (std::is_same_v<Op, mul_op>) {
-        mpq_mul(dest, lhs, rhs);
-    } else if constexpr (std::is_same_v<Op, div_op>) {
-        mpq_div(dest, lhs, rhs);
+    if constexpr (std::is_same_v<Op, shl_op> || std::is_same_v<Op, shr_op>) {
+        mpq_t lhs;
+        mpz_t rhs;
+        mpq_init(lhs);
+        mpz_init(rhs);
+        mpq_evaluate(lhs, expr.lhs());
+        mpz_evaluate(rhs, expr.rhs());
+        mpq_set(dest, lhs);
+        if constexpr (std::is_same_v<Op, shl_op>) {
+            mpz_mul_2exp(mpq_numref(dest), mpq_numref(dest), zq_shift_count_from_mpz(rhs));
+        } else {
+            mpz_mul_2exp(mpq_denref(dest), mpq_denref(dest), zq_shift_count_from_mpz(rhs));
+        }
+        mpq_canonicalize(dest);
+        mpz_clear(rhs);
+        mpq_clear(lhs);
+        return;
     } else {
-        static_assert(std::is_same_v<Op, add_op>, "unsupported MPQ expression operation");
-    }
-    mpq_canonicalize(dest);
+        mpq_t lhs;
+        mpq_t rhs;
+        mpq_init(lhs);
+        mpq_init(rhs);
+        mpq_evaluate(lhs, expr.lhs());
+        mpq_evaluate(rhs, expr.rhs());
 
-    mpq_clear(rhs);
-    mpq_clear(lhs);
+        if constexpr (std::is_same_v<Op, add_op>) {
+            mpq_add(dest, lhs, rhs);
+        } else if constexpr (std::is_same_v<Op, sub_op>) {
+            mpq_sub(dest, lhs, rhs);
+        } else if constexpr (std::is_same_v<Op, mul_op>) {
+            mpq_mul(dest, lhs, rhs);
+        } else if constexpr (std::is_same_v<Op, div_op>) {
+            mpq_div(dest, lhs, rhs);
+        } else {
+            static_assert(std::is_same_v<Op, add_op>, "unsupported MPQ expression operation");
+        }
+        mpq_canonicalize(dest);
+
+        mpq_clear(rhs);
+        mpq_clear(lhs);
+    }
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
@@ -1544,6 +1616,91 @@ auto operator-(Expr&& expr)
     auto operand = make_zq_operand(std::forward<Expr>(expr));
     using result_type = typename decltype(operand)::result_type;
     return unary_expr<neg_op, decltype(operand), result_type>(std::move(operand));
+}
+
+template <typename Expr, std::enable_if_t<is_zq_mpz_object_or_node_v<Expr>, int> = 0>
+auto operator~(Expr&& expr)
+{
+    auto operand = make_zq_operand(std::forward<Expr>(expr));
+    return unary_expr<com_op, decltype(operand), gmpxx::mpz_class>(std::move(operand));
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<
+                                    is_zq_mpz_expression_operand_v<Lhs> &&
+                                        is_zq_mpz_expression_operand_v<Rhs> &&
+                                        (is_zq_mpz_object_or_node_v<Lhs> ||
+                                         is_zq_mpz_object_or_node_v<Rhs>),
+                                    bool> = true>
+auto operator&(Lhs&& lhs, Rhs&& rhs)
+{
+    auto left = make_zq_operand(std::forward<Lhs>(lhs));
+    auto right = make_zq_operand(std::forward<Rhs>(rhs));
+    return binary_expr<bit_and_op, decltype(left), decltype(right), gmpxx::mpz_class>(
+        std::move(left), std::move(right));
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<
+                                    is_zq_mpz_expression_operand_v<Lhs> &&
+                                        is_zq_mpz_expression_operand_v<Rhs> &&
+                                        (is_zq_mpz_object_or_node_v<Lhs> ||
+                                         is_zq_mpz_object_or_node_v<Rhs>),
+                                    bool> = true>
+auto operator|(Lhs&& lhs, Rhs&& rhs)
+{
+    auto left = make_zq_operand(std::forward<Lhs>(lhs));
+    auto right = make_zq_operand(std::forward<Rhs>(rhs));
+    return binary_expr<bit_or_op, decltype(left), decltype(right), gmpxx::mpz_class>(
+        std::move(left), std::move(right));
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<
+                                    is_zq_mpz_expression_operand_v<Lhs> &&
+                                        is_zq_mpz_expression_operand_v<Rhs> &&
+                                        (is_zq_mpz_object_or_node_v<Lhs> ||
+                                         is_zq_mpz_object_or_node_v<Rhs>),
+                                    bool> = true>
+auto operator^(Lhs&& lhs, Rhs&& rhs)
+{
+    auto left = make_zq_operand(std::forward<Lhs>(lhs));
+    auto right = make_zq_operand(std::forward<Rhs>(rhs));
+    return binary_expr<bit_xor_op, decltype(left), decltype(right), gmpxx::mpz_class>(
+        std::move(left), std::move(right));
+}
+
+template <typename Lhs, typename Bits, std::enable_if_t<
+                                    is_zq_object_or_node_v<Lhs> &&
+                                        is_supported_expression_integral_v<std::decay_t<Bits>>,
+                                    int> = 0>
+auto operator<<(Lhs&& lhs, Bits bits)
+{
+    if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
+        if (bits < 0) {
+            throw std::invalid_argument("negative shift count");
+        }
+    }
+    auto left = make_zq_operand(std::forward<Lhs>(lhs));
+    auto right = scalar_leaf<std::uint64_t, gmpxx::mpz_class>(static_cast<std::uint64_t>(bits));
+    using result_type = typename decltype(left)::result_type;
+    return binary_expr<shl_op, decltype(left), decltype(right), result_type>(
+        std::move(left), std::move(right));
+}
+
+template <typename Lhs, typename Bits, std::enable_if_t<
+                                    is_zq_object_or_node_v<Lhs> &&
+                                        is_supported_expression_integral_v<std::decay_t<Bits>>,
+                                    int> = 0>
+auto operator>>(Lhs&& lhs, Bits bits)
+{
+    if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
+        if (bits < 0) {
+            throw std::invalid_argument("negative shift count");
+        }
+    }
+    auto left = make_zq_operand(std::forward<Lhs>(lhs));
+    auto right = scalar_leaf<std::uint64_t, gmpxx::mpz_class>(static_cast<std::uint64_t>(bits));
+    using result_type = typename decltype(left)::result_type;
+    return binary_expr<shr_op, decltype(left), decltype(right), result_type>(
+        std::move(left), std::move(right));
 }
 
 template <typename T>
@@ -1820,11 +1977,16 @@ inline mpz_class abs(const mpz_class& value)
     return result;
 }
 
-inline mpz_class operator~(const mpz_class& value)
+inline mpz_class& operator<<=(mpz_class& value, unsigned long bits)
 {
-    mpz_class result;
-    mpz_com(result.mpz_data(), value.mpz_data());
-    return result;
+    value = gmpfrxx_mkII::detail::operator<<(value, bits);
+    return value;
+}
+
+inline mpz_class& operator>>=(mpz_class& value, unsigned long bits)
+{
+    value = gmpfrxx_mkII::detail::operator>>(value, bits);
+    return value;
 }
 
 inline mpq_class abs(const mpq_class& value)
@@ -1832,6 +1994,18 @@ inline mpq_class abs(const mpq_class& value)
     mpq_class result;
     mpq_abs(result.mpq_data(), value.mpq_data());
     return result;
+}
+
+inline mpq_class& operator<<=(mpq_class& value, unsigned long bits)
+{
+    value = gmpfrxx_mkII::detail::operator<<(value, bits);
+    return value;
+}
+
+inline mpq_class& operator>>=(mpq_class& value, unsigned long bits)
+{
+    value = gmpfrxx_mkII::detail::operator>>(value, bits);
+    return value;
 }
 
 inline int sgn(const mpz_class& value)
@@ -2021,6 +2195,12 @@ using ::gmpfrxx_mkII::detail::operator+;
 using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
+using ::gmpfrxx_mkII::detail::operator~;
+using ::gmpfrxx_mkII::detail::operator&;
+using ::gmpfrxx_mkII::detail::operator|;
+using ::gmpfrxx_mkII::detail::operator^;
+using ::gmpfrxx_mkII::detail::operator<<;
+using ::gmpfrxx_mkII::detail::operator>>;
 using ::gmpfrxx_mkII::detail::cmp;
 using ::gmpfrxx_mkII::detail::operator==;
 using ::gmpfrxx_mkII::detail::operator!=;

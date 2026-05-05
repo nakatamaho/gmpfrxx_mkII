@@ -1363,33 +1363,47 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
         return;
     }
 
-    if (mpf_expression_references(dest, expr)) {
-        mpf_t lhs;
-        mpf_t rhs;
-        mpf_evaluate_to_temporary(lhs, expr.lhs(), eval_precision);
-        mpf_evaluate_to_temporary(rhs, expr.rhs(), eval_precision);
-        mpf_apply_binary<Op>(dest, lhs, rhs);
-        mpf_clear(rhs);
-        mpf_clear(lhs);
+    if constexpr (std::is_same_v<Op, shl_op> || std::is_same_v<Op, shr_op>) {
+        mpz_t bits_value;
+        mpz_init(bits_value);
+        mpf_evaluate(dest, expr.lhs(), eval_precision);
+        mpz_evaluate(bits_value, expr.rhs());
+        if constexpr (std::is_same_v<Op, shl_op>) {
+            mpf_mul_2exp(dest, dest, zq_shift_count_from_mpz(bits_value));
+        } else {
+            mpf_div_2exp(dest, dest, zq_shift_count_from_mpz(bits_value));
+        }
+        mpz_clear(bits_value);
         return;
-    }
-
-    if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
-                  std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>>) {
-        mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
-    } else if constexpr (std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>>) {
-        mpf_evaluate(dest, expr.lhs(), eval_precision);
-        mpf_apply_binary<Op>(dest, dest, expr.rhs().get().mpf_data());
-    } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
-                         (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
-        mpf_evaluate(dest, expr.rhs(), eval_precision);
-        mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), dest);
     } else {
-        mpf_t rhs;
-        mpf_evaluate(dest, expr.lhs(), eval_precision);
-        mpf_evaluate_to_temporary(rhs, expr.rhs(), eval_precision);
-        mpf_apply_binary<Op>(dest, dest, rhs);
-        mpf_clear(rhs);
+        if (mpf_expression_references(dest, expr)) {
+            mpf_t lhs;
+            mpf_t rhs;
+            mpf_evaluate_to_temporary(lhs, expr.lhs(), eval_precision);
+            mpf_evaluate_to_temporary(rhs, expr.rhs(), eval_precision);
+            mpf_apply_binary<Op>(dest, lhs, rhs);
+            mpf_clear(rhs);
+            mpf_clear(lhs);
+            return;
+        }
+
+        if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
+                      std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>>) {
+            mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+        } else if constexpr (std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>>) {
+            mpf_evaluate(dest, expr.lhs(), eval_precision);
+            mpf_apply_binary<Op>(dest, dest, expr.rhs().get().mpf_data());
+        } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
+                             (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
+            mpf_evaluate(dest, expr.rhs(), eval_precision);
+            mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), dest);
+        } else {
+            mpf_t rhs;
+            mpf_evaluate(dest, expr.lhs(), eval_precision);
+            mpf_evaluate_to_temporary(rhs, expr.rhs(), eval_precision);
+            mpf_apply_binary<Op>(dest, dest, rhs);
+            mpf_clear(rhs);
+        }
     }
 }
 
@@ -1463,6 +1477,40 @@ auto operator-(Expr&& expr)
     return unary_expr<neg_op, decltype(operand), gmpxx::mpf_class>(std::move(operand));
 }
 
+template <typename Lhs, typename Bits, std::enable_if_t<
+                                    is_mpf_object_or_node_v<Lhs> &&
+                                        is_supported_expression_integral_v<std::decay_t<Bits>>,
+                                    int> = 0>
+auto operator<<(Lhs&& lhs, Bits bits)
+{
+    if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
+        if (bits < 0) {
+            throw std::invalid_argument("negative shift count");
+        }
+    }
+    auto left = make_mpf_operand(std::forward<Lhs>(lhs));
+    auto right = scalar_leaf<std::uint64_t, gmpxx::mpz_class>(static_cast<std::uint64_t>(bits));
+    return binary_expr<shl_op, decltype(left), decltype(right), gmpxx::mpf_class>(
+        std::move(left), std::move(right));
+}
+
+template <typename Lhs, typename Bits, std::enable_if_t<
+                                    is_mpf_object_or_node_v<Lhs> &&
+                                        is_supported_expression_integral_v<std::decay_t<Bits>>,
+                                    int> = 0>
+auto operator>>(Lhs&& lhs, Bits bits)
+{
+    if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
+        if (bits < 0) {
+            throw std::invalid_argument("negative shift count");
+        }
+    }
+    auto left = make_mpf_operand(std::forward<Lhs>(lhs));
+    auto right = scalar_leaf<std::uint64_t, gmpxx::mpz_class>(static_cast<std::uint64_t>(bits));
+    return binary_expr<shr_op, decltype(left), decltype(right), gmpxx::mpf_class>(
+        std::move(left), std::move(right));
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -1495,6 +1543,8 @@ using ::gmpfrxx_mkII::detail::operator+;
 using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
+using ::gmpfrxx_mkII::detail::operator<<;
+using ::gmpfrxx_mkII::detail::operator>>;
 
 template <typename T>
 struct is_mpf_comparison_non_scalar
@@ -1608,6 +1658,18 @@ inline mpf_class& operator/=(mpf_class& lhs, Rhs&& rhs)
 {
     lhs = lhs / std::forward<Rhs>(rhs);
     return lhs;
+}
+
+inline mpf_class& operator<<=(mpf_class& value, unsigned long bits)
+{
+    value = gmpfrxx_mkII::detail::operator<<(value, bits);
+    return value;
+}
+
+inline mpf_class& operator>>=(mpf_class& value, unsigned long bits)
+{
+    value = gmpfrxx_mkII::detail::operator>>(value, bits);
+    return value;
 }
 
 namespace literals {

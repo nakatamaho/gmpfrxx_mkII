@@ -38,6 +38,7 @@ Exact commands run:
 - cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 - cmake --build build -j
 - ctest --test-dir build --output-on-failure
+- git diff --check
 - cmake --build build -j
 - ctest --test-dir build --output-on-failure
 - rg -n "#include <mpfr\\.h>|#include <mpc\\.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp
@@ -1799,6 +1800,53 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+Post-phase ZQ/MPF bitwise and shift ET audit:
+DONE
+
+Implemented features:
+- Converted newly added `mpz_class` bitwise operators (`~`, `&`, `|`, `^`) to
+  expression-template nodes instead of eager public `mpz_class` return values.
+- Converted `mpz_class`, `mpq_class`, and `mpf_class` power-of-two shift
+  operators (`<<`, `>>`) to expression-template nodes; compound assignments
+  materialize through assignment, which is an allowed materialization point.
+- Added evaluator support for MPZ bitwise nodes and MPZ/MPQ/MPF shift nodes.
+
+Missing features:
+- Broader upstream split migration for `test_mixed_type_arithmetic.cpp`,
+  `test_mpq_arithmetic.cpp`, and `test_mpz_arithmetic.cpp` is still ongoing;
+  this phase specifically fixed the ET contract for the bitwise/shift area
+  before continuing the matrix expansion.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpz_basic.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "operator[&|^]|operator<<|operator>>|bit_|shl|shr|mpf_class operator<<|mpq_class operator<<|mpz_class operator<<" include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/test_mpz_basic.cpp
+- sed -n '1,220p' include/gmpfrxx_mkII/detail/expr.hpp
+- sed -n '250,520p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1880,2140p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '520,760p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1740,1888p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1440,1645p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1,260p' tests/test_mpz_basic.cpp
+- rg -n "is_zq_expression_operand|make_zq_operand|zq_binary_result|mpz_evaluate|mpq_evaluate" include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1180,1445p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1280,1445p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j: PASS after fixing evaluator control flow.
+- ctest --test-dir build --output-on-failure: PASS, 112/112 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None for the bitwise/shift ET conversion.
 
 Post-phase header scan and MPF long-width dispatch migration:
 DONE
