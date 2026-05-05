@@ -1800,6 +1800,63 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase header scan and MPF long-width dispatch migration:
+DONE
+
+Implemented features:
+- Compared `../gmpxx_mkII/tests/test_headers.cpp` with local coverage.
+  Upstream only includes `gmpxx_mkII.h`; local `test_header_boundaries.cpp`
+  now also checks this repository's stricter header roles.
+- Extended header source scans to assert:
+  - `gmpxx_mkII.h` includes GMP and excludes MPFR/MPC headers and symbols.
+  - `mpfrxx_mkII.h` includes GMP/MPFR/MPC but does not bridge through
+    `gmpxx_mkII.h` or expose GMP-only MPF/MPFC implementation headers.
+  - `gmpfrxx_mkII.h` aggregates only `gmpxx_mkII.h` and `mpfrxx_mkII.h`.
+  - Public/implementation headers do not include `gmpxx.h`.
+  - GMP-only MPF/MPFC implementation paths do not contain MPFR/MPC C API
+    symbols.
+- Added `tests/test_mpf_long_width_dispatch.cpp`, mirroring the existing
+  MPFR long-width test for MPF.
+- Updated the upstream migration table rows for `test_headers.cpp` and
+  `test_long_width_dispatch.cpp` to Done for current policy.
+
+Tests added:
+- tests/test_mpf_long_width_dispatch.cpp
+
+Tests updated:
+- tests/test_header_boundaries.cpp
+- tests/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_headers.cpp
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_long_width_dispatch.cpp
+- sed -n '1,260p' tests/test_header_boundaries.cpp
+- sed -n '1,220p' tests/test_mpfr_long_width_dispatch.cpp
+- sed -n '1,140p' tests/CMakeLists.txt
+- sed -n '1,120p' include/gmpxx_mkII.h
+- sed -n '1,120p' include/mpfrxx_mkII.h
+- sed -n '1,120p' include/gmpfrxx_mkII.h
+- rg -n "mpf_data|get_mpf_t|mpf_cmp_z|mpf_cmp" include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/test_mpf* tests/test_gmpxx_mkII.cpp
+- rg -n "mpz_data\\(|mpq_data\\(" include/gmpfrxx_mkII/detail/zq_impl.hpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target test_header_boundaries test_mpf_long_width_dispatch test_mpfr_long_width_dispatch
+- ctest --test-dir build -R 'test_header_boundaries|test_mpf_long_width_dispatch|test_mpfr_long_width_dispatch' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j --target test_header_boundaries test_mpf_long_width_dispatch test_mpfr_long_width_dispatch: PASS.
+- ctest --test-dir build -R 'test_header_boundaries|test_mpf_long_width_dispatch|test_mpfr_long_width_dispatch' --output-on-failure: PASS, 3/3 tests passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 112/112 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None for these two migration rows.
+
 Post-phase MPC constructor adoption scan:
 DONE
 
@@ -2137,9 +2194,9 @@ Migration table:
 | test_defaults_policy.cpp | tests/test_mpf_precision_policy.cpp, tests/test_mpfr_defaults.cpp, tests/test_mpfr_environment*.cpp, tests/test_mpf_thread_safety.cpp, tests/test_mpfr_thread_safety.cpp | Done for current defaults policy | Done for current defaults policy | Upstream thread-local/default snapshot and default-base APIs are intentionally not mirrored; this repo uses process-global wrapper defaults, explicit reload/set APIs, and fixed string parse bases unless a base is specified. | Keep current-policy defaults coverage; revisit only if thread-local defaults or default-base APIs become policy. |
 | test_exception_support.cpp | tests/test_exception_support.cpp, tests/test_mpfr_exception_support.cpp | Done | Done | MPFC/MPC stream invalid-input preservation is covered in their I/O tests; direct parser/string-constructor exception APIs are intentionally limited. | Keep migrated; add direct MPFC/MPC parser exception cases only if public string-constructor/parser APIs are added. |
 | test_gmpxx_mkII.cpp | tests/test_gmpxx_mkII.cpp plus focused local tests | Monolithic smoke migrated and passing; focused split restored for previous TODO assertions | tests/test_mpfrxx_mkII.cpp provides MPFR/MPC adaptation and is passing | The previous local TODO blocks for MPF copy-assignment precision, legacy helper materialization, and mpz compound assignment with double have been restored under current policy. Broader focused split remains tracked by the specific upstream rows below. | Keep monolithic smoke as regression coverage; continue moving broad exact/scalar/conversion matrices into focused tests under their dedicated rows. |
-| test_headers.cpp | tests/test_header_boundaries.cpp, compile_fail header tests | Partial/Done | Partial/Done | May require source-scan parity with upstream header expectations. | Merge any missing include-boundary scans into test_header_boundaries.cpp. |
+| test_headers.cpp | tests/test_header_boundaries.cpp, compile_fail header tests | Done for current header-role policy | Done for current header-role policy | Upstream is an include-only smoke test; local coverage now adds public header include expectations, `gmpxx.h` exclusion, GMP-only source scans, MPFR/MPC header boundary checks, and compile-fail public namespace boundary tests. | Keep current-policy header scan coverage; extend only if header roles change. |
 | test_io_and_strings.cpp | tests/test_zq_string_io.cpp, tests/test_mpf_string_io.cpp, tests/test_mpfr_string_io.cpp, tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done for current GMP I/O surface | Done for current MPFR/MPC policy | Upstream class-API string/I/O cases have been compared and the natural missing cases were added, including MPF non-decimal ostream base formatting and raw GMP pointer I/O helpers. MPFR uses MPFR formatting primitives intentionally. | Keep current focused coverage; extend only if upstream adds new I/O cases or MPFR/MPC policy changes. |
-| test_long_width_dispatch.cpp | tests/test_mpfr_long_width_dispatch.cpp, construction tests | Partial | Done for MPFR scalar eval | Dedicated MPF long-width exactness test is missing. | Add tests/test_mpf_long_width_dispatch.cpp; extend exact types if upstream has additional cases. |
+| test_long_width_dispatch.cpp | tests/test_mpf_long_width_dispatch.cpp, tests/test_mpfr_long_width_dispatch.cpp, construction tests | Done | Done for MPFR scalar eval | MPF and MPFR now both cover exact uint64 max, int64 min, and int64 max expression-scalar dispatch through the full-width integer conversion path. | Keep migrated; extend exact types only if upstream adds additional long-width cases. |
 | test_mixed_type_arithmetic.cpp | tests/test_mixed_zq_mpf_promotion.cpp, tests/test_mixed_zq_mpfr_promotion.cpp | Partial | Partial | Full mixed mpz/mpq/mpf scalar matrix may be incomplete; mpfr natural matrix should mirror z/q/scalar promotion. | Port matrix in two files: GMP and MPFR. |
 | test_mpf_extended_transcendent_functions.cpp | tests/test_mpf_extended_transcendent_functions.cpp, tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream extended MPF constants, inverse trig, hyperbolic, inverse hyperbolic, exp-base variants, gamma, expression-overload, and precision-policy assertions are now mirrored in a focused C++17 test. MPFR has native MPFR math but public wrapper parity remains a separate policy decision. | Keep as migrated; add MPFR equivalents only when public MPFR math wrapper APIs become policy. |
 | test_mpf_math_functions.cpp | tests/test_mpf_math_functions.cpp, tests/test_mpf_pi.cpp, tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream MPF sqrt/abs/neg/ceil/floor/trunc/remainder/epsilon/hypot/scaling/sign/exact helper assertions are now mirrored in a focused C++17 test. MPFR equivalents may not map 1:1 to public wrapper APIs. | Keep as migrated; decide MPFR API additions separately from GMP-only upstream parity. |

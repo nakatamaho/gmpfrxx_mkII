@@ -57,6 +57,24 @@ void require_absent(const std::string& text, const char* needle)
     }
 }
 
+void require_present(const std::string& text, const char* needle)
+{
+    if (text.find(needle) == std::string::npos) {
+        std::abort();
+    }
+}
+
+void require_gmp_only_source(const std::string& source_dir, const char* relative_path)
+{
+    const std::string text = read_file((source_dir + "/" + relative_path).c_str());
+    require_absent(text, "#include <mpfr.h>");
+    require_absent(text, "#include <mpc.h>");
+    require_absent(text, "#include <gmpxx.h>");
+    require_absent(text, "mpfr_");
+    require_absent(text, "mpc_");
+    require_absent(text, "mpc_t");
+}
+
 } // namespace
 
 int main()
@@ -64,21 +82,38 @@ int main()
     const std::string source_dir = GMPFRXX_MKII_SOURCE_DIR;
     const std::string gmp_header_path = source_dir + "/include/gmpxx_mkII.h";
     const std::string mpfr_header_path = source_dir + "/include/mpfrxx_mkII.h";
+    const std::string aggregator_header_path = source_dir + "/include/gmpfrxx_mkII.h";
 
     const std::string gmp_header = read_file(gmp_header_path.c_str());
+    require_present(gmp_header, "#include <gmp.h>");
     require_absent(gmp_header, "#include <mpfr.h>");
     require_absent(gmp_header, "#include <mpc.h>");
+    require_absent(gmp_header, "#include <gmpxx.h>");
     require_absent(gmp_header, "mpfr_");
     require_absent(gmp_header, "mpc_");
     require_absent(gmp_header, "mpc_t");
 
     const std::string mpfr_header = read_file(mpfr_header_path.c_str());
+    require_present(mpfr_header, "#include <gmp.h>");
+    require_present(mpfr_header, "#include <mpfr.h>");
     if (mpfr_header.find("#include <mpc.h>") == std::string::npos) {
         std::abort();
     }
+    require_absent(mpfr_header, "#include <gmpxx.h>");
     require_absent(mpfr_header, "#include <gmpxx_mkII.h>");
     require_absent(mpfr_header, "mpf_impl.hpp");
     require_absent(mpfr_header, "mpfc_impl.hpp");
+
+    const std::string aggregator_header = read_file(aggregator_header_path.c_str());
+    require_present(aggregator_header, "#include <gmpxx_mkII.h>");
+    require_present(aggregator_header, "#include <mpfrxx_mkII.h>");
+    require_absent(aggregator_header, "#include <gmpxx.h>");
+
+    require_gmp_only_source(source_dir, "include/gmpxx_mkII.h");
+    require_gmp_only_source(source_dir, "include/gmpfrxx_mkII/detail/mpf_impl.hpp");
+    require_gmp_only_source(source_dir, "include/gmpfrxx_mkII/detail/mpfc_impl.hpp");
+    require_gmp_only_source(source_dir, "include/gmpfrxx_mkII/detail/math_mpf.hpp");
+    require_gmp_only_source(source_dir, "include/gmpfrxx_mkII/detail/math_mpfc.hpp");
 
     return 0;
 }
