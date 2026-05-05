@@ -3823,3 +3823,209 @@ Pass/fail result:
 
 Known issues:
 - Remaining MPFR math API candidates now exclude special functions. Remaining groups include rounding/remainder helpers, scaling helpers, additional comparison/conversion helpers, and vector-like helpers (`sum`, `dot`).
+
+Post-phase example03 MPF/MPFR port:
+DONE
+
+Implemented features:
+- Ported `../gmpxx_mkII/examples/example03.cpp` into this repository as:
+  - `examples/example03_mpf.cpp`
+  - `examples/example03_mpfr.cpp`
+- Kept the MPF version faithful to the upstream Newton/Heron iteration example, using `gmpxx::mpf_class`, `gmpxx::abs`, `gmpxx::sqrt`, and wrapper default precision setup.
+- Added a parallel MPFR version with minimal changes: `mpfrxx::mpfr_class`, `mpfr_prec_t`, `mpfrxx::abs`, `mpfrxx::sqrt`, and `mpfrxx_mkII.h`.
+- Registered both examples in `examples/CMakeLists.txt` and CTest.
+
+Tests added:
+- example03_mpf
+- example03_mpfr
+
+Tests updated:
+- examples/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/examples/example03.cpp
+- sed -n '1,220p' examples/CMakeLists.txt
+- ls -la examples
+- rg -n "set_initial_default_prec|set_initial_default_precision|default.*precision|gmpxx_defaults|mpfrxx_defaults" include examples tests
+- sed -n '1,140p' examples/example02_mpf.cpp
+- sed -n '1,140p' examples/example02_mpfr.cpp
+- cmake --build build -j --target example03_mpf example03_mpfr
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target example03_mpf example03_mpfr
+- ctest --test-dir build -R 'example03_mpf|example03_mpfr' --output-on-failure
+- ./build/examples/example03_mpf
+- ./build/examples/example03_mpfr
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- Initial cmake --build build -j --target example03_mpf example03_mpfr: FAIL because the build tree had not been reconfigured after adding new targets.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j --target example03_mpf example03_mpfr: PASS.
+- ctest --test-dir build -R 'example03_mpf|example03_mpfr' --output-on-failure: PASS, 3/3 tests passed because the regex also matched existing `example03_mpfc_math`.
+- Direct `./build/examples/example03_mpf`: PASS, printed Newton iteration for sqrt(2) and matching `sqrt()` result to 50 digits.
+- Direct `./build/examples/example03_mpfr`: PASS, printed matching Newton iteration and `sqrt()` result to 50 digits.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 103/103 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None for the example03 MPF/MPFR port.
+
+Post-phase example04 MPF/MPFR port:
+DONE
+
+Implemented features:
+- Ported `../gmpxx_mkII/examples/example04.cpp` into this repository as:
+  - `examples/example04_mpf.cpp`
+  - `examples/example04_mpfr.cpp`
+- Kept the MPF version faithful to the upstream Gauss-Legendre / Brent-Salamin pi example, using `gmpxx::mpf_class`, `gmpxx::sqrt`, `gmpxx::abs`, `gmpxx::const_pi`, and wrapper default precision setup.
+- Added a parallel MPFR version with minimal changes: `mpfrxx::mpfr_class`, `mpfr_prec_t`, `mpfrxx::sqrt`, `mpfrxx::abs`, `mpfrxx::const_pi`, and `mpfrxx_mkII.h`.
+- Registered both examples in `examples/CMakeLists.txt` and CTest.
+
+Tests added:
+- example04_mpf
+- example04_mpfr
+
+Tests updated:
+- examples/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,280p' ../gmpxx_mkII/examples/example04.cpp
+- sed -n '1,260p' examples/CMakeLists.txt
+- ls -la examples
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target example04_mpf example04_mpfr
+- ctest --test-dir build -R 'example04_mpf|example04_mpfr' --output-on-failure
+- ./build/examples/example04_mpf
+- ./build/examples/example04_mpfr
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j --target example04_mpf example04_mpfr: PASS.
+- ctest --test-dir build -R 'example04_mpf|example04_mpfr' --output-on-failure: PASS, 2/2 tests passed.
+- Direct `./build/examples/example04_mpf`: PASS, printed Gauss-Legendre iteration for pi and matching `const_pi()` result to 100 digits.
+- Direct `./build/examples/example04_mpfr`: PASS, printed matching Gauss-Legendre iteration and `const_pi()` result to 100 digits.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 105/105 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None for the example04 MPF/MPFR port.
+
+Post-phase example05 MPF/MPFR port:
+DONE
+
+Implemented features:
+- Ported `../gmpxx_mkII/examples/example05.cpp` into this repository as:
+  - `examples/example05_mpf.cpp`
+  - `examples/example05_mpfr.cpp`
+- Kept the MPF version faithful to the upstream Aberth-Ehrlich root-finding example, including the local real-only complex type built from `gmpxx::mpf_class`, Cauchy-radius initialization, Horner evaluation, simultaneous correction update, and residual printing.
+- Added a parallel MPFR version with minimal changes: `mpfrxx::mpfr_class`, `mpfr_prec_t`, `mpfrxx::sqrt`, `mpfrxx::abs`, `mpfrxx::sin`, `mpfrxx::cos`, `mpfrxx::const_pi`, and `mpfrxx_mkII.h`.
+- Registered both examples in `examples/CMakeLists.txt` and CTest.
+
+Tests added:
+- example05_mpf
+- example05_mpfr
+
+Tests updated:
+- examples/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,320p' ../gmpxx_mkII/examples/example05.cpp
+- sed -n '1,280p' examples/CMakeLists.txt
+- ls -la examples
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target example05_mpf example05_mpfr
+- ctest --test-dir build -R 'example05_mpf|example05_mpfr' --output-on-failure
+- ./build/examples/example05_mpf
+- ./build/examples/example05_mpfr
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j --target example05_mpf example05_mpfr: PASS.
+- ctest --test-dir build -R 'example05_mpf|example05_mpfr' --output-on-failure: PASS, 2/2 tests passed.
+- Direct `./build/examples/example05_mpf`: PASS, printed Aberth iteration, roots, and residuals.
+- Direct `./build/examples/example05_mpfr`: PASS, printed matching Aberth iteration/root structure and small residuals.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 107/107 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None for the example05 MPF/MPFR port.
+
+Post-phase MPC compound assignment and example06 MPFC/MPC port:
+DONE
+
+Implemented features:
+- Added `mpfrxx::mpc_class` compound assignment operators:
+  - `operator+=`
+  - `operator-=`
+  - `operator*=`
+  - `operator/=`
+- Compound assignment delegates through existing expression assignment, preserving destination real/imag precision.
+- Ported `../gmpxx_mkII/examples/example06.cpp` into this repository as:
+  - `examples/example06_mpfc.cpp`
+  - `examples/example06_mpc.cpp`
+- Kept the MPFC version faithful to the upstream Aberth-Ehrlich `gmpxx::mpfc_class` example, with only local include/default-precision API adjustments.
+- Added the MPC version as the MPFR/MPC counterpart, using `mpfrxx::mpfr_class`, `mpfrxx::mpc_class`, `mpfr_prec_t`, `mpfrxx::abs`, `mpfrxx::sin`, `mpfrxx::cos`, `mpfrxx::const_pi`, and `mpfrxx_mkII.h`.
+- Registered both examples in `examples/CMakeLists.txt` and CTest.
+
+Tests added:
+- example06_mpfc
+- example06_mpc
+
+Tests updated:
+- tests/test_mpc_basic.cpp
+- examples/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,360p' ../gmpxx_mkII/examples/example06.cpp
+- sed -n '1,320p' examples/CMakeLists.txt
+- rg -n "example06|gamma|beta|erf|zeta|fac_ui|const_" include examples tests
+- sed -n '1,180p' examples/example03_mpfc_math.cpp
+- rg -n "class mpc_class|mpc_class\\(|real\\(|imag\\(|abs\\(|operator\\+=|operator/=|mpc_data|get_mpc" include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/math_mpc.hpp tests/test_mpc_math.cpp tests/test_mpc_basic.cpp
+- rg -n "mpfc_class\\(|real\\(|imag\\(|abs\\(|operator\\+=|operator/=|mpfc_data" include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpfc.hpp tests/test_mpfc_math.cpp tests/test_mpfc_basic.cpp
+- sed -n '49,190p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '1040,1105p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '640,725p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp
+- sed -n '620,760p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '1,260p' tests/test_mpc_basic.cpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target example06_mpfc example06_mpc
+- cmake --build build -j --target test_mpc_basic example06_mpc example06_mpfc
+- ctest --test-dir build -R 'test_mpc_basic|example06_mpc|example06_mpfc' --output-on-failure
+- ./build/examples/example06_mpfc
+- ./build/examples/example06_mpc
+- cmake --build build -j --target test_mpc_basic example06_mpc example06_mpfc
+- ctest --test-dir build -R 'test_mpc_basic|example06_mpc|example06_mpfc' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Initial cmake --build build -j --target example06_mpfc example06_mpc: FAIL because `mpc_class` did not yet provide compound assignment operators.
+- cmake --build build -j --target test_mpc_basic example06_mpc example06_mpfc after adding compound assignment: PASS.
+- ctest --test-dir build -R 'test_mpc_basic|example06_mpc|example06_mpfc' --output-on-failure: PASS, 3/3 tests passed.
+- Direct `./build/examples/example06_mpfc`: PASS, printed Aberth iteration, roots, and residuals.
+- Direct `./build/examples/example06_mpc`: PASS, printed matching Aberth iteration/root structure and small residuals.
+- cmake --build build -j --target test_mpc_basic example06_mpc example06_mpfc after restoring compound syntax in the MPC example: PASS.
+- ctest --test-dir build -R 'test_mpc_basic|example06_mpc|example06_mpfc' --output-on-failure after restoring compound syntax: PASS, 3/3 tests passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 109/109 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None for MPC compound assignment or the example06 MPFC/MPC port.

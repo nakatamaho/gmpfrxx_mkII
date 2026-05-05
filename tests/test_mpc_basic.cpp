@@ -69,5 +69,41 @@ int main()
     require_close(result.real_to_double(), -1.0);
     require_close(result.imag_to_double(), -2.0);
 
+    mpfrxx::mpc_class compound = mpfrxx::mpc_class::with_precision(192, 224, 1.0, 2.0);
+    compound += w;
+    require_close(compound.real_to_double(), 4.0);
+    require_close(compound.imag_to_double(), 6.0);
+    if (compound.real_precision() != 192 || compound.imag_precision() != 224) {
+        std::abort();
+    }
+
+    compound -= r;
+    require_close(compound.real_to_double(), -1.0);
+    require_close(compound.imag_to_double(), 6.0);
+    if (compound.real_precision() != 192 || compound.imag_precision() != 224) {
+        std::abort();
+    }
+
+    compound *= mpfrxx::mpc_class::with_precision(160, 2.0, -1.0);
+    require_close(compound.real_to_double(), 4.0);
+    require_close(compound.imag_to_double(), 13.0);
+    if (compound.real_precision() != 192 || compound.imag_precision() != 224) {
+        std::abort();
+    }
+
+    compound /= mpfrxx::mpfr_class::with_precision(160, 2.0);
+    require_close(compound.real_to_double(), 2.0);
+    require_close(compound.imag_to_double(), 6.5);
+    if (compound.real_precision() != 192 || compound.imag_precision() != 224) {
+        std::abort();
+    }
+
+    compound += z * w;
+    require_close(compound.real_to_double(), -3.0);
+    require_close(compound.imag_to_double(), 16.5);
+    if (compound.real_precision() != 192 || compound.imag_precision() != 224) {
+        std::abort();
+    }
+
     return 0;
 }

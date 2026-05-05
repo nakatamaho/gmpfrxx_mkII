@@ -668,6 +668,34 @@ using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
 
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+inline mpc_class& operator+=(mpc_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs + std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+inline mpc_class& operator-=(mpc_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs - std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+inline mpc_class& operator*=(mpc_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs * std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+inline mpc_class& operator/=(mpc_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs / std::forward<Rhs>(rhs);
+    return lhs;
+}
+
 namespace detail {
 
 template <typename Expr>
