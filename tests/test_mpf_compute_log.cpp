@@ -85,6 +85,13 @@ gmpxx::mpf_class parse_decimal_literal(const char* text, mp_bitcnt_t precision)
     return gmpxx::mpf_class(text, precision);
 }
 
+gmpxx::mpf_class two_to_minus(mp_bitcnt_t bits, mp_bitcnt_t precision)
+{
+    gmpxx::mpf_class result(1, precision);
+    mpf_div_2exp(result.mpf_data(), result.mpf_data(), bits);
+    return result;
+}
+
 gmpxx::mpf_class rounded_to(const gmpxx::mpf_class& value, mp_bitcnt_t precision)
 {
     return gmpxx::mpf_math_detail::set_prec_copy(value, precision);
@@ -595,17 +602,28 @@ void require_precision_doubling_cases()
     require_within_ulp(gmpxx::log_two(512), rounded_to(gmpxx::log_two(1024), 512), 512, 2);
 
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::log1p), "0.1", 128, 256, 2);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::log1p), "0.1", 512, 1024, 2);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::log), "25", 128, 256, 2);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::log), "25", 512, 1024, 2);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::log2), "7.99", 128, 256, 4);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::log2), "7.99", 512, 1024, 4);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::log10), "5", 128, 256, 4);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::log10), "5", 512, 1024, 4);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::exp), "1", 128, 256, 2);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::exp), "1", 512, 1024, 2);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::expm1), "0.1", 128, 256, 2);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::expm1), "0.1", 512, 1024, 2);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::sin), "1", 128, 256, 4);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::sin), "1", 512, 1024, 4);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::cos), "1", 128, 256, 4);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::cos), "1", 512, 1024, 4);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::tan), "0.5", 128, 256, 8);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::tan), "0.5", 512, 1024, 8);
     require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::atan), "1", 128, 256, 4);
+    require_precision_doubling(static_cast<UnaryMpfFunction>(&gmpxx::atan), "1", 512, 1024, 4);
     require_precision_doubling(static_cast<BinaryMpfFunction>(&gmpxx::atan2), "1", "1", 128, 256, 4);
     require_precision_doubling(static_cast<BinaryMpfFunction>(&gmpxx::pow), "1.1", "4.4", 128, 256, 4);
+    require_precision_doubling(static_cast<BinaryMpfFunction>(&gmpxx::pow), "1.1", "4.4", 512, 1024, 4);
 }
 
 void require_precision_policy_cases()
@@ -643,6 +661,182 @@ void require_atan2_axis_cases()
                        precision,
                        2);
     require_within_ulp(gmpxx::atan2(zero, zero), zero, precision, 1);
+}
+
+void require_expression_overload_value_cases()
+{
+    constexpr mp_bitcnt_t low_precision = 160;
+    constexpr mp_bitcnt_t high_precision = 224;
+    const gmpxx::mpf_class a("0.25", low_precision);
+    const gmpxx::mpf_class b("0.5", high_precision);
+    const gmpxx::mpf_class c("1.25", high_precision);
+    const gmpxx::mpf_class offset("0.125", high_precision);
+    const auto positive_expr = a + b;
+    const auto small_expr = a - offset;
+    const auto atan_y = a + b;
+    const auto atan_x = c - a;
+
+    const gmpxx::mpf_class positive_value(positive_expr);
+    const gmpxx::mpf_class small_value(small_expr);
+    const gmpxx::mpf_class atan_y_value(atan_y);
+    const gmpxx::mpf_class atan_x_value(atan_x);
+
+    if (gmpxx::log(positive_expr).get_prec() != positive_value.get_prec()) {
+        std::abort();
+    }
+    require_close_bits(gmpxx::log(positive_expr), gmpxx::log(positive_value), high_precision, 150);
+    require_close_bits(gmpxx::log2(positive_expr), gmpxx::log2(positive_value), high_precision, 145);
+    require_close_bits(gmpxx::log10(positive_expr), gmpxx::log10(positive_value), high_precision, 145);
+    require_close_bits(gmpxx::log1p(small_expr), gmpxx::log1p(small_value), high_precision, 145);
+    require_close_bits(gmpxx::exp(small_expr), gmpxx::exp(small_value), high_precision, 145);
+    require_close_bits(gmpxx::expm1(small_expr), gmpxx::expm1(small_value), high_precision, 145);
+    require_close_bits(gmpxx::sin(positive_expr), gmpxx::sin(positive_value), high_precision, 145);
+    require_close_bits(gmpxx::cos(positive_expr), gmpxx::cos(positive_value), high_precision, 145);
+    require_close_bits(gmpxx::tan(small_expr), gmpxx::tan(small_value), high_precision, 145);
+    require_close_bits(gmpxx::atan(positive_expr), gmpxx::atan(positive_value), high_precision, 145);
+    require_close_bits(gmpxx::atan2(atan_y, atan_x),
+                       gmpxx::atan2(atan_y_value, atan_x_value),
+                       high_precision,
+                       145);
+    require_close_bits(gmpxx::pow(positive_expr, small_expr),
+                       gmpxx::pow(positive_value, small_value),
+                       high_precision,
+                       140);
+    require_close_bits(gmpxx::pow(positive_expr, small_value),
+                       gmpxx::pow(positive_value, small_value),
+                       high_precision,
+                       140);
+    require_close_bits(gmpxx::pow(positive_value, small_expr),
+                       gmpxx::pow(positive_value, small_value),
+                       high_precision,
+                       140);
+}
+
+void require_exact_special_value_cases()
+{
+    constexpr mp_bitcnt_t precision = 160;
+    const gmpxx::mpf_class zero(0, precision);
+    const gmpxx::mpf_class one(1, precision);
+    const gmpxx::mpf_class two(2, precision);
+    const gmpxx::mpf_class three(3, precision);
+
+    require_zero(gmpxx::log(one));
+    require_zero(gmpxx::log2(one));
+    require_zero(gmpxx::log10(one));
+    require_zero(gmpxx::log1p(zero));
+    require_close_bits(gmpxx::exp(zero), one, precision, 120);
+    require_zero(gmpxx::expm1(zero));
+    require_zero(gmpxx::sin(zero));
+    require_close_bits(gmpxx::cos(zero), one, precision, 120);
+    require_zero(gmpxx::tan(zero));
+    require_zero(gmpxx::atan(zero));
+    require_zero(gmpxx::atan2(zero, one));
+    require_close_bits(gmpxx::pow(two, three), gmpxx::mpf_class(8, precision), precision, 120);
+    require_close_bits(gmpxx::pow(two, gmpxx::mpf_class(-3, precision)),
+                       gmpxx::mpf_class("0.125", precision),
+                       precision,
+                       120);
+}
+
+void require_identity_cases()
+{
+    constexpr mp_bitcnt_t precision = 192;
+    const gmpxx::mpf_class x("0.125", precision);
+    const gmpxx::mpf_class one(1, precision);
+    const gmpxx::mpf_class two(2, precision);
+
+    require_close_bits(gmpxx::exp(gmpxx::log(two)), two, precision, 120);
+    require_close_bits(gmpxx::log(gmpxx::exp(x)), x, precision, 110);
+    require_close_bits(gmpxx::log1p(x), gmpxx::log(one + x), precision, 110);
+    require_close_bits(gmpxx::expm1(x), gmpxx::exp(x) - one, precision, 110);
+    require_close_bits(gmpxx::log2(two), one, precision, 110);
+    require_close_bits(gmpxx::log10(gmpxx::mpf_class(100, precision)),
+                       two,
+                       precision,
+                       110);
+
+    const gmpxx::mpf_class pi = gmpxx::pi(precision);
+    gmpxx::mpf_class half_pi = pi;
+    mpf_div_2exp(half_pi.mpf_data(), half_pi.mpf_data(), 1);
+    require_close_bits(gmpxx::sin(half_pi), one, precision, 100);
+    require_close_bits(gmpxx::cos(half_pi), gmpxx::mpf_class(0, precision), precision, 100);
+    require_close_bits(gmpxx::tan(x) * gmpxx::cos(x), gmpxx::sin(x), precision, 120);
+    require_close_bits(gmpxx::atan(one), half_pi / 2, precision, 100);
+    require_close_bits(gmpxx::atan2(one, one), half_pi / 2, precision, 100);
+}
+
+void require_near_zero_and_near_one_cases()
+{
+    constexpr mp_bitcnt_t precision = 256;
+    const gmpxx::mpf_class tiny = two_to_minus(120, precision);
+    const gmpxx::mpf_class one(1, precision);
+    const gmpxx::mpf_class tiny_squared = tiny * tiny;
+
+    if (gmpxx::abs(gmpxx::log1p(tiny) - tiny) >= tiny_squared ||
+        gmpxx::abs(gmpxx::expm1(tiny) - tiny) >= tiny_squared ||
+        gmpxx::abs(gmpxx::exp(tiny) - (one + tiny)) >= tiny_squared) {
+        std::abort();
+    }
+
+    const gmpxx::mpf_class near_one = one + two_to_minus(80, precision);
+    require_within_ulp(gmpxx::log(near_one), gmpxx::log1p(two_to_minus(80, precision)), precision, 2);
+}
+
+void require_trig_reduction_cases()
+{
+    constexpr mp_bitcnt_t precision = 256;
+    const gmpxx::mpf_class zero(0, precision);
+    const gmpxx::mpf_class one(1, precision);
+    const gmpxx::mpf_class pi = gmpxx::pi(precision);
+    gmpxx::mpf_class pi_over_two = pi;
+    mpf_div_2exp(pi_over_two.mpf_data(), pi_over_two.mpf_data(), 1);
+
+    const gmpxx::mpf_class x = pi_over_two + two_to_minus(80, precision);
+    if (gmpxx::abs(gmpxx::cos(x) + two_to_minus(80, precision)) >= two_to_minus(150, precision)) {
+        std::abort();
+    }
+    require_close_bits((gmpxx::sin(x) * gmpxx::sin(x)) + (gmpxx::cos(x) * gmpxx::cos(x)),
+                       one,
+                       precision,
+                       120);
+    require_within_ulp(gmpxx::atan2(zero, one), zero, precision, 1);
+    require_within_ulp(gmpxx::atan2(zero, -one), pi, precision, 2);
+    require_within_ulp(gmpxx::atan2(one, zero), pi_over_two, precision, 2);
+    require_within_ulp(gmpxx::atan2(-one, zero), -pi_over_two, precision, 2);
+    require_within_ulp(gmpxx::atan2(zero, zero), zero, precision, 1);
+}
+
+void require_pow_integer_and_domain_cases()
+{
+    constexpr mp_bitcnt_t precision = 192;
+    require_close_bits(gmpxx::pow(gmpxx::mpf_class(5, precision), gmpxx::mpf_class(3, precision)),
+                       gmpxx::mpf_class(125, precision),
+                       precision,
+                       120);
+    require_close_bits(gmpxx::pow(gmpxx::mpf_class(-2, precision), gmpxx::mpf_class(3, precision)),
+                       gmpxx::mpf_class(-8, precision),
+                       precision,
+                       120);
+
+    bool threw = false;
+    try {
+        (void)gmpxx::pow(gmpxx::mpf_class(-2, precision), gmpxx::mpf_class("0.5", precision));
+    } catch (const std::domain_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
+
+    threw = false;
+    try {
+        (void)gmpxx::pow(gmpxx::mpf_class(0, precision), gmpxx::mpf_class(-1, precision));
+    } catch (const std::domain_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
 }
 
 } // namespace
@@ -895,6 +1089,12 @@ int main()
     require_precision_doubling_cases();
     require_precision_policy_cases();
     require_atan2_axis_cases();
+    require_expression_overload_value_cases();
+    require_exact_special_value_cases();
+    require_identity_cases();
+    require_near_zero_and_near_one_cases();
+    require_trig_reduction_cases();
+    require_pow_integer_and_domain_cases();
 
     return 0;
 }
