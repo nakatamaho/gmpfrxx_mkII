@@ -37,6 +37,12 @@ target_link_libraries(example06_mpfc PRIVATE gmpxx_mkII)
 add_executable(example06_mpc example06_mpc.cpp)
 target_link_libraries(example06_mpc PRIVATE mpfrxx_mkII)
 
+add_executable(example07_mpfc example07_mpfc.cpp)
+target_link_libraries(example07_mpfc PRIVATE gmpxx_mkII)
+
+add_executable(example07_mpc example07_mpc.cpp)
+target_link_libraries(example07_mpc PRIVATE mpfrxx_mkII)
+
 add_test(NAME example01 COMMAND example01)
 add_test(NAME example02_mpf COMMAND example02_mpf)
 add_test(NAME example02_mpfr COMMAND example02_mpfr)
@@ -50,3 +56,5 @@ add_test(NAME example05_mpf COMMAND example05_mpf)
 add_test(NAME example05_mpfr COMMAND example05_mpfr)
 add_test(NAME example06_mpfc COMMAND example06_mpfc)
 add_test(NAME example06_mpc COMMAND example06_mpc)
+add_test(NAME example07_mpfc COMMAND example07_mpfc --width 24 --height 10 --iterations 24)
+add_test(NAME example07_mpc COMMAND example07_mpc --width 24 --height 10 --iterations 24)

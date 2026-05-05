@@ -50,6 +50,15 @@ int main()
     mpfrxx::mpz_class exact_z(7);
     mpfrxx::mpq_class exact_q(mpfrxx::mpz_class(1), mpfrxx::mpz_class(2));
 
+    mpfrxx::mpfr_class ctor_real = mpfrxx::mpfr_class::with_precision(192, 1.25);
+    mpfrxx::mpfr_class ctor_imag = mpfrxx::mpfr_class::with_precision(224, -2.5);
+    mpfrxx::mpc_class constructed(ctor_real, ctor_imag);
+    require_close(constructed.real_to_double(), 1.25);
+    require_close(constructed.imag_to_double(), -2.5);
+    if (constructed.real_precision() != 192 || constructed.imag_precision() != 224) {
+        std::abort();
+    }
+
     mpfrxx::mpc_class result = z + w;
     require_close(result.real_to_double(), 4.0);
     require_close(result.imag_to_double(), 6.0);

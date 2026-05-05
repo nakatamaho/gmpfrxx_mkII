@@ -67,6 +67,12 @@ public:
         mpc_swap(value_, other.value_);
     }
 
+    mpc_class(const mpfr_class& real, const mpfr_class& imag)
+    {
+        mpc_init3(value_, real.precision(), imag.precision());
+        mpc_set_fr_fr(value_, real.mpfr_data(), imag.mpfr_data(), default_rounding());
+    }
+
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
@@ -1092,7 +1098,7 @@ inline std::istream& operator>>(std::istream& in, mpc_class& value)
         (in >> comma) && comma == ',' &&
         (in >> imag) &&
         (in >> close) && close == ')') {
-        mpc_set_fr_fr(value.mpc_data(), real.mpfr_data(), imag.mpfr_data(), mpc_class::default_rounding());
+        value = mpc_class(real, imag);
     } else {
         in.setstate(std::ios_base::failbit);
     }
@@ -1114,13 +1120,9 @@ inline mpc_class operator"" _mpc_i(const char* value, std::size_t)
 {
     const mpfr_prec_t real_precision = default_mpc_real_precision_bits();
     const mpfr_prec_t imag_precision = default_mpc_imag_precision_bits();
-    mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    mpfr_class real = mpfr_class::with_precision(real_precision);
     mpfr_class imag(value, imag_precision, 0);
-    mpc_set_fr_fr(result.mpc_data(),
-                  mpfr_class::with_precision(real_precision).mpfr_data(),
-                  imag.mpfr_data(),
-                  mpc_class::default_rounding());
-    return result;
+    return mpc_class(real, imag);
 }
 
 } // namespace literals

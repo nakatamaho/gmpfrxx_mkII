@@ -1800,6 +1800,50 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPC constructor adoption scan:
+DONE
+
+Implemented features:
+- Scanned the repository for remaining `mpc_set_fr_fr` usage after adding
+  `mpfrxx::mpc_class(const mpfr_class&, const mpfr_class&)`.
+- Replaced additional wrapper-side uses that no longer need direct
+  `mpc_set_fr_fr`:
+  - `mpfrxx::operator>>(std::istream&, mpc_class&)`
+  - string `_mpc_i` user-defined literal
+- Left the single direct `mpc_set_fr_fr` call in the new pair constructor as
+  the central implementation point.
+
+Tests added:
+- None.
+
+Tests updated:
+- STATUS.md
+
+Exact commands run:
+- rg -n "mpc_set_fr_fr" .
+- sed -n '1070,1135p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- rg -n "mpc_set_fr_fr" include examples tests
+- rg -n "_mpc_i|mpc_class.*>>|operator>>|test_mpc_io|literal" tests examples include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- cmake --build build -j --target test_mpc_io test_mpfr_user_defined_literals test_mpc_basic
+- ctest --test-dir build -R 'test_mpc_io|test_mpfr_user_defined_literals|test_mpc_basic' --output-on-failure
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- rg -n "mpc_set_fr_fr" include examples tests: PASS, only `include/gmpfrxx_mkII/detail/mpc_impl.hpp` constructor use remains.
+- cmake --build build -j --target test_mpc_io test_mpfr_user_defined_literals test_mpc_basic: PASS.
+- ctest --test-dir build -R 'test_mpc_io|test_mpfr_user_defined_literals|test_mpc_basic' --output-on-failure: PASS, 3/3 tests passed.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 111/111 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- Reference MPC manual files still mention `mpc_set_fr_fr`; these are upstream
+  reference artifacts, not implementation usage.
+
 Post-phase generated Git commit hash API:
 DONE
 
@@ -4029,3 +4073,103 @@ Pass/fail result:
 
 Known issues:
 - None for MPC compound assignment or the example06 MPFC/MPC port.
+
+Post-phase example07 MPFC/MPC port and MPC pair constructor:
+DONE
+
+Implemented features:
+- Added `mpfrxx::mpc_class(const mpfr_class&, const mpfr_class&)`.
+- The constructor initializes real and imaginary precision from the two
+  `mpfr_class` operands independently and sets the value through
+  `mpc_set_fr_fr`.
+- Ported `../gmpxx_mkII/examples/example07.cpp` into this repository as:
+  - `examples/example07_mpfc.cpp`
+  - `examples/example07_mpc.cpp`
+- Kept the MPFC version faithful to the upstream Mandelbrot escape-time
+  renderer, with only local include/default-precision API adjustments.
+- Added the MPC version as the MPFR/MPC counterpart, using
+  `mpfrxx::mpfr_class`, `mpfrxx::mpc_class`, `mpfr_prec_t`,
+  `mpfrxx::norm`, `mpfrxx_mkII.h`, and the new pair constructor.
+- Registered both examples in `examples/CMakeLists.txt` and CTest with
+  reduced render dimensions for fast test execution.
+
+Tests added:
+- example07_mpfc
+- example07_mpc
+
+Tests updated:
+- tests/test_mpc_basic.cpp
+- examples/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,360p' ../gmpxx_mkII/examples/example07.cpp
+- sed -n '361,760p' ../gmpxx_mkII/examples/example07.cpp
+- sed -n '1,120p' examples/CMakeLists.txt
+- ls -la examples
+- sed -n '1,360p' examples/example06_mpc.cpp
+- rg -n "get_mpfr|mpfr_data|mpfr_ptr|real_precision|imag_precision|with_precision" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- cp ../gmpxx_mkII/examples/example07.cpp examples/example07_mpfc.cpp
+- cp ../gmpxx_mkII/examples/example07.cpp examples/example07_mpc.cpp
+- sed -n '1,230p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '1,150p' tests/test_mpc_basic.cpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target test_mpc_basic example07_mpfc example07_mpc
+- ctest --test-dir build -R 'test_mpc_basic|example07_mpfc|example07_mpc' --output-on-failure
+- ./build/examples/example07_mpfc --width 24 --height 10 --iterations 24
+- ./build/examples/example07_mpc --width 24 --height 10 --iterations 24
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j --target test_mpc_basic example07_mpfc example07_mpc: PASS.
+- ctest --test-dir build -R 'test_mpc_basic|example07_mpfc|example07_mpc' --output-on-failure: PASS, 3/3 tests passed.
+- Direct `./build/examples/example07_mpfc --width 24 --height 10 --iterations 24`: PASS, printed ASCII Mandelbrot output.
+- Direct `./build/examples/example07_mpc --width 24 --height 10 --iterations 24`: PASS, printed matching ASCII Mandelbrot output.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 111/111 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None for the example07 MPFC/MPC port or the MPC pair constructor.
+
+Post-phase example06 MPC constructor cleanup:
+DONE
+
+Implemented features:
+- Updated `examples/example06_mpc.cpp` to use
+  `mpfrxx::mpc_class(const mpfr_class&, const mpfr_class&)` in its
+  `make_complex` helpers.
+- Removed raw `mpc_set_fr_fr` usage from the example06/example07 MPC example
+  sources; direct MPC C API construction now stays in the wrapper
+  implementation.
+
+Tests added:
+- None.
+
+Tests updated:
+- STATUS.md
+
+Exact commands run:
+- rg -n "mpc_set_fr_fr|make_complex" examples/example06_mpc.cpp examples/example07_mpc.cpp
+- sed -n '60,105p' examples/example06_mpc.cpp
+- cmake --build build -j --target example06_mpc example07_mpc test_mpc_basic
+- ctest --test-dir build -R 'example06_mpc|example07_mpc|test_mpc_basic' --output-on-failure
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- rg -n "mpc_set_fr_fr" examples/example06_mpc.cpp examples/example07_mpc.cpp: PASS, no matches.
+- cmake --build build -j --target example06_mpc example07_mpc test_mpc_basic: PASS.
+- ctest --test-dir build -R 'example06_mpc|example07_mpc|test_mpc_basic' --output-on-failure: PASS, 3/3 tests passed.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 111/111 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None.

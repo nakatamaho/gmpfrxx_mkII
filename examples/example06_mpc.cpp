@@ -76,25 +76,15 @@ mpfr_prec_t bits_for_decimal_digits(int digits, int guard_bits)
 mpc_class make_complex(char const* real_value, char const* imag_value,
                        mpfr_prec_t precision)
 {
-    mpc_class result = mpc_class::with_precision(precision);
     mpfr_class real(real_value, precision);
     mpfr_class imag(imag_value, precision);
-    mpc_set_fr_fr(result.mpc_data(),
-                  real.mpfr_data(),
-                  imag.mpfr_data(),
-                  mpc_class::default_rounding());
-    return result;
+    return mpc_class(real, imag);
 }
 
 mpc_class make_complex(mpfr_class const& real_value,
                        mpfr_class const& imag_value)
 {
-    mpc_class result = mpc_class::with_precision(real_value.precision(), imag_value.precision());
-    mpc_set_fr_fr(result.mpc_data(),
-                  real_value.mpfr_data(),
-                  imag_value.mpfr_data(),
-                  mpc_class::default_rounding());
-    return result;
+    return mpc_class(real_value, imag_value);
 }
 
 mpfr_class cauchy_radius(std::vector<mpfr_class> const& coefficients,
