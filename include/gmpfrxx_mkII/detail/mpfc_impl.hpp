@@ -184,6 +184,11 @@ public:
         return std::max(real_.precision(), imag_.precision());
     }
 
+    mp_bitcnt_t get_prec() const noexcept
+    {
+        return precision();
+    }
+
     mp_bitcnt_t real_precision() const noexcept
     {
         return real_.precision();
@@ -196,8 +201,8 @@ public:
 
     void swap(mpfc_class& other) noexcept
     {
-        std::swap(real_, other.real_);
-        std::swap(imag_, other.imag_);
+        real_.swap(other.real_);
+        imag_.swap(other.imag_);
     }
 
 private:
@@ -668,6 +673,34 @@ using ::gmpfrxx_mkII::detail::operator+;
 using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<Rhs>, int> = 0>
+inline mpfc_class& operator+=(mpfc_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs + std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<Rhs>, int> = 0>
+inline mpfc_class& operator-=(mpfc_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs - std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<Rhs>, int> = 0>
+inline mpfc_class& operator*=(mpfc_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs * std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<Rhs>, int> = 0>
+inline mpfc_class& operator/=(mpfc_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs / std::forward<Rhs>(rhs);
+    return lhs;
+}
 
 } // namespace gmpxx
 

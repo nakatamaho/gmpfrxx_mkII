@@ -227,6 +227,64 @@ inline mpfc_class tanh(const mpfc_class& value)
     return sinh(value) / cosh(value);
 }
 
+inline mpfc_class asin(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    const mpf_class zero = mpfc_math_detail::zero(precision);
+    const mpf_class one_real = mpfc_math_detail::one(precision);
+    const mpfc_class one(one_real, zero);
+    const mpfc_class imaginary_unit(zero, one_real);
+    const mpfc_class negative_imaginary_unit(zero, -one_real);
+    return negative_imaginary_unit *
+           log(imaginary_unit * value + sqrt(one - value * value));
+}
+
+inline mpfc_class acos(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    mpf_class half_pi = const_pi(precision);
+    mpf_div_2exp(half_pi.mpf_data(), half_pi.mpf_data(), 1);
+    return mpfc_class(half_pi, mpfc_math_detail::zero(precision)) - asin(value);
+}
+
+inline mpfc_class atan(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    const mpf_class zero = mpfc_math_detail::zero(precision);
+    const mpf_class one_real = mpfc_math_detail::one(precision);
+    const mpfc_class one(one_real, zero);
+    const mpfc_class imaginary_unit(zero, one_real);
+    const mpfc_class half_i(zero, mpfc_math_detail::half(precision));
+    return half_i * (log(one - imaginary_unit * value) -
+                     log(one + imaginary_unit * value));
+}
+
+inline mpfc_class asinh(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    const mpfc_class one(mpfc_math_detail::one(precision),
+                         mpfc_math_detail::zero(precision));
+    return log(value + sqrt(value * value + one));
+}
+
+inline mpfc_class acosh(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    const mpfc_class one(mpfc_math_detail::one(precision),
+                         mpfc_math_detail::zero(precision));
+    return log(value + sqrt(value + one) * sqrt(value - one));
+}
+
+inline mpfc_class atanh(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    const mpfc_class one(mpfc_math_detail::one(precision),
+                         mpfc_math_detail::zero(precision));
+    const mpf_class half = mpfc_math_detail::half(precision);
+    return mpfc_class(half, mpfc_math_detail::zero(precision)) *
+           (log(one + value) - log(one - value));
+}
+
 inline mpfc_class pow(const mpfc_class& base, std::uint64_t exponent)
 {
     const mp_bitcnt_t precision = base.precision();
@@ -297,10 +355,30 @@ inline mpfc_class pow(const mpf_class& base, const mpfc_class& exponent)
     return pow(mpfc_class(mpf_class(base), mpfc_math_detail::zero(precision)), exponent);
 }
 
+template <typename Scalar,
+          typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<Scalar>>>
+inline mpfc_class pow(Scalar base, const mpfc_class& exponent)
+{
+    return pow(mpf_class(base, exponent.precision()), exponent);
+}
+
 inline mpfc_class gamma(const mpfc_class& value)
 {
     return mpfc_math_detail::from_complex_double(
         mpfc_math_detail::gamma_lanczos(mpfc_math_detail::to_complex_double(value)), value.precision());
+}
+
+inline mpfc_class reciprocal_gamma(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    const mpfc_class zero(mpfc_math_detail::zero(precision),
+                          mpfc_math_detail::zero(precision));
+    if (value == zero) {
+        return zero;
+    }
+    const mpfc_class one(mpfc_math_detail::one(precision),
+                         mpfc_math_detail::zero(precision));
+    return one / gamma(value);
 }
 
 template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
@@ -358,9 +436,51 @@ inline mpfc_class tanh(const Expr& expr)
 }
 
 template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class asin(const Expr& expr)
+{
+    return asin(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class acos(const Expr& expr)
+{
+    return acos(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class atan(const Expr& expr)
+{
+    return atan(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class asinh(const Expr& expr)
+{
+    return asinh(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class acosh(const Expr& expr)
+{
+    return acosh(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class atanh(const Expr& expr)
+{
+    return atanh(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
 inline mpfc_class gamma(const Expr& expr)
 {
     return gamma(mpfc_class(expr));
+}
+
+template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
+inline mpfc_class reciprocal_gamma(const Expr& expr)
+{
+    return reciprocal_gamma(mpfc_class(expr));
 }
 
 } // namespace gmpxx
