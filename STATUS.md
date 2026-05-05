@@ -1801,6 +1801,64 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase arithmetic matrix ET coverage:
+DONE
+
+Implemented features:
+- Added `mpz_class` and `mpq_class` pre/post increment and decrement support.
+- Added focused upstream-style arithmetic coverage for integer binary,
+  integral scalar, remainder, bitwise, shift, increment/decrement, and nested
+  expression shapes.
+- Added focused rational arithmetic coverage for binary, integral scalar,
+  shift, increment/decrement, and mixed `mpz/mpq` promotion.
+- Added focused mixed-type coverage for MPF and MPFR interactions with
+  `mpz_class`, `mpq_class`, and scalar leaves, including precision-preserving
+  materialization and power-of-two shifts.
+- Added compile-time ET contract assertions proving these public expression
+  forming operators return expression nodes instead of eager public numeric
+  objects.
+
+Missing features:
+- Exact `mpz_class`/`mpq_class` double-scalar parity with upstream
+  `gmpxx_mkII` remains intentionally outside this phase because the current
+  project ET scalar policy for exact Z/Q expressions is integral-only; MPF and
+  MPFR double scalar leaves are covered.
+
+Tests added:
+- tests/test_mpz_arithmetic.cpp
+- tests/test_mpq_arithmetic.cpp
+- tests/test_mixed_type_arithmetic.cpp
+
+Tests updated:
+- tests/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/tests/test_mpz_arithmetic.cpp
+- sed -n '260,560p' ../gmpxx_mkII/tests/test_mpz_arithmetic.cpp
+- sed -n '1,300p' ../gmpxx_mkII/tests/test_mpq_arithmetic.cpp
+- sed -n '1,320p' ../gmpxx_mkII/tests/test_mixed_type_arithmetic.cpp
+- sed -n '1,260p' tests/test_mpq_basic.cpp
+- sed -n '1,300p' tests/test_mixed_zq_mpf_promotion.cpp
+- sed -n '1,300p' tests/test_mixed_zq_mpfr_promotion.cpp
+- rg -n "operator\\+\\+|operator--|operator%|operator%=|gcd\\(|lcm\\(" include/gmpfrxx_mkII/detail/zq_impl.hpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target test_mpz_arithmetic test_mpq_arithmetic test_mixed_type_arithmetic
+- ctest --test-dir build -R 'test_mpz_arithmetic|test_mpq_arithmetic|test_mixed_type_arithmetic' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j --target test_mpz_arithmetic test_mpq_arithmetic test_mixed_type_arithmetic: PASS.
+- ctest --test-dir build -R 'test_mpz_arithmetic|test_mpq_arithmetic|test_mixed_type_arithmetic' --output-on-failure: PASS, 3/3 tests passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 115/115 tests passed.
+
+Known issues:
+- Exact Z/Q double-scalar upstream parity remains to be resolved as a separate
+  API-policy/ET design decision.
+
 Post-phase ZQ/MPF bitwise and shift ET audit:
 DONE
 

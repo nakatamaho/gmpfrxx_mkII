@@ -1970,6 +1970,58 @@ inline mpq_class& operator/=(mpq_class& lhs, Rhs&& rhs)
     return lhs;
 }
 
+inline mpz_class& operator++(mpz_class& value)
+{
+    mpz_add_ui(value.mpz_data(), value.mpz_data(), 1);
+    return value;
+}
+
+inline mpz_class operator++(mpz_class& value, int)
+{
+    mpz_class old(value);
+    ++value;
+    return old;
+}
+
+inline mpz_class& operator--(mpz_class& value)
+{
+    mpz_sub_ui(value.mpz_data(), value.mpz_data(), 1);
+    return value;
+}
+
+inline mpz_class operator--(mpz_class& value, int)
+{
+    mpz_class old(value);
+    --value;
+    return old;
+}
+
+inline mpq_class& operator++(mpq_class& value)
+{
+    value += 1;
+    return value;
+}
+
+inline mpq_class operator++(mpq_class& value, int)
+{
+    mpq_class old(value);
+    ++value;
+    return old;
+}
+
+inline mpq_class& operator--(mpq_class& value)
+{
+    value -= 1;
+    return value;
+}
+
+inline mpq_class operator--(mpq_class& value, int)
+{
+    mpq_class old(value);
+    --value;
+    return old;
+}
+
 inline mpz_class abs(const mpz_class& value)
 {
     mpz_class result;
