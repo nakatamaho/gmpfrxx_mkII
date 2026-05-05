@@ -3576,3 +3576,197 @@ Pass/fail result:
 Known issues:
 - `mpfr_root` is intentionally not wrapped because MPFR marks it deprecated; use `rootn_ui` or `rootn_si`.
 - Remaining MPFR math API candidates include fused/misc arithmetic (`fms`, `fmma`, `fmms`, `min`, `max`, `dim`, `hypot`), special functions, constants, rounding/remainder helpers, scaling/sign/next/comparison helpers, and vector-like helpers (`sum`, `dot`).
+
+Post-phase MPFR fused and misc arithmetic wrappers:
+DONE
+
+Implemented features:
+- Added `mpfrxx::mpfr_class` wrappers for MPFR fused arithmetic APIs:
+  - `fms`
+  - `fmma`
+  - `fmms`
+- Added `mpfrxx::mpfr_class` wrappers for MPFR misc arithmetic APIs:
+  - `min`
+  - `max`
+  - `dim`
+  - `hypot`
+- Added an internal four-operand MPFR math helper for `fmma` and `fmms`.
+- Result precision follows the existing math-wrapper policy: binary wrappers use max operand precision, ternary wrappers use max of three operands, and four-operand wrappers use max of four operands.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_math.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "ternary_mpfr_math|fma\\(|check_ternary|check_binary|test_binary_and_ternary|mpfr_fm" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp /usr/include/mpfr.h
+- sed -n '1540,2045p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,470p' tests/test_mpfr_math.cpp
+- sed -n '796,812p' /usr/include/mpfr.h
+- cmake --build build --target test_mpfr_math -j
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- tail -n 95 STATUS.md
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- Focused cmake --build build --target test_mpfr_math -j: PASS.
+- Focused ctest --test-dir build -R test_mpfr_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 99/99 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- Remaining MPFR math API candidates now exclude fused/misc arithmetic. Remaining groups include special functions, constants, rounding/remainder helpers, scaling/sign/next/comparison helpers, and vector-like helpers (`sum`, `dot`).
+
+Post-phase MPFR constants wrappers:
+DONE
+
+Implemented features:
+- Added `mpfrxx::mpfr_class` wrappers for MPFR constants:
+  - `const_pi`
+  - `const_log2`
+  - `const_euler`
+  - `const_catalan`
+- Each constant has explicit-precision and default-precision overloads.
+- Implementations delegate directly to the corresponding MPFR C APIs:
+  - `mpfr_const_pi`
+  - `mpfr_const_log2`
+  - `mpfr_const_euler`
+  - `mpfr_const_catalan`
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_math.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "const_pi|const_log2|mpfr_const|sqrt_ui|log_ui|ui_pow_ui|test_mpfr_class_const" include tests STATUS.md /usr/include/mpfr.h
+- sed -n '1588,1710p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '220,470p' tests/test_mpfr_math.cpp
+- cmake --build build --target test_mpfr_math -j
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- rg -n "const_pi|const_log2|const_euler|const_catalan|test_constants_against_mpfr" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp STATUS.md
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake --build build --target test_mpfr_math -j: PASS.
+- ctest --test-dir build -R test_mpfr_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 99/99 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- Remaining MPFR math API candidates now exclude constants. Remaining groups include special functions, rounding/remainder helpers, scaling/sign/next/comparison helpers, and vector-like helpers (`sum`, `dot`).
+
+Post-phase example02 MPF/MPFR port:
+DONE
+
+Implemented features:
+- Ported `../gmpxx_mkII/examples/example02.cpp` into this repository as:
+  - `examples/example02_mpf.cpp`
+  - `examples/example02_mpfr.cpp`
+- Kept the MPF version faithful to the upstream example body, using `gmpxx::mpf_class`, 256-bit precision, and `gmpxx::sqrt(two)`.
+- Added a parallel MPFR version with minimal changes: `mpfrxx::mpfr_class`, `mpfr_prec_t`, `mpfrxx::sqrt(two)`, and `mpfrxx_mkII.h`.
+- Registered both examples in `examples/CMakeLists.txt` and CTest.
+
+Tests added:
+- example02_mpf
+- example02_mpfr
+
+Tests updated:
+- examples/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,240p' ../gmpxx_mkII/examples/example02.cpp
+- ls -la examples
+- sed -n '1,220p' examples/CMakeLists.txt
+- rg -n "example02|mpf|mpfr|example" examples CMakeLists.txt STATUS.md
+- sed -n '1,100p' examples/example01.cpp
+- sed -n '1,100p' examples/example02_mpfr_mpc.cpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build --target example02_mpf example02_mpfr -j
+- ctest --test-dir build -R "example02_mpf|example02_mpfr" --output-on-failure
+- ./build/examples/example02_mpf
+- ./build/examples/example02_mpfr
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build --target example02_mpf example02_mpfr -j: PASS.
+- ctest --test-dir build -R "example02_mpf|example02_mpfr" --output-on-failure: PASS, 3/3 tests passed because the regex also matched the existing `example02_mpfr_mpc`.
+- Direct `./build/examples/example02_mpf`: PASS, printed `sqrt(2)` to 50 digits.
+- Direct `./build/examples/example02_mpfr`: PASS, printed matching `sqrt(2)` output to 50 digits.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 101/101 tests passed.
+
+Known issues:
+- None for the example02 MPF/MPFR port.
+
+Post-phase MPFR sign/next/predicate/comparison helpers:
+DONE
+
+Implemented features:
+- Added MPFR sign helpers:
+  - `mpfrxx::abs`
+  - `mpfrxx::signbit`
+  - `mpfrxx::sgn`
+  - `mpfrxx::setsign`
+  - `mpfrxx::copysign`
+- Added MPFR next-representable helpers:
+  - `mpfrxx::nextabove`
+  - `mpfrxx::nextbelow`
+  - `mpfrxx::nexttoward`
+- Added MPFR predicate helpers:
+  - `mpfrxx::nan_p`
+  - `mpfrxx::inf_p`
+  - `mpfrxx::number_p`
+  - `mpfrxx::integer_p`
+  - `mpfrxx::zero_p`
+  - `mpfrxx::regular_p`
+- Added MPFR comparison helpers:
+  - `mpfrxx::cmpabs`
+  - `mpfrxx::cmpabs_ui`
+  - `mpfrxx::reldiff`
+  - `mpfrxx::eq`
+  - `mpfrxx::greater_p`
+  - `mpfrxx::greaterequal_p`
+  - `mpfrxx::less_p`
+  - `mpfrxx::lessequal_p`
+  - `mpfrxx::lessgreater_p`
+  - `mpfrxx::equal_p`
+  - `mpfrxx::unordered_p`
+- Helpers accept MPFR wrapper values and expression operands where natural, then delegate to the corresponding MPFR C APIs.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_comparisons.cpp
+- STATUS.md
+
+Exact commands run:
+- cmake --build build -j --target test_mpfr_comparisons
+- ctest --test-dir build -R '^test_mpfr_comparisons$' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_comparisons: PASS.
+- ctest --test-dir build -R '^test_mpfr_comparisons$' --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 101/101 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- Remaining MPFR math API candidates still include special functions, rounding/remainder helpers, scaling helpers, and vector-like helpers (`sum`, `dot`).

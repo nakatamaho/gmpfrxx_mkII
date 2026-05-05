@@ -47,11 +47,13 @@ using unary_intmax_c_api = int (*)(mpfr_ptr, mpfr_srcptr, intmax_t, mpfr_rnd_t);
 using binary_c_api = int (*)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t);
 using binary_u_c_api = int (*)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, unsigned long, mpfr_rnd_t);
 using ternary_c_api = int (*)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t);
+using quaternary_c_api = int (*)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t);
 using unary_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&);
 using unary_u_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&, unsigned long);
 using unary_long_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&, long);
 using unary_uintmax_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&, uintmax_t);
 using unary_intmax_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&, intmax_t);
+using constant_c_api = int (*)(mpfr_ptr, mpfr_rnd_t);
 
 void assert_same_mpfr_value(const mpfrxx::mpfr_class& got, mpfr_srcptr expected)
 {
@@ -192,6 +194,48 @@ void check_ternary(const mpfrxx::mpfr_class& a,
     mpfr_clear(expected);
 }
 
+void check_quaternary(const mpfrxx::mpfr_class& a,
+                      const mpfrxx::mpfr_class& b,
+                      const mpfrxx::mpfr_class& c,
+                      const mpfrxx::mpfr_class& d,
+                      quaternary_c_api c_api,
+                      mpfrxx::mpfr_class (*wrapper)(const mpfrxx::mpfr_class&,
+                                                    const mpfrxx::mpfr_class&,
+                                                    const mpfrxx::mpfr_class&,
+                                                    const mpfrxx::mpfr_class&))
+{
+    const mpfr_prec_t precision = std::max({a.precision(), b.precision(), c.precision(), d.precision()});
+    mpfr_t expected;
+    mpfr_init2(expected, precision);
+    c_api(expected,
+          a.mpfr_data(),
+          b.mpfr_data(),
+          c.mpfr_data(),
+          d.mpfr_data(),
+          mpfrxx::mpfr_class::default_rounding());
+
+    const mpfrxx::mpfr_class got = wrapper(a, b, c, d);
+    assert(got.precision() == precision);
+    assert_same_mpfr_value(got, expected);
+
+    mpfr_clear(expected);
+}
+
+void check_constant(mpfr_prec_t precision,
+                    constant_c_api c_api,
+                    mpfrxx::mpfr_class (*wrapper)(mpfr_prec_t))
+{
+    mpfr_t expected;
+    mpfr_init2(expected, precision);
+    c_api(expected, mpfrxx::mpfr_class::default_rounding());
+
+    const mpfrxx::mpfr_class got = wrapper(precision);
+    assert(got.precision() == precision);
+    assert_same_mpfr_value(got, expected);
+
+    mpfr_clear(expected);
+}
+
 void test_compile_time_surface()
 {
     using mpfrxx::mpfr_class;
@@ -202,6 +246,14 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::sqr(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::sqrt_ui(9ul)), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::sqrt_ui(9ul, static_cast<mpfr_prec_t>(128))), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::const_pi()), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::const_pi(static_cast<mpfr_prec_t>(128))), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::const_log2()), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::const_log2(static_cast<mpfr_prec_t>(128))), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::const_euler()), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::const_euler(static_cast<mpfr_prec_t>(128))), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::const_catalan()), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::const_catalan(static_cast<mpfr_prec_t>(128))), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::rec_sqrt(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::agm(std::declval<const mpfr_class&>(),
                                                     std::declval<const mpfr_class&>())),
@@ -209,6 +261,20 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::fma(std::declval<const mpfr_class&>(),
                                                     std::declval<const mpfr_class&>(),
                                                     std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::fms(std::declval<const mpfr_class&>(),
+                                                    std::declval<const mpfr_class&>(),
+                                                    std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::fmma(std::declval<const mpfr_class&>(),
+                                                     std::declval<const mpfr_class&>(),
+                                                     std::declval<const mpfr_class&>(),
+                                                     std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::fmms(std::declval<const mpfr_class&>(),
+                                                     std::declval<const mpfr_class&>(),
+                                                     std::declval<const mpfr_class&>(),
+                                                     std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::sin_cos(std::declval<const mpfr_class&>())),
                                std::pair<mpfr_class, mpfr_class>>::value);
@@ -264,6 +330,18 @@ void test_compile_time_surface()
                                mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::powr(std::declval<const mpfr_class&>(),
                                                      std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::min(std::declval<const mpfr_class&>(),
+                                                    std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::max(std::declval<const mpfr_class&>(),
+                                                    std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::dim(std::declval<const mpfr_class&>(),
+                                                    std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::hypot(std::declval<const mpfr_class&>(),
+                                                      std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::pow_si(std::declval<const mpfr_class&>(), -3l)),
                                mpfr_class>::value);
@@ -322,6 +400,18 @@ void test_compile_time_surface()
                                                     std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::log(std::declval<expr_type>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::hypot(std::declval<expr_type>(),
+                                                      std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::fms(std::declval<expr_type>(),
+                                                    std::declval<const mpfr_class&>(),
+                                                    std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::fmma(std::declval<expr_type>(),
+                                                     std::declval<const mpfr_class&>(),
+                                                     std::declval<const mpfr_class&>(),
+                                                     std::declval<const mpfr_class&>())),
+                               mpfr_class>::value);
 }
 
 void test_unary_functions_against_mpfr()
@@ -401,11 +491,23 @@ void test_sqrt_ui_against_mpfr()
     mpfr_clear(expected);
 }
 
+void test_constants_against_mpfr()
+{
+    check_constant(160, mpfr_const_pi, mpfrxx::const_pi);
+    check_constant(192, mpfr_const_log2, mpfrxx::const_log2);
+    check_constant(224, mpfr_const_euler, mpfrxx::const_euler);
+    check_constant(256, mpfr_const_catalan, mpfrxx::const_catalan);
+
+    const mpfrxx::mpfr_class default_pi = mpfrxx::const_pi();
+    assert(default_pi.precision() == mpfrxx::mpfr_class::default_precision());
+}
+
 void test_binary_and_ternary_against_mpfr()
 {
     const mpfrxx::mpfr_class lhs("0.25", 192);
     const mpfrxx::mpfr_class rhs("1.5", 224);
     const mpfrxx::mpfr_class addend("0.125", 160);
+    const mpfrxx::mpfr_class fourth("0.75", 256);
 
     check_binary(lhs, rhs, mpfr_agm, mpfrxx::agm);
     check_binary(lhs, rhs, mpfr_atan2, mpfrxx::atan2);
@@ -413,7 +515,14 @@ void test_binary_and_ternary_against_mpfr()
     check_binary_u(lhs, rhs, 360ul, mpfr_atan2u, mpfrxx::atan2u);
     check_binary(lhs, rhs, mpfr_pow, mpfrxx::pow);
     check_binary(lhs, rhs, mpfr_powr, mpfrxx::powr);
+    check_binary(lhs, rhs, mpfr_min, mpfrxx::min);
+    check_binary(lhs, rhs, mpfr_max, mpfrxx::max);
+    check_binary(rhs, lhs, mpfr_dim, mpfrxx::dim);
+    check_binary(lhs, rhs, mpfr_hypot, mpfrxx::hypot);
     check_ternary(lhs, rhs, addend, mpfr_fma, mpfrxx::fma);
+    check_ternary(lhs, rhs, addend, mpfr_fms, mpfrxx::fms);
+    check_quaternary(lhs, rhs, addend, fourth, mpfr_fmma, mpfrxx::fmma);
+    check_quaternary(lhs, rhs, addend, fourth, mpfr_fmms, mpfrxx::fmms);
 }
 
 void test_power_scalar_functions_against_mpfr()
@@ -580,6 +689,7 @@ int main()
     test_compile_time_surface();
     test_unary_functions_against_mpfr();
     test_sqrt_ui_against_mpfr();
+    test_constants_against_mpfr();
     test_binary_and_ternary_against_mpfr();
     test_power_scalar_functions_against_mpfr();
     test_paired_functions_against_mpfr();
