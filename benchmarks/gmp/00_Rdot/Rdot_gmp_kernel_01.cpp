@@ -107,15 +107,13 @@ int main(int argc, char **argv) {
         vec1_mpf_class[i] = mpf_class(vec1[i]);
         vec2_mpf_class[i] = mpf_class(vec2[i]);
     }
-    benchmark_mpf_init_counter::print("after_setup");
-
+    benchmark_mpf_init_counter::begin_kernel();
     auto start = std::chrono::high_resolution_clock::now();
     _ans = _Rdot(N, vec1_mpf_class, 1, vec2_mpf_class, 1);
     auto end = std::chrono::high_resolution_clock::now();
-    benchmark_mpf_init_counter::print("after_timed_kernel");
+    benchmark_mpf_init_counter::print_kernel("timed_kernel");
 
     mpf_class ans = Rdot(N, vec1_mpf_class, 1, vec2_mpf_class, 1);
-    benchmark_mpf_init_counter::print("after_reference");
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
@@ -129,7 +127,6 @@ int main(int argc, char **argv) {
         std::cout << "OK" << std::endl;
     else
         std::cout << "NG" << std::endl;
-    benchmark_mpf_init_counter::print("after_diff");
 
     clear_mpf_vec(vec1, N);
     clear_mpf_vec(vec2, N);
@@ -139,7 +136,6 @@ int main(int argc, char **argv) {
     mpf_clear(dot_product);
     delete[] vec1;
     delete[] vec2;
-    benchmark_mpf_init_counter::print("after_cleanup");
 
     return 0;
 }

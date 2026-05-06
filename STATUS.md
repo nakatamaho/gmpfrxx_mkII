@@ -1801,6 +1801,212 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase Rdot kernel 02 MPF operation counter check:
+DONE
+
+Implemented features:
+- Added the optional benchmark kernel counter include and `begin_kernel` /
+  `print_kernel` instrumentation to
+  `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp`.
+- Measured `Rdot_gmp_kernel_02` for both original `gmpxx.h` and mkII builds.
+
+Tests added:
+- None; this is benchmark instrumentation and measurement only.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '25,145p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp`
+- `rg -n "Rdot_gmp_kernel_02" benchmarks/CMakeLists.txt benchmarks/gmp/CMakeLists.txt benchmarks -g 'CMakeLists.txt'`
+- `cmake --build build_mpf_count -j --target Rdot_gmp_kernel_02_orig Rdot_gmp_kernel_02_mkII`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 1000 512`
+- `cmake --build build -j --target Rdot_gmp_kernel_02_orig Rdot_gmp_kernel_02_mkII`
+- `git diff --check`
+
+Pass/fail result:
+- Count-enabled Rdot kernel 02 build: PASS.
+- `Rdot_gmp_kernel_02_orig 10 512`: PASS;
+  `init=1 init2=10 total_init=11 clear=11 add=10 mul=10`.
+- `Rdot_gmp_kernel_02_mkII 10 512`: PASS;
+  `init=0 init2=11 total_init=11 clear=11 add=10 mul=10`.
+- `Rdot_gmp_kernel_02_orig 1000 512`: PASS;
+  `init=1 init2=1000 total_init=1001 clear=1001 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_02_mkII 1000 512`: PASS;
+  `init=0 init2=1001 total_init=1001 clear=1001 add=1000 mul=1000`.
+- Normal Rdot kernel 02 target build: PASS.
+- `git diff --check`: PASS.
+
+Known issues:
+- Full CTest was not rerun for this benchmark-only instrumentation check.
+
+Post-phase Rdot kernel 03 MPF operation counter check:
+DONE
+
+Implemented features:
+- Added optional benchmark kernel counter instrumentation to
+  `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp`.
+- Measured `Rdot_gmp_kernel_03` for original `gmpxx.h` and mkII builds.
+
+Tests added:
+- None; this is benchmark instrumentation and measurement only.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '25,145p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp`
+- `rg -n "Rdot_gmp_kernel_03" benchmarks/CMakeLists.txt benchmarks -g 'CMakeLists.txt'`
+- `cmake --build build_mpf_count -j --target Rdot_gmp_kernel_03_orig Rdot_gmp_kernel_03_mkII`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 1000 512`
+- `cmake --build build -j --target Rdot_gmp_kernel_03_orig Rdot_gmp_kernel_03_mkII`
+- `git diff --check`
+
+Pass/fail result:
+- Count-enabled Rdot kernel 03 build: PASS.
+- `Rdot_gmp_kernel_03_orig 10 512`: PASS;
+  `init=2 init2=0 total_init=2 clear=2 add=10 mul=10`.
+- `Rdot_gmp_kernel_03_mkII 10 512`: PASS;
+  `init=0 init2=2 total_init=2 clear=2 add=10 mul=10`.
+- `Rdot_gmp_kernel_03_orig 1000 512`: PASS;
+  `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_03_mkII 1000 512`: PASS;
+  `init=0 init2=2 total_init=2 clear=2 add=1000 mul=1000`.
+- Normal Rdot kernel 03 target build: PASS.
+- `git diff --check`: PASS.
+
+Known issues:
+- Full CTest was not rerun for this benchmark-only instrumentation check.
+
+Post-phase MPF compound assignment temporary reduction:
+DONE
+
+Implemented features:
+- Optimized `gmpxx::mpf_class` compound assignment operators so the left-hand
+  side is no longer materialized through `lhs = lhs op rhs`.
+- Compound assignment now evaluates only the right-hand side to a temporary
+  when needed, then applies the GMP C operation directly to the destination:
+  `mpf_add/sub/mul/div(lhs, lhs, rhs_value)`.
+- Direct `mpf_class` right-hand sides use no temporary; expression and scalar
+  right-hand sides use a single destination-precision temporary.
+- This reduces `temp += dx[i] * dy[i]` in the Rdot mkII benchmark from about
+  `2N + 1` kernel `mpf_init*` calls to `N + 1`, matching `gmpxx.h` for the
+  measured case.
+
+Tests added:
+- Added `dst += a * b` allocation coverage to `tests/test_mpf_alloc_count.cpp`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `tests/test_mpf_alloc_count.cpp`
+- `tests/test_mpf_scalar_alloc_count.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "operator\\+=|addmul|mpf_add|mpf_mul|assign_from_expression|eval.*mpf|compound" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/expr.hpp include/gmpfrxx_mkII/detail/eval_context.hpp tests -g '*.hpp' -g '*.cpp'`
+- `sed -n '1380,1515p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1515,1895p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1,180p' tests/test_mpf_alloc_count.cpp`
+- `sed -n '1,180p' tests/test_compound_assign.cpp`
+- `cmake --build build -j --target test_mpf_alloc_count test_compound_assign`
+- `cmake --build build_mpf_count -j --target Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_orig Rdot_gmp_C_native_01`
+- `ctest --test-dir build -R 'test_mpf_alloc_count|test_compound_assign' --output-on-failure`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 1000 512`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+- `sed -n '68,108p' tests/test_mpf_scalar_alloc_count.cpp`
+- `cmake --build build -j --target test_mpf_alloc_count test_mpf_scalar_alloc_count test_compound_assign`
+- `ctest --test-dir build -R 'test_mpf_alloc_count|test_mpf_scalar_alloc_count|test_compound_assign' --output-on-failure`
+- `cmake --build build -j`
+- `cmake --build build_mpf_count -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_01_orig Rdot_gmp_kernel_01_mkII`
+- `git diff --check`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 1000 512`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial related tests: PASS.
+- Initial Rdot count comparison after optimization:
+  - native C: `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+  - orig `gmpxx.h`: `init=1 init2=1000 total_init=1001 clear=1001 add=1000 mul=1000`.
+  - mkII: `init=0 init2=1001 total_init=1001 clear=1001 add=1000 mul=1000`.
+- Initial full CTest: FAIL, `test_mpf_scalar_alloc_count` expected 2
+  allocations for `dst += 5LL` but the optimized path now performs 1
+  allocation.
+- Updated `test_mpf_scalar_alloc_count` expectation for `dst += 5LL` to 1.
+- Focused alloc/compound CTest: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- Final Rdot count comparison:
+  - native C: `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+  - orig `gmpxx.h`: `init=1 init2=1000 total_init=1001 clear=1001 add=1000 mul=1000`.
+  - mkII: `init=0 init2=1001 total_init=1001 clear=1001 add=1000 mul=1000`.
+- Final `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- None.
+
+Post-phase benchmark kernel MPF operation counter:
+DONE
+
+Implemented features:
+- Extended the optional benchmark MPF counter to wrap `mpf_add` and
+  `mpf_mul` in addition to `mpf_init`, `mpf_init2`, and `mpf_clear`.
+- Made benchmark counters atomic so OpenMP benchmark builds can be counted
+  without data races in the counter itself.
+- Added a kernel interval API:
+  `benchmark_mpf_init_counter::begin_kernel()` and
+  `benchmark_mpf_init_counter::print_kernel(label)`.
+- Updated the instrumented Rdot native C and mkII kernel benchmarks to print
+  kernel-only operation deltas with `MPF_KERNEL_COUNTS`.
+
+Tests added:
+- None; this is benchmark instrumentation only.
+
+Tests updated:
+- `benchmarks/common/mpf_init_counter.hpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,240p' benchmarks/common/mpf_init_counter.hpp`
+- `rg -n "benchmark_mpf_init_counter|mpf_init_counter|MPF_INIT_COUNTS|mpf_add|mpf_mul" benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp benchmarks/CMakeLists.txt`
+- `sed -n '25,45p' benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `sed -n '25,45p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
+- `rg -n "mpf_add\\(|mpf_mul\\(|__gmpf_add|__gmpf_mul" include/gmpfrxx_mkII/detail benchmarks/gmp/00_Rdot -g '*.hpp' -g '*.cpp'`
+- `cmake --build build_mpf_count -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_01_mkII`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10 512`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Count-enabled Rdot target build: PASS.
+- `Rdot_gmp_C_native_01 10 512`: PASS; kernel counts were
+  `init=2 init2=0 total_init=2 clear=2 add=10 mul=10`.
+- `Rdot_gmp_kernel_01_mkII 10 512`: PASS; kernel counts were
+  `init=0 init2=21 total_init=21 clear=21 add=10 mul=10`.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- None.
+
 Post-phase benchmark strict-compatibility guard cleanup:
 DONE
 

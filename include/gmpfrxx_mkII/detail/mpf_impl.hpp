@@ -1650,6 +1650,21 @@ auto operator>>(Lhs&& lhs, Bits bits)
         std::move(left), std::move(right));
 }
 
+template <typename Op, typename Rhs>
+void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&& rhs)
+{
+    auto operand = make_mpf_operand(std::forward<Rhs>(rhs));
+    using operand_type = std::decay_t<decltype(operand)>;
+    if constexpr (std::is_same_v<operand_type, object_leaf<gmpxx::mpf_class>>) {
+        mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), operand.get().mpf_data());
+    } else {
+        mpf_t value;
+        mpf_evaluate_to_temporary(value, operand, lhs.precision());
+        mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), value);
+        mpf_clear(value);
+    }
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -1862,28 +1877,28 @@ inline mpq_class& operator/=(mpq_class& lhs, Rhs&& rhs)
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
 inline mpf_class& operator+=(mpf_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs + std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpf_compound_assign<gmpfrxx_mkII::detail::add_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
 inline mpf_class& operator-=(mpf_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs - std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpf_compound_assign<gmpfrxx_mkII::detail::sub_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
 inline mpf_class& operator*=(mpf_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs * std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpf_compound_assign<gmpfrxx_mkII::detail::mul_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
 inline mpf_class& operator/=(mpf_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs / std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpf_compound_assign<gmpfrxx_mkII::detail::div_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 

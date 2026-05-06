@@ -90,5 +90,9 @@ int main()
     dst = (a + b) * (c + d);
     require_alloc_count(1);
 
+    alloc_count = 0;
+    dst += a * b;
+    require_alloc_count(1);
+
     return 0;
 }
