@@ -369,6 +369,7 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::const_catalan()), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::const_catalan(static_cast<mpfr_prec_t>(128))), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::rec_sqrt(std::declval<const mpfr_class&>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::neg(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::ceil(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::floor(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::trunc(std::declval<const mpfr_class&>())), mpfr_class>::value);
@@ -546,6 +547,7 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::sqrt(std::declval<expr_type>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::sqr(std::declval<expr_type>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::rec_sqrt(std::declval<expr_type>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::neg(std::declval<expr_type>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::ceil(std::declval<expr_type>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::floor(std::declval<expr_type>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::trunc(std::declval<expr_type>())), mpfr_class>::value);
@@ -617,6 +619,7 @@ void test_unary_functions_against_mpfr()
         check_unary(value, mpfr_sqrt, mpfrxx::sqrt);
         check_unary(value, mpfr_sqr, mpfrxx::sqr);
         check_unary(value, mpfr_rec_sqrt, mpfrxx::rec_sqrt);
+        check_unary(value, mpfr_neg, mpfrxx::neg);
         check_unary(value, mpfr_sin, mpfrxx::sin);
         check_unary(value, mpfr_cos, mpfrxx::cos);
         check_unary(value, mpfr_tan, mpfrxx::tan);
@@ -984,6 +987,11 @@ void test_expression_inputs()
     const mpfrxx::mpfr_class got = mpfrxx::sqr(expr);
     assert(got.precision() == materialized.precision());
     assert_same_mpfr_value(got, expected);
+
+    mpfr_neg(expected, materialized.mpfr_data(), mpfrxx::mpfr_class::default_rounding());
+    const mpfrxx::mpfr_class got_neg = mpfrxx::neg(expr);
+    assert(got_neg.precision() == materialized.precision());
+    assert_same_mpfr_value(got_neg, expected);
 
     mpfr_mul_2si(expected, materialized.mpfr_data(), -3l, mpfrxx::mpfr_class::default_rounding());
     const mpfrxx::mpfr_class got_scaled = mpfrxx::mul_2si(expr, -3l);

@@ -1838,6 +1838,18 @@ inline mpfr_class rec_sqrt(const Expr& expr)
     });
 }
 
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class neg(const Expr& expr)
+{
+    return detail::unary_mpfr_math(expr, [](mpfr_t rop, mpfr_srcptr op, mpfr_rnd_t rnd) {
+        mpfr_neg(rop, op, rnd);
+    });
+}
+
 #define GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(name) \
     template < \
         typename Expr, \
