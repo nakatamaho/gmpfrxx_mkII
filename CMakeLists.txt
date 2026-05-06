@@ -40,6 +40,7 @@ target_include_directories(gmpxx_mkII INTERFACE
 )
 target_link_libraries(gmpxx_mkII INTERFACE GMP::GMP)
 target_compile_features(gmpxx_mkII INTERFACE cxx_std_17)
+add_library(gmpxx_mkII::gmpxx_mkII ALIAS gmpxx_mkII)
 
 add_library(mpfrxx_mkII INTERFACE)
 target_include_directories(mpfrxx_mkII INTERFACE
@@ -49,6 +50,7 @@ target_include_directories(mpfrxx_mkII INTERFACE
 )
 target_link_libraries(mpfrxx_mkII INTERFACE GMP::GMP MPFR::MPFR MPC::MPC)
 target_compile_features(mpfrxx_mkII INTERFACE cxx_std_17)
+add_library(mpfrxx_mkII::mpfrxx_mkII ALIAS mpfrxx_mkII)
 
 add_library(gmpfrxx_mkII INTERFACE)
 target_include_directories(gmpfrxx_mkII INTERFACE
@@ -58,6 +60,7 @@ target_include_directories(gmpfrxx_mkII INTERFACE
 )
 target_link_libraries(gmpfrxx_mkII INTERFACE GMP::GMP MPFR::MPFR MPC::MPC)
 target_compile_features(gmpfrxx_mkII INTERFACE cxx_std_17)
+add_library(gmpfrxx_mkII::gmpfrxx_mkII ALIAS gmpfrxx_mkII)
 
 add_subdirectory(examples)
 add_subdirectory(benchmarks)

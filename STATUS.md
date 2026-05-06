@@ -1801,6 +1801,68 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPLAPACK-derived benchmark build:
+DONE
+
+Implemented features:
+- Added build-tree namespace alias targets for `gmpxx_mkII`,
+  `mpfrxx_mkII`, and `gmpfrxx_mkII`, so benchmark CMake can use the same
+  target names as installed/package-style consumers.
+- Restored the simple arithmetic benchmark targets while enabling the
+  MPLAPACK-derived Rdot/Raxpy/Rgemv/Rgemm benchmark families.
+- Kept `libgmpxx` usage local to `benchmarks/CMakeLists.txt` for the
+  upstream `gmpxx.h` `orig` comparison variants; the library implementation
+  still does not include `gmpxx.h` or link `libgmpxx`.
+- Updated benchmark sources from the removed
+  `gmpxx::gmpxx_defaults::set_initial_default_prec` call to
+  `gmpxx::set_default_mpf_precision_bits`, guarded out for
+  `USE_ORIGINAL_GMPXX`.
+- Fixed shared-output OpenMP races in `Rgemv_gmp_kernel_openmp_02.cpp` and
+  `Rgemm_gmp_C_native_openmp_02.cpp` that produced `Result NG` in smoke
+  runs.  The final structure parallelizes Rgemv by output row `i` and Rgemm
+  by output element `(i,j)`, so worker threads do not share-update the same
+  output element.
+
+Tests added:
+- Tiny full-suite benchmark smoke via `benchmarks/run_benchmarks.sh`.
+
+Tests updated:
+- `CMakeLists.txt`
+- `benchmarks/CMakeLists.txt`
+- MPLAPACK-derived benchmark sources under `benchmarks/00_Rdot`,
+  `benchmarks/01_Raxpy`, `benchmarks/02_Rgemv`, and `benchmarks/03_Rgemm`.
+- `STATUS.md`
+
+Exact commands run:
+- `ls benchmarks`
+- `sed -n '1,260p' benchmarks/CMakeLists.txt`
+- `rg -n "TODO|FIXME|gmpxx|mpfrxx|mpf_class|mpfr_class|mpc_class|mpfc_class|MPLAPACK|#include|main\\(" benchmarks`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target Rdot_gmp_kernel_01_mkII`
+- `rg -n "gmpxx_defaults::set_initial_default_prec|set_initial_default_prec|set_default_mpf_precision_bits|mpf_set_default_prec" benchmarks`
+- `cmake --build build -j --target bench_gmp_arithmetic bench_mpfr_mpc_arithmetic Rdot_gmp_C_native_01 Rdot_gmp_C_native_openmp_01 Rdot_gmp_kernel_01_orig Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_mkII_NOPRECCHANGE Rdot_gmp_kernel_02_orig Rdot_gmp_kernel_02_mkII Rdot_gmp_kernel_02_mkII_NOPRECCHANGE Rdot_gmp_kernel_03_orig Rdot_gmp_kernel_03_mkII Rdot_gmp_kernel_03_mkII_NOPRECCHANGE Rdot_gmp_kernel_04_orig Rdot_gmp_kernel_04_mkII Rdot_gmp_kernel_04_mkII_NOPRECCHANGE Rdot_gmp_kernel_openmp_01_orig Rdot_gmp_kernel_openmp_01_mkII Rdot_gmp_kernel_openmp_01_mkII_NOPRECCHANGE Rdot_gmp_kernel_openmp_02_orig Rdot_gmp_kernel_openmp_02_mkII Rdot_gmp_kernel_openmp_02_mkII_NOPRECCHANGE`
+- `cmake --build build -j`
+- `bash benchmarks/run_benchmarks.sh build 128 8 8 4 4 3 3 3 /tmp/gmpfrxx_benchmark_smoke`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `cmake --build build -j --target Rgemv_gmp_kernel_openmp_02_mkII Rgemv_gmp_kernel_openmp_02_mkII_NOPRECCHANGE Rgemv_gmp_kernel_openmp_02_orig Rgemm_gmp_C_native_openmp_02`
+- `rg -n "critical|nowait|Compute alpha \\* A \\* B|Compute alpha \\* A \\* x" benchmarks/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp benchmarks/03_Rgemm/Rgemm_gmp_C_native_openmp_02.cpp`
+
+Pass/fail result:
+- Initial configure/build exposed missing build-tree alias targets and
+  obsolete benchmark precision setter usage.
+- Initial tiny benchmark smoke built all variants but reported `Result NG`
+  for `Rgemv_gmp_kernel_openmp_02_mkII` and
+  `Rgemm_gmp_C_native_openmp_02` because of shared-output OpenMP races.
+- `cmake --build build -j`: PASS after fixes.
+- `bash benchmarks/run_benchmarks.sh build 128 8 8 4 4 3 3 3 /tmp/gmpfrxx_benchmark_smoke`: PASS; all reported benchmark correctness checks were `OK`.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+- `git diff --check`: PASS.
+- `rg -n "critical|nowait|Compute alpha \\* A \\* B|Compute alpha \\* A \\* x" benchmarks/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp benchmarks/03_Rgemm/Rgemm_gmp_C_native_openmp_02.cpp`: PASS; no `critical` remains in the touched kernels.
+
+Known issues:
+- None.
+
 Post-phase example15 hexadecimal digits port:
 DONE
 
