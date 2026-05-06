@@ -36,6 +36,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 #include <cstdint>
 #include <ios>
 #include <istream>
@@ -48,6 +49,27 @@
 #include <utility>
 
 #include <mpfr.h>
+
+namespace gmpfrxx_mkII {
+namespace detail {
+
+inline std::string mpfr_remove_grouping_whitespace(const char* text)
+{
+    if (text == nullptr) {
+        return {};
+    }
+
+    std::string result;
+    for (const unsigned char c : std::string(text)) {
+        if (!std::isspace(c)) {
+            result.push_back(static_cast<char>(c));
+        }
+    }
+    return result;
+}
+
+} // namespace detail
+} // namespace gmpfrxx_mkII
 
 namespace mpfrxx {
 
@@ -127,7 +149,8 @@ public:
         mpfr_init2(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
         const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
-        if (text == nullptr || mpfr_set_str(value_, text, base, context.rounding_mode) != 0) {
+        const std::string parse_text = gmpfrxx_mkII::detail::mpfr_remove_grouping_whitespace(text);
+        if (text == nullptr || mpfr_set_str(value_, parse_text.c_str(), base, context.rounding_mode) != 0) {
             mpfr_clear(value_);
             throw std::invalid_argument("invalid mpfr_class decimal string");
         }
@@ -401,7 +424,8 @@ public:
         mpfr_init2(temp, precision());
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
         const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
-        const int rc = mpfr_set_str(temp, text, base, context.rounding_mode);
+        const std::string parse_text = gmpfrxx_mkII::detail::mpfr_remove_grouping_whitespace(text);
+        const int rc = mpfr_set_str(temp, parse_text.c_str(), base, context.rounding_mode);
         if (rc == 0) {
             mpfr_set(value_, temp, context.rounding_mode);
         }
@@ -747,6 +771,298 @@ inline std::string mpfr_strip_leading_plus(std::string token)
     return token;
 }
 
+inline std::string mpfr_get_str_abs(mpfr_srcptr value, mpfr_exp_t& exponent, int base, std::size_t digits)
+{
+    mpfr_t magnitude;
+    mpfr_init2(magnitude, mpfr_get_prec(value));
+    mpfr_abs(magnitude, value, ::mpfrxx::mpfr_class::default_rounding());
+    gmpfrxx_mkII::detail::mpfr_allocated_string raw(
+        mpfr_get_str(nullptr, &exponent, base, digits, magnitude, ::mpfrxx::mpfr_class::default_rounding()));
+    mpfr_clear(magnitude);
+    if (!raw) {
+        throw std::bad_alloc();
+    }
+    return std::string(raw.c_str());
+}
+
+inline void mpfr_uppercase_if_requested(std::string& text, std::ios_base::fmtflags flags)
+{
+    if (!(flags & std::ios_base::uppercase)) {
+        return;
+    }
+    std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) {
+        return static_cast<char>(std::toupper(c));
+    });
+}
+
+inline void add_mpfr_base_prefix(std::string& text, mpfr_srcptr value, int base, std::ios_base::fmtflags flags)
+{
+    if (!(flags & std::ios_base::showbase)) {
+        return;
+    }
+    if (base == 16) {
+        text.insert(0, "0x");
+    } else if (base == 8 && mpfr_sgn(value) != 0) {
+        text.insert(0, "0");
+    }
+}
+
+inline bool mpfr_formatted_has_nonzero_digit(const std::string& text)
+{
+    return std::any_of(text.begin(), text.end(), [](unsigned char c) {
+        return std::isdigit(c) && c != '0';
+    });
+}
+
+inline void add_mpfr_sign(std::string& text, mpfr_srcptr value)
+{
+    if (mpfr_sgn(value) < 0) {
+        text.insert(0, "-");
+    }
+}
+
+inline mpfr_exp_t mpfr_integral_digits_in_base(mpfr_srcptr value, int base)
+{
+    if (mpfr_sgn(value) == 0) {
+        return 1;
+    }
+
+    mpfr_exp_t exponent = 0;
+    mpfr_get_d_2exp(&exponent, value, ::mpfrxx::mpfr_class::default_rounding());
+    if (exponent <= 0) {
+        return 1;
+    }
+
+    switch (base) {
+    case 16:
+        return static_cast<mpfr_exp_t>((exponent + 3) / 4);
+    case 8:
+        return static_cast<mpfr_exp_t>((exponent + 2) / 3);
+    case 10:
+        return static_cast<mpfr_exp_t>(std::floor(exponent / std::log2(10.0)) + 1);
+    case 2:
+        return exponent;
+    default:
+        return 0;
+    }
+}
+
+inline std::size_t effective_mpfr_base_precision(std::streamsize precision)
+{
+    return static_cast<std::size_t>(precision == 0 ? 6 : precision);
+}
+
+inline std::string mpfr_to_base_string_default(
+    mpfr_srcptr value,
+    int base,
+    std::ios_base::fmtflags flags,
+    std::streamsize precision)
+{
+    if (mpfr_sgn(value) == 0) {
+        std::string text = (flags & std::ios_base::showpoint) ? "0." : "0";
+        add_mpfr_base_prefix(text, value, base, flags);
+        mpfr_uppercase_if_requested(text, flags);
+        return text;
+    }
+
+    const std::size_t effective_precision = effective_mpfr_base_precision(precision);
+    mpfr_exp_t exponent = 0;
+    std::string digits = mpfr_get_str_abs(value, exponent, base, effective_precision);
+    if (digits.empty()) {
+        digits = "0";
+    }
+
+    std::string text;
+    if (exponent <= 0) {
+        text = "0.";
+        text.append(static_cast<std::size_t>(-exponent), '0');
+        text += digits;
+    } else if (static_cast<std::size_t>(exponent) > digits.size()) {
+        text = digits.substr(0, 1);
+        if (digits.size() > 1 || (flags & std::ios_base::showpoint)) {
+            text += ".";
+            if (digits.size() > 1) {
+                text += digits.substr(1);
+            }
+        }
+        const mpfr_exp_t adjusted_exponent = exponent - 1;
+        text += (base == 16) ? "@" : "e";
+        text += adjusted_exponent >= 0 ? "+" : "-";
+        const mpfr_exp_t absolute_exponent = adjusted_exponent >= 0 ? adjusted_exponent : -adjusted_exponent;
+        if (absolute_exponent < 10) {
+            text += "0";
+        }
+        text += std::to_string(absolute_exponent);
+    } else {
+        text = digits.substr(0, static_cast<std::size_t>(exponent));
+        if (exponent < static_cast<mpfr_exp_t>(digits.size())) {
+            text += ".";
+            text += digits.substr(static_cast<std::size_t>(exponent));
+        }
+    }
+
+    if ((flags & std::ios_base::showpoint) && text.find('.') == std::string::npos) {
+        text += ".";
+    }
+    if (!(flags & std::ios_base::showpoint)) {
+        const std::size_t point = text.find('.');
+        if (point != std::string::npos) {
+            while (!text.empty() && text.back() == '0') {
+                text.pop_back();
+            }
+        }
+    }
+    if (!(flags & std::ios_base::showpoint) && !text.empty() && text.back() == '.') {
+        text.pop_back();
+    }
+    if (base != 8 || !(flags & std::ios_base::showbase) || mpfr_formatted_has_nonzero_digit(text)) {
+        add_mpfr_base_prefix(text, value, base, flags);
+    }
+    add_mpfr_sign(text, value);
+    mpfr_uppercase_if_requested(text, flags);
+    return text;
+}
+
+inline std::string mpfr_to_base_string_fixed(
+    mpfr_srcptr value,
+    int base,
+    std::ios_base::fmtflags flags,
+    std::streamsize precision)
+{
+    const std::size_t effective_precision = effective_mpfr_base_precision(precision);
+    mpfr_exp_t exponent = 0;
+    const std::size_t digits_wanted =
+        static_cast<std::size_t>(mpfr_integral_digits_in_base(value, base)) + effective_precision + 1;
+    std::string digits = mpfr_get_str_abs(value, exponent, base, digits_wanted);
+    if (digits.empty()) {
+        digits = "0";
+    }
+
+    std::string text;
+    if (exponent <= 0) {
+        text = "0";
+        if (effective_precision > 0 || (flags & std::ios_base::showpoint)) {
+            text += ".";
+            std::string fraction(static_cast<std::size_t>(-exponent), '0');
+            fraction += digits;
+            fraction.resize(effective_precision, '0');
+            text += fraction;
+        }
+    } else {
+        if (static_cast<std::size_t>(exponent) >= digits.size()) {
+            text = digits;
+            text.append(static_cast<std::size_t>(exponent) - digits.size(), '0');
+        } else {
+            text = digits.substr(0, static_cast<std::size_t>(exponent));
+        }
+        if (effective_precision > 0 || (flags & std::ios_base::showpoint)) {
+            text += ".";
+            std::string fraction;
+            if (static_cast<std::size_t>(exponent) < digits.size()) {
+                fraction = digits.substr(static_cast<std::size_t>(exponent));
+            }
+            fraction.resize(effective_precision, '0');
+            text += fraction;
+        }
+    }
+
+    if (base != 8 || !(flags & std::ios_base::showbase) || mpfr_formatted_has_nonzero_digit(text)) {
+        add_mpfr_base_prefix(text, value, base, flags);
+    }
+    add_mpfr_sign(text, value);
+    mpfr_uppercase_if_requested(text, flags);
+    return text;
+}
+
+inline std::string mpfr_to_base_string_scientific(
+    mpfr_srcptr value,
+    int base,
+    std::ios_base::fmtflags flags,
+    std::streamsize precision)
+{
+    const std::size_t effective_precision = effective_mpfr_base_precision(precision);
+    mpfr_exp_t exponent = 0;
+    std::string digits = mpfr_get_str_abs(value, exponent, base, effective_precision + 1);
+    if (digits.empty()) {
+        digits = "0";
+    }
+
+    std::string text;
+    text += digits[0];
+    text += ".";
+    if (digits.size() > 1) {
+        text += digits.substr(1, effective_precision);
+    }
+    if (text.size() < effective_precision + 2) {
+        text.append(effective_precision + 2 - text.size(), '0');
+    }
+
+    const mpfr_exp_t adjusted_exponent = mpfr_sgn(value) == 0 ? 0 : exponent - 1;
+    text += (base == 16) ? "@" : "e";
+    text += adjusted_exponent >= 0 ? "+" : "-";
+    const mpfr_exp_t absolute_exponent = adjusted_exponent >= 0 ? adjusted_exponent : -adjusted_exponent;
+    if (absolute_exponent < 10) {
+        text += "0";
+    }
+    text += std::to_string(absolute_exponent);
+
+    add_mpfr_base_prefix(text, value, base, flags);
+    add_mpfr_sign(text, value);
+    mpfr_uppercase_if_requested(text, flags);
+    return text;
+}
+
+inline std::string mpfr_stream_text(mpfr_srcptr value, const std::ios_base& out)
+{
+    const auto flags = out.flags();
+    const auto basefield = flags & std::ios_base::basefield;
+    if (basefield == std::ios_base::hex || basefield == std::ios_base::oct) {
+        const int base = basefield == std::ios_base::hex ? 16 : 8;
+        const auto floatfield = flags & std::ios_base::floatfield;
+        if (floatfield == std::ios_base::fixed) {
+            return mpfr_to_base_string_fixed(value, base, flags, out.precision());
+        }
+        if (floatfield == std::ios_base::scientific) {
+            return mpfr_to_base_string_scientific(value, base, flags, out.precision());
+        }
+        return mpfr_to_base_string_default(value, base, flags, out.precision());
+    }
+
+    char conversion = 'g';
+    const auto floatfield = flags & std::ios_base::floatfield;
+    if (floatfield == std::ios_base::fixed) {
+        conversion = 'f';
+    } else if (floatfield == std::ios_base::scientific) {
+        conversion = 'e';
+    }
+    if (flags & std::ios_base::uppercase) {
+        conversion = static_cast<char>(conversion - 'a' + 'A');
+    }
+
+    std::string format = (flags & std::ios_base::showpoint) ? "%#.*R" : "%.*R";
+    format.push_back(conversion);
+
+    std::streamsize stream_precision = out.precision();
+    if (stream_precision < 0) {
+        stream_precision = 6;
+    }
+    if (stream_precision == 0 && (flags & std::ios_base::floatfield) != std::ios_base::fixed) {
+        stream_precision = 6;
+    }
+    if (stream_precision > static_cast<std::streamsize>(std::numeric_limits<int>::max())) {
+        stream_precision = std::numeric_limits<int>::max();
+    }
+
+    char* raw = nullptr;
+    const int count = mpfr_asprintf(
+        &raw, format.c_str(), static_cast<int>(stream_precision), value);
+    gmpfrxx_mkII::detail::mpfr_allocated_string formatted(raw);
+    if (count < 0 || !formatted) {
+        return {};
+    }
+    return std::string(formatted.c_str());
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -755,38 +1071,12 @@ namespace mpfrxx {
 inline std::ostream& operator<<(std::ostream& out, const mpfr_class& value)
 {
     try {
-        char conversion = 'g';
-        const auto floatfield = out.flags() & std::ios_base::floatfield;
-        if (floatfield == std::ios_base::fixed) {
-            conversion = 'f';
-        } else if (floatfield == std::ios_base::scientific) {
-            conversion = 'e';
-        }
-        if (out.flags() & std::ios_base::uppercase) {
-            conversion = static_cast<char>(conversion - 'a' + 'A');
-        }
-
-        std::string format = (out.flags() & std::ios_base::showpoint) ? "%#.*R" : "%.*R";
-        format.push_back(conversion);
-
-        std::streamsize stream_precision = out.precision();
-        if (stream_precision < 0) {
-            stream_precision = 6;
-        }
-        if (stream_precision > static_cast<std::streamsize>(std::numeric_limits<int>::max())) {
-            stream_precision = std::numeric_limits<int>::max();
-        }
-
-        char* raw = nullptr;
-        const int count = mpfr_asprintf(
-            &raw, format.c_str(), static_cast<int>(stream_precision), value.mpfr_data());
-        gmpfrxx_mkII::detail::mpfr_allocated_string formatted(raw);
-        if (count < 0 || !formatted) {
+        std::string text = gmpfrxx_mkII::detail::mpfr_stream_text(value.mpfr_data(), out);
+        if (text.empty()) {
             out.setstate(std::ios_base::badbit);
             return out;
         }
 
-        std::string text(formatted.c_str());
         const char decimal_point = gmpfrxx_mkII::detail::mpfr_stream_decimal_point(out);
         if (decimal_point != '.') {
             const std::size_t point = text.find('.');
@@ -804,7 +1094,14 @@ inline std::ostream& operator<<(std::ostream& out, const mpfr_class& value)
             if (out.flags() & std::ios_base::left) {
                 text.append(fill_count, out.fill());
             } else if (out.flags() & std::ios_base::internal) {
-                const std::size_t pos = (!text.empty() && (text[0] == '-' || text[0] == '+')) ? 1 : 0;
+                std::size_t pos = (!text.empty() && (text[0] == '-' || text[0] == '+')) ? 1 : 0;
+                if (text.compare(pos, 2, "0x") == 0 || text.compare(pos, 2, "0X") == 0) {
+                    pos += 2;
+                } else if (text.compare(pos, 1, "0") == 0 &&
+                           (out.flags() & std::ios_base::basefield) == std::ios_base::oct &&
+                           (out.flags() & std::ios_base::showbase)) {
+                    pos += 1;
+                }
                 text.insert(pos, fill_count, out.fill());
             } else {
                 text.insert(0, fill_count, out.fill());

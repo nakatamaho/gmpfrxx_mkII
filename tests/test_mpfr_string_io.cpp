@@ -94,6 +94,16 @@ void require_string_accessors()
     assert(value.to_double() == 32.0);
     value = std::string("052");
     assert(value.to_double() == 52.0);
+
+    mpfrxx::mpfr_class grouped("0.33333 33333 33333", 192);
+    mpfrxx::mpfr_class ungrouped("0.333333333333333", 192);
+    assert(mpfr_cmp(grouped.mpfr_data(), ungrouped.mpfr_data()) == 0);
+
+    value.set("1.25 00");
+    assert(value.get_str() == "1.25");
+
+    value = "0x1 p+5";
+    assert(value.to_double() == 32.0);
 }
 
 void require_stream_output()
@@ -107,6 +117,26 @@ void require_stream_output()
     std::ostringstream scientific;
     scientific << std::scientific << std::setprecision(3) << value;
     assert(scientific.str() == "1.250e+00");
+
+    const mpfrxx::mpfr_class zero("0", 192);
+    std::ostringstream showpoint_zero;
+    showpoint_zero << std::showpoint << std::setprecision(0) << zero;
+    assert(showpoint_zero.str() == "0.00000");
+
+    std::ostringstream hex_internal;
+    hex_internal << std::hex << std::showbase << std::internal << std::setw(6)
+                 << mpfrxx::mpfr_class("-1", 192);
+    assert(hex_internal.str() == "-0x  1");
+
+    std::ostringstream hex_scientific;
+    hex_scientific << std::hex << std::scientific << std::showbase << std::setprecision(1)
+                   << mpfrxx::mpfr_class("123", 192);
+    assert(hex_scientific.str() == "0x7.b@+01");
+
+    std::ostringstream oct_scientific;
+    oct_scientific << std::oct << std::scientific << std::showbase << std::setprecision(3)
+                   << mpfrxx::mpfr_class("256", 192);
+    assert(oct_scientific.str() == "04.000e+02");
 
     std::ostringstream showpos_internal;
     showpos_internal << std::showpos << std::internal << std::setw(8) << std::setfill('_')
@@ -254,6 +284,10 @@ void require_raw_mpfr_stream_output()
     std::ostringstream output;
     output << value;
     assert(output.str() == "1.5");
+
+    std::ostringstream hex_output;
+    hex_output << std::hex << std::showbase << std::internal << std::setw(6) << value;
+    assert(hex_output.str() == "0x 1.8");
 
     std::locale comma_locale(std::locale::classic(), new test_numpunct(','));
     std::ostringstream locale_output;

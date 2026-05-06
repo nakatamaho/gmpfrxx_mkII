@@ -1801,6 +1801,136 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase upstream t-prec MPFR adaptation review:
+DONE
+
+Implemented features:
+- Reviewed `../gmpxx_mkII/cxx/t-prec.cc` as a candidate for a minimal
+  `mpfrxx_mkII.h` adaptation covering `mpfr_class`, `mpq_class`, and the
+  shared exact classes exposed through the MPFR header.
+- Built a temporary minimally adapted MPFR version at
+  `/tmp/t-prec-mpfrxx/t-prec-mpfrxx-mkII.cc`.
+- Decided not to pursue full line-by-line MPFR parity for this upstream
+  test because the upstream assertions encode GMP `mpf_class` expression
+  precision propagation policy.
+- Kept MPFR grouped decimal string input support, because upstream precision
+  tests use decimal strings with embedded spaces for readability and this is
+  harmless for normal MPFR string construction, assignment, and `set_str`.
+
+Tests added:
+- Added MPFR string I/O regression coverage for grouped decimal input,
+  grouped input through `set`, and grouped C99 hex-float input in
+  `tests/test_mpfr_string_io.cpp`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/test_mpfr_string_io.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-prec.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-prec.cc`
+- `rg -n "ASSERT_ALWAYS_PREC|ASSERT_ALWAYS|mpf_|mpq_class|mpz_class|sqrt|hypot|mpf_class|main|check_" ../gmpxx_mkII/cxx/t-prec.cc`
+- `sed -n '32,38p' ../gmpxx_mkII/cxx/t-prec.cc | tr -s ' ' | fold -w 160`
+- `mkdir -p /tmp/t-prec-mpfrxx`
+- `cp ../gmpxx_mkII/cxx/t-prec.cc /tmp/t-prec-mpfrxx/t-prec-mpfrxx-mkII.cc`
+- Minimal source adaptation commands for the temporary MPFR version.
+- `g++ -std=c++17 -Iinclude /tmp/t-prec-mpfrxx/t-prec-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-prec-mpfrxx/t-prec-mpfrxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-prec-mpfrxx/t-prec-mpfrxx-mkII`
+- `cmake --build build -j --target test_mpfr_string_io`
+- `./build/tests/test_mpfr_string_io`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `diff -u ../gmpxx_mkII/cxx/t-prec.cc /tmp/t-prec-mpfrxx/t-prec-mpfrxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted `t-prec` build: PASS.
+- First temporary adapted `t-prec` run: FAIL because MPFR string
+  construction rejected upstream grouped decimal strings with embedded
+  spaces.
+- After adding grouped whitespace handling, temporary adapted `t-prec` run:
+  FAIL at the `-(1 + f) / 3` precision assertion.
+- The remaining failure is an intentional policy difference: upstream GMP
+  `mpf_class` tests expect expression precision propagation behavior that
+  should not be imposed on the MPFR wrapper.
+- `cmake --build build -j --target test_mpfr_string_io`: PASS.
+- `./build/tests/test_mpfr_string_io`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- `../gmpxx_mkII/cxx/t-prec.cc` is intentionally not fully ported to MPFR.
+- MPFR precision policy remains explicit and MPFR-oriented instead of
+  emulating GMP `mpf_class` expression precision propagation.
+
+Post-phase upstream t-ostream MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted `../gmpxx_mkII/cxx/t-ostream.cc` against
+  this repository's `mpfrxx_mkII.h`.
+- The adapted check covers raw `mpz_t`, raw `mpq_t`, and raw `mpfr_t`
+  stream insertion through the mpfrxx public header.
+- Added MPFR ostream formatting support for non-decimal bases, including
+  `std::hex`, `std::oct`, `std::showbase`, `std::showpoint`,
+  `std::uppercase`, `std::fixed`, `std::scientific`, stream precision,
+  width, fill, and `std::internal` padding.
+- Matched the upstream MPF ostream precision-0 default/showpoint behavior
+  for MPFR output.
+
+Tests added:
+- Added MPFR ostream regression coverage in `tests/test_mpfr_string_io.cpp`
+  for showpoint zero with stream precision 0, hex internal padding, hex
+  scientific output, oct scientific output, and raw `mpfr_t` hex output.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/test_mpfr_string_io.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,320p' ../gmpxx_mkII/cxx/t-ostream.cc`
+- `sed -n '321,700p' ../gmpxx_mkII/cxx/t-ostream.cc`
+- `mkdir -p /tmp/t-ostream-mpfrxx`
+- `cp ../gmpxx_mkII/cxx/t-ostream.cc /tmp/t-ostream-mpfrxx/t-ostream-mpfrxx-mkII.cc`
+- Minimal source adaptation commands for the temporary MPFR version.
+- `g++ -std=c++17 -Iinclude /tmp/t-ostream-mpfrxx/t-ostream-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ostream-mpfrxx/t-ostream-mpfrxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-ostream-mpfrxx/t-ostream-mpfrxx-mkII`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpfr_string_io`
+- `./build/tests/test_mpfr_string_io`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `diff -u ../gmpxx_mkII/cxx/t-ostream.cc /tmp/t-ostream-mpfrxx/t-ostream-mpfrxx-mkII.cc`
+
+Pass/fail result:
+- Initial temporary build: FAIL because upstream's private
+  `MPZ_CHECK_FORMAT` and `gmp-impl.h` were not available in the standalone
+  adaptation.
+- Initial temporary MPFR run: FAIL because MPFR ostream printed showpoint
+  zero with stream precision 0 as `0.` instead of upstream MPF-compatible
+  `0.00000`.
+- Next temporary MPFR run: FAIL because MPFR ostream did not yet implement
+  upstream-style hex/oct base formatting.
+- Next temporary MPFR run: FAIL because `std::internal` padding placed fill
+  before the base prefix (`-  0x1`) instead of after sign and prefix
+  (`-0x  1`).
+- Final temporary MPFR build/run: PASS.
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j --target test_mpfr_string_io`: PASS.
+- `./build/tests/test_mpfr_string_io`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for the t-ostream MPFR adaptation.
+- The temporary adaptation uses a local no-op `MPZ_CHECK_FORMAT` replacement
+  only because upstream's private `gmp-impl.h` is not part of this repository.
+
 Post-phase upstream t-ops MPFR adaptation:
 DONE
 
