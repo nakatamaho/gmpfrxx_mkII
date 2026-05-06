@@ -1801,6 +1801,66 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFR raw stream extraction/insertion:
+DONE
+
+Implemented features:
+- Added global `std::istream& operator>>(std::istream&, mpfr_ptr)` for raw
+  initialized MPFR values, matching the GMP raw pointer extraction style.
+- Added global `std::ostream& operator<<(std::ostream&, mpfr_srcptr)` for raw
+  initialized MPFR values, matching the GMP raw pointer insertion style.
+- Raw MPFR extraction preserves the destination precision, uses the current
+  mpfrxx rounding/exponent context when committing a parsed value, and leaves
+  the destination unchanged on failed input.
+- Verified the upstream `../gmpxx_mkII/cxx/t-istream.cc` intent against
+  `mpfrxx_mkII.h` with the MPF section adapted to raw `mpfr_t`.
+- Verified the upstream `../gmpxx_mkII/cxx/t-locale.cc` intent against
+  `mpfrxx_mkII.h` with the MPF section adapted to raw `mpfr_t`.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_string_io.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '720,785p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1085,1130p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1,140p' tests/test_mpfr_string_io.cpp
+- sed -n '1130,1165p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '140,260p' tests/test_mpfr_string_io.cpp
+- cmake --build build -j --target test_mpfr_string_io
+- ctest --test-dir build -R test_mpfr_string_io --output-on-failure
+- cp ../gmpxx_mkII/cxx/t-istream.cc /tmp/t-istream-mpfrxx-mkII.cc
+- g++ -std=c++17 -Iinclude /tmp/t-istream-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-istream-mpfrxx-mkII
+- /tmp/t-istream-mpfrxx-mkII
+- diff -u ../gmpxx_mkII/cxx/t-istream.cc /tmp/t-istream-mpfrxx-mkII.cc
+- rg -n "operator<<\\(std::ostream&.*mpfr|mpfr_srcptr|operator>>\\(std::istream&.*mpfr_ptr|print_mpfr" include tests
+- cp ../gmpxx_mkII/cxx/t-locale.cc /tmp/t-locale-mpfrxx-mkII.cc
+- g++ -std=c++17 -Iinclude /tmp/t-locale-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-locale-mpfrxx-mkII
+- /tmp/t-locale-mpfrxx-mkII
+- diff -u ../gmpxx_mkII/cxx/t-locale.cc /tmp/t-locale-mpfrxx-mkII.cc
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+- git status --short
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_string_io: PASS.
+- ctest --test-dir build -R test_mpfr_string_io --output-on-failure: PASS, 1/1 test passed.
+- g++ -std=c++17 -Iinclude /tmp/t-istream-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-istream-mpfrxx-mkII: PASS.
+- /tmp/t-istream-mpfrxx-mkII: PASS.
+- g++ -std=c++17 -Iinclude /tmp/t-locale-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-locale-mpfrxx-mkII: PASS.
+- /tmp/t-locale-mpfrxx-mkII: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 119/119 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- Raw `mpfr_ptr` extraction and `mpfr_srcptr` insertion require initialized
+  `mpfr_t` values, as with MPFR C API usage generally.
+
 Post-phase std::common_type promotion parity:
 DONE
 

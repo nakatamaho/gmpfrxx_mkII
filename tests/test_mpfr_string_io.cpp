@@ -34,6 +34,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 namespace {
 
@@ -47,6 +48,11 @@ protected:
 private:
     char decimal_point_;
 };
+
+static_assert(std::is_same_v<decltype(std::declval<std::istream&>() >> std::declval<mpfr_ptr>()),
+                             std::istream&>);
+static_assert(std::is_same_v<decltype(std::declval<std::ostream&>() << std::declval<mpfr_srcptr>()),
+                             std::ostream&>);
 
 void assert_equal(const mpfrxx::mpfr_class& got, const mpfrxx::mpfr_class& expected)
 {
@@ -201,6 +207,63 @@ void require_stream_input()
     }
 }
 
+void require_raw_mpfr_stream_input()
+{
+    mpfr_t value;
+    mpfr_init2(value, 128);
+    mpfr_set_ui(value, 9, MPFR_RNDN);
+
+    std::istringstream input("1.25 rest");
+    input >> value;
+    assert(!input.fail());
+    assert(mpfr_get_prec(value) == 128);
+    mpfrxx::mpfr_class expected("1.25", 128);
+    assert(mpfr_cmp(value, expected.mpfr_data()) == 0);
+
+    std::string rest;
+    input >> rest;
+    assert(rest == "rest");
+
+    mpfr_set_ui(value, 9, MPFR_RNDN);
+    std::istringstream invalid_input("not-a-real");
+    invalid_input >> value;
+    assert(invalid_input.fail());
+    assert(mpfr_get_prec(value) == 128);
+    assert(mpfr_cmp_ui(value, 9) == 0);
+
+    std::istringstream rounding_input("1.1");
+    mpfrxx::set_default_rounding_mode(MPFR_RNDU);
+    rounding_input >> value;
+    mpfrxx::set_default_rounding_mode(MPFR_RNDN);
+    assert(!rounding_input.fail());
+    mpfr_t rounded_up;
+    mpfr_init2(rounded_up, 128);
+    mpfr_set_str(rounded_up, "1.1", 10, MPFR_RNDU);
+    assert(mpfr_cmp(value, rounded_up) == 0);
+    mpfr_clear(rounded_up);
+
+    mpfr_clear(value);
+}
+
+void require_raw_mpfr_stream_output()
+{
+    mpfr_t value;
+    mpfr_init2(value, 128);
+    mpfr_set_d(value, 1.5, MPFR_RNDN);
+
+    std::ostringstream output;
+    output << value;
+    assert(output.str() == "1.5");
+
+    std::locale comma_locale(std::locale::classic(), new test_numpunct(','));
+    std::ostringstream locale_output;
+    locale_output.imbue(comma_locale);
+    locale_output << value;
+    assert(locale_output.str() == "1,5");
+
+    mpfr_clear(value);
+}
+
 } // namespace
 
 int main()
@@ -208,5 +271,7 @@ int main()
     require_string_accessors();
     require_stream_output();
     require_stream_input();
+    require_raw_mpfr_stream_input();
+    require_raw_mpfr_stream_output();
     return 0;
 }

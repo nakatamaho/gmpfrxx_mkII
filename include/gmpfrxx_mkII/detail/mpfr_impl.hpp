@@ -1023,6 +1023,34 @@ inline void random_mpfr_expr::generate(mpfr_t dest, mpfr_rnd_t rnd) const
 
 } // namespace mpfrxx
 
+inline std::ostream& operator<<(std::ostream& out, mpfr_srcptr value)
+{
+    return out << mpfrxx::mpfr_class(value);
+}
+
+inline std::istream& operator>>(std::istream& in, mpfr_ptr value)
+{
+    std::istream::sentry sentry(in);
+    if (!sentry) {
+        return in;
+    }
+
+    const int base = gmpfrxx_mkII::detail::mpfr_stream_input_base(in);
+    std::string token;
+    const bool parsed_token = gmpfrxx_mkII::detail::mpfr_read_float_token(in, token, base);
+    const std::string parse_token = gmpfrxx_mkII::detail::mpfr_strip_leading_plus(std::move(token));
+
+    mpfrxx::mpfr_class tmp = mpfrxx::mpfr_class::with_precision(mpfr_get_prec(value));
+    if (parsed_token && tmp.set_str(parse_token, base) == 0) {
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(mpfr_get_prec(value));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpfr_set(value, tmp.mpfr_data(), context.rounding_mode);
+    } else {
+        in.setstate(std::ios_base::failbit);
+    }
+    return in;
+}
+
 namespace gmpfrxx_mkII {
 namespace detail {
 
