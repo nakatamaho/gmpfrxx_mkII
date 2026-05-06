@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(gmpfrxx_mkII LANGUAGES CXX)
+project(gmpfrxx_mkII VERSION 0.0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,9 +11,29 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CTest)
 
 find_package(Git QUIET)
+find_program(XZ_EXECUTABLE xz)
 find_package(GMP REQUIRED)
 find_package(MPFR REQUIRED)
 find_package(MPC REQUIRED)
+
+set(GMPFRXX_MKII_DIST_BASENAME "${PROJECT_NAME}-${PROJECT_VERSION}")
+set(GMPFRXX_MKII_DIST_TAR "${CMAKE_CURRENT_BINARY_DIR}/${GMPFRXX_MKII_DIST_BASENAME}.tar")
+set(GMPFRXX_MKII_DIST_ARCHIVE "${GMPFRXX_MKII_DIST_TAR}.xz")
+
+if(Git_FOUND AND XZ_EXECUTABLE)
+    add_custom_target(dist
+        COMMAND "${CMAKE_COMMAND}" -E rm -f "${GMPFRXX_MKII_DIST_TAR}" "${GMPFRXX_MKII_DIST_ARCHIVE}"
+        COMMAND "${GIT_EXECUTABLE}" archive
+                --format=tar
+                "--prefix=${GMPFRXX_MKII_DIST_BASENAME}/"
+                HEAD
+                -o "${GMPFRXX_MKII_DIST_TAR}"
+        COMMAND "${XZ_EXECUTABLE}" -z -f -9 "${GMPFRXX_MKII_DIST_TAR}"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMENT "Creating ${GMPFRXX_MKII_DIST_ARCHIVE} from git archive"
+        VERBATIM
+    )
+endif()
 
 set(GMPFRXX_MKII_GIT_COMMIT_HASH "unknown")
 if(Git_FOUND)

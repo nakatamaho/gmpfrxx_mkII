@@ -1,3 +1,41 @@
+Git-archive distribution target:
+DONE
+
+Implemented features:
+- Added CMake project version 0.0.1.
+- Added a git-archive based `dist` custom target.
+- The target writes `${CMAKE_BINARY_DIR}/gmpfrxx_mkII-0.0.1.tar.xz`.
+- The archive top directory is `gmpfrxx_mkII-0.0.1/`.
+- The target uses tracked files from `HEAD`, so untracked files and build artifacts are not included.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None. This phase adds a build target and verifies it by running the target.
+
+Exact commands run:
+- sed -n '1,90p' CMakeLists.txt
+- rg -n "PROJECT_VERSION|VERSION|gmpfrxx_mkII_VERSION|configure_file|version" CMakeLists.txt include/gmpfrxx_mkII/detail/version.hpp.in README.md
+- git status --short
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- git diff -- CMakeLists.txt
+- cmake --build build --target dist
+- ls -lh build/gmpfrxx_mkII-0.0.1.tar.xz
+- tar -tf build/gmpfrxx_mkII-0.0.1.tar.xz | sed -n '1,10p'
+- tar -tf build/gmpfrxx_mkII-0.0.1.tar.xz | rg 'AGENTS.md~|^gmpfrxx_mkII-0\\.0\\.1/build/'
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build --target dist: PASS.
+- Archive created: build/gmpfrxx_mkII-0.0.1.tar.xz, 771K.
+- Archive top-level listing starts with `gmpfrxx_mkII-0.0.1/`.
+- Archive scan for AGENTS.md~ and build artifacts: PASS, no matches.
+
+Known issues:
+- The `dist` target is available only when both Git and xz are found by CMake.
+- Because the target uses `git archive HEAD`, uncommitted changes are not included until committed.
+
 MPFR/MPC header and link separation:
 DONE
 
