@@ -568,6 +568,39 @@ struct common_type<gmpxx::mpf_class, gmpxx::mpf_class> {
     using type = gmpxx::mpf_class;
 };
 
+#define GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, SCALAR) \
+    template <>                                                \
+    struct common_type<CLASS, SCALAR> {                        \
+        using type = CLASS;                                    \
+    };                                                         \
+    template <>                                                \
+    struct common_type<SCALAR, CLASS> {                        \
+        using type = CLASS;                                    \
+    }
+
+#define GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(CLASS)              \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, char);            \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, signed char);     \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned char);   \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, wchar_t);         \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, char16_t);        \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, char32_t);        \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, short);           \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned short);  \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, int);             \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned int);    \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, long);            \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned long);   \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, long long);       \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned long long); \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, float);           \
+    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, double)
+
+GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(gmpxx::mpf_class);
+
+#undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES
+#undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE
+
 } // namespace std
 
 namespace gmpxx {

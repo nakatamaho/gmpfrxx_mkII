@@ -3471,6 +3471,8 @@ inline mpfr_class operator"" _mpfr(const char* value, std::size_t)
 
 } // namespace literals
 
+using literals::operator"" _mpfr;
+
 } // namespace mpfrxx
 
 #endif // GMPFRXX_MKII_DETAIL_MPFR_IMPL_HPP

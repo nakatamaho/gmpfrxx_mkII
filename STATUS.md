@@ -2174,6 +2174,174 @@ Pass/fail result:
 Known issues:
 - None for the t-binary GMP adaptation.
 
+Post-phase upstream t-cast GMP adaptation:
+DONE
+
+Implemented features:
+- Verified upstream `../gmpxx_mkII/cxx/t-cast.cc` against this repository's
+  `gmpxx_mkII.h`.
+- The test is a GMP C macro warning-cleanliness check through the C++ wrapper
+  header. It exercises GMP C API macro expansion such as `mpz_odd_p`,
+  `mpz_even_p`, `mpz_cmp_si`, `mpz_cmp_ui`, `GMP_NUMB_*`, and low-level `mpn_*`
+  declarations, rather than direct `mpz_class`/`mpq_class`/`mpf_class` object
+  operations.
+- No source adaptation was needed beyond copying the upstream test to `/tmp`.
+- No wrapper implementation changes were needed.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-cast.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-cast.cc`
+- `mkdir -p /tmp/t-cast-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-cast.cc /tmp/t-cast-gmpxx/t-cast-gmpxx-mkII.cc`
+- `g++ -std=c++17 -Wold-style-cast -Werror=old-style-cast -Iinclude /tmp/t-cast-gmpxx/t-cast-gmpxx-mkII.cc -lgmp -o /tmp/t-cast-gmpxx/t-cast-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-cast.cc /tmp/t-cast-gmpxx/t-cast-gmpxx-mkII.cc`
+- `stdbuf -o0 -e0 /tmp/t-cast-gmpxx/t-cast-gmpxx-mkII`
+- `cmake --build build -j --target test_gmp_header_smoke test_header_boundaries test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_gmp_header_smoke|test_header_boundaries|test_gmpxx_mkII' --output-on-failure`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Temporary copied `t-cast` build with `-Wold-style-cast -Werror=old-style-cast`: PASS.
+- Temporary copied `t-cast` run: PASS.
+- Minimal diff against upstream: empty.
+- `cmake --build build -j --target test_gmp_header_smoke test_header_boundaries test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_gmp_header_smoke|test_header_boundaries|test_gmpxx_mkII' --output-on-failure`: PASS, 3/3 tests passed.
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- None for the t-cast GMP adaptation.
+
+Post-phase upstream t-constr GMP adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted `../gmpxx_mkII/cxx/t-constr.cc` against this
+  repository's `gmpxx_mkII.h`.
+- The adapted check covers constructor surfaces for `gmpxx::mpz_class`,
+  `gmpxx::mpq_class`, and `gmpxx::mpf_class`, including signed/unsigned
+  character, short, int, long, floating, string/base, raw GMP pointer,
+  copy-construction, MPQ numerator/denominator construction, MPF precision
+  constructors, and invalid string exception paths.
+- Removed only the upstream bool-constructor assertions from the temporary
+  adaptation. This repository intentionally deletes bool constructors as part
+  of the scalar rejection policy, while upstream GMP C++ lets bool convert
+  through int.
+- No wrapper implementation changes were needed.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-constr.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-constr.cc`
+- `sed -n '621,1040p' ../gmpxx_mkII/cxx/t-constr.cc`
+- `mkdir -p /tmp/t-constr-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-constr.cc /tmp/t-constr-gmpxx/t-constr-gmpxx-mkII.cc`
+- Minimal source adaptation commands for the temporary GMP version.
+- `g++ -std=c++17 -Iinclude /tmp/t-constr-gmpxx/t-constr-gmpxx-mkII.cc -lgmp -o /tmp/t-constr-gmpxx/t-constr-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-constr.cc /tmp/t-constr-gmpxx/t-constr-gmpxx-mkII.cc`
+- `stdbuf -o0 -e0 /tmp/t-constr-gmpxx/t-constr-gmpxx-mkII`
+- `cmake --build build -j --target test_type_conversions test_mpf_basic test_mpq_basic test_mpz_basic test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_type_conversions|test_mpf_basic|test_mpq_basic|test_mpz_basic|test_gmpxx_mkII' --output-on-failure`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial temporary adapted `t-constr` build after namespace/config-only
+  adaptation: FAIL because `mpz_class(bool)`, `mpq_class(bool)`,
+  `mpf_class(bool)`, and `mpf_class(bool, precision)` are intentionally
+  deleted.
+- Temporary adapted `t-constr` build after removing only bool constructor
+  assertions: PASS.
+- Temporary adapted `t-constr` run: PASS.
+- `cmake --build build -j --target test_type_conversions test_mpf_basic test_mpq_basic test_mpz_basic test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_type_conversions|test_mpf_basic|test_mpq_basic|test_mpz_basic|test_gmpxx_mkII' --output-on-failure`: PASS, 5/5 tests passed.
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- Intentional difference from upstream: bool constructors remain rejected.
+
+Post-phase upstream t-cxx11 GMP adaptation and C++11 parity:
+DONE
+
+Implemented features:
+- Added `std::common_type` specializations for expression nodes:
+  `object_leaf`, `scalar_leaf`, `unary_expr`, and `binary_expr`.
+- Added expression/expression `std::common_type` specializations so mixed
+  expression nodes resolve through their public `result_type`, matching the
+  upstream C++11 test intent for cases such as `decltype(-z)` with
+  `decltype(z + z)` and `decltype(-q)` with `decltype(-f)`.
+- Verified a minimally adapted `../gmpxx_mkII/cxx/t-cxx11.cc` against this
+  repository's `gmpxx_mkII.h`, covering move construction/assignment,
+  expression common_type, string UDLs, and explicit bool conversion for
+  `mpz_class`, `mpq_class`, and `mpf_class`.
+
+Tests added:
+- Added expression-node `std::common_type` regression coverage to
+  `tests/test_common_type.cpp`.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-cxx11.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-cxx11.cc`
+- `rg -n "__GMPXX_USE_CXX11|tests_start|tests_end|ASSERT_ALWAYS|CHECK_COMMON_TYPE|check_" ../gmpxx_mkII/cxx/t-cxx11.cc`
+- `rg -n "common_type|operator bool|explicit operator bool|operator\"\" _mpz|operator\"\" _mpq|operator\"\" _mpf|noexcept|move" include tests -g '*.hpp' -g '*.cpp'`
+- `sed -n '1,170p' include/gmpfrxx_mkII/detail/expr.hpp`
+- `sed -n '1188,1230p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '540,575p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '2548,2575p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1800,1825p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '3448,3475p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `rg -n "using namespace .*literals|operator\"\" _mpfr|_mpz" tests/test_user_defined_literals.cpp tests/test_mpfr_user_defined_literals.cpp tests/test_gmpxx_mkII.cpp`
+- `mkdir -p /tmp/t-cxx11-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-cxx11.cc /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII.cc`
+- Minimal source adaptation commands for the temporary GMP version.
+- `g++ -std=c++17 -Iinclude /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII.cc -lgmp -o /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII`
+- `g++ -std=c++17 -fext-numeric-literals -Iinclude /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII.cc -lgmp -o /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-cxx11.cc /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII.cc`
+- `stdbuf -o0 -e0 /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII`
+- `cmake --build build -j --target test_common_type test_user_defined_literals test_et_contract_zq_mpf test_mixed_type_arithmetic test_gmpxx_mkII`
+- `cmake --build build -j --target test_common_type test_user_defined_literals test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_common_type|test_user_defined_literals|test_gmpxx_mkII' --output-on-failure`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial temporary adapted `t-cxx11` build before implementation: FAIL
+  because expression-node `std::common_type` coverage was missing.
+- Temporary adapted `t-cxx11` build after implementation and remaining policy
+  adaptations: PASS.
+- Temporary adapted `t-cxx11` run: PASS.
+- `cmake --build build -j --target test_common_type test_user_defined_literals test_et_contract_zq_mpf test_mixed_type_arithmetic test_gmpxx_mkII`: PASS after the expression/expression common_type ambiguity fix.
+- `ctest --test-dir build -R 'test_common_type|test_user_defined_literals|test_gmpxx_mkII' --output-on-failure`: PASS, 3/3 tests passed.
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- Intentional differences from upstream remain in the temporary `t-cxx11`
+  adaptation: this repository keeps bool scalar construction rejected and has
+  different noexcept/default-construction policy details from upstream GMP C++.
+
 Post-phase upstream t-ops MPFR adaptation:
 DONE
 
@@ -6019,6 +6187,95 @@ Pass/fail result:
 - cmake --build build -j: PASS.
 - ctest --test-dir build --output-on-failure: PASS, 111/111 tests passed.
 - git diff --check: PASS.
+
+Known issues:
+- None.
+
+Post-phase GMP builtin scalar common_type parity:
+DONE
+
+Implemented features:
+- Added explicit `std::common_type` specializations for supported builtin
+  scalar types with `gmpxx::mpz_class`, `gmpxx::mpq_class`,
+  `gmpxx::mpf_class`, and `gmpxx::mpfc_class`.
+- Kept the scalar set aligned with expression scalar policy and MPFR behavior:
+  ordinary integral types plus `float` and `double` are accepted; `bool` and
+  `long double` remain unsupported.
+- Used concrete builtin-type specializations rather than a broad partial
+  specialization, so expression-node `std::common_type` remains unambiguous.
+
+Tests added:
+- Added GMP builtin scalar `std::common_type` coverage to
+  `tests/test_common_type.cpp`.
+- Added ABI fingerprint coverage for
+  `std::common_type_t<gmpxx::mpf_class, double>`.
+
+Tests updated:
+- `tests/test_common_type.cpp`
+- `tests/test_abi_fingerprint.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '520,590p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '560,610p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1,130p' tests/test_abi_fingerprint.cpp`
+- `sed -n '190,225p' tests/test_abi_fingerprint.cpp`
+- `rg -n "is_supported_mpf_scalar|normalized_mpf_scalar|is_supported_mpfr_scalar|normalized_mpfr_scalar|is_zq_scalar_operand" include/gmpfrxx_mkII/detail`
+- `cmake --build build -j --target test_common_type test_abi_fingerprint`
+- `ctest --test-dir build -R 'test_common_type|test_abi_fingerprint' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Initial generic partial specialization build: FAIL due ambiguity with
+  expression-node `std::common_type` specializations.
+- `cmake --build build -j --target test_common_type test_abi_fingerprint`: PASS after switching to explicit builtin-type specializations.
+- `ctest --test-dir build -R 'test_common_type|test_abi_fingerprint' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- Namespace-level GMP UDL re-export remains out of scope for this phase.
+
+Post-phase MPFR UDL namespace visibility parity:
+DONE
+
+Implemented features:
+- Re-exported `mpfrxx::literals::operator"" _mpfr` into namespace
+  `mpfrxx`.
+- Re-exported `mpfrxx::literals::operator"" _mpc_i` into namespace
+  `mpfrxx`.
+- `using namespace mpfrxx;` now exposes MPFR real and MPC imaginary UDLs,
+  matching the GMP-side namespace-level visibility policy.
+
+Tests added:
+- Added `using namespace mpfrxx;` visibility coverage to
+  `tests/test_mpfr_user_defined_literals.cpp` for numeric `_mpfr`, string
+  `_mpfr`, and `_mpc_i`.
+
+Tests updated:
+- `tests/test_mpfr_user_defined_literals.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "operator\"\" _mpz|operator\"\" _mpq|operator\"\" _mpf|operator\"\" _mpfr|operator\"\" _mpc_i|operator\"\" _mpfc_i|using literals::operator" include/gmpfrxx_mkII/detail tests/test_user_defined_literals.cpp tests/test_mpfr_user_defined_literals.cpp`
+- `sed -n '3425,3480p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1135,1170p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1,220p' tests/test_mpfr_user_defined_literals.cpp`
+- `cmake --build build -j --target test_mpfr_user_defined_literals`
+- `ctest --test-dir build -R 'test_mpfr_user_defined_literals' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfr_user_defined_literals`: PASS.
+- `ctest --test-dir build -R 'test_mpfr_user_defined_literals' --output-on-failure`: PASS, 1/1 test passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
 
 Known issues:
 - None.

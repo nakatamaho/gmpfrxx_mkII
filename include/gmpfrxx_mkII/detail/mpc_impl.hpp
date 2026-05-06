@@ -1166,6 +1166,8 @@ inline mpc_class operator"" _mpc_i(const char* value, std::size_t)
 
 } // namespace literals
 
+using literals::operator"" _mpc_i;
+
 } // namespace mpfrxx
 
 #endif // GMPFRXX_MKII_DETAIL_MPC_IMPL_HPP

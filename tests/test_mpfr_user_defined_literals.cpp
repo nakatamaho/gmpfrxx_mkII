@@ -132,6 +132,21 @@ void test_literal_precision_uses_wrapper_default()
     assert(floating.precision() == mpfrxx::mpfr_class::default_precision());
 }
 
+void test_mpfrxx_namespace_exposes_literals()
+{
+    using namespace mpfrxx;
+
+    mpfr_class real = 112.5e-1_mpfr;
+    mpfr_class string_real = "0x1.8"_mpfr;
+    mpc_class imag = -9.765625e-4_mpc_i;
+
+    assert_mpfr_equal(real, mpfr_class(11.25, real.precision()));
+    assert_mpfr_equal(string_real, mpfr_class("1.8", string_real.precision(), 16));
+    assert_mpc_equal(imag,
+                     mpfr_class("0", imag.real_precision()),
+                     mpfr_class("-0.0009765625", imag.imag_precision()));
+}
+
 } // namespace
 
 int main()
@@ -140,6 +155,7 @@ int main()
     test_mpc_imaginary_literals();
     test_string_literals_use_auto_base();
     test_literal_precision_uses_wrapper_default();
+    test_mpfrxx_namespace_exposes_literals();
 
     return 0;
 }

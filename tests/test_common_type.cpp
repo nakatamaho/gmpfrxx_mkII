@@ -66,6 +66,23 @@ void require_gmp_common_types()
     require_common_type<gmpxx::mpfc_class, gmpxx::mpq_class, gmpxx::mpfc_class>();
     require_common_type<gmpxx::mpfc_class, gmpxx::mpf_class, gmpxx::mpfc_class>();
     require_common_type<gmpxx::mpfc_class, gmpxx::mpfc_class, gmpxx::mpfc_class>();
+
+    require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, int>();
+    require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, unsigned long long>();
+    require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, float>();
+    require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, double>();
+    require_common_type<gmpxx::mpq_class, gmpxx::mpq_class, int>();
+    require_common_type<gmpxx::mpq_class, gmpxx::mpq_class, double>();
+    require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, int>();
+    require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, double>();
+    require_common_type<gmpxx::mpfc_class, gmpxx::mpfc_class, int>();
+    require_common_type<gmpxx::mpfc_class, gmpxx::mpfc_class, double>();
+
+    static_assert(!has_common_type<gmpxx::mpz_class, bool>::value);
+    static_assert(!has_common_type<gmpxx::mpq_class, bool>::value);
+    static_assert(!has_common_type<gmpxx::mpf_class, bool>::value);
+    static_assert(!has_common_type<gmpxx::mpfc_class, bool>::value);
+    static_assert(!has_common_type<gmpxx::mpf_class, long double>::value);
 }
 
 void require_mpfr_common_types()
@@ -85,8 +102,33 @@ void require_forbidden_cross_domain_common_types()
     static_assert(!has_common_type<gmpxx::mpf_class, mpfrxx::mpc_class>::value);
     static_assert(!has_common_type<gmpxx::mpfc_class, mpfrxx::mpfr_class>::value);
     static_assert(!has_common_type<gmpxx::mpfc_class, mpfrxx::mpc_class>::value);
-    static_assert(!has_common_type<gmpxx::mpf_class, double>::value);
     require_common_type<mpfrxx::mpfr_class, double, mpfrxx::mpfr_class>();
+}
+
+void require_expression_common_types()
+{
+    gmpxx::mpz_class z;
+    gmpxx::mpq_class q;
+    gmpxx::mpf_class f;
+
+    require_common_type<gmpxx::mpz_class, decltype(-z), gmpxx::mpz_class>();
+    require_common_type<gmpxx::mpq_class, decltype(-q), gmpxx::mpq_class>();
+    require_common_type<gmpxx::mpf_class, decltype(-f), gmpxx::mpf_class>();
+
+    require_common_type<gmpxx::mpq_class, decltype(-z), gmpxx::mpq_class>();
+    require_common_type<gmpxx::mpf_class, decltype(-z), gmpxx::mpf_class>();
+    require_common_type<gmpxx::mpf_class, decltype(-q), gmpxx::mpf_class>();
+
+    require_common_type<gmpxx::mpz_class, decltype(-z), decltype(z + z)>();
+    require_common_type<gmpxx::mpq_class, decltype(-q), decltype(q + q)>();
+    require_common_type<gmpxx::mpf_class, decltype(-f), decltype(f + f)>();
+
+    require_common_type<gmpxx::mpq_class, decltype(-z), decltype(-q)>();
+    require_common_type<gmpxx::mpf_class, decltype(-z), decltype(-f)>();
+    require_common_type<gmpxx::mpf_class, decltype(-q), decltype(-f)>();
+    require_common_type<gmpxx::mpz_class, decltype(-z), int>();
+    require_common_type<gmpxx::mpq_class, decltype(-q), int>();
+    require_common_type<gmpxx::mpf_class, decltype(-f), double>();
 }
 
 void require_materialized_add()
@@ -128,6 +170,7 @@ int main()
     require_gmp_common_types();
     require_mpfr_common_types();
     require_forbidden_cross_domain_common_types();
+    require_expression_common_types();
     require_materialized_add();
     return 0;
 }
