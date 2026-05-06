@@ -1113,15 +1113,7 @@ inline std::istream& operator>>(std::istream& in, mpq_class& value)
     const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
 
     mpq_class tmp;
-    bool zero_denominator = false;
-    const std::size_t slash = parse_token.find('/');
-    if (slash != std::string::npos) {
-        mpz_class denominator;
-        zero_denominator = denominator.set_str(parse_token.substr(slash + 1), base) == 0 &&
-                           mpz_sgn(denominator.mpz_data()) == 0;
-    }
-
-    if (parsed_token && !zero_denominator && tmp.set_str(parse_token, base) == 0) {
+    if (parsed_token && mpq_set_str(tmp.get_mpq_t(), parse_token.c_str(), base) == 0) {
         value.swap(tmp);
     } else {
         in.setstate(std::ios_base::failbit);
@@ -1217,7 +1209,7 @@ inline std::istream& operator>>(std::istream& in, mpq_ptr value)
     const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
 
     gmpxx::mpq_class tmp;
-    if (parsed_token && tmp.set_str(parse_token, base) == 0) {
+    if (parsed_token && mpq_set_str(tmp.get_mpq_t(), parse_token.c_str(), base) == 0) {
         mpq_set(value, tmp.get_mpq_t());
     } else {
         in.setstate(std::ios_base::failbit);

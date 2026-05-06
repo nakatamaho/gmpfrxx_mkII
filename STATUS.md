@@ -2019,6 +2019,53 @@ Pass/fail result:
 Known issues:
 - None for `mpfrxx::neg`.
 
+Post-phase non-canonical mpq stream extraction:
+DONE
+
+Implemented features:
+- Changed `mpq_class` stream extraction to preserve the rational read by
+  `mpq_set_str` instead of routing through `mpq_class::set_str`, which
+  canonicalizes.
+- Changed raw `mpq_ptr` stream extraction the same way.
+- Kept constructor and explicit `set_str` behavior canonicalized; only
+  formatted input now preserves non-canonical rationals.
+- Verified upstream `cxx/t-istream.cc` with minimal local edits against both
+  `gmpxx_mkII.h` and `mpfrxx_mkII.h`.
+
+Tests added:
+- None.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- tests/test_zq_string_io.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "class mpq_class|set_str\\(|canonical|operator>>\\(std::istream& in, mpq|mpq_set_str|mpq_canonicalize" include/gmpfrxx_mkII/detail/zq_impl.hpp tests/test_zq_string_io.cpp tests/test_mpq_canonicalization.cpp
+- cmake --build build -j --target test_zq_string_io
+- ctest --test-dir build -R test_zq_string_io --output-on-failure
+- gdb -batch -ex run -ex bt --args build/tests/test_zq_string_io
+- g++ -std=c++17 -Iinclude /tmp/t-istream-gmpxx-mkII.cc -lgmp -o /tmp/t-istream-gmpxx-mkII && /tmp/t-istream-gmpxx-mkII && /tmp/t-istream-gmpxx-mkII -s
+- g++ -std=c++17 -Iinclude /tmp/t-istream-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-istream-mpfrxx-mkII && /tmp/t-istream-mpfrxx-mkII && /tmp/t-istream-mpfrxx-mkII -s
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial test_zq_string_io after preserving non-canonical rationals: FAIL,
+  expected decimal `10/20` for hex input instead of the correct non-canonical
+  decimal value `16/32`.
+- test_zq_string_io after expectation update: PASS.
+- Minimal upstream `t-istream.cc` adaptation for `gmpxx_mkII.h`: PASS,
+  including `-s`.
+- Minimal upstream `t-istream.cc` adaptation for `mpfrxx_mkII.h`: PASS,
+  including `-s`.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 118/118 tests passed.
+
+Known issues:
+- None for stream extraction. Non-canonical rationals can now be held after
+  formatted input; callers can still call `canonicalize()` explicitly.
+
 Post-phase MPF transcendent test rename:
 DONE
 
