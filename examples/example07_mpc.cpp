@@ -84,7 +84,8 @@ struct render_config {
     int width = 96;
     int height = 40;
     int max_iterations = 160;
-    mpfr_prec_t precision = 192;
+    bool precision_set = false;
+    mpfr_prec_t precision = 0;
     char const* center_real = "0";
     char const* center_imag = "0";
     char const* scale = "3.5";
@@ -111,7 +112,7 @@ void print_usage(char const* program) {
         << "  --scale S           Real-axis viewport span (default: 3.5).\n"
         << "  --aspect A          Pixel-height correction for ASCII "
            "(default: 2; PPM default: 1).\n"
-        << "  --precision BITS    MPFR precision in bits (default: 192).\n"
+        << "  --precision BITS    Override the wrapper default precision.\n"
         << "  --iterations N      Maximum escape iterations (default: 160).\n"
         << "  --ppm [FILE]        Write PPM image to FILE, or stdout if omitted.\n"
         << "\n"
@@ -130,11 +131,9 @@ mpc_class make_complex(mpfr_class const& real_value,
     return mpc_class(real_value, imag_value);
 }
 
-int escape_iterations(mpc_class const& c, int max_iterations,
-                      mpfr_prec_t precision) {
-    mpc_class z = make_complex(mpfr_class(0, precision),
-                               mpfr_class(0, precision));
-    mpfr_class escape_radius_squared(4, precision);
+int escape_iterations(mpc_class const& c, int max_iterations) {
+    mpc_class z = make_complex(mpfr_class(0), mpfr_class(0));
+    mpfr_class escape_radius_squared(4);
 
     for (int iter = 0; iter < max_iterations; ++iter) {
         z = z * z + c;
@@ -242,8 +241,10 @@ struct render_state {
 };
 
 render_state make_render_state(render_config const& config) {
-    mpfrxx::set_default_precision_bits(config.precision);
-    mpfrxx::set_default_mpc_precision_bits(config.precision);
+    if (config.precision_set) {
+        mpfrxx::set_default_precision_bits(config.precision);
+        mpfrxx::set_default_mpc_precision_bits(config.precision);
+    }
 
     mpfr_class center_real(config.center_real);
     mpfr_class center_imag(config.center_imag);
@@ -271,7 +272,7 @@ int iterations_at(int x, int y, render_config const& config,
     mpfr_class real = state.center_real + x_pos * state.real_span;
     mpc_class c = make_complex(real, imag);
 
-    return escape_iterations(c, config.max_iterations, config.precision);
+    return escape_iterations(c, config.max_iterations);
 }
 
 void write_ascii(std::ostream& out, render_config const& config) {
@@ -285,7 +286,7 @@ void write_ascii(std::ostream& out, render_config const& config) {
     out << "center=(" << state.center_real << "," << state.center_imag
         << "), scale=" << state.scale
         << ", y_pixel_aspect=" << state.y_pixel_aspect
-        << ", precision=" << config.precision
+        << ", precision=" << mpfrxx::default_precision_bits()
         << ", max_iterations=" << config.max_iterations << "\n\n";
 
     for (int y = 0; y < config.height; ++y) {
@@ -307,7 +308,8 @@ void write_ppm(std::ostream& out, render_config const& config) {
     out << "# mpfrxx_mkII example07 Mandelbrot deep zoom\n";
     out << "# center=(" << state.center_real << "," << state.center_imag
         << ")\n";
-    out << "# scale=" << state.scale << ", precision=" << config.precision
+    out << "# scale=" << state.scale
+        << ", precision=" << mpfrxx::default_precision_bits()
         << ", max_iterations=" << config.max_iterations << '\n';
     out << config.width << ' ' << config.height << "\n255\n";
 
@@ -364,6 +366,7 @@ int main(int argc, char** argv) {
                 config.precision = parse_positive_precision(
                     require_value(argc, argv, i, "--precision"),
                     "--precision");
+                config.precision_set = true;
             } else if (arg == "--iterations") {
                 config.max_iterations = parse_positive_int(
                     require_value(argc, argv, i, "--iterations"),

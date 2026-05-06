@@ -54,32 +54,30 @@
 
 namespace {
 
-mpfr_prec_t bits_for_decimal_digits(int digits, int guard_bits)
+int decimal_digits_for_bits(mpfr_prec_t bits)
 {
-    double raw_bits = std::ceil(static_cast<double>(digits) * std::log2(10.0));
-    return static_cast<mpfr_prec_t>(raw_bits) +
-           static_cast<mpfr_prec_t>(guard_bits);
+    return static_cast<int>(
+        std::floor(static_cast<double>(bits) * std::log10(2.0)));
 }
 
 } // namespace
 
 int main()
 {
-    constexpr int decimal_digits = 100;
-    const mpfr_prec_t precision = bits_for_decimal_digits(decimal_digits, 96);
+    const int decimal_digits =
+        decimal_digits_for_bits(mpfrxx::default_precision_bits());
 
-    mpfrxx::set_default_precision_bits(precision);
-
-    mpfrxx::mpfr_class one("1.0", precision);
-    mpfrxx::mpfr_class two("2.0", precision);
-    mpfrxx::mpfr_class four("4.0", precision);
+    mpfrxx::mpfr_class one("1.0");
+    mpfrxx::mpfr_class two("2.0");
+    mpfrxx::mpfr_class four("4.0");
     mpfrxx::mpfr_class a = one;
     mpfrxx::mpfr_class b = one / mpfrxx::sqrt(two);
-    mpfrxx::mpfr_class t("0.25", precision);
+    mpfrxx::mpfr_class t("0.25");
     mpfrxx::mpfr_class p = one;
-    mpfrxx::mpfr_class pi("0.0", precision);
-    mpfrxx::mpfr_class previous_pi("0.0", precision);
-    mpfrxx::mpfr_class tolerance("1e-100", precision);
+    mpfrxx::mpfr_class pi("0.0");
+    mpfrxx::mpfr_class previous_pi("0.0");
+    mpfrxx::mpfr_class tolerance =
+        mpfrxx::exp2(-mpfrxx::mpfr_class(mpfrxx::default_precision_bits() / 2));
 
     std::cout << std::fixed << std::setprecision(decimal_digits);
     std::cout << "Gauss-Legendre iteration for pi\n";
@@ -104,6 +102,6 @@ int main()
                   << ": " << pi << '\n';
     } while (iteration == 1 || mpfrxx::abs(pi - previous_pi) > tolerance);
 
-    std::cout << "const_pi() result: " << mpfrxx::const_pi(precision) << '\n';
+    std::cout << "const_pi() result: " << mpfrxx::const_pi() << '\n';
     return 0;
 }

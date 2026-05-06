@@ -47,9 +47,7 @@
 
 int main()
 {
-    constexpr mpfr_prec_t precision = 256;
-
-    mpfrxx::mpfr_class two("2.0", precision);
+    mpfrxx::mpfr_class two("2.0");
     mpfrxx::mpfr_class result = mpfrxx::sqrt(two);
 
     std::cout << std::setprecision(50)

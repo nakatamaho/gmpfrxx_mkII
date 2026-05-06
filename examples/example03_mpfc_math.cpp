@@ -32,7 +32,7 @@
 
 int main()
 {
-    const auto z = gmpxx::mpfc_class::with_precision(160, 1.0, 1.0);
+    const auto z = gmpxx::mpfc_class(1.0, 1.0);
 
     const gmpxx::mpfc_class squared = z * z;
     const gmpxx::mpfc_class exponential = gmpxx::exp(z);

@@ -66,18 +66,9 @@ namespace {
 using gmpxx::mpf_class;
 using gmpxx::mpfc_class;
 
-mp_bitcnt_t bits_for_decimal_digits(int digits, int guard_bits)
+mpfc_class make_complex(char const* real_value, char const* imag_value)
 {
-    double raw_bits = std::ceil(static_cast<double>(digits) * std::log2(10.0));
-    return static_cast<mp_bitcnt_t>(raw_bits) +
-           static_cast<mp_bitcnt_t>(guard_bits);
-}
-
-mpfc_class make_complex(char const* real_value, char const* imag_value,
-                        mp_bitcnt_t precision)
-{
-    return mpfc_class(mpf_class(real_value, precision),
-                      mpf_class(imag_value, precision));
+    return mpfc_class(mpf_class(real_value), mpf_class(imag_value));
 }
 
 mpfc_class make_complex(mpf_class const& real_value,
@@ -86,19 +77,18 @@ mpfc_class make_complex(mpf_class const& real_value,
     return mpfc_class(real_value, imag_value);
 }
 
-mpf_class cauchy_radius(std::vector<mpf_class> const& coefficients,
-                        mp_bitcnt_t precision)
+mpf_class cauchy_radius(std::vector<mpf_class> const& coefficients)
 {
     if (coefficients.size() < 2) {
         throw std::invalid_argument("polynomial degree must be at least one");
     }
 
     mpf_class leading = gmpxx::abs(coefficients.back());
-    if (leading == mpf_class(0, precision)) {
+    if (leading == mpf_class(0)) {
         throw std::invalid_argument("leading coefficient must be nonzero");
     }
 
-    mpf_class max_ratio(0, precision);
+    mpf_class max_ratio(0);
     for (std::size_t i = 0; i + 1 < coefficients.size(); ++i) {
         mpf_class ratio = gmpxx::abs(coefficients[i]) / leading;
         if (ratio > max_ratio) {
@@ -106,19 +96,17 @@ mpf_class cauchy_radius(std::vector<mpf_class> const& coefficients,
         }
     }
 
-    return mpf_class(1, precision) + max_ratio;
+    return mpf_class(1) + max_ratio;
 }
 
 mpfc_class evaluate_polynomial(std::vector<mpf_class> const& coefficients,
-                               mpfc_class const& z,
-                               mp_bitcnt_t precision)
+                               mpfc_class const& z)
 {
     if (coefficients.empty()) {
-        return make_complex("0.0", "0.0", precision);
+        return make_complex("0.0", "0.0");
     }
 
-    mpfc_class value =
-        make_complex(coefficients.back(), mpf_class(0, precision));
+    mpfc_class value = make_complex(coefficients.back(), mpf_class(0));
     for (std::size_t k = coefficients.size() - 1; k-- > 0;) {
         value *= z;
         value += coefficients[k];
@@ -127,43 +115,40 @@ mpfc_class evaluate_polynomial(std::vector<mpf_class> const& coefficients,
 }
 
 mpfc_class evaluate_derivative(std::vector<mpf_class> const& coefficients,
-                               mpfc_class const& z,
-                               mp_bitcnt_t precision)
+                               mpfc_class const& z)
 {
     if (coefficients.size() < 2) {
-        return make_complex("0.0", "0.0", precision);
+        return make_complex("0.0", "0.0");
     }
 
     std::size_t degree = coefficients.size() - 1;
     mpfc_class value =
         make_complex(coefficients[degree] *
-                         mpf_class(static_cast<unsigned long>(degree),
-                                   precision),
-                     mpf_class(0, precision));
+                         mpf_class(static_cast<unsigned long>(degree)),
+                     mpf_class(0));
 
     for (std::size_t k = degree - 1; k > 0; --k) {
         value *= z;
         value += mpf_class(
             coefficients[k] *
-            mpf_class(static_cast<unsigned long>(k), precision));
+            mpf_class(static_cast<unsigned long>(k)));
     }
     return value;
 }
 
 std::vector<mpfc_class>
-initial_circle(std::size_t degree, mpf_class const& radius,
-               mp_bitcnt_t precision)
+initial_circle(std::size_t degree, mpf_class const& radius)
 {
     std::vector<mpfc_class> roots;
     roots.reserve(degree);
 
-    mpf_class two(2, precision);
-    mpf_class quarter("0.25", precision);
-    mpf_class pi = gmpxx::const_pi(precision);
-    mpf_class denominator(static_cast<unsigned long>(degree), precision);
+    mpf_class two(2);
+    mpf_class quarter("0.25");
+    mpf_class pi = gmpxx::const_pi();
+    mpf_class denominator(static_cast<unsigned long>(degree));
 
     for (std::size_t i = 0; i < degree; ++i) {
-        mpf_class index(static_cast<unsigned long>(i), precision);
+        mpf_class index(static_cast<unsigned long>(i));
         mpf_class angle = two * pi * (index + quarter) / denominator;
         roots.push_back(make_complex(mpf_class(radius * gmpxx::cos(angle)),
                                      mpf_class(radius * gmpxx::sin(angle))));
@@ -174,38 +159,36 @@ initial_circle(std::size_t degree, mpf_class const& radius,
 
 std::vector<mpfc_class> solve_with_aberth(
     std::vector<mpf_class> const& coefficients, mpf_class const& radius,
-    mpf_class const& tolerance, int max_iterations, mp_bitcnt_t precision)
+    mpf_class const& tolerance, int max_iterations)
 {
     if (coefficients.size() < 2) {
         throw std::invalid_argument("polynomial degree must be at least one");
     }
-    if (coefficients.back() == mpf_class(0, precision)) {
+    if (coefficients.back() == mpf_class(0)) {
         throw std::invalid_argument("leading coefficient must be nonzero");
     }
 
     std::size_t degree = coefficients.size() - 1;
-    std::vector<mpfc_class> roots = initial_circle(degree, radius, precision);
+    std::vector<mpfc_class> roots = initial_circle(degree, radius);
 
     for (int iteration = 1; iteration <= max_iterations; ++iteration) {
-        mpf_class max_update(0, precision);
+        mpf_class max_update(0);
         std::vector<mpfc_class> next_roots = roots;
 
         for (std::size_t i = 0; i < degree; ++i) {
-            mpfc_class f =
-                evaluate_polynomial(coefficients, roots[i], precision);
-            mpfc_class df =
-                evaluate_derivative(coefficients, roots[i], precision);
+            mpfc_class f = evaluate_polynomial(coefficients, roots[i]);
+            mpfc_class df = evaluate_derivative(coefficients, roots[i]);
             mpfc_class ratio = f / df;
 
-            mpfc_class repulsion = make_complex("0.0", "0.0", precision);
+            mpfc_class repulsion = make_complex("0.0", "0.0");
             for (std::size_t j = 0; j < degree; ++j) {
                 if (i != j) {
                     mpfc_class separation = roots[i] - roots[j];
-                    repulsion += mpf_class(1, precision) / separation;
+                    repulsion += mpf_class(1) / separation;
                 }
             }
 
-            mpfc_class one = make_complex("1.0", "0.0", precision);
+            mpfc_class one = make_complex("1.0", "0.0");
             mpfc_class correction = ratio / (one - ratio * repulsion);
             next_roots[i] = roots[i] - correction;
 
@@ -228,10 +211,9 @@ std::vector<mpfc_class> solve_with_aberth(
 }
 
 void print_root(std::size_t index, mpfc_class const& root,
-                std::vector<mpf_class> const& coefficients,
-                mp_bitcnt_t precision)
+                std::vector<mpf_class> const& coefficients)
 {
-    mpfc_class residual = evaluate_polynomial(coefficients, root, precision);
+    mpfc_class residual = evaluate_polynomial(coefficients, root);
 
     std::cout << "root " << index << ": " << root;
     std::cout << ", |f(root)| = " << gmpxx::abs(residual) << '\n';
@@ -242,17 +224,15 @@ void print_root(std::size_t index, mpfc_class const& root,
 int main()
 {
     constexpr int decimal_digits = 60;
-    const mp_bitcnt_t precision = bits_for_decimal_digits(decimal_digits, 96);
-
-    gmpxx::set_default_mpf_precision_bits(precision);
 
     std::vector<mpf_class> coefficients = {
         mpf_class(13), mpf_class(-11), mpf_class(7), mpf_class(-1),
         mpf_class(0),  mpf_class(2),   mpf_class(0), mpf_class(-3),
         mpf_class(0),  mpf_class(0),   mpf_class(1)};
 
-    mpf_class radius = cauchy_radius(coefficients, precision);
-    mpf_class tolerance("1e-50");
+    mpf_class radius = cauchy_radius(coefficients);
+    mpf_class tolerance =
+        gmpxx::exp2(-mpf_class(gmpxx::default_mpf_precision_bits() / 2));
 
     std::cout << std::scientific << std::setprecision(decimal_digits);
     std::cout << "Aberth method using gmpxx::mpfc_class for f(z) = "
@@ -262,10 +242,10 @@ int main()
     std::cout << "initial radius = " << radius << '\n';
 
     std::vector<mpfc_class> roots =
-        solve_with_aberth(coefficients, radius, tolerance, 80, precision);
+        solve_with_aberth(coefficients, radius, tolerance, 80);
 
     for (std::size_t i = 0; i < roots.size(); ++i) {
-        print_root(i, roots[i], coefficients, precision);
+        print_root(i, roots[i], coefficients);
     }
 
     return 0;

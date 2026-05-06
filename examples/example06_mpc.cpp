@@ -66,18 +66,10 @@ namespace {
 using mpfrxx::mpc_class;
 using mpfrxx::mpfr_class;
 
-mpfr_prec_t bits_for_decimal_digits(int digits, int guard_bits)
+mpc_class make_complex(char const* real_value, char const* imag_value)
 {
-    double raw_bits = std::ceil(static_cast<double>(digits) * std::log2(10.0));
-    return static_cast<mpfr_prec_t>(raw_bits) +
-           static_cast<mpfr_prec_t>(guard_bits);
-}
-
-mpc_class make_complex(char const* real_value, char const* imag_value,
-                       mpfr_prec_t precision)
-{
-    mpfr_class real(real_value, precision);
-    mpfr_class imag(imag_value, precision);
+    mpfr_class real(real_value);
+    mpfr_class imag(imag_value);
     return mpc_class(real, imag);
 }
 
@@ -87,19 +79,18 @@ mpc_class make_complex(mpfr_class const& real_value,
     return mpc_class(real_value, imag_value);
 }
 
-mpfr_class cauchy_radius(std::vector<mpfr_class> const& coefficients,
-                         mpfr_prec_t precision)
+mpfr_class cauchy_radius(std::vector<mpfr_class> const& coefficients)
 {
     if (coefficients.size() < 2) {
         throw std::invalid_argument("polynomial degree must be at least one");
     }
 
     mpfr_class leading = mpfrxx::abs(coefficients.back());
-    if (leading == mpfr_class(0, precision)) {
+    if (leading == mpfr_class(0)) {
         throw std::invalid_argument("leading coefficient must be nonzero");
     }
 
-    mpfr_class max_ratio(0, precision);
+    mpfr_class max_ratio(0);
     for (std::size_t i = 0; i + 1 < coefficients.size(); ++i) {
         mpfr_class ratio = mpfrxx::abs(coefficients[i]) / leading;
         if (ratio > max_ratio) {
@@ -107,19 +98,17 @@ mpfr_class cauchy_radius(std::vector<mpfr_class> const& coefficients,
         }
     }
 
-    return mpfr_class(1, precision) + max_ratio;
+    return mpfr_class(1) + max_ratio;
 }
 
 mpc_class evaluate_polynomial(std::vector<mpfr_class> const& coefficients,
-                              mpc_class const& z,
-                              mpfr_prec_t precision)
+                              mpc_class const& z)
 {
     if (coefficients.empty()) {
-        return make_complex("0.0", "0.0", precision);
+        return make_complex("0.0", "0.0");
     }
 
-    mpc_class value =
-        make_complex(coefficients.back(), mpfr_class(0, precision));
+    mpc_class value = make_complex(coefficients.back(), mpfr_class(0));
     for (std::size_t k = coefficients.size() - 1; k-- > 0;) {
         value *= z;
         value += coefficients[k];
@@ -128,43 +117,40 @@ mpc_class evaluate_polynomial(std::vector<mpfr_class> const& coefficients,
 }
 
 mpc_class evaluate_derivative(std::vector<mpfr_class> const& coefficients,
-                              mpc_class const& z,
-                              mpfr_prec_t precision)
+                              mpc_class const& z)
 {
     if (coefficients.size() < 2) {
-        return make_complex("0.0", "0.0", precision);
+        return make_complex("0.0", "0.0");
     }
 
     std::size_t degree = coefficients.size() - 1;
     mpc_class value =
         make_complex(coefficients[degree] *
-                         mpfr_class(static_cast<unsigned long>(degree),
-                                    precision),
-                     mpfr_class(0, precision));
+                         mpfr_class(static_cast<unsigned long>(degree)),
+                     mpfr_class(0));
 
     for (std::size_t k = degree - 1; k > 0; --k) {
         value *= z;
         value += mpfr_class(
             coefficients[k] *
-            mpfr_class(static_cast<unsigned long>(k), precision));
+            mpfr_class(static_cast<unsigned long>(k)));
     }
     return value;
 }
 
 std::vector<mpc_class>
-initial_circle(std::size_t degree, mpfr_class const& radius,
-               mpfr_prec_t precision)
+initial_circle(std::size_t degree, mpfr_class const& radius)
 {
     std::vector<mpc_class> roots;
     roots.reserve(degree);
 
-    mpfr_class two(2, precision);
-    mpfr_class quarter("0.25", precision);
-    mpfr_class pi = mpfrxx::const_pi(precision);
-    mpfr_class denominator(static_cast<unsigned long>(degree), precision);
+    mpfr_class two(2);
+    mpfr_class quarter("0.25");
+    mpfr_class pi = mpfrxx::const_pi();
+    mpfr_class denominator(static_cast<unsigned long>(degree));
 
     for (std::size_t i = 0; i < degree; ++i) {
-        mpfr_class index(static_cast<unsigned long>(i), precision);
+        mpfr_class index(static_cast<unsigned long>(i));
         mpfr_class angle = two * pi * (index + quarter) / denominator;
         roots.push_back(make_complex(mpfr_class(radius * mpfrxx::cos(angle)),
                                      mpfr_class(radius * mpfrxx::sin(angle))));
@@ -175,38 +161,36 @@ initial_circle(std::size_t degree, mpfr_class const& radius,
 
 std::vector<mpc_class> solve_with_aberth(
     std::vector<mpfr_class> const& coefficients, mpfr_class const& radius,
-    mpfr_class const& tolerance, int max_iterations, mpfr_prec_t precision)
+    mpfr_class const& tolerance, int max_iterations)
 {
     if (coefficients.size() < 2) {
         throw std::invalid_argument("polynomial degree must be at least one");
     }
-    if (coefficients.back() == mpfr_class(0, precision)) {
+    if (coefficients.back() == mpfr_class(0)) {
         throw std::invalid_argument("leading coefficient must be nonzero");
     }
 
     std::size_t degree = coefficients.size() - 1;
-    std::vector<mpc_class> roots = initial_circle(degree, radius, precision);
+    std::vector<mpc_class> roots = initial_circle(degree, radius);
 
     for (int iteration = 1; iteration <= max_iterations; ++iteration) {
-        mpfr_class max_update(0, precision);
+        mpfr_class max_update(0);
         std::vector<mpc_class> next_roots = roots;
 
         for (std::size_t i = 0; i < degree; ++i) {
-            mpc_class f =
-                evaluate_polynomial(coefficients, roots[i], precision);
-            mpc_class df =
-                evaluate_derivative(coefficients, roots[i], precision);
+            mpc_class f = evaluate_polynomial(coefficients, roots[i]);
+            mpc_class df = evaluate_derivative(coefficients, roots[i]);
             mpc_class ratio = f / df;
 
-            mpc_class repulsion = make_complex("0.0", "0.0", precision);
+            mpc_class repulsion = make_complex("0.0", "0.0");
             for (std::size_t j = 0; j < degree; ++j) {
                 if (i != j) {
                     mpc_class separation = roots[i] - roots[j];
-                    repulsion += mpfr_class(1, precision) / separation;
+                    repulsion += mpfr_class(1) / separation;
                 }
             }
 
-            mpc_class one = make_complex("1.0", "0.0", precision);
+            mpc_class one = make_complex("1.0", "0.0");
             mpc_class correction = ratio / (one - ratio * repulsion);
             next_roots[i] = roots[i] - correction;
 
@@ -229,10 +213,9 @@ std::vector<mpc_class> solve_with_aberth(
 }
 
 void print_root(std::size_t index, mpc_class const& root,
-                std::vector<mpfr_class> const& coefficients,
-                mpfr_prec_t precision)
+                std::vector<mpfr_class> const& coefficients)
 {
-    mpc_class residual = evaluate_polynomial(coefficients, root, precision);
+    mpc_class residual = evaluate_polynomial(coefficients, root);
 
     std::cout << "root " << index << ": " << root;
     std::cout << ", |f(root)| = " << mpfrxx::abs(residual) << '\n';
@@ -243,18 +226,15 @@ void print_root(std::size_t index, mpc_class const& root,
 int main()
 {
     constexpr int decimal_digits = 60;
-    const mpfr_prec_t precision = bits_for_decimal_digits(decimal_digits, 96);
-
-    mpfrxx::set_default_precision_bits(precision);
-    mpfrxx::set_default_mpc_precision_bits(precision);
 
     std::vector<mpfr_class> coefficients = {
         mpfr_class(13), mpfr_class(-11), mpfr_class(7), mpfr_class(-1),
         mpfr_class(0),  mpfr_class(2),   mpfr_class(0), mpfr_class(-3),
         mpfr_class(0),  mpfr_class(0),   mpfr_class(1)};
 
-    mpfr_class radius = cauchy_radius(coefficients, precision);
-    mpfr_class tolerance("1e-50");
+    mpfr_class radius = cauchy_radius(coefficients);
+    mpfr_class tolerance =
+        mpfrxx::exp2(-mpfr_class(mpfrxx::default_precision_bits() / 2));
 
     std::cout << std::scientific << std::setprecision(decimal_digits);
     std::cout << "Aberth method using mpfrxx::mpc_class for f(z) = "
@@ -264,10 +244,10 @@ int main()
     std::cout << "initial radius = " << radius << '\n';
 
     std::vector<mpc_class> roots =
-        solve_with_aberth(coefficients, radius, tolerance, 80, precision);
+        solve_with_aberth(coefficients, radius, tolerance, 80);
 
     for (std::size_t i = 0; i < roots.size(); ++i) {
-        print_root(i, roots[i], coefficients, precision);
+        print_root(i, roots[i], coefficients);
     }
 
     return 0;

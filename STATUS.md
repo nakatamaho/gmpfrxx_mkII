@@ -1801,6 +1801,74 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase examples default precision cleanup:
+DONE
+
+Implemented features:
+- Removed unconditional explicit precision setup from example programs.
+- Updated MPF/MPFR/MPFC/MPC examples to use ordinary constructors so default
+  wrapper precision is used by default.
+- Replaced fixed decimal tolerances in iterative examples with
+  default-precision-derived thresholds of roughly `2^(-default_bits/2)`.
+- Aligned `example04_mpf` and `example04_mpfr` printed fractional digits with
+  the active default precision using `floor(default_bits * log10(2))`.
+- Preserved command-line precision override support for Mandelbrot examples:
+  `example07_mpfc --precision BITS` and `example07_mpc --precision BITS`
+  still set wrapper defaults, while no option means no precision override.
+- Added `example08_mpfc.cpp` and `example08_mpc.cpp` Wilkinson polynomial
+  examples, both using default precision by default.
+
+Tests added:
+- Added CMake targets and CTest entries for `example08_mpfc` and
+  `example08_mpc`.
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `examples/example02_mpf.cpp`
+- `examples/example02_mpfr.cpp`
+- `examples/example02_mpfr_mpc.cpp`
+- `examples/example03_mpf.cpp`
+- `examples/example03_mpfc_math.cpp`
+- `examples/example03_mpfr.cpp`
+- `examples/example04_mpf.cpp`
+- `examples/example04_mpfr.cpp`
+- `examples/example05_mpf.cpp`
+- `examples/example05_mpfr.cpp`
+- `examples/example06_mpfc.cpp`
+- `examples/example06_mpc.cpp`
+- `examples/example07_mpfc.cpp`
+- `examples/example07_mpc.cpp`
+- `examples/example08_mpfc.cpp`
+- `examples/example08_mpc.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "set_default|set_initial_default|with_precision|--precision|precision" examples`
+- `cmake --build build -j`
+- `rg -n "set_initial_default|with_precision|bits_for_decimal_digits|mpf_class\\([^\\)]*, *(precision|prec)\\)|mpfr_class\\([^\\)]*, *(precision|prec)\\)|const_pi\\((precision|prec)\\)|1e-50|1e-100|1e-45" examples`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure -R "example08|example07|example06|example05|example04|example03|example02"`
+- `ctest --test-dir build --output-on-failure`
+- `cmake --build build -j --target example04_mpf example04_mpfr`
+- `./build/examples/example04_mpf | head -n 3`
+- `./build/examples/example04_mpfr | head -n 3`
+- `ctest --test-dir build --output-on-failure -R "example04_mpf|example04_mpfr"`
+
+Pass/fail result:
+- Initial build after adding `example08_mpc`: FAIL because MPC uses the free
+  `mpfrxx::real(z)` helper rather than an `mpc_class::real()` member.
+- `cmake --build build -j`: PASS after using `mpfrxx::real`.
+- Precision/tolerance scan: PASS; remaining precision setters are only the
+  command-line override paths in `example07_mpfc` and `example07_mpc`.
+- `git diff --check`: PASS.
+- Focused examples CTest: PASS, 16/16 tests passed.
+- Full CTest: PASS, 121/121 tests passed.
+- `cmake --build build -j --target example04_mpf example04_mpfr`: PASS.
+- `ctest --test-dir build --output-on-failure -R "example04_mpf|example04_mpfr"`: PASS, 2/2 tests passed.
+
+Known issues:
+- None.
+
 Post-phase upstream t-unary GMP adaptation:
 DONE
 

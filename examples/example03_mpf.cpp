@@ -50,28 +50,15 @@
 #include <iomanip>
 #include <iostream>
 
-namespace {
-
-mp_bitcnt_t bits_for_decimal_digits(int digits, int guard_bits)
-{
-    double raw_bits = std::ceil(static_cast<double>(digits) * std::log2(10.0));
-    return static_cast<mp_bitcnt_t>(raw_bits) +
-           static_cast<mp_bitcnt_t>(guard_bits);
-}
-
-} // namespace
-
 int main()
 {
     constexpr int decimal_digits = 50;
-    const mp_bitcnt_t precision = bits_for_decimal_digits(decimal_digits, 32);
 
-    gmpxx::set_default_mpf_precision_bits(precision);
-
-    gmpxx::mpf_class x("1.0", precision);
-    gmpxx::mpf_class previous("0.0", precision);
-    gmpxx::mpf_class two("2.0", precision);
-    gmpxx::mpf_class tolerance("1e-50", precision);
+    gmpxx::mpf_class x("1.0");
+    gmpxx::mpf_class previous("0.0");
+    gmpxx::mpf_class two("2.0");
+    gmpxx::mpf_class tolerance =
+        gmpxx::exp2(-gmpxx::mpf_class(gmpxx::default_mpf_precision_bits() / 2));
 
     std::cout << std::fixed << std::setprecision(decimal_digits);
     std::cout << "Newton iteration for sqrt(2)\n";

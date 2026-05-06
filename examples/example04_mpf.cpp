@@ -54,32 +54,30 @@
 
 namespace {
 
-mp_bitcnt_t bits_for_decimal_digits(int digits, int guard_bits)
+int decimal_digits_for_bits(mp_bitcnt_t bits)
 {
-    double raw_bits = std::ceil(static_cast<double>(digits) * std::log2(10.0));
-    return static_cast<mp_bitcnt_t>(raw_bits) +
-           static_cast<mp_bitcnt_t>(guard_bits);
+    return static_cast<int>(
+        std::floor(static_cast<double>(bits) * std::log10(2.0)));
 }
 
 } // namespace
 
 int main()
 {
-    constexpr int decimal_digits = 100;
-    const mp_bitcnt_t precision = bits_for_decimal_digits(decimal_digits, 96);
+    const int decimal_digits =
+        decimal_digits_for_bits(gmpxx::default_mpf_precision_bits());
 
-    gmpxx::set_default_mpf_precision_bits(precision);
-
-    gmpxx::mpf_class one("1.0", precision);
-    gmpxx::mpf_class two("2.0", precision);
-    gmpxx::mpf_class four("4.0", precision);
+    gmpxx::mpf_class one("1.0");
+    gmpxx::mpf_class two("2.0");
+    gmpxx::mpf_class four("4.0");
     gmpxx::mpf_class a = one;
     gmpxx::mpf_class b = one / gmpxx::sqrt(two);
-    gmpxx::mpf_class t("0.25", precision);
+    gmpxx::mpf_class t("0.25");
     gmpxx::mpf_class p = one;
-    gmpxx::mpf_class pi("0.0", precision);
-    gmpxx::mpf_class previous_pi("0.0", precision);
-    gmpxx::mpf_class tolerance("1e-100", precision);
+    gmpxx::mpf_class pi("0.0");
+    gmpxx::mpf_class previous_pi("0.0");
+    gmpxx::mpf_class tolerance =
+        gmpxx::exp2(-gmpxx::mpf_class(gmpxx::default_mpf_precision_bits() / 2));
 
     std::cout << std::fixed << std::setprecision(decimal_digits);
     std::cout << "Gauss-Legendre iteration for pi\n";
@@ -104,6 +102,6 @@ int main()
                   << ": " << pi << '\n';
     } while (iteration == 1 || gmpxx::abs(pi - previous_pi) > tolerance);
 
-    std::cout << "const_pi() result: " << gmpxx::const_pi(precision) << '\n';
+    std::cout << "const_pi() result: " << gmpxx::const_pi() << '\n';
     return 0;
 }
