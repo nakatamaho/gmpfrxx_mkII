@@ -1801,6 +1801,195 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase example09 default-precision MPFC/MPC port:
+DONE
+
+Implemented features:
+- Ported upstream `gmpxx_mkII/examples/example09.cpp` to
+  `examples/example09_mpfc.cpp` using `gmpxx::mpf_class` and
+  `gmpxx::mpfc_class`.
+- Added `examples/example09_mpc.cpp` using `mpfrxx::mpfr_class` and
+  `mpfrxx::mpc_class`.
+- Removed the upstream multi-precision sweep and default-precision setters;
+  both examples run at the active wrapper default precision.
+- Replaced fixed `1e-35`/`1e-70` tolerances with
+  `2^(-default_bits/2)`-style tolerances based on the active default
+  precision.
+- Registered both example09 variants in CMake and CTest.
+
+Tests added:
+- `example09_mpfc`
+- `example09_mpc`
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `examples/example09_mpfc.cpp`
+- `examples/example09_mpc.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,380p' ../gmpxx_mkII/examples/example09.cpp`
+- `cmake --build build -j`
+- `./build/examples/example09_mpfc | head -n 20`
+- `./build/examples/example09_mpc | head -n 20`
+- `rg -n "set_default|set_initial_default|with_precision|bits_for_decimal_digits|mpf_class\\([^\\)]*, *(precision|prec)\\)|mpfr_class\\([^\\)]*, *(precision|prec)\\)|1e-35|1e-70" examples/example09_mpfc.cpp examples/example09_mpc.cpp`
+- `ctest --test-dir build --output-on-failure -R "example09_mpfc|example09_mpc"`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial direct target build before CMake regeneration: FAIL because the new
+  targets did not exist yet.
+- `cmake --build build -j`: PASS.
+- Example09 precision scan: PASS; no explicit precision setup or fixed
+  upstream tolerance literals remain in the new example09 files.
+- Focused example09 CTest: PASS, 2/2 tests passed.
+- Full CTest: PASS, 123/123 tests passed.
+
+Known issues:
+- None.
+
+Post-phase example09 license and explanation comments:
+DONE
+
+Implemented features:
+- Expanded `examples/example09_mpfc.cpp` and `examples/example09_mpc.cpp`
+  with the full BSD-style license block used by the neighboring examples.
+- Added explanatory comments matching the style of `example08_*.cpp`,
+  including the near-multiple-root conditioning summary and
+  Wilkinson/Aberth-Ehrlich references.
+
+Tests added:
+- None; comment-only update.
+
+Tests updated:
+- `examples/example09_mpfc.cpp`
+- `examples/example09_mpc.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,90p' examples/example08_mpfc.cpp`
+- `sed -n '1,90p' examples/example08_mpc.cpp`
+- `sed -n '1,90p' examples/example09_mpfc.cpp`
+- `sed -n '1,90p' examples/example09_mpc.cpp`
+- `git diff --check`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- Build/CTest not rerun because the change is comment-only.
+
+Known issues:
+- None.
+
+Post-phase example10 license comments:
+DONE
+
+Implemented features:
+- Expanded `examples/example10_mpf.cpp` and `examples/example10_mpfr.cpp`
+  with the full BSD-style license block used by the neighboring examples.
+
+Tests added:
+- None; comment-only update.
+
+Tests updated:
+- `examples/example10_mpf.cpp`
+- `examples/example10_mpfr.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff --check`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- Build/CTest not rerun because the change is comment-only.
+
+Known issues:
+- None.
+
+Post-phase example11 MPF/MPFR port:
+DONE
+
+Implemented features:
+- Added `examples/example11_mpf.cpp`, a `gmpxx::mpf_class` port of
+  upstream `gmpxx_mkII/examples/example11.cpp`.
+- Added `examples/example11_mpfr.cpp`, an `mpfrxx::mpfr_class` port with the
+  same Muller's recurrence sample table and precision sweep.
+- Preserved the upstream BSD-style license block and copied the explanatory
+  Muller's recurrence comment, including the Muller/Rump/Goldberg references.
+- Registered `example11_mpf` and `example11_mpfr` in CMake and CTest.
+- No MPFC/MPC variants were added because this example is real-valued only.
+
+Tests added:
+- `example11_mpf`
+- `example11_mpfr`
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `examples/example11_mpf.cpp`
+- `examples/example11_mpfr.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/examples/example11.cpp`
+- `cmake --build build -j`
+- `./build/examples/example11_mpf | head -n 35`
+- `./build/examples/example11_mpfr | head -n 35`
+- `ctest --test-dir build --output-on-failure -R "example11_mpf|example11_mpfr"`
+- `git diff --check`
+
+Pass/fail result:
+- Initial `cmake --build build -j`: FAIL because the upstream
+  `gmpxx::gmpxx_defaults::set_initial_default_prec` name is not public in
+  this repo; replaced it with `gmpxx::set_default_mpf_precision_bits`.
+- Final `cmake --build build -j`: PASS.
+- Focused example11 CTest: PASS, 2/2 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- Full CTest was not rerun for this phase; focused example11 CTest passed.
+
+Post-phase example12 MPF/MPFR port:
+DONE
+
+Implemented features:
+- Added `examples/example12_mpf.cpp`, a `gmpxx::mpf_class` port of
+  upstream `gmpxx_mkII/examples/example12.cpp`.
+- Added `examples/example12_mpfr.cpp`, an `mpfrxx::mpfr_class` port with the
+  same integer-relation sweep at 100, 300, and 1000 working decimal digits.
+- Preserved the upstream BSD-style license block and copied the explanatory
+  integer-relation/PSLQ comment.
+- Registered `example12_mpf` and `example12_mpfr` in CMake and CTest.
+- No MPFC/MPC variants were added because this example is real-valued only.
+
+Tests added:
+- `example12_mpf`
+- `example12_mpfr`
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `examples/example12_mpf.cpp`
+- `examples/example12_mpfr.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,360p' ../gmpxx_mkII/examples/example12.cpp`
+- `cmake --build build -j`
+- `./build/examples/example12_mpf`
+- `./build/examples/example12_mpfr`
+- `ctest --test-dir build --output-on-failure -R "example12_mpf|example12_mpfr"`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j`: PASS.
+- `example12_mpf`: PASS; 100 digits fails, 300 digits recovers a candidate,
+  and 1000 digits accepts the relation.
+- `example12_mpfr`: PASS; 100 digits fails, 300 digits recovers a candidate,
+  and 1000 digits accepts the relation.
+- Focused example12 CTest: PASS, 2/2 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- Full CTest was not rerun for this phase; focused example12 CTest passed.
+
 Post-phase examples default precision cleanup:
 DONE
 
