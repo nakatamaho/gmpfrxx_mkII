@@ -2031,6 +2031,50 @@ Pass/fail result:
 Known issues:
 - None for the t-ternary MPFR adaptation.
 
+Post-phase upstream t-unary MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted `../gmpxx_mkII/cxx/t-unary.cc` against this
+  repository's `mpfrxx_mkII.h`.
+- The adapted check covers unary `+` and `-` for `mpfrxx::mpz_class`,
+  `mpfrxx::mpq_class`, and `mpfrxx::mpfr_class`, plus bitwise `~` for the
+  shared exact `mpz_class`.
+- No wrapper implementation changes were needed.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-unary.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-unary.cc`
+- `mkdir -p /tmp/t-unary-mpfrxx`
+- `cp ../gmpxx_mkII/cxx/t-unary.cc /tmp/t-unary-mpfrxx/t-unary-mpfrxx-mkII.cc`
+- Minimal source adaptation commands for the temporary MPFR version.
+- `g++ -std=c++17 -Iinclude /tmp/t-unary-mpfrxx/t-unary-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-unary-mpfrxx/t-unary-mpfrxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-unary-mpfrxx/t-unary-mpfrxx-mkII`
+- `cmake --build build -j --target test_unary_minus_simplification test_mpz_arithmetic test_mpq_arithmetic test_mpfrxx_mkII`
+- `ctest --test-dir build -R 'test_unary_minus_simplification|test_mpz_arithmetic|test_mpq_arithmetic|test_mpfrxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `diff -u ../gmpxx_mkII/cxx/t-unary.cc /tmp/t-unary-mpfrxx/t-unary-mpfrxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted `t-unary` build: PASS.
+- Temporary adapted `t-unary` run: PASS.
+- `cmake --build build -j --target test_unary_minus_simplification test_mpz_arithmetic test_mpq_arithmetic test_mpfrxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_unary_minus_simplification|test_mpz_arithmetic|test_mpq_arithmetic|test_mpfrxx_mkII' --output-on-failure`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for the t-unary MPFR adaptation.
+
 Post-phase upstream t-ops MPFR adaptation:
 DONE
 
