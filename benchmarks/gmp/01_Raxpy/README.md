@@ -32,14 +32,14 @@ build_bench_release/benchmarks/gmp/01_Raxpy/
 Run the whole benchmark set through the top-level runner:
 
 ```bash
-benchmarks/run_benchmarks.sh build_bench_release 512
+benchmarks/common/run_benchmarks.sh build_bench_release 512
 ```
 
 For a quick Raxpy-sized smoke run, pass smaller dimensions:
 
 ```bash
-benchmarks/run_benchmarks.sh build_bench_release 128 1000 1000 32 32 16 16 16 \
-    benchmarks/results-smoke
+benchmarks/common/run_benchmarks.sh build_bench_release 128 1000 1000 32 32 16 16 16 \
+    benchmarks/gmp/results-smoke
 ```
 
 The second vector-size argument is used for Raxpy.  Individual executables take:

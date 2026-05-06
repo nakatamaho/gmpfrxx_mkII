@@ -183,18 +183,17 @@ mpfrxx_mkII      -> GMP + MPFR + MPC
 gmpfrxx_mkII     -> GMP + MPFR + MPC
 ```
 
-The build also compiles examples and small benchmark programs.
+The build also compiles examples and the GMP benchmark families.
 
 ## Benchmarks
 
-Benchmarks are simple standalone executables under `benchmarks/`. They are
-intended for quick local comparisons while developing expression-template
-evaluation paths, not for stable published performance numbers.
+Benchmarks are standalone executables under `benchmarks/`, split by numeric
+backend.  The current benchmark families live under `benchmarks/gmp/`; shared
+runner and plotting helpers live under `benchmarks/common/`.
 
 ```sh
 cmake --build build -j
-./build/benchmarks/bench_gmp_arithmetic
-./build/benchmarks/bench_mpfr_mpc_arithmetic
+benchmarks/common/run_benchmarks.sh build 128 8 8 4 4 3 3 3
 ```
 
 ## Known Limitations

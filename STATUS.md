@@ -1801,6 +1801,119 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase benchmark helper layout cleanup:
+DONE
+
+Implemented features:
+- Removed obsolete micro benchmark sources:
+  `benchmarks/bench_gmp_arithmetic.cpp` and
+  `benchmarks/bench_mpfr_mpc_arithmetic.cpp`.
+- Removed the corresponding CMake targets.
+- Moved shared benchmark helpers to `benchmarks/common/`:
+  `plot.py` and `run_benchmarks.sh`.
+- Updated the runner default output directory to
+  `benchmarks/gmp/results_raw/`.
+- Added `.gitignore` entries for `build/` and
+  `benchmarks/**/results_raw/`.
+- Updated top-level and benchmark README instructions for the new helper
+  location.
+
+Tests added:
+- None.
+
+Tests updated:
+- `.gitignore`
+- `README.md`
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/README.md`
+- GMP benchmark README paths under `benchmarks/gmp/`
+- `benchmarks/common/run_benchmarks.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `git rm benchmarks/bench_gmp_arithmetic.cpp benchmarks/bench_mpfr_mpc_arithmetic.cpp`
+- `git mv benchmarks/plot.py benchmarks/common/plot.py`
+- `git mv benchmarks/run_benchmarks.sh benchmarks/common/run_benchmarks.sh`
+- `rg -n "run_benchmarks\\.sh|bench_gmp_arithmetic|bench_mpfr_mpc_arithmetic|benchmarks/results_raw|common/plot.py|plot.py" . -g '!build/**' -g '!benchmarks/**/results_raw/**'`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `bash benchmarks/common/run_benchmarks.sh build 128 8 8 4 4 3 3 3 /tmp/gmpfrxx_benchmark_common_smoke`
+- `git check-ignore -v build benchmarks/results_raw benchmarks/gmp/results_raw`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j`: PASS.
+- `bash benchmarks/common/run_benchmarks.sh build 128 8 8 4 4 3 3 3 /tmp/gmpfrxx_benchmark_common_smoke`: PASS; all reported correctness checks were `OK`.
+- `git check-ignore -v build benchmarks/results_raw benchmarks/gmp/results_raw`: PASS for existing ignored `build/` and `benchmarks/results_raw/`; `benchmarks/gmp/results_raw/` is covered by the same ignore rule when created.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- Historical STATUS entries still mention the removed micro benchmark targets
+  as part of earlier completed phases.
+
+Post-phase Rdot MPF init counting:
+DONE
+
+Implemented features:
+- Added optional benchmark-only `mpf_init` instrumentation via
+  `benchmarks/common/mpf_init_counter.hpp`.
+- Added CMake option `GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT`, default OFF, so
+  normal benchmark timings are not polluted by counter increments.
+- Instrumented `Rdot_gmp_C_native_01.cpp` and `Rdot_gmp_kernel_01.cpp` with
+  `MPF_INIT_COUNTS` snapshots after setup, after the timed kernel, after the
+  reference computation, after diff checking, and after manual cleanup.
+- Fixed benchmark cleanup leaks in those files:
+  `Rdot_gmp_C_native_01.cpp` now clears `_ans` and both files delete the
+  `mpf_class` reference arrays.
+- The counter wraps `mpf_init`, `mpf_init2`, and `mpf_clear`, and also catches
+  inline `mpf_class` initialization paths when enabled before including
+  `gmpxx_mkII.h` or upstream `gmpxx.h`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/mpf_init_counter.hpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
+- `.gitignore`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake -S . -B build_mpf_count -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT=ON`
+- `cmake --build build -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_01_mkII`
+- `cmake --build build_mpf_count -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_orig`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 8 128`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 8 128`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 8 128`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 8 128`
+- `cmake --build build -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_orig`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Normal `build/` output: PASS; no `MPF_INIT_COUNTS` lines are printed with
+  counting disabled.
+- Count-enabled `Rdot_gmp_C_native_01 8 128`: PASS; final snapshot
+  after diff was `init=2 init2=71 total_init=73 clear=37`; after manual
+  cleanup it was `init=2 init2=71 total_init=73 clear=71`.
+- Count-enabled `Rdot_gmp_kernel_01_mkII 8 128`: PASS; final snapshot
+  after diff was `init=0 init2=87 total_init=87 clear=50`; after manual
+  cleanup it was `init=0 init2=87 total_init=87 clear=84`.
+- Count-enabled `Rdot_gmp_kernel_01_orig 8 128`: PASS; final snapshot
+  after diff was `init=19 init2=50 total_init=69 clear=34`; after manual
+  cleanup it was `init=19 init2=50 total_init=69 clear=68`.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- Counter output is benchmark instrumentation only; it is intentionally kept
+  behind `GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT` to avoid changing normal
+  benchmark timings.
+
 Post-phase benchmark backend layout split:
 DONE
 

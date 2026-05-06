@@ -30,6 +30,8 @@
 #include <chrono>
 #include <gmp.h>
 
+#include "mpf_init_counter.hpp"
+
 #if defined USE_ORIGINAL_GMPXX
 #include <gmpxx.h>
 #else
@@ -117,12 +119,15 @@ int main(int argc, char **argv) {
         vec1_mpf_class[i] = mpf_class(vec1[i]);
         vec2_mpf_class[i] = mpf_class(vec2[i]);
     }
+    benchmark_mpf_init_counter::print("after_setup");
 
     auto start = std::chrono::high_resolution_clock::now();
     _Rdot(N, vec1, 1, vec2, 1, &_ans);
     auto end = std::chrono::high_resolution_clock::now();
+    benchmark_mpf_init_counter::print("after_timed_kernel");
 
     ans = Rdot(N, vec1_mpf_class, 1, vec2_mpf_class, 1);
+    benchmark_mpf_init_counter::print("after_reference");
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
@@ -136,12 +141,17 @@ int main(int argc, char **argv) {
         std::cout << "OK" << std::endl;
     else
         std::cout << "NG" << std::endl;
+    benchmark_mpf_init_counter::print("after_diff");
 
     clear_mpf_vec(vec1, N);
     clear_mpf_vec(vec2, N);
+    delete[] vec1_mpf_class;
+    delete[] vec2_mpf_class;
     mpf_clear(dot_product);
+    mpf_clear(_ans);
     delete[] vec1;
     delete[] vec2;
+    benchmark_mpf_init_counter::print("after_cleanup");
 
     return 0;
 }

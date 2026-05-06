@@ -26,23 +26,26 @@
 find_package(OpenMP)
 find_library(BENCHMARK_GMPXX_LIBRARY NAMES gmpxx)
 
+option(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT
+    "Count mpf_init/mpf_init2/mpf_clear calls in instrumented GMP benchmarks"
+    OFF)
+
 if(NOT BENCHMARK_GMPXX_LIBRARY)
     message(WARNING "libgmpxx was not found; upstream gmpxx.h orig benchmark variants will not be built")
 endif()
 
-add_executable(bench_gmp_arithmetic bench_gmp_arithmetic.cpp)
-target_link_libraries(bench_gmp_arithmetic PRIVATE gmpxx_mkII::gmpxx_mkII)
-
-add_executable(bench_mpfr_mpc_arithmetic bench_mpfr_mpc_arithmetic.cpp)
-target_link_libraries(bench_mpfr_mpc_arithmetic PRIVATE mpfrxx_mkII::mpfrxx_mkII)
-
 function(configure_eager_benchmark target subdir)
     target_include_directories(${target} PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/common"
         "${CMAKE_CURRENT_SOURCE_DIR}/${subdir}")
     set_target_properties(${target} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${subdir}")
     if(target MATCHES "openmp" AND OpenMP_CXX_FOUND)
         target_link_libraries(${target} PRIVATE OpenMP::OpenMP_CXX)
+    endif()
+    if(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT)
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT)
     endif()
 endfunction()
 

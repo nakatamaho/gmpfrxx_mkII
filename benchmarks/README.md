@@ -9,6 +9,7 @@ The benchmark tree is split by numeric backend.
   `gmpxx.h`, `gmpxx_mkII`, `gmpxx_mkII` with
   `GMPXX_MKII_NOPRECCHANGE`, and OpenMP variants where available.
 - `mpfr/`: reserved for MPFR/MPC benchmarks.
+- `common/`: shared runner and plotting helpers.
 
 Build from the repository root:
 
@@ -20,9 +21,9 @@ cmake --build build_bench_release -j
 Run the full sample dimensions inherited from `go.sh`:
 
 ```bash
-benchmarks/run_benchmarks.sh build_bench_release 512 \
+benchmarks/common/run_benchmarks.sh build_bench_release 512 \
     100000000 100000000 4000 4000 500 500 500 \
-    benchmarks/results_raw/Linux_Ryzen_3970X_32-Core
+    benchmarks/gmp/results_raw/Linux_Ryzen_3970X_32-Core
 ```
 
 The plotter writes serial and OpenMP graphs separately:
@@ -33,6 +34,9 @@ The plotter writes serial and OpenMP graphs separately:
 The raw log is the authoritative result.  The plotted `MFLOPS` values measure
 the timed kernel body, not allocation, random initialization, or verification.
 Use `WALL_SECONDS` in the log when total executable time matters.
+
+Generated result directories such as `benchmarks/gmp/results_raw/` are ignored
+by Git.
 
 GMP benchmark directories:
 

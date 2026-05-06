@@ -28,7 +28,8 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-repo_dir="$(cd "${script_dir}/.." && pwd)"
+benchmark_root="$(cd "${script_dir}/.." && pwd)"
+repo_dir="$(cd "${benchmark_root}/.." && pwd)"
 
 build_dir="${1:-${repo_dir}/build_phase5}"
 precision="${2:-512}"
@@ -39,7 +40,7 @@ rgemv_n="${6:-4000}"
 rgemm_m="${7:-500}"
 rgemm_k="${8:-500}"
 rgemm_n="${9:-500}"
-output_dir="${10:-${script_dir}/results}"
+output_dir="${10:-${benchmark_root}/gmp/results_raw}"
 
 mkdir -p "${output_dir}"
 log_file="${output_dir}/benchmark_$(date +%Y%m%d_%H%M%S).log"
