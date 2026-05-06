@@ -2075,6 +2075,105 @@ Pass/fail result:
 Known issues:
 - None for the t-unary MPFR adaptation.
 
+Post-phase upstream t-assign GMP adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted `../gmpxx_mkII/cxx/t-assign.cc` against this
+  repository's `gmpxx_mkII.h`.
+- The adapted check covers assignment and swap surfaces for `gmpxx::mpz_class`,
+  `gmpxx::mpq_class`, and `gmpxx::mpf_class`, including signed/unsigned
+  integral scalars, `int32_t`/`uint32_t`, `int64_t`/`uint64_t`, direct
+  `__int128` assignment where available, `float`, `double`, string
+  assignment, invalid string exceptions, member `swap`, explicit `::swap`,
+  and ADL/std swap.
+- No wrapper implementation changes were needed.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-assign.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-assign.cc`
+- `sed -n '621,1040p' ../gmpxx_mkII/cxx/t-assign.cc`
+- `mkdir -p /tmp/t-assign-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-assign.cc /tmp/t-assign-gmpxx/t-assign-gmpxx-mkII.cc`
+- Minimal source adaptation commands for the temporary GMP version.
+- `g++ -std=c++17 -Iinclude /tmp/t-assign-gmpxx/t-assign-gmpxx-mkII.cc -lgmp -o /tmp/t-assign-gmpxx/t-assign-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-assign-gmpxx/t-assign-gmpxx-mkII`
+- `cmake --build build -j --target test_type_conversions test_mpf_basic test_mpq_basic test_mpz_basic test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_type_conversions|test_mpf_basic|test_mpq_basic|test_mpz_basic|test_gmpxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `diff -u ../gmpxx_mkII/cxx/t-assign.cc /tmp/t-assign-gmpxx/t-assign-gmpxx-mkII.cc`
+
+Pass/fail result:
+- Initial temporary adapted `t-assign` build: FAIL because this repository
+  keeps GMP wrapper types in namespace `gmpxx` and does not expose global
+  `mpz_class`, `mpq_class`, `mpf_class`, or `::swap`.
+- Temporary adapted `t-assign` build after adding `using namespace gmpxx` and
+  `using gmpxx::swap`: PASS.
+- Temporary adapted `t-assign` run: PASS.
+- `cmake --build build -j --target test_type_conversions test_mpf_basic test_mpq_basic test_mpz_basic test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_type_conversions|test_mpf_basic|test_mpq_basic|test_mpz_basic|test_gmpxx_mkII' --output-on-failure`: PASS, 5/5 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for the t-assign GMP adaptation.
+
+Post-phase upstream t-binary GMP adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted `../gmpxx_mkII/cxx/t-binary.cc` against this
+  repository's `gmpxx_mkII.h`.
+- The adapted check covers binary expression combinations for
+  `gmpxx::mpz_class`, `gmpxx::mpq_class`, and `gmpxx::mpf_class`, including
+  scalar mixed arithmetic, nested expression operands, shifts, exact
+  `mpz`/`mpq`/`mpf` promotion paths, bitwise `mpz` operations, and the
+  upstream large double bitwise case assigning
+  `0x1000000000000000000000cafe`.
+- No wrapper implementation changes were needed.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-binary.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-binary.cc`
+- `mkdir -p /tmp/t-binary-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-binary.cc /tmp/t-binary-gmpxx/t-binary-gmpxx-mkII.cc`
+- Minimal source adaptation commands for the temporary GMP version.
+- `g++ -std=c++17 -Iinclude /tmp/t-binary-gmpxx/t-binary-gmpxx-mkII.cc -lgmp -o /tmp/t-binary-gmpxx/t-binary-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-binary-gmpxx/t-binary-gmpxx-mkII`
+- `cmake --build build -j --target test_mixed_type_arithmetic test_mpz_arithmetic test_mpq_arithmetic test_mpf_basic test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_mixed_type_arithmetic|test_mpz_arithmetic|test_mpq_arithmetic|test_mpf_basic|test_gmpxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `diff -u ../gmpxx_mkII/cxx/t-binary.cc /tmp/t-binary-gmpxx/t-binary-gmpxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted `t-binary` build: PASS.
+- Temporary adapted `t-binary` run: PASS.
+- `cmake --build build -j --target test_mixed_type_arithmetic test_mpz_arithmetic test_mpq_arithmetic test_mpf_basic test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_mixed_type_arithmetic|test_mpz_arithmetic|test_mpq_arithmetic|test_mpf_basic|test_gmpxx_mkII' --output-on-failure`: PASS, 5/5 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for the t-binary GMP adaptation.
+
 Post-phase upstream t-ops MPFR adaptation:
 DONE
 
