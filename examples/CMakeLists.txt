@@ -73,6 +73,18 @@ target_link_libraries(example12_mpf PRIVATE gmpxx_mkII)
 add_executable(example12_mpfr example12_mpfr.cpp)
 target_link_libraries(example12_mpfr PRIVATE mpfrxx_mkII)
 
+add_executable(example13_mpf example13_mpf.cpp)
+target_link_libraries(example13_mpf PRIVATE gmpxx_mkII)
+
+add_executable(example13_mpfr example13_mpfr.cpp)
+target_link_libraries(example13_mpfr PRIVATE mpfrxx_mkII)
+
+add_executable(example14_mpf example14_mpf.cpp)
+target_link_libraries(example14_mpf PRIVATE gmpxx_mkII)
+
+add_executable(example14_mpfr example14_mpfr.cpp)
+target_link_libraries(example14_mpfr PRIVATE mpfrxx_mkII)
+
 add_test(NAME example01 COMMAND example01)
 add_test(NAME example02_mpf COMMAND example02_mpf)
 add_test(NAME example02_mpfr COMMAND example02_mpfr)
@@ -98,3 +110,7 @@ add_test(NAME example11_mpf COMMAND example11_mpf)
 add_test(NAME example11_mpfr COMMAND example11_mpfr)
 add_test(NAME example12_mpf COMMAND example12_mpf)
 add_test(NAME example12_mpfr COMMAND example12_mpfr)
+add_test(NAME example13_mpf COMMAND example13_mpf)
+add_test(NAME example13_mpfr COMMAND example13_mpfr)
+add_test(NAME example14_mpf COMMAND example14_mpf)
+add_test(NAME example14_mpfr COMMAND example14_mpfr)

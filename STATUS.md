@@ -1990,6 +1990,92 @@ Pass/fail result:
 Known issues:
 - Full CTest was not rerun for this phase; focused example12 CTest passed.
 
+Post-phase example13 MPF/MPFR port:
+DONE
+
+Implemented features:
+- Added `examples/example13_mpf.cpp`, a `gmpxx::mpf_class` port of
+  upstream `gmpxx_mkII/examples/example13.cpp`.
+- Added `examples/example13_mpfr.cpp`, an `mpfrxx::mpfr_class` port with the
+  same SIAM 100-Digit Challenge Problem 1 contour-transformed Simpson
+  quadrature workflow and command-line options.
+- Preserved the upstream BSD-style license block and explanatory problem
+  comment.
+- Registered `example13_mpf` and `example13_mpfr` in CMake and CTest.
+- No MPFC/MPC variants were added because this port evaluates the transformed
+  real integrals directly.
+
+Tests added:
+- `example13_mpf`
+- `example13_mpfr`
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `examples/example13_mpf.cpp`
+- `examples/example13_mpfr.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,420p' ../gmpxx_mkII/examples/example13.cpp`
+- `cmake --build build -j`
+- `./build/examples/example13_mpf --digits 20 --first-panels 16 --max-panels 32 --reference-panels 64`
+- `./build/examples/example13_mpfr --digits 20 --first-panels 16 --max-panels 32 --reference-panels 64`
+- `ctest --test-dir build --output-on-failure -R "example13_mpf|example13_mpfr"`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j`: PASS.
+- Short `example13_mpf` smoke run: PASS.
+- Short `example13_mpfr` smoke run: PASS.
+- Focused example13 CTest: PASS, 2/2 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- Full CTest was not rerun for this phase; focused example13 CTest passed.
+
+Post-phase example14 MPF/MPFR port:
+DONE
+
+Implemented features:
+- Added `examples/example14_mpf.cpp`, a `gmpxx::mpf_class` port of
+  upstream `gmpxx_mkII/examples/example14.cpp`.
+- Added `examples/example14_mpfr.cpp`, an `mpfrxx::mpfr_class` port with the
+  same NaCl Madelung theta-function lattice-sum transform and command-line
+  options.
+- Preserved the upstream BSD-style license block, explanatory Madelung
+  constant comment, and the tail-correction note in the implementation.
+- Registered `example14_mpf` and `example14_mpfr` in CMake and CTest.
+- No MPFC/MPC variants were added because the theta-transform implementation
+  is real-valued.
+
+Tests added:
+- `example14_mpf`
+- `example14_mpfr`
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `examples/example14_mpf.cpp`
+- `examples/example14_mpfr.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,460p' ../gmpxx_mkII/examples/example14.cpp`
+- `cmake --build build -j`
+- `./build/examples/example14_mpf --digits 20 --first-panels 32 --max-panels 64 --reference-panels 128 --extent 6`
+- `./build/examples/example14_mpfr --digits 20 --first-panels 32 --max-panels 64 --reference-panels 128 --extent 6`
+- `ctest --test-dir build --output-on-failure -R "example14_mpf|example14_mpfr"`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j`: PASS.
+- Short `example14_mpf` smoke run: PASS.
+- Short `example14_mpfr` smoke run: PASS.
+- Focused example14 CTest: PASS, 2/2 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- Full CTest was not rerun for this phase; focused example14 CTest passed.
+
 Post-phase examples default precision cleanup:
 DONE
 
