@@ -1801,6 +1801,166 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFR Rdot benchmarks:
+DONE
+
+Implemented features:
+- Added `benchmarks/mpfr/00_Rdot` as the MPFR counterpart of
+  `benchmarks/gmp/00_Rdot`.
+- Ported the native C, native OpenMP, kernel 01-04, and kernel OpenMP 01-02
+  Rdot benchmark variants to `mpfrxx::mpfr_class`.
+- Kept the source shape close to the GMP benchmark and used
+  `using namespace mpfrxx;`.
+- Wired the MPFR Rdot benchmarks into `benchmarks/CMakeLists.txt` through
+  `mpfrxx_mkII::mpfrxx_mkII`.
+- Preserved command-line precision handling by setting both MPFR's C default
+  precision and the wrapper-owned MPFR default precision.
+
+Tests added:
+- No CTest test was added; this phase adds benchmark executables.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/mpfr/00_Rdot/*`
+- `STATUS.md`
+
+Exact commands run:
+- `find benchmarks/gmp/00_Rdot -maxdepth 1 -type f | sort`
+- `sed -n '1,220p' benchmarks/CMakeLists.txt`
+- `rg -n "set_default_precision|default_prec|default_rounding|mpfr_class\\(" include tests benchmarks -g'*.hpp' -g'*.cpp'`
+- `sed -n '1,180p' benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `sed -n '1,180p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
+- `sed -n '1,180p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp`
+- `rg -n "mpfr_class\\(.*mpfr_t|mpfr_class\\(const mpfr|operator=.*mpfr_t|get_fr_urandomb|get_fr_uniform" include tests`
+- `sed -n '1,160p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp`
+- `sed -n '1,170p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02.cpp`
+- `mkdir -p benchmarks/mpfr/00_Rdot`
+- `cp benchmarks/gmp/00_Rdot/... benchmarks/mpfr/00_Rdot/...`
+- `perl -0pi ... benchmarks/mpfr/00_Rdot/*.cpp benchmarks/mpfr/00_Rdot/Rdot.hpp`
+- `rg -n "mpf_|gmp_printf|benchmark_mpf|USE_ORIGINAL|#if|#endif|gmpxx|mpf_class|mpf_t|get_mpf|mpfr_set_default_prec" benchmarks/mpfr/00_Rdot`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target Rdot_mpfr_C_native_01 Rdot_mpfr_C_native_openmp_01 Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_01_mkII_NOPRECCHANGE Rdot_mpfr_kernel_02_mkII Rdot_mpfr_kernel_02_mkII_NOPRECCHANGE Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_03_mkII_NOPRECCHANGE Rdot_mpfr_kernel_04_mkII Rdot_mpfr_kernel_04_mkII_NOPRECCHANGE Rdot_mpfr_kernel_openmp_01_mkII Rdot_mpfr_kernel_openmp_01_mkII_NOPRECCHANGE Rdot_mpfr_kernel_openmp_02_mkII Rdot_mpfr_kernel_openmp_02_mkII_NOPRECCHANGE`
+- `for exe in build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_*; do "$exe" 12 128 | tail -n 1; done`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- MPFR Rdot benchmark target build: PASS.
+- MPFR Rdot smoke run with `N=12`, `precision=128`: PASS, all checked
+  variants reported `OK`.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- No MPFR operation-counter instrumentation was added in this phase; the
+  existing operation counter remains MPF-specific.
+
+Post-phase MPFR Rdot operation counters:
+DONE
+
+Implemented features:
+- Added `benchmarks/common/mpfr_operation_counter.hpp`, mirroring the MPF
+  benchmark counter technique.
+- The MPFR counter wraps `mpfr_init`, `mpfr_init2`, `mpfr_clear`,
+  `mpfr_add`, and `mpfr_mul` when
+  `GMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS` is enabled.
+- Added `MPFR_KERNEL_COUNTS` / `MPFR_OPERATION_COUNTS` output with
+  `init`, `init2`, `total_init`, `clear`, `add`, and `mul` fields.
+- Wired the counter into all `benchmarks/mpfr/00_Rdot` native, kernel, and
+  OpenMP variants using the same include-before-wrapper-header approach as
+  the GMP benchmark counter.
+- Added the CMake option
+  `GMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS`.
+
+Tests added:
+- No CTest test was added; this phase adds optional benchmark
+  instrumentation.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/mpfr_operation_counter.hpp`
+- `benchmarks/mpfr/00_Rdot/*`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,240p' benchmarks/common/mpf_operation_counter.hpp`
+- `sed -n '1,150p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
+- `rg -n "COUNT_MPF|mpf_operation_counter|begin_kernel|print_kernel" benchmarks`
+- `cp benchmarks/common/mpf_operation_counter.hpp benchmarks/common/mpfr_operation_counter.hpp`
+- `perl -0pi ... benchmarks/common/mpfr_operation_counter.hpp`
+- `sed -n '1,230p' benchmarks/common/mpfr_operation_counter.hpp`
+- `perl -0pi ... benchmarks/mpfr/00_Rdot/*.cpp`
+- `rg -n "mpfr_operation_counter|begin_kernel|print_kernel|auto start|auto end" benchmarks/mpfr/00_Rdot/*.cpp`
+- `cmake -S . -B build_mpfr_ops_count -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS=ON`
+- `cmake --build build_mpfr_ops_count -j --target Rdot_mpfr_C_native_01 Rdot_mpfr_C_native_openmp_01 Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_02_mkII Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_04_mkII Rdot_mpfr_kernel_openmp_01_mkII Rdot_mpfr_kernel_openmp_02_mkII`
+- `for exe in build_mpfr_ops_count/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 build_mpfr_ops_count/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII build_mpfr_ops_count/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII build_mpfr_ops_count/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII build_mpfr_ops_count/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII; do "$exe" 12 128 | rg "MPFR_KERNEL_COUNTS|DIFF"; done`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target Rdot_mpfr_C_native_01 Rdot_mpfr_C_native_openmp_01 Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_02_mkII Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_04_mkII Rdot_mpfr_kernel_openmp_01_mkII Rdot_mpfr_kernel_openmp_02_mkII`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Counter-enabled MPFR Rdot target build: PASS.
+- Counter-enabled smoke run with `N=12`, `precision=128`: PASS; sampled
+  variants emitted `MPFR_KERNEL_COUNTS` and reported `DIFF ... OK`.
+- Normal MPFR Rdot target build: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- The MPFR counter currently covers Rdot benchmark instrumentation only; other
+  MPFR benchmark families can opt in when they are added.
+
+Post-phase MPFR compound assignment temporary reduction:
+DONE
+
+Implemented features:
+- Added `mpfr_compound_assign`, mirroring the MPF compound-assignment fast
+  path.
+- `mpfr_class::operator+=`, `operator-=`, `operator*=`, and `operator/=`
+  now evaluate compound assignment directly instead of materializing
+  `lhs op rhs` through ordinary assignment.
+- Direct `mpfr_class` RHS operands are applied without an MPFR temporary.
+- Expression RHS operands are evaluated into a single destination-precision
+  temporary before applying the compound operation.
+- This reduces MPFR Rdot benchmark kernel counts:
+  - `Rdot_mpfr_kernel_01_mkII 100 512`: `init2` from 201 to 101.
+  - `Rdot_mpfr_kernel_02_mkII 100 512`: `init2` from 301 to 101.
+  - `Rdot_mpfr_kernel_03_mkII 100 512`: `init2` from 202 to 2.
+  - `Rdot_mpfr_kernel_04_mkII 100 512`: `init2` from 402 to 2.
+
+Tests added:
+- Added MPFR compound-assignment expression RHS regression coverage for
+  `a += b * c`, `a -= b * c`, `a *= b * c`, and `a /= b * c`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/test_mpfr_compound_assign.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "operator\\+=|operator\\*=|mpfr_evaluate|evaluate_binary|compound|assign" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/expr.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '360,620p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '360,640p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1560,1825p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1620,1715p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '2040,2165p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `cmake --build build_mpfr_ops_count -j --target Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_02_mkII Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_04_mkII test_mpfr_compound_assign test_mpfr_numeric_equivalence`
+- `for exe in Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_02_mkII Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_04_mkII; do echo "$exe"; ./build_mpfr_ops_count/benchmarks/mpfr/00_Rdot/$exe 100 512 | rg "MPFR_KERNEL_COUNTS|DIFF"; done`
+- `sed -n '1,230p' tests/test_mpfr_compound_assign.cpp`
+- `cmake --build build -j --target test_mpfr_compound_assign test_mpfr_numeric_equivalence Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_02_mkII Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_04_mkII`
+- `ctest --test-dir build -R 'test_mpfr_compound_assign|test_mpfr_numeric_equivalence' --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Counter-enabled MPFR Rdot target build: PASS.
+- Counter-enabled MPFR Rdot measurement: PASS, all four sampled variants
+  reported `DIFF ... OK`.
+- Focused tests: PASS, 2/2 tests passed.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- `kernel_01` and `kernel_02` still allocate one temporary per loop for the
+  `dx[i] * dy[i]` expression RHS. The manual compound style used by
+  `kernel_03` and `kernel_04` is now reduced to two timed-kernel
+  initializations.
+
 Post-phase benchmark MPF counter rename:
 DONE
 

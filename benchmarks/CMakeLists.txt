@@ -29,6 +29,9 @@ find_library(BENCHMARK_GMPXX_LIBRARY NAMES gmpxx)
 option(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS
     "Count mpf_init, mpf_clear, and selected mpf arithmetic calls in instrumented GMP benchmarks"
     OFF)
+option(GMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS
+    "Count mpfr_init, mpfr_init2, mpfr_clear, mpfr_add, and mpfr_mul calls in instrumented MPFR benchmarks"
+    OFF)
 
 if(NOT BENCHMARK_GMPXX_LIBRARY)
     message(WARNING "libgmpxx was not found; upstream gmpxx.h orig benchmark variants will not be built")
@@ -46,6 +49,10 @@ function(configure_eager_benchmark target subdir)
     if(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS)
         target_compile_definitions(${target} PRIVATE
             GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS)
+    endif()
+    if(GMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS)
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS)
     endif()
 endfunction()
 
@@ -82,6 +89,27 @@ function(add_native_benchmark subdir source target)
     target_link_libraries(${target} PRIVATE gmpxx_mkII::gmpxx_mkII GMP::GMP)
 endfunction()
 
+function(add_mpfr_mkii_variant subdir source base suffix)
+    set(target "${base}_${suffix}")
+    add_executable(${target} "${subdir}/${source}")
+    configure_eager_benchmark(${target} ${subdir})
+    target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
+    if(suffix STREQUAL "mkII_NOPRECCHANGE")
+        target_compile_definitions(${target} PRIVATE GMPXX_MKII_NOPRECCHANGE)
+    endif()
+endfunction()
+
+function(add_mpfr_kernel_variants subdir source base)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_NOPRECCHANGE)
+endfunction()
+
+function(add_mpfr_native_benchmark subdir source target)
+    add_executable(${target} "${subdir}/${source}")
+    configure_eager_benchmark(${target} ${subdir})
+    target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
+endfunction()
+
 add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_01.cpp
     Rdot_gmp_C_native_01)
 add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_01.cpp
@@ -94,6 +122,23 @@ add_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_01.cpp
     Rdot_gmp_kernel_openmp_01)
 add_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_02.cpp
     Rdot_gmp_kernel_openmp_02)
+
+add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_01.cpp
+    Rdot_mpfr_C_native_01)
+add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_01.cpp
+    Rdot_mpfr_C_native_openmp_01)
+add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01.cpp
+    Rdot_mpfr_kernel_01)
+add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_02.cpp
+    Rdot_mpfr_kernel_02)
+add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_03.cpp
+    Rdot_mpfr_kernel_03)
+add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_04.cpp
+    Rdot_mpfr_kernel_04)
+add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
+    Rdot_mpfr_kernel_openmp_01)
+add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_02.cpp
+    Rdot_mpfr_kernel_openmp_02)
 
 add_native_benchmark(gmp/01_Raxpy Raxpy_gmp_C_native_01.cpp
     Raxpy_gmp_C_native_01)

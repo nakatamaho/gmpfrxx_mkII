@@ -1912,6 +1912,30 @@ auto operator>>(Lhs&& lhs, Bits bits)
         std::move(left), std::move(right));
 }
 
+template <typename Op, typename Rhs>
+void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
+{
+    auto operand = make_mpfr_operand(std::forward<Rhs>(rhs));
+    using operand_type = std::decay_t<decltype(operand)>;
+
+    const mpfr_prec_t precision = lhs.precision();
+    const auto context = current_eval_context(precision);
+    const mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+
+    if constexpr (std::is_same_v<operand_type, object_leaf<mpfrxx::mpfr_class>>) {
+        mpfr_apply_binary<Op>(
+            lhs.mpfr_data(),
+            lhs.mpfr_data(),
+            operand.get().mpfr_data(),
+            context.rounding_mode);
+    } else {
+        mpfr_t value;
+        mpfr_evaluate_to_temporary(value, operand, precision, context.rounding_mode);
+        mpfr_apply_binary<Op>(lhs.mpfr_data(), lhs.mpfr_data(), value, context.rounding_mode);
+        mpfr_clear(value);
+    }
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -2127,28 +2151,28 @@ inline gmpxx::mpq_class& operator/=(gmpxx::mpq_class& lhs, Rhs&& rhs)
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
 inline mpfr_class& operator+=(mpfr_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs + std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpfr_compound_assign<gmpfrxx_mkII::detail::add_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
 inline mpfr_class& operator-=(mpfr_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs - std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpfr_compound_assign<gmpfrxx_mkII::detail::sub_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
 inline mpfr_class& operator*=(mpfr_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs * std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpfr_compound_assign<gmpfrxx_mkII::detail::mul_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
 inline mpfr_class& operator/=(mpfr_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs / std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpfr_compound_assign<gmpfrxx_mkII::detail::div_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 

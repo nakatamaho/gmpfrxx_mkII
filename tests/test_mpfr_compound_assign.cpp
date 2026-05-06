@@ -122,6 +122,55 @@ void check_self_alias_and_expression_rhs()
     mpfr_clear(rhs);
 }
 
+void check_compound_assignment_expression_fast_path()
+{
+    const mpfr_rnd_t rnd = mpfrxx::mpfr_class::default_rounding();
+    const mpfr_prec_t precision = 256;
+    const mpfrxx::mpfr_class b("1.25", 384);
+    const mpfrxx::mpfr_class c("2.5", 512);
+
+    mpfr_t product;
+    mpfr_t ref;
+    mpfr_init2(product, precision);
+    mpfr_init2(ref, precision);
+    mpfr_mul(product, b.mpfr_data(), c.mpfr_data(), rnd);
+
+    {
+        mpfrxx::mpfr_class a("7.5", precision);
+        mpfr_set(ref, a.mpfr_data(), rnd);
+        mpfr_add(ref, ref, product, rnd);
+        a += b * c;
+        assert_equal(a, ref, precision);
+    }
+
+    {
+        mpfrxx::mpfr_class a("7.5", precision);
+        mpfr_set(ref, a.mpfr_data(), rnd);
+        mpfr_sub(ref, ref, product, rnd);
+        a -= b * c;
+        assert_equal(a, ref, precision);
+    }
+
+    {
+        mpfrxx::mpfr_class a("7.5", precision);
+        mpfr_set(ref, a.mpfr_data(), rnd);
+        mpfr_mul(ref, ref, product, rnd);
+        a *= b * c;
+        assert_equal(a, ref, precision);
+    }
+
+    {
+        mpfrxx::mpfr_class a("7.5", precision);
+        mpfr_set(ref, a.mpfr_data(), rnd);
+        mpfr_div(ref, ref, product, rnd);
+        a /= b * c;
+        assert_equal(a, ref, precision);
+    }
+
+    mpfr_clear(ref);
+    mpfr_clear(product);
+}
+
 void check_exact_lhs_mpfr_rhs()
 {
     mpfrxx::mpfr_class implicit = 3.375;
@@ -166,6 +215,7 @@ int main()
     check_rhs('*', 0);
     check_exact_rhs();
     check_self_alias_and_expression_rhs();
+    check_compound_assignment_expression_fast_path();
     check_exact_lhs_mpfr_rhs();
     return 0;
 }
