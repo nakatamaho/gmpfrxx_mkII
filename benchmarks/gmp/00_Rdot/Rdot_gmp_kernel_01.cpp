@@ -36,9 +36,7 @@
 #include <gmpxx.h>
 #else
 #include "gmpxx_mkII.h"
-#if !defined ___GMPXX_STRICT_COMPATIBILITY___
 using namespace gmpxx;
-#endif
 #endif
 
 #include "Rdot.hpp"

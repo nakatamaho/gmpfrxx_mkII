@@ -1801,6 +1801,46 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase benchmark strict-compatibility guard cleanup:
+DONE
+
+Implemented features:
+- Removed benchmark-only `#if !defined ___GMPXX_STRICT_COMPATIBILITY___`
+  guards around `using namespace gmpxx;`.
+- Kept the benchmark source behavior unchanged for the local
+  `gmpxx_mkII.h` path: `using namespace gmpxx;` is now unconditional when
+  `ORIGINAL_GMPXX` is not selected.
+
+Tests added:
+- None; this is a benchmark source compatibility cleanup.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/*.cpp`
+- `benchmarks/gmp/01_Raxpy/*.cpp`
+- `benchmarks/gmp/02_Rgemv/*.cpp`
+- `benchmarks/gmp/03_Rgemm/*.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `perl -0pi -e 's/#if !defined ___GMPXX_STRICT_COMPATIBILITY___\\nusing namespace gmpxx;\\n#endif/using namespace gmpxx;/g' benchmarks/gmp/00_Rdot/*.cpp benchmarks/gmp/01_Raxpy/*.cpp benchmarks/gmp/02_Rgemv/*.cpp benchmarks/gmp/03_Rgemm/*.cpp`
+- `rg -n "___GMPXX_STRICT_COMPATIBILITY___" benchmarks`
+- `rg -n "#include \\"gmpxx_mkII.h\\"|using namespace gmpxx;" benchmarks/gmp -g '*.cpp'`
+- `git diff -- benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_03.cpp`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Guard removal command: PASS.
+- Residual `___GMPXX_STRICT_COMPATIBILITY___` scan: PASS, no matches.
+- Representative diff check: PASS.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- None.
+
 Post-phase benchmark helper layout cleanup:
 DONE
 
