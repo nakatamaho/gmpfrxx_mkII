@@ -120,6 +120,28 @@ void check_self_alias_and_expression_rhs()
     mpf_clear(rhs);
 }
 
+void check_zq_lhs_mpf_rhs()
+{
+    gmpxx::mpf_class f("13.0", 256);
+    gmpxx::mpz_class z = 18;
+    gmpxx::mpq_class q(7, 2);
+
+    assert((z += f) == 31);
+    assert((z -= f) == 18);
+    assert((z *= f) == 234);
+    assert((z /= f) == 18);
+
+    assert((q += f) == gmpxx::mpq_class(33, 2));
+    assert((q -= f) == gmpxx::mpq_class(7, 2));
+    assert((q *= f) == gmpxx::mpq_class(91, 2));
+    assert((q /= f) == gmpxx::mpq_class(7, 2));
+
+    assert((z += -f) == 5);
+    assert((z -= -f) == 18);
+    assert((q += -f) == gmpxx::mpq_class(-19, 2));
+    assert((q -= -f) == gmpxx::mpq_class(7, 2));
+}
+
 } // namespace
 
 int main()
@@ -137,5 +159,6 @@ int main()
     check_rhs('*', 0);
     check_exact_rhs();
     check_self_alias_and_expression_rhs();
+    check_zq_lhs_mpf_rhs();
     return 0;
 }

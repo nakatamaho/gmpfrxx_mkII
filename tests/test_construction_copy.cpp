@@ -52,14 +52,22 @@ void test_compile_time_surface()
     static_assert(std::is_default_constructible_v<gmpxx::mpf_class>);
     static_assert(std::is_copy_constructible_v<gmpxx::mpf_class>);
     static_assert(std::is_move_constructible_v<gmpxx::mpf_class>);
-    static_assert(std::is_nothrow_move_constructible_v<gmpxx::mpf_class>);
+    static_assert(!std::is_nothrow_move_constructible_v<gmpxx::mpf_class>);
     static_assert(std::is_copy_assignable_v<gmpxx::mpf_class>);
     static_assert(std::is_move_assignable_v<gmpxx::mpf_class>);
     static_assert(noexcept(std::declval<gmpxx::mpf_class&>() = std::declval<gmpxx::mpf_class&&>()));
     static_assert(std::is_constructible_v<gmpxx::mpf_class, double>);
+    static_assert(std::is_convertible_v<double, gmpxx::mpf_class>);
     static_assert(std::is_constructible_v<gmpxx::mpf_class, double, mp_bitcnt_t>);
     static_assert(std::is_constructible_v<gmpxx::mpf_class, int>);
+    static_assert(std::is_convertible_v<int, gmpxx::mpf_class>);
     static_assert(std::is_constructible_v<gmpxx::mpf_class, int, mp_bitcnt_t>);
+    static_assert(std::is_convertible_v<gmpxx::mpz_class, gmpxx::mpf_class>);
+    static_assert(std::is_convertible_v<gmpxx::mpq_class, gmpxx::mpf_class>);
+    using neg_mpz_expr = decltype(-std::declval<const gmpxx::mpz_class&>());
+    using neg_mpq_expr = decltype(-std::declval<const gmpxx::mpq_class&>());
+    static_assert(std::is_convertible_v<neg_mpz_expr, gmpxx::mpf_class>);
+    static_assert(std::is_convertible_v<neg_mpq_expr, gmpxx::mpf_class>);
     static_assert(std::is_constructible_v<gmpxx::mpf_class, long long, mp_bitcnt_t>);
     static_assert(std::is_constructible_v<gmpxx::mpf_class, std::uint64_t, mp_bitcnt_t>);
     static_assert(std::is_constructible_v<gmpxx::mpf_class, const char*, mp_bitcnt_t>);
@@ -71,6 +79,7 @@ void test_compile_time_surface()
     static_assert(!std::is_constructible_v<gmpxx::mpf_class, bool, mp_bitcnt_t>);
 
     static_assert(std::is_default_constructible_v<gmpxx::mpz_class>);
+    static_assert(std::is_nothrow_default_constructible_v<gmpxx::mpz_class>);
     static_assert(std::is_copy_constructible_v<gmpxx::mpz_class>);
     static_assert(std::is_nothrow_move_constructible_v<gmpxx::mpz_class>);
     static_assert(std::is_copy_assignable_v<gmpxx::mpz_class>);
@@ -81,10 +90,11 @@ void test_compile_time_surface()
 
     static_assert(std::is_default_constructible_v<gmpxx::mpq_class>);
     static_assert(std::is_copy_constructible_v<gmpxx::mpq_class>);
-    static_assert(std::is_nothrow_move_constructible_v<gmpxx::mpq_class>);
+    static_assert(!std::is_nothrow_move_constructible_v<gmpxx::mpq_class>);
     static_assert(std::is_copy_assignable_v<gmpxx::mpq_class>);
     static_assert(std::is_move_assignable_v<gmpxx::mpq_class>);
     static_assert(noexcept(std::declval<gmpxx::mpq_class&>() = std::declval<gmpxx::mpq_class&&>()));
+    static_assert(noexcept(std::declval<gmpxx::mpq_class&>() = std::declval<gmpxx::mpz_class&&>()));
     static_assert(std::is_constructible_v<gmpxx::mpq_class, int>);
     static_assert(std::is_constructible_v<gmpxx::mpq_class, int, int>);
     static_assert(!std::is_constructible_v<gmpxx::mpq_class, bool>);
@@ -158,6 +168,22 @@ void test_integral_constructor_with_explicit_precision()
     mpf_set_z(unsigned_expected.mpf_data(), large_z.mpz_data());
     assert(unsigned_value.precision() == unsigned_expected.precision());
     assert_mpf_equal(unsigned_value, unsigned_expected);
+}
+
+void test_zq_mpf_implicit_conversions()
+{
+    gmpxx::mpz_class z = 42;
+    gmpxx::mpq_class q(33, 2);
+
+    gmpxx::mpf_class from_z = z;
+    gmpxx::mpf_class from_q = q;
+    gmpxx::mpf_class from_neg_z = -z;
+    gmpxx::mpf_class from_neg_q = -q;
+
+    assert_mpf_equal(from_z, gmpxx::mpf_class(42));
+    assert_mpf_equal(from_q, gmpxx::mpf_class(gmpxx::mpq_class(33, 2)));
+    assert_mpf_equal(from_neg_z, gmpxx::mpf_class(-42));
+    assert_mpf_equal(from_neg_q, gmpxx::mpf_class(gmpxx::mpq_class(-33, 2)));
 }
 
 void test_expression_constructor_with_explicit_precision()
@@ -560,6 +586,7 @@ int main()
     test_bare_integral_constructor_is_value_not_precision();
     test_zero_with_explicit_precision_replaces_precision_only_ctor();
     test_integral_constructor_with_explicit_precision();
+    test_zq_mpf_implicit_conversions();
     test_expression_constructor_with_explicit_precision();
     test_raw_mpf_t_constructor();
     test_copy_and_move();

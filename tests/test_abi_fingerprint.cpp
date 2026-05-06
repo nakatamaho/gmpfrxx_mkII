@@ -197,9 +197,12 @@ void compile_time_fingerprint()
     static_assert(!is_expression_node_v<gmpxx::mpf_class>);
     static_assert(!is_expression_node_v<int>);
 
-    static_assert(!std::numeric_limits<gmpxx::mpz_class>::is_specialized);
-    static_assert(!std::numeric_limits<gmpxx::mpq_class>::is_specialized);
-    static_assert(!std::numeric_limits<gmpxx::mpf_class>::is_specialized);
+    static_assert(std::numeric_limits<gmpxx::mpz_class>::is_specialized);
+    static_assert(std::numeric_limits<gmpxx::mpz_class>::is_integer);
+    static_assert(std::numeric_limits<gmpxx::mpq_class>::is_specialized);
+    static_assert(!std::numeric_limits<gmpxx::mpq_class>::is_integer);
+    static_assert(std::numeric_limits<gmpxx::mpf_class>::is_specialized);
+    static_assert(!std::numeric_limits<gmpxx::mpf_class>::is_integer);
     static_assert(!std::numeric_limits<mpfrxx::mpfr_class>::is_specialized);
     static_assert(!std::numeric_limits<mpfrxx::mpc_class>::is_specialized);
     static_assert(!std::numeric_limits<gmpxx::mpfc_class>::is_specialized);

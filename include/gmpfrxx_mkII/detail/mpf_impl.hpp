@@ -115,13 +115,13 @@ public:
         mpf_set(value_, other.value_);
     }
 
-    mpf_class(mpf_class&& other) noexcept
+    mpf_class(mpf_class&& other)
     {
         mpf_init2(value_, other.precision());
         mpf_swap(value_, other.value_);
     }
 
-    explicit mpf_class(double value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    mpf_class(double value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
     {
         mpf_set_d(value_, value);
     }
@@ -137,7 +137,7 @@ public:
     template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
                                                       !std::is_same_v<std::remove_cv_t<T>, bool> &&
                                                       (sizeof(T) <= sizeof(std::uint64_t))>>
-    explicit mpf_class(T value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    mpf_class(T value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
     {
         set_integral(value);
     }
@@ -156,12 +156,12 @@ public:
         mpf_set(value_, value);
     }
 
-    explicit mpf_class(const mpz_class& value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    mpf_class(const mpz_class& value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
     {
         mpf_set_z(value_, value.mpz_data());
     }
 
-    explicit mpf_class(const mpq_class& value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    mpf_class(const mpq_class& value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
     {
         mpf_set_q(value_, value.mpq_data());
     }
@@ -211,6 +211,23 @@ public:
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
                                     std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
     mpf_class(const Expr& expr);
+
+    template <
+        typename Expr,
+        std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                             (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class> ||
+                              std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>),
+                         int> = 0>
+    mpf_class(const Expr& expr) : mpf_class(precision_tag{}, default_mpf_precision_bits())
+    {
+        using result_type = typename std::decay_t<Expr>::result_type;
+        result_type value(expr);
+        if constexpr (std::is_same_v<result_type, mpz_class>) {
+            mpf_set_z(value_, value.mpz_data());
+        } else {
+            mpf_set_q(value_, value.mpq_data());
+        }
+    }
 
     template <
         typename Expr,
@@ -597,6 +614,16 @@ struct common_type<gmpxx::mpf_class, gmpxx::mpf_class> {
     GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, double)
 
 GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(gmpxx::mpf_class);
+
+template <>
+struct numeric_limits<gmpxx::mpf_class> {
+    static constexpr bool is_specialized = true;
+    static constexpr bool is_signed = true;
+    static constexpr bool is_integer = false;
+    static constexpr bool is_exact = false;
+    static constexpr bool is_bounded = false;
+    static constexpr bool is_modulo = false;
+};
 
 #undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES
 #undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE
@@ -1744,6 +1771,94 @@ inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
     return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) >= 0;
 }
 
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<std::decay_t<Rhs>>,
+                           int> = 0>
+inline mpz_class& operator+=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = mpf_class(lhs + std::forward<Rhs>(rhs));
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<std::decay_t<Rhs>>,
+                           int> = 0>
+inline mpz_class& operator-=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = mpf_class(lhs - std::forward<Rhs>(rhs));
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<std::decay_t<Rhs>>,
+                           int> = 0>
+inline mpz_class& operator*=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = mpf_class(lhs * std::forward<Rhs>(rhs));
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<std::decay_t<Rhs>>,
+                           int> = 0>
+inline mpz_class& operator/=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = mpf_class(lhs / std::forward<Rhs>(rhs));
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<std::decay_t<Rhs>>,
+                           int> = 0>
+inline mpq_class& operator+=(mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = mpf_class(lhs + std::forward<Rhs>(rhs));
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<std::decay_t<Rhs>>,
+                           int> = 0>
+inline mpq_class& operator-=(mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = mpf_class(lhs - std::forward<Rhs>(rhs));
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<std::decay_t<Rhs>>,
+                           int> = 0>
+inline mpq_class& operator*=(mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = mpf_class(lhs * std::forward<Rhs>(rhs));
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs> &&
+                               !gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<std::decay_t<Rhs>>,
+                           int> = 0>
+inline mpq_class& operator/=(mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = mpf_class(lhs / std::forward<Rhs>(rhs));
+    return lhs;
+}
+
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpf_expression_operand_v<Rhs>, int> = 0>
 inline mpf_class& operator+=(mpf_class& lhs, Rhs&& rhs)
 {
@@ -1854,6 +1969,8 @@ inline mpf_class operator"" _mpf(const char* value, std::size_t)
 }
 
 } // namespace literals
+
+using literals::operator"" _mpf;
 
 } // namespace gmpxx
 

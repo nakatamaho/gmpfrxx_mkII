@@ -142,6 +142,19 @@ void test_string_literals_use_auto_base_for_exact_types()
     assert(raw == gmpxx::mpz_class(std::int64_t{123}));
 }
 
+void test_gmpxx_namespace_exposes_literals()
+{
+    using namespace gmpxx;
+
+    mpz_class z = 123_mpz;
+    mpq_class q = -11_mpq;
+    mpf_class f = 112.5e-1_mpf;
+
+    assert(z == mpz_class(std::int64_t{123}));
+    assert(q == mpq_class(std::int64_t{-11}));
+    assert_mpf_equal(f, mpf_class("11.25", f.get_prec()));
+}
+
 } // namespace
 
 int main()
@@ -151,6 +164,7 @@ int main()
     test_mpf_literals();
     test_mpfc_imaginary_literals();
     test_string_literals_use_auto_base_for_exact_types();
+    test_gmpxx_namespace_exposes_literals();
 
     return 0;
 }

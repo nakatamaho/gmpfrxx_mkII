@@ -1801,6 +1801,798 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase upstream t-unary GMP adaptation:
+DONE
+
+Implemented features:
+- Checked the upstream `gmpxx_mkII/cxx/t-unary.cc` unary-expression test
+  against this repository's `gmpxx_mkII.h`.
+- Covered upstream unary cases for `mpz_class`, `mpq_class`, and
+  `mpf_class`, including unary plus, unary minus, nested unary minus, and
+  `mpz_class` bitwise complement.
+- No production-code changes were required.
+
+Tests added:
+- No permanent test file was added in this phase; the upstream test was
+  compiled and executed as a temporary minimal-adaptation source.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-unary.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-unary.cc`
+- `mkdir -p /tmp/t-unary-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-unary.cc /tmp/t-unary-gmpxx/t-unary-gmpxx-mkII.cc`
+- `g++ -std=c++17 -Iinclude /tmp/t-unary-gmpxx/t-unary-gmpxx-mkII.cc -lgmp -o /tmp/t-unary-gmpxx/t-unary-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-unary.cc /tmp/t-unary-gmpxx/t-unary-gmpxx-mkII.cc`
+- `/tmp/t-unary-gmpxx/t-unary-gmpxx-mkII`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial temporary compile without `using namespace gmpxx;`: FAIL, because
+  this repository exposes GMP classes in namespace `gmpxx`.
+- Temporary `t-unary-gmpxx-mkII.cc` compile after namespace adaptation: PASS.
+- Temporary `t-unary-gmpxx-mkII` execution: PASS.
+- Minimal adaptation diff: add `using namespace gmpxx;`.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- None.
+
+Post-phase upstream t-ternary GMP adaptation:
+DONE
+
+Implemented features:
+- Checked the upstream `gmpxx_mkII/cxx/t-ternary.cc` ternary-expression
+  test against this repository's `gmpxx_mkII.h`.
+- No production-code changes were required. The upstream file only contains
+  active assertions for `mpz_class`; `check_mpq()` and `check_mpf()` remain
+  empty upstream because there is no ternary MPQ/MPF operation in that test.
+
+Tests added:
+- No permanent test file was added in this phase; the upstream test was
+  compiled and executed as a temporary minimal-adaptation source.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-ternary.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-ternary.cc`
+- `sed -n '621,980p' ../gmpxx_mkII/cxx/t-ternary.cc`
+- `mkdir -p /tmp/t-ternary-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-ternary.cc /tmp/t-ternary-gmpxx/t-ternary-gmpxx-mkII.cc`
+- `g++ -std=c++17 -Iinclude /tmp/t-ternary-gmpxx/t-ternary-gmpxx-mkII.cc -lgmp -o /tmp/t-ternary-gmpxx/t-ternary-gmpxx-mkII`
+- `/tmp/t-ternary-gmpxx/t-ternary-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-ternary.cc /tmp/t-ternary-gmpxx/t-ternary-gmpxx-mkII.cc`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Temporary `t-ternary-gmpxx-mkII.cc` compile: PASS.
+- Temporary `t-ternary-gmpxx-mkII` execution: PASS.
+- Minimal adaptation diff: harness-only include/assert/namespace changes.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- None.
+
+Post-phase upstream t-misc GMP adaptation:
+DONE
+
+Implemented features:
+- Added GMP-side `std::numeric_limits` specializations for
+  `gmpxx::mpz_class`, `gmpxx::mpq_class`, and `gmpxx::mpf_class`.
+- Kept the specialization intentionally narrow: `mpz_class` reports
+  `is_integer == true`; `mpq_class` and `mpf_class` report
+  `is_integer == false`.
+- Left MPFR/MPC and MPFC `std::numeric_limits` unspecialized for the current
+  public policy.
+- Verified upstream `gmpxx_mkII/cxx/t-misc.cc` against this repo's
+  `gmpxx_mkII.h` with minimal harness edits.
+
+Tests added:
+- None.
+
+Tests updated:
+- Updated `tests/test_abi_fingerprint.cpp` to reflect the GMP
+  `std::numeric_limits` public API policy.
+
+Exact commands run:
+- `sed -n '1,280p' ../gmpxx_mkII/cxx/t-misc.cc`
+- `sed -n '281,700p' ../gmpxx_mkII/cxx/t-misc.cc`
+- `rg -n "numeric_limits|set_prec_raw|fits_sint_p|default_mpf_precision|mpf_get_default_prec" include tests STATUS.md`
+- `sed -n '180,215p' tests/test_abi_fingerprint.cpp`
+- `rg -n "namespace std|common_type" include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1190,1262p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '536,610p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `g++ -std=c++17 -Iinclude /tmp/t-misc-gmpxx/t-misc-gmpxx-mkII.cc -lgmp -o /tmp/t-misc-gmpxx/t-misc-gmpxx-mkII`
+- `/tmp/t-misc-gmpxx/t-misc-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-misc.cc /tmp/t-misc-gmpxx/t-misc-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_abi_fingerprint test_type_conversions test_mpf_precision_policy`
+- `ctest --test-dir build --output-on-failure -R "test_abi_fingerprint|test_type_conversions|test_mpf_precision_policy"`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Minimal adapted upstream `t-misc.cc`: PASS.
+- `cmake --build build -j --target test_abi_fingerprint test_type_conversions test_mpf_precision_policy`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_abi_fingerprint|test_type_conversions|test_mpf_precision_policy"`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- The upstream `t-misc.cc` assertion `f.get_prec() == mpf_get_default_prec()`
+  is intentionally adapted to
+  `f.get_prec() == gmpxx::default_mpf_precision_bits()`. This repo's MPF
+  policy uses wrapper-owned default precision and does not call or mirror
+  GMP's process-global `mpf_set_default_prec()` state.
+
+Post-phase upstream t-mix GMP adaptation:
+DONE
+
+Implemented features:
+- Made `gmpxx::mpf_class` construction from `gmpxx::mpz_class` and
+  `gmpxx::mpq_class` implicit, matching upstream mixed conversion behavior
+  used by `t-mix.cc`.
+- Added `mpf_class` materialization from `mpz_class`/`mpq_class` expression
+  nodes, so expressions such as `mpf_class(-z)` and implicit function
+  argument conversion from `-z`/`-q` work without making arithmetic eager.
+- Verified upstream `gmpxx_mkII/cxx/t-mix.cc` against this repo's
+  `gmpxx_mkII.h` with minimal harness edits.
+
+Tests added:
+- Added construction-copy coverage for implicit `mpz_class`/`mpq_class` to
+  `mpf_class` conversion.
+- Added expression-node conversion coverage for unary `mpz_class` and
+  `mpq_class` expressions materialized as `mpf_class`.
+
+Tests updated:
+- `tests/test_construction_copy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-mix.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-mix.cc`
+- `g++ -std=c++17 -Iinclude /tmp/t-mix-gmpxx/t-mix-gmpxx-mkII.cc -lgmp -o /tmp/t-mix-gmpxx/t-mix-gmpxx-mkII`
+- `/tmp/t-mix-gmpxx/t-mix-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-mix.cc /tmp/t-mix-gmpxx/t-mix-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_construction_copy test_mixed_type_arithmetic test_gmpxx_mkII`
+- `ctest --test-dir build --output-on-failure -R "test_construction_copy|test_mixed_type_arithmetic|test_gmpxx_mkII"`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Initial minimal adapted upstream `t-mix.cc`: FAIL before repo fix because
+  `mpz_class`/`mpq_class` and their unary expression nodes did not implicitly
+  convert to `mpf_class`.
+- Minimal adapted upstream `t-mix.cc`: PASS after repo fix.
+- `cmake --build build -j --target test_construction_copy test_mixed_type_arithmetic test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_construction_copy|test_mixed_type_arithmetic|test_gmpxx_mkII"`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+Post-phase upstream t-ops GMP adaptation:
+DONE
+
+Implemented features:
+- Verified upstream `gmpxx_mkII/cxx/t-ops.cc` against this repo's
+  `gmpxx_mkII.h`.
+- No implementation changes were required for the upstream operator/function
+  cases in `t-ops.cc`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-ops.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-ops.cc`
+- `sed -n '621,1040p' ../gmpxx_mkII/cxx/t-ops.cc`
+- `g++ -std=c++17 -Iinclude /tmp/t-ops-gmpxx/t-ops-gmpxx-mkII.cc -lgmp -o /tmp/t-ops-gmpxx/t-ops-gmpxx-mkII`
+- `/tmp/t-ops-gmpxx/t-ops-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-ops.cc /tmp/t-ops-gmpxx/t-ops-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_mpz_arithmetic test_mpq_arithmetic test_mpf_basic test_mixed_type_arithmetic test_gmpxx_mkII`
+- `ctest --test-dir build --output-on-failure -R "test_mpz_arithmetic|test_mpq_arithmetic|test_mpf_basic|test_mixed_type_arithmetic|test_gmpxx_mkII"`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Minimal adapted upstream `t-ops.cc`: PASS.
+- `cmake --build build -j --target test_mpz_arithmetic test_mpq_arithmetic test_mpf_basic test_mixed_type_arithmetic test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_mpz_arithmetic|test_mpq_arithmetic|test_mpf_basic|test_mixed_type_arithmetic|test_gmpxx_mkII"`: PASS, 5/5 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- None.
+
+Post-phase upstream t-ops2f GMP adaptation:
+DONE
+
+Implemented features:
+- Verified upstream `gmpxx_mkII/cxx/t-ops2f.cc` against this repo's
+  `gmpxx_mkII.h`.
+- No implementation changes were required for the upstream MPF mixed
+  operator/function cases in `t-ops2f.cc`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-ops2f.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-ops2f.cc`
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-ops2.h`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-ops2.h`
+- `g++ -std=c++17 -Iinclude -I/tmp/t-ops2f-gmpxx /tmp/t-ops2f-gmpxx/t-ops2f-gmpxx-mkII.cc -lgmp -o /tmp/t-ops2f-gmpxx/t-ops2f-gmpxx-mkII`
+- `/tmp/t-ops2f-gmpxx/t-ops2f-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-ops2f.cc /tmp/t-ops2f-gmpxx/t-ops2f-gmpxx-mkII.cc`
+- `diff -u ../gmpxx_mkII/cxx/t-ops2.h /tmp/t-ops2f-gmpxx/t-ops2.h`
+- `cmake --build build -j --target test_mpf_basic test_mixed_type_arithmetic test_mixed_zq_mpf_promotion test_gmpxx_mkII`
+- `ctest --test-dir build --output-on-failure -R "test_mpf_basic|test_mixed_type_arithmetic|test_mixed_zq_mpf_promotion|test_gmpxx_mkII"`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Minimal adapted upstream `t-ops2f.cc`: PASS.
+- `diff -u ../gmpxx_mkII/cxx/t-ops2f.cc /tmp/t-ops2f-gmpxx/t-ops2f-gmpxx-mkII.cc`: PASS, no direct source diff.
+- `cmake --build build -j --target test_mpf_basic test_mixed_type_arithmetic test_mixed_zq_mpf_promotion test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_mpf_basic|test_mixed_type_arithmetic|test_mixed_zq_mpf_promotion|test_gmpxx_mkII"`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- The only minimal adaptation is in shared `t-ops2.h`: replace upstream
+  local harness includes with `<gmpxx_mkII.h>`, `<cassert>`, `<cmath>`,
+  `ASSERT_ALWAYS`, and `using namespace gmpxx;`.
+
+Post-phase upstream t-ops2qf GMP adaptation:
+DONE
+
+Implemented features:
+- Verified upstream `gmpxx_mkII/cxx/t-ops2qf.cc` against this repo's
+  `gmpxx_mkII.h`.
+- No implementation changes were required for the upstream MPQ/MPF mixed
+  operator/function cases in `t-ops2qf.cc`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-ops2qf.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-ops2qf.cc`
+- `g++ -std=c++17 -Iinclude -I/tmp/t-ops2qf-gmpxx /tmp/t-ops2qf-gmpxx/t-ops2qf-gmpxx-mkII.cc -lgmp -o /tmp/t-ops2qf-gmpxx/t-ops2qf-gmpxx-mkII`
+- `/tmp/t-ops2qf-gmpxx/t-ops2qf-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-ops2qf.cc /tmp/t-ops2qf-gmpxx/t-ops2qf-gmpxx-mkII.cc`
+- `diff -u ../gmpxx_mkII/cxx/t-ops2.h /tmp/t-ops2qf-gmpxx/t-ops2.h`
+- `cmake --build build -j --target test_mpq_arithmetic test_mpf_basic test_mixed_type_arithmetic test_mixed_zq_mpf_promotion test_gmpxx_mkII`
+- `ctest --test-dir build --output-on-failure -R "test_mpq_arithmetic|test_mpf_basic|test_mixed_type_arithmetic|test_mixed_zq_mpf_promotion|test_gmpxx_mkII"`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial minimal adapted upstream `t-ops2qf.cc`: FAIL because upstream
+  `mpf_set_default_prec()` does not affect this repo's wrapper-owned MPF
+  default precision.
+- Minimal adapted upstream `t-ops2qf.cc`: PASS after replacing the precision
+  setup with `gmpxx::set_default_mpf_precision_bits(...)`.
+- `cmake --build build -j --target test_mpq_arithmetic test_mpf_basic test_mixed_type_arithmetic test_mixed_zq_mpf_promotion test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_mpq_arithmetic|test_mpf_basic|test_mixed_type_arithmetic|test_mixed_zq_mpf_promotion|test_gmpxx_mkII"`: PASS, 5/5 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- The shared `t-ops2.h` minimal adaptation replaces upstream local harness
+  includes with `<gmpxx_mkII.h>`, `<cassert>`, `<cmath>`, `<limits>`,
+  `ASSERT_ALWAYS`, and `using namespace gmpxx;`.
+- The `t-ops2qf.cc` precision setup is intentionally adapted from
+  `mpf_set_default_prec(...)` to `gmpxx::set_default_mpf_precision_bits(...)`
+  because this repo's MPF class does not mirror GMP's process-global default
+  precision.
+
+Post-phase upstream t-ops2z GMP adaptation:
+DONE
+
+Implemented features:
+- Verified upstream `gmpxx_mkII/cxx/t-ops2z.cc` against this repo's
+  `gmpxx_mkII.h`.
+- No implementation changes were required for the upstream MPZ operator,
+  comparison, gcd/lcm, factorial, primorial, and fibonacci cases in
+  `t-ops2z.cc`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-ops2z.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-ops2z.cc`
+- `g++ -std=c++17 -Iinclude -I/tmp/t-ops2z-gmpxx /tmp/t-ops2z-gmpxx/t-ops2z-gmpxx-mkII.cc -lgmp -o /tmp/t-ops2z-gmpxx/t-ops2z-gmpxx-mkII`
+- `/tmp/t-ops2z-gmpxx/t-ops2z-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-ops2z.cc /tmp/t-ops2z-gmpxx/t-ops2z-gmpxx-mkII.cc`
+- `diff -u ../gmpxx_mkII/cxx/t-ops2.h /tmp/t-ops2z-gmpxx/t-ops2.h`
+- `cmake --build build -j --target test_mpz_arithmetic test_mpz_basic test_mixed_type_arithmetic test_gmpxx_mkII`
+- `ctest --test-dir build --output-on-failure -R "test_mpz_arithmetic|test_mpz_basic|test_mixed_type_arithmetic|test_gmpxx_mkII"`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Minimal adapted upstream `t-ops2z.cc`: PASS.
+- `diff -u ../gmpxx_mkII/cxx/t-ops2z.cc /tmp/t-ops2z-gmpxx/t-ops2z-gmpxx-mkII.cc`: PASS, no direct source diff.
+- `cmake --build build -j --target test_mpz_arithmetic test_mpz_basic test_mixed_type_arithmetic test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_mpz_arithmetic|test_mpz_basic|test_mixed_type_arithmetic|test_gmpxx_mkII"`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- The only minimal adaptation is in shared `t-ops2.h`: replace upstream local
+  harness includes with `<gmpxx_mkII.h>`, `<cassert>`, `<cmath>`, `<limits>`,
+  `ASSERT_ALWAYS`, and `using namespace gmpxx;`.
+
+Post-phase upstream t-ops3 GMP adaptation:
+DONE
+
+Implemented features:
+- Added `mpz_class` and `mpq_class` compound assignment support for
+  `mpf_class` RHS values and MPF expression RHS values.
+- The new compound assignment overloads materialize through `mpf_class` and
+  assign back to the left-hand type; arithmetic operators themselves remain
+  expression-template based.
+- Verified upstream `gmpxx_mkII/cxx/t-ops3.cc` against this repo's
+  `gmpxx_mkII.h` with minimal harness edits.
+
+Tests added:
+- Added `tests/test_compound_assign.cpp` coverage for `mpz_class` and
+  `mpq_class` left-hand compound assignment with `mpf_class` RHS and unary MPF
+  expression RHS.
+
+Tests updated:
+- `tests/test_compound_assign.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,280p' ../gmpxx_mkII/cxx/t-ops3.cc`
+- `sed -n '281,700p' ../gmpxx_mkII/cxx/t-ops3.cc`
+- `g++ -std=c++17 -Iinclude /tmp/t-ops3-gmpxx/t-ops3-gmpxx-mkII.cc -lgmp -o /tmp/t-ops3-gmpxx/t-ops3-gmpxx-mkII`
+- `/tmp/t-ops3-gmpxx/t-ops3-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-ops3.cc /tmp/t-ops3-gmpxx/t-ops3-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_compound_assign test_mpz_arithmetic test_mpq_arithmetic test_mpf_basic test_mixed_type_arithmetic test_gmpxx_mkII`
+- `ctest --test-dir build --output-on-failure -R "test_compound_assign|test_mpz_arithmetic|test_mpq_arithmetic|test_mpf_basic|test_mixed_type_arithmetic|test_gmpxx_mkII"`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial minimal adapted upstream `t-ops3.cc`: FAIL because `mpz_class` and
+  `mpq_class` compound assignment did not accept `mpf_class` or MPF
+  expression RHS values.
+- Minimal adapted upstream `t-ops3.cc`: PASS after repo fix.
+- `cmake --build build -j --target test_compound_assign test_mpz_arithmetic test_mpq_arithmetic test_mpf_basic test_mixed_type_arithmetic test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_compound_assign|test_mpz_arithmetic|test_mpq_arithmetic|test_mpf_basic|test_mixed_type_arithmetic|test_gmpxx_mkII"`: PASS, 6/6 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- None.
+
+Post-phase upstream t-ostream GMP adaptation:
+DONE
+
+Implemented features:
+- Verified upstream `gmpxx_mkII/cxx/t-ostream.cc` against this repo's
+  `gmpxx_mkII.h`.
+- No implementation changes were required for the upstream GMP ostream
+  formatting cases.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-ostream.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-ostream.cc`
+- `g++ -std=c++17 -Iinclude /tmp/t-ostream-gmpxx/t-ostream-gmpxx-mkII.cc -lgmp -o /tmp/t-ostream-gmpxx/t-ostream-gmpxx-mkII`
+- `/tmp/t-ostream-gmpxx/t-ostream-gmpxx-mkII`
+- `/tmp/t-ostream-gmpxx/t-ostream-gmpxx-mkII -s`
+- `diff -u ../gmpxx_mkII/cxx/t-ostream.cc /tmp/t-ostream-gmpxx/t-ostream-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_zq_string_io test_mpf_string_io test_gmpxx_mkII test_mpfc_io`
+- `ctest --test-dir build --output-on-failure -R "test_zq_string_io|test_mpf_string_io|test_gmpxx_mkII|test_mpfc_io"`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Minimal adapted upstream `t-ostream.cc`: PASS.
+- Minimal adapted upstream `t-ostream.cc -s`: PASS exit status; diagnostic
+  differences were printed for standard `long`/`double` stream comparison
+  cases where the C++ standard library formats zero/showpoint differently
+  from GMP's expected wrapper output.
+- `cmake --build build -j --target test_zq_string_io test_mpf_string_io test_gmpxx_mkII test_mpfc_io`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_zq_string_io|test_mpf_string_io|test_gmpxx_mkII|test_mpfc_io"`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- The minimal harness defines `MPZ_CHECK_FORMAT` as a no-op because it is an
+  upstream internal limb-format assertion macro from `gmp-impl.h`, not part of
+  this repo's public wrapper behavior.
+
+Post-phase upstream t-prec GMP adaptation:
+DONE
+
+Implemented features:
+- Verified upstream `gmpxx_mkII/cxx/t-prec.cc` against this repo's
+  `gmpxx_mkII.h`.
+- No implementation changes were required for the upstream MPF precision
+  expression cases in `t-prec.cc`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,280p' ../gmpxx_mkII/cxx/t-prec.cc`
+- `sed -n '281,700p' ../gmpxx_mkII/cxx/t-prec.cc`
+- `g++ -std=c++17 -Iinclude /tmp/t-prec-gmpxx/t-prec-gmpxx-mkII.cc -lgmp -o /tmp/t-prec-gmpxx/t-prec-gmpxx-mkII`
+- `/tmp/t-prec-gmpxx/t-prec-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-prec.cc /tmp/t-prec-gmpxx/t-prec-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_mpf_precision_policy test_mpf_basic test_mixed_zq_mpf_promotion test_gmpxx_mkII`
+- `ctest --test-dir build --output-on-failure -R "test_mpf_precision_policy|test_mpf_basic|test_mixed_zq_mpf_promotion|test_gmpxx_mkII"`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Minimal adapted upstream `t-prec.cc`: PASS.
+- `cmake --build build -j --target test_mpf_precision_policy test_mpf_basic test_mixed_zq_mpf_promotion test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_mpf_precision_policy|test_mpf_basic|test_mixed_zq_mpf_promotion|test_gmpxx_mkII"`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- None.
+
+Post-phase upstream t-rand GMP adaptation:
+DONE
+
+Implemented features:
+- Verified upstream `gmpxx_mkII/cxx/t-rand.cc` against this repo's
+  `gmpxx_mkII.h`.
+- No implementation changes were required for the upstream `gmp_randclass`,
+  random `mpz_class`, or random `mpf_class` cases.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,280p' ../gmpxx_mkII/cxx/t-rand.cc`
+- `sed -n '281,700p' ../gmpxx_mkII/cxx/t-rand.cc`
+- `g++ -std=c++17 -Iinclude /tmp/t-rand-gmpxx/t-rand-gmpxx-mkII.cc -lgmp -o /tmp/t-rand-gmpxx/t-rand-gmpxx-mkII`
+- `/tmp/t-rand-gmpxx/t-rand-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-rand.cc /tmp/t-rand-gmpxx/t-rand-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_random test_mpf_precision_policy test_gmpxx_mkII`
+- `ctest --test-dir build --output-on-failure -R "test_random|test_mpf_precision_policy|test_gmpxx_mkII"`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial minimal adapted upstream `t-rand.cc`: FAIL because upstream
+  `mpf_get_default_prec()` does not represent this repo's wrapper-owned MPF
+  default precision.
+- Minimal adapted upstream `t-rand.cc`: PASS after replacing
+  `mpf_get_default_prec()` with `gmpxx::default_mpf_precision_bits()`.
+- `cmake --build build -j --target test_random test_mpf_precision_policy test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build --output-on-failure -R "test_random|test_mpf_precision_policy|test_gmpxx_mkII"`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+
+Known issues:
+- The default precision assertions are intentionally adapted from GMP's
+  process-global `mpf_get_default_prec()` to this repo's wrapper-owned
+  `gmpxx::default_mpf_precision_bits()`.
+
+Post-phase upstream t-cxx11 GMP parity check:
+DONE
+
+Implemented features:
+- Re-exported `gmpxx::literals::operator"" _mpz`,
+  `gmpxx::literals::operator"" _mpq`, and
+  `gmpxx::literals::operator"" _mpf` into namespace `gmpxx`, so
+  `using namespace gmpxx;` exposes GMP numeric/string UDLs.
+- Made `gmpxx::mpf_class` integral construction non-explicit for upstream
+  C++11 copy-initialization cases such as `mpf_class f = 3;`, while keeping
+  `bool` construction deleted.
+- Marked `gmpxx::mpz_class` default construction and
+  `gmpxx::mpq_class::operator=(const mpz_class&)` as `noexcept`, matching the
+  upstream `t-cxx11.cc` expectations.
+- Removed `noexcept` from `gmpxx::mpq_class` and `gmpxx::mpf_class` move
+  constructors so their `std::is_nothrow_move_constructible` traits match
+  upstream GMP C++.
+- Verified a minimally adapted copy of upstream
+  `../gmpxx_mkII/cxx/t-cxx11.cc` against this repository's `gmpxx_mkII.h`.
+
+Tests added:
+- Added `using namespace gmpxx;` UDL visibility coverage to
+  `tests/test_user_defined_literals.cpp`.
+- Added compile-time coverage for `int -> gmpxx::mpf_class` convertibility,
+  `gmpxx::mpz_class` nothrow default construction, and
+  `gmpxx::mpq_class = gmpxx::mpz_class&&` noexcept behavior to
+  `tests/test_construction_copy.cpp`.
+- Updated compile-time coverage to assert that `gmpxx::mpq_class` and
+  `gmpxx::mpf_class` move construction are not nothrow.
+
+Tests updated:
+- `tests/test_user_defined_literals.cpp`
+- `tests/test_construction_copy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-cxx11.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-cxx11.cc`
+- `rg -n "using literals::operator\"\" _mpz|using literals::operator\"\" _mpq|using literals::operator\"\" _mpf|using literals::operator\"\" _mpfr|using literals::operator\"\" _mpc_i" include/gmpfrxx_mkII/detail`
+- `g++ -std=c++17 -fext-numeric-literals -Iinclude /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII.cc -lgmp -o /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-cxx11.cc /tmp/t-cxx11-gmpxx/t-cxx11-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_user_defined_literals test_construction_copy test_common_type test_abi_fingerprint test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_user_defined_literals|test_construction_copy|test_common_type|test_abi_fingerprint|test_gmpxx_mkII' --output-on-failure`
+- `cmake --build build -j --target test_construction_copy test_user_defined_literals test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_construction_copy|test_user_defined_literals|test_gmpxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Initial minimally adapted upstream `t-cxx11.cc` build before wrapper changes:
+  FAIL due GMP UDL namespace visibility, `mpf_class` integer copy-init, and
+  selected `noexcept` differences.
+- After wrapper changes, minimally adapted upstream `t-cxx11.cc` build: PASS.
+- Temporary adapted `t-cxx11` run: PASS.
+- After aligning `mpq_class` and `mpf_class` move-constructor noexcept traits,
+  the temporary `t-cxx11.cc` diff only contains include/test-harness and
+  namespace adaptation; no assertion changes are required.
+- `cmake --build build -j --target test_user_defined_literals test_construction_copy test_common_type test_abi_fingerprint test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_user_defined_literals|test_construction_copy|test_common_type|test_abi_fingerprint|test_gmpxx_mkII' --output-on-failure`: PASS, 5/5 tests passed.
+- `cmake --build build -j --target test_construction_copy test_user_defined_literals test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_construction_copy|test_user_defined_literals|test_gmpxx_mkII' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for the GMP `t-cxx11.cc` parity check beyond local include/test-harness
+  adaptation.
+
+Post-phase upstream exception-smoke GMP header check:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream
+  `../gmpxx_mkII/cxx/t-do-exceptions-work-at-all-with-this-compiler.cc`
+  against this repository's `gmpxx_mkII.h`.
+- No wrapper implementation changes were needed; including the GMP-only header
+  with `mpz_class`, `mpq_class`, and `mpf_class` declarations present does not
+  interfere with basic C++ exception handling.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,240p' ../gmpxx_mkII/cxx/t-do-exceptions-work-at-all-with-this-compiler.cc`
+- `mkdir -p /tmp/t-exceptions-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-do-exceptions-work-at-all-with-this-compiler.cc /tmp/t-exceptions-gmpxx/t-do-exceptions-gmpxx-mkII.cc`
+- Added `#include <gmpxx_mkII.h>` to the temporary copy.
+- `g++ -std=c++17 -Iinclude /tmp/t-exceptions-gmpxx/t-do-exceptions-gmpxx-mkII.cc -lgmp -o /tmp/t-exceptions-gmpxx/t-do-exceptions-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-exceptions-gmpxx/t-do-exceptions-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-do-exceptions-work-at-all-with-this-compiler.cc /tmp/t-exceptions-gmpxx/t-do-exceptions-gmpxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted exception-smoke build: PASS.
+- Temporary adapted exception-smoke run: PASS.
+
+Known issues:
+- None.
+
+Post-phase upstream t-headers GMP header check:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream
+  `../gmpxx_mkII/cxx/t-headers.cc` against this repository's
+  `gmpxx_mkII.h`.
+- No wrapper implementation changes were needed; the GMP-only public header
+  compiles standalone with `mpz_class`, `mpq_class`, and `mpf_class` exposed
+  from namespace `gmpxx`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-headers.cc`
+- `mkdir -p /tmp/t-headers-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-headers.cc /tmp/t-headers-gmpxx/t-headers-gmpxx-mkII.cc`
+- Replaced `#include "gmpxx_mkII.h"` with `#include <gmpxx_mkII.h>` in the
+  temporary copy.
+- `g++ -std=c++17 -Iinclude /tmp/t-headers-gmpxx/t-headers-gmpxx-mkII.cc -lgmp -o /tmp/t-headers-gmpxx/t-headers-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-headers-gmpxx/t-headers-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-headers.cc /tmp/t-headers-gmpxx/t-headers-gmpxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted `t-headers` build: PASS.
+- Temporary adapted `t-headers` run: PASS.
+
+Known issues:
+- None.
+
+Post-phase upstream t-iostream GMP adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream
+  `../gmpxx_mkII/cxx/t-iostream.cc` against this repository's
+  `gmpxx_mkII.h`.
+- Made `gmpxx::mpf_class(double)` non-explicit so upstream-style
+  copy-initialization such as `mpf_class x = 1.5;` works, while keeping
+  `bool` construction deleted.
+
+Tests added:
+- Added compile-time coverage that `double` is convertible to
+  `gmpxx::mpf_class` in `tests/test_construction_copy.cpp`.
+
+Tests updated:
+- `tests/test_construction_copy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,280p' ../gmpxx_mkII/cxx/t-iostream.cc`
+- `sed -n '281,620p' ../gmpxx_mkII/cxx/t-iostream.cc`
+- `mkdir -p /tmp/t-iostream-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-iostream.cc /tmp/t-iostream-gmpxx/t-iostream-gmpxx-mkII.cc`
+- Applied include/test-harness and `using namespace gmpxx;` adaptation to the
+  temporary copy.
+- `g++ -std=c++17 -Iinclude /tmp/t-iostream-gmpxx/t-iostream-gmpxx-mkII.cc -lgmp -o /tmp/t-iostream-gmpxx/t-iostream-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-iostream-gmpxx/t-iostream-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-iostream.cc /tmp/t-iostream-gmpxx/t-iostream-gmpxx-mkII.cc`
+- `cmake --build build -j --target test_construction_copy test_mpf_basic test_user_defined_literals test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_construction_copy|test_mpf_basic|test_user_defined_literals|test_gmpxx_mkII' --output-on-failure`
+
+Pass/fail result:
+- Initial temporary adapted `t-iostream` build: FAIL because
+  `mpf_class x = 1.5;` required double copy-initialization support.
+- Temporary adapted `t-iostream` build after wrapper change: PASS.
+- Temporary adapted `t-iostream` run: PASS.
+- `cmake --build build -j --target test_construction_copy test_mpf_basic test_user_defined_literals test_gmpxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_construction_copy|test_mpf_basic|test_user_defined_literals|test_gmpxx_mkII' --output-on-failure`: PASS, 4/4 tests passed.
+
+Known issues:
+- None for the basic GMP iostream smoke test beyond local include/test-harness
+  adaptation.
+
+Post-phase upstream t-istream GMP adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream
+  `../gmpxx_mkII/cxx/t-istream.cc` against this repository's
+  `gmpxx_mkII.h`.
+- No wrapper implementation changes were needed; GMP `mpz_ptr`, `mpq_ptr`,
+  and `mpf_ptr` stream extraction behavior already satisfies the upstream
+  focused input cases, including the optional `-s` standard-stream comparison
+  mode.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-istream.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-istream.cc`
+- `mkdir -p /tmp/t-istream-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-istream.cc /tmp/t-istream-gmpxx/t-istream-gmpxx-mkII.cc`
+- Applied include/test-harness, `numberof`, trace helper, and
+  `using namespace gmpxx;` adaptation to the temporary copy.
+- `g++ -std=c++17 -Iinclude /tmp/t-istream-gmpxx/t-istream-gmpxx-mkII.cc -lgmp -o /tmp/t-istream-gmpxx/t-istream-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-istream-gmpxx/t-istream-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-istream-gmpxx/t-istream-gmpxx-mkII -s`
+- `diff -u ../gmpxx_mkII/cxx/t-istream.cc /tmp/t-istream-gmpxx/t-istream-gmpxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted `t-istream` build: PASS.
+- Temporary adapted `t-istream` run: PASS.
+- Temporary adapted `t-istream -s` run: PASS.
+
+Known issues:
+- None for GMP istream extraction beyond local include/test-harness
+  adaptation.
+
+Post-phase upstream t-locale GMP adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream
+  `../gmpxx_mkII/cxx/t-locale.cc` against this repository's
+  `gmpxx_mkII.h`.
+- No wrapper implementation changes were needed; GMP `mpf_t` stream input and
+  output already respect the active C++ locale decimal point in the upstream
+  focused locale smoke test.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,280p' ../gmpxx_mkII/cxx/t-locale.cc`
+- `sed -n '281,620p' ../gmpxx_mkII/cxx/t-locale.cc`
+- `mkdir -p /tmp/t-locale-gmpxx`
+- `cp ../gmpxx_mkII/cxx/t-locale.cc /tmp/t-locale-gmpxx/t-locale-gmpxx-mkII.cc`
+- Applied include/test-harness macros and `using namespace gmpxx;` adaptation
+  to the temporary copy.
+- `g++ -std=c++17 -Iinclude /tmp/t-locale-gmpxx/t-locale-gmpxx-mkII.cc -lgmp -o /tmp/t-locale-gmpxx/t-locale-gmpxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-locale-gmpxx/t-locale-gmpxx-mkII`
+- `diff -u ../gmpxx_mkII/cxx/t-locale.cc /tmp/t-locale-gmpxx/t-locale-gmpxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted `t-locale` build: PASS.
+- Temporary adapted `t-locale` run: PASS.
+
+Known issues:
+- None for GMP locale stream behavior beyond local include/test-harness
+  adaptation.
+
 Post-phase upstream t-prec MPFR adaptation review:
 DONE
 

@@ -320,7 +320,7 @@ class mpq_class;
 
 class mpz_class {
 public:
-    mpz_class()
+    mpz_class() noexcept
     {
         mpz_init(value_);
     }
@@ -689,7 +689,7 @@ public:
         mpq_set(value_, other.value_);
     }
 
-    mpq_class(mpq_class&& other) noexcept
+    mpq_class(mpq_class&& other)
     {
         mpq_init(value_);
         mpq_swap(value_, other.value_);
@@ -812,7 +812,7 @@ public:
         return *this;
     }
 
-    mpq_class& operator=(const mpz_class& value)
+    mpq_class& operator=(const mpz_class& value) noexcept
     {
         mpq_set_z(value_, value.mpz_data());
         return *this;
@@ -1234,6 +1234,16 @@ struct common_type<gmpxx::mpz_class, gmpxx::mpz_class> {
 GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(gmpxx::mpz_class);
 
 template <>
+struct numeric_limits<gmpxx::mpz_class> {
+    static constexpr bool is_specialized = true;
+    static constexpr bool is_signed = true;
+    static constexpr bool is_integer = true;
+    static constexpr bool is_exact = true;
+    static constexpr bool is_bounded = false;
+    static constexpr bool is_modulo = false;
+};
+
+template <>
 struct common_type<gmpxx::mpz_class, gmpxx::mpq_class> {
     using type = gmpxx::mpq_class;
 };
@@ -1249,6 +1259,16 @@ struct common_type<gmpxx::mpq_class, gmpxx::mpq_class> {
 };
 
 GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(gmpxx::mpq_class);
+
+template <>
+struct numeric_limits<gmpxx::mpq_class> {
+    static constexpr bool is_specialized = true;
+    static constexpr bool is_signed = true;
+    static constexpr bool is_integer = false;
+    static constexpr bool is_exact = true;
+    static constexpr bool is_bounded = false;
+    static constexpr bool is_modulo = false;
+};
 
 #undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES
 #undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE
@@ -2606,6 +2626,9 @@ inline mpq_class operator"" _mpq(const char* value, std::size_t)
 }
 
 } // namespace literals
+
+using literals::operator"" _mpq;
+using literals::operator"" _mpz;
 
 } // namespace gmpxx
 
