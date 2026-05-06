@@ -69,6 +69,7 @@ void check_binary(const gmpxx::mpz_class& a, const gmpxx::mpz_class& b)
     if (mpz_sgn(b.mpz_data()) != 0) {
         mpz_tdiv_q(ref, a.mpz_data(), b.mpz_data());
         require_mpz_raw(gmpxx::mpz_class(a / b), ref);
+        require_mpz_equal(gmpxx::mpz_class(5) / gmpxx::mpz_class(2), gmpxx::mpz_class(2));
 
         mpz_tdiv_r(ref, a.mpz_data(), b.mpz_data());
         require_mpz_raw(a % b, ref);
@@ -124,6 +125,8 @@ void check_bitwise_and_shifts()
     require_mpz_equal(0xcafeL ^ b, gmpxx::mpz_class(0x7411));
     require_mpz_equal(~gmpxx::mpz_class(3), gmpxx::mpz_class(-4));
     require_mpz_equal(~(a & b), gmpxx::mpz_class(-0x8aef));
+    require_mpz_equal(gmpxx::mpz_class(17) % 2.0, gmpxx::mpz_class(1));
+    require_mpz_equal(17.0 % gmpxx::mpz_class(2), gmpxx::mpz_class(1));
 
     require_mpz_equal((-gmpxx::mpz_class(5)) << 2u, gmpxx::mpz_class(-20));
     require_mpz_equal((gmpxx::mpz_class(5) * gmpxx::mpz_class(-4)) >> 3u, gmpxx::mpz_class(-3));
@@ -231,11 +234,17 @@ void check_integer_helpers()
 
     require_mpz_equal(gmpxx::factorial(gmpxx::mpz_class(3)), gmpxx::mpz_class(6));
     require_mpz_equal(gmpxx::factorial(gmpxx::mpz_class(5) - 1), gmpxx::mpz_class(24));
+    require_mpz_equal(gmpxx::mpz_class::factorial(gmpxx::mpz_class(2) * 2), gmpxx::mpz_class(24));
+    require_mpz_equal(gmpxx::mpz_class::factorial(3.0f), gmpxx::mpz_class(6));
     require_mpz_equal(gmpxx::primorial(gmpxx::mpz_class(5)), gmpxx::mpz_class(30));
     require_mpz_equal(gmpxx::primorial(gmpxx::mpz_class(2) * 2), gmpxx::mpz_class(6));
+    require_mpz_equal(gmpxx::mpz_class::primorial(gmpxx::mpz_class(2) * 2), gmpxx::mpz_class(6));
+    require_mpz_equal(gmpxx::mpz_class::primorial(3.0f), gmpxx::mpz_class(6));
     require_mpz_equal(gmpxx::fibonacci(gmpxx::mpz_class(6)), gmpxx::mpz_class(8));
     require_mpz_equal(gmpxx::fibonacci(gmpxx::mpz_class(2) * 2), gmpxx::mpz_class(3));
     require_mpz_equal(gmpxx::fibonacci(-gmpxx::mpz_class(6)), gmpxx::mpz_class(-8));
+    require_mpz_equal(gmpxx::mpz_class::fibonacci(gmpxx::mpz_class(2) * 2), gmpxx::mpz_class(3));
+    require_mpz_equal(gmpxx::mpz_class::fibonacci(3.0f), gmpxx::mpz_class(2));
 }
 
 } // namespace

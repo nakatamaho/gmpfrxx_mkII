@@ -595,6 +595,30 @@ public:
         set(value.c_str(), base);
     }
 
+    static mpz_class factorial(const mpz_class& value);
+
+    template <typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, mpz_class>, int> = 0>
+    static mpz_class factorial(const T& value)
+    {
+        return factorial(mpz_class(value));
+    }
+
+    static mpz_class primorial(const mpz_class& value);
+
+    template <typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, mpz_class>, int> = 0>
+    static mpz_class primorial(const T& value)
+    {
+        return primorial(mpz_class(value));
+    }
+
+    static mpz_class fibonacci(const mpz_class& value);
+
+    template <typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, mpz_class>, int> = 0>
+    static mpz_class fibonacci(const T& value)
+    {
+        return fibonacci(mpz_class(value));
+    }
+
 private:
     void set_unsigned(std::uint64_t value)
     {
@@ -1515,8 +1539,7 @@ inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
 template <typename Op, typename LhsResult, typename RhsResult>
 struct zq_binary_result {
     using type = std::conditional_t<
-        std::is_same_v<Op, div_op> ||
-            std::is_same_v<LhsResult, gmpxx::mpq_class> ||
+        std::is_same_v<LhsResult, gmpxx::mpq_class> ||
             std::is_same_v<RhsResult, gmpxx::mpq_class>,
         gmpxx::mpq_class,
         gmpxx::mpz_class>;
@@ -1585,6 +1608,8 @@ void mpz_evaluate(mpz_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
         mpz_sub(dest, lhs, rhs);
     } else if constexpr (std::is_same_v<Op, mul_op>) {
         mpz_mul(dest, lhs, rhs);
+    } else if constexpr (std::is_same_v<Op, div_op>) {
+        mpz_tdiv_q(dest, lhs, rhs);
     } else if constexpr (std::is_same_v<Op, bit_and_op>) {
         mpz_and(dest, lhs, rhs);
     } else if constexpr (std::is_same_v<Op, bit_or_op>) {
@@ -2343,7 +2368,7 @@ inline mpz_class lcm(const Lhs& lhs, const Rhs& rhs)
 inline unsigned long mpz_to_ulong_checked(const mpz_class& value, const char* name)
 {
     if (!value.fits_ulong_p()) {
-        throw std::overflow_error(name);
+        throw std::bad_alloc();
     }
     return value.get_ui();
 }
@@ -2384,6 +2409,21 @@ inline mpz_class fibonacci(const mpz_class& value)
     return result;
 }
 
+inline mpz_class mpz_class::factorial(const mpz_class& value)
+{
+    return gmpxx::factorial(value);
+}
+
+inline mpz_class mpz_class::primorial(const mpz_class& value)
+{
+    return gmpxx::primorial(value);
+}
+
+inline mpz_class mpz_class::fibonacci(const mpz_class& value)
+{
+    return gmpxx::fibonacci(value);
+}
+
 inline mpz_class& operator+=(mpz_class& lhs, double rhs)
 {
     mpz_add(lhs.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
@@ -2415,6 +2455,16 @@ inline mpz_class operator%(const mpz_class& lhs, const mpz_class& rhs)
     return result;
 }
 
+inline mpz_class operator%(const mpz_class& lhs, double rhs)
+{
+    return lhs % mpz_class(rhs);
+}
+
+inline mpz_class operator%(double lhs, const mpz_class& rhs)
+{
+    return mpz_class(lhs) % rhs;
+}
+
 template <typename Rhs,
           std::enable_if_t<std::is_integral_v<std::decay_t<Rhs>> &&
                                !std::is_same_v<std::remove_cv_t<std::decay_t<Rhs>>, bool> &&
@@ -2439,6 +2489,11 @@ inline mpz_class& operator%=(mpz_class& lhs, const mpz_class& rhs)
 {
     mpz_tdiv_r(lhs.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
     return lhs;
+}
+
+inline mpz_class& operator%=(mpz_class& lhs, double rhs)
+{
+    return lhs %= mpz_class(rhs);
 }
 
 template <typename Rhs,

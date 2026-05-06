@@ -1944,6 +1944,65 @@ Pass/fail result:
 Known issues:
 - None for the t-ops2qf MPFR adaptation.
 
+Post-phase upstream t-ops2z MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream `gmpxx_mkII/cxx/t-ops2z.cc`
+  against this repo's `mpfrxx_mkII.h` for `mpz_class` arithmetic,
+  comparisons, bit operations, shifts, unary helpers, integer helpers, and
+  exceptional helper paths.
+- Adjusted Z/Q expression-template division so `mpz_class / mpz_class`
+  materializes as truncating integer `mpz_class`, matching upstream gmpxx
+  behavior. Mixed rational division remains `mpq_class`.
+- Added floating scalar `%` overloads for `mpz_class` so upstream macro cases
+  such as `mpz_class % double` and `double % mpz_class` resolve directly.
+- Added `mpz_class::factorial`, `mpz_class::primorial`, and
+  `mpz_class::fibonacci` static helpers forwarding to the existing free
+  helpers.
+- Matched upstream helper overflow behavior for factorial/primorial/fibonacci
+  by throwing `std::bad_alloc` when the input does not fit `unsigned long`.
+
+Tests added:
+- Regression coverage in `tests/test_mpz_arithmetic.cpp` for truncating
+  `mpz/mpz` division, floating scalar `%`, and static integer helper forms.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- tests/test_mpz_arithmetic.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,280p' ../gmpxx_mkII/cxx/t-ops2z.cc
+- sed -n '1,120p' ../gmpxx_mkII/cxx/t-ops2.h
+- mkdir -p /tmp/t-ops2z-mpfrxx
+- cp ../gmpxx_mkII/cxx/t-ops2z.cc /tmp/t-ops2z-mpfrxx/t-ops2z-mpfrxx-mkII.cc
+- cp ../gmpxx_mkII/cxx/t-ops2.h /tmp/t-ops2z-mpfrxx/t-ops2.h
+- perl -0pi -e '...' /tmp/t-ops2z-mpfrxx/t-ops2.h
+- g++ -std=c++17 -Iinclude -I/tmp/t-ops2z-mpfrxx /tmp/t-ops2z-mpfrxx/t-ops2z-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops2z-mpfrxx/t-ops2z-mpfrxx-mkII
+- /tmp/t-ops2z-mpfrxx/t-ops2z-mpfrxx-mkII
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial g++ build of the temporary adaptation: FAIL because floating scalar
+  `%` and static integer helpers were missing.
+- Initial run after adding those helpers: FAIL because `mpz/mpz` division was
+  exact rational rather than upstream truncating integer division.
+- g++ -std=c++17 -Iinclude -I/tmp/t-ops2z-mpfrxx /tmp/t-ops2z-mpfrxx/t-ops2z-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops2z-mpfrxx/t-ops2z-mpfrxx-mkII after fixes: PASS.
+- /tmp/t-ops2z-mpfrxx/t-ops2z-mpfrxx-mkII: PASS.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j: PASS.
+- Initial ctest --test-dir build --output-on-failure: FAIL because a new
+  `test_mpz_arithmetic` regression asserted a fixed quotient for every
+  parameterized input pair.
+- ctest --test-dir build --output-on-failure after fixing that regression:
+  PASS, 119/119 tests passed.
+
+Known issues:
+- None for the t-ops2z MPFR adaptation.
+
 Post-phase upstream t-mix MPFR adaptation:
 DONE
 
