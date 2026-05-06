@@ -32,7 +32,6 @@
 #include <gmpfrxx_mkII/detail/math_mpf.hpp>
 #include <gmpfrxx_mkII/detail/mpfc_impl.hpp>
 
-#include <complex>
 #include <cstdint>
 #include <type_traits>
 
@@ -67,45 +66,6 @@ inline bool is_negative(const mpf_class& value)
 inline bool is_zero(const mpf_class& value)
 {
     return mpf_sgn(value.mpf_data()) == 0;
-}
-
-inline mpfc_class from_complex_double(std::complex<double> value, mp_bitcnt_t precision)
-{
-    return mpfc_class(
-        mpf_math_detail::make_from_double(value.real(), precision),
-        mpf_math_detail::make_from_double(value.imag(), precision));
-}
-
-inline std::complex<double> to_complex_double(const mpfc_class& value)
-{
-    return {value.real().to_double(), value.imag().to_double()};
-}
-
-inline std::complex<double> gamma_lanczos(std::complex<double> z)
-{
-    static constexpr double coefficients[] = {
-        676.5203681218851,
-        -1259.1392167224028,
-        771.32342877765313,
-        -176.61502916214059,
-        12.507343278686905,
-        -0.13857109526572012,
-        9.9843695780195716e-6,
-        1.5056327351493116e-7,
-    };
-    static constexpr double pi = 3.141592653589793238462643383279502884;
-
-    if (z.real() < 0.5) {
-        return pi / (std::sin(pi * z) * gamma_lanczos(1.0 - z));
-    }
-
-    z -= 1.0;
-    std::complex<double> x = 0.99999999999980993;
-    for (std::size_t i = 0; i < sizeof(coefficients) / sizeof(coefficients[0]); ++i) {
-        x += coefficients[i] / (z + static_cast<double>(i + 1));
-    }
-    const std::complex<double> t = z + 7.5;
-    return std::sqrt(2.0 * pi) * std::pow(t, z + 0.5) * std::exp(-t) * x;
 }
 
 template <typename Expr>
@@ -362,25 +322,6 @@ inline mpfc_class pow(Scalar base, const mpfc_class& exponent)
     return pow(mpf_class(base, exponent.precision()), exponent);
 }
 
-inline mpfc_class gamma(const mpfc_class& value)
-{
-    return mpfc_math_detail::from_complex_double(
-        mpfc_math_detail::gamma_lanczos(mpfc_math_detail::to_complex_double(value)), value.precision());
-}
-
-inline mpfc_class reciprocal_gamma(const mpfc_class& value)
-{
-    const mp_bitcnt_t precision = value.precision();
-    const mpfc_class zero(mpfc_math_detail::zero(precision),
-                          mpfc_math_detail::zero(precision));
-    if (value == zero) {
-        return zero;
-    }
-    const mpfc_class one(mpfc_math_detail::one(precision),
-                         mpfc_math_detail::zero(precision));
-    return one / gamma(value);
-}
-
 template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
 inline mpfc_class sqrt(const Expr& expr)
 {
@@ -469,18 +410,6 @@ template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
 inline mpfc_class atanh(const Expr& expr)
 {
     return atanh(mpfc_class(expr));
-}
-
-template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
-inline mpfc_class gamma(const Expr& expr)
-{
-    return gamma(mpfc_class(expr));
-}
-
-template <typename Expr, typename = mpfc_math_detail::enable_mpfc_expr_t<Expr>>
-inline mpfc_class reciprocal_gamma(const Expr& expr)
-{
-    return reciprocal_gamma(mpfc_class(expr));
 }
 
 } // namespace gmpxx

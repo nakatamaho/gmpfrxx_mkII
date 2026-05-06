@@ -1801,6 +1801,48 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFC double-backed gamma removal:
+DONE
+
+Implemented features:
+- Removed the `gmpxx::mpfc_class` complex `gamma` and `reciprocal_gamma`
+  public helpers because the implementation converted through
+  `std::complex<double>` and therefore could not honor MPF precision.
+- Removed the internal MPFC `std::complex<double>` Lanczos helper and the
+  conversion helpers used only by that path.
+
+Tests added:
+- None.
+
+Tests updated:
+- `tests/test_mpfc_math.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "gamma_lanczos|to_complex_double|from_complex_double|mpfc.*gamma|reciprocal_gamma\\(|gamma\\(" include/gmpfrxx_mkII/detail/math_mpfc.hpp tests examples STATUS.md`
+- `sed -n '1,115p' include/gmpfrxx_mkII/detail/math_mpfc.hpp`
+- `sed -n '140,180p' tests/test_mpfc_math.cpp`
+- `rg -n "std::complex|complex<" include/gmpfrxx_mkII/detail/math_mpfc.hpp`
+- `sed -n '450,490p' include/gmpfrxx_mkII/detail/math_mpfc.hpp`
+- `rg -n "test_gamma_functions|test_.*\\(\\);" tests/test_mpfc_math.cpp`
+- `cmake --build build -j --target test_mpfc_math`
+- `ctest --test-dir build -R test_mpfc_math --output-on-failure`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfc_math`: PASS.
+- `ctest --test-dir build -R test_mpfc_math --output-on-failure`: PASS, 1/1 test passed.
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 133/133 tests passed.
+
+Known issues:
+- MPFC complex gamma is now intentionally absent. Add it only with a
+  high-precision implementation; do not restore the double-backed Lanczos
+  path.
+
 Post-phase example09 default-precision MPFC/MPC port:
 DONE
 
@@ -5109,7 +5151,7 @@ Normal tests:
 | test_mpfc_basic | gmpxx_mkII | Basic MPFC arithmetic evaluation | Evaluates complex MPF-backed arithmetic and compares real/imaginary double values. |
 | test_mpfc_precision_policy | gmpxx_mkII | MPFC precision propagation | Checks real/imag precision propagation, assignment preservation, and mixed MPF/MPFC precision rules. |
 | test_mpfc_header_boundary | gmpxx_mkII | MPFC availability in GMP-only header | Constructs mpfc_class through gmpxx_mkII.h and checks real/imag precision without MPFR/MPC exposure. |
-| test_mpfc_math | gmpxx_mkII | MPFC math functions | Checks sqrt, exp, log, trig, hyperbolic, pow, gamma, and expression materialization against double-level expectations. |
+| test_mpfc_math | gmpxx_mkII | MPFC math functions | Checks sqrt, exp, log, trig, hyperbolic, pow, and expression materialization against double-level expectations. |
 | test_et_contract_zq_mpf | gmpxx_mkII | z/q/MPF mixed ET contract | Static-asserts mpz/mpq/mpf mixed arithmetic returns expression nodes with the required promoted result types. |
 | test_mixed_zq_mpf_promotion | gmpxx_mkII | z/q to MPF promotion behavior | Evaluates mixed exact/MPF expressions and checks promoted MPF numeric results. |
 | test_et_contract_zq_mpfr | mpfrxx_mkII | z/q/MPFR mixed ET contract | Static-asserts mpz/mpq/mpfr mixed arithmetic returns expression nodes with MPFR result types. |
@@ -5298,7 +5340,7 @@ Migration table:
 | test_mpf_transcendent_functions.cpp | tests/test_mpf_transcendent_functions.cpp | Done for upstream assertion-list parity | Done for natural MPFR adaptation | Upstream assertion list is now mirrored in the focused MPF transcendent test, adapted to C++17 and local helper names. MPFR wrapper math parity is covered by `tests/test_mpfr_transcendent_functions.cpp`, which compares deterministic random wrapper results against double `std::` references at `1e-15` scaled tolerance. | Keep migrated; extend only if upstream adds new transcendental families or MPFR policy adds new public wrappers. |
 | test_mpfc_arithmetic.cpp | tests/test_mpfc_basic.cpp, tests/test_et_contract_mpfc.cpp | Done for upstream arithmetic/precision focused coverage | N/A for MPFR; MPC analog exists separately | None known for the GMP-only MPFC arithmetic surface; upstream compound, swap/precision, mixed real operand, and random arithmetic matrix cases are now mirrored locally. | Keep as migrated; add MPC analogs only as separate MPC policy work. |
 | test_mpfc_io.cpp | tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done | MPC analog covered separately | None known for the current local complex `(real,imag)` stream format; this is local-policy parity, not a direct upstream MPC test. | Keep migrated; add only if upstream gains an MPC-specific I/O parity matrix or local complex-format policy changes. |
-| test_mpfc_transcendent_functions.cpp | tests/test_mpfc_math.cpp, tests/test_mpc_math.cpp | Done for upstream complex math focused coverage | MPC analog covered separately with MPC 1.3.1 C API references | Local MPFC gamma/reciprocal_gamma are still double-backed, so the gamma known-value tolerance is intentionally double-level rather than high-precision MPF-level. MPC wrappers now cover MPC 1.3.1 sqrt/exp/log/log10/trig/hyperbolic/inverse/pow functions against direct `mpc_*` references; MPC gamma is not part of MPC 1.3.1. | Keep as migrated; improve MPFC gamma tolerance only if MPFC gamma is later replaced with a high-precision implementation. |
+| test_mpfc_transcendent_functions.cpp | tests/test_mpfc_math.cpp, tests/test_mpc_math.cpp | Done for upstream complex math focused coverage except complex gamma | MPC analog covered separately with MPC 1.3.1 C API references | MPFC gamma/reciprocal_gamma are intentionally not exposed because the previous implementation converted through `std::complex<double>`. MPC wrappers cover MPC 1.3.1 sqrt/exp/log/log10/trig/hyperbolic/inverse/pow functions against direct `mpc_*` references; MPC gamma is not part of MPC 1.3.1. | Add MPFC complex gamma only with a real high-precision implementation; do not restore the double-backed Lanczos helper. |
 | test_mpq_arithmetic.cpp | tests/test_mpq_arithmetic.cpp, tests/test_mpq_basic.cpp, tests/test_mpq_canonicalization.cpp | Done | mpfrxx aliases use same exact types | Upstream rational binary/scalar/shift, mixed exact promotion, accessor, nested expression, compound assignment, unary, and ET contract cases are covered under the shared exact type. | Keep migrated; add only if upstream expands rational-specific arithmetic coverage. |
 | test_mpz_addmul_alloc_count.cpp | tests/test_mpz_addmul_alloc_count.cpp | Done for direct mpz addmul/submul paths | N/A | No upstream wrapper instrumentation counters; local test checks GMP allocator count for preallocated direct paths. | Keep as direct-path regression coverage. |
 | test_mpz_addmul_fusion.cpp | tests/test_mpz_addmul_fusion.cpp | Done | N/A | No diagnostic fusion counter API; behavior and direct overload routing are covered. | Keep migrated; add counters only if instrumentation becomes public policy. |
@@ -6054,7 +6096,9 @@ Pass/fail result:
 - Final ctest --test-dir build --output-on-failure: PASS, 92/92 tests passed.
 
 Known issues:
-- MPFC gamma and reciprocal_gamma still use the existing double-backed Lanczos path, so tests/test_mpfc_math.cpp uses a double-level tolerance for gamma identity checks. This is an intentional current implementation limitation, not a missing assertion-list item.
+- Superseded by the later MPFC double-backed gamma removal phase:
+  MPFC gamma and reciprocal_gamma are no longer exposed until a
+  high-precision implementation is available.
 
 Post-phase unary simplification and user-defined literals:
 DONE
