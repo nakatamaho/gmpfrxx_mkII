@@ -1801,6 +1801,57 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase example15 hexadecimal digits port:
+DONE
+
+Implemented features:
+- Ported `../gmpxx_mkII/examples/example16.cpp` as
+  `examples/example15_mpf.cpp`, preserving the license and explanatory
+  comment while adapting the include and MPF default precision setter.
+- Added `examples/example15_mpfr.cpp` as the MPFR-backed counterpart with the
+  same command-line surface and digit extraction algorithm.
+- Registered both examples in `examples/CMakeLists.txt`.
+- Added CTest coverage for both full-constant extraction and BBP-style
+  offset extraction.
+
+Tests added:
+- `example15_mpf`
+- `example15_mpfr`
+- `example15_mpf_bbp`
+- `example15_mpfr_bbp`
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `ls examples ../gmpxx_mkII/examples`
+- `sed -n '1,260p' ../gmpxx_mkII/examples/example16.cpp`
+- `sed -n '261,620p' ../gmpxx_mkII/examples/example16.cpp`
+- `sed -n '1,260p' examples/CMakeLists.txt`
+- `rg -n "mpz_class\\(const mpfr_class|operator mpz|mpfr_get_z|class mpfr_class|const_log2|log_two|floor\\(" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp tests/test_mpfr_math.cpp examples/example*.cpp`
+- `cp ../gmpxx_mkII/examples/example16.cpp examples/example15_mpf.cpp`
+- `cp examples/example15_mpf.cpp examples/example15_mpfr.cpp`
+- `rg -n "gmpxx::|mpf_class|mp_bitcnt_t|mpf_|get_mpf|floor|pow|log_two|const_pi|Example 16|gmpxx_mkII" examples/example15_mpfr.cpp`
+- `rg -n "gmpxx::|mpf_class|mp_bitcnt_t|gmpxx_mkII|Example 16|log_two|const_log2|mpfr_get_z|hexadecimal_fraction" examples/example15_mpf.cpp examples/example15_mpfr.cpp`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target example15_mpf example15_mpfr`
+- `ctest --test-dir build -R "example15" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j --target example15_mpf example15_mpfr`: PASS.
+- `ctest --test-dir build -R "example15" --output-on-failure`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
 Post-phase MPFC double-backed gamma removal:
 DONE
 
