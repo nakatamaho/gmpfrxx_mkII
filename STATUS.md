@@ -1980,6 +1980,57 @@ Pass/fail result:
 Known issues:
 - None for the t-rand MPFR adaptation.
 
+Post-phase upstream t-ternary MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted `../gmpxx_mkII/cxx/t-ternary.cc` against
+  this repository's `mpfrxx_mkII.h`.
+- The adapted check covers the upstream `mpz_class` ternary/nested
+  expression matrix through `mpfrxx::mpz_class`, which is an alias to the
+  shared exact GMP-backed class.
+- Kept `check_mpq()` empty as in upstream because the upstream test states
+  there is currently no ternary `mpq` operation.
+- Renamed the empty `check_mpf()` placeholder to `check_mpfr()` for the MPFR
+  adaptation; no MPFR ternary-specific operation exists in this upstream
+  test.
+- No wrapper implementation changes were needed.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-ternary.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-ternary.cc`
+- `rg -n "static void check_|check_mp|main|mpq_class|mpf_class|mpfr|mpz_class" ../gmpxx_mkII/cxx/t-ternary.cc`
+- `tail -n 120 ../gmpxx_mkII/cxx/t-ternary.cc`
+- `mkdir -p /tmp/t-ternary-mpfrxx`
+- `cp ../gmpxx_mkII/cxx/t-ternary.cc /tmp/t-ternary-mpfrxx/t-ternary-mpfrxx-mkII.cc`
+- Minimal source adaptation commands for the temporary MPFR version.
+- `g++ -std=c++17 -Iinclude /tmp/t-ternary-mpfrxx/t-ternary-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ternary-mpfrxx/t-ternary-mpfrxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-ternary-mpfrxx/t-ternary-mpfrxx-mkII`
+- `cmake --build build -j --target test_mpz_arithmetic test_mixed_zq_mpfr_promotion test_mpfrxx_mkII`
+- `ctest --test-dir build -R 'test_mpz_arithmetic|test_mixed_zq_mpfr_promotion|test_mpfrxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `diff -u ../gmpxx_mkII/cxx/t-ternary.cc /tmp/t-ternary-mpfrxx/t-ternary-mpfrxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted `t-ternary` build: PASS.
+- Temporary adapted `t-ternary` run: PASS.
+- `cmake --build build -j --target test_mpz_arithmetic test_mixed_zq_mpfr_promotion test_mpfrxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_mpz_arithmetic|test_mixed_zq_mpfr_promotion|test_mpfrxx_mkII' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for the t-ternary MPFR adaptation.
+
 Post-phase upstream t-ops MPFR adaptation:
 DONE
 
