@@ -1868,6 +1868,25 @@ GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(ai)
 
 #undef GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION
 
+#define GMPFRXX_MKII_DEFINE_MPFR_ROUND_TO_INTEGER_FUNCTION(name) \
+    template < \
+        typename Expr, \
+        std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> && \
+                             gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>, \
+                         int> = 0> \
+    inline mpfr_class name(const Expr& expr) \
+    { \
+        return detail::unary_mpfr_math(expr, [](mpfr_t rop, mpfr_srcptr op, mpfr_rnd_t) { \
+            mpfr_##name(rop, op); \
+        }); \
+    }
+
+GMPFRXX_MKII_DEFINE_MPFR_ROUND_TO_INTEGER_FUNCTION(ceil)
+GMPFRXX_MKII_DEFINE_MPFR_ROUND_TO_INTEGER_FUNCTION(floor)
+GMPFRXX_MKII_DEFINE_MPFR_ROUND_TO_INTEGER_FUNCTION(trunc)
+
+#undef GMPFRXX_MKII_DEFINE_MPFR_ROUND_TO_INTEGER_FUNCTION
+
 template <
     typename Expr,
     std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&

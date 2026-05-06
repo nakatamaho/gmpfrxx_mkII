@@ -40,6 +40,7 @@
 namespace {
 
 using unary_c_api = int (*)(mpfr_ptr, mpfr_srcptr, mpfr_rnd_t);
+using unary_round_to_integer_c_api = int (*)(mpfr_ptr, mpfr_srcptr);
 using unary_u_c_api = int (*)(mpfr_ptr, mpfr_srcptr, unsigned long, mpfr_rnd_t);
 using unary_long_c_api = int (*)(mpfr_ptr, mpfr_srcptr, long, mpfr_rnd_t);
 using unary_order_c_api = int (*)(mpfr_ptr, long, mpfr_srcptr, mpfr_rnd_t);
@@ -50,6 +51,7 @@ using binary_u_c_api = int (*)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, unsigned long
 using ternary_c_api = int (*)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t);
 using quaternary_c_api = int (*)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t);
 using unary_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&);
+using unary_round_to_integer_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&);
 using unary_u_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&, unsigned long);
 using unary_long_wrapper = mpfrxx::mpfr_class (*)(const mpfrxx::mpfr_class&, long);
 using unary_order_wrapper = mpfrxx::mpfr_class (*)(long, const mpfrxx::mpfr_class&);
@@ -62,6 +64,21 @@ void assert_same_mpfr_value(const mpfrxx::mpfr_class& got, mpfr_srcptr expected)
     assert(mpfr_cmp(got.mpfr_data(), expected) == 0);
 }
 
+int mpfr_ceil_reference(mpfr_ptr rop, mpfr_srcptr op)
+{
+    return mpfr_ceil(rop, op);
+}
+
+int mpfr_floor_reference(mpfr_ptr rop, mpfr_srcptr op)
+{
+    return mpfr_floor(rop, op);
+}
+
+int mpfr_trunc_reference(mpfr_ptr rop, mpfr_srcptr op)
+{
+    return mpfr_trunc(rop, op);
+}
+
 void check_unary(const mpfrxx::mpfr_class& value, unary_c_api c_api, unary_wrapper wrapper)
 {
     mpfr_t expected;
@@ -71,6 +88,39 @@ void check_unary(const mpfrxx::mpfr_class& value, unary_c_api c_api, unary_wrapp
     const mpfrxx::mpfr_class got = wrapper(value);
     assert(got.precision() == value.precision());
     assert_same_mpfr_value(got, expected);
+
+    mpfr_clear(expected);
+}
+
+void check_unary_round_to_integer(const mpfrxx::mpfr_class& value,
+                                  unary_round_to_integer_c_api c_api,
+                                  unary_round_to_integer_wrapper wrapper)
+{
+    mpfr_t expected;
+    mpfr_init2(expected, value.precision());
+    c_api(expected, value.mpfr_data());
+
+    const mpfrxx::mpfr_class got = wrapper(value);
+    assert(got.precision() == value.precision());
+    assert_same_mpfr_value(got, expected);
+
+    mpfr_clear(expected);
+}
+
+void check_unary_round_to_integer_signed_zero(unary_round_to_integer_c_api c_api,
+                                             unary_round_to_integer_wrapper wrapper)
+{
+    mpfrxx::mpfr_class negative_zero = mpfrxx::mpfr_class::with_precision(128);
+    mpfr_set_zero(negative_zero.mpfr_data(), -1);
+
+    mpfr_t expected;
+    mpfr_init2(expected, negative_zero.precision());
+    c_api(expected, negative_zero.mpfr_data());
+
+    const mpfrxx::mpfr_class got = wrapper(negative_zero);
+    assert(got.precision() == negative_zero.precision());
+    assert(mpfr_zero_p(got.mpfr_data()) != 0);
+    assert(mpfr_signbit(got.mpfr_data()) == mpfr_signbit(expected));
 
     mpfr_clear(expected);
 }
@@ -273,6 +323,9 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::const_catalan()), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::const_catalan(static_cast<mpfr_prec_t>(128))), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::rec_sqrt(std::declval<const mpfr_class&>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::ceil(std::declval<const mpfr_class&>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::floor(std::declval<const mpfr_class&>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::trunc(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::agm(std::declval<const mpfr_class&>(),
                                                     std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
@@ -428,6 +481,9 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::sqrt(std::declval<expr_type>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::sqr(std::declval<expr_type>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::rec_sqrt(std::declval<expr_type>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::ceil(std::declval<expr_type>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::floor(std::declval<expr_type>())), mpfr_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::trunc(std::declval<expr_type>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::agm(std::declval<expr_type>(),
                                                     std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
@@ -541,6 +597,27 @@ void test_unary_functions_against_mpfr()
     check_unary(acosh_value, mpfr_acosh, mpfrxx::acosh);
     const mpfrxx::mpfr_class li2_value("0.25", 192);
     check_unary(li2_value, mpfr_li2, mpfrxx::li2);
+}
+
+void test_round_to_integer_functions_against_mpfr()
+{
+    const mpfrxx::mpfr_class values[] = {
+        mpfrxx::mpfr_class("-2.75", 192),
+        mpfrxx::mpfr_class("-0.25", 224),
+        mpfrxx::mpfr_class("0.25", 160),
+        mpfrxx::mpfr_class("1.5", 192),
+        mpfrxx::mpfr_class("4.0", 224),
+    };
+
+    for (const mpfrxx::mpfr_class& value : values) {
+        check_unary_round_to_integer(value, mpfr_ceil_reference, mpfrxx::ceil);
+        check_unary_round_to_integer(value, mpfr_floor_reference, mpfrxx::floor);
+        check_unary_round_to_integer(value, mpfr_trunc_reference, mpfrxx::trunc);
+    }
+
+    check_unary_round_to_integer_signed_zero(mpfr_ceil_reference, mpfrxx::ceil);
+    check_unary_round_to_integer_signed_zero(mpfr_floor_reference, mpfrxx::floor);
+    check_unary_round_to_integer_signed_zero(mpfr_trunc_reference, mpfrxx::trunc);
 }
 
 void test_lgamma_against_mpfr()
@@ -782,6 +859,7 @@ int main()
 {
     test_compile_time_surface();
     test_unary_functions_against_mpfr();
+    test_round_to_integer_functions_against_mpfr();
     test_lgamma_against_mpfr();
     test_sqrt_ui_against_mpfr();
     test_constants_against_mpfr();
