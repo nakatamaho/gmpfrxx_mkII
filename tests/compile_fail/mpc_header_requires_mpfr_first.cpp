@@ -19,31 +19,16 @@
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
-#include <mpfrxx_mkII.h>
 #include <mpcxx_mkII.h>
-
-#include <iostream>
 
 int main()
 {
-    const auto real = mpfrxx::mpfr_class(1.25);
-    const auto offset = mpfrxx::mpq_class("3/4");
-    const auto complex =
-        mpfrxx::mpc_class(mpfrxx::mpfr_class(1.0), mpfrxx::mpfr_class(2.0));
-
-    mpfrxx::mpfr_class real_result = real + offset + 2;
-    mpfrxx::mpc_class complex_result = complex * complex + real_result;
-
-    std::cout << "real: " << real_result.to_double() << '\n';
-    std::cout << "complex: "
-              << complex_result.real_to_double() << " + "
-              << complex_result.imag_to_double() << "i\n";
     return 0;
 }

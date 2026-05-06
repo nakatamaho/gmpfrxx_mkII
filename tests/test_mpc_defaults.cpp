@@ -27,6 +27,7 @@
  */
 
 #include <mpfrxx_mkII.h>
+#include <mpcxx_mkII.h>
 
 #include <cstdlib>
 

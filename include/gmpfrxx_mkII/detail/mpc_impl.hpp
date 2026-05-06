@@ -31,6 +31,7 @@
 
 #include <gmpfrxx_mkII/detail/expr.hpp>
 #include <gmpfrxx_mkII/detail/integer_conversion.hpp>
+#include <gmpfrxx_mkII/detail/mpc_environment.hpp>
 #include <gmpfrxx_mkII/detail/mpfr_impl.hpp>
 #include <gmpfrxx_mkII/detail/zq_impl.hpp>
 

@@ -82,6 +82,7 @@ int main()
     const std::string source_dir = GMPFRXX_MKII_SOURCE_DIR;
     const std::string gmp_header_path = source_dir + "/include/gmpxx_mkII.h";
     const std::string mpfr_header_path = source_dir + "/include/mpfrxx_mkII.h";
+    const std::string mpc_header_path = source_dir + "/include/mpcxx_mkII.h";
     const std::string aggregator_header_path = source_dir + "/include/gmpfrxx_mkII.h";
 
     const std::string gmp_header = read_file(gmp_header_path.c_str());
@@ -96,17 +97,23 @@ int main()
     const std::string mpfr_header = read_file(mpfr_header_path.c_str());
     require_present(mpfr_header, "#include <gmp.h>");
     require_present(mpfr_header, "#include <mpfr.h>");
-    if (mpfr_header.find("#include <mpc.h>") == std::string::npos) {
-        std::abort();
-    }
+    require_absent(mpfr_header, "#include <mpc.h>");
     require_absent(mpfr_header, "#include <gmpxx.h>");
     require_absent(mpfr_header, "#include <gmpxx_mkII.h>");
+    require_absent(mpfr_header, "mpc_impl.hpp");
     require_absent(mpfr_header, "mpf_impl.hpp");
     require_absent(mpfr_header, "mpfc_impl.hpp");
+
+    const std::string mpc_header = read_file(mpc_header_path.c_str());
+    require_present(mpc_header, "Include <mpfrxx_mkII.h> before <mpcxx_mkII.h>.");
+    require_present(mpc_header, "#include <mpc.h>");
+    require_present(mpc_header, "mpc_impl.hpp");
+    require_absent(mpc_header, "#include <gmpxx.h>");
 
     const std::string aggregator_header = read_file(aggregator_header_path.c_str());
     require_present(aggregator_header, "#include <gmpxx_mkII.h>");
     require_present(aggregator_header, "#include <mpfrxx_mkII.h>");
+    require_present(aggregator_header, "#include <mpcxx_mkII.h>");
     require_absent(aggregator_header, "#include <gmpxx.h>");
 
     require_gmp_only_source(source_dir, "include/gmpxx_mkII.h");

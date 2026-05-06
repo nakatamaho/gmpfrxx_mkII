@@ -26,24 +26,16 @@
  *
  */
 
-#include <mpfrxx_mkII.h>
-#include <mpcxx_mkII.h>
+#ifndef MPCXX_MKII_H
+#define MPCXX_MKII_H
 
-#include <iostream>
+#ifndef MPFRXX_MKII_H
+#error "Include <mpfrxx_mkII.h> before <mpcxx_mkII.h>."
+#endif
 
-int main()
-{
-    const auto real = mpfrxx::mpfr_class(1.25);
-    const auto offset = mpfrxx::mpq_class("3/4");
-    const auto complex =
-        mpfrxx::mpc_class(mpfrxx::mpfr_class(1.0), mpfrxx::mpfr_class(2.0));
+#include <mpc.h>
 
-    mpfrxx::mpfr_class real_result = real + offset + 2;
-    mpfrxx::mpc_class complex_result = complex * complex + real_result;
+#include <gmpfrxx_mkII/detail/mpc_environment.hpp>
+#include <gmpfrxx_mkII/detail/mpc_impl.hpp>
 
-    std::cout << "real: " << real_result.to_double() << '\n';
-    std::cout << "complex: "
-              << complex_result.real_to_double() << " + "
-              << complex_result.imag_to_double() << "i\n";
-    return 0;
-}
+#endif // MPCXX_MKII_H

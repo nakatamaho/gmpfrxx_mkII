@@ -8,7 +8,7 @@ add_executable(example02_mpfr example02_mpfr.cpp)
 target_link_libraries(example02_mpfr PRIVATE mpfrxx_mkII)
 
 add_executable(example02_mpfr_mpc example02_mpfr_mpc.cpp)
-target_link_libraries(example02_mpfr_mpc PRIVATE mpfrxx_mkII)
+target_link_libraries(example02_mpfr_mpc PRIVATE mpcxx_mkII)
 
 add_executable(example03_mpf example03_mpf.cpp)
 target_link_libraries(example03_mpf PRIVATE gmpxx_mkII)
@@ -35,25 +35,25 @@ add_executable(example06_mpfc example06_mpfc.cpp)
 target_link_libraries(example06_mpfc PRIVATE gmpxx_mkII)
 
 add_executable(example06_mpc example06_mpc.cpp)
-target_link_libraries(example06_mpc PRIVATE mpfrxx_mkII)
+target_link_libraries(example06_mpc PRIVATE mpcxx_mkII)
 
 add_executable(example07_mpfc example07_mpfc.cpp)
 target_link_libraries(example07_mpfc PRIVATE gmpxx_mkII)
 
 add_executable(example07_mpc example07_mpc.cpp)
-target_link_libraries(example07_mpc PRIVATE mpfrxx_mkII)
+target_link_libraries(example07_mpc PRIVATE mpcxx_mkII)
 
 add_executable(example08_mpfc example08_mpfc.cpp)
 target_link_libraries(example08_mpfc PRIVATE gmpxx_mkII)
 
 add_executable(example08_mpc example08_mpc.cpp)
-target_link_libraries(example08_mpc PRIVATE mpfrxx_mkII)
+target_link_libraries(example08_mpc PRIVATE mpcxx_mkII)
 
 add_executable(example09_mpfc example09_mpfc.cpp)
 target_link_libraries(example09_mpfc PRIVATE gmpxx_mkII)
 
 add_executable(example09_mpc example09_mpc.cpp)
-target_link_libraries(example09_mpc PRIVATE mpfrxx_mkII)
+target_link_libraries(example09_mpc PRIVATE mpcxx_mkII)
 
 add_executable(example10_mpf example10_mpf.cpp)
 target_link_libraries(example10_mpf PRIVATE gmpxx_mkII)

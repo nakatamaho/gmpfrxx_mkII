@@ -31,5 +31,6 @@
 
 #include <gmpxx_mkII.h>
 #include <mpfrxx_mkII.h>
+#include <mpcxx_mkII.h>
 
 #endif // GMPFRXX_MKII_H

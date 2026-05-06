@@ -83,7 +83,7 @@ int main()
 
     alloc_count = 0;
     dst += 5LL;
-    require_alloc_count(2);
+    require_alloc_count(1);
 
     alloc_count = 0;
     dst = a + 5.0;

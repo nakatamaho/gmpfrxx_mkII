@@ -1,3 +1,69 @@
+MPFR/MPC header and link separation:
+DONE
+
+Implemented features:
+- Split MPC-facing public entry point into include/mpcxx_mkII.h.
+- Kept include/mpfrxx_mkII.h MPFR-only: it no longer includes <mpc.h> or detail/mpc_impl.hpp.
+- Moved MPC default environment helpers out of detail/environment.hpp into detail/mpc_environment.hpp.
+- Added the mpcxx_mkII interface target for code that needs mpfrxx::mpc_class.
+- Changed MPFR-only CMake target mpfrxx_mkII to link GMP + MPFR only.
+- Changed the combined gmpfrxx_mkII target to link gmpxx_mkII + mpfrxx_mkII + mpcxx_mkII explicitly.
+- Changed MPC examples/tests to explicitly include both <mpfrxx_mkII.h> for real MPFR APIs and <mpcxx_mkII.h> for MPC APIs, and to link mpcxx_mkII.
+- Changed include/mpcxx_mkII.h to require that <mpfrxx_mkII.h> has already been included instead of including it implicitly.
+- Kept the combined include/gmpfrxx_mkII.h aggregator exposing both MPFR and MPC by including <mpcxx_mkII.h>.
+- Added header-boundary coverage proving mpfrxx_mkII.h does not expose mpc_class.
+- Updated stale MPFR scalar allocation-count expectation for dst += 5LL from 2 to the current MPF-matching 1 allocation.
+
+Missing features:
+- None for this phase. MPC remains a required project dependency for the full repository; the separation is at the public include and target-use boundary.
+
+Tests added:
+- tests/test_mpc_header_smoke.cpp
+- tests/compile_fail/mpfr_header_must_not_expose_mpc.cpp
+- tests/compile_fail/mpc_header_requires_mpfr_first.cpp
+
+Exact commands run:
+- sed -n '1,150p' tests/test_mpfr_exception_support.cpp
+- rg -n "test_mpfr_exception_support|#include <mpfrxx_mkII\\.h>|mpc_class|_mpc_i|mpc_" tests examples -g'*.cpp' -g'CMakeLists.txt'
+- git status --short
+- rg -n "add_phase0_test\\(test_.*mpc|test_mpfr_exception_support|#include <mpfrxx_mkII\\.h>|#include <mpcxx_mkII\\.h>" tests examples -g'*.cpp' -g'CMakeLists.txt'
+- cmake --build build -j --target test_mpfr_exception_support
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- sed -n '1p' build/examples/CMakeFiles/example02_mpfr.dir/link.txt
+- sed -n '1p' build/examples/CMakeFiles/example02_mpfr_mpc.dir/link.txt
+- sed -n '1,220p' tests/test_mpfr_scalar_alloc_count.cpp
+- ./build/tests/test_mpfr_scalar_alloc_count
+- rg -n "expected 2 allocations|expect_allocations|mpfr_scalar_alloc_count|allocation" tests/test_mpfr_scalar_alloc_count.cpp include/gmpfrxx_mkII/detail -g'*.hpp'
+- sed -n '1,180p' tests/test_mpf_scalar_alloc_count.cpp
+- git diff -- tests/test_mpfr_scalar_alloc_count.cpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- cmake --build build -j --target test_mpfr_scalar_alloc_count
+- ctest --test-dir build --output-on-failure
+- git diff --check
+- git status --short
+- cmake --build build -j --target example02_mpfr_mpc test_mpc_header_smoke test_header_boundaries test_mpfrxx_mkII test_mpfr_user_defined_literals
+- ctest --test-dir build -R 'example02_mpfr_mpc|test_mpc_header_smoke|test_header_boundaries|test_mpfrxx_mkII|test_mpfr_user_defined_literals|compile_fail_mpc_header_requires_mpfr_first|compile_fail_mpfr_header_must_not_expose_mpc' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_exception_support: PASS
+- cmake --build build -j: PASS
+- Initial full ctest failed only in test_mpfr_scalar_alloc_count because dst += 5LL expected 2 allocations while current behavior is 1.
+- ./build/tests/test_mpfr_scalar_alloc_count: initially FAIL with "expected 2 allocations, got 1".
+- After updating the stale expectation, cmake --build build -j --target test_mpfr_scalar_alloc_count: PASS.
+- Final ctest --test-dir build --output-on-failure: PASS, 139/139 tests passed.
+- git diff --check: PASS.
+- MPFR-only link check: example02_mpfr links libgmp + libmpfr and does not link libmpc.
+- MPC link check: example02_mpfr_mpc links libgmp + libmpfr + libmpc.
+- Focused include-order ctest: PASS, 7/7 tests passed.
+- Final cmake --build build -j after include-order enforcement: PASS.
+- Final ctest --test-dir build --output-on-failure after include-order enforcement: PASS, 140/140 tests passed.
+
+Known issues:
+- Full-tree CMake configure intentionally still requires MPC. MPFR-only users should include <mpfrxx_mkII.h> and use the mpfrxx_mkII target; MPC users must include <mpfrxx_mkII.h> before <mpcxx_mkII.h> and use the mpcxx_mkII target.
+- AGENTS.md~ is an existing untracked local file and was not touched.
+
 Phase 0 status:
 DONE
 

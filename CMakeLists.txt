@@ -48,9 +48,19 @@ target_include_directories(mpfrxx_mkII INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(mpfrxx_mkII INTERFACE GMP::GMP MPFR::MPFR MPC::MPC)
+target_link_libraries(mpfrxx_mkII INTERFACE GMP::GMP MPFR::MPFR)
 target_compile_features(mpfrxx_mkII INTERFACE cxx_std_17)
 add_library(mpfrxx_mkII::mpfrxx_mkII ALIAS mpfrxx_mkII)
+
+add_library(mpcxx_mkII INTERFACE)
+target_include_directories(mpcxx_mkII INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(mpcxx_mkII INTERFACE mpfrxx_mkII::mpfrxx_mkII MPC::MPC)
+target_compile_features(mpcxx_mkII INTERFACE cxx_std_17)
+add_library(mpcxx_mkII::mpcxx_mkII ALIAS mpcxx_mkII)
 
 add_library(gmpfrxx_mkII INTERFACE)
 target_include_directories(gmpfrxx_mkII INTERFACE
@@ -58,7 +68,11 @@ target_include_directories(gmpfrxx_mkII INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(gmpfrxx_mkII INTERFACE GMP::GMP MPFR::MPFR MPC::MPC)
+target_link_libraries(gmpfrxx_mkII INTERFACE
+    gmpxx_mkII::gmpxx_mkII
+    mpfrxx_mkII::mpfrxx_mkII
+    mpcxx_mkII::mpcxx_mkII
+)
 target_compile_features(gmpfrxx_mkII INTERFACE cxx_std_17)
 add_library(gmpfrxx_mkII::gmpfrxx_mkII ALIAS gmpfrxx_mkII)
 
