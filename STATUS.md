@@ -1931,6 +1931,55 @@ Known issues:
 - The temporary adaptation uses a local no-op `MPZ_CHECK_FORMAT` replacement
   only because upstream's private `gmp-impl.h` is not part of this repository.
 
+Post-phase upstream t-rand MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted `../gmpxx_mkII/cxx/t-rand.cc` against this
+  repository's `mpfrxx_mkII.h`.
+- The adapted check covers `mpfrxx::gmp_randclass` initialization forms,
+  `mpfrxx::mpz_class` seeding and random integer generation, and the MPFR
+  random expression surface through `get_fr`.
+- No wrapper implementation changes were needed; the existing MPFR random API
+  already covers the upstream `gmp_randclass` surface once MPF-specific
+  `get_f` calls are mapped to MPFR-specific `get_fr`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' ../gmpxx_mkII/cxx/t-rand.cc`
+- `sed -n '261,620p' ../gmpxx_mkII/cxx/t-rand.cc`
+- `rg -n "class gmp_randclass|gmp_randclass|get_z_bits|get_z_range|get_f|get_fr|get_mpfr|rand" include tests`
+- `sed -n '1,220p' tests/test_random.cpp`
+- `sed -n '1,220p' tests/test_mpfr_random.cpp`
+- `mkdir -p /tmp/t-rand-mpfrxx`
+- `cp ../gmpxx_mkII/cxx/t-rand.cc /tmp/t-rand-mpfrxx/t-rand-mpfrxx-mkII.cc`
+- Minimal source adaptation commands for the temporary MPFR version.
+- `g++ -std=c++17 -Iinclude /tmp/t-rand-mpfrxx/t-rand-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-rand-mpfrxx/t-rand-mpfrxx-mkII`
+- `stdbuf -o0 -e0 /tmp/t-rand-mpfrxx/t-rand-mpfrxx-mkII`
+- `cmake --build build -j --target test_mpfr_random test_random`
+- `ctest --test-dir build -R 'test_mpfr_random|test_random' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `diff -u ../gmpxx_mkII/cxx/t-rand.cc /tmp/t-rand-mpfrxx/t-rand-mpfrxx-mkII.cc`
+
+Pass/fail result:
+- Temporary adapted `t-rand` build: PASS.
+- Temporary adapted `t-rand` run: PASS.
+- `cmake --build build -j --target test_mpfr_random test_random`: PASS.
+- `ctest --test-dir build -R 'test_mpfr_random|test_random' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for the t-rand MPFR adaptation.
+
 Post-phase upstream t-ops MPFR adaptation:
 DONE
 
