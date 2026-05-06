@@ -1885,6 +1885,65 @@ Known issues:
 - The temporary adaptation maps upstream MPF-specific default precision setup
   to `mpfrxx::set_default_precision_bits(DBL_MANT_DIG - DBL_MIN_EXP + 42)`.
 
+Post-phase upstream t-ops2qf MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream `gmpxx_mkII/cxx/t-ops2qf.cc`
+  against this repo's `mpfrxx_mkII.h` for mixed `mpq_class`/`mpfr_class`
+  arithmetic, comparisons, shifts, unary helpers, and increment/decrement.
+- Added rvalue pre/post increment and decrement overloads for
+  `gmpxx::mpz_class`, `gmpxx::mpq_class`, `gmpxx::mpf_class`, and
+  `mpfrxx::mpfr_class`, matching upstream-style expressions such as
+  `++T(7)` and `T(7)++`.
+- Kept the temporary adaptation limited to include/assertion setup,
+  `mpf_class` to `mpfr_class`, and MPF default precision setup to
+  `mpfrxx::set_default_precision_bits(...)`.
+
+Tests added:
+- Rvalue increment/decrement regression coverage in existing arithmetic tests.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- tests/test_mpz_arithmetic.cpp
+- tests/test_mpq_arithmetic.cpp
+- tests/test_mpf_basic.cpp
+- tests/test_mpfr_scalar_eval.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/cxx/t-ops2qf.cc
+- sed -n '1,340p' ../gmpxx_mkII/cxx/t-ops2.h
+- mkdir -p /tmp/t-ops2qf-mpfrxx
+- cp ../gmpxx_mkII/cxx/t-ops2qf.cc /tmp/t-ops2qf-mpfrxx/t-ops2qf-mpfrxx-mkII.cc
+- cp ../gmpxx_mkII/cxx/t-ops2.h /tmp/t-ops2qf-mpfrxx/t-ops2.h
+- perl -0pi -e '...' /tmp/t-ops2qf-mpfrxx/t-ops2.h
+- perl -0pi -e '...' /tmp/t-ops2qf-mpfrxx/t-ops2qf-mpfrxx-mkII.cc
+- g++ -std=c++17 -Iinclude -I/tmp/t-ops2qf-mpfrxx /tmp/t-ops2qf-mpfrxx/t-ops2qf-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops2qf-mpfrxx/t-ops2qf-mpfrxx-mkII
+- /tmp/t-ops2qf-mpfrxx/t-ops2qf-mpfrxx-mkII
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial g++ build of the temporary adaptation: FAIL because rvalue
+  increment/decrement overloads were missing for `mpq_class` and `mpfr_class`.
+- g++ -std=c++17 -Iinclude -I/tmp/t-ops2qf-mpfrxx /tmp/t-ops2qf-mpfrxx/t-ops2qf-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops2qf-mpfrxx/t-ops2qf-mpfrxx-mkII after adding rvalue overloads: PASS.
+- /tmp/t-ops2qf-mpfrxx/t-ops2qf-mpfrxx-mkII: PASS.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j: PASS.
+- Initial ctest --test-dir build --output-on-failure: FAIL because the new
+  MPF regression compared requested precision to the exact literal `160`
+  instead of GMP's actual rounded precision.
+- ctest --test-dir build --output-on-failure after adjusting the MPF
+  regression to compare against actual `get_prec()`: PASS, 119/119 tests
+  passed.
+
+Known issues:
+- None for the t-ops2qf MPFR adaptation.
+
 Post-phase upstream t-mix MPFR adaptation:
 DONE
 

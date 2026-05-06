@@ -2120,6 +2120,19 @@ inline mpz_class operator++(mpz_class& value, int)
     return old;
 }
 
+inline mpz_class operator++(mpz_class&& value)
+{
+    ++value;
+    return std::move(value);
+}
+
+inline mpz_class operator++(mpz_class&& value, int)
+{
+    mpz_class old(value);
+    ++value;
+    return old;
+}
+
 inline mpz_class& operator--(mpz_class& value)
 {
     mpz_sub_ui(value.mpz_data(), value.mpz_data(), 1);
@@ -2127,6 +2140,19 @@ inline mpz_class& operator--(mpz_class& value)
 }
 
 inline mpz_class operator--(mpz_class& value, int)
+{
+    mpz_class old(value);
+    --value;
+    return old;
+}
+
+inline mpz_class operator--(mpz_class&& value)
+{
+    --value;
+    return std::move(value);
+}
+
+inline mpz_class operator--(mpz_class&& value, int)
 {
     mpz_class old(value);
     --value;
@@ -2146,6 +2172,19 @@ inline mpq_class operator++(mpq_class& value, int)
     return old;
 }
 
+inline mpq_class operator++(mpq_class&& value)
+{
+    ++value;
+    return std::move(value);
+}
+
+inline mpq_class operator++(mpq_class&& value, int)
+{
+    mpq_class old(value);
+    ++value;
+    return old;
+}
+
 inline mpq_class& operator--(mpq_class& value)
 {
     value -= 1;
@@ -2153,6 +2192,19 @@ inline mpq_class& operator--(mpq_class& value)
 }
 
 inline mpq_class operator--(mpq_class& value, int)
+{
+    mpq_class old(value);
+    --value;
+    return old;
+}
+
+inline mpq_class operator--(mpq_class&& value)
+{
+    --value;
+    return std::move(value);
+}
+
+inline mpq_class operator--(mpq_class&& value, int)
 {
     mpq_class old(value);
     --value;

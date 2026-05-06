@@ -185,6 +185,23 @@ void check_increment_decrement()
     if ((--value).get_prec() != precision || value.to_double() != 3.5) {
         std::abort();
     }
+
+    mpfrxx::mpfr_class prefix = ++mpfrxx::mpfr_class(7.0, static_cast<mpfr_prec_t>(160));
+    if (prefix.get_prec() != 160 || prefix.to_double() != 8.0) {
+        std::abort();
+    }
+    prefix = --mpfrxx::mpfr_class(-7.0, static_cast<mpfr_prec_t>(160));
+    if (prefix.get_prec() != 160 || prefix.to_double() != -8.0) {
+        std::abort();
+    }
+    mpfrxx::mpfr_class postfix = mpfrxx::mpfr_class(7.0, static_cast<mpfr_prec_t>(160))++;
+    if (postfix.get_prec() != 160 || postfix.to_double() != 7.0) {
+        std::abort();
+    }
+    postfix = mpfrxx::mpfr_class(-8.0, static_cast<mpfr_prec_t>(160))--;
+    if (postfix.get_prec() != 160 || postfix.to_double() != -8.0) {
+        std::abort();
+    }
 }
 
 } // namespace

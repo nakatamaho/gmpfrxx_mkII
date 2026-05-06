@@ -1792,6 +1792,19 @@ inline mpfr_class operator++(mpfr_class& value, int)
     return old;
 }
 
+inline mpfr_class operator++(mpfr_class&& value)
+{
+    ++value;
+    return std::move(value);
+}
+
+inline mpfr_class operator++(mpfr_class&& value, int)
+{
+    mpfr_class old(value);
+    ++value;
+    return old;
+}
+
 inline mpfr_class& operator--(mpfr_class& value)
 {
     value -= 1;
@@ -1799,6 +1812,19 @@ inline mpfr_class& operator--(mpfr_class& value)
 }
 
 inline mpfr_class operator--(mpfr_class& value, int)
+{
+    mpfr_class old(value);
+    --value;
+    return old;
+}
+
+inline mpfr_class operator--(mpfr_class&& value)
+{
+    --value;
+    return std::move(value);
+}
+
+inline mpfr_class operator--(mpfr_class&& value, int)
 {
     mpfr_class old(value);
     --value;

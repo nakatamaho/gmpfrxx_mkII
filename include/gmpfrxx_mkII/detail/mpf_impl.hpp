@@ -1764,6 +1764,19 @@ inline mpf_class operator++(mpf_class& value, int)
     return old;
 }
 
+inline mpf_class operator++(mpf_class&& value)
+{
+    ++value;
+    return std::move(value);
+}
+
+inline mpf_class operator++(mpf_class&& value, int)
+{
+    mpf_class old(value);
+    ++value;
+    return old;
+}
+
 inline mpf_class& operator--(mpf_class& value)
 {
     value -= 1;
@@ -1771,6 +1784,19 @@ inline mpf_class& operator--(mpf_class& value)
 }
 
 inline mpf_class operator--(mpf_class& value, int)
+{
+    mpf_class old(value);
+    --value;
+    return old;
+}
+
+inline mpf_class operator--(mpf_class&& value)
+{
+    --value;
+    return std::move(value);
+}
+
+inline mpf_class operator--(mpf_class&& value, int)
 {
     mpf_class old(value);
     --value;

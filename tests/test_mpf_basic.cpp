@@ -203,6 +203,24 @@ void check_increment_decrement()
     if ((--value).get_prec() != precision || mpf_cmp_d(value.mpf_data(), 3.5) != 0) {
         std::abort();
     }
+
+    const mp_bitcnt_t rvalue_precision = gmpxx::mpf_class(0.0, static_cast<mp_bitcnt_t>(160)).get_prec();
+    gmpxx::mpf_class prefix = ++gmpxx::mpf_class(7.0, static_cast<mp_bitcnt_t>(160));
+    if (prefix.get_prec() != rvalue_precision || mpf_cmp_d(prefix.mpf_data(), 8.0) != 0) {
+        std::abort();
+    }
+    prefix = --gmpxx::mpf_class(-7.0, static_cast<mp_bitcnt_t>(160));
+    if (prefix.get_prec() != rvalue_precision || mpf_cmp_d(prefix.mpf_data(), -8.0) != 0) {
+        std::abort();
+    }
+    gmpxx::mpf_class postfix = gmpxx::mpf_class(7.0, static_cast<mp_bitcnt_t>(160))++;
+    if (postfix.get_prec() != rvalue_precision || mpf_cmp_d(postfix.mpf_data(), 7.0) != 0) {
+        std::abort();
+    }
+    postfix = gmpxx::mpf_class(-8.0, static_cast<mp_bitcnt_t>(160))--;
+    if (postfix.get_prec() != rvalue_precision || mpf_cmp_d(postfix.mpf_data(), -8.0) != 0) {
+        std::abort();
+    }
 }
 
 } // namespace

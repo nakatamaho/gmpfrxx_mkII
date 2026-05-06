@@ -128,6 +128,13 @@ void check_shift_increment_and_mixed_zq()
     require_mpq_equal(inc--, gmpxx::mpq_class("3/2"));
     require_mpq_equal(inc, gmpxx::mpq_class("1/2"));
 
+    require_mpq_equal(++gmpxx::mpq_class(7), gmpxx::mpq_class(8));
+    require_mpq_equal(++gmpxx::mpq_class(-8), gmpxx::mpq_class(-7));
+    require_mpq_equal(--gmpxx::mpq_class(8), gmpxx::mpq_class(7));
+    require_mpq_equal(--gmpxx::mpq_class(-7), gmpxx::mpq_class(-8));
+    require_mpq_equal(gmpxx::mpq_class(7)++, gmpxx::mpq_class(7));
+    require_mpq_equal(gmpxx::mpq_class(-8)--, gmpxx::mpq_class(-8));
+
     gmpxx::mpz_class b(1);
     gmpxx::mpz_class c(4);
     gmpxx::mpq_class d = (b - c) * gmpxx::mpq_class("2/3");

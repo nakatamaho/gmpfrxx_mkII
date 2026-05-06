@@ -145,6 +145,13 @@ void check_increment_decrement()
     require_mpz_equal(--a, gmpxx::mpz_class(0));
     require_mpz_equal(a--, gmpxx::mpz_class(0));
     require_mpz_equal(a, gmpxx::mpz_class(-1));
+
+    require_mpz_equal(++gmpxx::mpz_class(7), gmpxx::mpz_class(8));
+    require_mpz_equal(++gmpxx::mpz_class(-8), gmpxx::mpz_class(-7));
+    require_mpz_equal(--gmpxx::mpz_class(8), gmpxx::mpz_class(7));
+    require_mpz_equal(--gmpxx::mpz_class(-7), gmpxx::mpz_class(-8));
+    require_mpz_equal(gmpxx::mpz_class(7)++, gmpxx::mpz_class(7));
+    require_mpz_equal(gmpxx::mpz_class(-8)--, gmpxx::mpz_class(-8));
 }
 
 void check_nested_shapes()
