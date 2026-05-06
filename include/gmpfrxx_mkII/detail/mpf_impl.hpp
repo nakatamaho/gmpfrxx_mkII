@@ -1303,10 +1303,20 @@ void mpf_evaluate(mpf_t dest, const scalar_leaf<T, Result>& expr, mp_bitcnt_t)
 {
     if constexpr (std::is_same_v<T, double>) {
         mpf_set_d(dest, expr.value());
-    } else if constexpr (std::is_same_v<T, std::int64_t> ||
-                         std::is_same_v<T, std::uint64_t>) {
-        const gmpxx::mpz_class integer(expr.value());
-        mpf_set_z(dest, integer.mpz_data());
+    } else if constexpr (std::is_same_v<T, std::int64_t>) {
+        if constexpr (std::numeric_limits<long>::digits >= 63) {
+            mpf_set_si(dest, static_cast<long>(expr.value()));
+        } else {
+            const gmpxx::mpz_class integer(expr.value());
+            mpf_set_z(dest, integer.mpz_data());
+        }
+    } else if constexpr (std::is_same_v<T, std::uint64_t>) {
+        if constexpr (std::numeric_limits<unsigned long>::digits >= 64) {
+            mpf_set_ui(dest, static_cast<unsigned long>(expr.value()));
+        } else {
+            const gmpxx::mpz_class integer(expr.value());
+            mpf_set_z(dest, integer.mpz_data());
+        }
     } else {
         static_assert(std::is_same_v<T, double>, "unsupported MPF scalar leaf");
     }

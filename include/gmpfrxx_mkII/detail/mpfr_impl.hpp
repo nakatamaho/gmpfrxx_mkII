@@ -1200,10 +1200,20 @@ void mpfr_evaluate(
 {
     if constexpr (std::is_same_v<T, double>) {
         mpfr_set_d(dest, expr.value(), rnd);
-    } else if constexpr (std::is_same_v<T, std::int64_t> ||
-                         std::is_same_v<T, std::uint64_t>) {
-        const gmpxx::mpz_class integer(expr.value());
-        mpfr_set_z(dest, integer.mpz_data(), rnd);
+    } else if constexpr (std::is_same_v<T, std::int64_t>) {
+        if constexpr (std::numeric_limits<long>::digits >= 63) {
+            mpfr_set_si(dest, static_cast<long>(expr.value()), rnd);
+        } else {
+            const gmpxx::mpz_class integer(expr.value());
+            mpfr_set_z(dest, integer.mpz_data(), rnd);
+        }
+    } else if constexpr (std::is_same_v<T, std::uint64_t>) {
+        if constexpr (std::numeric_limits<unsigned long>::digits >= 64) {
+            mpfr_set_ui(dest, static_cast<unsigned long>(expr.value()), rnd);
+        } else {
+            const gmpxx::mpz_class integer(expr.value());
+            mpfr_set_z(dest, integer.mpz_data(), rnd);
+        }
     } else {
         static_assert(std::is_same_v<T, double>, "unsupported MPFR scalar leaf");
     }
@@ -1965,6 +1975,19 @@ inline mpfr_class nexttoward(const Expr& expr, const Direction& direction)
     const mpfr_class target = detail::materialize_mpfr_math_operand(direction);
     mpfr_nexttoward(result.mpfr_data(), target.mpfr_data());
     return result;
+}
+
+template <
+    typename Expr,
+    typename Direction,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Direction> &&
+                         (gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr> ||
+                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Direction>),
+                     int> = 0>
+inline mpfr_class nextafter(const Expr& expr, const Direction& direction)
+{
+    return nexttoward(expr, direction);
 }
 
 #define GMPFRXX_MKII_DEFINE_MPFR_PREDICATE(name) \

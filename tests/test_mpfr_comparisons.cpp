@@ -145,6 +145,9 @@ void test_mpfr_sign_next_and_predicates()
     static_assert(std::is_same<decltype(mpfrxx::nexttoward(std::declval<const mpfr_class&>(),
                                                            std::declval<const mpfr_class&>())),
                                mpfr_class>::value, "");
+    static_assert(std::is_same<decltype(mpfrxx::nextafter(std::declval<const mpfr_class&>(),
+                                                          std::declval<const mpfr_class&>())),
+                               mpfr_class>::value, "");
     static_assert(std::is_same<decltype(mpfrxx::signbit(std::declval<const mpfr_class&>())), bool>::value, "");
     static_assert(std::is_same<decltype(mpfrxx::sgn(std::declval<const mpfr_class&>())), int>::value, "");
     static_assert(std::is_same<decltype(mpfrxx::nan_p(std::declval<const mpfr_class&>())), bool>::value, "");
@@ -197,6 +200,12 @@ void test_mpfr_sign_next_and_predicates()
     mpfr_class got_nexttoward = mpfrxx::nexttoward(positive, negative);
     assert(got_nexttoward.precision() == positive.precision());
     assert_same_mpfr_value(got_nexttoward, expected);
+
+    mpfr_set(expected, positive.mpfr_data(), mpfrxx::mpfr_class::default_rounding());
+    mpfr_nexttoward(expected, negative.mpfr_data());
+    mpfr_class got_nextafter = mpfrxx::nextafter(positive, negative);
+    assert(got_nextafter.precision() == positive.precision());
+    assert_same_mpfr_value(got_nextafter, expected);
 
     mpfr_clear(expected);
 

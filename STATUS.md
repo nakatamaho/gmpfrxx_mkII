@@ -1801,6 +1801,108 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFR nextafter alias:
+DONE
+
+Implemented features:
+- Added `mpfrxx::nextafter(x, y)` as a thin public alias for
+  `mpfrxx::nexttoward(x, y)`, matching the standard `nextafter` naming while
+  preserving MPFR `mpfr_nexttoward` semantics.
+- The result keeps the source operand precision because the implementation
+  delegates to the existing `nexttoward` wrapper.
+
+Tests added:
+- None.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- tests/test_mpfr_comparisons.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1938,1982p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '135,205p' tests/test_mpfr_comparisons.cpp
+- cmake --build build -j --target test_mpfr_comparisons
+- ctest --test-dir build -R test_mpfr_comparisons --output-on-failure
+- cmake --build build -j
+- git diff --check
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_comparisons: PASS.
+- ctest --test-dir build -R test_mpfr_comparisons --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- git diff --check: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 117/117 tests passed.
+
+Known issues:
+- None for this phase.
+
+Post-phase scalar allocation fast path:
+DONE
+
+Implemented features:
+- Added MPF integer scalar evaluation fast paths that use `mpf_set_si` when
+  `long` covers int64_t and `mpf_set_ui` when `unsigned long` covers uint64_t.
+- Added MPFR integer scalar evaluation fast paths that use `mpfr_set_si` and
+  `mpfr_set_ui` under the same ABI-width conditions.
+- Kept the existing `gmpxx::mpz_class` fallback on narrower ABIs so full
+  int64_t/uint64_t exactness is preserved.
+- Updated scalar allocation-count tests to document the reduced LP64 counts:
+  direct integer scalar expressions are allocation-free, nested scalar
+  expressions allocate one temporary, and compound aliasing expressions allocate
+  two temporaries.
+- Added explicit int64_t-min and uint64_t-max allocation checks on ABIs where
+  direct long/unsigned long fast paths are exact.
+- Updated the upstream migration table row for `test_scalar_alloc_count.cpp`
+  from TODO/current-policy to Done.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpf_scalar_alloc_count.cpp
+- tests/test_mpfr_scalar_alloc_count.cpp
+- include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' tests/test_mpf_scalar_alloc_count.cpp
+- sed -n '1,280p' tests/test_mpfr_scalar_alloc_count.cpp
+- sed -n '1280,1345p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1160,1235p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '28,55p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '28,55p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "#include <limits>" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- cmake --build build -j --target test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count
+- ctest --test-dir build -R 'test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count' --output-on-failure
+- cmake --build build -j --target test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count
+- ctest --test-dir build -R 'test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count' --output-on-failure
+- cmake --build build -j --target test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count
+- ctest --test-dir build -R 'test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count' --output-on-failure
+- cmake --build build -j --target test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count
+- ctest --test-dir build -R 'test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count' --output-on-failure
+- tail -n 80 STATUS.md
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- Initial focused CTest after fast path: FAIL because direct scalar count
+  dropped from 1 to 0; test expectation updated.
+- Second focused CTest: FAIL because nested scalar count dropped from 2 to 1;
+  test expectation updated.
+- Third focused CTest: FAIL because compound scalar count dropped from 3 to 2;
+  test expectation updated.
+- Final focused CTest: PASS, 2/2 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 117/117 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- None for this phase.
+
 Post-phase scalar arithmetic focused migration:
 DONE
 
@@ -2595,7 +2697,7 @@ Migration table:
 | test_power_of_two_fusion.cpp | tests/test_mpf_power_of_two_fusion.cpp, tests/test_mpfr_power_of_two_fusion.cpp | Done for behavior | Done for natural MPFR behavior | No diagnostic fusion counter API; tests verify power-of-two scalar multiply/divide behavior and destination precision preservation. | Add counters only if optimizer instrumentation becomes public policy. |
 | test_precision_policy.cpp | tests/test_mpf_precision_policy.cpp, tests/test_mpfr_precision_policy.cpp | Done | Done for natural MPFR adaptation | Upstream MPF precision-policy assertions are now mirrored, including `set_prec`, `set_prec_raw`, expression construction precision, assignment precision preservation, `.eval()` materialization, compound-assignment precision preservation, and value comparison against direct C API references. MPFR has the natural adaptation with `set_prec` implemented via `mpfr_prec_round`; there is no MPFR `set_prec_raw` wrapper because raw precision mutation is not part of the current MPFR policy. | Keep migrated; revisit only if MPFR raw-precision mutation becomes public policy. |
 | test_random.cpp | tests/test_random.cpp, tests/test_mpfr_random.cpp | Done | Done | Statistical tests are smoke checks only; no deep distribution or high-precision randomness quality test is currently defined as policy. | Keep migrated; add stronger statistical/high-precision random tests only if the random API policy expands. |
-| test_scalar_alloc_count.cpp | tests/test_mpf_scalar_alloc_count.cpp, tests/test_mpfr_scalar_alloc_count.cpp | Done for current policy | Done for current policy | Current MPF/MPFR scalar evaluation converts int64_t/uint64_t leaves through gmpxx::mpz_class to preserve exactness, so integer scalar paths allocate; compound/nested scalar expressions can also allocate evaluation temporaries. | TODO: add exact scalar fast paths for values that safely fit GMP/MPFR C APIs, with fallback to mpz for full int64_t/uint64_t correctness. |
+| test_scalar_alloc_count.cpp | tests/test_mpf_scalar_alloc_count.cpp, tests/test_mpfr_scalar_alloc_count.cpp | Done | Done | MPF/MPFR integer scalar leaves now use direct GMP/MPFR C API fast paths when `long`/`unsigned long` cover int64_t/uint64_t, avoiding the previous `mpz` allocation on LP64 while preserving the mpz fallback on narrower ABIs. Direct scalar assignment is allocation-free; nested and compound expression temporaries remain documented by the focused tests. | Keep migrated; revisit only if expression alias evaluation gains scalar-temporary elision. |
 | test_scalar_arithmetic.cpp | tests/test_mpf_basic.cpp, tests/test_mpfr_scalar_eval.cpp | Done | Done for natural MPFR adaptation | Upstream scalar matrix is now covered for MPF and naturally adapted to MPFR: signed/unsigned integer edges, uint64 max, float/double extremes, assignment precision preservation, scalar-left/right arithmetic, expression-plus-scalar shapes, and pre/post inc-dec precision preservation. Exact Z/Q inc-dec and exact scalar interactions are covered under `test_mpz_arithmetic.cpp`, `test_mpq_arithmetic.cpp`, and `test_mixed_type_arithmetic.cpp`. | Keep migrated; extend only if upstream adds new scalar families. |
 | test_thread_safety.cpp | tests/test_mpf_thread_safety.cpp, tests/test_mpfr_thread_safety.cpp | Done for current global-default policy | Done for current global-default policy | This repo exposes process-global wrapper defaults, not upstream thread-snapshot default semantics. Tests cover concurrent default construction, isolation from GMP/MPFR global defaults, and parallel expression materialization with per-thread objects. | Keep current-policy tests; revisit only if defaults become thread-local. |
 | test_type_conversions.cpp | tests/test_type_conversions.cpp, tests/test_mpfr_type_conversions.cpp, tests/test_gmpxx_mkII.cpp, tests/test_mpfrxx_mkII.cpp | Done for policy-compatible focused matrix | Done for natural MPFR adaptation | Focused tests now cover raw GMP/MPFR pointer construction, exact int64_t/uint64_t and int128 construction/assignment, string assignment and invalid-input preservation, wrapper-to-wrapper conversions, explicit bool conversion, accessors, fit predicates, and destination-precision preservation. Upstream APIs that conflict with local policy remain intentional differences: bool construction is rejected, `mpfrxx_mkII.h` does not expose `gmpxx::mpf_class`, and MPFR does not mirror GMP-only MPF conversion forms. | Keep migrated; extend only if upstream adds a new policy-compatible conversion assertion or local conversion policy changes. |

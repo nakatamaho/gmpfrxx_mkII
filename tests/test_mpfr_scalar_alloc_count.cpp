@@ -30,6 +30,8 @@
 #include <atomic>
 #include <cstdio>
 #include <cstdlib>
+#include <cstdint>
+#include <limits>
 
 namespace {
 
@@ -73,19 +75,31 @@ int main()
 
     alloc_count = 0;
     dst = a + 5LL;
-    require_alloc_count(1);
+    require_alloc_count(0);
 
     alloc_count = 0;
     dst = a + b + 5LL;
-    require_alloc_count(2);
+    require_alloc_count(1);
 
     alloc_count = 0;
     dst += 5LL;
-    require_alloc_count(3);
+    require_alloc_count(2);
 
     alloc_count = 0;
     dst = a + 5.0;
     require_alloc_count(0);
+
+    if (std::numeric_limits<long>::digits >= 63) {
+        alloc_count = 0;
+        dst = a + std::numeric_limits<std::int64_t>::min();
+        require_alloc_count(0);
+    }
+
+    if (std::numeric_limits<unsigned long>::digits >= 64) {
+        alloc_count = 0;
+        dst = a + std::numeric_limits<std::uint64_t>::max();
+        require_alloc_count(0);
+    }
 
     return 0;
 }
