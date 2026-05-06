@@ -1801,6 +1801,134 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase std::common_type promotion parity:
+DONE
+
+Implemented features:
+- Added public `std::common_type` specializations for GMP promotion:
+  `mpz_class -> mpq_class -> mpf_class -> mpfc_class`.
+- Added public `std::common_type` specializations for MPFR/MPC promotion:
+  `mpz_class/mpq_class -> mpfr_class -> mpc_class`.
+- Kept forbidden cross-domain promotion absent:
+  `gmpxx::mpf_class` / `gmpxx::mpfc_class` do not gain common types with
+  `mpfrxx::mpfr_class` / `mpfrxx::mpc_class`.
+- Updated ABI fingerprint expectations from "no common_type" to the new
+  promotion policy.
+
+Tests added:
+- tests/test_common_type.cpp
+
+Tests updated:
+- tests/CMakeLists.txt
+- tests/test_abi_fingerprint.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,130p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '1,140p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1,150p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '70,225p' tests/test_abi_fingerprint.cpp
+- sed -n '1,90p' include/gmpxx_mkII.h
+- sed -n '1,90p' include/mpfrxx_mkII.h
+- sed -n '1,90p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '1,110p' tests/CMakeLists.txt
+- rg -n "} // namespace gmpxx|} // namespace mpfrxx|class mpfc_class|class mpc_class|class mpq_class|class mpz_class" include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '900,980p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- sed -n '250,340p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '160,245p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp
+- sed -n '780,835p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '160,215p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- sed -n '445,500p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "mpf_class\\s*\\{|private:|mpf_t value_|};" include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '505,545p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1138,1165p' include/gmpfrxx_mkII/detail/zq_impl.hpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target test_common_type test_abi_fingerprint
+- ctest --test-dir build -R "test_common_type|test_abi_fingerprint" --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+- git status --short
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j --target test_common_type test_abi_fingerprint: PASS.
+- ctest --test-dir build -R "test_common_type|test_abi_fingerprint" --output-on-failure: PASS, 2/2 tests passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 119/119 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- `std::common_type` is intentionally not provided for forbidden GMP/MPFR
+  cross-domain pairs such as `gmpxx::mpf_class` with `mpfrxx::mpfr_class`.
+
+Post-phase upstream t-binary auto-base assignment and MPFR shift parity:
+DONE
+
+Implemented features:
+- Updated `mpz_class` and `mpq_class` string assignment from `const char*`
+  and `std::string` to use GMP base 0 parsing, so assignment such as
+  `want = "0x1000000000000000000000cafe";` works without adapting the
+  upstream `t-binary.cc` assertion.
+- Updated `mpf_class` string assignment to use `mpf_set_str(..., 0)` and
+  report invalid inputs through `std::invalid_argument`.
+- Updated `mpfr_class` string assignment to use MPFR base 0 parsing, including
+  C99-style hexadecimal floating input accepted by MPFR such as `0x1p+5`.
+- Added MPFR `operator<<`, `operator>>`, `operator<<=`, and `operator>>=`
+  as expression-template power-of-two scaling operations backed by
+  `mpfr_mul_2ui` / `mpfr_div_2ui`.
+- Verified minimally adapted upstream `../gmpxx_mkII/cxx/t-binary.cc` against
+  both `gmpxx_mkII.h` and `mpfrxx_mkII.h`. The GMP-header adaptation keeps
+  the upstream `want = "0x1000000000000000000000cafe";` line unchanged.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_zq_string_io.cpp
+- tests/test_mpf_string_io.cpp
+- tests/test_mpfr_string_io.cpp
+- tests/test_mpfr_power_of_two_fusion.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "operator<<|operator>>|shl_op|shr_op|mpfr_apply|operator\\+=|namespace mpfrxx" include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "operator<<|operator>>|shl_op|shr_op" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/expr.hpp
+- rg -n "power_of_two|shl|shr|<<|>>" tests/test_mpfr_power_of_two_fusion.cpp tests/test_mpfr_scalar_eval.cpp tests/test_et_contract_mpfr.cpp
+- sed -n '1240,1385p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1510,1745p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1428,1625p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1390,1445p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1,180p' tests/test_mpfr_power_of_two_fusion.cpp
+- cmake --build build -j --target test_mpfr_power_of_two_fusion test_zq_string_io test_mpf_string_io test_mpfr_string_io
+- ctest --test-dir build -R "test_mpfr_power_of_two_fusion|test_zq_string_io|test_mpf_string_io|test_mpfr_string_io" --output-on-failure
+- g++ -std=c++17 -Iinclude /tmp/t-binary-gmpxx-mkII.cc -lgmp -o /tmp/t-binary-gmpxx-mkII
+- g++ -std=c++17 -Iinclude /tmp/t-binary-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-binary-mpfrxx-mkII
+- /tmp/t-binary-gmpxx-mkII
+- /tmp/t-binary-mpfrxx-mkII
+- diff -u ../gmpxx_mkII/cxx/t-binary.cc /tmp/t-binary-gmpxx-mkII.cc
+- diff -u ../gmpxx_mkII/cxx/t-binary.cc /tmp/t-binary-mpfrxx-mkII.cc
+- git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_zq_string_io.cpp tests/test_mpf_string_io.cpp tests/test_mpfr_string_io.cpp tests/test_mpfr_power_of_two_fusion.cpp
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_power_of_two_fusion test_zq_string_io test_mpf_string_io test_mpfr_string_io: PASS.
+- ctest --test-dir build -R "test_mpfr_power_of_two_fusion|test_zq_string_io|test_mpf_string_io|test_mpfr_string_io" --output-on-failure: PASS, 4/4 tests passed.
+- g++ -std=c++17 -Iinclude /tmp/t-binary-gmpxx-mkII.cc -lgmp -o /tmp/t-binary-gmpxx-mkII: PASS.
+- g++ -std=c++17 -Iinclude /tmp/t-binary-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-binary-mpfrxx-mkII: PASS.
+- /tmp/t-binary-gmpxx-mkII: PASS.
+- /tmp/t-binary-mpfrxx-mkII: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 118/118 tests passed.
+- git diff --check: PASS.
+
+Known issues:
+- `mpf_class` string assignment follows GMP `mpf_set_str(..., 0)` semantics;
+  unlike MPFR, GMP MPF does not accept C99 hexadecimal floating literals such
+  as `0x1p+5`.
+
 Post-phase MPFR nextafter alias:
 DONE
 

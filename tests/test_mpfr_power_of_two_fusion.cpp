@@ -31,6 +31,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <limits>
+#include <type_traits>
 
 namespace {
 
@@ -78,6 +79,18 @@ int main()
     check_mul_2ui(std::int64_t{-8} * a, a, 3, true);
     check_div_2ui(a / std::int64_t{-8}, a, 3, true);
 
+    {
+        auto shl_expr = a << 4;
+        auto shr_expr = a >> 3;
+        static_assert(gmpfrxx_mkII::detail::is_expression_node_v<decltype(shl_expr)>);
+        static_assert(gmpfrxx_mkII::detail::is_expression_node_v<decltype(shr_expr)>);
+        static_assert(!std::is_same_v<decltype(shl_expr), mpfrxx::mpfr_class>);
+        static_assert(!std::is_same_v<decltype(shr_expr), mpfrxx::mpfr_class>);
+        check_mul_2ui(shl_expr, a, 4, false);
+        check_div_2ui(shr_expr, a, 3, false);
+        check_div_2ui((-a) >> 2, a, 2, true);
+    }
+
     check_mul_2ui(a * std::numeric_limits<std::int64_t>::min(), a, 63, true);
     check_div_2ui(a / std::numeric_limits<std::int64_t>::min(), a, 63, true);
 
@@ -103,6 +116,22 @@ int main()
         mpfr_set(ref.get_mpfr_t(), r.get_mpfr_t(), mpfrxx::default_rounding_mode());
         mpfr_div_2ui(ref.get_mpfr_t(), ref.get_mpfr_t(), 4, mpfrxx::default_rounding_mode());
         r /= std::uint64_t{16};
+        if (r.precision() != precision) {
+            std::abort();
+        }
+        require_equal(r, ref);
+
+        mpfr_set(ref.get_mpfr_t(), r.get_mpfr_t(), mpfrxx::default_rounding_mode());
+        mpfr_mul_2ui(ref.get_mpfr_t(), ref.get_mpfr_t(), 5, mpfrxx::default_rounding_mode());
+        r <<= 5;
+        if (r.precision() != precision) {
+            std::abort();
+        }
+        require_equal(r, ref);
+
+        mpfr_set(ref.get_mpfr_t(), r.get_mpfr_t(), mpfrxx::default_rounding_mode());
+        mpfr_div_2ui(ref.get_mpfr_t(), ref.get_mpfr_t(), 3, mpfrxx::default_rounding_mode());
+        r >>= 3;
         if (r.precision() != precision) {
             std::abort();
         }

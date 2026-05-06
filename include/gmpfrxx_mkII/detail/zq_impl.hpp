@@ -425,13 +425,13 @@ public:
 
     mpz_class& operator=(const char* value)
     {
-        set(value);
+        set(value, 0);
         return *this;
     }
 
     mpz_class& operator=(const std::string& value)
     {
-        set(value);
+        set(value, 0);
         return *this;
     }
 
@@ -771,13 +771,13 @@ public:
 
     mpq_class& operator=(const char* value)
     {
-        set(value);
+        set(value, 0);
         return *this;
     }
 
     mpq_class& operator=(const std::string& value)
     {
-        set(value);
+        set(value, 0);
         return *this;
     }
 
@@ -1152,6 +1152,30 @@ inline bool operator!=(const mpq_class& lhs, const mpq_class& rhs)
 }
 
 } // namespace gmpxx
+
+namespace std {
+
+template <>
+struct common_type<gmpxx::mpz_class, gmpxx::mpz_class> {
+    using type = gmpxx::mpz_class;
+};
+
+template <>
+struct common_type<gmpxx::mpz_class, gmpxx::mpq_class> {
+    using type = gmpxx::mpq_class;
+};
+
+template <>
+struct common_type<gmpxx::mpq_class, gmpxx::mpz_class> {
+    using type = gmpxx::mpq_class;
+};
+
+template <>
+struct common_type<gmpxx::mpq_class, gmpxx::mpq_class> {
+    using type = gmpxx::mpq_class;
+};
+
+} // namespace std
 
 inline void print_mpz(std::ostream& out, mpz_srcptr value)
 {

@@ -240,8 +240,8 @@ public:
 
     mpfr_class& operator=(const char* text)
     {
-        if (set_str(text) != 0) {
-            throw std::invalid_argument("invalid mpfr_class decimal string");
+        if (set_str(text, 0) != 0) {
+            throw std::invalid_argument("invalid mpfr_class string");
         }
         return *this;
     }
@@ -477,6 +477,35 @@ inline void swap(mpfr_class& lhs, mpfr_class& rhs) noexcept
 }
 
 } // namespace mpfrxx
+
+namespace std {
+
+template <>
+struct common_type<gmpxx::mpz_class, mpfrxx::mpfr_class> {
+    using type = mpfrxx::mpfr_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpfr_class, gmpxx::mpz_class> {
+    using type = mpfrxx::mpfr_class;
+};
+
+template <>
+struct common_type<gmpxx::mpq_class, mpfrxx::mpfr_class> {
+    using type = mpfrxx::mpfr_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpfr_class, gmpxx::mpq_class> {
+    using type = mpfrxx::mpfr_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpfr_class, mpfrxx::mpfr_class> {
+    using type = mpfrxx::mpfr_class;
+};
+
+} // namespace std
 
 namespace gmpfrxx_mkII {
 namespace detail {
@@ -1276,6 +1305,10 @@ void mpfr_apply_binary(mpfr_t dest, const mpfr_t lhs, const mpfr_t rhs, mpfr_rnd
         mpfr_mul(dest, lhs, rhs, rnd);
     } else if constexpr (std::is_same_v<Op, div_op>) {
         mpfr_div(dest, lhs, rhs, rnd);
+    } else if constexpr (std::is_same_v<Op, shl_op>) {
+        mpfr_mul_2ui(dest, lhs, mpfr_get_ui(rhs, MPFR_RNDZ), rnd);
+    } else if constexpr (std::is_same_v<Op, shr_op>) {
+        mpfr_div_2ui(dest, lhs, mpfr_get_ui(rhs, MPFR_RNDZ), rnd);
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPFR expression operation");
     }
@@ -1333,6 +1366,20 @@ void mpfr_evaluate(
         mpq_evaluate(exact, expr);
         mpfr_set_q(dest, exact, rnd);
         mpq_clear(exact);
+        return;
+    }
+
+    if constexpr (std::is_same_v<Op, shl_op> || std::is_same_v<Op, shr_op>) {
+        mpz_t bits_value;
+        mpz_init(bits_value);
+        mpfr_evaluate(dest, expr.lhs(), eval_precision, rnd);
+        mpz_evaluate(bits_value, expr.rhs());
+        if constexpr (std::is_same_v<Op, shl_op>) {
+            mpfr_mul_2ui(dest, dest, zq_shift_count_from_mpz(bits_value), rnd);
+        } else {
+            mpfr_div_2ui(dest, dest, zq_shift_count_from_mpz(bits_value), rnd);
+        }
+        mpz_clear(bits_value);
         return;
     }
 
@@ -1440,6 +1487,40 @@ auto operator-(Expr&& expr)
     return unary_expr<neg_op, decltype(operand), mpfrxx::mpfr_class>(std::move(operand));
 }
 
+template <typename Lhs, typename Bits, std::enable_if_t<
+                                    is_mpfr_object_or_node_v<Lhs> &&
+                                        is_supported_expression_integral_v<std::decay_t<Bits>>,
+                                    int> = 0>
+auto operator<<(Lhs&& lhs, Bits bits)
+{
+    if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
+        if (bits < 0) {
+            throw std::invalid_argument("negative shift count");
+        }
+    }
+    auto left = make_mpfr_operand(std::forward<Lhs>(lhs));
+    auto right = scalar_leaf<std::uint64_t, gmpxx::mpz_class>(static_cast<std::uint64_t>(bits));
+    return binary_expr<shl_op, decltype(left), decltype(right), mpfrxx::mpfr_class>(
+        std::move(left), std::move(right));
+}
+
+template <typename Lhs, typename Bits, std::enable_if_t<
+                                    is_mpfr_object_or_node_v<Lhs> &&
+                                        is_supported_expression_integral_v<std::decay_t<Bits>>,
+                                    int> = 0>
+auto operator>>(Lhs&& lhs, Bits bits)
+{
+    if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
+        if (bits < 0) {
+            throw std::invalid_argument("negative shift count");
+        }
+    }
+    auto left = make_mpfr_operand(std::forward<Lhs>(lhs));
+    auto right = scalar_leaf<std::uint64_t, gmpxx::mpz_class>(static_cast<std::uint64_t>(bits));
+    return binary_expr<shr_op, decltype(left), decltype(right), mpfrxx::mpfr_class>(
+        std::move(left), std::move(right));
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -1478,6 +1559,8 @@ using ::gmpfrxx_mkII::detail::operator+;
 using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
+using ::gmpfrxx_mkII::detail::operator<<;
+using ::gmpfrxx_mkII::detail::operator>>;
 
 template <typename T>
 struct is_mpfr_comparison_non_scalar
@@ -1585,6 +1668,18 @@ inline mpfr_class& operator/=(mpfr_class& lhs, Rhs&& rhs)
 {
     lhs = lhs / std::forward<Rhs>(rhs);
     return lhs;
+}
+
+inline mpfr_class& operator<<=(mpfr_class& value, unsigned long bits)
+{
+    value = gmpfrxx_mkII::detail::operator<<(value, bits);
+    return value;
+}
+
+inline mpfr_class& operator>>=(mpfr_class& value, unsigned long bits)
+{
+    value = gmpfrxx_mkII::detail::operator>>(value, bits);
+    return value;
 }
 
 inline mpfr_class& operator++(mpfr_class& value)

@@ -192,6 +192,45 @@ private:
 
 } // namespace mpfrxx
 
+namespace std {
+
+template <>
+struct common_type<gmpxx::mpz_class, mpfrxx::mpc_class> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpc_class, gmpxx::mpz_class> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<gmpxx::mpq_class, mpfrxx::mpc_class> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpc_class, gmpxx::mpq_class> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpfr_class, mpfrxx::mpc_class> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpc_class, mpfrxx::mpfr_class> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpc_class, mpfrxx::mpc_class> {
+    using type = mpfrxx::mpc_class;
+};
+
+} // namespace std
+
 namespace gmpfrxx_mkII {
 namespace detail {
 

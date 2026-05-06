@@ -219,6 +219,10 @@ int main()
     if (result.get_str() != "255") {
         std::abort();
     }
+    result = std::string("052");
+    if (result.to_double() != 52.0) {
+        std::abort();
+    }
 
     std::istringstream decimal_input("  -2.5 rest");
     decimal_input >> result;

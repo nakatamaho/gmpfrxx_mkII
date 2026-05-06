@@ -67,6 +67,15 @@ int main()
     if (z.get_str() != "-42") {
         std::abort();
     }
+    z = "0x2a";
+    if (z.get_str() != "42") {
+        std::abort();
+    }
+    z = std::string("052");
+    if (z.get_str() != "42") {
+        std::abort();
+    }
+    z.set("-42");
 
     std::ostringstream out;
     out << std::showbase << std::hex << std::uppercase << z;
@@ -93,6 +102,15 @@ int main()
     if (q.get_str() != "-5/4") {
         std::abort();
     }
+    q = "0x10/0x20";
+    if (q.get_str() != "1/2") {
+        std::abort();
+    }
+    q = std::string("052/0104");
+    if (q.get_str() != "21/34") {
+        std::abort();
+    }
+    q.set("-10/8");
 
     out.str("");
     out.clear();

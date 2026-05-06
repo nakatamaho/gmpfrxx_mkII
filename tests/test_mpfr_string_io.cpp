@@ -83,6 +83,11 @@ void require_string_accessors()
 
     mpfrxx::mpfr_class hex_value("ff", 192, 16);
     assert(hex_value.get_str() == "255");
+
+    value = "0x1p+5";
+    assert(value.to_double() == 32.0);
+    value = std::string("052");
+    assert(value.to_double() == 52.0);
 }
 
 void require_stream_output()

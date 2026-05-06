@@ -280,13 +280,17 @@ public:
 
     mpf_class& operator=(const char* value)
     {
-        set(value);
+        if (set_str(value, 0) != 0) {
+            throw std::invalid_argument("invalid mpf_class string");
+        }
         return *this;
     }
 
     mpf_class& operator=(const std::string& value)
     {
-        set(value);
+        if (set_str(value, 0) != 0) {
+            throw std::invalid_argument("invalid mpf_class string");
+        }
         return *this;
     }
 
@@ -534,6 +538,39 @@ inline void swap(mpf_class& lhs, mpf_class& rhs) noexcept
 {
     lhs.swap(rhs);
 }
+
+} // namespace gmpxx
+
+namespace std {
+
+template <>
+struct common_type<gmpxx::mpz_class, gmpxx::mpf_class> {
+    using type = gmpxx::mpf_class;
+};
+
+template <>
+struct common_type<gmpxx::mpf_class, gmpxx::mpz_class> {
+    using type = gmpxx::mpf_class;
+};
+
+template <>
+struct common_type<gmpxx::mpq_class, gmpxx::mpf_class> {
+    using type = gmpxx::mpf_class;
+};
+
+template <>
+struct common_type<gmpxx::mpf_class, gmpxx::mpq_class> {
+    using type = gmpxx::mpf_class;
+};
+
+template <>
+struct common_type<gmpxx::mpf_class, gmpxx::mpf_class> {
+    using type = gmpxx::mpf_class;
+};
+
+} // namespace std
+
+namespace gmpxx {
 
 inline std::string mpf_get_str_abs(mpf_srcptr value, mp_exp_t& exponent, int base, std::size_t digits)
 {

@@ -218,6 +218,49 @@ private:
     mpf_class imag_;
 };
 
+} // namespace gmpxx
+
+namespace std {
+
+template <>
+struct common_type<gmpxx::mpz_class, gmpxx::mpfc_class> {
+    using type = gmpxx::mpfc_class;
+};
+
+template <>
+struct common_type<gmpxx::mpfc_class, gmpxx::mpz_class> {
+    using type = gmpxx::mpfc_class;
+};
+
+template <>
+struct common_type<gmpxx::mpq_class, gmpxx::mpfc_class> {
+    using type = gmpxx::mpfc_class;
+};
+
+template <>
+struct common_type<gmpxx::mpfc_class, gmpxx::mpq_class> {
+    using type = gmpxx::mpfc_class;
+};
+
+template <>
+struct common_type<gmpxx::mpf_class, gmpxx::mpfc_class> {
+    using type = gmpxx::mpfc_class;
+};
+
+template <>
+struct common_type<gmpxx::mpfc_class, gmpxx::mpf_class> {
+    using type = gmpxx::mpfc_class;
+};
+
+template <>
+struct common_type<gmpxx::mpfc_class, gmpxx::mpfc_class> {
+    using type = gmpxx::mpfc_class;
+};
+
+} // namespace std
+
+namespace gmpxx {
+
 inline std::ostream& operator<<(std::ostream& out, const mpfc_class& value)
 {
     out.width(0);
