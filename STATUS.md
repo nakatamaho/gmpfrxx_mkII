@@ -1801,6 +1801,51 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase benchmark backend layout split:
+DONE
+
+Implemented features:
+- Moved the existing MPLAPACK-derived GMP/MPF benchmark families under
+  `benchmarks/gmp/`.
+- Added `benchmarks/mpfr/README.md` as the reserved location for future
+  MPFR/MPC benchmark families.
+- Updated benchmark CMake source paths and runtime output directories to
+  preserve target names while emitting executables under
+  `build/benchmarks/gmp/...`.
+- Updated `benchmarks/run_benchmarks.sh` and benchmark documentation for the
+  new backend-first layout.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/README.md`
+- `benchmarks/run_benchmarks.sh`
+- GMP benchmark README paths under `benchmarks/gmp/`
+- `STATUS.md`
+
+Exact commands run:
+- `git mv benchmarks/00_Rdot benchmarks/gmp/00_Rdot`
+- `git mv benchmarks/01_Raxpy benchmarks/gmp/01_Raxpy`
+- `git mv benchmarks/02_Rgemv benchmarks/gmp/02_Rgemv`
+- `git mv benchmarks/03_Rgemm benchmarks/gmp/03_Rgemm`
+- `rg -n "benchmarks/(00_Rdot|01_Raxpy|02_Rgemv|03_Rgemm)|build_bench_release/benchmarks/(00_Rdot|01_Raxpy|02_Rgemv|03_Rgemm)" benchmarks CMakeLists.txt STATUS.md -g '!benchmarks/results_raw/**'`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `bash benchmarks/run_benchmarks.sh build 128 8 8 4 4 3 3 3 /tmp/gmpfrxx_benchmark_layout_smoke`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j`: PASS.
+- `bash benchmarks/run_benchmarks.sh build 128 8 8 4 4 3 3 3 /tmp/gmpfrxx_benchmark_layout_smoke`: PASS; executables were found under `build/benchmarks/gmp/...` and all reported correctness checks were `OK`.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+- Stale-path scan excluding historical `benchmarks/results_raw/**`: PASS; no active benchmark path references the old top-level kernel directories.
+
+Known issues:
+- None.
+
 Post-phase MPLAPACK-derived benchmark build:
 DONE
 
@@ -1829,8 +1874,9 @@ Tests added:
 Tests updated:
 - `CMakeLists.txt`
 - `benchmarks/CMakeLists.txt`
-- MPLAPACK-derived benchmark sources under `benchmarks/00_Rdot`,
-  `benchmarks/01_Raxpy`, `benchmarks/02_Rgemv`, and `benchmarks/03_Rgemm`.
+- MPLAPACK-derived GMP benchmark sources under `benchmarks/gmp/00_Rdot`,
+  `benchmarks/gmp/01_Raxpy`, `benchmarks/gmp/02_Rgemv`, and
+  `benchmarks/gmp/03_Rgemm`.
 - `STATUS.md`
 
 Exact commands run:
@@ -1846,7 +1892,7 @@ Exact commands run:
 - `ctest --test-dir build --output-on-failure`
 - `git diff --check`
 - `cmake --build build -j --target Rgemv_gmp_kernel_openmp_02_mkII Rgemv_gmp_kernel_openmp_02_mkII_NOPRECCHANGE Rgemv_gmp_kernel_openmp_02_orig Rgemm_gmp_C_native_openmp_02`
-- `rg -n "critical|nowait|Compute alpha \\* A \\* B|Compute alpha \\* A \\* x" benchmarks/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp benchmarks/03_Rgemm/Rgemm_gmp_C_native_openmp_02.cpp`
+- `rg -n "critical|nowait|Compute alpha \\* A \\* B|Compute alpha \\* A \\* x" benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_02.cpp`
 
 Pass/fail result:
 - Initial configure/build exposed missing build-tree alias targets and
@@ -1858,7 +1904,7 @@ Pass/fail result:
 - `bash benchmarks/run_benchmarks.sh build 128 8 8 4 4 3 3 3 /tmp/gmpfrxx_benchmark_smoke`: PASS; all reported benchmark correctness checks were `OK`.
 - `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
 - `git diff --check`: PASS.
-- `rg -n "critical|nowait|Compute alpha \\* A \\* B|Compute alpha \\* A \\* x" benchmarks/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp benchmarks/03_Rgemm/Rgemm_gmp_C_native_openmp_02.cpp`: PASS; no `critical` remains in the touched kernels.
+- `rg -n "critical|nowait|Compute alpha \\* A \\* B|Compute alpha \\* A \\* x" benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_02.cpp`: PASS; no `critical` remains in the touched kernels.
 
 Known issues:
 - None.

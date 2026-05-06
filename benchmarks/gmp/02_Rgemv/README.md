@@ -24,7 +24,7 @@ cmake --build build_bench_release -j
 The executables are created under:
 
 ```text
-build_bench_release/benchmarks/02_Rgemv/
+build_bench_release/benchmarks/gmp/02_Rgemv/
 ```
 
 ## Run
@@ -52,7 +52,7 @@ executables take:
 Example:
 
 ```bash
-build_bench_release/benchmarks/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 512
+build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 512
 ```
 
 ## Reading Results

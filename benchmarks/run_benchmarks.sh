@@ -180,10 +180,10 @@ run_variants() {
     echo "BENCHMARK_PARAMS precision=${precision} rdot_n=${rdot_n} raxpy_n=${raxpy_n} rgemv_m=${rgemv_m} rgemv_n=${rgemv_n} rgemm_m=${rgemm_m} rgemm_k=${rgemm_k} rgemm_n=${rgemm_n}"
     echo
 
-    run_variants Rdot 00_Rdot "${rdot_n}" "${precision}"
-    run_variants Raxpy 01_Raxpy "${raxpy_n}" "${precision}"
-    run_variants Rgemv 02_Rgemv "${rgemv_m}" "${rgemv_n}" "${precision}"
-    run_variants Rgemm 03_Rgemm "${rgemm_m}" "${rgemm_k}" "${rgemm_n}" "${precision}"
+    run_variants Rdot gmp/00_Rdot "${rdot_n}" "${precision}"
+    run_variants Raxpy gmp/01_Raxpy "${raxpy_n}" "${precision}"
+    run_variants Rgemv gmp/02_Rgemv "${rgemv_m}" "${rgemv_n}" "${precision}"
+    run_variants Rgemm gmp/03_Rgemm "${rgemm_m}" "${rgemm_k}" "${rgemm_n}" "${precision}"
 } 2>&1 | tee "${log_file}"
 
 python3 "${script_dir}/plot.py" "${log_file}" --output-dir "${output_dir}"

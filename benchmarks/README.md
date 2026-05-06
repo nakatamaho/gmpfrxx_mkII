@@ -2,10 +2,13 @@
 
 # Benchmarks
 
-The benchmark tree contains the eager BLAS-like GMP benchmark programs ported
-to this repository.  The top-level CMake build creates raw `mpf_t`, upstream
-`gmpxx.h`, `gmpxx_mkII`, `gmpxx_mkII` with
-`GMPXX_MKII_NOPRECCHANGE`, and OpenMP variants where available.
+The benchmark tree is split by numeric backend.
+
+- `gmp/`: eager BLAS-like GMP/MPF benchmark programs ported to this
+  repository.  The top-level CMake build creates raw `mpf_t`, upstream
+  `gmpxx.h`, `gmpxx_mkII`, `gmpxx_mkII` with
+  `GMPXX_MKII_NOPRECCHANGE`, and OpenMP variants where available.
+- `mpfr/`: reserved for MPFR/MPC benchmarks.
 
 Build from the repository root:
 
@@ -31,9 +34,9 @@ The raw log is the authoritative result.  The plotted `MFLOPS` values measure
 the timed kernel body, not allocation, random initialization, or verification.
 Use `WALL_SECONDS` in the log when total executable time matters.
 
-Benchmark directories:
+GMP benchmark directories:
 
-- [00_Rdot](00_Rdot/README.md): dot product, `sum_i x_i * y_i`.
-- [01_Raxpy](01_Raxpy/README.md): AXPY, `y_i = y_i + alpha * x_i`.
-- [02_Rgemv](02_Rgemv/README.md): dense matrix-vector multiply.
-- [03_Rgemm](03_Rgemm/README.md): dense matrix-matrix multiply.
+- [gmp/00_Rdot](gmp/00_Rdot/README.md): dot product, `sum_i x_i * y_i`.
+- [gmp/01_Raxpy](gmp/01_Raxpy/README.md): AXPY, `y_i = y_i + alpha * x_i`.
+- [gmp/02_Rgemv](gmp/02_Rgemv/README.md): dense matrix-vector multiply.
+- [gmp/03_Rgemm](gmp/03_Rgemm/README.md): dense matrix-matrix multiply.

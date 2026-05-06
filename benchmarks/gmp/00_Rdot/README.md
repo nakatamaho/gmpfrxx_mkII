@@ -24,7 +24,7 @@ cmake --build build_bench_release -j
 The executables are created under:
 
 ```text
-build_bench_release/benchmarks/00_Rdot/
+build_bench_release/benchmarks/gmp/00_Rdot/
 ```
 
 ## Run
@@ -51,7 +51,7 @@ The first vector-size argument is used for Rdot.  Individual executables take:
 Example:
 
 ```bash
-build_bench_release/benchmarks/00_Rdot/Rdot_gmp_kernel_01_mkII 1000000 512
+build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 1000000 512
 ```
 
 ## Reading Results
