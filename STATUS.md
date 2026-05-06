@@ -1878,6 +1878,112 @@ Known issues:
   MPFR adaptation row still tracks remainder/scaling/exact-helper policy
   decisions separately.
 
+Post-phase MPFR remainder and scaling helpers:
+DONE
+
+Implemented features:
+- Added MPFR-native remainder wrappers:
+  - `mpfrxx::remainder(x, y)` delegating to `mpfr_remainder`.
+  - `mpfrxx::fmod(x, y)` delegating to `mpfr_fmod`.
+  - `mpfrxx::remquo(x, y)` delegating to `mpfr_remquo` and returning
+    `std::pair<mpfr_class, long>`.
+- Added MPFR-native power-of-two scaling wrappers:
+  - `mpfrxx::mul_2ui`
+  - `mpfrxx::div_2ui`
+  - `mpfrxx::mul_2si`
+  - `mpfrxx::div_2si`
+- Kept `ldexp` out of the public surface for now; the MPFR C API names are the
+  canonical policy surface.
+- Added exact-helper style checks for expression operands and destination
+  precision preservation without adding an MPFR `epsilon` helper.
+
+Tests added:
+- None.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- tests/test_mpfr_math.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "remainder|fmod|remquo|mul_2|div_2|ldexp|mpfr_remainder|mpfr_fmod|mpfr_remquo|mpfr_mul_2|mpfr_div_2" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/test_mpf_math_functions.cpp
+- rg -n "mpfr_(remainder|fmod|remquo|mul_2ui|div_2ui|mul_2si|div_2si)" /usr/include/mpfr.h
+- cmake --build build -j --target test_mpfr_math
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- cmake --build build -j --target test_mpfr_math
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- cmake --build build -j
+- git diff --check
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_math: PASS.
+- ctest --test-dir build -R test_mpfr_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- git diff --check: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 117/117 tests passed.
+
+Known issues:
+- None for MPFR remainder/scaling. Remaining MPFR adaptation work for
+  `test_mpf_math_functions.cpp` is limited to deciding whether any additional
+  exact-helper aliases such as a public `neg` wrapper are worth adding, since
+  the natural MPFR APIs now cover ceil/floor/trunc, remainder, scaling, sign,
+  sqrt/sqr, hypot, expression operands, and precision preservation.
+
+Post-phase MPFR extended transcendent focused coverage:
+DONE
+
+Implemented features:
+- Added focused MPFR coverage mirroring the upstream MPF extended transcendent
+  assertion intent where it naturally maps to MPFR:
+  - `const_e`, `const_log10`, `pi_over_two`, and derived constant identities;
+  - inverse trigonometric identities;
+  - hyperbolic and inverse hyperbolic identities;
+  - `exp2`/`exp10` base-variant identities;
+  - `gamma`, `lngamma`, `reciprocal_gamma`, and gamma recurrence checks;
+  - expression-operand checks for the extended unary function family;
+  - result precision checks for the same family.
+- Added MPFR convenience wrappers requested for MPF parity:
+  - `mpfrxx::const_e`
+  - `mpfrxx::const_log10`
+  - `mpfrxx::pi_over_two`
+  - `mpfrxx::reciprocal_gamma`
+- Added deterministic random double smoke coverage for MPFR transcendental
+  wrappers, checking generated values against `std::` double functions with a
+  `1e-15` scaled tolerance.
+
+Tests added:
+- None.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- tests/test_mpfr_math.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "const_e|const_log10|pi_over_two|reciprocal_gamma|const_pi|const_log2|const_catalan|const_euler|gamma" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '1700,1795p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- sed -n '1,260p' tests/test_mpf_extended_transcendent_functions.cpp
+- sed -n '260,380p' tests/test_mpf_extended_transcendent_functions.cpp
+- rg -n "const_|asin|acos|atan|sinh|cosh|tanh|asinh|acosh|atanh|exp|gamma|lngamma|precision|expression|check_unary|test_" tests/test_mpfr_math.cpp
+- rg -n "reciprocal_gamma|recip|gamma" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_math.cpp /usr/include/mpfr.h
+- cmake --build build -j --target test_mpfr_math
+- ctest --test-dir build -R test_mpfr_math --output-on-failure
+- cmake --build build -j
+- git diff --check
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_math: PASS.
+- ctest --test-dir build -R test_mpfr_math --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- git diff --check: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 117/117 tests passed.
+
+Known issues:
+- None for the natural MPFR adaptation of the upstream MPF extended
+  transcendent assertion list. MPFR `epsilon` remains intentionally absent.
+
 Post-phase scalar allocation fast path:
 DONE
 
@@ -2722,8 +2828,8 @@ Migration table:
 | test_io_and_strings.cpp | tests/test_zq_string_io.cpp, tests/test_mpf_string_io.cpp, tests/test_mpfr_string_io.cpp, tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done for current GMP I/O surface | Done for current MPFR/MPC policy | Upstream class-API string/I/O cases have been compared and the natural missing cases were added, including MPF non-decimal ostream base formatting and raw GMP pointer I/O helpers. MPFR uses MPFR formatting primitives intentionally. | Keep current focused coverage; extend only if upstream adds new I/O cases or MPFR/MPC policy changes. |
 | test_long_width_dispatch.cpp | tests/test_mpf_long_width_dispatch.cpp, tests/test_mpfr_long_width_dispatch.cpp, construction tests | Done | Done for MPFR scalar eval | MPF and MPFR now both cover exact uint64 max, int64 min, and int64 max expression-scalar dispatch through the full-width integer conversion path. | Keep migrated; extend exact types only if upstream adds additional long-width cases. |
 | test_mixed_type_arithmetic.cpp | tests/test_mixed_type_arithmetic.cpp, tests/test_mixed_zq_mpf_promotion.cpp, tests/test_mixed_zq_mpfr_promotion.cpp | Done | Done | Upstream mixed mpz/mpq/mpf scalar matrix is now mirrored for current policy, including MPF with exact operands, exact Z/Q with double scalar leaves, denormal/DBL edge smoke checks, precision-preserving assignment, and power-of-two shifts. MPFR has the natural mpz/mpq/scalar adaptation for the MPFR expression surface. | Keep migrated; extend only if upstream adds new mixed operand families. |
-| test_mpf_extended_transcendent_functions.cpp | tests/test_mpf_extended_transcendent_functions.cpp, tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream extended MPF constants, inverse trig, hyperbolic, inverse hyperbolic, exp-base variants, gamma, expression-overload, and precision-policy assertions are now mirrored in a focused C++17 test. MPFR has native MPFR math but public wrapper parity remains a separate policy decision. | Keep as migrated; add MPFR equivalents only when public MPFR math wrapper APIs become policy. |
-| test_mpf_math_functions.cpp | tests/test_mpf_math_functions.cpp, tests/test_mpf_pi.cpp, tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream MPF sqrt/abs/neg/ceil/floor/trunc/remainder/epsilon/hypot/scaling/sign/exact helper assertions are now mirrored in a focused C++17 test. MPFR `ceil`/`floor`/`trunc` now delegate to `mpfr_ceil`/`mpfr_floor`/`mpfr_trunc` and are covered against direct MPFR references; MPFR `epsilon` is intentionally not added because MPF `set_epsilon()` is a GMP/upstream compatibility helper rather than a natural MPFR API. | Keep as migrated; decide remaining MPFR remainder/scaling/exact-helper additions separately from GMP-only upstream parity. |
+| test_mpf_extended_transcendent_functions.cpp | tests/test_mpf_extended_transcendent_functions.cpp, tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | Done for natural MPFR adaptation | Upstream extended MPF constants, inverse trig, hyperbolic, inverse hyperbolic, exp-base variants, gamma, expression-overload, and precision-policy assertions are mirrored in focused C++17 tests. MPFR natural adaptation is covered in `tests/test_mpfr_math.cpp` with `const_e`/`const_log10`/`pi_over_two`, inverse trig/hyperbolic/exp/gamma/reciprocal-gamma identities, expression operands, result precision checks, and deterministic random double smoke tests at `1e-15` scaled tolerance. MPFR `epsilon` remains intentionally absent. | Keep migrated; add only if upstream or MPFR policy adds new extended-function surface. |
+| test_mpf_math_functions.cpp | tests/test_mpf_math_functions.cpp, tests/test_mpf_pi.cpp, tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream MPF sqrt/abs/neg/ceil/floor/trunc/remainder/epsilon/hypot/scaling/sign/exact helper assertions are now mirrored in a focused C++17 test. MPFR `ceil`/`floor`/`trunc`, `remainder`/`fmod`/`remquo`, and `mul_2ui`/`div_2ui`/`mul_2si`/`div_2si` now delegate to direct MPFR C APIs and are covered against direct MPFR references; MPFR `epsilon` is intentionally not added because MPF `set_epsilon()` is a GMP/upstream compatibility helper rather than a natural MPFR API. | Keep as migrated; only revisit if a public `neg` helper or other exact-helper alias becomes policy. |
 | test_mpf_transcendent_functions.cpp | tests/test_mpf_compute_log.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream assertion list is now mirrored in the focused MPF compute-log/transcendent test, adapted to C++17 and local helper names. MPFR wrapper math parity remains tracked under broader MPFR math policy work. | Keep as migrated; add MPFR equivalents only when public MPFR math wrapper APIs become policy. |
 | test_mpfc_arithmetic.cpp | tests/test_mpfc_basic.cpp, tests/test_et_contract_mpfc.cpp | Done for upstream arithmetic/precision focused coverage | N/A for MPFR; MPC analog exists separately | None known for the GMP-only MPFC arithmetic surface; upstream compound, swap/precision, mixed real operand, and random arithmetic matrix cases are now mirrored locally. | Keep as migrated; add MPC analogs only as separate MPC policy work. |
 | test_mpfc_io.cpp | tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done | MPC analog covered separately | None known for the current local complex `(real,imag)` stream format; this is local-policy parity, not a direct upstream MPC test. | Keep migrated; add only if upstream gains an MPC-specific I/O parity matrix or local complex-format policy changes. |
