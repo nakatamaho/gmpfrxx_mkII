@@ -35,6 +35,32 @@
 
 #if defined(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT)
 
+namespace benchmark_mpf_init_counter {
+namespace raw {
+
+inline void call_mpf_init(mpf_ptr value) {
+    mpf_init(value);
+}
+
+inline void call_mpf_init2(mpf_ptr value, mp_bitcnt_t precision) {
+    mpf_init2(value, precision);
+}
+
+inline void call_mpf_clear(mpf_ptr value) {
+    mpf_clear(value);
+}
+
+inline void call_mpf_add(mpf_ptr result, mpf_srcptr lhs, mpf_srcptr rhs) {
+    mpf_add(result, lhs, rhs);
+}
+
+inline void call_mpf_mul(mpf_ptr result, mpf_srcptr lhs, mpf_srcptr rhs) {
+    mpf_mul(result, lhs, rhs);
+}
+
+} // namespace raw
+} // namespace benchmark_mpf_init_counter
+
 #undef mpf_init
 #undef mpf_init2
 #undef mpf_clear
@@ -80,27 +106,27 @@ inline snapshot read_counters() {
 
 inline void counted_mpf_init(mpf_ptr value) {
     global_counters().init.fetch_add(1, std::memory_order_relaxed);
-    __gmpf_init(value);
+    raw::call_mpf_init(value);
 }
 
 inline void counted_mpf_init2(mpf_ptr value, mp_bitcnt_t precision) {
     global_counters().init2.fetch_add(1, std::memory_order_relaxed);
-    __gmpf_init2(value, precision);
+    raw::call_mpf_init2(value, precision);
 }
 
 inline void counted_mpf_clear(mpf_ptr value) {
     global_counters().clear.fetch_add(1, std::memory_order_relaxed);
-    __gmpf_clear(value);
+    raw::call_mpf_clear(value);
 }
 
 inline void counted_mpf_add(mpf_ptr result, mpf_srcptr lhs, mpf_srcptr rhs) {
     global_counters().add.fetch_add(1, std::memory_order_relaxed);
-    __gmpf_add(result, lhs, rhs);
+    raw::call_mpf_add(result, lhs, rhs);
 }
 
 inline void counted_mpf_mul(mpf_ptr result, mpf_srcptr lhs, mpf_srcptr rhs) {
     global_counters().mul.fetch_add(1, std::memory_order_relaxed);
-    __gmpf_mul(result, lhs, rhs);
+    raw::call_mpf_mul(result, lhs, rhs);
 }
 
 inline void begin_kernel() {

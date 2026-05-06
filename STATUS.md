@@ -1844,6 +1844,102 @@ Pass/fail result:
 Known issues:
 - Full CTest was not rerun for this benchmark-only instrumentation check.
 
+Post-phase benchmark counter raw GMP wrapper safety:
+DONE
+
+Implemented features:
+- Removed direct `__gmpf_*` calls from the benchmark MPF operation counter.
+- Added `benchmark_mpf_init_counter::raw::call_mpf_*` wrappers before the
+  counter redefines the `mpf_*` macros.
+- Counted wrappers now increment counters and call the saved raw wrappers
+  instead of spelling GMP implementation symbols directly.
+
+Tests added:
+- None; this is benchmark instrumentation internals only.
+
+Tests updated:
+- `benchmarks/common/mpf_init_counter.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,180p' benchmarks/common/mpf_init_counter.hpp`
+- `cmake --build build_mpf_count -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_04_mkII Rdot_gmp_kernel_04_orig`
+- `rg -n "__gmpf_" benchmarks/common/mpf_init_counter.hpp`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 1000 512`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial raw wrapper attempt: FAIL because GMP's `mpf_*` macros expanded the
+  raw wrapper function names. Fixed by naming the raw wrappers
+  `call_mpf_*`.
+- Count-enabled benchmark build after fix: PASS.
+- `rg -n "__gmpf_" benchmarks/common/mpf_init_counter.hpp`: PASS, no matches.
+- `Rdot_gmp_C_native_01 1000 512`: PASS;
+  `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_04_mkII 1000 512`: PASS;
+  `init=0 init2=2 total_init=2 clear=2 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_04_orig 1000 512`: PASS;
+  `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- None.
+
+Post-phase Rdot kernel 02/03/04 comparison:
+DONE
+
+Implemented features:
+- Added optional benchmark kernel counter instrumentation to
+  `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp`.
+- Compared Rdot kernels 02, 03, and 04 for original `gmpxx.h` and mkII builds
+  using kernel-only MPF operation counters.
+
+Tests added:
+- None; this is benchmark instrumentation and measurement only.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '25,145p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp`
+- `rg -n "Rdot_gmp_kernel_04" benchmarks/CMakeLists.txt benchmarks -g 'CMakeLists.txt'`
+- `cmake --build build_mpf_count -j --target Rdot_gmp_kernel_02_orig Rdot_gmp_kernel_02_mkII Rdot_gmp_kernel_03_orig Rdot_gmp_kernel_03_mkII Rdot_gmp_kernel_04_orig Rdot_gmp_kernel_04_mkII`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 1000 512`
+- `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 1000 512`
+- `cmake --build build -j --target Rdot_gmp_kernel_04_orig Rdot_gmp_kernel_04_mkII`
+- `git diff --check`
+
+Pass/fail result:
+- Count-enabled Rdot kernel 02/03/04 build: PASS.
+- `Rdot_gmp_kernel_02_orig 1000 512`: PASS;
+  `init=1 init2=1000 total_init=1001 clear=1001 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_02_mkII 1000 512`: PASS;
+  `init=0 init2=1001 total_init=1001 clear=1001 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_03_orig 1000 512`: PASS;
+  `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_03_mkII 1000 512`: PASS;
+  `init=0 init2=2 total_init=2 clear=2 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_04_orig 1000 512`: PASS;
+  `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_04_mkII 1000 512`: PASS;
+  `init=0 init2=2 total_init=2 clear=2 add=1000 mul=1000`.
+- Normal Rdot kernel 04 target build: PASS.
+- `git diff --check`: PASS.
+
+Known issues:
+- Full CTest was not rerun for this benchmark-only instrumentation check.
+
 Post-phase Rdot kernel 03 MPF operation counter check:
 DONE
 
