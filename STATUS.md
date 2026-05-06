@@ -1801,6 +1801,90 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase upstream t-ops MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream `gmpxx_mkII/cxx/t-ops.cc`
+  against this repo's `mpfrxx_mkII.h` for mpz/mpq/mpfr operator and helper
+  coverage.
+- No wrapper implementation changes were needed; existing exact Z/Q operators
+  and MPFR arithmetic/math/comparison helpers covered the adapted test.
+
+Tests added:
+- None.
+
+Tests updated:
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/cxx/t-ops.cc
+- sed -n '261,620p' ../gmpxx_mkII/cxx/t-ops.cc
+- sed -n '621,980p' ../gmpxx_mkII/cxx/t-ops.cc
+- cp ../gmpxx_mkII/cxx/t-ops.cc /tmp/t-ops-mpfrxx-mkII.cc
+- perl -0pi -e '...' /tmp/t-ops-mpfrxx-mkII.cc
+- g++ -std=c++17 -Iinclude /tmp/t-ops-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops-mpfrxx-mkII
+- /tmp/t-ops-mpfrxx-mkII
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- g++ -std=c++17 -Iinclude /tmp/t-ops-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops-mpfrxx-mkII: PASS.
+- /tmp/t-ops-mpfrxx-mkII: PASS.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 119/119 tests passed.
+
+Known issues:
+- The temporary adaptation maps upstream MPF operator coverage to
+  `mpfrxx::mpfr_class`; GMP-only MPF-specific precision behavior is not part
+  of this MPFR header check.
+
+Post-phase upstream t-ops2f MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream `gmpxx_mkII/cxx/t-ops2f.cc`
+  against this repo's `mpfrxx_mkII.h` for MPFR unary math, hypot, mixed
+  MPFR/MPQ arithmetic, and MPFR/MPQ comparisons.
+- Reused a minimally adapted temporary copy of upstream `t-ops2.h` so the
+  upstream CHECK macro structure remained intact.
+- No wrapper implementation changes were needed; existing MPFR math, mixed
+  exact promotion, and comparison helpers covered the adapted test.
+
+Tests added:
+- None.
+
+Tests updated:
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/cxx/t-ops2f.cc
+- sed -n '261,620p' ../gmpxx_mkII/cxx/t-ops2f.cc
+- sed -n '1,320p' ../gmpxx_mkII/cxx/t-ops2.h
+- mkdir -p /tmp/t-ops2f-mpfrxx
+- cp ../gmpxx_mkII/cxx/t-ops2f.cc /tmp/t-ops2f-mpfrxx/t-ops2f-mpfrxx-mkII.cc
+- cp ../gmpxx_mkII/cxx/t-ops2.h /tmp/t-ops2f-mpfrxx/t-ops2.h
+- perl -0pi -e '...' /tmp/t-ops2f-mpfrxx/t-ops2.h
+- perl -0pi -e '...' /tmp/t-ops2f-mpfrxx/t-ops2f-mpfrxx-mkII.cc
+- g++ -std=c++17 -Iinclude -I/tmp/t-ops2f-mpfrxx /tmp/t-ops2f-mpfrxx/t-ops2f-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops2f-mpfrxx/t-ops2f-mpfrxx-mkII
+- /tmp/t-ops2f-mpfrxx/t-ops2f-mpfrxx-mkII
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- g++ -std=c++17 -Iinclude -I/tmp/t-ops2f-mpfrxx /tmp/t-ops2f-mpfrxx/t-ops2f-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops2f-mpfrxx/t-ops2f-mpfrxx-mkII: PASS.
+- /tmp/t-ops2f-mpfrxx/t-ops2f-mpfrxx-mkII: PASS.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 119/119 tests passed.
+
+Known issues:
+- The temporary adaptation maps upstream MPF-specific default precision setup
+  to `mpfrxx::set_default_precision_bits(DBL_MANT_DIG - DBL_MIN_EXP + 42)`.
+
 Post-phase upstream t-mix MPFR adaptation:
 DONE
 
