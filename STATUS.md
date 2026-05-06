@@ -2061,6 +2061,50 @@ Pass/fail result:
 Known issues:
 - None for the rename.
 
+Post-phase MPFR transcendent focused test:
+DONE
+
+Implemented features:
+- Added `tests/test_mpfr_transcendent_functions.cpp` as the MPFR-side focused
+  counterpart to `tests/test_mpf_transcendent_functions.cpp`.
+- Added deterministic random smoke coverage comparing MPFR wrapper results
+  against the corresponding `std::` double functions with a `1e-15` scaled
+  tolerance.
+- Covered trigonometric, unit/pi trigonometric, hyperbolic, log/exp, power,
+  root/hypot, gamma, reciprocal-gamma, and erf/erfc wrapper families.
+- Registered the new `test_mpfr_transcendent_functions` CTest target.
+
+Tests added:
+- tests/test_mpfr_transcendent_functions.cpp
+
+Tests updated:
+- tests/CMakeLists.txt
+- STATUS.md
+
+Exact commands run:
+- rg -n "double.*smoke|mt19937|1e-15|assert_double_close|std::(sin|cos|exp|log|pow|gamma)|test_double" tests/test_mpfr_math.cpp tests/test_mpf_transcendent_functions.cpp tests/CMakeLists.txt
+- sed -n '1100,1235p' tests/test_mpfr_math.cpp
+- rg -n "double to_double|to_double\\(|get_d\\(" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr*.cpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j --target test_mpfr_transcendent_functions
+- ctest --test-dir build -R test_mpfr_transcendent_functions --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial ctest --test-dir build -R test_mpfr_transcendent_functions
+  --output-on-failure: FAIL, `tanpi` random inputs included a high-condition
+  tangent region that exceeded `1e-15`.
+- After narrowing the `tanpi` smoke input range:
+  - cmake --build build -j --target test_mpfr_transcendent_functions: PASS.
+  - ctest --test-dir build -R test_mpfr_transcendent_functions
+    --output-on-failure: PASS, 1/1 test passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 118/118 tests passed.
+
+Known issues:
+- None for the MPFR transcendent focused smoke test.
+
 Post-phase scalar allocation fast path:
 DONE
 
@@ -2708,6 +2752,7 @@ Normal tests:
 | test_mpfr_environment | mpfrxx_mkII | Valid MPFR environment configuration | Sets MPFRXX_* variables, reloads defaults, checks precision/exponent/rounding values and rounding behavior. |
 | test_mpfr_environment_invalid | mpfrxx_mkII | Invalid MPFR environment fallback | Sets invalid MPFRXX_* variables and checks fallback defaults, then checks valid prefixed rounding strings. |
 | test_mpfr_string_io | mpfrxx_mkII | MPFR string and stream I/O | Checks set_str/get_str, invalid input preservation, base parsing, stream formatting, expression output, and stream extraction. |
+| test_mpfr_transcendent_functions | mpfrxx_mkII | MPFR transcendental functions | Checks trigonometric, hyperbolic, log/exp, pow, gamma, and erf/erfc wrappers against deterministic random double smoke references at `1e-15` scaled tolerance. |
 | test_et_contract_mpf | gmpxx_mkII | MPF expression-template contract | Static-asserts MPF arithmetic returns expression nodes with expected result types. |
 | test_mpf_basic | gmpxx_mkII | Basic MPF arithmetic evaluation | Evaluates MPF arithmetic with object and scalar operands and compares double results. |
 | test_mpf_precision_policy | gmpxx_mkII | MPF default and expression precision policy | Checks MPFXX_DEFAULT_PREC_BITS, runtime default setter, max leaf precision materialization, and assignment precision preservation. |
@@ -2907,7 +2952,7 @@ Migration table:
 | test_mixed_type_arithmetic.cpp | tests/test_mixed_type_arithmetic.cpp, tests/test_mixed_zq_mpf_promotion.cpp, tests/test_mixed_zq_mpfr_promotion.cpp | Done | Done | Upstream mixed mpz/mpq/mpf scalar matrix is now mirrored for current policy, including MPF with exact operands, exact Z/Q with double scalar leaves, denormal/DBL edge smoke checks, precision-preserving assignment, and power-of-two shifts. MPFR has the natural mpz/mpq/scalar adaptation for the MPFR expression surface. | Keep migrated; extend only if upstream adds new mixed operand families. |
 | test_mpf_extended_transcendent_functions.cpp | tests/test_mpf_extended_transcendent_functions.cpp, tests/test_mpf_transcendent_functions.cpp | Done for upstream assertion-list parity | Done for natural MPFR adaptation | Upstream extended MPF constants, inverse trig, hyperbolic, inverse hyperbolic, exp-base variants, gamma, expression-overload, and precision-policy assertions are mirrored in focused C++17 tests. MPFR natural adaptation is covered in `tests/test_mpfr_math.cpp` with `const_e`/`const_log10`/`pi_over_two`, inverse trig/hyperbolic/exp/gamma/reciprocal-gamma identities, expression operands, result precision checks, and deterministic random double smoke tests at `1e-15` scaled tolerance. MPFR `epsilon` remains intentionally absent. | Keep migrated; add only if upstream or MPFR policy adds new extended-function surface. |
 | test_mpf_math_functions.cpp | tests/test_mpf_math_functions.cpp, tests/test_mpf_pi.cpp, tests/test_mpf_transcendent_functions.cpp | Done for upstream assertion-list parity | Done for natural MPFR adaptation | Upstream MPF sqrt/abs/neg/ceil/floor/trunc/remainder/epsilon/hypot/scaling/sign/exact helper assertions are now mirrored in a focused C++17 test. MPFR `neg`, `ceil`/`floor`/`trunc`, `remainder`/`fmod`/`remquo`, and `mul_2ui`/`div_2ui`/`mul_2si`/`div_2si` now delegate to direct MPFR C APIs and are covered against direct MPFR references; MPFR `epsilon` is intentionally not added because MPF `set_epsilon()` is a GMP/upstream compatibility helper rather than a natural MPFR API. | Keep migrated; add only if upstream or MPFR policy adds a new exact-helper alias. |
-| test_mpf_transcendent_functions.cpp | tests/test_mpf_transcendent_functions.cpp | Done for upstream assertion-list parity | TODO if applicable | Upstream assertion list is now mirrored in the focused MPF transcendent test, adapted to C++17 and local helper names. MPFR wrapper math parity remains tracked under broader MPFR math policy work. | Keep as migrated; add MPFR equivalents only when public MPFR math wrapper APIs become policy. |
+| test_mpf_transcendent_functions.cpp | tests/test_mpf_transcendent_functions.cpp | Done for upstream assertion-list parity | Done for natural MPFR adaptation | Upstream assertion list is now mirrored in the focused MPF transcendent test, adapted to C++17 and local helper names. MPFR wrapper math parity is covered by `tests/test_mpfr_transcendent_functions.cpp`, which compares deterministic random wrapper results against double `std::` references at `1e-15` scaled tolerance. | Keep migrated; extend only if upstream adds new transcendental families or MPFR policy adds new public wrappers. |
 | test_mpfc_arithmetic.cpp | tests/test_mpfc_basic.cpp, tests/test_et_contract_mpfc.cpp | Done for upstream arithmetic/precision focused coverage | N/A for MPFR; MPC analog exists separately | None known for the GMP-only MPFC arithmetic surface; upstream compound, swap/precision, mixed real operand, and random arithmetic matrix cases are now mirrored locally. | Keep as migrated; add MPC analogs only as separate MPC policy work. |
 | test_mpfc_io.cpp | tests/test_mpfc_io.cpp, tests/test_mpc_io.cpp | Done | MPC analog covered separately | None known for the current local complex `(real,imag)` stream format; this is local-policy parity, not a direct upstream MPC test. | Keep migrated; add only if upstream gains an MPC-specific I/O parity matrix or local complex-format policy changes. |
 | test_mpfc_transcendent_functions.cpp | tests/test_mpfc_math.cpp, tests/test_mpc_math.cpp | Done for upstream complex math focused coverage | MPC analog covered separately with MPC 1.3.1 C API references | Local MPFC gamma/reciprocal_gamma are still double-backed, so the gamma known-value tolerance is intentionally double-level rather than high-precision MPF-level. MPC wrappers now cover MPC 1.3.1 sqrt/exp/log/log10/trig/hyperbolic/inverse/pow functions against direct `mpc_*` references; MPC gamma is not part of MPC 1.3.1. | Keep as migrated; improve MPFC gamma tolerance only if MPFC gamma is later replaced with a high-precision implementation. |
