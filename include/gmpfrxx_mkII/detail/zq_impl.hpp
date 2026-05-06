@@ -2506,6 +2506,30 @@ inline mpz_class& operator%=(mpz_class& lhs, Rhs rhs)
     return lhs %= mpz_class(rhs);
 }
 
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_zq_mpz_expression_operand_v<Rhs>, int> = 0>
+inline mpz_class& operator&=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs & std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_zq_mpz_expression_operand_v<Rhs>, int> = 0>
+inline mpz_class& operator|=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs | std::forward<Rhs>(rhs);
+    return lhs;
+}
+
+template <typename Rhs,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_zq_mpz_expression_operand_v<Rhs>, int> = 0>
+inline mpz_class& operator^=(mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = lhs ^ std::forward<Rhs>(rhs);
+    return lhs;
+}
+
 using ::gmpfrxx_mkII::detail::operator+;
 using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;

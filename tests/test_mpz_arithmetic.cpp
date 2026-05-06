@@ -128,6 +128,16 @@ void check_bitwise_and_shifts()
     require_mpz_equal(gmpxx::mpz_class(17) % 2.0, gmpxx::mpz_class(1));
     require_mpz_equal(17.0 % gmpxx::mpz_class(2), gmpxx::mpz_class(1));
 
+    gmpxx::mpz_class compound(0xcafe);
+    compound &= b;
+    require_mpz_equal(compound, gmpxx::mpz_class(0x8aee));
+    compound = 0xcafe;
+    compound |= -b;
+    require_mpz_equal(compound, gmpxx::mpz_class(-0x3401));
+    compound = 0xcafe;
+    compound ^= 48879.0;
+    require_mpz_equal(compound, gmpxx::mpz_class(0x7411));
+
     require_mpz_equal((-gmpxx::mpz_class(5)) << 2u, gmpxx::mpz_class(-20));
     require_mpz_equal((gmpxx::mpz_class(5) * gmpxx::mpz_class(-4)) >> 3u, gmpxx::mpz_class(-3));
 

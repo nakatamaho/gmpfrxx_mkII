@@ -69,7 +69,7 @@ public:
         mpfr_swap(value_, other.value_);
     }
 
-    explicit mpfr_class(double value) : mpfr_class(value, default_precision()) {}
+    mpfr_class(double value) : mpfr_class(value, default_precision()) {}
 
     mpfr_class(double value, mpfr_prec_t precision)
     {
@@ -1737,6 +1737,94 @@ template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<L
 inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
 {
     return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) >= 0;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>,
+                     int> = 0>
+inline gmpxx::mpz_class& operator+=(gmpxx::mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = static_cast<gmpxx::mpz_class>(mpfr_class(mpfr_class(lhs) + std::forward<Rhs>(rhs)));
+    return lhs;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>,
+                     int> = 0>
+inline gmpxx::mpz_class& operator-=(gmpxx::mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = static_cast<gmpxx::mpz_class>(mpfr_class(mpfr_class(lhs) - std::forward<Rhs>(rhs)));
+    return lhs;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>,
+                     int> = 0>
+inline gmpxx::mpz_class& operator*=(gmpxx::mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = static_cast<gmpxx::mpz_class>(mpfr_class(mpfr_class(lhs) * std::forward<Rhs>(rhs)));
+    return lhs;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>,
+                     int> = 0>
+inline gmpxx::mpz_class& operator/=(gmpxx::mpz_class& lhs, Rhs&& rhs)
+{
+    lhs = static_cast<gmpxx::mpz_class>(mpfr_class(mpfr_class(lhs) / std::forward<Rhs>(rhs)));
+    return lhs;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>,
+                     int> = 0>
+inline gmpxx::mpq_class& operator+=(gmpxx::mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = static_cast<gmpxx::mpq_class>(mpfr_class(mpfr_class(lhs) + std::forward<Rhs>(rhs)));
+    return lhs;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>,
+                     int> = 0>
+inline gmpxx::mpq_class& operator-=(gmpxx::mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = static_cast<gmpxx::mpq_class>(mpfr_class(mpfr_class(lhs) - std::forward<Rhs>(rhs)));
+    return lhs;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>,
+                     int> = 0>
+inline gmpxx::mpq_class& operator*=(gmpxx::mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = static_cast<gmpxx::mpq_class>(mpfr_class(mpfr_class(lhs) * std::forward<Rhs>(rhs)));
+    return lhs;
+}
+
+template <
+    typename Rhs,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs> &&
+                         !gmpfrxx_mkII::detail::is_zq_expression_operand_v<Rhs>,
+                     int> = 0>
+inline gmpxx::mpq_class& operator/=(gmpxx::mpq_class& lhs, Rhs&& rhs)
+{
+    lhs = static_cast<gmpxx::mpq_class>(mpfr_class(mpfr_class(lhs) / std::forward<Rhs>(rhs)));
+    return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>

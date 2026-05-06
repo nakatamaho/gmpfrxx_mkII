@@ -86,7 +86,7 @@ void require_forbidden_cross_domain_common_types()
     static_assert(!has_common_type<gmpxx::mpfc_class, mpfrxx::mpfr_class>::value);
     static_assert(!has_common_type<gmpxx::mpfc_class, mpfrxx::mpc_class>::value);
     static_assert(!has_common_type<gmpxx::mpf_class, double>::value);
-    static_assert(!has_common_type<mpfrxx::mpfr_class, double>::value);
+    require_common_type<mpfrxx::mpfr_class, double, mpfrxx::mpfr_class>();
 }
 
 void require_materialized_add()

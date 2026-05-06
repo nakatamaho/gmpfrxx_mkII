@@ -209,10 +209,11 @@ void compile_time_fingerprint()
     static_assert(!has_common_type_with_mpf<double>::value);
     static_assert(has_common_type_with_mpfr<gmpxx::mpz_class>::value);
     static_assert(has_common_type_with_mpfr<gmpxx::mpq_class>::value);
-    static_assert(!has_common_type_with_mpfr<double>::value);
+    static_assert(has_common_type_with_mpfr<double>::value);
     static_assert(std::is_same_v<std::common_type_t<gmpxx::mpz_class, gmpxx::mpq_class>, gmpxx::mpq_class>);
     static_assert(std::is_same_v<std::common_type_t<gmpxx::mpq_class, gmpxx::mpf_class>, gmpxx::mpf_class>);
     static_assert(std::is_same_v<std::common_type_t<gmpxx::mpz_class, mpfrxx::mpfr_class>, mpfrxx::mpfr_class>);
+    static_assert(std::is_same_v<std::common_type_t<mpfrxx::mpfr_class, double>, mpfrxx::mpfr_class>);
 
     static_assert(has_mpf_plus<int>::value);
     static_assert(has_mpf_plus<double>::value);

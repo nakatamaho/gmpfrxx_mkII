@@ -2003,6 +2003,68 @@ Pass/fail result:
 Known issues:
 - None for the t-ops2z MPFR adaptation.
 
+Post-phase upstream t-ops3 MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream `gmpxx_mkII/cxx/t-ops3.cc`
+  against this repo's `mpfrxx_mkII.h` for compound assignment coverage across
+  `mpz_class`, `mpq_class`, and `mpfr_class`.
+- Made `mpfrxx::mpfr_class(double)` non-explicit so upstream-style
+  copy-initialization such as `mpfr_class d = 3.375;` is accepted.
+- Updated the common-type policy to allow
+  `std::common_type_t<mpfrxx::mpfr_class, double>` as `mpfrxx::mpfr_class`.
+- Added MPFR-header-only compound assignment overloads for exact Z/Q lvalues
+  with MPFR RHS values and expressions; the result is materialized through
+  MPFR and converted back to the exact lvalue type.
+- Added `mpz_class` bitwise compound assignment overloads for `&=`, `|=`, and
+  `^=` with integer/Z expression operands.
+
+Tests added:
+- Regression coverage in `tests/test_mpfr_compound_assign.cpp` for
+  `mpfr_class d = 3.375;` and Z/Q lvalue compound assignment with MPFR RHS.
+- Regression coverage in `tests/test_mpz_arithmetic.cpp` for `mpz_class`
+  bitwise compound assignment.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- include/gmpfrxx_mkII/detail/zq_impl.hpp
+- tests/test_mpfr_compound_assign.cpp
+- tests/test_mpz_arithmetic.cpp
+- tests/test_common_type.cpp
+- tests/test_abi_fingerprint.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,320p' ../gmpxx_mkII/cxx/t-ops3.cc
+- mkdir -p /tmp/t-ops3-mpfrxx
+- cp ../gmpxx_mkII/cxx/t-ops3.cc /tmp/t-ops3-mpfrxx/t-ops3-mpfrxx-mkII.cc
+- perl -0pi -e '...' /tmp/t-ops3-mpfrxx/t-ops3-mpfrxx-mkII.cc
+- g++ -std=c++17 -Iinclude /tmp/t-ops3-mpfrxx/t-ops3-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops3-mpfrxx/t-ops3-mpfrxx-mkII
+- /tmp/t-ops3-mpfrxx/t-ops3-mpfrxx-mkII
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Initial g++ build of the temporary adaptation: FAIL because namespace setup
+  was missing in the temporary file.
+- Second g++ build: FAIL because `mpfr_class(double)` was explicit, Z/Q
+  lvalue compound assignment with MPFR RHS was missing, and `mpz_class`
+  bitwise compound assignment was missing.
+- g++ -std=c++17 -Iinclude /tmp/t-ops3-mpfrxx/t-ops3-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-ops3-mpfrxx/t-ops3-mpfrxx-mkII after fixes: PASS.
+- /tmp/t-ops3-mpfrxx/t-ops3-mpfrxx-mkII: PASS.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Initial cmake --build build -j after making `mpfr_class(double)`
+  non-explicit: FAIL because common-type policy tests still expected no
+  `mpfr_class`/`double` common type.
+- cmake --build build -j after updating common-type tests: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 119/119 tests passed.
+
+Known issues:
+- The MPFR header now intentionally accepts implicit `double` construction for
+  `mpfr_class` to match upstream-style `mpf_class` usage.
+
 Post-phase upstream t-mix MPFR adaptation:
 DONE
 
