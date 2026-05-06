@@ -50,6 +50,9 @@ int main()
     if (mpfrxx::default_precision_bits() != 512) {
         std::abort();
     }
+    if (mpfrxx::default_prec() != mpfrxx::default_precision_bits()) {
+        std::abort();
+    }
     if (mpfrxx::default_rounding_mode() != MPFR_RNDN) {
         std::abort();
     }
@@ -60,6 +63,7 @@ int main()
     setenv("MPFRXX_EMAX", "30", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
     if (mpfrxx::default_precision_bits() != 384 ||
+        mpfrxx::default_prec() != 384 ||
         mpfrxx::default_rounding_mode() != MPFR_RNDA ||
         mpfrxx::default_emin() != -30 ||
         mpfrxx::default_emax() != 30) {

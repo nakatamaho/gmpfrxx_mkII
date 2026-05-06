@@ -62,6 +62,9 @@ void test_compile_time_surface()
                                         mpfr_prec_t>::value,
                   "");
     static_assert(std::is_constructible<mpfrxx::mpfr_class, const mpfrxx::mpq_class&>::value, "");
+    static_assert(std::is_convertible<mpfrxx::mpz_class, mpfrxx::mpfr_class>::value, "");
+    static_assert(std::is_convertible<mpfrxx::mpq_class, mpfrxx::mpfr_class>::value, "");
+    static_assert(std::is_convertible<int, mpfrxx::mpfr_class>::value, "");
     static_assert(std::is_constructible<mpfrxx::mpfr_class,
                                         const mpfrxx::mpq_class&,
                                         mpfr_prec_t>::value,
@@ -71,6 +74,22 @@ void test_compile_time_surface()
     static_assert(std::is_assignable<mpfrxx::mpfr_class&, const char*>::value, "");
     static_assert(std::is_assignable<mpfrxx::mpfr_class&, const std::string&>::value, "");
     static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().to_double()), double>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().get_d()), double>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().get_si()), signed long>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().get_ui()), unsigned long>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_sint_p()), bool>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_uint_p()), bool>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_slong_p()), bool>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_ulong_p()), bool>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_sshort_p()), bool>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_ushort_p()), bool>::value, "");
+    static_assert(std::is_constructible<mpfrxx::mpz_class, mpfrxx::mpq_class>::value, "");
+    static_assert(std::is_assignable<mpfrxx::mpz_class&, mpfrxx::mpq_class>::value, "");
+    static_assert(std::is_constructible<mpfrxx::mpz_class, mpfrxx::mpz_class>::value, "");
+    static_assert(!std::is_convertible<mpfrxx::mpq_class, mpfrxx::mpz_class>::value, "");
+    static_assert(std::is_constructible<mpfrxx::mpq_class, decltype(-std::declval<mpfrxx::mpz_class>())>::value, "");
+    static_assert(std::is_constructible<mpfrxx::mpfr_class, decltype(-std::declval<mpfrxx::mpz_class>())>::value, "");
+    static_assert(std::is_constructible<mpfrxx::mpfr_class, decltype(-std::declval<mpfrxx::mpq_class>())>::value, "");
     static_assert(!std::is_convertible<mpfrxx::mpfr_class, bool>::value, "");
 }
 
@@ -191,6 +210,144 @@ void test_accessors_and_bool()
     if (digits.empty() || exponent != 1 || value.to_double() != 1.25) {
         std::abort();
     }
+
+    const mpfrxx::mpfr_class small("123", 192);
+    if (small.get_d() != 123.0 || small.get_si() != 123L || small.get_ui() != 123UL ||
+        !small.fits_sint_p() || !small.fits_uint_p() ||
+        !small.fits_slong_p() || !small.fits_ulong_p() ||
+        !small.fits_sshort_p() || !small.fits_ushort_p()) {
+        std::abort();
+    }
+
+    const mpfrxx::mpfr_class negative("-123", 192);
+    if (negative.get_d() != -123.0 || negative.get_si() != -123L ||
+        !negative.fits_sint_p() || negative.fits_uint_p()) {
+        std::abort();
+    }
+
+    const mpfrxx::mpfr_class too_large("1e100", 192);
+    if (too_large.fits_sint_p() || too_large.fits_uint_p() ||
+        too_large.fits_slong_p() || too_large.fits_ulong_p()) {
+        std::abort();
+    }
+}
+
+int overload_z(mpfrxx::mpz_class)
+{
+    return 0;
+}
+
+int overload_q(mpfrxx::mpq_class)
+{
+    return 1;
+}
+
+int overload_r(mpfrxx::mpfr_class)
+{
+    return 2;
+}
+
+int overload_zq(mpfrxx::mpz_class)
+{
+    return 0;
+}
+
+int overload_zq(mpfrxx::mpq_class)
+{
+    return 1;
+}
+
+int overload_zr(mpfrxx::mpz_class)
+{
+    return 0;
+}
+
+int overload_zr(mpfrxx::mpfr_class)
+{
+    return 2;
+}
+
+int overload_qr(mpfrxx::mpq_class)
+{
+    return 1;
+}
+
+int overload_qr(mpfrxx::mpfr_class)
+{
+    return 2;
+}
+
+int overload_zqr(mpfrxx::mpz_class)
+{
+    return 0;
+}
+
+int overload_zqr(mpfrxx::mpq_class)
+{
+    return 1;
+}
+
+int overload_zqr(mpfrxx::mpfr_class)
+{
+    return 2;
+}
+
+void test_mixed_exact_mpfr_conversion_legality()
+{
+    mpfrxx::mpz_class z = 42;
+    mpfrxx::mpq_class q = 33;
+    mpfrxx::mpfr_class r = 18;
+
+    if (overload_z(z) != 0 || overload_z(-z) != 0) {
+        std::abort();
+    }
+    if (overload_q(z) != 1 || overload_q(-z) != 1 ||
+        overload_q(q) != 1 || overload_q(-q) != 1) {
+        std::abort();
+    }
+    if (overload_r(z) != 2 || overload_r(-z) != 2 ||
+        overload_r(q) != 2 || overload_r(-q) != 2 ||
+        overload_r(r) != 2 || overload_r(-r) != 2) {
+        std::abort();
+    }
+    if (overload_zq(z) != 0 || overload_zq(q) != 1 || overload_zq(-q) != 1) {
+        std::abort();
+    }
+    if (overload_zr(z) != 0 || overload_zr(r) != 2 || overload_zr(-r) != 2) {
+        std::abort();
+    }
+    if (overload_qr(q) != 1 || overload_qr(r) != 2 || overload_qr(-r) != 2) {
+        std::abort();
+    }
+    if (overload_zqr(z) != 0 || overload_zqr(q) != 1 ||
+        overload_zqr(r) != 2 || overload_zqr(-r) != 2) {
+        std::abort();
+    }
+
+    if (overload_zqr(mpfrxx::mpz_class(z)) != 0 ||
+        overload_zqr(mpfrxx::mpz_class(-z)) != 0 ||
+        overload_zqr(mpfrxx::mpz_class(q)) != 0 ||
+        overload_zqr(mpfrxx::mpz_class(-q)) != 0 ||
+        overload_zqr(static_cast<mpfrxx::mpz_class>(r)) != 0 ||
+        overload_zqr(static_cast<mpfrxx::mpz_class>(mpfrxx::mpfr_class(-r))) != 0) {
+        std::abort();
+    }
+    if (overload_zqr(mpfrxx::mpq_class(z)) != 1 ||
+        overload_zqr(mpfrxx::mpq_class(-z)) != 1 ||
+        overload_zqr(mpfrxx::mpq_class(q)) != 1 ||
+        overload_zqr(mpfrxx::mpq_class(-q)) != 1 ||
+        overload_zqr(static_cast<mpfrxx::mpq_class>(r)) != 1 ||
+        overload_zqr(static_cast<mpfrxx::mpq_class>(mpfrxx::mpfr_class(-r))) != 1) {
+        std::abort();
+    }
+    if (overload_zqr(mpfrxx::mpfr_class(z)) != 2 ||
+        overload_zqr(mpfrxx::mpfr_class(-z)) != 2 ||
+        overload_zqr(mpfrxx::mpfr_class(q)) != 2 ||
+        overload_zqr(mpfrxx::mpfr_class(-q)) != 2 ||
+        overload_zqr(mpfrxx::mpfr_class(r)) != 2 ||
+        overload_zqr(mpfrxx::mpfr_class(-r)) != 2) {
+        std::abort();
+    }
 }
 
 } // namespace
@@ -201,5 +358,6 @@ int main()
     test_integral_string_and_raw_construction();
     test_exact_wrapper_construction_and_assignment();
     test_accessors_and_bool();
+    test_mixed_exact_mpfr_conversion_legality();
     return 0;
 }

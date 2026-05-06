@@ -79,9 +79,9 @@ public:
         mpfr_set_d(value_, value, context.rounding_mode);
     }
 
-    explicit mpfr_class(const gmpxx::mpz_class& value) : mpfr_class(value, default_precision()) {}
+    mpfr_class(const gmpxx::mpz_class& value) : mpfr_class(value, default_precision()) {}
 
-    explicit mpfr_class(const gmpxx::mpq_class& value) : mpfr_class(value, default_precision()) {}
+    mpfr_class(const gmpxx::mpq_class& value) : mpfr_class(value, default_precision()) {}
 
     mpfr_class(const gmpxx::mpz_class& value, mpfr_prec_t precision)
     {
@@ -102,7 +102,7 @@ public:
     template <
         typename T,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
-    explicit mpfr_class(T value) : mpfr_class(value, default_precision())
+    mpfr_class(T value) : mpfr_class(value, default_precision())
     {
     }
 
@@ -166,13 +166,17 @@ public:
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
-                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpfr_class>>>
+                                    (std::is_same_v<typename std::decay_t<Expr>::result_type, mpfr_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, gmpxx::mpz_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, gmpxx::mpq_class>)>>
     mpfr_class(const Expr& expr);
 
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
-                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpfr_class>>,
+                                    (std::is_same_v<typename std::decay_t<Expr>::result_type, mpfr_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, gmpxx::mpz_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, gmpxx::mpq_class>)>,
         typename = void>
     mpfr_class(const Expr& expr, mpfr_prec_t precision);
 
@@ -254,7 +258,9 @@ public:
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
-                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpfr_class>>>
+                                    (std::is_same_v<typename std::decay_t<Expr>::result_type, mpfr_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, gmpxx::mpz_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, gmpxx::mpq_class>)>>
     mpfr_class& operator=(const Expr& expr);
 
     static mpfr_class with_precision(mpfr_prec_t precision, double value)
@@ -286,6 +292,51 @@ public:
         return mpfr_get_d(value_, default_rounding());
     }
 
+    double get_d() const
+    {
+        return to_double();
+    }
+
+    signed long get_si() const
+    {
+        return mpfr_get_si(value_, default_rounding());
+    }
+
+    unsigned long get_ui() const
+    {
+        return mpfr_get_ui(value_, default_rounding());
+    }
+
+    bool fits_sint_p() const
+    {
+        return mpfr_fits_sint_p(value_, default_rounding()) != 0;
+    }
+
+    bool fits_slong_p() const
+    {
+        return mpfr_fits_slong_p(value_, default_rounding()) != 0;
+    }
+
+    bool fits_sshort_p() const
+    {
+        return mpfr_fits_sshort_p(value_, default_rounding()) != 0;
+    }
+
+    bool fits_uint_p() const
+    {
+        return mpfr_fits_uint_p(value_, default_rounding()) != 0;
+    }
+
+    bool fits_ulong_p() const
+    {
+        return mpfr_fits_ulong_p(value_, default_rounding()) != 0;
+    }
+
+    bool fits_ushort_p() const
+    {
+        return mpfr_fits_ushort_p(value_, default_rounding()) != 0;
+    }
+
     void set_prec(mpfr_prec_t precision)
     {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
@@ -296,6 +347,21 @@ public:
     explicit operator bool() const noexcept
     {
         return mpfr_zero_p(value_) == 0;
+    }
+
+    explicit operator gmpxx::mpz_class() const
+    {
+        gmpxx::mpz_class result;
+        mpfr_get_z(result.mpz_data(), value_, default_rounding());
+        return result;
+    }
+
+    explicit operator gmpxx::mpq_class() const
+    {
+        gmpxx::mpq_class result;
+        mpfr_get_q(result.mpq_data(), value_);
+        result.canonicalize();
+        return result;
     }
 
     void set(double value)
@@ -1557,7 +1623,10 @@ namespace mpfrxx {
 template <typename Expr, typename>
 mpfr_class::mpfr_class(const Expr& expr)
 {
-    const mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_expression_precision(expr);
+    mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_expression_precision(expr);
+    if (precision == 0) {
+        precision = default_precision();
+    }
     mpfr_init2(value_, precision);
     const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
     const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);

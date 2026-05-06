@@ -1801,6 +1801,174 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase upstream t-mix MPFR adaptation:
+DONE
+
+Implemented features:
+- Verified a minimally adapted copy of upstream `gmpxx_mkII/cxx/t-mix.cc`
+  against this repo's `mpfrxx_mkII.h` for mpz/mpq/mpfr conversion legality.
+- Made `mpfrxx::mpfr_class` naturally constructible from mpz/mpq exact values,
+  exact expression nodes, and supported integral scalars in the same overload
+  contexts as upstream MPF promotion.
+- Added explicit `mpfr_class` conversion operators to `gmpxx::mpz_class` and
+  `gmpxx::mpq_class`, so MPFR-to-exact conversions remain opt-in.
+- Moved exact `mpz_class(mpq_class)` and assignment definitions from the MPF
+  implementation path into `zq_impl.hpp`, allowing `mpfrxx_mkII.h` to use
+  exact Z/Q conversions without including MPF implementation.
+- Split mpz expression construction so mpz-result expressions remain implicit
+  while mpq-result expressions are explicit, avoiding upstream t-mix overload
+  ambiguity for `-q`.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_type_conversions.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/cxx/t-mix.cc
+- rg -n "mixed|mpq_class|mpz_class|mpfr_class|operator[+*/%-]|common_type" tests include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp
+- cp ../gmpxx_mkII/cxx/t-mix.cc /tmp/t-mix-mpfrxx-mkII.cc
+- perl -0pi -e '...' /tmp/t-mix-mpfrxx-mkII.cc
+- g++ -std=c++17 -Iinclude /tmp/t-mix-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-mix-mpfrxx-mkII
+- /tmp/t-mix-mpfrxx-mkII
+- cmake --build build -j --target test_mpfr_type_conversions
+- ctest --test-dir build -R test_mpfr_type_conversions --output-on-failure
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- cmake --build build -j --target test_mpz_basic test_mpfr_type_conversions
+- ctest --test-dir build -R 'test_mpz_basic|test_mpfr_type_conversions' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+- diff -u ../gmpxx_mkII/cxx/t-mix.cc /tmp/t-mix-mpfrxx-mkII.cc
+
+Pass/fail result:
+- Initial t-mix MPFR adaptation build: FAIL, exact-to-MPFR promotion and
+  MPFR-to-exact explicit conversion surface were incomplete; exact
+  `mpz_class(mpq_class)` also linked only through the MPF implementation path.
+- t-mix MPFR adaptation after wrapper changes: PASS.
+- cmake --build build -j --target test_mpfr_type_conversions: PASS.
+- ctest --test-dir build -R test_mpfr_type_conversions --output-on-failure:
+  PASS, 1/1 tests passed.
+- First full cmake --build build -j after t-mix changes: FAIL, `abs(-mpz)`
+  and `sgn(-mpz)` became ambiguous after mpq expression construction accepted
+  mpz-result expressions.
+- Added expression-node `abs` and `sgn` overloads keyed by result_type.
+- cmake --build build -j --target test_mpz_basic test_mpfr_type_conversions:
+  PASS.
+- ctest --test-dir build -R 'test_mpz_basic|test_mpfr_type_conversions' --output-on-failure:
+  PASS, 2/2 tests passed.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Final cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 119/119 tests passed.
+- git diff --check: PASS.
+- diff -u ../gmpxx_mkII/cxx/t-mix.cc /tmp/t-mix-mpfrxx-mkII.cc:
+  PASS, expected nonzero diff status because the adapted file differs.
+
+Known issues:
+- The temporary adaptation uses explicit casts for MPFR-to-exact conversions
+  (`static_cast<mpz_class>(mpfr_class(...))` and `static_cast<mpq_class>(...)`)
+  because this repo keeps MPFR-to-exact conversion opt-in rather than implicit.
+
+Post-phase MPFR default_prec alias:
+DONE
+
+Implemented features:
+- Added `mpfrxx::default_prec()` as a source-compatible alias for
+  `mpfrxx::default_precision_bits()`.
+- Kept `default_precision_bits()` unchanged; the new name is an inline
+  header-only API addition and does not remove or rename the existing API.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_defaults.cpp
+- STATUS.md
+
+Exact commands run:
+- rg -n "default_precision_bits|default_prec|get_default_prec|set_default_precision|default_rounding" include tests examples STATUS.md
+- sed -n '200,275p' include/gmpfrxx_mkII/detail/environment.hpp
+- sed -n '1,120p' tests/test_mpfr_defaults.cpp
+- cmake --build build -j --target test_mpfr_defaults test_mpfr_type_conversions
+- ctest --test-dir build -R 'test_mpfr_defaults|test_mpfr_type_conversions' --output-on-failure
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j --target test_mpfr_defaults test_mpfr_type_conversions: PASS.
+- ctest --test-dir build -R 'test_mpfr_defaults|test_mpfr_type_conversions' --output-on-failure: PASS, 2/2 tests passed.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 119/119 tests passed.
+
+Known issues:
+- `mpfrxx::set_default_precision_bits()` remains the setter name for now;
+  no `set_default_prec()` alias was added in this phase.
+
+Post-phase upstream t-misc MPFR adaptation:
+DONE
+
+Implemented features:
+- Added GMP-compatible MPFR accessor/fits members:
+  `mpfr_class::get_d`, `get_si`, `get_ui`, `fits_sint_p`,
+  `fits_uint_p`, `fits_slong_p`, `fits_ulong_p`, `fits_sshort_p`, and
+  `fits_ushort_p`.
+- These wrappers delegate to the corresponding MPFR C APIs using the current
+  mpfrxx default rounding policy.
+- Verified a minimally adapted copy of upstream `gmpxx_mkII/cxx/t-misc.cc`
+  against this repo's `mpfrxx_mkII.h` for mpz/mpq/mpfr coverage.
+
+Tests added:
+- None.
+
+Tests updated:
+- tests/test_mpfr_type_conversions.cpp
+- STATUS.md
+
+Exact commands run:
+- sed -n '1,260p' ../gmpxx_mkII/cxx/t-misc.cc
+- sed -n '261,620p' ../gmpxx_mkII/cxx/t-misc.cc
+- rg -n "fits_|get_str|get_d|mpfr_fits|operator!|sgn|swap|canonical|misc" include tests STATUS.md
+- sed -n '250,470p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- rg -n "numeric_limits<|fits_sint_p|fits_uint_p|fits_slong_p|fits_ulong_p|fits_sshort_p|fits_ushort_p|set_prec|get_prec|get_ui|get_si" include/gmpfrxx_mkII/detail include/*.h
+- cp ../gmpxx_mkII/cxx/t-misc.cc /tmp/t-misc-mpfrxx-mkII.cc
+- perl -0pi -e '...' /tmp/t-misc-mpfrxx-mkII.cc
+- g++ -std=c++17 -Iinclude /tmp/t-misc-mpfrxx-mkII.cc -lgmp -lmpfr -lmpc -o /tmp/t-misc-mpfrxx-mkII
+- /tmp/t-misc-mpfrxx-mkII
+- cmake --build build -j --target test_mpfr_type_conversions
+- ctest --test-dir build -R test_mpfr_type_conversions --output-on-failure
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+- git diff --check
+- diff -u ../gmpxx_mkII/cxx/t-misc.cc /tmp/t-misc-mpfrxx-mkII.cc
+
+Pass/fail result:
+- First t-misc MPFR adaptation build: FAIL, `mpfr_class` lacked
+  GMP-compatible `fits_*` and `get_d/get_si/get_ui` members.
+- t-misc MPFR adaptation after adding members: PASS.
+- cmake --build build -j --target test_mpfr_type_conversions: PASS.
+- ctest --test-dir build -R test_mpfr_type_conversions --output-on-failure:
+  PASS, 1/1 tests passed.
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 119/119 tests passed.
+- git diff --check: PASS.
+- diff -u ../gmpxx_mkII/cxx/t-misc.cc /tmp/t-misc-mpfrxx-mkII.cc:
+  PASS, expected nonzero diff status because the adapted file differs.
+
+Known issues:
+- The temporary t-misc adaptation keeps this repo's ABI policy that
+  `std::numeric_limits` is not specialized for wrapper classes; this differs
+  from upstream GMP's historical t-misc expectations.
+- MPFR `get_str(exp, base, 0)` returns precision-dependent digits, so the
+  temporary MPFR adaptation uses explicit `n_digits` for the upstream MPF
+  `get_str` assertions.
+
 Post-phase MPFR raw stream extraction/insertion:
 DONE
 

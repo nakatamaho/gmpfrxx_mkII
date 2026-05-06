@@ -392,9 +392,15 @@ public:
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
-                                    (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class> ||
-                                     std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>)>>
+                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class>>>
     mpz_class(const Expr& expr);
+
+    template <
+        typename Expr,
+        typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>>,
+        typename = void>
+    explicit mpz_class(const Expr& expr);
 
     ~mpz_class()
     {
@@ -738,7 +744,8 @@ public:
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
-                                    std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>>>
+                                    (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class> ||
+                                     std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>)>>
     mpq_class(const Expr& expr);
 
     ~mpq_class()
@@ -1149,6 +1156,18 @@ inline bool operator==(const mpq_class& lhs, const mpq_class& rhs)
 inline bool operator!=(const mpq_class& lhs, const mpq_class& rhs)
 {
     return !(lhs == rhs);
+}
+
+inline mpz_class::mpz_class(const mpq_class& value)
+{
+    mpz_init(value_);
+    mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
+}
+
+inline mpz_class& mpz_class::operator=(const mpq_class& value)
+{
+    mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
+    return *this;
 }
 
 } // namespace gmpxx
@@ -1932,12 +1951,15 @@ template <typename Expr, typename>
 mpz_class::mpz_class(const Expr& expr)
 {
     mpz_init(value_);
-    if constexpr (std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class>) {
-        gmpfrxx_mkII::detail::mpz_evaluate(value_, expr);
-    } else {
-        mpq_class temp(expr);
-        mpz_tdiv_q(value_, mpq_numref(temp.mpq_data()), mpq_denref(temp.mpq_data()));
-    }
+    gmpfrxx_mkII::detail::mpz_evaluate(value_, expr);
+}
+
+template <typename Expr, typename, typename>
+mpz_class::mpz_class(const Expr& expr)
+{
+    mpz_init(value_);
+    mpq_class temp(expr);
+    mpz_tdiv_q(value_, mpq_numref(temp.mpq_data()), mpq_denref(temp.mpq_data()));
 }
 
 template <typename Expr, typename>
@@ -2163,6 +2185,25 @@ inline mpq_class abs(const mpq_class& value)
     return result;
 }
 
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class>>>
+inline mpz_class abs(const Expr& expr)
+{
+    return abs(mpz_class(expr));
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>>,
+    typename = void>
+inline mpq_class abs(const Expr& expr)
+{
+    return abs(mpq_class(expr));
+}
+
 inline mpq_class& operator<<=(mpq_class& value, unsigned long bits)
 {
     value = gmpfrxx_mkII::detail::operator<<(value, bits);
@@ -2183,6 +2224,25 @@ inline int sgn(const mpz_class& value)
 inline int sgn(const mpq_class& value)
 {
     return mpq_sgn(value.mpq_data());
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpz_class>>>
+inline int sgn(const Expr& expr)
+{
+    return sgn(mpz_class(expr));
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpq_class>>,
+    typename = void>
+inline int sgn(const Expr& expr)
+{
+    return sgn(mpq_class(expr));
 }
 
 inline mpz_class sqrt(const mpz_class& value)

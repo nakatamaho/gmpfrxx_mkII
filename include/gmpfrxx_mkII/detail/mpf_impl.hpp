@@ -956,21 +956,9 @@ inline mpz_class::mpz_class(const mpf_class& value)
     mpz_set_f(value_, value.mpf_data());
 }
 
-inline mpz_class::mpz_class(const mpq_class& value)
-{
-    mpz_init(value_);
-    mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
-}
-
 inline mpz_class& mpz_class::operator=(const mpf_class& value)
 {
     mpz_set_f(value_, value.mpf_data());
-    return *this;
-}
-
-inline mpz_class& mpz_class::operator=(const mpq_class& value)
-{
-    mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
     return *this;
 }
 

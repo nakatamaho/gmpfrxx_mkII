@@ -243,6 +243,11 @@ inline mpfr_prec_t default_precision_bits()
     return mutable_mpfr_default_options().precision_bits;
 }
 
+inline mpfr_prec_t default_prec()
+{
+    return default_precision_bits();
+}
+
 inline void set_default_precision_bits(mpfr_prec_t precision)
 {
     if (precision >= MPFR_PREC_MIN) {
