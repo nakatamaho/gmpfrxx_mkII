@@ -26,8 +26,8 @@
 find_package(OpenMP)
 find_library(BENCHMARK_GMPXX_LIBRARY NAMES gmpxx)
 
-option(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT
-    "Count mpf_init/mpf_init2/mpf_clear calls in instrumented GMP benchmarks"
+option(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS
+    "Count mpf_init, mpf_clear, and selected mpf arithmetic calls in instrumented GMP benchmarks"
     OFF)
 
 if(NOT BENCHMARK_GMPXX_LIBRARY)
@@ -43,9 +43,9 @@ function(configure_eager_benchmark target subdir)
     if(target MATCHES "openmp" AND OpenMP_CXX_FOUND)
         target_link_libraries(${target} PRIVATE OpenMP::OpenMP_CXX)
     endif()
-    if(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT)
+    if(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS)
         target_compile_definitions(${target} PRIVATE
-            GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT)
+            GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS)
     endif()
 endfunction()
 

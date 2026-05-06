@@ -30,7 +30,7 @@
 #include <chrono>
 #include <gmp.h>
 
-#include "mpf_init_counter.hpp"
+#include "mpf_operation_counter.hpp"
 
 #if defined USE_ORIGINAL_GMPXX
 #include <gmpxx.h>
@@ -117,11 +117,11 @@ int main(int argc, char **argv) {
         vec1_mpf_class[i] = mpf_class(vec1[i]);
         vec2_mpf_class[i] = mpf_class(vec2[i]);
     }
-    benchmark_mpf_init_counter::begin_kernel();
+    benchmark_mpf_operation_counter::begin_kernel();
     auto start = std::chrono::high_resolution_clock::now();
     _Rdot(N, vec1, 1, vec2, 1, &_ans);
     auto end = std::chrono::high_resolution_clock::now();
-    benchmark_mpf_init_counter::print_kernel("timed_kernel");
+    benchmark_mpf_operation_counter::print_kernel("timed_kernel");
 
     ans = Rdot(N, vec1_mpf_class, 1, vec2_mpf_class, 1);
 

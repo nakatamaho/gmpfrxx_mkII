@@ -1801,6 +1801,73 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase benchmark MPF counter rename:
+DONE
+
+Implemented features:
+- Renamed the benchmark helper from `mpf_init_counter.hpp` to
+  `mpf_operation_counter.hpp`.
+- Renamed namespace `benchmark_mpf_init_counter` to
+  `benchmark_mpf_operation_counter`.
+- Renamed CMake option `GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT` to
+  `GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS`.
+- Renamed aggregate non-kernel output label from `MPF_INIT_COUNTS` to
+  `MPF_OPERATION_COUNTS`; kernel output remains `MPF_KERNEL_COUNTS`.
+- Updated Rdot counter includes and call sites to the new operation-counter
+  naming.
+
+Tests added:
+- None; this is naming cleanup for benchmark instrumentation.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/mpf_operation_counter.hpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpf_init_counter|MPF_INIT_COUNTS|GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT" benchmarks STATUS.md CMakeLists.txt cmake -g '*'`
+- `sed -n '1,150p' benchmarks/CMakeLists.txt`
+- `ls benchmarks/common`
+- `mv benchmarks/common/mpf_init_counter.hpp benchmarks/common/mpf_operation_counter.hpp`
+- `perl -0pi -e 's/mpf_init_counter\\.hpp/mpf_operation_counter.hpp/g; s/benchmark_mpf_init_counter/benchmark_mpf_operation_counter/g; s/GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT/GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS/g; s/MPF_INIT_COUNTS/MPF_OPERATION_COUNTS/g; s/GMPFRXX_MKII_BENCHMARK_MPF_INIT_COUNTER_HPP/GMPFRXX_MKII_BENCHMARK_MPF_OPERATION_COUNTER_HPP/g; s/Count mpf_init\\/mpf_init2\\/mpf_clear calls in instrumented GMP benchmarks/Count mpf_init, mpf_clear, and selected mpf arithmetic calls in instrumented GMP benchmarks/g' benchmarks/CMakeLists.txt benchmarks/common/mpf_operation_counter.hpp benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp STATUS.md`
+- `rg -n "mpf_init_counter|benchmark_mpf_init_counter|GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT|MPF_INIT_COUNTS|MFP_INIT|INIT_COUNTER" benchmarks STATUS.md`
+- `sed -n '26,180p' benchmarks/common/mpf_operation_counter.hpp`
+- `sed -n '26,54p' benchmarks/CMakeLists.txt`
+- `perl -0pi -e 's/\\|mpf_init_counter//g' STATUS.md`
+- `rg -n "mpf_init_counter|benchmark_mpf_init_counter|GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT|MPF_INIT_COUNTS" benchmarks STATUS.md`
+- `rg -n "mpf_operation_counter|benchmark_mpf_operation_counter|GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS|MPF_OPERATION_COUNTS" benchmarks STATUS.md`
+- `cmake -S . -B build_mpf_ops_count -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS=ON`
+- `cmake --build build_mpf_ops_count -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_04_mkII Rdot_gmp_kernel_04_orig`
+- `build_mpf_ops_count/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 1000 512`
+- `build_mpf_ops_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 1000 512`
+- `build_mpf_ops_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 1000 512`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Old-name scan after cleanup: PASS, no matches.
+- New-name scan: PASS.
+- `cmake -S . -B build_mpf_ops_count -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS=ON`: PASS.
+- Count-enabled benchmark build: PASS.
+- `Rdot_gmp_C_native_01 1000 512`: PASS;
+  `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_04_mkII 1000 512`: PASS;
+  `init=0 init2=2 total_init=2 clear=2 add=1000 mul=1000`.
+- `Rdot_gmp_kernel_04_orig 1000 512`: PASS;
+  `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 137/137 tests passed.
+
+Known issues:
+- None.
+
 Post-phase Rdot kernel 02 MPF operation counter check:
 DONE
 
@@ -1849,7 +1916,7 @@ DONE
 
 Implemented features:
 - Removed direct `__gmpf_*` calls from the benchmark MPF operation counter.
-- Added `benchmark_mpf_init_counter::raw::call_mpf_*` wrappers before the
+- Added `benchmark_mpf_operation_counter::raw::call_mpf_*` wrappers before the
   counter redefines the `mpf_*` macros.
 - Counted wrappers now increment counters and call the saved raw wrappers
   instead of spelling GMP implementation symbols directly.
@@ -1858,13 +1925,13 @@ Tests added:
 - None; this is benchmark instrumentation internals only.
 
 Tests updated:
-- `benchmarks/common/mpf_init_counter.hpp`
+- `benchmarks/common/mpf_operation_counter.hpp`
 - `STATUS.md`
 
 Exact commands run:
-- `sed -n '1,180p' benchmarks/common/mpf_init_counter.hpp`
+- `sed -n '1,180p' benchmarks/common/mpf_operation_counter.hpp`
 - `cmake --build build_mpf_count -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_04_mkII Rdot_gmp_kernel_04_orig`
-- `rg -n "__gmpf_" benchmarks/common/mpf_init_counter.hpp`
+- `rg -n "__gmpf_" benchmarks/common/mpf_operation_counter.hpp`
 - `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 1000 512`
 - `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 1000 512`
 - `build_mpf_count/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 1000 512`
@@ -1877,7 +1944,7 @@ Pass/fail result:
   raw wrapper function names. Fixed by naming the raw wrappers
   `call_mpf_*`.
 - Count-enabled benchmark build after fix: PASS.
-- `rg -n "__gmpf_" benchmarks/common/mpf_init_counter.hpp`: PASS, no matches.
+- `rg -n "__gmpf_" benchmarks/common/mpf_operation_counter.hpp`: PASS, no matches.
 - `Rdot_gmp_C_native_01 1000 512`: PASS;
   `init=2 init2=0 total_init=2 clear=2 add=1000 mul=1000`.
 - `Rdot_gmp_kernel_04_mkII 1000 512`: PASS;
@@ -2063,8 +2130,8 @@ Implemented features:
 - Made benchmark counters atomic so OpenMP benchmark builds can be counted
   without data races in the counter itself.
 - Added a kernel interval API:
-  `benchmark_mpf_init_counter::begin_kernel()` and
-  `benchmark_mpf_init_counter::print_kernel(label)`.
+  `benchmark_mpf_operation_counter::begin_kernel()` and
+  `benchmark_mpf_operation_counter::print_kernel(label)`.
 - Updated the instrumented Rdot native C and mkII kernel benchmarks to print
   kernel-only operation deltas with `MPF_KERNEL_COUNTS`.
 
@@ -2072,14 +2139,14 @@ Tests added:
 - None; this is benchmark instrumentation only.
 
 Tests updated:
-- `benchmarks/common/mpf_init_counter.hpp`
+- `benchmarks/common/mpf_operation_counter.hpp`
 - `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
 - `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
 - `STATUS.md`
 
 Exact commands run:
-- `sed -n '1,240p' benchmarks/common/mpf_init_counter.hpp`
-- `rg -n "benchmark_mpf_init_counter|mpf_init_counter|MPF_INIT_COUNTS|mpf_add|mpf_mul" benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp benchmarks/CMakeLists.txt`
+- `sed -n '1,240p' benchmarks/common/mpf_operation_counter.hpp`
+- `rg -n "benchmark_mpf_operation_counter|MPF_OPERATION_COUNTS|mpf_add|mpf_mul" benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp benchmarks/CMakeLists.txt`
 - `sed -n '25,45p' benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
 - `sed -n '25,45p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
 - `rg -n "mpf_add\\(|mpf_mul\\(|__gmpf_add|__gmpf_mul" include/gmpfrxx_mkII/detail benchmarks/gmp/00_Rdot -g '*.hpp' -g '*.cpp'`
@@ -2199,11 +2266,11 @@ DONE
 
 Implemented features:
 - Added optional benchmark-only `mpf_init` instrumentation via
-  `benchmarks/common/mpf_init_counter.hpp`.
-- Added CMake option `GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT`, default OFF, so
+  `benchmarks/common/mpf_operation_counter.hpp`.
+- Added CMake option `GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS`, default OFF, so
   normal benchmark timings are not polluted by counter increments.
 - Instrumented `Rdot_gmp_C_native_01.cpp` and `Rdot_gmp_kernel_01.cpp` with
-  `MPF_INIT_COUNTS` snapshots after setup, after the timed kernel, after the
+  `MPF_OPERATION_COUNTS` snapshots after setup, after the timed kernel, after the
   reference computation, after diff checking, and after manual cleanup.
 - Fixed benchmark cleanup leaks in those files:
   `Rdot_gmp_C_native_01.cpp` now clears `_ans` and both files delete the
@@ -2217,7 +2284,7 @@ Tests added:
 
 Tests updated:
 - `benchmarks/CMakeLists.txt`
-- `benchmarks/common/mpf_init_counter.hpp`
+- `benchmarks/common/mpf_operation_counter.hpp`
 - `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
 - `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
 - `.gitignore`
@@ -2225,7 +2292,7 @@ Tests updated:
 
 Exact commands run:
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
-- `cmake -S . -B build_mpf_count -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT=ON`
+- `cmake -S . -B build_mpf_count -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS=ON`
 - `cmake --build build -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_01_mkII`
 - `cmake --build build_mpf_count -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_orig`
 - `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 8 128`
@@ -2237,7 +2304,7 @@ Exact commands run:
 - `ctest --test-dir build --output-on-failure`
 
 Pass/fail result:
-- Normal `build/` output: PASS; no `MPF_INIT_COUNTS` lines are printed with
+- Normal `build/` output: PASS; no `MPF_OPERATION_COUNTS` lines are printed with
   counting disabled.
 - Count-enabled `Rdot_gmp_C_native_01 8 128`: PASS; final snapshot
   after diff was `init=2 init2=71 total_init=73 clear=37`; after manual
@@ -2253,7 +2320,7 @@ Pass/fail result:
 
 Known issues:
 - Counter output is benchmark instrumentation only; it is intentionally kept
-  behind `GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT` to avoid changing normal
+  behind `GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS` to avoid changing normal
   benchmark timings.
 
 Post-phase benchmark backend layout split:

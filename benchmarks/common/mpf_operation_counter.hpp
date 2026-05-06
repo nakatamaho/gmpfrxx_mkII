@@ -25,17 +25,17 @@
  * SUCH DAMAGE.
  */
 
-#ifndef GMPFRXX_MKII_BENCHMARK_MPF_INIT_COUNTER_HPP
-#define GMPFRXX_MKII_BENCHMARK_MPF_INIT_COUNTER_HPP
+#ifndef GMPFRXX_MKII_BENCHMARK_MPF_OPERATION_COUNTER_HPP
+#define GMPFRXX_MKII_BENCHMARK_MPF_OPERATION_COUNTER_HPP
 
 #include <cstdint>
 #include <iostream>
 #include <atomic>
 #include <gmp.h>
 
-#if defined(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_INIT)
+#if defined(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS)
 
-namespace benchmark_mpf_init_counter {
+namespace benchmark_mpf_operation_counter {
 namespace raw {
 
 inline void call_mpf_init(mpf_ptr value) {
@@ -59,7 +59,7 @@ inline void call_mpf_mul(mpf_ptr result, mpf_srcptr lhs, mpf_srcptr rhs) {
 }
 
 } // namespace raw
-} // namespace benchmark_mpf_init_counter
+} // namespace benchmark_mpf_operation_counter
 
 #undef mpf_init
 #undef mpf_init2
@@ -67,7 +67,7 @@ inline void call_mpf_mul(mpf_ptr result, mpf_srcptr lhs, mpf_srcptr rhs) {
 #undef mpf_add
 #undef mpf_mul
 
-namespace benchmark_mpf_init_counter {
+namespace benchmark_mpf_operation_counter {
 
 struct counters {
     std::atomic<std::uint64_t> init{0};
@@ -135,7 +135,7 @@ inline void begin_kernel() {
 
 inline void print(const char *label) {
     const snapshot current = read_counters();
-    std::cout << "MPF_INIT_COUNTS label=" << label
+    std::cout << "MPF_OPERATION_COUNTS label=" << label
               << " init=" << current.init
               << " init2=" << current.init2
               << " total_init=" << (current.init + current.init2)
@@ -158,24 +158,24 @@ inline void print_kernel(const char *label) {
               << " mul=" << (end.mul - start.mul) << std::endl;
 }
 
-} // namespace benchmark_mpf_init_counter
+} // namespace benchmark_mpf_operation_counter
 
-#define mpf_init(value) ::benchmark_mpf_init_counter::counted_mpf_init((value))
-#define mpf_init2(value, precision) ::benchmark_mpf_init_counter::counted_mpf_init2((value), (precision))
-#define mpf_clear(value) ::benchmark_mpf_init_counter::counted_mpf_clear((value))
-#define mpf_add(result, lhs, rhs) ::benchmark_mpf_init_counter::counted_mpf_add((result), (lhs), (rhs))
-#define mpf_mul(result, lhs, rhs) ::benchmark_mpf_init_counter::counted_mpf_mul((result), (lhs), (rhs))
+#define mpf_init(value) ::benchmark_mpf_operation_counter::counted_mpf_init((value))
+#define mpf_init2(value, precision) ::benchmark_mpf_operation_counter::counted_mpf_init2((value), (precision))
+#define mpf_clear(value) ::benchmark_mpf_operation_counter::counted_mpf_clear((value))
+#define mpf_add(result, lhs, rhs) ::benchmark_mpf_operation_counter::counted_mpf_add((result), (lhs), (rhs))
+#define mpf_mul(result, lhs, rhs) ::benchmark_mpf_operation_counter::counted_mpf_mul((result), (lhs), (rhs))
 
 #else
 
-namespace benchmark_mpf_init_counter {
+namespace benchmark_mpf_operation_counter {
 
 inline void begin_kernel() {}
 inline void print(const char *) {}
 inline void print_kernel(const char *) {}
 
-} // namespace benchmark_mpf_init_counter
+} // namespace benchmark_mpf_operation_counter
 
 #endif
 
-#endif // GMPFRXX_MKII_BENCHMARK_MPF_INIT_COUNTER_HPP
+#endif // GMPFRXX_MKII_BENCHMARK_MPF_OPERATION_COUNTER_HPP
