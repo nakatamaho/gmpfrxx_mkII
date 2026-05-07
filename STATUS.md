@@ -1,3 +1,37 @@
+MPFC/MPC imaginary literal base policy:
+DONE
+
+Implemented features:
+- Changed `_mpfc_i` string literals to accept prefixed hexadecimal and binary forms such as `"0xff"_mpfc_i` and `"0b101.1"_mpfc_i`.
+- Kept decimal `_mpfc_i` behavior unchanged.
+- Kept C99-style MPFR hex float syntax out of MPFC; GMP `mpf_set_str` does not accept `0x1p+5` as an MPF input form.
+- Added matching regression coverage showing `"0xff"_mpfc_i` and `"0xff"_mpc_i` both materialize as imaginary 255.
+
+Missing features:
+- None for the current MPFC/MPC imaginary literal policy.
+
+Tests added:
+- Extended tests/test_user_defined_literals.cpp for `_mpfc_i` hex integer and hex fractional string literals.
+- Extended tests/test_mpfr_user_defined_literals.cpp for `_mpc_i` hex integer string literals.
+
+Exact commands run:
+- sed -n '760,820p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp
+- sed -n '1130,1185p' include/gmpfrxx_mkII/detail/mpc_impl.hpp
+- rg -n "_mpfc_i|_mpc_i|mpfc.*literal|mpc.*literal|0xff|base 0|base 10" tests include STATUS.md
+- cmake --build build -j --target test_user_defined_literals test_mpfr_user_defined_literals
+- ctest --test-dir build -R 'test_user_defined_literals|test_mpfr_user_defined_literals' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j --target test_user_defined_literals test_mpfr_user_defined_literals: PASS.
+- ctest --test-dir build -R 'test_user_defined_literals|test_mpfr_user_defined_literals' --output-on-failure: PASS, 2/2 tests passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 140/140 tests passed.
+
+Known issues:
+- MPFC uses GMP MPF parsing under the hood. Prefixes are normalized before calling `mpf_set_str`; this is intentionally narrower than MPFR's full string parser.
+
 Public version API:
 DONE
 
@@ -6338,7 +6372,7 @@ Migration table:
 | test_thread_safety.cpp | tests/test_mpf_thread_safety.cpp, tests/test_mpfr_thread_safety.cpp | Done for current global-default policy | Done for current global-default policy | This repo exposes process-global wrapper defaults, not upstream thread-snapshot default semantics. Tests cover concurrent default construction, isolation from GMP/MPFR global defaults, and parallel expression materialization with per-thread objects. | Keep current-policy tests; revisit only if defaults become thread-local. |
 | test_type_conversions.cpp | tests/test_type_conversions.cpp, tests/test_mpfr_type_conversions.cpp, tests/test_gmpxx_mkII.cpp, tests/test_mpfrxx_mkII.cpp | Done for policy-compatible focused matrix | Done for natural MPFR adaptation | Focused tests now cover raw GMP/MPFR pointer construction, exact int64_t/uint64_t and int128 construction/assignment, string assignment and invalid-input preservation, wrapper-to-wrapper conversions, explicit bool conversion, accessors, fit predicates, and destination-precision preservation. Upstream APIs that conflict with local policy remain intentional differences: bool construction is rejected, `mpfrxx_mkII.h` does not expose `gmpxx::mpf_class`, and MPFR does not mirror GMP-only MPF conversion forms. | Keep migrated; extend only if upstream adds a new policy-compatible conversion assertion or local conversion policy changes. |
 | test_unary_minus_simplification.cpp | tests/test_unary_minus_simplification.cpp | Done for GMP plus MPFR adaptation | Done for MPFR unary expression adaptation | None known for current unary simplification policy. Double-negative MPF/MPFR expressions now simplify to `pos_op`; MPZ/MPQ behavior and MPZ complement are covered. | Keep migrated; extend only if MPC/MPFC unary node-shape simplification becomes policy. |
-| test_user_defined_literals.cpp | tests/test_user_defined_literals.cpp, tests/test_mpfr_user_defined_literals.cpp | Done for GMP literal surface plus MPFC imaginary literal extension | Done for MPFR `_mpfr` and MPC imaginary literal extensions | GMP `_mpz/_mpq/_mpf` literals are covered, including exact auto-base string/raw integer parsing. MPFC `_mpfc_i` follows `std::complex_literals` as an imaginary-only suffix. MPFR `_mpfr` and MPC `_mpc_i` are public under `mpfrxx::literals` and covered for floating, string, auto-base/default-precision behavior where applicable. | Keep migrated; add real-only complex literals only if a future API policy explicitly wants them. |
+| test_user_defined_literals.cpp | tests/test_user_defined_literals.cpp, tests/test_mpfr_user_defined_literals.cpp | Done for GMP literal surface plus MPFC imaginary literal extension | Done for MPFR `_mpfr` and MPC imaginary literal extensions | GMP `_mpz/_mpq/_mpf` literals are covered, including exact auto-base string/raw integer parsing. MPFC `_mpfc_i` follows `std::complex_literals` as an imaginary-only suffix and covers decimal plus prefixed hex/binary string inputs. MPFR `_mpfr` and MPC `_mpc_i` are public under `mpfrxx::literals` and covered for floating, string, auto-base/default-precision behavior where applicable. | Keep migrated; add real-only complex literals only if a future API policy explicitly wants them. |
 
 Execution policy:
 - Do not copy upstream C++20 concept tests verbatim; rewrite to C++17 and this repository's public namespaces.
@@ -7175,7 +7209,7 @@ DONE
 Implemented features:
 - Added `gmpxx::literals::operator"" _mpfc_i` as an imaginary-only MPFC literal aligned with `std::complex_literals`.
 - Added `mpfrxx::literals::operator"" _mpc_i` as an imaginary-only MPC literal aligned with `std::complex_literals`.
-- `_mpfc_i` supports floating literals and decimal string literals using the existing MPF literal/string policy.
+- `_mpfc_i` supports floating literals, decimal string literals, and prefixed hex/binary string literals normalized to GMP MPF base-specific parsing.
 - `_mpc_i` supports floating literals and MPFR auto-base string literals using the existing MPFR literal/string policy.
 - Added tests showing `real + imaginary_literal` construction for both MPFC and MPC.
 - Added signed and scientific-notation imaginary literal cases using binary-finite values:

@@ -95,6 +95,16 @@ void test_mpfc_imaginary_literals()
     assert_mpf_equal(string_imag.imag(),
                      gmpxx::mpf_class("1.75", string_imag.imag().get_prec(), 10));
 
+    gmpxx::mpfc_class hex_imag = "0xff"_mpfc_i;
+    assert(hex_imag.real() == 0);
+    assert_mpf_equal(hex_imag.imag(),
+                     gmpxx::mpf_class("255", hex_imag.imag().get_prec(), 10));
+
+    gmpxx::mpfc_class hex_fraction_imag = "0x1.8"_mpfc_i;
+    assert(hex_fraction_imag.real() == 0);
+    assert_mpf_equal(hex_fraction_imag.imag(),
+                     gmpxx::mpf_class("1.8", hex_fraction_imag.imag().get_prec(), 16));
+
     gmpxx::mpfc_class z = gmpxx::mpf_class("1.25", 192) + "2.5"_mpfc_i;
     assert_mpf_equal(z.real(), gmpxx::mpf_class("1.25", z.real().get_prec()));
     assert_mpf_equal(z.imag(), gmpxx::mpf_class("2.5", z.imag().get_prec()));

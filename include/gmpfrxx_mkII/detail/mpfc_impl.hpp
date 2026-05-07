@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <istream>
 #include <ostream>
+#include <string>
 #include <type_traits>
 #include <utility>
 
@@ -780,6 +781,31 @@ inline mpfc_class& operator/=(mpfc_class& lhs, Rhs&& rhs)
 
 namespace literals {
 
+inline mpf_class parse_mpfc_imaginary_literal_mpf(const char* value, mp_bitcnt_t precision)
+{
+    if (value == nullptr) {
+        return mpf_class(value, precision, 10);
+    }
+
+    std::string text(value);
+    std::size_t pos = 0;
+    if (pos < text.size() && (text[pos] == '+' || text[pos] == '-')) {
+        ++pos;
+    }
+
+    if (pos + 2 < text.size() && text[pos] == '0' && (text[pos + 1] == 'x' || text[pos + 1] == 'X')) {
+        text.erase(pos, 2);
+        return mpf_class(text.c_str(), precision, 16);
+    }
+
+    if (pos + 2 < text.size() && text[pos] == '0' && (text[pos + 1] == 'b' || text[pos + 1] == 'B')) {
+        text.erase(pos, 2);
+        return mpf_class(text.c_str(), precision, 2);
+    }
+
+    return mpf_class(value, precision, 10);
+}
+
 inline mpfc_class operator"" _mpfc_i(long double value)
 {
     return mpfc_class(mpf_class::with_precision(default_mpf_precision_bits()),
@@ -790,7 +816,7 @@ inline mpfc_class operator"" _mpfc_i(const char* value, std::size_t)
 {
     const mp_bitcnt_t precision = default_mpf_precision_bits();
     return mpfc_class(mpf_class::with_precision(precision),
-                      mpf_class(value, precision, 10));
+                      parse_mpfc_imaginary_literal_mpf(value, precision));
 }
 
 } // namespace literals

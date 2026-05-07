@@ -78,6 +78,11 @@ void test_mpc_imaginary_literals()
                      mpfrxx::mpfr_class("0", string_imag.real_precision()),
                      mpfrxx::mpfr_class("1.8", string_imag.imag_precision(), 16));
 
+    mpfrxx::mpc_class hex_integer_imag = "0xff"_mpc_i;
+    assert_mpc_equal(hex_integer_imag,
+                     mpfrxx::mpfr_class("0", hex_integer_imag.real_precision()),
+                     mpfrxx::mpfr_class("255", hex_integer_imag.imag_precision(), 10));
+
     mpfrxx::mpc_class z = "1.25"_mpfr + "2.5"_mpc_i;
     assert_mpc_equal(z,
                      mpfrxx::mpfr_class("1.25", z.real_precision()),
