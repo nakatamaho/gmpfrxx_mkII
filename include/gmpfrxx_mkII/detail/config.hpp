@@ -34,11 +34,13 @@
 #if __has_include(<gmpfrxx_mkII/detail/version.hpp>)
 #include <gmpfrxx_mkII/detail/version.hpp>
 #else
+#define GMPFRXX_MKII_VERSION "0.0.1"
 #define GMPFRXX_MKII_GIT_COMMIT_HASH "unknown"
 
 namespace gmpfrxx_mkII {
 namespace detail {
 
+inline constexpr const char* version = GMPFRXX_MKII_VERSION;
 inline constexpr const char* git_commit_hash = GMPFRXX_MKII_GIT_COMMIT_HASH;
 
 } // namespace detail
@@ -61,6 +63,16 @@ struct build_options {
 
 namespace gmpxx {
 
+inline constexpr const char* version() noexcept
+{
+    return ::gmpfrxx_mkII::detail::version;
+}
+
+inline std::ostream& print_version(std::ostream& out)
+{
+    return out << version();
+}
+
 inline constexpr const char* git_commit_hash() noexcept
 {
     return ::gmpfrxx_mkII::detail::git_commit_hash;
@@ -74,6 +86,16 @@ inline std::ostream& print_git_commit_hash(std::ostream& out)
 } // namespace gmpxx
 
 namespace mpfrxx {
+
+inline constexpr const char* version() noexcept
+{
+    return ::gmpfrxx_mkII::detail::version;
+}
+
+inline std::ostream& print_version(std::ostream& out)
+{
+    return out << version();
+}
 
 inline constexpr const char* git_commit_hash() noexcept
 {

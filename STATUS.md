@@ -1,3 +1,41 @@
+Public version API:
+DONE
+
+Implemented features:
+- Added generated `GMPFRXX_MKII_VERSION` from the CMake project version.
+- Added a source-tree fallback `GMPFRXX_MKII_VERSION "0.0.1"` for direct includes without a generated header.
+- Added `gmpxx::version()`, `mpfrxx::version()`, `gmpxx::print_version(std::ostream&)`, and `mpfrxx::print_version(std::ostream&)`.
+- Kept the existing generated Git commit hash API unchanged.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Extended tests/test_version_info.cpp to check public version APIs, the generated macro, and stream-print helpers.
+
+Exact commands run:
+- sed -n '1,120p' include/gmpfrxx_mkII/detail/version.hpp.in
+- sed -n '1,120p' include/gmpfrxx_mkII/detail/config.hpp
+- sed -n '1,90p' CMakeLists.txt
+- sed -n '1,120p' tests/test_version_info.cpp
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+- sed -n '1,80p' build/generated/gmpfrxx_mkII/detail/version.hpp
+- cmake --build build -j --target test_version_info
+- ctest --test-dir build -R test_version_info --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug: PASS.
+- Generated header contains `GMPFRXX_MKII_VERSION "0.0.1"`.
+- cmake --build build -j --target test_version_info: PASS.
+- ctest --test-dir build -R test_version_info --output-on-failure: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 140/140 tests passed.
+
+Known issues:
+- The generated Git hash remains configure-time data; rerun CMake after commits to refresh it.
+
 Git-archive distribution target:
 DONE
 

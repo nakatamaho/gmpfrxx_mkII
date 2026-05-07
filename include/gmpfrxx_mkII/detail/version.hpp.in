@@ -29,11 +29,13 @@
 #ifndef GMPFRXX_MKII_DETAIL_VERSION_HPP
 #define GMPFRXX_MKII_DETAIL_VERSION_HPP
 
+#define GMPFRXX_MKII_VERSION "@PROJECT_VERSION@"
 #define GMPFRXX_MKII_GIT_COMMIT_HASH "@GMPFRXX_MKII_GIT_COMMIT_HASH@"
 
 namespace gmpfrxx_mkII {
 namespace detail {
 
+inline constexpr const char* version = GMPFRXX_MKII_VERSION;
 inline constexpr const char* git_commit_hash = GMPFRXX_MKII_GIT_COMMIT_HASH;
 
 } // namespace detail

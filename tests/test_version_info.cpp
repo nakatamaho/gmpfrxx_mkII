@@ -38,6 +38,16 @@ int main()
 {
     static_assert(std::is_same_v<decltype(gmpxx::git_commit_hash()), const char*>);
     static_assert(std::is_same_v<decltype(mpfrxx::git_commit_hash()), const char*>);
+    static_assert(std::is_same_v<decltype(gmpxx::version()), const char*>);
+    static_assert(std::is_same_v<decltype(mpfrxx::version()), const char*>);
+
+    const char* gmp_version = gmpxx::version();
+    const char* mpfrxx_version = mpfrxx::version();
+    assert(gmp_version != nullptr);
+    assert(mpfrxx_version != nullptr);
+    assert(std::strcmp(gmp_version, "0.0.1") == 0);
+    assert(std::strcmp(gmp_version, mpfrxx_version) == 0);
+    assert(std::strcmp(gmp_version, GMPFRXX_MKII_VERSION) == 0);
 
     const char* gmp_hash = gmpxx::git_commit_hash();
     const char* mpfr_hash = mpfrxx::git_commit_hash();
@@ -54,6 +64,14 @@ int main()
     std::ostringstream mpfr_out;
     mpfrxx::print_git_commit_hash(mpfr_out);
     assert(mpfr_out.str() == mpfr_hash);
+
+    std::ostringstream gmp_version_out;
+    gmpxx::print_version(gmp_version_out);
+    assert(gmp_version_out.str() == gmp_version);
+
+    std::ostringstream mpfr_version_out;
+    mpfrxx::print_version(mpfr_version_out);
+    assert(mpfr_version_out.str() == mpfrxx_version);
 
     return 0;
 }
