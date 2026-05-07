@@ -1,0 +1,1659 @@
+% gmpfrxx_mkII Reference Manual
+% Compile with: pdflatex gmpfrxx_mkII_manual.tex
+%               (or lualatex / xelatex)
+%
+% Sources:
+%   - STATUS.md development log (~8,400 lines, 100+ phases) for policy
+%     and history,
+%   - public header sources for actual API surface:
+%       include/gmpfrxx_mkII/detail/{config,environment,eval_context,
+%       expr,integer_conversion,math_mpf,math_mpfc,mpc_environment,
+%       mpc_impl,mpf_impl,mpfc_impl,type_traits,zq_impl}.hpp
+%   - version_hpp.in.
+%   The MPFR class file (mpfr_impl.hpp) was not available; statements
+%   about mpfrxx::mpfr_class follow STATUS.md and are flagged where
+%   relevant.
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=25mm}
+
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!60!black,
+  citecolor=blue!50!black,
+  pdftitle={gmpfrxx_mkII Reference Manual},
+  pdfauthor={Maho Nakata},
+}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+
+% Code listing style.
+\definecolor{codebg}{rgb}{0.97,0.97,0.97}
+\definecolor{codekw}{rgb}{0.10,0.30,0.70}
+\definecolor{codecm}{rgb}{0.40,0.40,0.40}
+\definecolor{codestr}{rgb}{0.55,0.10,0.10}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  keywordstyle=\color{codekw}\bfseries,
+  commentstyle=\color{codecm}\itshape,
+  stringstyle=\color{codestr},
+  language=C++,
+  showstringspaces=false,
+  breaklines=true,
+  columns=fullflexible,
+  frame=single,
+  framesep=4pt,
+  framerule=0pt,
+  xleftmargin=8pt,
+  xrightmargin=4pt,
+  aboveskip=8pt,
+  belowskip=8pt,
+  morekeywords={mpz_class,mpq_class,mpf_class,mpfc_class,mpfr_class,mpc_class,
+                gmp_randclass,mp_bitcnt_t,mpfr_prec_t,mpfr_rnd_t,mpc_rnd_t,
+                gmp_randalg_t,mpfr_exp_t,gmpxx,mpfrxx,literals,detail,
+                with_precision,real_precision,imag_precision,precision,
+                set,set_str,get_str,to_string,to_double,
+                real_to_double,imag_to_double,nullptr,constexpr,noexcept,
+                override,final,decltype,auto,using,namespace}
+}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\hdr}[1]{\texttt{#1}}
+\newcommand{\sym}[1]{\texttt{#1}}
+\newcommand{\envv}[1]{\texttt{#1}}
+
+% Relax line-break tolerance: this manual contains many long monospace
+% identifier lists with no natural break points. Without this, LaTeX
+% emits overfull \hbox warnings even though the result is acceptable.
+\tolerance=2000
+\emergencystretch=3em
+\hbadness=10000
+
+\title{\textbf{gmpfrxx\_mkII Reference Manual}\\[2pt]
+  \large A header-only C++17/20 wrapper for GMP, MPFR, and MPC}
+\author{Maho Nakata\\
+  \small RIKEN Cluster for Pioneering Research\\
+  \small Chiba Institute of Technology}
+\date{Version 0.0.1}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+\textbf{gmpfrxx\_mkII} is a from-scratch, header-only C++17/20 wrapper for
+GMP, MPFR, and MPC. It does not depend on \code{gmpxx.h} or
+\code{libgmpxx}, and does not bridge to any pre-existing C++ wrapper.
+This manual documents the public API surface as exposed by the project's
+detail headers. Internal evaluation machinery (expression-node
+evaluators, allocator-aware materialization paths) is mentioned only
+where its observable behavior matters to the caller.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+
+% ============================================================
+\section{Overview}
+% ============================================================
+
+gmpfrxx\_mkII exposes the following arbitrary-precision numeric types:
+
+\begin{itemize}
+\item \code{gmpxx::mpz\_class}\,---\,exact integer (GMP \code{mpz\_t}).
+\item \code{gmpxx::mpq\_class}\,---\,exact rational (GMP \code{mpq\_t}).
+\item \code{gmpxx::mpf\_class}\,---\,GMP MPF floating point.
+\item \code{gmpxx::mpfc\_class}\,---\,GMP-only complex, backed by two
+  \code{mpf\_class} components. Independent of MPC.
+\item \code{mpfrxx::mpfr\_class}\,---\,MPFR correctly-rounded floating point.
+\item \code{mpfrxx::mpc\_class}\,---\,MPC correctly-rounded complex.
+\item \code{mpfrxx::mpz\_class}, \code{mpfrxx::mpq\_class}\,---\,aliases
+  for the corresponding \code{gmpxx} exact types (same type, not subclasses).
+\end{itemize}
+
+\subsection{Design properties}
+
+\begin{itemize}
+\item Header-only. All public APIs live under \code{include/}.
+\item Two public namespaces: \code{gmpxx} (GMP family) and \code{mpfrxx}
+  (MPFR/MPC family). Internal facilities live in
+  \code{gmpfrxx\_mkII::detail} and are not part of the public API.
+\item Strict header separation. Code that needs only GMP can include
+  \code{<gmpxx\_mkII.h>} alone and never sees MPFR or MPC headers or
+  symbols.
+\item Arithmetic operators (\code{+}, \code{-}, \code{*}, \code{/}, unary
+  \code{+}, unary \code{-}) return expression nodes, not eager values.
+  Materialization happens at construction or assignment.
+\item Allocation-aware evaluation: a left-associated addition chain such as
+  \code{dst = a + b + c + d} performs zero allocations; a two-sided expression
+  such as \code{dst = (a + b) * (c + d)} uses exactly one temporary.
+\item Aliasing-safe assignment: when the destination appears in the source
+  expression, evaluation falls back to a temporary path.
+\item No eager arithmetic operator returning the underlying numeric type is
+  defined; the only public surface is the expression-template surface.
+\end{itemize}
+
+\subsection{Cross-family arithmetic policy}
+
+\begin{itemize}
+\item \code{mpz}, \code{mpq}, and \code{mpf} freely promote within the GMP family.
+\item \code{mpz}, \code{mpq}, \code{mpfr}, and \code{mpc} freely promote within
+  the MPFR/MPC family. \code{mpfr} promotes to \code{mpc} when at least one
+  operand is \code{mpc}.
+\item \code{mpf} \emph{must not} be combined with \code{mpfr} or \code{mpc};
+  this is enforced at compile time. \code{mpfc\_class} (GMP-only complex)
+  must not be combined with \code{mpfr\_class} or \code{mpc\_class} either.
+\end{itemize}
+
+
+% ============================================================
+\section{Build and Installation}
+% ============================================================
+
+The build system is CMake. The project requires GMP, MPFR, and MPC at
+configure time for the full repository; MPFR-only and GMP-only consumers
+exist at the include and link-target boundary (see Section~\ref{sec:headers}).
+
+\subsection{Configuration}
+
+\begin{lstlisting}[language=bash]
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+ctest --test-dir build --output-on-failure
+\end{lstlisting}
+
+CMake finder modules \code{cmake/FindGMP.cmake}, \code{cmake/FindMPFR.cmake},
+and \code{cmake/FindMPC.cmake} are bundled.
+
+\subsection{Source distribution target}
+
+A \code{dist} target produces a clean source tarball using
+\code{git archive HEAD}:
+
+\begin{lstlisting}[language=bash]
+cmake --build build --target dist
+# produces build/gmpfrxx_mkII-0.0.1.tar.xz
+\end{lstlisting}
+
+The archive top directory is \code{gmpfrxx\_mkII-0.0.1/}. The target is
+available only when both Git and \code{xz} are detected by CMake. Because
+the implementation is \code{git archive HEAD}, uncommitted changes are not
+included until committed.
+
+\subsection{Compile-time options}
+
+\begin{description}[leftmargin=*,style=nextline]
+\item[\code{GMPFRXX\_MKII\_ASSUME\_FIXED\_PRECISION\_FASTPATH}]
+  Define this preprocessor macro before including any wrapper header (or
+  via \code{-D}) to enable a fast-path that assumes all
+  \code{mpf\_class}, \code{mpfr\_class}, and \code{mpc\_class} operands
+  in expressions share the same precision. The macro flips
+  \code{gmpfrxx\_mkII::detail::build\_options::assume\_fixed\_precision\_fastpath}
+  (a \code{constexpr bool} flag) to \code{true}, which feeds into
+  evaluation decisions. Default: off.
+\end{description}
+
+\subsection{Version information}
+
+The build system generates a private header \code{detail/version.hpp}
+from \code{detail/version.hpp.in}, embedding the Git commit hash. The
+following accessors are provided in both \code{gmpxx} and \code{mpfrxx}
+namespaces:
+
+\begin{lstlisting}
+namespace gmpxx /* and namespace mpfrxx */ {
+  constexpr const char* git_commit_hash() noexcept;
+  std::ostream& print_git_commit_hash(std::ostream& out);
+}
+\end{lstlisting}
+
+\noindent
+When the version header is unavailable (e.g.\ in a sandboxed build),
+\code{git\_commit\_hash()} returns the literal \code{"unknown"}.
+
+
+% ============================================================
+\section{Headers and Link Targets}
+\label{sec:headers}
+% ============================================================
+
+The library exposes three concentric public headers and four CMake
+\code{INTERFACE} targets. Choose the smallest pair sufficient for your
+translation unit.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Header} & \textbf{CMake target} & \textbf{Links}\\
+\midrule
+\code{<gmpxx\_mkII.h>}    & \code{gmpxx\_mkII}    & GMP\\
+\code{<mpfrxx\_mkII.h>}   & \code{mpfrxx\_mkII}   & GMP, MPFR\\
+\code{<mpcxx\_mkII.h>}    & \code{mpcxx\_mkII}    & MPC (requires MPFR header first)\\
+\code{<gmpfrxx\_mkII.h>}  & \code{gmpfrxx\_mkII}  & GMP, MPFR, MPC (aggregator)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Header rules}
+
+\begin{itemize}
+\item \code{<gmpxx\_mkII.h>} is GMP-only. It must not include or expose any
+  MPFR or MPC header, type, or symbol. Compile-fail tests enforce this.
+\item \code{<mpfrxx\_mkII.h>} provides MPFR (\code{mpfr\_class}) but does not
+  expose \code{mpc\_class} or \code{mpfc\_class}.
+\item \code{<mpcxx\_mkII.h>} provides \code{mpc\_class} and \emph{requires}
+  that \code{<mpfrxx\_mkII.h>} has been included beforehand. It does not
+  include MPFR implicitly. A static assertion enforces include order.
+\item \code{<gmpfrxx\_mkII.h>} is the convenience aggregator. It pulls in all
+  of the above, including \code{<mpcxx\_mkII.h>}.
+\end{itemize}
+
+\subsection{Linkage examples}
+
+\begin{lstlisting}[language=bash]
+# GMP-only consumer
+target_link_libraries(myapp PRIVATE gmpxx_mkII)
+
+# MPFR consumer (no MPC)
+target_link_libraries(myapp PRIVATE mpfrxx_mkII)
+
+# MPC consumer (must include both MPFR and MPC headers)
+target_link_libraries(myapp PRIVATE mpcxx_mkII)
+
+# Everything
+target_link_libraries(myapp PRIVATE gmpfrxx_mkII)
+\end{lstlisting}
+
+
+% ============================================================
+\section{Construction and Precision}
+% ============================================================
+
+Numeric precision is selected through one of three mechanisms:
+
+\begin{itemize}
+\item Implicit, using the family's process-global wrapper default
+  (Section~\ref{sec:defaults}).
+\item Explicit, by passing \code{mp\_bitcnt\_t} or \code{mpfr\_prec\_t} as
+  the second constructor argument.
+\item Through the \code{with\_precision(\dots)} static factories on
+  \code{mpf\_class}, \code{mpfc\_class}, and \code{mpc\_class} (and
+  presumably \code{mpfr\_class}).
+\end{itemize}
+
+\noindent
+All numeric types reject \code{bool} construction (\code{= delete}).
+\code{mpz\_class}, \code{mpq\_class}, and \code{mpf\_class} additionally
+accept \code{\_\_int128\_t}, \code{\_\_uint128\_t} where the GMP API allows
+exact conversion. Note that \code{\_\_int128} as an \emph{expression-template
+scalar leaf} is rejected at compile time; the two paths are distinct.
+
+\subsection{Default construction}
+
+Default construction yields a zero-valued object at the current
+wrapper-owned default precision.
+
+\begin{lstlisting}
+gmpxx::mpz_class z;        // value 0 (precision is irrelevant for mpz)
+gmpxx::mpq_class q;        // value 0/1
+gmpxx::mpf_class f;        // 0.0 at default MPF precision
+gmpxx::mpfc_class fc;      // (0,0) at default MPF precision per component
+mpfrxx::mpfr_class r;      // 0.0 at default MPFR precision
+mpfrxx::mpc_class  c;      // (0,0) at default MPC precision per component
+\end{lstlisting}
+
+\subsection{Numeric-value constructors}
+
+\subsubsection*{\texttt{mpz\_class}}
+
+\begin{lstlisting}
+gmpxx::mpz_class a(42);                 // any non-bool integral type
+gmpxx::mpz_class b(__int128_t{...});    // 128-bit signed
+gmpxx::mpz_class c(__uint128_t{...});   // 128-bit unsigned
+gmpxx::mpz_class d(double{3.0});        // explicit; truncates fractional part
+gmpxx::mpz_class e("ff", 16);           // string + base, base default 10
+gmpxx::mpz_class f(std::string("123"));
+gmpxx::mpz_class g(other_mpz);          // copy
+gmpxx::mpz_class h(some_mpz_srcptr);    // explicit, from raw mpz_t
+explicit mpz_class(const mpf_class&);   // truncates
+explicit mpz_class(const mpq_class&);   // truncates
+\end{lstlisting}
+
+\subsubsection*{\texttt{mpq\_class}}
+
+\begin{lstlisting}
+gmpxx::mpq_class a(42);                       // integral
+gmpxx::mpq_class b(some_mpz);                 // integer numerator
+gmpxx::mpq_class c(num_mpz, den_mpz);         // num/den, canonicalized
+gmpxx::mpq_class d(355, 113);                 // integral pair
+gmpxx::mpq_class e(double{0.5});              // explicit
+gmpxx::mpq_class f("355/113");                // string, canonicalized
+explicit mpq_class(const mpf_class&);         // exact MPF -> rational
+\end{lstlisting}
+
+\subsubsection*{\texttt{mpf\_class}}
+
+\code{mpf\_class} provides numeric-value constructors at the default
+precision and overloads taking an explicit precision in
+\code{mp\_bitcnt\_t}.
+
+\begin{lstlisting}
+gmpxx::mpf_class a(1.5);                      // double, default precision
+gmpxx::mpf_class b(1.5, 256);                 // double, 256 bits
+gmpxx::mpf_class c(int{42});                  // any non-bool integral
+gmpxx::mpf_class d(42L, 256);                 // integral + precision
+gmpxx::mpf_class e(some_mpz);                 // exact int -> mpf
+gmpxx::mpf_class f(some_mpq, 256);            // exact rational -> mpf at 256
+gmpxx::mpf_class g(other_mpf, 256);           // requantize precision
+gmpxx::mpf_class h("3.14159");                // string at default precision
+gmpxx::mpf_class i("3.14159", 256);           // string + precision
+gmpxx::mpf_class j("3.14159", 256, 10);       // string + precision + base
+\end{lstlisting}
+
+\paragraph{Constructor diagnostics.} Invalid string input raises
+\code{std::invalid\_argument}.
+
+\subsubsection*{\texttt{mpfc\_class} (GMP-only complex)}
+
+\begin{lstlisting}
+gmpxx::mpfc_class c(real_mpf, imag_mpf);      // pair of mpf_class
+explicit mpfc_class(const mpf_class&);        // real-only
+explicit mpfc_class(double{1.5});             // real-only scalar
+gmpxx::mpfc_class d(1.5, -1.5);               // scalar pair
+gmpxx::mpfc_class e =
+    gmpxx::mpfc_class::with_precision(256, 1.0, -1.0);
+\end{lstlisting}
+
+\subsubsection*{\texttt{mpc\_class} (MPC complex)}
+
+\code{mpc\_class} has \emph{no} scalar-value constructor. Use
+\code{with\_precision} to set the value through doubles, or pass an
+\code{mpfr\_class} pair.
+
+\begin{lstlisting}
+mpfrxx::mpc_class a(real_mpfr, imag_mpfr);   // pair of mpfr_class
+auto b = mpfrxx::mpc_class::with_precision(256);
+auto c = mpfrxx::mpc_class::with_precision(256, 256);                // (re,im) prec
+auto d = mpfrxx::mpc_class::with_precision(256, /*re=*/1.0, /*im=*/2.0);
+auto e = mpfrxx::mpc_class::with_precision(256, 128, 1.0, 2.0);     // mixed prec
+\end{lstlisting}
+
+\subsection{The \texttt{with\_precision} factories}
+
+\begin{lstlisting}
+// MPF
+auto f0 = gmpxx::mpf_class::with_precision(256);
+auto f1 = gmpxx::mpf_class::with_precision(256, /*value=*/1.5);
+
+// MPFC: per-component or shared precision
+auto c0 = gmpxx::mpfc_class::with_precision(256);
+auto c1 = gmpxx::mpfc_class::with_precision(/*re=*/256, /*im=*/128);
+auto c2 = gmpxx::mpfc_class::with_precision(256, /*re=*/1.0, /*im=*/-1.0);
+
+// MPC: per-component or shared precision
+auto z0 = mpfrxx::mpc_class::with_precision(256);
+auto z1 = mpfrxx::mpc_class::with_precision(/*re=*/256, /*im=*/128);
+auto z2 = mpfrxx::mpc_class::with_precision(256, /*re=*/1.0, /*im=*/2.0);
+\end{lstlisting}
+
+\subsection{Value setters and accessors}
+
+\subsubsection*{Common accessors}
+
+Every numeric class exposes raw GMP/MPFR/MPC pointer access for interop:
+
+\begin{lstlisting}
+const mpz_t&  mpz_class::mpz_data() const;     mpz_t&  mpz_data();
+const mpq_t&  mpq_class::mpq_data() const;     mpq_t&  mpq_data();
+const mpf_t&  mpf_class::mpf_data() const;     mpf_t&  mpf_data();
+const mpc_t&  mpc_class::mpc_data() const;     mpc_t&  mpc_data();
+// mpfr_class follows the same pattern with mpfr_data().
+\end{lstlisting}
+
+\noindent
+\code{get\_mpz\_t()} / \code{get\_mpq\_t()} / \code{get\_mpf\_t()}
+spellings are also provided for compatibility with the gmpxx idiom.
+
+\subsubsection*{\texttt{mpz\_class} / \texttt{mpq\_class} accessors and setters}
+
+\begin{lstlisting}
+mpz_class a;
+a.set("42");        a.set(std::string("42"));     // throws on failure
+int rc = a.set_str("42", 10);                     // non-throwing; rc==0 on success
+std::string s = a.get_str(/*base=*/10);
+std::string t = a.to_string(10);
+double      x = a.get_d();
+unsigned long u = a.get_ui();
+signed long   v = a.get_si();
+bool ok = a.fits_slong_p();   // also fits_sint_p, fits_sshort_p,
+                              //      fits_uint_p, fits_ulong_p, fits_ushort_p
+
+mpq_class q;
+q.canonicalize();
+mpz_class num = q.get_num();
+mpz_class den = q.get_den();
+mpz_srcptr np = q.get_num_mpz_t();
+mpz_srcptr dp = q.get_den_mpz_t();
+double     d  = q.get_d();
+\end{lstlisting}
+
+\subsubsection*{\texttt{mpf\_class} accessors and setters}
+
+\begin{lstlisting}
+mpf_class f = mpf_class::with_precision(256);
+f.set(2.5);
+f.set("3.14159");                                  // throws on failure
+int rc = f.set_str("3.14159", 10);                 // non-throwing
+
+double        d   = f.to_double();   // also get_d()
+unsigned long u   = f.get_ui();
+signed long   v   = f.get_si();
+mp_bitcnt_t   p   = f.precision();   // also get_prec()
+
+f.set_prec(512);          // change effective precision (preserves value)
+f.set_prec_raw(512);      // raw precision change (no value preservation)
+f.div_2exp(8);            // f /= 2^8
+f.mul_2exp(8);            // f *= 2^8
+f.set_epsilon();          // f := 2^-(prec-1)
+
+bool ok = f.fits_slong_p();   // fits_sint_p, fits_sshort_p,
+                              // fits_uint_p, fits_ulong_p, fits_ushort_p
+
+std::string s = f.to_string(/*n_digits=*/0);
+std::string g = f.get_str();
+mp_exp_t exp;
+std::string g2 = f.get_str(exp, /*base=*/10, /*n_digits=*/0);
+\end{lstlisting}
+
+\subsubsection*{\texttt{mpfc\_class} component access}
+
+\begin{lstlisting}
+gmpxx::mpfc_class c(1.0, 2.0);
+mpf_class&       re = c.real();    // mutable reference
+const mpf_class& ci = c.imag();    // const reference
+c.real(other_mpf);                 // setter
+c.imag(other_mpf);
+mp_bitcnt_t pr = c.real_precision();
+mp_bitcnt_t pi = c.imag_precision();
+mp_bitcnt_t pp = c.precision();    // == max(pr, pi)
+\end{lstlisting}
+
+\subsubsection*{\texttt{mpc\_class} component access}
+
+\begin{lstlisting}
+mpfrxx::mpc_class z = mpfrxx::mpc_class::with_precision(256, 1.0, 2.0);
+double re = z.real_to_double();
+double im = z.imag_to_double();
+mpfr_prec_t pr = z.real_precision();
+mpfr_prec_t pi = z.imag_precision();
+mpfr_prec_t pp = z.precision();    // common precision if equal,
+                                   // else min(pr, pi)
+mpc_rnd_t rnd = mpfrxx::mpc_class::default_rounding();
+\end{lstlisting}
+
+\noindent
+For component reads on \code{mpc\_class} use the math-side helpers
+\code{mpfrxx::real(z)}, \code{mpfrxx::imag(z)}; both return
+\code{mpfr\_class} (Section~\ref{sec:math-mpc}).
+
+\subsection{String construction}
+
+\code{mpz\_class}, \code{mpq\_class}, and \code{mpf\_class} all accept
+\code{const char*} and \code{std::string}. Successful \code{mpq\_class}
+parses are canonicalized; zero denominators are rejected.
+
+\begin{lstlisting}
+gmpxx::mpz_class z("ff", 16);              // 255
+gmpxx::mpq_class q("355/113");             // canonicalized
+gmpxx::mpf_class f("3.14159", 256);        // explicit precision
+mpfrxx::mpfr_class r("1.0e-100", 1024);    // explicit precision
+\end{lstlisting}
+
+\paragraph{Throwing vs. non-throwing.} Constructors and assignment
+operators that take a string (\code{const char*} or \code{std::string})
+throw \code{std::invalid\_argument} on parse failure. The
+\code{set\_str()} member returns an \code{int} (0 on success, non-zero on
+failure) and preserves the destination value when parsing fails. The
+\code{set()} member throws on failure.
+
+\subsection{Increment, decrement, and \texttt{swap}}
+
+\code{mpz\_class}, \code{mpq\_class}, and \code{mpf\_class} support
+prefix and postfix \code{operator++} / \code{operator--}. All wrapper
+classes provide a non-throwing member \code{swap()} and a free
+\code{swap()} that delegates to it.
+
+
+% ============================================================
+\section{Defaults and Environment Variables}
+\label{sec:defaults}
+% ============================================================
+
+Each numeric family has a process-global, wrapper-owned default. Defaults
+are loaded from environment variables at static-initialization time and can
+be reloaded or overwritten at runtime. The wrapper does \emph{not} call
+\code{mpf\_set\_default\_prec()}; GMP's process-global default is left
+untouched.
+
+\subsection{GMP MPF defaults}
+
+\noindent Header: \code{<gmpxx\_mkII.h>}\\
+\noindent Initial default precision: \textbf{512 bits}.
+
+\begin{lstlisting}
+namespace gmpxx {
+  mp_bitcnt_t default_mpf_precision_bits();
+  void        set_default_mpf_precision_bits(mp_bitcnt_t bits);
+  void        reload_default_mpf_precision_bits_from_environment();
+}
+\end{lstlisting}
+
+\noindent Environment variable: \envv{MPFXX\_DEFAULT\_PREC\_BITS}.
+
+\subsubsection*{Note on \texttt{mpf\_get\_prec()}}
+GMP rounds requested MPF precision up to its internal limb allocation, so
+\code{mpf\_get\_prec()} may return a value greater than the requested
+default. The wrapper preserves the \emph{requested} default for new
+constructions; existing destinations preserve their effective GMP precision
+on assignment.
+
+\subsection{MPFR defaults}
+
+\noindent Header: \code{<mpfrxx\_mkII.h>}\\
+\noindent Initial default precision: \textbf{512 bits}.\\
+\noindent Initial default rounding mode: \code{MPFR\_RNDN}.
+
+\begin{lstlisting}
+namespace mpfrxx {
+  // Aggregate accessor.
+  struct mpfr_default_options {
+    mpfr_prec_t precision_bits;
+    mpfr_exp_t  emin;
+    mpfr_exp_t  emax;
+    mpfr_rnd_t  rounding_mode;
+  };
+  mpfr_default_options default_options();
+
+  // Precision.
+  mpfr_prec_t default_precision_bits();
+  mpfr_prec_t default_prec();          // alias for default_precision_bits
+  void        set_default_precision_bits(mpfr_prec_t);
+
+  // Rounding mode.
+  mpfr_rnd_t  default_rounding_mode();
+  void        set_default_rounding_mode(mpfr_rnd_t);
+
+  // Exponent range.
+  mpfr_exp_t  default_emin();
+  mpfr_exp_t  default_emax();
+  void        set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax);
+
+  // Reload from environment.
+  void        reload_mpfr_defaults_from_environment();
+}
+\end{lstlisting}
+
+\noindent Environment variables (parsed at startup or on reload):
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Variable} & \textbf{Effect}\\
+\midrule
+\envv{MPFRXX\_DEFAULT\_PRECISION\_BITS} & Wrapper default precision in bits\\
+\envv{MPFRXX\_EMIN}                     & Default exponent minimum\\
+\envv{MPFRXX\_EMAX}                     & Default exponent maximum\\
+\envv{MPFRXX\_ROUNDING\_MODE}           & One of: \code{RNDN}, \code{RNDZ}, \code{RNDU}, \code{RNDD}, \code{RNDA}, \code{RNDF},\\
+                                        & \quad or the \code{MPFR\_*} spellings\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Invalid values fall back to the documented defaults; explicit setters
+silently no-op when given out-of-range arguments (precision below
+\code{MPFR\_PREC\_MIN}, or \code{emin > emax}). The exponent-range pair
+is loaded atomically: if only one of \envv{MPFRXX\_EMIN} or
+\envv{MPFRXX\_EMAX} is set, it is applied only if the implied range is
+self-consistent. Wrapper expression evaluation guards the MPFR
+process-global exponent range with the wrapper-owned defaults via an
+RAII guard and restores the previous values afterward.
+
+\subsection{MPC defaults}
+
+\noindent Header: \code{<mpfrxx\_mkII.h>} (the \code{mpc\_class} type itself
+lives in \code{<mpcxx\_mkII.h>}).\\
+\noindent MPC defaults inherit from MPFR defaults unless
+\envv{MPFRXX\_MPC\_*} variables override them. Real and imaginary parts may
+be configured independently for both precision and rounding.
+
+\begin{lstlisting}
+namespace mpfrxx {
+  options_t   default_mpc_options();
+
+  mpfr_prec_t default_mpc_precision_bits();
+  mpfr_prec_t default_mpc_real_precision_bits();
+  mpfr_prec_t default_mpc_imag_precision_bits();
+  void        set_default_mpc_precision_bits(mpfr_prec_t bits);
+  void        set_default_mpc_precision_bits(mpfr_prec_t real_bits,
+                                             mpfr_prec_t imag_bits);
+
+  mpc_rnd_t   default_mpc_rounding_mode();
+  mpfr_rnd_t  default_mpc_real_rounding_mode();
+  mpfr_rnd_t  default_mpc_imag_rounding_mode();
+  void        set_default_mpc_rounding_mode(mpc_rnd_t rounding);
+  void        set_default_mpc_rounding_mode(mpfr_rnd_t real_rnd,
+                                            mpfr_rnd_t imag_rnd);
+
+  void        reload_mpc_defaults_from_environment();
+}
+\end{lstlisting}
+
+\noindent Environment variables:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\envv{MPFRXX\_MPC\_DEFAULT\_PRECISION\_BITS} & Common default precision\\
+\envv{MPFRXX\_MPC\_REAL\_PRECISION\_BITS}    & Real-part precision\\
+\envv{MPFRXX\_MPC\_IMAG\_PRECISION\_BITS}    & Imag-part precision\\
+\envv{MPFRXX\_MPC\_ROUNDING\_MODE}           & Combined rounding mode\\
+\envv{MPFRXX\_MPC\_REAL\_ROUNDING\_MODE}     & Real-part rounding\\
+\envv{MPFRXX\_MPC\_IMAG\_ROUNDING\_MODE}     & Imag-part rounding\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+% ============================================================
+\section{Expression Templates}
+% ============================================================
+
+All public arithmetic operators (\code{+}, \code{-}, \code{*}, \code{/},
+unary \code{+}, unary \code{-}) return expression nodes from
+\code{gmpfrxx\_mkII::detail} rather than eager numeric values. Materialization
+occurs in two contexts:
+
+\begin{enumerate}
+\item Construction of a numeric class from the expression.
+\item Assignment of the expression to an existing numeric object.
+\end{enumerate}
+
+\subsection{Precision policy}
+
+\begin{itemize}
+\item \textbf{New materialization} (constructing a fresh object from an
+  expression) uses the maximum precision among the relevant object leaves
+  in the expression.
+\item \textbf{Assignment to an existing object} preserves the destination's
+  precision; the expression is evaluated at the destination's precision.
+\item Exact \code{mpz}/\code{mpq} leaves contribute \emph{zero} precision to
+  mixed exact/MPF or exact/MPFR materialization. The MPF or MPFR leaf
+  precision drives the result.
+\item For \code{mpc\_class}, real and imaginary precisions are tracked
+  separately. New materialization uses the per-component max across leaves;
+  assignment preserves per-component destination precision.
+\end{itemize}
+
+\subsection{Allocation behavior}
+
+\begin{itemize}
+\item Simple leaf-only assignments (\code{dst = a + b}) allocate zero times.
+\item Left-associated addition chains (\code{dst = a + b + c + d}) allocate
+  zero times.
+\item Two-sided compound expressions (\code{dst = (a + b) * (c + d)}) use
+  exactly one temporary \code{mpfr\_t} (or \code{mpf\_t}, etc.).
+\item Aliasing assignments (where the destination appears in the source)
+  fall back to the temporary path; safety is preserved.
+\end{itemize}
+
+\subsection{Unary simplification}
+
+A double negation \code{-(-expr)} is simplified to a positive-tag node
+\code{pos\_op(expr)} during expression construction. \code{mpz\_class}
+additionally supports bitwise complement \code{operator\textasciitilde}.
+
+\subsection{Direct-routed compound assignments}
+
+The \code{mpz\_class} compound assignments \code{+=} and \code{-=} for
+expressions of shape \code{mpz * mpz} (or with a small unsigned scalar) are
+routed directly to GMP's \code{mpz\_addmul}, \code{mpz\_submul},
+\code{mpz\_addmul\_ui}, or \code{mpz\_submul\_ui}. The generic compound
+overload is excluded from these shapes to ensure the fast path is used.
+
+
+% ============================================================
+\section{Mixed-Type Promotion}
+\label{sec:promotion}
+% ============================================================
+
+\subsection{GMP family}
+
+\begin{itemize}
+\item \code{mpz + mpz} $\to$ \code{mpz\_class}.
+\item \code{mpq + mpq} $\to$ \code{mpq\_class}; \code{mpz + mpq}, division
+  in either direction $\to$ \code{mpq\_class}.
+\item \code{mpz} or \code{mpq} mixed with \code{mpf} $\to$ \code{mpf\_class}.
+  Exact \code{mpz} leaves go through \code{mpf\_set\_z()}. Exact \code{mpq}
+  leaves are evaluated by computing numerator and denominator as MPF values
+  and dividing (GMP MPF has no \code{mpf\_set\_q()}).
+\item \code{mpz} or \code{mpq} mixed with \code{mpfc} $\to$ \code{mpfc\_class}.
+\end{itemize}
+
+\subsection{MPFR/MPC family}
+
+\begin{itemize}
+\item \code{mpz} or \code{mpq} mixed with \code{mpfr} $\to$ \code{mpfr\_class}.
+  \code{mpz} leaves go through \code{mpfr\_set\_z()}; \code{mpq} leaves go
+  through \code{mpfr\_set\_q()}.
+\item Exact \code{mpz}- or \code{mpq}-result subexpressions embedded in an
+  MPFR expression are evaluated in the exact GMP evaluator first, then
+  converted once with \code{mpfr\_set\_z()} or \code{mpfr\_set\_q()}. This
+  avoids precision loss in intermediate exact arithmetic.
+\item \code{mpc} promotes any operand of type \code{mpfr}, \code{mpz}, or
+  \code{mpq} when at least one operand is \code{mpc}.
+  Conversions go through \code{mpc\_set\_fr()}, \code{mpc\_set\_z()}, and
+  \code{mpc\_set\_q()} respectively.
+\end{itemize}
+
+\subsection{Forbidden combinations}
+
+The following are rejected at compile time:
+
+\begin{itemize}
+\item \code{mpf\_class} combined with \code{mpfr\_class} in either order.
+\item \code{mpf\_class} combined with \code{mpc\_class} in either order.
+\item \code{mpfc\_class} combined with \code{mpfr\_class} or \code{mpc\_class}.
+\end{itemize}
+
+
+% ============================================================
+\section{Scalar Operands}
+% ============================================================
+
+Standard built-in scalars participate in expression templates, subject to
+strict acceptance rules.
+
+\subsection{Accepted scalars}
+
+\begin{itemize}
+\item Signed and unsigned standard integral types, \emph{except}
+  \code{bool}.
+\item \code{float} and \code{double}.
+\end{itemize}
+
+\subsection{Rejected scalars}
+
+\begin{itemize}
+\item \code{bool} (compile-fail test enforced).
+\item \code{long double} (compile-fail test enforced).
+\item \code{\_\_int128} and \code{unsigned \_\_int128} (compile-fail test).
+\end{itemize}
+
+\subsection{Internal normalization}
+
+Accepted scalars are normalized at the expression-leaf level to one of three
+ABI-stable types:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Source kind}     & \textbf{Normalized leaf type}\\
+\midrule
+signed integral          & \code{std::int64\_t}\\
+unsigned integral        & \code{std::uint64\_t}\\
+\code{float}, \code{double} & \code{double}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\code{std::uint64\_t} max, \code{std::int64\_t} min, and \code{std::int64\_t}
+max round-trip exactly through the integer conversion path; the signed
+minimum is not negated during conversion.
+
+\subsection{The scalar/scalar boundary}
+
+Expression-template operators always require at least one wrapper object or
+wrapper expression operand. Two raw scalars never form an expression node;
+this prevents the detail operators from accidentally applying to ordinary
+scalar arithmetic.
+
+\subsection{Standard-library interoperability}
+
+\subsubsection*{\texttt{std::common\_type}}
+
+Explicit \code{std::common\_type} specializations are provided for
+\code{mpz\_class}, \code{mpq\_class}, \code{mpf\_class}, and
+\code{mpfc\_class} paired with each of the following builtin scalar
+types, both directions: \code{char}, \code{signed char}, \code{unsigned
+char}, \code{wchar\_t}, \code{char16\_t}, \code{char32\_t}, \code{short},
+\code{unsigned short}, \code{int}, \code{unsigned int}, \code{long},
+\code{unsigned long}, \code{long long}, \code{unsigned long long},
+\code{float}, and \code{double}. The result type in each case is the
+wrapper class. Cross-class specializations (\code{mpz}/\code{mpq},
+\code{mpz}/\code{mpf}, \code{mpq}/\code{mpf}, and the corresponding
+\code{mpfc} pairs) follow the promotion table in
+Section~\ref{sec:promotion}.
+
+\code{std::common\_type} is also specialized for the expression-template
+node types declared in \code{gmpfrxx\_mkII::detail} so that mixing
+\code{object\_leaf}, \code{scalar\_leaf}, \code{unary\_expr}, and
+\code{binary\_expr} resolves to the underlying \code{result\_type}.
+
+No \code{std::common\_type} specializations are provided on the MPFR/MPC
+side (\code{mpfr\_class}, \code{mpc\_class}).
+
+\subsubsection*{\texttt{std::numeric\_limits}}
+
+The following minimal specializations are provided:
+
+\begin{center}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Type} & \code{is\_specialized} & \code{is\_signed} & \code{is\_integer} & \code{is\_exact} & \code{is\_bounded} \\
+\midrule
+\code{gmpxx::mpz\_class} & true & true & true  & true  & false \\
+\code{gmpxx::mpq\_class} & true & true & false & true  & false \\
+\code{gmpxx::mpf\_class} & true & true & false & false & false \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+\code{is\_modulo} is \code{false} for all three. No
+\code{numeric\_limits} specialization is provided for
+\code{mpfc\_class}, \code{mpfr\_class}, or \code{mpc\_class}; for those
+types \code{numeric\_limits<T>::is\_specialized} is \code{false}.
+
+
+% ============================================================
+\section{Compound Assignment}
+% ============================================================
+
+\subsection{Floating-point family}
+
+\code{mpf\_class}, \code{mpfc\_class}, \code{mpfr\_class}, and
+\code{mpc\_class} provide \code{operator+=}, \code{operator-=},
+\code{operator*=}, and \code{operator/=} accepting the same operand
+families as the binary operators (object, expression, supported scalar).
+Compound assignment \emph{always} preserves the destination's precision
+regardless of operand precision.
+
+\begin{lstlisting}
+mpfrxx::mpfr_class x = mpfrxx::mpfr_class::with_precision(256, 1.0);
+mpfrxx::mpfr_class y = mpfrxx::mpfr_class::with_precision(1024, 2.0);
+x += y;                       // x stays at 256 bits, evaluated at 256 bits
+x *= 3;                       // scalar
+x -= (y * y + 1);             // expression RHS
+\end{lstlisting}
+
+\code{mpf\_class} additionally supports power-of-two scaling via
+\code{operator<<=} and \code{operator>>=} (shift by \code{unsigned
+long}), which delegate to \code{mpf\_mul\_2exp} and
+\code{mpf\_div\_2exp}.
+
+\subsection{Integer-specific operators}
+
+\code{mpz\_class} exposes the full GMP integer-arithmetic surface as
+public operators.
+
+\subsubsection*{Arithmetic compound assignment}
+
+\code{mpz\_class} supports \code{+=}, \code{-=}, \code{*=}, \code{/=}
+with operand types \code{mpz\_class}, supported integral and
+floating-point scalars, and expression nodes. The
+\code{mpz\_class += mpz * mpz} and \code{mpz\_class -= mpz * mpz}
+shapes (and scalar-multiplied variants) are routed directly to GMP's
+\code{mpz\_addmul} / \code{mpz\_submul} (or \code{mpz\_addmul\_ui} /
+\code{mpz\_submul\_ui}) fast paths; the generic compound overload is
+specifically excluded from these shapes to ensure dispatch.
+
+\subsubsection*{Modulo}
+
+\begin{lstlisting}
+mpz_class operator%(const mpz_class&, const mpz_class&);
+mpz_class operator%(const mpz_class&, double);
+mpz_class operator%(double, const mpz_class&);
+template <Integral I> mpz_class operator%(const mpz_class&, I);
+template <Integral I> mpz_class operator%(I, const mpz_class&);
+
+mpz_class& operator%=(mpz_class&, const mpz_class&);
+mpz_class& operator%=(mpz_class&, double);
+template <Integral I> mpz_class& operator%=(mpz_class&, I);
+\end{lstlisting}
+
+\subsubsection*{Bitwise}
+
+\begin{lstlisting}
+mpz_class  operator~(const mpz_class&);            // bitwise complement
+mpz_class& operator&=(mpz_class&, /* mpz, scalar, or expression */);
+mpz_class& operator|=(mpz_class&, /* mpz, scalar, or expression */);
+mpz_class& operator^=(mpz_class&, /* mpz, scalar, or expression */);
+\end{lstlisting}
+
+\subsubsection*{Shift}
+
+\begin{lstlisting}
+mpz_class& operator<<=(mpz_class&, unsigned long);
+mpz_class& operator>>=(mpz_class&, unsigned long);
+\end{lstlisting}
+
+\subsubsection*{Increment / decrement}
+
+Pre- and post-increment / decrement are defined for \code{mpz\_class},
+\code{mpq\_class}, and \code{mpf\_class}, in both lvalue and rvalue
+forms.
+
+\subsection{Free functions for \texttt{mpz\_class}}
+
+\begin{lstlisting}
+namespace gmpxx {
+  mpz_class abs(const mpz_class&);
+  mpz_class abs(/* expression node */);   // SFINAE-restricted
+
+  mpz_class sqrt(const mpz_class&);       // floor of integer sqrt
+
+  mpz_class gcd(const mpz_class&, const mpz_class&);
+  mpz_class gcd(/* mixed lhs */, /* mixed rhs */);
+
+  mpz_class lcm(const mpz_class&, const mpz_class&);
+  mpz_class lcm(/* mixed lhs */, /* mixed rhs */);
+
+  mpz_class factorial (const mpz_class&);
+  mpz_class primorial (const mpz_class&);
+  mpz_class fibonacci (const mpz_class&);
+
+  // Static spellings on mpz_class:
+  static mpz_class mpz_class::factorial (const mpz_class&);
+  static mpz_class mpz_class::primorial (const mpz_class&);
+  static mpz_class mpz_class::fibonacci (const mpz_class&);
+  // plus generic overloads for any non-mpz operand.
+}
+\end{lstlisting}
+
+
+% ============================================================
+\section{User-Defined Literals}
+% ============================================================
+
+User-defined literals are defined under \code{gmpxx::literals} and
+\code{mpfrxx::literals}. Re-export into the parent namespace is
+\emph{partial}: only the real-valued suffixes are re-exported. The
+imaginary-only complex suffixes \code{\_mpfc\_i} and \code{\_mpc\_i}
+must be brought in by an explicit \code{using namespace
+gmpxx::literals;} or \code{using namespace mpfrxx::literals;}.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{@{}>{\ttfamily}l l c >{\raggedright\arraybackslash}p{6.0cm}@{}}
+\toprule
+\textnormal{\textbf{Suffix}} & \textbf{Type produced} & \textbf{Re-exported?} & \textbf{Notes}\\
+\midrule\endhead
+\_mpz     & \code{gmpxx::mpz\_class}   & yes & raw / auto-base; supports large hex literals\\
+\_mpq     & \code{gmpxx::mpq\_class}   & yes & canonicalized; auto-base\\
+\_mpf     & \code{gmpxx::mpf\_class}   & yes & floating and decimal string forms\\
+\_mpfc\_i & \code{gmpxx::mpfc\_class}  & no  & imaginary only; needs explicit \code{using namespace gmpxx::literals}\\
+\_mpfr    & \code{mpfrxx::mpfr\_class} & yes & floating and MPFR auto-base string forms\\
+\_mpc\_i  & \code{mpfrxx::mpc\_class}  & yes & imaginary only\\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\noindent
+``Re-exported'' means the suffix is brought into the parent namespace
+(\code{gmpxx} or \code{mpfrxx}) automatically by including the relevant
+header.
+
+\begin{lstlisting}
+using namespace gmpxx;             // brings _mpz, _mpq, _mpf into scope
+using namespace gmpxx::literals;   // additionally brings _mpfc_i
+using namespace mpfrxx;            // brings _mpfr and _mpc_i into scope
+
+auto z = 0xdeadbeefdeadbeefdeadbeef_mpz;        // large hex via raw parser
+auto q = "355/113"_mpq;
+auto f = 3.14_mpf;
+auto c = 1.0_mpf + 2.0_mpfc_i;                  // GMP-only complex
+auto r = 3.14159265358979323846_mpfr;
+auto z2 = 1.0_mpfr + (-3.25_mpc_i);             // MPC complex
+\end{lstlisting}
+
+Real-only \code{\_mpfc} and \code{\_mpc} literals are intentionally
+absent; complex literals follow the standard library's imaginary-only
+suffix design (\code{std::complex\_literals}).
+
+
+% ============================================================
+\section{String and Stream I/O}
+% ============================================================
+
+\subsection{Exact types (\texttt{mpz\_class}, \texttt{mpq\_class})}
+
+\begin{lstlisting}
+namespace gmpxx {
+  // string getters
+  std::string mpz_class::get_str(int base = 10) const;
+  std::string mpz_class::to_string() const;
+  std::string mpq_class::get_str(int base = 10) const;
+  std::string mpq_class::to_string() const;
+
+  // setters: set_str() is non-throwing and preserves value on failure;
+  //         set() throws std::invalid_argument on failure.
+  bool mpz_class::set_str(const char* s, int base);
+  bool mpq_class::set_str(const char* s, int base);  // rejects 0 denominator
+  void mpz_class::set(const char* s, int base = 10);
+  void mpq_class::set(const char* s, int base = 10);
+}
+\end{lstlisting}
+
+\code{std::ostream} insertion supports decimal/hex/octal base selection,
+\code{showbase}, \code{uppercase}, \code{showpos}, width, fill, and
+alignment.
+
+\subsection{MPF}
+
+\begin{lstlisting}
+gmpxx::mpf_class f("1.0e-100", 1024);
+f.set("3.14159");
+f.set(std::string("3.14159"));
+std::string s1 = f.get_str();
+std::string s2 = f.get_str(/*exp out*/, /*base*/, /*digits*/);
+bool ok = f.set_str("0xff.0p-4", /*base*/ 0);  // value preserved on failure
+\end{lstlisting}
+
+\code{std::ostream} insertion uses \code{gmp\_asprintf} and honors basic
+ostream formatting flags (precision, \code{fixed}/\code{scientific},
+\code{uppercase}, \code{showpoint}, \code{showpos}, width, fill,
+alignment). The active C++ locale's decimal point is honored.
+
+\subsection{MPFR}
+
+\code{mpfr\_class} string construction and string assignment throw
+\code{std::invalid\_argument} on parse failure, matching MPF behavior.
+\code{set\_str()} is non-throwing and preserves the destination value on
+failure. \code{std::ostream} insertion supports the standard ostream
+formatting flags.
+
+\subsection{MPFC complex}
+
+\code{mpfc\_class} stream insertion materializes \code{mpfc}
+expressions through their components and is locale-aware via the
+underlying MPF I/O. Equality and inequality comparison
+(\code{operator==}, \code{operator!=}) are defined for
+\code{mpfc\_class} pairs and for \code{mpfc\_class} \emph{vs.}
+\code{mpf\_class}. No ordering operators (\code{<}, \code{<=}, etc.) are
+defined.
+
+\subsection{Stream extraction (\texttt{operator>>})}
+
+Stream extraction is implemented for every wrapper type:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Type} & \textbf{Accepted input} \\
+\midrule
+\code{gmpxx::mpz\_class}    & integer literal in the stream's current base \\
+\code{gmpxx::mpq\_class}    & \code{num/den} or integer (rejects zero den.) \\
+\code{gmpxx::mpf\_class}    & floating-point literal \\
+\code{gmpxx::mpfc\_class}   & \code{(real,imag)} \\
+\code{mpfrxx::mpc\_class}   & \code{(real,imag)} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+On parse failure, the destination value (and, for complex types, the
+per-component precision) is preserved and the stream's failbit is set.
+Raw-pointer overloads of \code{operator<<} and \code{operator>>} are
+also defined for \code{mpz\_srcptr} / \code{mpz\_ptr},
+\code{mpq\_srcptr} / \code{mpq\_ptr}, and \code{mpf\_srcptr} /
+\code{mpf\_ptr}.
+
+
+% ============================================================
+\section{Math Functions}
+% ============================================================
+
+All math functions are eager: they accept object or expression operands and
+return a freshly constructed numeric object. They do \emph{not} return
+expression nodes. Precision policy:
+
+\begin{itemize}
+\item Unary functions preserve the materialized operand precision.
+\item Binary and ternary functions use the maximum operand precision.
+\item Functions taking only scalar arguments come in two overloads: one with
+  an explicit destination precision, one using the wrapper default
+  precision (e.g., \code{sqrt\_ui(value, prec)} versus \code{sqrt\_ui(value)}).
+\item Pair-returning functions (\code{sin\_cos}, \code{sinh\_cosh},
+  \code{lgamma}) return both values at the materialized operand precision.
+\end{itemize}
+
+\subsection{MPF (\texttt{gmpxx::mpf\_class})}
+\label{sec:math-mpf}
+
+Header: \code{<gmpxx\_mkII.h>}.
+
+\begin{description}[leftmargin=*,style=nextline]
+\item[Algebraic / power]
+  \code{sqrt}, \code{abs}, \code{pow}.
+\item[Exponential / logarithm]
+  \code{exp}, \code{exp2}, \code{exp10}, \code{expm1};
+  \code{log}, \code{log2}, \code{log10}, \code{log1p}.
+\item[Trigonometric]
+  \code{sin}, \code{cos}, \code{tan},
+  \code{asin}, \code{acos}, \code{atan}, \code{atan2}.
+\item[Hyperbolic]
+  \code{sinh}, \code{cosh}, \code{tanh},
+  \code{asinh}, \code{acosh}, \code{atanh}.
+\item[Special]
+  \code{gamma}, \code{reciprocal\_gamma}.
+\item[Constants]
+  \begin{sloppypar}
+  \code{const\_pi}, \code{const\_e}, \code{const\_log10}, \code{log\_two},
+  \code{inv\_log\_two}, \code{log\_ten}, \code{pi\_over\_two},
+  \code{pi\_over\_four}, \code{two\_pi}.
+  \end{sloppypar}
+\end{description}
+
+\paragraph{Implementation notes.}
+All listed unary functions evaluate at the destination precision plus
+guard bits, then truncate the result back to the destination. Algorithms
+used:
+\begin{itemize}
+\item \code{const\_pi} / \code{const\_e} / \code{log\_two}: hardcoded
+  table lookup at 512, 1024, and 2048 bits when the requested precision
+  matches; otherwise Gauss--Legendre (\code{pi}) or theta--AGM
+  (\code{log\_two}) at the requested precision.
+\item Trigonometric functions: argument reduction modulo $\pi/2$ at an
+  internal constant precision, followed by Taylor series at working
+  precision.
+\item \code{log}, \code{log1p}: hybrid path that switches between
+  Taylor on $\log(1+x)$ for small $|x|$ and an artanh-series form for
+  larger inputs, with cancellation-aware working-precision selection.
+\item \code{exp}, \code{expm1}: range-reduced Taylor series.
+\item \code{gamma}: Spouge's algorithm with reflection for non-positive
+  arguments. The number of Spouge terms is selected from the target
+  precision; the function throws \code{std::domain\_error} at
+  non-positive integer poles.
+\item \code{sqrt}: Newton iteration via GMP's \code{mpf\_sqrt}.
+\end{itemize}
+
+\noindent
+For applications that require correctly-rounded (last-bit accurate)
+results, use \code{mpfrxx::mpfr\_class} (Section~\ref{sec:math-mpfr}),
+whose math wrappers delegate directly to MPFR.
+
+\paragraph{Expression-input overloads.}
+Every \code{mpf\_class} math function above has a parallel template
+overload accepting any expression node whose \code{result\_type} is
+\code{mpf\_class}; the expression is materialized first and the
+function is then applied.
+
+\subsection{MPFC (\texttt{gmpxx::mpfc\_class})}
+
+Header: \code{<gmpxx\_mkII.h>}.
+
+\begin{description}[leftmargin=*,style=nextline]
+\item[Algebraic]
+  \code{sqrt}; \code{abs}, \code{norm}, \code{arg}.
+\item[Exponential / logarithm]
+  \code{exp}, \code{log}.
+\item[Trigonometric]
+  \code{sin}, \code{cos}, \code{tan},
+  \code{asin}, \code{acos}, \code{atan}.
+\item[Hyperbolic]
+  \code{sinh}, \code{cosh}, \code{tanh},
+  \code{asinh}, \code{acosh}, \code{atanh}.
+\item[Component / structure]
+  \code{conj}, \code{real}, \code{imag}, \code{polar(radius, angle)}.
+\item[Power]
+  Multiple \code{pow} overloads:
+  \code{pow(mpfc, std::uint64\_t)},
+  \code{pow(mpfc, std::int64\_t)},
+  generic integral overloads, \code{pow(mpfc, mpf\_class)},
+  \code{pow(mpfc, mpfc)}, \code{pow(mpf\_class, mpfc)}, and a scalar/mpfc
+  overload guarded by \code{is\_supported\_mpf\_scalar\_v}.
+\end{description}
+
+\noindent
+Each unary function additionally has an expression-input overload
+constrained by \code{is\_expression\_node\_v} with
+\code{result\_type == mpfc\_class}, materializing the expression first.
+
+\paragraph{Notes.}
+\code{abs} returns \code{mpf\_class} (i.e.\ $\sqrt{a^2 + b^2}$),
+\code{norm} returns \code{mpf\_class} (i.e.\ $a^2 + b^2$), \code{arg}
+returns \code{mpf\_class}, and \code{real}/\code{imag} return
+\code{mpf\_class}. \code{conj} returns \code{mpfc\_class}.
+
+\paragraph{Removed.}
+\code{mpfc\_class} \code{gamma} and \code{reciprocal\_gamma} were
+intentionally removed because the implementation was double-backed via
+\code{std::complex<double>} Lanczos and could not honor MPF precision.
+They will be reintroduced only with a genuine high-precision
+implementation.
+
+\subsection{MPFR (\texttt{mpfrxx::mpfr\_class})}
+\label{sec:math-mpfr}
+
+Header: \code{<mpfrxx\_mkII.h>}. All wrappers delegate to MPFR 4.2.2 C APIs
+at the materialized precision and the wrapper-owned (or destination)
+rounding mode.
+
+\subsubsection*{Algebraic}
+\code{sqrt}, \code{sqr}, \code{sqrt\_ui}, \code{rec\_sqrt}, \code{cbrt},
+\code{rootn\_ui}, \code{rootn\_si}, \code{agm}, \code{fma}, \code{fms},
+\code{fmma}, \code{fmms}, \code{hypot}, \code{min}, \code{max}, \code{dim}.
+
+\noindent (\code{mpfr\_root} is intentionally not wrapped because MPFR
+deprecates it; use \code{rootn\_ui} or \code{rootn\_si}.)
+
+\subsubsection*{Power}
+\code{pow}, \code{powr}, \code{pow\_si}, \code{pow\_ui}, \code{pow\_z},
+\code{pow\_sj}, \code{pow\_uj}, \code{ui\_pow}, \code{ui\_pow\_ui},
+\code{compound\_si}.
+
+\subsubsection*{Logarithm and exponential}
+\code{log}, \code{log2}, \code{log10}, \code{log1p}, \code{log2p1},
+\code{log10p1}, \code{log\_ui};
+\code{exp}, \code{exp2}, \code{exp10}, \code{expm1}, \code{exp2m1},
+\code{exp10m1};
+\code{eint}, \code{li2}.
+
+\subsubsection*{Trigonometric}
+\code{sin}, \code{cos}, \code{tan}, \code{sin\_cos};
+\code{asin}, \code{acos}, \code{atan}, \code{atan2};
+\code{sec}, \code{csc}, \code{cot};
+\code{sinu}, \code{cosu}, \code{tanu}, \code{asinu}, \code{acosu},
+\code{atanu}, \code{atan2u};
+\code{sinpi}, \code{cospi}, \code{tanpi}, \code{asinpi}, \code{acospi},
+\code{atanpi}, \code{atan2pi}.
+
+\subsubsection*{Hyperbolic}
+\code{sinh}, \code{cosh}, \code{tanh}, \code{sinh\_cosh};
+\code{asinh}, \code{acosh}, \code{atanh};
+\code{sech}, \code{csch}, \code{coth}.
+
+\subsubsection*{Constants}
+\code{const\_pi}, \code{const\_log2}, \code{const\_euler},
+\code{const\_catalan}. Each has both an explicit-precision overload and a
+default-precision overload.
+
+\subsubsection*{Sign and next-representable}
+\code{abs}, \code{signbit}, \code{sgn}, \code{setsign}, \code{copysign};
+\code{nextabove}, \code{nextbelow}, \code{nexttoward}.
+
+\subsubsection*{Predicates}
+\code{nan\_p}, \code{inf\_p}, \code{number\_p}, \code{integer\_p},
+\code{zero\_p}, \code{regular\_p}.
+
+\subsubsection*{Comparison helpers}
+\begin{sloppypar}
+\code{cmpabs}, \code{cmpabs\_ui}, \code{reldiff}, \code{eq};
+\code{greater\_p}, \code{greaterequal\_p}, \code{less\_p},
+\code{lessequal\_p}, \code{lessgreater\_p}, \code{equal\_p},
+\code{unordered\_p}.
+\end{sloppypar}
+
+\subsubsection*{Special functions}
+\code{erf}, \code{erfc}, \code{gamma}, \code{lngamma}, \code{digamma},
+\code{zeta}, \code{j0}, \code{j1}, \code{y0}, \code{y1}, \code{ai};\\
+\code{lgamma} returns \code{std::pair<mpfr\_class,int>} (value plus sign);\\
+\code{zeta\_ui} and \code{fac\_ui} provide default- and explicit-precision overloads;\\
+\code{jn}, \code{yn}, \code{gamma\_inc}, \code{beta}.
+
+\subsection{MPC (\texttt{mpfrxx::mpc\_class})}
+\label{sec:math-mpc}
+
+Header: \code{<mpcxx\_mkII.h>}. All wrappers delegate to the MPC 1.3.1
+C API at the materialized operand precision and at
+\code{mpc\_class::default\_rounding()}.
+
+\subsubsection*{Unary, returning \texttt{mpc\_class}}
+\code{sqrt}, \code{sqr};
+\code{exp}, \code{log}, \code{log10};
+\code{sin}, \code{cos}, \code{tan};
+\code{sinh}, \code{cosh}, \code{tanh};
+\code{asin}, \code{acos}, \code{atan};
+\code{asinh}, \code{acosh}, \code{atanh};
+\code{conj}, \code{proj}.
+
+\subsubsection*{Unary, returning \texttt{mpfr\_class}}
+\code{real}, \code{imag}, \code{abs}, \code{norm}, \code{arg}.
+
+\subsubsection*{Binary and ternary}
+\code{pow(lhs, rhs)}, \code{agm(lhs, rhs)};
+\code{fma(a, b, c)}.
+
+\subsubsection*{Pair-returning}
+\code{sin\_cos(z)} returns \code{std::pair<mpc\_class, mpc\_class>}.
+
+\subsubsection*{Constants}
+\begin{lstlisting}
+mpc_class rootofunity(unsigned long order, unsigned long index);
+mpc_class rootofunity(unsigned long order, unsigned long index,
+                      mpfr_prec_t precision);
+mpc_class rootofunity(unsigned long order, unsigned long index,
+                      mpfr_prec_t real_precision,
+                      mpfr_prec_t imag_precision);
+\end{lstlisting}
+
+\paragraph{Not provided.}
+\begin{sloppypar}
+MPC 1.3.1 lacks \code{mpc\_gamma} and \code{mpc\_rgamma}; the wrapper
+does not provide complex \code{gamma} for \code{mpc\_class}.
+Vector-reduction APIs (\code{mpc\_sum}, \code{mpc\_dot}) are not
+wrapped. Specialized \code{mpc\_pow\_*} fast paths
+(\code{mpc\_pow\_fr}, \code{mpc\_pow\_d}, \code{mpc\_pow\_si},
+\code{mpc\_pow\_ui}, \code{mpc\_pow\_z}) are not separately exposed; the
+public \code{pow} materializes operands to \code{mpc\_class} and calls
+\code{mpc\_pow}. \code{mpc\_mul\_i}, \code{mpc\_mul\_2ui},
+\code{mpc\_div\_2ui}, \code{mpc\_mul\_2si}, and \code{mpc\_div\_2si} are
+covered by general arithmetic and scalar expression routes rather than
+named wrappers.
+\end{sloppypar}
+
+
+% ============================================================
+\section{Random Number API}
+% ============================================================
+
+There are two random-number wrapper classes, both named
+\code{gmp\_randclass} but living in different namespaces with disjoint
+purposes.
+
+\subsection{GMP random class (\texttt{gmpxx::gmp\_randclass})}
+
+Header: \code{<gmpxx\_mkII.h>}. RAII wrapper around \code{gmp\_randstate\_t},
+non-copyable and non-movable (state ownership).
+
+\begin{lstlisting}
+namespace gmpxx {
+  class gmp_randclass {
+   public:
+    // Constructors
+    gmp_randclass();                             // default
+    explicit gmp_randclass(decltype(gmp_randinit_default));
+    explicit gmp_randclass(decltype(gmp_randinit_mt));
+    gmp_randclass(decltype(gmp_randinit_lc_2exp_size), mp_bitcnt_t);
+    gmp_randclass(decltype(gmp_randinit_lc_2exp), const mpz_class&,
+                  unsigned long, mp_bitcnt_t);
+    gmp_randclass(gmp_randalg_t, mp_bitcnt_t);   // obsolete form
+
+    // Seeding
+    void seed(unsigned long s);
+    void seed(const mpz_class& s);
+
+    // Integer generation
+    mpz_class get_z_bits(mp_bitcnt_t n);
+    mpz_class get_z_bits(const mpz_class& n);
+    mpz_class get_z_range(const mpz_class& upper);
+
+    // Float generation (returns an expression node so the caller's
+    // destination precision drives generation)
+    random_mpf_expr get_f();
+    random_mpf_expr get_f(mp_bitcnt_t prec);
+    random_mpf_expr get_f(const mpf_class& prototype);
+  };
+}
+\end{lstlisting}
+
+Negative bit counts, non-positive range limits, and over-large LC table
+sizes are rejected with errors.
+
+\subsection{MPFR random class (\texttt{mpfrxx::gmp\_randclass})}
+
+Header: \code{<mpfrxx\_mkII.h>}. As MPFR documents, MPFR random generation
+runs on a GMP \code{gmp\_randstate\_t}.
+
+\begin{lstlisting}
+namespace mpfrxx {
+  class gmp_randclass {
+   public:
+    // Constructors mirror gmpxx::gmp_randclass (default, MT, LC variants,
+    // obsolete gmp_randalg_t form).
+
+    void seed(unsigned long s);
+    void seed(const gmpxx::mpz_class& s);
+
+    mpz_class get_z_bits(mp_bitcnt_t n);
+    mpz_class get_z_bits(const mpz_class& n);
+    mpz_class get_z_range(const mpz_class& upper);
+
+    // [0, 1) via mpfr_urandomb (MPF-style)
+    random_mpfr_expr get_fr();
+    random_mpfr_expr get_fr(mpfr_prec_t prec);
+    random_mpfr_expr get_fr(const mpfr_class& prototype);
+
+    // Distributions
+    random_mpfr_expr get_fr_uniform();              // mpfr_urandom
+    random_mpfr_expr get_fr_uniform(mpfr_prec_t);
+    random_mpfr_expr get_fr_normal();               // mpfr_nrandom
+    random_mpfr_expr get_fr_normal(mpfr_prec_t);
+    random_mpfr_expr get_fr_exponential();          // mpfr_erandom
+    random_mpfr_expr get_fr_exponential(mpfr_prec_t);
+
+    // MPFR C-API name aliases
+    random_mpfr_expr get_fr_urandomb();   // == get_fr
+    random_mpfr_expr get_fr_urandom();    // == get_fr_uniform
+    random_mpfr_expr get_fr_nrandom();    // == get_fr_normal
+    random_mpfr_expr get_fr_erandom();    // == get_fr_exponential
+  };
+}
+\end{lstlisting}
+
+The expression nodes \code{random\_mpf\_expr} and \code{random\_mpfr\_expr}
+integrate with the standard expression-template materialization so that
+construction uses the requested or wrapper-default precision and assignment
+preserves the destination precision. Non-zero MPFR ternary return values
+from \code{mpfr\_urandom}, \code{mpfr\_nrandom}, and \code{mpfr\_erandom}
+are rounding information, not failures.
+
+
+% ============================================================
+\section{Examples}
+% ============================================================
+
+The \code{examples/} directory contains the following programs. Each is
+registered as a CTest target.
+
+\begin{center}
+\begin{longtable}{@{}lp{8.5cm}l@{}}
+\toprule
+\textbf{Program} & \textbf{Demonstrates} & \textbf{Backend}\\
+\midrule\endhead
+\code{example01}             & Explicit-precision MPF construction, expression-template addition, stream output. & MPF\\
+\code{example02\_mpf}        & Default-precision MPF basics. & MPF\\
+\code{example02\_mpfr}       & Default-precision MPFR basics. & MPFR\\
+\code{example02\_mpfr\_mpc}  & Combined MPFR/MPC use through the aggregator header. & MPFR+MPC\\
+\code{example03\_mpf}        & Newton/Heron iteration for $\sqrt{2}$. & MPF\\
+\code{example03\_mpfr}       & Newton iteration parallel to the MPF version. & MPFR\\
+\code{example03\_mpfc\_math} & Eager MPFC math helpers. & MPFC\\
+\code{example04\_*}          & Port of upstream example04 to MPF and MPFR. & MPF / MPFR\\
+\code{example05\_*}          & Port of upstream example05. & MPF / MPFR\\
+\code{example06\_mpfc}       & Complex example via MPFC. & MPFC\\
+\code{example06\_mpc}        & Complex example via MPC pair constructor. & MPC\\
+\code{example07\_mpfc}       & ASCII Mandelbrot using MPFC. & MPFC\\
+\code{example07\_mpc}        & ASCII Mandelbrot using MPC. & MPC\\
+\code{example08\_*}          & Wilkinson polynomial conditioning. & MPFC / MPC\\
+\code{example09\_mpfc}       & Aberth--Ehrlich root-finding (default precision). & MPFC\\
+\code{example09\_mpc}        & Aberth--Ehrlich root-finding (default precision). & MPC\\
+\code{example10\_*}          & Comment-only license-aligned port. & MPF / MPFR\\
+\code{example11\_*}          & Upstream example11 port. & MPF / MPFR\\
+\code{example12\_*}          & Upstream example12 port. & MPF / MPFR\\
+\code{example13\_*}          & Upstream example13 port. & MPF / MPFR\\
+\code{example14\_*}          & Upstream example14 port. & MPF / MPFR\\
+\code{example15\_mpf}        & BBP-style hexadecimal-digit extraction. & MPF\\
+\code{example15\_mpfr}       & BBP-style hexadecimal-digit extraction. & MPFR\\
+\bottomrule
+\end{longtable}
+\end{center}
+
+A minimal program using the aggregator header looks like:
+
+\begin{lstlisting}
+#include <gmpfrxx_mkII.h>
+#include <iostream>
+
+int main() {
+    using namespace gmpxx::literals;
+    using namespace mpfrxx::literals;
+
+    auto a = 3.14_mpfr;
+    auto b = 2.71_mpfr;
+    mpfrxx::mpfr_class c = a * b + 1;
+    std::cout << c << '\n';
+
+    mpfrxx::mpc_class z(a, b);
+    z = mpfrxx::sin(z);
+    std::cout << z.real_to_double() << ' '
+              << z.imag_to_double() << '\n';
+    return 0;
+}
+\end{lstlisting}
+
+
+% ============================================================
+\section{Limitations and Notes}
+% ============================================================
+
+The following limitations reflect the current state of the library and are
+recorded explicitly so users can avoid surprises.
+
+\begin{itemize}
+\item \textbf{MPF transcendentals are not correctly rounded.} The
+  \code{gmpxx::mpf\_class} math wrappers compute at the destination
+  precision plus internal guard bits using arbitrary-precision
+  algorithms (see Section~\ref{sec:math-mpf}), but the results are not
+  guaranteed last-bit correct. For correctly-rounded transcendentals,
+  use \code{mpfrxx::mpfr\_class}.
+\item \textbf{MPFC complex \code{gamma} removed.} The previous
+  implementation was double-backed via Lanczos and could not honor MPF
+  precision. It will be reintroduced only with a genuine high-precision
+  implementation.
+\item \textbf{MPC \code{gamma} not provided.} MPC 1.3.1 has no
+  \code{mpc\_gamma} or \code{mpc\_rgamma}.
+\item \textbf{Exact division by zero} follows the underlying GMP behavior;
+  no wrapper-specific diagnostic is raised.
+\item \textbf{MPF effective precision} as reported by \code{mpf\_get\_prec()}
+  may exceed the requested value because GMP rounds up to its internal limb
+  allocation.
+\item \textbf{Compile-time-rejected expression-template scalar leaves}:
+  \code{bool}, \code{long double}, \code{\_\_int128}, \code{unsigned
+  \_\_int128}. Note that \code{mpz\_class} accepts \code{\_\_int128\_t}
+  and \code{\_\_uint128\_t} \emph{directly} as constructor arguments;
+  the rejection applies only when these types appear inside an arithmetic
+  expression (e.g.\ \code{mpf + \_\_int128\_t\{...\}}).
+\item \textbf{Forbidden mixed families}: \code{mpf} with \code{mpfr};
+  \code{mpf} with \code{mpc}; \code{mpfc} with \code{mpfr}; \code{mpfc}
+  with \code{mpc}.
+\item \textbf{Standard-library traits are partial.}
+  \code{std::numeric\_limits} is specialized only for \code{mpz\_class},
+  \code{mpq\_class}, and \code{mpf\_class} (with the minimal flags listed
+  in Section on standard-library interoperability). For
+  \code{mpfc\_class}, \code{mpfr\_class}, and \code{mpc\_class},
+  \code{is\_specialized} is \code{false}. \code{std::common\_type} is
+  specialized for the GMP-side classes paired with builtin scalars and
+  for cross-class promotions; no specializations exist on the MPFR/MPC
+  side.
+\item \textbf{No MPC vector reductions.} \code{mpc\_sum} and \code{mpc\_dot}
+  are unwrapped; ditto \code{mpfr\_sum} and \code{mpfr\_dot}. These require
+  a separate public container/API policy that has not been settled.
+\item \textbf{Random statistical quality is not certified.} The bundled
+  smoke checks catch gross wiring errors only.
+\end{itemize}
+
+
+% ============================================================
+\appendix
+\section{Public Symbol Index}
+% ============================================================
+
+\subsection*{Namespace \texttt{gmpxx}}
+
+\begin{sloppypar}
+Types: \code{mpz\_class}, \code{mpq\_class}, \code{mpf\_class},
+\code{mpfc\_class}, \code{gmp\_randclass}, \code{random\_mpf\_expr}.\\
+Defaults: \code{default\_mpf\_precision\_bits},
+\code{set\_default\_mpf\_precision\_bits},
+\code{reload\_default\_mpf\_precision\_bits\_from\_environment}.\\
+Version info: \code{git\_commit\_hash}, \code{print\_git\_commit\_hash}.\\
+Math (\code{mpf\_class}): see Section~\ref{sec:math-mpf}.\\
+Math (\code{mpfc\_class}): see Section on MPFC math.\\
+Number-theoretic (\code{mpz\_class}): \code{abs}, \code{sqrt},
+\code{gcd}, \code{lcm}, \code{factorial}, \code{primorial},
+\code{fibonacci}.\\
+Literals (in \code{gmpxx::literals}; \code{\_mpz}, \code{\_mpq},
+\code{\_mpf} also visible directly in namespace \code{gmpxx},
+\code{\_mpfc\_i} only via \code{using namespace gmpxx::literals}):
+\code{\_mpz}, \code{\_mpq}, \code{\_mpf}, \code{\_mpfc\_i}.
+\end{sloppypar}
+
+\subsection*{Namespace \texttt{mpfrxx}}
+
+\begin{sloppypar}
+Types: \code{mpfr\_class}, \code{mpc\_class}, \code{mpz\_class} (alias of
+\code{gmpxx::mpz\_class}), \code{mpq\_class} (alias of
+\code{gmpxx::mpq\_class}), \code{gmp\_randclass}, \code{random\_mpfr\_expr}.\\
+MPFR defaults: \code{default\_options}, \code{default\_precision\_bits},
+\code{default\_prec}, \code{set\_default\_precision\_bits},
+\code{default\_rounding\_mode},
+\code{set\_default\_rounding\_mode}, \code{default\_emin},
+\code{default\_emax}, \code{set\_default\_exponent\_range},
+\code{reload\_mpfr\_defaults\_from\_environment}.\\
+MPC defaults: \code{default\_mpc\_options},
+\code{default\_mpc\_precision\_bits},
+\code{default\_mpc\_real\_precision\_bits},
+\code{default\_mpc\_imag\_precision\_bits},
+\code{set\_default\_mpc\_precision\_bits},
+\code{default\_mpc\_rounding\_mode},
+\code{default\_mpc\_real\_rounding\_mode},
+\code{default\_mpc\_imag\_rounding\_mode},
+\code{set\_default\_mpc\_rounding\_mode},
+\code{reload\_mpc\_defaults\_from\_environment}.\\
+Version info: \code{git\_commit\_hash}, \code{print\_git\_commit\_hash}.\\
+Math (\code{mpfr\_class}): see Section~\ref{sec:math-mpfr}.\\
+Math (\code{mpc\_class}): see Section~\ref{sec:math-mpc}.\\
+Literals (in \code{mpfrxx::literals}; \code{\_mpfr} and
+\code{\_mpc\_i} also visible directly in namespace \code{mpfrxx}):
+\code{\_mpfr}, \code{\_mpc\_i}.
+\end{sloppypar}
+
+\subsection*{Macros}
+
+\code{GMPFRXX\_MKII\_ASSUME\_FIXED\_PRECISION\_FASTPATH}\,---\,enable
+the fixed-precision evaluation fast path.\\
+\code{GMPFRXX\_MKII\_GIT\_COMMIT\_HASH}\,---\,string literal of the
+build's Git commit hash, also exposed as
+\code{gmpfrxx\_mkII::detail::git\_commit\_hash}.
+
+\subsection*{Environment variables}
+
+\begin{sloppypar}
+\code{MPFXX\_DEFAULT\_PREC\_BITS},
+\code{MPFRXX\_DEFAULT\_PRECISION\_BITS},
+\code{MPFRXX\_EMIN}, \code{MPFRXX\_EMAX},
+\code{MPFRXX\_ROUNDING\_MODE},
+\code{MPFRXX\_MPC\_DEFAULT\_PRECISION\_BITS},
+\code{MPFRXX\_MPC\_REAL\_PRECISION\_BITS},
+\code{MPFRXX\_MPC\_IMAG\_PRECISION\_BITS},
+\code{MPFRXX\_MPC\_ROUNDING\_MODE},
+\code{MPFRXX\_MPC\_REAL\_ROUNDING\_MODE},
+\code{MPFRXX\_MPC\_IMAG\_ROUNDING\_MODE}.
+\end{sloppypar}
+
+\end{document}
