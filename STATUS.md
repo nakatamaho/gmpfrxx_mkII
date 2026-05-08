@@ -2045,6 +2045,49 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPF exact rational conversion temporary reduction:
+DONE
+
+Implemented features:
+- Reduced `mpf_set_q_exact` from two `mpf_t` temporaries to one by loading
+  the rational numerator directly into the destination and only materializing
+  the denominator as a temporary before division.
+- Preserved destination precision and the exact numerator/denominator
+  conversion policy.
+
+Tests added:
+- Extended `tests/test_mixed_type_arithmetic.cpp` with a focused MPQ-to-MPF
+  assignment check that computes the reference value using the same
+  numerator/direct-destination and denominator-temporary formula.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `tests/test_mixed_type_arithmetic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1325,1385p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `rg -n "mpf_set_q_exact|mpq.*mpf|set_q|mpf_set_q|mpq_class" tests include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1388,1428p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpf_scalar_alloc_count test_mixed_type_arithmetic test_construction_copy`
+- `ctest --test-dir build -R 'test_mpf_scalar_alloc_count|test_mixed_type_arithmetic|test_construction_copy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j --target test_mpf_scalar_alloc_count test_mixed_type_arithmetic test_construction_copy`: PASS.
+- `ctest --test-dir build -R 'test_mpf_scalar_alloc_count|test_mixed_type_arithmetic|test_construction_copy' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- GMP's memory hooks did not provide a stable allocation-count signal for
+  this small `mpf_t` temporary path in this environment, so the regression is
+  covered by value/precision tests and implementation review rather than a
+  hard allocation-count assertion.
+
 Post-phase MPZ binary expression allocation fast path:
 DONE
 

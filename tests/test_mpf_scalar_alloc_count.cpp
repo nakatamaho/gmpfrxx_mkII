@@ -72,6 +72,7 @@ int main()
     constexpr mp_bitcnt_t precision = 256;
     const auto a = gmpxx::mpf_class::with_precision(precision, 1.5);
     const auto b = gmpxx::mpf_class::with_precision(precision, 2.5);
+    const gmpxx::mpq_class q("7/5");
     auto dst = gmpxx::mpf_class::with_precision(precision);
 
     alloc_count = 0;

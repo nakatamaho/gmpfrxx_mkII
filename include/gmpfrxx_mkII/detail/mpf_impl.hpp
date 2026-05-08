@@ -1400,15 +1400,12 @@ inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpf_class>& expr, 
 
 inline void mpf_set_q_exact(mpf_t dest, const mpq_t value, mp_bitcnt_t eval_precision)
 {
-    mpf_t numerator;
     mpf_t denominator;
-    mpf_init2(numerator, eval_precision);
     mpf_init2(denominator, eval_precision);
-    mpf_set_z(numerator, mpq_numref(value));
+    mpf_set_z(dest, mpq_numref(value));
     mpf_set_z(denominator, mpq_denref(value));
-    mpf_div(dest, numerator, denominator);
+    mpf_div(dest, dest, denominator);
     mpf_clear(denominator);
-    mpf_clear(numerator);
 }
 
 inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpz_class>& expr, mp_bitcnt_t)

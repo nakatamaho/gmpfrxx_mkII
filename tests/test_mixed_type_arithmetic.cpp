@@ -87,6 +87,23 @@ void check_mpf_matrix()
     }
 
     {
+        const gmpxx::mpq_class exact("7/5");
+        auto got = gmpxx::mpf_class::with_precision(256);
+        got = exact;
+
+        mpf_t ref;
+        mpf_t denominator;
+        mpf_init2(ref, got.precision());
+        mpf_init2(denominator, got.precision());
+        mpf_set_z(ref, mpq_numref(exact.mpq_data()));
+        mpf_set_z(denominator, mpq_denref(exact.mpq_data()));
+        mpf_div(ref, ref, denominator);
+        require_mpf_equal(got, ref);
+        mpf_clear(denominator);
+        mpf_clear(ref);
+    }
+
+    {
         gmpxx::mpf_class lhs = gmpxx::mpf_class::with_precision(128, 1.5);
         gmpxx::mpq_class rhs("9/4");
         if (gmpxx::mpf_class(lhs + rhs) != gmpxx::mpf_class::with_precision(128, 3.75)) {
