@@ -133,6 +133,14 @@ void test_mpfc_imaginary_literals()
     assert(string_large.real() == 0);
     assert_mpf_equal(string_large.imag(),
                      gmpxx::mpf_class("536870912", string_large.imag().get_prec()));
+
+    gmpxx::mpfc_class numeric_decimal = 0.1_mpfc_i;
+    gmpxx::mpfc_class string_decimal = "0.1"_mpfc_i;
+    assert_mpf_equal(numeric_decimal.imag(),
+                     gmpxx::mpf_class(static_cast<double>(0.1L), numeric_decimal.imag().get_prec()));
+    assert_mpf_equal(string_decimal.imag(),
+                     gmpxx::mpf_class("0.1", string_decimal.imag().get_prec(), 10));
+    assert(numeric_decimal.imag() != string_decimal.imag());
 }
 
 void test_string_literals_use_auto_base_for_exact_types()

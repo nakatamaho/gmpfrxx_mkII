@@ -1,3 +1,48 @@
+Post-phase MPFC compound assignment review and literal precision note:
+DONE
+
+Implemented features:
+- Rechecked the C5 concern for `mpfc_class` compound assignment.  The current
+  implementation no longer uses the old `lhs = lhs op rhs` pattern; `+=`,
+  `-=`, `*=`, and `/=` dispatch through `mpfc_compound_assign<Op>`.
+- Documented the numeric `_mpfc_i` literal behavior in code: C++ numeric UDLs
+  receive an already-rounded `long double`, and this library intentionally
+  routes that value through the ordinary double-based MPF floating constructor.
+- Clarified that string `_mpfc_i` literals such as `"0.1"_mpfc_i` should be
+  used when decimal text must be parsed at MPF default precision.
+
+Missing features:
+- None for the current literal policy.  A future source-preserving numeric
+  MPFC literal would require a raw literal operator and an explicit API policy.
+
+Tests added:
+- Extended `tests/test_user_defined_literals.cpp` to show that `0.1_mpfc_i`
+  follows the double-based numeric path while `"0.1"_mpfc_i` parses decimal
+  text at MPF precision, and that the two values differ at the default
+  precision.
+
+Exact commands run:
+- `rg -n "operator\\+=|operator-=|operator\\*=|operator/=|_mpfc_i|operator\\\"\\\"_mpfc|complex_literals|long double|mpfc literal|mpfc_class& operator=" include/gmpfrxx_mkII/detail/mpfc_impl.hpp tests STATUS.md`
+- `sed -n '880,972p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '2738,2788p' STATUS.md`
+- `sed -n '82,136p' tests/test_user_defined_literals.cpp`
+- `git diff --check`
+- `cmake --build build -j --target test_user_defined_literals test_mpfc_precision_policy test_mpfc_basic`
+- `ctest --test-dir build -R 'test_user_defined_literals|test_mpfc_precision_policy|test_mpfc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `cmake --build build -j --target test_user_defined_literals test_mpfc_precision_policy test_mpfc_basic`: PASS.
+- `ctest --test-dir build -R 'test_user_defined_literals|test_mpfc_precision_policy|test_mpfc_basic' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- Numeric `_mpfc_i` literals are not source-spelling preserving.  This is
+  documented behavior; string literals are the precision-preserving path.
+
 Post-phase int128 constructor policy note and Spouge coefficient guard:
 DONE
 

@@ -956,6 +956,11 @@ inline mpf_class parse_mpfc_imaginary_literal_mpf(const char* value, mp_bitcnt_t
 
 inline mpfc_class operator"" _mpfc_i(long double value)
 {
+    // Numeric user-defined literals receive an already-rounded long double
+    // value rather than the source spelling.  Keep this path aligned with the
+    // ordinary MPF floating constructor, which is double-based; use the string
+    // literal form such as "0.1"_mpfc_i when decimal text should be parsed at
+    // the MPF default precision.
     return mpfc_class(mpf_class::with_precision(default_mpf_precision_bits()),
                       mpf_class(static_cast<double>(value)));
 }
