@@ -130,12 +130,19 @@ inline mpfc_class sqrt(const mpfc_class& value)
 
     const mpf_class half = mpfc_math_detail::half(precision);
     const mpf_class magnitude = abs(value);
-    mpf_class real_part = sqrt((magnitude + value.real()) * half);
-    mpf_class imag_part = sqrt((magnitude - value.real()) * half);
-    if (mpfc_math_detail::is_negative(value.imag())) {
-        imag_part = -imag_part;
+
+    if (!mpfc_math_detail::is_negative(value.real())) {
+        mpf_class real_part = sqrt((magnitude + value.real()) * half);
+        mpf_class imag_part = value.imag() / (real_part + real_part);
+        return mpfc_class(real_part, imag_part);
     }
-    return mpfc_class(real_part, imag_part);
+
+    mpf_class imag_magnitude = sqrt((magnitude - value.real()) * half);
+    mpf_class real_part = gmpxx::abs(value.imag()) / (imag_magnitude + imag_magnitude);
+    if (mpfc_math_detail::is_negative(value.imag())) {
+        imag_magnitude = -imag_magnitude;
+    }
+    return mpfc_class(real_part, imag_magnitude);
 }
 
 inline mpfc_class exp(const mpfc_class& value)

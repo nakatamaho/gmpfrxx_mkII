@@ -1,3 +1,43 @@
+Post-phase MPFC numeric caveats and stable sqrt:
+DONE
+
+Implemented features:
+- Replaced `gmpxx::sqrt(mpfc_class)` with Smith-style branch formulas.
+- For `Re(z) >= 0`, the imaginary part is computed as `Im(z) / (2w)` instead
+  of `sqrt((|z| - Re(z)) / 2)`, avoiding the cancellation path near the
+  positive real axis.
+- For `Re(z) < 0`, the real part is computed from `abs(Im(z)) / (2w)` while
+  preserving the sign of the imaginary part.
+- Documented that `gmpxx::mpfc_class` is a GMP-only convenience complex type,
+  not an MPC replacement, and does not promise MPC-style correctly rounded
+  complex arithmetic or systematic guard-bit evaluation.
+
+Missing features:
+- `mpfc_class` multiplication and division still evaluate with the destination
+  MPF precision and do not use systematic guard bits.
+- `mpfc_class` inverse and transcendental functions still compose MPF-backed
+  formulas directly; cancellation-sensitive workloads should use
+  `mpfrxx::mpc_class`.
+
+Tests added:
+- Extended `tests/test_mpfc_math.cpp` with a near-positive-real-axis square
+  root case where the previous `sqrt((|z| - Re(z)) / 2)` formula could round
+  the imaginary component to zero.
+
+Exact commands run:
+- `rg -n "mpfc_apply_binary|sqrt\\(.*mpfc|asin\\(|acos\\(|atan\\(|asinh\\(|atanh\\(|mpfc" include/gmpfrxx_mkII/detail/math_mpfc.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp README.md STATUS.md docs tests -g '*.*' && sed -n '1,220p' include/gmpfrxx_mkII/detail/math_mpfc.hpp && sed -n '680,790p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1,220p' tests/test_mpfc_math.cpp && sed -n '180,220p' README.md && sed -n '1,130p' STATUS.md`
+- `cmake --build build -j --target test_mpfc_math && ctest --test-dir build -R 'test_mpfc_math' --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfc_math`: PASS.
+- `ctest --test-dir build -R 'test_mpfc_math' --output-on-failure`: PASS, 1/1 tests passed.
+
+Known issues:
+- `mpfc_class` remains an MPF-backed compromise complex type. It is suitable
+  for GMP-only convenience and compatibility coverage, but MPC should be used
+  when complex correct rounding or robust guard-bit behavior matters.
+
 Post-phase MPC move assignment precision semantics:
 DONE
 

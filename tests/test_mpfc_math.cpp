@@ -145,6 +145,15 @@ void test_real_axis_and_expression_inputs() {
     mpfc_class principal_root = sqrt(negative_real);
     assert(principal_root.real() == 0);
     assert(principal_root.imag() == 2);
+
+    mpf_class tiny(1, 256);
+    mpf_div_2exp(tiny.mpf_data(), tiny.mpf_data(), 200);
+    mpfc_class near_positive_axis(mpf_class(1, 256), tiny);
+    mpfc_class near_axis_root = sqrt(near_positive_axis);
+    mpf_class expected_imag = tiny / mpf_class(2, 256);
+    assert(near_axis_root.real() == 1);
+    assert(near_axis_root.imag() == expected_imag);
+    assert(near_axis_root.imag() != 0);
 }
 
 void test_pow_against_std_complex() {
