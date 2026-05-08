@@ -61,7 +61,28 @@ int main()
     mpfrxx::mpz_class a("1000");
     mpfrxx::mpz_class b("12345678901234567890");
     mpfrxx::mpz_class c("-98765432109876543210");
+    mpfrxx::mpz_class d("11223344556677889900");
     mpfrxx::mpz_class expected;
+
+    mpz_add(expected.mpz_data(), b.mpz_data(), c.mpz_data());
+    mpz_realloc2(a.mpz_data(), static_cast<mp_bitcnt_t>(mpz_sizeinbase(expected.mpz_data(), 2) + 64));
+
+    alloc_count = 0;
+    a = b + c;
+    const int binary_add_allocations = alloc_count.load();
+    assert(a == expected);
+    assert(binary_add_allocations == 0);
+
+    mpz_set(expected.mpz_data(), b.mpz_data());
+    mpz_add(expected.mpz_data(), expected.mpz_data(), c.mpz_data());
+    mpz_add(expected.mpz_data(), expected.mpz_data(), d.mpz_data());
+    mpz_realloc2(a.mpz_data(), static_cast<mp_bitcnt_t>(mpz_sizeinbase(expected.mpz_data(), 2) + 64));
+
+    alloc_count = 0;
+    a = b + c + d;
+    const int add_chain_allocations = alloc_count.load();
+    assert(a == expected);
+    assert(add_chain_allocations == 0);
 
     mpz_set(expected.mpz_data(), a.mpz_data());
     mpz_addmul(expected.mpz_data(), b.mpz_data(), c.mpz_data());
