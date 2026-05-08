@@ -623,6 +623,15 @@ inline mp_bitcnt_t checked_mp_exp_magnitude(mp_exp_t value)
     return static_cast<mp_bitcnt_t>(magnitude);
 }
 
+inline mp_exp_t checked_mp_bitcnt_to_mp_exp(mp_bitcnt_t value, const char* message)
+{
+    if (static_cast<std::uintmax_t>(value) >
+        static_cast<std::uintmax_t>(std::numeric_limits<mp_exp_t>::max())) {
+        throw std::overflow_error(message);
+    }
+    return static_cast<mp_exp_t>(value);
+}
+
 inline mpf_class mul_signed_exp(const mpf_class& value, mp_exp_t multiplier, mp_bitcnt_t precision)
 {
     if (multiplier == 0) {
@@ -634,6 +643,95 @@ inline mpf_class mul_signed_exp(const mpf_class& value, mp_exp_t multiplier, mp_
         return sub(make_ui(0, precision), magnitude, precision);
     }
     return magnitude;
+}
+
+inline void mpz_set_mp_exp(mpz_t target, mp_exp_t value)
+{
+    if constexpr (std::numeric_limits<mp_exp_t>::min() >= std::numeric_limits<long>::min() &&
+                  std::numeric_limits<mp_exp_t>::max() <= std::numeric_limits<long>::max()) {
+        mpz_set_si(target, static_cast<long>(value));
+    } else {
+        using unsigned_exp_t = std::make_unsigned_t<mp_exp_t>;
+        unsigned_exp_t magnitude = 0;
+        if (value >= 0) {
+            magnitude = static_cast<unsigned_exp_t>(value);
+        } else {
+            magnitude = static_cast<unsigned_exp_t>(-(value + 1));
+            ++magnitude;
+        }
+        mpz_import(target, 1, -1, sizeof(magnitude), 0, 0, &magnitude);
+        if (value < 0) {
+            mpz_neg(target, target);
+        }
+    }
+}
+
+inline mp_exp_t checked_log_scaling_exponent(mp_exp_t desired_exponent, mp_exp_t x_exponent)
+{
+    mpz_t value;
+    mpz_t x_value;
+    mpz_init(value);
+    mpz_init(x_value);
+    mpz_set_mp_exp(value, desired_exponent);
+    mpz_set_mp_exp(x_value, x_exponent);
+    mpz_sub(value, value, x_value);
+    mpz_add_ui(value, value, 1);
+    if (!mpz_fits_slong_p(value)) {
+        mpz_clear(x_value);
+        mpz_clear(value);
+        throw std::overflow_error("log(x) scaling exponent is too large");
+    }
+    const long result = mpz_get_si(value);
+    mpz_clear(x_value);
+    mpz_clear(value);
+    if constexpr (sizeof(mp_exp_t) < sizeof(long)) {
+        if (result < static_cast<long>(std::numeric_limits<mp_exp_t>::min()) ||
+            result > static_cast<long>(std::numeric_limits<mp_exp_t>::max())) {
+            throw std::overflow_error("log(x) scaling exponent is too large");
+        }
+    }
+    return static_cast<mp_exp_t>(result);
+}
+
+inline void ensure_mpf_mul_exponent_fits(const mpf_class& lhs, const mpf_class& rhs)
+{
+    if (mpf_sgn(lhs.mpf_data()) == 0 || mpf_sgn(rhs.mpf_data()) == 0) {
+        return;
+    }
+
+    mp_exp_t lhs_exponent = 0;
+    mp_exp_t rhs_exponent = 0;
+    mpf_get_d_2exp(&lhs_exponent, lhs.mpf_data());
+    mpf_get_d_2exp(&rhs_exponent, rhs.mpf_data());
+
+    mpz_t sum;
+    mpz_t rhs_value;
+    mpz_init(sum);
+    mpz_init(rhs_value);
+    mpz_set_mp_exp(sum, lhs_exponent);
+    mpz_set_mp_exp(rhs_value, rhs_exponent);
+    mpz_add(sum, sum, rhs_value);
+    mpz_clear(rhs_value);
+
+    mpz_t min_value;
+    mpz_t max_value;
+    mpz_init(min_value);
+    mpz_init(max_value);
+    mpz_set_mp_exp(min_value, std::numeric_limits<mp_exp_t>::min());
+    mpz_set_mp_exp(max_value, std::numeric_limits<mp_exp_t>::max());
+    const bool too_large = mpz_cmp(sum, max_value) > 0;
+    mpz_sub_ui(sum, sum, 1);
+    const bool too_small = mpz_cmp(sum, min_value) < 0;
+    mpz_clear(max_value);
+    mpz_clear(min_value);
+    mpz_clear(sum);
+
+    if (too_large) {
+        throw std::overflow_error("mpf multiplication result exponent is too large");
+    }
+    if (too_small) {
+        throw std::overflow_error("mpf multiplication result exponent is too small");
+    }
 }
 
 inline mpf_class compute_log(const mpf_class& x_input, mp_bitcnt_t target_precision)
@@ -664,14 +762,25 @@ inline mpf_class compute_log(const mpf_class& x_input, mp_bitcnt_t target_precis
 
     mp_exp_t x_exponent = 0;
     mpf_get_d_2exp(&x_exponent, x.mpf_data());
-    const mp_exp_t desired_exponent = static_cast<mp_exp_t>(work / 2 + 16);
-    const mp_exp_t exponent = desired_exponent - x_exponent + 1;
+    const mp_bitcnt_t desired_exponent_bits = work / 2;
+    if (desired_exponent_bits > std::numeric_limits<mp_bitcnt_t>::max() - 16) {
+        throw std::overflow_error("log(x) scaling exponent is too large");
+    }
+    const mp_exp_t desired_exponent =
+        checked_mp_bitcnt_to_mp_exp(desired_exponent_bits + 16, "log(x) scaling exponent is too large");
+    const mp_exp_t exponent = checked_log_scaling_exponent(desired_exponent, x_exponent);
 
     mpf_class s = set_prec_copy(x, work);
     if (exponent >= 0) {
-        mpf_mul_2exp(s.mpf_data(), s.mpf_data(), static_cast<mp_bitcnt_t>(exponent));
+        const mp_bitcnt_t shift = checked_mp_exp_magnitude(exponent);
+        ensure_mpf_shift_result_exponent_fits(
+            s.mpf_data(), shift, true, "log(x) scaling exponent is too large");
+        mpf_mul_2exp(s.mpf_data(), s.mpf_data(), shift);
     } else {
-        mpf_div_2exp(s.mpf_data(), s.mpf_data(), static_cast<mp_bitcnt_t>(-exponent));
+        const mp_bitcnt_t shift = checked_mp_exp_magnitude(exponent);
+        ensure_mpf_shift_result_exponent_fits(
+            s.mpf_data(), shift, false, "log(x) scaling exponent is too small");
+        mpf_div_2exp(s.mpf_data(), s.mpf_data(), shift);
     }
 
     mpf_class b = div(make_ui(4, work), s, work);
@@ -1145,10 +1254,12 @@ inline mpf_class pow_integer_unsigned(const mpf_class& base_input, const mpz_cla
 
     while (mpz_sgn(e.mpz_data()) > 0) {
         if (mpz_odd_p(e.mpz_data())) {
+            ensure_mpf_mul_exponent_fits(result, base);
             result = mul(result, base, precision);
         }
         mpz_fdiv_q_2exp(e.mpz_data(), e.mpz_data(), 1);
         if (mpz_sgn(e.mpz_data()) > 0) {
+            ensure_mpf_mul_exponent_fits(base, base);
             base = sqr(base, precision);
         }
     }

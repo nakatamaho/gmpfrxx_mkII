@@ -4,6 +4,7 @@
 #include <cmath>
 #include <complex>
 #include <random>
+#include <type_traits>
 #include <utility>
 
 #include <gmpxx_mkII.h>
@@ -11,6 +12,29 @@
 namespace {
 
 using complex_ref = std::complex<double>;
+
+template <typename Lhs, typename Rhs, typename = void>
+struct has_less_than : std::false_type {};
+
+template <typename Lhs, typename Rhs>
+struct has_less_than<Lhs, Rhs, std::void_t<decltype(std::declval<Lhs>() < std::declval<Rhs>())>>
+    : std::true_type {};
+
+template <typename T, typename = void>
+struct has_mutable_real_set_prec : std::false_type {};
+
+template <typename T>
+struct has_mutable_real_set_prec<T, std::void_t<decltype(std::declval<T&>().real().set_prec(64))>>
+    : std::true_type {};
+
+template <typename T, typename = void>
+struct has_mutable_imag_assignment : std::false_type {};
+
+template <typename T>
+struct has_mutable_imag_assignment<
+    T,
+    std::void_t<decltype(std::declval<T&>().imag() = std::declval<gmpxx::mpf_class>())>>
+    : std::true_type {};
 
 constexpr double complex_test_values[][2] = {
     {0.0, 0.0},
@@ -91,6 +115,12 @@ void test_construction_and_accessors() {
     assert(scalar_pair.imag() == 64);
 
     mpfc_class z(mpf_class(3, 192), mpf_class(-4, 128));
+    static_assert(!std::is_assignable<decltype(z.real()), mpf_class>::value,
+                  "mpfc_class::real() must not expose mutable component assignment");
+    static_assert(!has_mutable_real_set_prec<mpfc_class>::value,
+                  "mpfc_class::real() must not expose mutable precision changes");
+    static_assert(!has_mutable_imag_assignment<mpfc_class>::value,
+                  "mpfc_class::imag() must not expose mutable component assignment");
 
     assert(z.real() == mpf_class(3, 192));
     assert(z.imag() == mpf_class(-4, 128));
@@ -232,6 +262,20 @@ void test_comparison_and_free_helpers() {
     assert(real_value == mpf_class(3, 192));
     assert(mpf_class(3, 192) == real_value);
     assert(z != mpf_class(3, 192));
+    assert(mpfc_class(mpf_class(0, 192), mpf_class(0, 160)) == 0);
+    assert(0 == mpfc_class(mpf_class(0, 192), mpf_class(0, 160)));
+    assert(mpfc_class(mpf_class(3, 192), mpf_class(0, 160)) == 3);
+    assert(3 == mpfc_class(mpf_class(3, 192), mpf_class(0, 160)));
+    assert(mpfc_class(mpf_class("1.25", 192), mpf_class(0, 160)) == 1.25);
+    assert(1.25 == mpfc_class(mpf_class("1.25", 192), mpf_class(0, 160)));
+    assert(mpfc_class(mpf_class(3, 192), mpf_class(1, 160)) != 3);
+    assert(3 != mpfc_class(mpf_class(3, 192), mpf_class(1, 160)));
+    static_assert(!has_less_than<mpfc_class, mpfc_class>::value,
+                  "mpfc_class intentionally has no ordering comparison");
+    static_assert(!has_less_than<mpfc_class, int>::value,
+                  "mpfc_class intentionally has no scalar ordering comparison");
+    static_assert(!has_less_than<int, mpfc_class>::value,
+                  "mpfc_class intentionally has no scalar ordering comparison");
 
     assert(real(z) == 3);
     assert(imag(z) == 4);

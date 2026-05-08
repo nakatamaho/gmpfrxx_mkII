@@ -105,6 +105,47 @@ inline void reload_default_mpf_precision_bits_from_environment()
     mutable_default_mpf_precision_bits() = load_default_mpf_precision_bits_from_environment();
 }
 
+inline std::uintmax_t mpf_mp_exp_negative_magnitude(mp_exp_t value) noexcept
+{
+    return static_cast<std::uintmax_t>(-(value + 1)) + std::uintmax_t{1};
+}
+
+inline void ensure_mpf_shift_result_exponent_fits(mpf_srcptr value,
+                                                  mp_bitcnt_t bits,
+                                                  bool left_shift,
+                                                  const char* message)
+{
+    if (mpf_sgn(value) == 0 || bits == 0) {
+        return;
+    }
+
+    mp_exp_t exponent = 0;
+    mpf_get_d_2exp(&exponent, value);
+    std::uintmax_t allowed = 0;
+    if (left_shift) {
+        if (exponent >= 0) {
+            allowed = static_cast<std::uintmax_t>(std::numeric_limits<mp_exp_t>::max() - exponent);
+        } else {
+            allowed = static_cast<std::uintmax_t>(std::numeric_limits<mp_exp_t>::max()) +
+                      mpf_mp_exp_negative_magnitude(exponent);
+        }
+    } else {
+        if (exponent >= 0) {
+            allowed = static_cast<std::uintmax_t>(exponent) +
+                      mpf_mp_exp_negative_magnitude(std::numeric_limits<mp_exp_t>::min());
+        } else {
+            const std::uintmax_t exponent_magnitude = mpf_mp_exp_negative_magnitude(exponent);
+            const std::uintmax_t min_magnitude =
+                mpf_mp_exp_negative_magnitude(std::numeric_limits<mp_exp_t>::min());
+            allowed = min_magnitude - exponent_magnitude;
+        }
+    }
+
+    if (static_cast<std::uintmax_t>(bits) > allowed) {
+        throw std::overflow_error(message);
+    }
+}
+
 class mpf_class {
 public:
     mpf_class() : mpf_class(precision_tag{}, default_mpf_precision_bits()) {}
@@ -400,11 +441,13 @@ public:
 
     void div_2exp(mp_bitcnt_t bits)
     {
+        ensure_mpf_shift_result_exponent_fits(value_, bits, false, "mpf right shift result exponent is too small");
         mpf_div_2exp(value_, value_, bits);
     }
 
     void mul_2exp(mp_bitcnt_t bits)
     {
+        ensure_mpf_shift_result_exponent_fits(value_, bits, true, "mpf left shift result exponent is too large");
         mpf_mul_2exp(value_, value_, bits);
     }
 
@@ -1507,10 +1550,15 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
         mpz_init(bits_value);
         mpf_evaluate(dest, expr.lhs(), eval_precision);
         mpz_evaluate(bits_value, expr.rhs());
+        const unsigned long shift_count = zq_shift_count_from_mpz(bits_value);
         if constexpr (std::is_same_v<Op, shl_op>) {
-            mpf_mul_2exp(dest, dest, zq_shift_count_from_mpz(bits_value));
+            gmpxx::ensure_mpf_shift_result_exponent_fits(
+                dest, shift_count, true, "mpf left shift result exponent is too large");
+            mpf_mul_2exp(dest, dest, shift_count);
         } else {
-            mpf_div_2exp(dest, dest, zq_shift_count_from_mpz(bits_value));
+            gmpxx::ensure_mpf_shift_result_exponent_fits(
+                dest, shift_count, false, "mpf right shift result exponent is too small");
+            mpf_div_2exp(dest, dest, shift_count);
         }
         mpz_clear(bits_value);
         return;

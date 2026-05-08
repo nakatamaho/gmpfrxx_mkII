@@ -43,6 +43,7 @@
 
 namespace gmpxx {
 class mpf_class;
+class mpfc_class;
 } // namespace gmpxx
 
 namespace gmpfrxx_mkII {
@@ -50,6 +51,8 @@ namespace detail {
 
 template <typename Scalar, typename>
 void mpfc_assign_scalar(gmpxx::mpf_class& dest, Scalar value);
+gmpxx::mpf_class& mpfc_real_ref(gmpxx::mpfc_class& value) noexcept;
+gmpxx::mpf_class& mpfc_imag_ref(gmpxx::mpfc_class& value) noexcept;
 
 } // namespace detail
 } // namespace gmpfrxx_mkII
@@ -150,19 +153,9 @@ public:
         return result;
     }
 
-    mpf_class& real() noexcept
-    {
-        return real_;
-    }
-
     const mpf_class& real() const noexcept
     {
         return real_;
-    }
-
-    mpf_class& imag() noexcept
-    {
-        return imag_;
     }
 
     const mpf_class& imag() const noexcept
@@ -208,6 +201,8 @@ public:
 
 private:
     struct precision_tag {};
+    friend mpf_class& ::gmpfrxx_mkII::detail::mpfc_real_ref(mpfc_class& value) noexcept;
+    friend mpf_class& ::gmpfrxx_mkII::detail::mpfc_imag_ref(mpfc_class& value) noexcept;
 
     mpfc_class(precision_tag, mp_bitcnt_t real_precision, mp_bitcnt_t imag_precision)
         : real_(mpf_class::with_precision(real_precision)),
@@ -375,10 +370,44 @@ inline bool operator!=(const mpf_class& lhs, const mpfc_class& rhs)
     return !(lhs == rhs);
 }
 
+template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<Scalar>, int> = 0>
+inline bool operator==(const mpfc_class& lhs, Scalar rhs)
+{
+    return lhs == mpf_class(rhs, lhs.real_precision());
+}
+
+template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<Scalar>, int> = 0>
+inline bool operator==(Scalar lhs, const mpfc_class& rhs)
+{
+    return rhs == lhs;
+}
+
+template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<Scalar>, int> = 0>
+inline bool operator!=(const mpfc_class& lhs, Scalar rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<Scalar>, int> = 0>
+inline bool operator!=(Scalar lhs, const mpfc_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
 } // namespace gmpxx
 
 namespace gmpfrxx_mkII {
 namespace detail {
+
+inline gmpxx::mpf_class& mpfc_real_ref(gmpxx::mpfc_class& value) noexcept
+{
+    return value.real_;
+}
+
+inline gmpxx::mpf_class& mpfc_imag_ref(gmpxx::mpfc_class& value) noexcept
+{
+    return value.imag_;
+}
 
 template <typename Scalar, typename = std::enable_if_t<is_supported_mpf_scalar_v<Scalar>>>
 void mpfc_assign_scalar(gmpxx::mpf_class& dest, Scalar value)
@@ -533,28 +562,28 @@ inline mp_bitcnt_t mpfc_expression_precision_max(mp_bitcnt_t real_precision, mp_
 
 inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpfc_class>& expr)
 {
-    dest.real() = expr.get().real();
-    dest.imag() = expr.get().imag();
+    mpfc_real_ref(dest) = expr.get().real();
+    mpfc_imag_ref(dest) = expr.get().imag();
 }
 
 inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpf_class>& expr)
 {
-    dest.real() = expr.get();
-    mpf_set_ui(dest.imag().mpf_data(), 0);
+    mpfc_real_ref(dest) = expr.get();
+    mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
 template <typename T, typename Result>
 void mpfc_evaluate(gmpxx::mpfc_class& dest, const scalar_leaf<T, Result>& expr)
 {
-    mpfc_assign_scalar(dest.real(), expr.value());
-    mpf_set_ui(dest.imag().mpf_data(), 0);
+    mpfc_assign_scalar(mpfc_real_ref(dest), expr.value());
+    mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
 template <typename T>
 void mpfc_evaluate(gmpxx::mpfc_class& dest, const scalar_leaf<T, gmpxx::mpf_class>& expr)
 {
-    mpfc_assign_scalar(dest.real(), expr.value());
-    mpf_set_ui(dest.imag().mpf_data(), 0);
+    mpfc_assign_scalar(mpfc_real_ref(dest), expr.value());
+    mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
 template <typename Expr, typename Result>
@@ -567,19 +596,19 @@ template <typename Expr, typename Result>
 void mpfc_evaluate(gmpxx::mpfc_class& dest, const unary_expr<neg_op, Expr, Result>& expr)
 {
     mpfc_evaluate(dest, expr.expr());
-    mpf_neg(dest.real().mpf_data(), dest.real().mpf_data());
-    mpf_neg(dest.imag().mpf_data(), dest.imag().mpf_data());
+    mpf_neg(mpfc_real_ref(dest).mpf_data(), mpfc_real_ref(dest).mpf_data());
+    mpf_neg(mpfc_imag_ref(dest).mpf_data(), mpfc_imag_ref(dest).mpf_data());
 }
 
 template <typename Op>
 void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, const gmpxx::mpfc_class& rhs)
 {
     if constexpr (std::is_same_v<Op, add_op>) {
-        mpf_add(dest.real().mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
-        mpf_add(dest.imag().mpf_data(), lhs.imag().mpf_data(), rhs.imag().mpf_data());
+        mpf_add(mpfc_real_ref(dest).mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
+        mpf_add(mpfc_imag_ref(dest).mpf_data(), lhs.imag().mpf_data(), rhs.imag().mpf_data());
     } else if constexpr (std::is_same_v<Op, sub_op>) {
-        mpf_sub(dest.real().mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
-        mpf_sub(dest.imag().mpf_data(), lhs.imag().mpf_data(), rhs.imag().mpf_data());
+        mpf_sub(mpfc_real_ref(dest).mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
+        mpf_sub(mpfc_imag_ref(dest).mpf_data(), lhs.imag().mpf_data(), rhs.imag().mpf_data());
     } else if constexpr (std::is_same_v<Op, mul_op>) {
         mpf_t real_part;
         mpf_t imag_part;
@@ -597,8 +626,8 @@ void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, co
         mpf_mul(temp, lhs.imag().mpf_data(), rhs.real().mpf_data());
         mpf_add(imag_part, imag_part, temp);
 
-        mpf_set(dest.real().mpf_data(), real_part);
-        mpf_set(dest.imag().mpf_data(), imag_part);
+        mpf_set(mpfc_real_ref(dest).mpf_data(), real_part);
+        mpf_set(mpfc_imag_ref(dest).mpf_data(), imag_part);
         mpf_clear(temp);
         mpf_clear(imag_part);
         mpf_clear(real_part);
@@ -627,8 +656,8 @@ void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, co
         mpf_sub(imag_part, imag_part, temp);
         mpf_div(imag_part, imag_part, denominator);
 
-        mpf_set(dest.real().mpf_data(), real_part);
-        mpf_set(dest.imag().mpf_data(), imag_part);
+        mpf_set(mpfc_real_ref(dest).mpf_data(), real_part);
+        mpf_set(mpfc_imag_ref(dest).mpf_data(), imag_part);
         mpf_clear(temp);
         mpf_clear(imag_part);
         mpf_clear(real_part);

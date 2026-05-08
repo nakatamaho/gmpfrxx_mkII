@@ -714,6 +714,101 @@ using ::gmpfrxx_mkII::detail::operator-;
 using ::gmpfrxx_mkII::detail::operator*;
 using ::gmpfrxx_mkII::detail::operator/;
 
+inline bool operator==(const mpc_class& lhs, const mpc_class& rhs)
+{
+    return mpc_cmp(lhs.mpc_data(), rhs.mpc_data()) == 0;
+}
+
+inline bool operator!=(const mpc_class& lhs, const mpc_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator==(const mpc_class& lhs, const mpfr_class& rhs)
+{
+    return mpfr_cmp(mpc_realref(lhs.mpc_data()), rhs.mpfr_data()) == 0 &&
+           mpfr_zero_p(mpc_imagref(lhs.mpc_data())) != 0;
+}
+
+inline bool operator==(const mpfr_class& lhs, const mpc_class& rhs)
+{
+    return rhs == lhs;
+}
+
+inline bool operator!=(const mpc_class& lhs, const mpfr_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator!=(const mpfr_class& lhs, const mpc_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator==(const mpc_class& lhs, const gmpxx::mpz_class& rhs)
+{
+    return lhs == mpfr_class(rhs, lhs.real_precision());
+}
+
+inline bool operator==(const gmpxx::mpz_class& lhs, const mpc_class& rhs)
+{
+    return rhs == lhs;
+}
+
+inline bool operator!=(const mpc_class& lhs, const gmpxx::mpz_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator!=(const gmpxx::mpz_class& lhs, const mpc_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator==(const mpc_class& lhs, const gmpxx::mpq_class& rhs)
+{
+    return lhs == mpfr_class(rhs, lhs.real_precision());
+}
+
+inline bool operator==(const gmpxx::mpq_class& lhs, const mpc_class& rhs)
+{
+    return rhs == lhs;
+}
+
+inline bool operator!=(const mpc_class& lhs, const gmpxx::mpq_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator!=(const gmpxx::mpq_class& lhs, const mpc_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
+inline bool operator==(const mpc_class& lhs, Scalar rhs)
+{
+    return lhs == mpfr_class(rhs, lhs.real_precision());
+}
+
+template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
+inline bool operator==(Scalar lhs, const mpc_class& rhs)
+{
+    return rhs == lhs;
+}
+
+template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
+inline bool operator!=(const mpc_class& lhs, Scalar rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
+inline bool operator!=(Scalar lhs, const mpc_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
 inline mpc_class& operator+=(mpc_class& lhs, Rhs&& rhs)
 {

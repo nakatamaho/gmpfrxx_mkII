@@ -31,8 +31,24 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <type_traits>
+#include <utility>
 
 namespace {
+
+template <typename Lhs, typename Rhs, typename = void>
+struct has_less_than : std::false_type {};
+
+template <typename Lhs, typename Rhs>
+struct has_less_than<Lhs, Rhs, std::void_t<decltype(std::declval<Lhs>() < std::declval<Rhs>())>>
+    : std::true_type {};
+
+template <typename T, typename = void>
+struct has_real_member_accessor : std::false_type {};
+
+template <typename T>
+struct has_real_member_accessor<T, std::void_t<decltype(std::declval<T&>().real())>>
+    : std::true_type {};
 
 void require_close(double actual, double expected)
 {
@@ -54,6 +70,8 @@ int main()
     mpfrxx::mpfr_class ctor_real = mpfrxx::mpfr_class::with_precision(192, 1.25);
     mpfrxx::mpfr_class ctor_imag = mpfrxx::mpfr_class::with_precision(224, -2.5);
     mpfrxx::mpc_class constructed(ctor_real, ctor_imag);
+    static_assert(!has_real_member_accessor<mpfrxx::mpc_class>::value,
+                  "mpc_class must not expose mutable real()/imag() component accessors");
     require_close(constructed.real_to_double(), 1.25);
     require_close(constructed.imag_to_double(), -2.5);
     if (constructed.real_precision() != 192 || constructed.imag_precision() != 224) {
@@ -78,6 +96,41 @@ int main()
     result = -z;
     require_close(result.real_to_double(), -1.0);
     require_close(result.imag_to_double(), -2.0);
+
+    auto zero = mpfrxx::mpc_class::with_precision(160, 192, 0.0, 0.0);
+    auto real_three = mpfrxx::mpc_class::with_precision(160, 192, 3.0, 0.0);
+    auto complex_three = mpfrxx::mpc_class::with_precision(160, 192, 3.0, 1.0);
+    auto same_three = mpfrxx::mpc_class::with_precision(224, 256, 3.0, 0.0);
+    auto mpfr_three = mpfrxx::mpfr_class::with_precision(224, 3.0);
+    if (!(zero == 0) || !(0 == zero) || zero != 0) {
+        std::abort();
+    }
+    if (!(real_three == same_three) || real_three != same_three) {
+        std::abort();
+    }
+    if (!(real_three == mpfr_three) || !(mpfr_three == real_three)) {
+        std::abort();
+    }
+    mpfrxx::mpz_class exact_three(3);
+    if (!(real_three == exact_three) || !(exact_three == real_three)) {
+        std::abort();
+    }
+    mpfrxx::mpq_class exact_three_q(mpfrxx::mpz_class(6), mpfrxx::mpz_class(2));
+    if (!(real_three == exact_three_q) || !(exact_three_q == real_three)) {
+        std::abort();
+    }
+    if (!(real_three == 3) || !(3 == real_three) || !(real_three == 3.0) || !(3.0 == real_three)) {
+        std::abort();
+    }
+    if (!(complex_three != 3) || !(3 != complex_three) || !(complex_three != mpfr_three)) {
+        std::abort();
+    }
+    static_assert(!has_less_than<mpfrxx::mpc_class, mpfrxx::mpc_class>::value,
+                  "mpc_class intentionally has no ordering comparison");
+    static_assert(!has_less_than<mpfrxx::mpc_class, int>::value,
+                  "mpc_class intentionally has no scalar ordering comparison");
+    static_assert(!has_less_than<int, mpfrxx::mpc_class>::value,
+                  "mpc_class intentionally has no scalar ordering comparison");
 
     mpfrxx::mpc_class compound = mpfrxx::mpc_class::with_precision(192, 224, 1.0, 2.0);
     compound += w;

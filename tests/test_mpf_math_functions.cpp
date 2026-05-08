@@ -193,6 +193,42 @@ void test_hypot_and_scaling()
     value.mul_2exp(1);
     assert_mpf_equal(value, gmpxx::mpf_class("2.0", value.get_prec()));
 
+    bool threw = false;
+    try {
+        value.mul_2exp(std::numeric_limits<mp_bitcnt_t>::max());
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    assert(threw);
+
+    threw = false;
+    try {
+        value.div_2exp(std::numeric_limits<mp_bitcnt_t>::max());
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    assert(threw);
+
+    threw = false;
+    try {
+        gmpxx::mpf_class shifted =
+            gmpxx::mpf_class(1, static_cast<mp_bitcnt_t>(128)) << std::numeric_limits<unsigned long>::max();
+        (void)shifted;
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    assert(threw);
+
+    threw = false;
+    try {
+        gmpxx::mpf_class shifted =
+            gmpxx::mpf_class(1, static_cast<mp_bitcnt_t>(128)) >> std::numeric_limits<unsigned long>::max();
+        (void)shifted;
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    assert(threw);
+
     assert(gmpxx::hypot(gmpxx::mpf_class(-3), 4.0) > gmpxx::mpf_class("4.9"));
     assert(gmpxx::hypot(-3.0, gmpxx::mpf_class(4)) < gmpxx::mpf_class("5.1"));
     assert(gmpxx::hypot(gmpxx::mpf_class(-3), 4L) > gmpxx::mpf_class("4.9"));

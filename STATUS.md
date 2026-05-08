@@ -2045,6 +2045,268 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFC/MPC component accessor policy:
+DONE
+
+Implemented features:
+- Rechecked the A5 component-accessor concern for MPFC and MPC.
+- Changed `gmpxx::mpfc_class::real()` and `gmpxx::mpfc_class::imag()` so
+  public access returns const component references only.  External code can
+  no longer write `z.real() = ...` or mutate component precision through
+  `z.real().set_prec(...)`.
+- Kept explicit `mpfc_class::real(const mpf_class&)` and
+  `mpfc_class::imag(const mpf_class&)` setters as the public mutation path.
+  These setters preserve the destination component precision through
+  `mpf_class` assignment.
+- Added private friend helpers for the MPFC implementation so expression
+  evaluation can still update component values without exposing mutable
+  component references as public API.
+- Rechecked `mpfrxx::mpc_class`: it does not expose member `real()` /
+  `imag()` component references.  MPC still exposes raw `mpc_data()` for
+  low-level interop, but the high-level component API is already value-return
+  helpers (`mpfrxx::real(z)`, `mpfrxx::imag(z)`) and `real_to_double()` /
+  `imag_to_double()`.
+
+Tests added:
+- Added static checks to `tests/test_mpfc_basic.cpp` proving
+  `mpfc_class::real()` is not assignable, `real().set_prec(...)` is not
+  available, and `imag()` is not assignable.
+- Added a static check to `tests/test_mpc_basic.cpp` proving `mpc_class`
+  does not expose a member `real()` accessor.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_mpfc_basic.cpp`
+- `tests/test_mpc_basic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "real\\(\\)|imag\\(\\)|real\\([^)]|imag\\([^)]|real_to_double|imag_to_double|mpc_realref|mpc_imagref" include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp tests examples`
+- `sed -n '120,210p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '120,185p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `rg -n "mpf_class& operator=|operator=\\(const mpf_class|void set_prec|set_prec|mpf_set_prec|mpf_init2|mpf_set\\(" include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '300,380p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `rg -n "\\.real\\(\\)\\s*=|\\.imag\\(\\)\\s*=|real\\(\\)\\.mpf_data|imag\\(\\)\\.mpf_data|mpfc_assign_scalar\\(dest\\.real|mpf_set_ui\\(dest\\.imag" include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '274,305p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1,70p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '540,665p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `rg -n "\\.real\\(\\)\\s*=|\\.imag\\(\\)\\s*=|dest\\.real\\(\\)|dest\\.imag\\(\\)|mpfc_assign_scalar\\(dest\\.real|mpf_set_ui\\(dest\\.imag" include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `cmake --build build -j --target test_mpfc_basic test_mpc_basic`
+- `ctest --test-dir build -R 'test_mpfc_basic|test_mpc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfc_basic test_mpc_basic`: PASS.
+- `ctest --test-dir build -R 'test_mpfc_basic|test_mpc_basic' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- `mpc_class::mpc_data()` still intentionally exposes raw mutable MPC data
+  for low-level C API interop.  This is separate from the high-level
+  `real()` / `imag()` accessor policy.
+
+Post-phase MPC scalar equality and ordering policy:
+DONE
+
+Implemented features:
+- Rechecked `mpfrxx::mpc_class` comparison parity with
+  `gmpxx::mpfc_class`.  Before this phase, MPC arithmetic was implemented
+  but equality comparison coverage was missing.
+- Added symmetric equality and inequality overloads for:
+  - `mpc_class` with `mpc_class`
+  - `mpc_class` with `mpfr_class`
+  - `mpc_class` with `mpz_class`
+  - `mpc_class` with `mpq_class`
+  - `mpc_class` with supported builtin scalar leaves
+- The real-scalar comparisons use the same complex-number rule as MPFC:
+  real components must compare equal and the imaginary component must be zero.
+- Kept ordering operators (`<`, `<=`, `>`, `>=`) intentionally absent for
+  `mpc_class`, including scalar mixed forms, because MPC is a complex type
+  and no canonical total ordering is part of this wrapper API.
+
+Tests added:
+- Added MPC equality/inequality coverage to `tests/test_mpc_basic.cpp` for
+  zero, `mpc_class`, `mpfr_class`, `mpz_class`, `mpq_class`, integer scalar,
+  and double scalar cases, including reverse-order exact-type checks.
+- Added static SFINAE checks proving `mpc_class < mpc_class`,
+  `mpc_class < int`, and `int < mpc_class` are not available.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_mpc_basic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "operator==|operator!=|operator<|operator>|mpc_class" include/gmpfrxx_mkII/detail/mpc_impl.hpp tests/test_mpc* STATUS.md`
+- `sed -n '1,220p' tests/test_mpc_basic.cpp`
+- `sed -n '560,760p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1,110p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '260,385p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `rg -n "is_supported_mpfr_scalar|normalized_mpfr_scalar|operator==\\(.*mpfr_class|is_mpfr_comparison" include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '110,190p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '240,270p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '90,155p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '2020,2065p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `cmake --build build -j --target test_mpc_basic`
+- `ctest --test-dir build -R test_mpc_basic --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `rg -n "operator==\\(const mpfc_class|operator!=\\(const mpfc_class|operator==\\(Scalar.*mpfc|operator!=\\(Scalar.*mpfc|operator==\\(const mpc_class|operator!=\\(const mpc_class|operator==\\(Scalar.*mpc|operator!=\\(Scalar.*mpc|operator<\\(.*mp[cf]c|operator>\\(.*mp[cf]c" include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `rg -n "has_less_than|mpfc_class\\(mpf_class\\(0|real_three ==|complex_three !=|mpc_class intentionally|mpfc_class intentionally" tests/test_mpfc_basic.cpp tests/test_mpc_basic.cpp`
+- `sed -n '2040,2148p' STATUS.md`
+- `cmake --build build -j --target test_mpfc_basic test_mpc_basic`
+- `ctest --test-dir build -R 'test_mpfc_basic|test_mpc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpc_basic`: PASS.
+- `ctest --test-dir build -R test_mpc_basic --output-on-failure`: PASS, 1/1 test passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+- Final `cmake --build build -j --target test_mpfc_basic test_mpc_basic`: PASS.
+- Final `ctest --test-dir build -R 'test_mpfc_basic|test_mpc_basic' --output-on-failure`: PASS, 2/2 tests passed.
+- Final `cmake --build build -j`: PASS.
+- Final `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+- Final `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+Post-phase MPFC scalar equality and ordering policy:
+DONE
+
+Implemented features:
+- Added symmetric equality and inequality overloads between
+  `gmpxx::mpfc_class` and supported MPF scalar leaves.
+- `mpfc_class == 0`, `0 == mpfc_class`, `mpfc_class != scalar`, and
+  `scalar != mpfc_class` now compile and compare as a real scalar with zero
+  imaginary part.
+- Kept ordering operators (`<`, `<=`, `>`, `>=`) intentionally absent for
+  `mpfc_class`, including scalar mixed forms, because MPFC is a complex type
+  and no canonical total ordering is part of this wrapper API.
+
+Tests added:
+- Added scalar equality/inequality coverage to `tests/test_mpfc_basic.cpp`
+  for integer zero, integer nonzero, and double scalar cases.
+- Added static SFINAE checks proving `mpfc_class < mpfc_class`,
+  `mpfc_class < int`, and `int < mpfc_class` are not available.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_mpfc_basic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpfc_class|operator==|operator!=|operator<|operator>" include/gmpfrxx_mkII/detail/mpfc_impl.hpp tests/test_mpfc* tests/test_comparisons.cpp STATUS.md`
+- `sed -n '1,220p' tests/test_mpfc_basic.cpp`
+- `sed -n '1,220p' tests/test_mpfc_math.cpp`
+- `sed -n '330,470p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `rg -n "is_supported_mpf_scalar|operator==\\(const mpf_class|operator<\\(const mpf_class|is_mpf_comparison" include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1740,1838p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '50,110p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '180,225p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '150,190p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '220,315p' tests/test_mpfc_basic.cpp`
+- `cmake --build build -j --target test_mpfc_basic`
+- `ctest --test-dir build -R test_mpfc_basic --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfc_basic`: PASS.
+- `ctest --test-dir build -R test_mpfc_basic --output-on-failure`: PASS, 1/1 test passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- None.
+
+Post-phase MPF exponent-overflow guards:
+DONE
+
+Implemented features:
+- Routed `compute_log` dynamic scaling through checked exponent helpers.
+  The desired scaling exponent is checked before conversion to `mp_exp_t`,
+  the `desired - x_exponent + 1` arithmetic is done in `mpz_t`, and the
+  final `mpf_mul_2exp` / `mpf_div_2exp` scaling checks both shift magnitude
+  and result exponent range.
+- Added result-exponent guards to public `gmpxx::mpf_class::mul_2exp` and
+  `gmpxx::mpf_class::div_2exp`.
+- Added the same result-exponent guards to MPF expression shift evaluation
+  for `<<` and `>>`.
+- Added multiplication exponent guards to `pow_integer_unsigned`, so integer
+  exponent `compute_pow` checks the result exponent before each multiply and
+  squaring step.
+- Added an `mp_exp_t` to `mpz_t` helper so guard arithmetic does not depend
+  on `mp_exp_t` being exactly `long`.
+
+Updated exponent-overflow status:
+
+| Function/site | Status | Comment |
+| --- | --- | --- |
+| `compute_exp` | Done | Uses `round_to_nearest_mp_exp` to reject exponents outside `mp_exp_t`, then checks shift magnitude and result exponent before binary scaling. |
+| `compute_log` | Done | Dynamic scaling now checks `mp_bitcnt_t` to `mp_exp_t` conversion, computes `desired - x_exponent + 1` in `mpz_t`, and validates the final result exponent before `mpf_mul_2exp` / `mpf_div_2exp`. |
+| `mpf_class::mul_2exp` | Done | Public in-place left shift now rejects results whose exponent would exceed `mp_exp_t::max()` before calling GMP. |
+| `mpf_class::div_2exp` | Done | Public in-place right shift now rejects results whose exponent would go below `mp_exp_t::min()` before calling GMP. |
+| MPF expression shift `<<` | Done | Shift count is still checked through `zq_shift_count_from_mpz`; materialization now also checks the resulting exponent. |
+| MPF expression shift `>>` | Done | Same as `<<`, but for right shift / exponent decrease before `mpf_div_2exp`. |
+| `pow_integer_unsigned` | Done | Repeated multiplication and squaring now check the approximate product exponent before each multiply/square step. |
+| Integer-exponent `compute_pow` | Done | Exact integer exponents route through `pow_integer_unsigned`, so the guarded multiply/square path is used. Negative integer exponents then take a reciprocal; that part is not a binary-scaling overflow site. |
+| Non-integer `compute_pow` | Covered by callees | Uses `compute_log` and `compute_exp`; the dynamic scaling overflow paths are guarded in those callees. |
+| `exp2` / `exp10` | Covered by callees | These route through `compute_exp`, so they share the exponent scaling guard. |
+| Hyperbolic functions | Covered by callees | `sinh` / `cosh` / `tanh` route through `compute_exp` and ordinary arithmetic; no separate dynamic binary-scaling exponent remains. |
+| Gamma / reciprocal gamma | Partially covered by callees | Spouge code uses `compute_exp` / `compute_pow` in the risky exponent paths. Remaining ordinary multiply/divide sites are not direct `mpf_*_2exp` scaling paths. |
+| Fixed small binary shifts | No issue found | Half-pi, fixed `/2`, and similar constant shifts are not user-controlled dynamic exponent paths. |
+
+Tests added:
+- Added `mul_2exp` / `div_2exp` overflow checks to
+  `tests/test_mpf_math_functions.cpp`.
+- Added expression shift overflow checks for MPF `<<` and `>>`.
+- Added `checked_log_scaling_exponent` normal and overflow cases to
+  `tests/test_mpf_transcendent_functions.cpp`.
+- Added a `log` scaling overflow regression using a value near the
+  `mp_exp_t` exponent floor.
+- Added integer-exponent `pow` overflow regression coverage.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `tests/test_mpf_math_functions.cpp`
+- `tests/test_mpf_transcendent_functions.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `tail -80 STATUS.md`
+- `git diff -- include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_math_functions.cpp tests/test_mpf_transcendent_functions.cpp`
+- `git status --short`
+- `rg -n "checked_mp_exp_magnitude|mpz_init_set_si\\(|std::numeric_limits<mp_exp_t>|round_to_nearest_mp_exp|ensure_exp_scaling_exponent_fits" include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '560,760p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '80,140p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `rg -n "mpz_import|set_.*mpz|uintmax|intmax" include/gmpfrxx_mkII/detail/*.hpp`
+- `sed -n '1180,1260p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '1260,1335p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '1,40p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `cmake --build build -j --target test_mpf_math_functions test_mpf_transcendent_functions`
+- `git diff -- include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `ctest --test-dir build -R 'test_mpf_math_functions|test_mpf_transcendent_functions' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpf_math_functions test_mpf_transcendent_functions`: PASS.
+- `ctest --test-dir build -R 'test_mpf_math_functions|test_mpf_transcendent_functions' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None identified in the targeted exponent-scaling paths.
+
 Post-phase MPF Taylor counter overflow recheck:
 DONE
 

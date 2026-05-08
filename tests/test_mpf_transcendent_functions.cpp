@@ -847,6 +847,9 @@ void require_exp_scaling_overflow_guard_cases()
 
     gmpxx::mpf_math_detail::ensure_exp_scaling_exponent_fits(one, 0);
     gmpxx::mpf_math_detail::ensure_exp_scaling_exponent_fits(one, std::numeric_limits<mp_exp_t>::max() - 1);
+    if (gmpxx::mpf_math_detail::checked_log_scaling_exponent(16, 8) != 9) {
+        std::abort();
+    }
 
     bool threw = false;
     try {
@@ -870,10 +873,49 @@ void require_exp_scaling_overflow_guard_cases()
         std::abort();
     }
 
+    threw = false;
+    try {
+        (void)gmpxx::mpf_math_detail::checked_log_scaling_exponent(16, std::numeric_limits<mp_exp_t>::min());
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
+
     gmpxx::mpf_class huge("1e100", precision);
     threw = false;
     try {
         (void)gmpxx::exp(huge);
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
+
+    mpf_t tiny_raw;
+    mpf_init2(tiny_raw, precision);
+    mpf_set_ui(tiny_raw, 1);
+    mpf_div_2exp(tiny_raw, tiny_raw,
+                 gmpxx::mpf_math_detail::checked_mp_exp_magnitude(std::numeric_limits<mp_exp_t>::min()));
+    const gmpxx::mpf_class tiny_at_exponent_floor(tiny_raw);
+    mpf_clear(tiny_raw);
+
+    threw = false;
+    try {
+        (void)gmpxx::log(tiny_at_exponent_floor);
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
+
+    threw = false;
+    try {
+        (void)gmpxx::pow(gmpxx::mpf_class(2, precision),
+                         gmpxx::mpf_class(std::numeric_limits<mp_exp_t>::max(), precision));
     } catch (const std::overflow_error&) {
         threw = true;
     }
