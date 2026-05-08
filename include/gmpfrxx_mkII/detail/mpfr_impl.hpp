@@ -1575,6 +1575,37 @@ mpfr_prec_t mpfr_expression_precision(const binary_expr<Op, Lhs, Rhs, Result>& e
     return std::max(mpfr_expression_precision(expr.lhs()), mpfr_expression_precision(expr.rhs()));
 }
 
+template <typename T>
+struct mpfr_expression_contains_random : std::false_type {};
+
+template <>
+struct mpfr_expression_contains_random<mpfrxx::random_mpfr_expr> : std::true_type {};
+
+template <typename Op, typename Expr, typename Result>
+struct mpfr_expression_contains_random<unary_expr<Op, Expr, Result>>
+    : mpfr_expression_contains_random<std::decay_t<Expr>> {};
+
+template <typename Op, typename Lhs, typename Rhs, typename Result>
+struct mpfr_expression_contains_random<binary_expr<Op, Lhs, Rhs, Result>>
+    : std::bool_constant<
+          mpfr_expression_contains_random<std::decay_t<Lhs>>::value ||
+          mpfr_expression_contains_random<std::decay_t<Rhs>>::value> {};
+
+template <typename Expr>
+inline constexpr bool mpfr_expression_contains_random_v =
+    mpfr_expression_contains_random<std::decay_t<Expr>>::value;
+
+template <typename Expr>
+mpfr_prec_t mpfr_materialization_precision(const Expr& expr)
+{
+    if constexpr (build_options::assume_fixed_precision_fastpath &&
+                  !mpfr_expression_contains_random_v<Expr>) {
+        return mpfrxx::mpfr_class::default_precision();
+    } else {
+        return mpfr_expression_precision(expr);
+    }
+}
+
 inline void mpfr_evaluate(
     mpfr_t dest,
     const object_leaf<mpfrxx::mpfr_class>& expr,
@@ -1735,6 +1766,167 @@ void mpfr_evaluate_to_temporary(
 {
     mpfr_init2(temp, eval_precision);
     mpfr_evaluate(temp, expr, eval_precision, rnd);
+}
+
+class mpfr_thread_scratch_pool {
+public:
+    static constexpr std::size_t slot_count = 4;
+    static constexpr mpfr_prec_t max_retained_precision = mpfr_prec_t{1} << 20;
+
+    struct slot {
+        mpfr_t value;
+        bool initialized = false;
+        bool in_use = false;
+        mpfr_prec_t allocated_precision = 0;
+        mpfr_prec_t active_precision = 0;
+    };
+
+    ~mpfr_thread_scratch_pool()
+    {
+        for (auto& item : slots_) {
+            if (item.initialized) {
+                restore_allocated_precision(item);
+                mpfr_clear(item.value);
+            }
+        }
+    }
+
+    slot* acquire(mpfr_prec_t precision)
+    {
+        if (precision > max_retained_precision) {
+            return nullptr;
+        }
+
+        for (auto& item : slots_) {
+            if (!item.in_use) {
+                prepare(item, precision);
+                item.in_use = true;
+                return &item;
+            }
+        }
+        return nullptr;
+    }
+
+    static void release(slot& item) noexcept
+    {
+        restore_allocated_precision(item);
+        item.in_use = false;
+    }
+
+private:
+    static void restore_allocated_precision(slot& item) noexcept
+    {
+        if (item.initialized && item.active_precision != item.allocated_precision) {
+            mpfr_set_prec_raw(item.value, item.allocated_precision);
+            item.active_precision = item.allocated_precision;
+        }
+    }
+
+    static void prepare(slot& item, mpfr_prec_t precision)
+    {
+        if (!item.initialized) {
+            mpfr_init2(item.value, precision);
+            item.initialized = true;
+            item.allocated_precision = mpfr_get_prec(item.value);
+            item.active_precision = item.allocated_precision;
+        } else if (item.allocated_precision < precision) {
+            restore_allocated_precision(item);
+            mpfr_set_prec(item.value, precision);
+            item.allocated_precision = mpfr_get_prec(item.value);
+            item.active_precision = item.allocated_precision;
+        }
+
+        if (item.active_precision != precision) {
+            mpfr_set_prec_raw(item.value, precision);
+            item.active_precision = precision;
+        }
+    }
+
+    slot slots_[slot_count]{};
+};
+
+inline mpfr_thread_scratch_pool& mpfr_current_thread_scratch_pool()
+{
+    thread_local mpfr_thread_scratch_pool pool;
+    return pool;
+}
+
+class mpfr_thread_scratch {
+public:
+    explicit mpfr_thread_scratch(mpfr_prec_t precision)
+        : slot_(mpfr_current_thread_scratch_pool().acquire(precision))
+    {
+        if (slot_ == nullptr) {
+            mpfr_init2(fallback_, precision);
+            using_fallback_ = true;
+        }
+    }
+
+    ~mpfr_thread_scratch()
+    {
+        if (using_fallback_) {
+            mpfr_clear(fallback_);
+        } else {
+            mpfr_thread_scratch_pool::release(*slot_);
+        }
+    }
+
+    mpfr_thread_scratch(const mpfr_thread_scratch&) = delete;
+    mpfr_thread_scratch& operator=(const mpfr_thread_scratch&) = delete;
+
+    mpfr_t& get() noexcept
+    {
+        return using_fallback_ ? fallback_ : slot_->value;
+    }
+
+private:
+    mpfr_thread_scratch_pool::slot* slot_ = nullptr;
+    bool using_fallback_ = false;
+    mpfr_t fallback_;
+};
+
+template <typename T>
+struct is_mpfr_object_leaf : std::false_type {};
+
+template <>
+struct is_mpfr_object_leaf<object_leaf<mpfrxx::mpfr_class>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpfr_object_leaf_v = is_mpfr_object_leaf<std::decay_t<T>>::value;
+
+template <typename T>
+struct is_mpfr_mul_direct_expr : std::false_type {};
+
+template <typename Lhs, typename Rhs>
+struct is_mpfr_mul_direct_expr<binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>>
+    : std::bool_constant<is_mpfr_object_leaf_v<Lhs> && is_mpfr_object_leaf_v<Rhs>> {};
+
+template <typename T>
+inline constexpr bool is_mpfr_mul_direct_expr_v =
+    is_mpfr_mul_direct_expr<std::decay_t<T>>::value;
+
+template <typename Lhs, typename Rhs>
+void mpfr_compound_mul_scratch_apply(
+    mpfr_t dest,
+    const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
+    mpfr_prec_t precision,
+    mpfr_rnd_t rnd)
+{
+    mpfr_thread_scratch product(precision);
+    mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+    mpfr_apply_binary<add_op>(dest, dest, product.get(), rnd);
+}
+
+template <typename Lhs, typename Rhs>
+void mpfr_compound_submul_scratch_apply(
+    mpfr_t dest,
+    const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
+    mpfr_prec_t precision,
+    mpfr_rnd_t rnd)
+{
+    mpfr_thread_scratch product(precision);
+    mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+    mpfr_apply_binary<sub_op>(dest, dest, product.get(), rnd);
 }
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
@@ -1928,6 +2120,23 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
             lhs.mpfr_data(),
             operand.get().mpfr_data(),
             context.rounding_mode);
+    } else if constexpr (
+        build_options::assume_fixed_precision_fastpath &&
+        is_mpfr_mul_direct_expr_v<operand_type> &&
+        (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
+        if constexpr (std::is_same_v<Op, add_op>) {
+            mpfr_compound_mul_scratch_apply(
+                lhs.mpfr_data(),
+                operand,
+                precision,
+                context.rounding_mode);
+        } else {
+            mpfr_compound_submul_scratch_apply(
+                lhs.mpfr_data(),
+                operand,
+                precision,
+                context.rounding_mode);
+        }
     } else {
         mpfr_t value;
         mpfr_evaluate_to_temporary(value, operand, precision, context.rounding_mode);
@@ -1944,7 +2153,7 @@ namespace mpfrxx {
 template <typename Expr, typename>
 mpfr_class::mpfr_class(const Expr& expr)
 {
-    mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_expression_precision(expr);
+    mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_materialization_precision(expr);
     if (precision == 0) {
         precision = default_precision();
     }

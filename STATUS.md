@@ -2098,6 +2098,56 @@ Known issues:
   error bars show observed jitter for this run; they are not a cross-machine
   performance guarantee.
 
+Post-phase MPFR fixed-precision fast path:
+DONE
+
+Implemented features:
+- Added MPFR expression materialization precision selection through
+  `mpfr_materialization_precision()`.
+- Under `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`, non-random MPFR
+  expression construction now uses `mpfrxx::mpfr_class::default_precision()`
+  directly instead of walking the expression tree for max leaf precision.
+- Preserved explicit random-expression precision requests by excluding
+  `random_mpfr_expr` from the fixed-precision shortcut.
+- Added a thread-local MPFR scratch pool for fixed-precision `mpfr_class`
+  compound add/sub of direct products, so `acc += x * y` and `acc -= x * y`
+  can reuse a per-thread product temporary instead of allocating a fresh
+  `mpfr_t` on the steady-state path.
+- Kept MPFR rounding and exponent-range policy intact by using the existing
+  `current_eval_context()` and `mpfr_exponent_range_guard` paths.
+
+Tests added:
+- `tests/test_mpfr_fixed_precision_materialization.cpp`
+- `tests/test_mpfr_fixed_precision_tls_scratch.cpp`
+
+Tests updated:
+- `tests/CMakeLists.txt`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpfr_fixed_precision_materialization test_mpfr_fixed_precision_tls_scratch`
+- `ctest --test-dir build -R 'test_mpfr_fixed_precision_materialization|test_mpfr_fixed_precision_tls_scratch' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000 512`
+
+Pass/fail result:
+- Targeted MPFR fixed-precision tests: PASS, 2/2 tests passed.
+- First full `ctest --test-dir build --output-on-failure`: FAIL due running
+  concurrently with a full rebuild; several example executables were observed
+  while being relinked and reported BAD_COMMAND/permission denied.
+- Re-run after build completion: PASS, 144/144 tests passed.
+- MPFR Rdot baseline smoke: PASS, `DIFF ... OK`.
+- MPFR Rdot fixed-precision-fastpath smoke: PASS, `DIFF ... OK`.
+
+Known issues:
+- The MPFR fast path intentionally only covers fixed-precision materialization
+  and direct-product `+=`/`-=` compound assignment.  More general nested
+  expression scratch reuse remains a separate optimization.
+
 Post-phase MPF exact rational conversion temporary reduction:
 DONE
 
