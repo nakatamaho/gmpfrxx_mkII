@@ -574,14 +574,29 @@ inline mp_bitcnt_t working_precision_for_log(const mpf_class& x_input, mp_bitcnt
            log_cancellation_bits(x_input, target_precision);
 }
 
+inline mp_bitcnt_t checked_mp_exp_magnitude(mp_exp_t value)
+{
+    const std::uintmax_t bit_limit = static_cast<std::uintmax_t>(std::numeric_limits<mp_bitcnt_t>::max());
+    std::uintmax_t magnitude = 0;
+    if (value >= 0) {
+        magnitude = static_cast<std::uintmax_t>(value);
+    } else {
+        magnitude = static_cast<std::uintmax_t>(-(value + 1));
+        ++magnitude;
+    }
+    if (magnitude > bit_limit) {
+        throw std::overflow_error("exp(x) scaling shift exceeds mp_bitcnt_t");
+    }
+    return static_cast<mp_bitcnt_t>(magnitude);
+}
+
 inline mpf_class mul_signed_exp(const mpf_class& value, mp_exp_t multiplier, mp_bitcnt_t precision)
 {
     if (multiplier == 0) {
         return make_ui(0, precision);
     }
-    const unsigned long magnitude_ui =
-        static_cast<unsigned long>(multiplier > 0 ? multiplier : -multiplier);
-    mpf_class magnitude = mul_ui(value, magnitude_ui, precision);
+    mpf_class factor(checked_mp_exp_magnitude(multiplier), precision);
+    mpf_class magnitude = mul(value, factor, precision);
     if (multiplier < 0) {
         return sub(make_ui(0, precision), magnitude, precision);
     }
@@ -643,6 +658,21 @@ inline mp_bitcnt_t working_precision_for_exp(mp_bitcnt_t target_precision)
     return normalize_target_precision(target_precision) + guard_bits_for_exp(target_precision);
 }
 
+inline void ensure_exp_scaling_exponent_fits(const mpf_class& value, mp_exp_t shift)
+{
+    mp_exp_t exponent = 0;
+    mpf_get_d_2exp(&exponent, value.mpf_data());
+    if (shift > 0) {
+        if (exponent > std::numeric_limits<mp_exp_t>::max() - shift) {
+            throw std::overflow_error("exp(x) result exponent is too large");
+        }
+    } else if (shift < 0) {
+        if (exponent < std::numeric_limits<mp_exp_t>::min() - shift) {
+            throw std::overflow_error("exp(x) result exponent is too small");
+        }
+    }
+}
+
 inline mp_exp_t round_to_nearest_mp_exp(const mpf_class& value, mp_bitcnt_t precision)
 {
     const mpf_class zero = make_ui(0, precision);
@@ -660,7 +690,14 @@ inline mp_exp_t round_to_nearest_mp_exp(const mpf_class& value, mp_bitcnt_t prec
     if (!mpz_fits_slong_p(rounded_integer.mpz_data())) {
         throw std::overflow_error("exp(x) scaling exponent is too large");
     }
-    return static_cast<mp_exp_t>(mpz_get_si(rounded_integer.mpz_data()));
+    const long rounded = mpz_get_si(rounded_integer.mpz_data());
+    if constexpr (sizeof(mp_exp_t) < sizeof(long)) {
+        if (rounded < static_cast<long>(std::numeric_limits<mp_exp_t>::min()) ||
+            rounded > static_cast<long>(std::numeric_limits<mp_exp_t>::max())) {
+            throw std::overflow_error("exp(x) scaling exponent is too large");
+        }
+    }
+    return static_cast<mp_exp_t>(rounded);
 }
 
 inline mpf_class exp_taylor_reduced(const mpf_class& x, mp_bitcnt_t precision)
@@ -699,10 +736,11 @@ inline mpf_class compute_exp(const mpf_class& x_input, mp_bitcnt_t target_precis
     const mpf_class reduced = sub(x, mul_signed_exp(log2_value, k, work), work);
 
     mpf_class result = exp_taylor_reduced(reduced, work);
+    ensure_exp_scaling_exponent_fits(result, k);
     if (k >= 0) {
-        mpf_mul_2exp(result.mpf_data(), result.mpf_data(), static_cast<mp_bitcnt_t>(k));
+        mpf_mul_2exp(result.mpf_data(), result.mpf_data(), checked_mp_exp_magnitude(k));
     } else {
-        mpf_div_2exp(result.mpf_data(), result.mpf_data(), static_cast<mp_bitcnt_t>(-k));
+        mpf_div_2exp(result.mpf_data(), result.mpf_data(), checked_mp_exp_magnitude(k));
     }
     return set_prec_copy(result, target);
 }

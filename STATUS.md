@@ -1,3 +1,38 @@
+MPF exp scaling exponent guard:
+DONE
+
+Implemented features:
+- Added an explicit exponent-range guard before `compute_exp` calls `mpf_mul_2exp` or `mpf_div_2exp`.
+- The guard checks the current Taylor result exponent plus the requested power-of-two shift against `mp_exp_t` limits.
+- Added a checked `mp_exp_t` magnitude helper for shift-count conversion to `mp_bitcnt_t`, avoiding `-LONG_MIN` style signed overflow.
+- Reused the checked magnitude helper in `mul_signed_exp`, which computes the `k * log(2)` correction term during argument reduction.
+- Kept huge `exp(x)` results outside the MPF exponent range as `std::overflow_error` instead of letting GMP scaling wrap or corrupt the exponent.
+
+Missing features:
+- This does not add arbitrary-range exponential results beyond GMP MPF's exponent model.
+
+Tests added:
+- Extended tests/test_mpf_transcendent_functions.cpp with direct positive and negative exponent-boundary guard coverage.
+- Added a public `gmpxx::exp(gmpxx::mpf_class("1e100", precision))` overflow regression.
+
+Exact commands run:
+- sed -n '600,690p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- rg -n "round_to_nearest_mp_exp|mpf_mul_2exp|mpf_div_2exp|overflow_error\\(\\\"exp|compute_exp|exp\\(" include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf*
+- rg -n "mpf_get_d_2exp|mpf_get_str|mpf_get_prec|mpf_get" include/gmpfrxx_mkII/detail tests -g'*.hpp' -g'*.cpp'
+- cmake --build build -j --target test_mpf_transcendent_functions
+- ctest --test-dir build -R test_mpf_transcendent_functions --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j --target test_mpf_transcendent_functions: PASS.
+- ctest --test-dir build -R test_mpf_transcendent_functions --output-on-failure: PASS.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 140/140 tests passed.
+
+Known issues:
+- GMP MPF still has finite exponent limits; very large exponentials are reported as overflow rather than represented symbolically or as infinity.
+
 MPF Taylor denominator counter width:
 DONE
 

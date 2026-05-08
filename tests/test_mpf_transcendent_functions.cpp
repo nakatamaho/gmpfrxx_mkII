@@ -32,6 +32,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <random>
 #include <stdexcept>
 #include <string>
@@ -839,6 +840,48 @@ void require_pow_integer_and_domain_cases()
     }
 }
 
+void require_exp_scaling_overflow_guard_cases()
+{
+    const mp_bitcnt_t precision = 128;
+    const gmpxx::mpf_class one(1, precision);
+
+    gmpxx::mpf_math_detail::ensure_exp_scaling_exponent_fits(one, 0);
+    gmpxx::mpf_math_detail::ensure_exp_scaling_exponent_fits(one, std::numeric_limits<mp_exp_t>::max() - 1);
+
+    bool threw = false;
+    try {
+        gmpxx::mpf_math_detail::ensure_exp_scaling_exponent_fits(one, std::numeric_limits<mp_exp_t>::max());
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
+
+    gmpxx::mpf_class quarter(1, precision);
+    mpf_div_2exp(quarter.mpf_data(), quarter.mpf_data(), 2);
+    threw = false;
+    try {
+        gmpxx::mpf_math_detail::ensure_exp_scaling_exponent_fits(quarter, std::numeric_limits<mp_exp_t>::min());
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
+
+    gmpxx::mpf_class huge("1e100", precision);
+    threw = false;
+    try {
+        (void)gmpxx::exp(huge);
+    } catch (const std::overflow_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main()
@@ -1095,6 +1138,7 @@ int main()
     require_near_zero_and_near_one_cases();
     require_trig_reduction_cases();
     require_pow_integer_and_domain_cases();
+    require_exp_scaling_overflow_guard_cases();
 
     return 0;
 }
