@@ -1635,12 +1635,7 @@ inline constexpr bool mpfr_expression_contains_random_v =
 template <typename Expr>
 mpfr_prec_t mpfr_materialization_precision(const Expr& expr)
 {
-    if constexpr (build_options::assume_fixed_precision_fastpath &&
-                  !mpfr_expression_contains_random_v<Expr>) {
-        return mpfrxx::mpfr_class::default_precision();
-    } else {
-        return mpfr_expression_precision(expr);
-    }
+    return mpfr_expression_precision(expr);
 }
 
 inline void mpfr_evaluate(
@@ -1823,8 +1818,35 @@ void mpfr_evaluate_to_temporary(
     mpfr_rnd_t rnd)
 {
     mpfr_init2(temp, eval_precision);
-    mpfr_evaluate(temp, expr, eval_precision, rnd);
+    try {
+        mpfr_evaluate(temp, expr, eval_precision, rnd);
+    } catch (...) {
+        mpfr_clear(temp);
+        throw;
+    }
 }
+
+class scoped_mpfr_temporary {
+public:
+    explicit scoped_mpfr_temporary(mpfr_prec_t precision)
+    {
+        mpfr_init2(value_, precision);
+    }
+
+    scoped_mpfr_temporary(const scoped_mpfr_temporary&) = delete;
+    scoped_mpfr_temporary& operator=(const scoped_mpfr_temporary&) = delete;
+
+    ~scoped_mpfr_temporary()
+    {
+        mpfr_clear(value_);
+    }
+
+    mpfr_ptr get() noexcept { return value_; }
+    mpfr_srcptr get() const noexcept { return value_; }
+
+private:
+    mpfr_t value_;
+};
 
 class mpfr_thread_scratch_pool {
 public:
@@ -1995,18 +2017,14 @@ void mpfr_evaluate(
     mpfr_rnd_t rnd)
 {
     if constexpr (std::is_same_v<Result, gmpxx::mpz_class>) {
-        mpz_t exact;
-        mpz_init(exact);
-        mpz_evaluate(exact, expr);
-        mpfr_set_z(dest, exact, rnd);
-        mpz_clear(exact);
+        scoped_mpz_t exact;
+        mpz_evaluate(exact.get(), expr);
+        mpfr_set_z(dest, exact.get(), rnd);
         return;
     } else if constexpr (std::is_same_v<Result, gmpxx::mpq_class>) {
-        mpq_t exact;
-        mpq_init(exact);
-        mpq_evaluate(exact, expr);
-        mpfr_set_q(dest, exact, rnd);
-        mpq_clear(exact);
+        scoped_mpq_t exact;
+        mpq_evaluate(exact.get(), expr);
+        mpfr_set_q(dest, exact.get(), rnd);
         return;
     }
 
@@ -2016,11 +2034,9 @@ void mpfr_evaluate(
         if constexpr (is_zq_shift_scalar_leaf_v<Rhs>) {
             shift_count = zq_shift_count_from_scalar(expr.rhs().value());
         } else {
-            mpz_t bits_value;
-            mpz_init(bits_value);
-            mpz_evaluate(bits_value, expr.rhs());
-            shift_count = zq_shift_count_from_mpz(bits_value);
-            mpz_clear(bits_value);
+            scoped_mpz_t bits_value;
+            mpz_evaluate(bits_value.get(), expr.rhs());
+            shift_count = zq_shift_count_from_mpz(bits_value.get());
         }
         if constexpr (std::is_same_v<Op, shl_op>) {
             mpfr_mul_2ui(dest, dest, shift_count, rnd);
@@ -2031,13 +2047,11 @@ void mpfr_evaluate(
     }
 
     if (mpfr_expression_references(dest, expr)) {
-        mpfr_t lhs;
-        mpfr_t rhs;
-        mpfr_evaluate_to_temporary(lhs, expr.lhs(), eval_precision, rnd);
-        mpfr_evaluate_to_temporary(rhs, expr.rhs(), eval_precision, rnd);
-        mpfr_apply_binary<Op>(dest, lhs, rhs, rnd);
-        mpfr_clear(rhs);
-        mpfr_clear(lhs);
+        scoped_mpfr_temporary lhs(eval_precision);
+        scoped_mpfr_temporary rhs(eval_precision);
+        mpfr_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
+        mpfr_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
+        mpfr_apply_binary<Op>(dest, lhs.get(), rhs.get(), rnd);
         return;
     }
 
@@ -2052,11 +2066,10 @@ void mpfr_evaluate(
         mpfr_evaluate(dest, expr.rhs(), eval_precision, rnd);
         mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), dest, rnd);
     } else {
-        mpfr_t rhs;
+        scoped_mpfr_temporary rhs(eval_precision);
         mpfr_evaluate(dest, expr.lhs(), eval_precision, rnd);
-        mpfr_evaluate_to_temporary(rhs, expr.rhs(), eval_precision, rnd);
-        mpfr_apply_binary<Op>(dest, dest, rhs, rnd);
-        mpfr_clear(rhs);
+        mpfr_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
+        mpfr_apply_binary<Op>(dest, dest, rhs.get(), rnd);
     }
 }
 
@@ -2202,10 +2215,9 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
                 context.rounding_mode);
         }
     } else {
-        mpfr_t value;
-        mpfr_evaluate_to_temporary(value, operand, precision, context.rounding_mode);
-        mpfr_apply_binary<Op>(lhs.mpfr_data(), lhs.mpfr_data(), value, context.rounding_mode);
-        mpfr_clear(value);
+        scoped_mpfr_temporary value(precision);
+        mpfr_evaluate(value.get(), operand, precision, context.rounding_mode);
+        mpfr_apply_binary<Op>(lhs.mpfr_data(), lhs.mpfr_data(), value.get(), context.rounding_mode);
     }
 }
 

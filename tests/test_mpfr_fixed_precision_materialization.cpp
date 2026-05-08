@@ -42,11 +42,11 @@ int main()
     const auto high = mpfrxx::mpfr_class::with_precision(384, 2.5);
     const mpfrxx::mpfr_class materialized = low + high;
 
-    assert(materialized.precision() == default_object_precision);
-    assert(materialized.precision() < high.precision());
+    assert(materialized.precision() == high.precision());
+    assert(materialized.precision() > default_object_precision);
 
     mpfr_t expected;
-    mpfr_init2(expected, default_object_precision);
+    mpfr_init2(expected, high.precision());
     mpfr_add(expected, low.mpfr_data(), high.mpfr_data(), rnd);
     assert(mpfr_cmp(materialized.mpfr_data(), expected) == 0);
     mpfr_clear(expected);

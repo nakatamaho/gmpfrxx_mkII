@@ -1424,12 +1424,7 @@ inline constexpr bool mpf_expression_contains_random_v =
 template <typename Expr>
 mp_bitcnt_t mpf_materialization_precision(const Expr& expr)
 {
-    if constexpr (build_options::assume_fixed_precision_fastpath &&
-                  !mpf_expression_contains_random_v<Expr>) {
-        return gmpxx::default_mpf_precision_bits();
-    } else {
-        return mpf_expression_precision(expr);
-    }
+    return mpf_expression_precision(expr);
 }
 
 inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpf_class>& expr, mp_bitcnt_t)
@@ -1559,8 +1554,35 @@ template <typename Expr>
 void mpf_evaluate_to_temporary(mpf_t temp, const Expr& expr, mp_bitcnt_t eval_precision)
 {
     mpf_init2(temp, eval_precision);
-    mpf_evaluate(temp, expr, eval_precision);
+    try {
+        mpf_evaluate(temp, expr, eval_precision);
+    } catch (...) {
+        mpf_clear(temp);
+        throw;
+    }
 }
+
+class scoped_mpf_temporary {
+public:
+    explicit scoped_mpf_temporary(mp_bitcnt_t precision)
+    {
+        mpf_init2(value_, precision);
+    }
+
+    scoped_mpf_temporary(const scoped_mpf_temporary&) = delete;
+    scoped_mpf_temporary& operator=(const scoped_mpf_temporary&) = delete;
+
+    ~scoped_mpf_temporary()
+    {
+        mpf_clear(value_);
+    }
+
+    mpf_ptr get() noexcept { return value_; }
+    mpf_srcptr get() const noexcept { return value_; }
+
+private:
+    mpf_t value_;
+};
 
 class mpf_thread_scratch_pool {
 public:
@@ -1725,18 +1747,14 @@ template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_bitcnt_t eval_precision)
 {
     if constexpr (std::is_same_v<Result, gmpxx::mpz_class>) {
-        mpz_t exact;
-        mpz_init(exact);
-        mpz_evaluate(exact, expr);
-        mpf_set_z(dest, exact);
-        mpz_clear(exact);
+        scoped_mpz_t exact;
+        mpz_evaluate(exact.get(), expr);
+        mpf_set_z(dest, exact.get());
         return;
     } else if constexpr (std::is_same_v<Result, gmpxx::mpq_class>) {
-        mpq_t exact;
-        mpq_init(exact);
-        mpq_evaluate(exact, expr);
-        mpf_set_q_at_precision(dest, exact, eval_precision);
-        mpq_clear(exact);
+        scoped_mpq_t exact;
+        mpq_evaluate(exact.get(), expr);
+        mpf_set_q_at_precision(dest, exact.get(), eval_precision);
         return;
     }
 
@@ -1746,11 +1764,9 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
         if constexpr (is_zq_shift_scalar_leaf_v<Rhs>) {
             shift_count = zq_shift_count_from_scalar(expr.rhs().value());
         } else {
-            mpz_t bits_value;
-            mpz_init(bits_value);
-            mpz_evaluate(bits_value, expr.rhs());
-            shift_count = zq_shift_count_from_mpz(bits_value);
-            mpz_clear(bits_value);
+            scoped_mpz_t bits_value;
+            mpz_evaluate(bits_value.get(), expr.rhs());
+            shift_count = zq_shift_count_from_mpz(bits_value.get());
         }
         if constexpr (std::is_same_v<Op, shl_op>) {
             gmpxx::ensure_mpf_shift_result_exponent_fits(
@@ -1764,13 +1780,11 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
         return;
     } else {
         if (mpf_expression_references(dest, expr)) {
-            mpf_t lhs;
-            mpf_t rhs;
-            mpf_evaluate_to_temporary(lhs, expr.lhs(), eval_precision);
-            mpf_evaluate_to_temporary(rhs, expr.rhs(), eval_precision);
-            mpf_apply_binary<Op>(dest, lhs, rhs);
-            mpf_clear(rhs);
-            mpf_clear(lhs);
+            scoped_mpf_temporary lhs(eval_precision);
+            scoped_mpf_temporary rhs(eval_precision);
+            mpf_evaluate(lhs.get(), expr.lhs(), eval_precision);
+            mpf_evaluate(rhs.get(), expr.rhs(), eval_precision);
+            mpf_apply_binary<Op>(dest, lhs.get(), rhs.get());
             return;
         }
 
@@ -1785,11 +1799,10 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
             mpf_evaluate(dest, expr.rhs(), eval_precision);
             mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), dest);
         } else {
-            mpf_t rhs;
+            scoped_mpf_temporary rhs(eval_precision);
             mpf_evaluate(dest, expr.lhs(), eval_precision);
-            mpf_evaluate_to_temporary(rhs, expr.rhs(), eval_precision);
-            mpf_apply_binary<Op>(dest, dest, rhs);
-            mpf_clear(rhs);
+            mpf_evaluate(rhs.get(), expr.rhs(), eval_precision);
+            mpf_apply_binary<Op>(dest, dest, rhs.get());
         }
     }
 }
@@ -1915,10 +1928,9 @@ void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&& rhs)
             mpf_compound_submul_scratch_apply(lhs.mpf_data(), operand, lhs.precision());
         }
     } else {
-        mpf_t value;
-        mpf_evaluate_to_temporary(value, operand, lhs.precision());
-        mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), value);
-        mpf_clear(value);
+        scoped_mpf_temporary value(lhs.precision());
+        mpf_evaluate(value.get(), operand, lhs.precision());
+        mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), value.get());
     }
 }
 

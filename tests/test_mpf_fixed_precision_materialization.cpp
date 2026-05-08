@@ -41,11 +41,11 @@ int main()
     const auto high = gmpxx::mpf_class::with_precision(384, 2.5);
     const gmpxx::mpf_class materialized = low + high;
 
-    assert(materialized.precision() == default_object_precision);
-    assert(materialized.precision() < high.precision());
+    assert(materialized.precision() == high.precision());
+    assert(materialized.precision() > default_object_precision);
 
     mpf_t expected;
-    mpf_init2(expected, default_object_precision);
+    mpf_init2(expected, high.precision());
     mpf_add(expected, low.mpf_data(), high.mpf_data());
     assert(mpf_cmp(materialized.mpf_data(), expected) == 0);
     mpf_clear(expected);
