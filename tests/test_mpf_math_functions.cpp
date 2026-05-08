@@ -32,6 +32,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -264,6 +265,42 @@ void test_sign_and_exact_math_functions()
     assert(gmpxx::fibonacci(gmpxx::mpz_class(std::int64_t{7})) == gmpxx::mpz_class("13"));
 }
 
+void test_taylor_denominator_uint64_helpers()
+{
+    const mp_bitcnt_t precision = 192;
+    const std::uint64_t k = UINT64_C(32768);
+    const std::uint64_t sin_den1 = gmpxx::mpf_math_detail::checked_taylor_counter_product(UINT64_C(2), k);
+    const std::uint64_t sin_den2 = sin_den1 + UINT64_C(1);
+    const std::uint64_t sin_den = gmpxx::mpf_math_detail::checked_taylor_counter_product(sin_den1, sin_den2);
+    const std::uint64_t cos_den = gmpxx::mpf_math_detail::checked_taylor_counter_product(sin_den1 - UINT64_C(1), sin_den1);
+
+    static_assert(UINT64_C(4295032832) > std::numeric_limits<std::uint32_t>::max(), "");
+    assert(sin_den == UINT64_C(4295032832));
+    assert(cos_den == UINT64_C(4294901760));
+    assert_mpf_equal(gmpxx::mpf_math_detail::make_u64(sin_den, precision),
+                     gmpxx::mpf_class("4295032832", precision));
+    assert_mpf_equal(gmpxx::mpf_math_detail::make_u64(cos_den, precision),
+                     gmpxx::mpf_class("4294901760", precision));
+
+    bool product_threw = false;
+    try {
+        (void)gmpxx::mpf_math_detail::checked_taylor_counter_product(
+            std::numeric_limits<std::uint64_t>::max(), UINT64_C(2));
+    } catch (const std::overflow_error&) {
+        product_threw = true;
+    }
+    assert(product_threw);
+
+    bool counter_threw = false;
+    std::uint64_t counter = std::numeric_limits<std::uint64_t>::max();
+    try {
+        gmpxx::mpf_math_detail::increment_taylor_counter(counter);
+    } catch (const std::overflow_error&) {
+        counter_threw = true;
+    }
+    assert(counter_threw);
+}
+
 } // namespace
 
 int main()
@@ -276,5 +313,6 @@ int main()
     test_hypot_and_scaling();
     test_epsilon_and_remainder();
     test_sign_and_exact_math_functions();
+    test_taylor_denominator_uint64_helpers();
     return 0;
 }

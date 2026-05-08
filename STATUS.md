@@ -1,3 +1,36 @@
+MPF Taylor denominator counter width:
+DONE
+
+Implemented features:
+- Changed MPF `exp_taylor_reduced`, `expm1_taylor_small`, and `sincos_taylor_small` loop counters from `unsigned long` to `std::uint64_t`.
+- Changed Taylor denominator materialization to use `mpf_class(std::uint64_t, precision)` instead of `make_ui(unsigned long, precision)`.
+- Added checked `std::uint64_t` product and counter increment helpers so denominator arithmetic cannot silently wrap before division.
+- Kept the fix scoped to the practical 32-bit `unsigned long` failure mode; extremely large Taylor iteration counts now fail with `std::overflow_error` instead of wrapping.
+
+Missing features:
+- This does not make the naive Taylor algorithms practical for billion-bit workloads. It prevents integer-width corruption in the current algorithms.
+
+Tests added:
+- Extended tests/test_mpf_math_functions.cpp with direct coverage for denominator values beyond 32-bit `unsigned long`, exact `mpf_class(uint64_t, precision)` materialization, product overflow detection, and counter overflow detection.
+
+Exact commands run:
+- sed -n '120,180p' include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- sed -n '640,790p' include/gmpfrxx_mkII/detail/math_mpf.hpp
+- rg -n "uint64|UINT64|long_width|mpf_class\\(.*precision|mpf_class\\(.*get_prec" tests include/gmpfrxx_mkII/detail/mpf_impl.hpp
+- cmake --build build -j --target test_mpf_math_functions test_mpf_transcendent_functions
+- ctest --test-dir build -R 'test_mpf_math_functions|test_mpf_transcendent_functions' --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- cmake --build build -j --target test_mpf_math_functions test_mpf_transcendent_functions: PASS.
+- ctest --test-dir build -R 'test_mpf_math_functions|test_mpf_transcendent_functions' --output-on-failure: PASS, 2/2 tests passed.
+- cmake --build build -j: PASS.
+- ctest --test-dir build --output-on-failure: PASS, 140/140 tests passed.
+
+Known issues:
+- Other MPF Taylor/helper loops still use `unsigned long` where their current denominator expressions do not multiply two loop-derived factors. They should be reviewed separately if the MPF transcendental algorithms are reworked for very high precision.
+
 MPFC/MPC imaginary literal base policy:
 DONE
 

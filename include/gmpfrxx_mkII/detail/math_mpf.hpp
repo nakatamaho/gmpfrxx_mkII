@@ -33,6 +33,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
+#include <limits>
 #include <mutex>
 #include <stdexcept>
 #include <type_traits>
@@ -75,6 +77,27 @@ inline mpf_class make_ui(unsigned long value, mp_bitcnt_t precision)
     mpf_class result = mpf_class::with_precision(precision);
     mpf_set_ui(result.mpf_data(), value);
     return result;
+}
+
+inline mpf_class make_u64(std::uint64_t value, mp_bitcnt_t precision)
+{
+    return mpf_class(value, precision);
+}
+
+inline std::uint64_t checked_taylor_counter_product(std::uint64_t lhs, std::uint64_t rhs)
+{
+    if (lhs != 0 && rhs > std::numeric_limits<std::uint64_t>::max() / lhs) {
+        throw std::overflow_error("MPF Taylor denominator exceeds uint64_t");
+    }
+    return lhs * rhs;
+}
+
+inline void increment_taylor_counter(std::uint64_t& counter)
+{
+    if (counter == std::numeric_limits<std::uint64_t>::max()) {
+        throw std::overflow_error("MPF Taylor counter exceeds uint64_t");
+    }
+    ++counter;
 }
 
 inline mpf_class set_prec_copy(const mpf_class& value, mp_bitcnt_t precision)
@@ -647,12 +670,14 @@ inline mpf_class exp_taylor_reduced(const mpf_class& x, mp_bitcnt_t precision)
 
     mpf_class sum = make_ui(1, precision);
     mpf_class term = make_ui(1, precision);
-    for (unsigned long n = 1;; ++n) {
-        term = div(mul(term, x, precision), make_ui(n, precision), precision);
+    std::uint64_t n = 1;
+    for (;;) {
+        term = div(mul(term, x, precision), make_u64(n, precision), precision);
         sum = add(sum, term, precision);
         if (mpf_cmp(abs_prec(term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
             break;
         }
+        increment_taylor_counter(n);
     }
     return sum;
 }
@@ -699,12 +724,14 @@ inline mpf_class expm1_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
 
     mpf_class sum = set_prec_copy(x, precision);
     mpf_class term = set_prec_copy(x, precision);
-    for (unsigned long n = 2;; ++n) {
-        term = div(mul(term, x, precision), make_ui(n, precision), precision);
+    std::uint64_t n = 2;
+    for (;;) {
+        term = div(mul(term, x, precision), make_u64(n, precision), precision);
         sum = add(sum, term, precision);
         if (mpf_cmp(abs_prec(term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
             break;
         }
+        increment_taylor_counter(n);
     }
     return sum;
 }
@@ -772,16 +799,19 @@ inline sincos_result sincos_taylor_small(const mpf_class& x, mp_bitcnt_t precisi
     mpf_class sin_term = set_prec_copy(x, precision);
     mpf_class cos_term = make_ui(1, precision);
 
-    for (unsigned long k = 1;; ++k) {
-        const unsigned long sin_den1 = 2ul * k;
-        const unsigned long sin_den2 = 2ul * k + 1ul;
-        sin_term = div(mul(sin_term, x2, precision), make_ui(sin_den1 * sin_den2, precision), precision);
+    std::uint64_t k = 1;
+    for (;;) {
+        const std::uint64_t sin_den1 = checked_taylor_counter_product(std::uint64_t{2}, k);
+        const std::uint64_t sin_den2 = sin_den1 + 1u;
+        const std::uint64_t sin_den = checked_taylor_counter_product(sin_den1, sin_den2);
+        sin_term = div(mul(sin_term, x2, precision), make_u64(sin_den, precision), precision);
         sin_term = sub(make_ui(0, precision), sin_term, precision);
         result.sin_value = add(result.sin_value, sin_term, precision);
 
-        const unsigned long cos_den1 = 2ul * k - 1ul;
-        const unsigned long cos_den2 = 2ul * k;
-        cos_term = div(mul(cos_term, x2, precision), make_ui(cos_den1 * cos_den2, precision), precision);
+        const std::uint64_t cos_den1 = sin_den1 - 1u;
+        const std::uint64_t cos_den2 = sin_den1;
+        const std::uint64_t cos_den = checked_taylor_counter_product(cos_den1, cos_den2);
+        cos_term = div(mul(cos_term, x2, precision), make_u64(cos_den, precision), precision);
         cos_term = sub(make_ui(0, precision), cos_term, precision);
         result.cos_value = add(result.cos_value, cos_term, precision);
 
@@ -789,6 +819,7 @@ inline sincos_result sincos_taylor_small(const mpf_class& x, mp_bitcnt_t precisi
             mpf_cmp(abs_prec(cos_term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
             break;
         }
+        increment_taylor_counter(k);
     }
     return result;
 }
