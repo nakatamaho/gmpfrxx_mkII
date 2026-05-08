@@ -29,6 +29,7 @@
 #include <mpfrxx_mkII.h>
 #include <mpcxx_mkII.h>
 
+#include <cmath>
 #include <cstdlib>
 
 int main()
@@ -44,6 +45,64 @@ int main()
     auto dst = mpfrxx::mpc_class::with_precision(80, 112);
     dst = z + r;
     if (dst.real_precision() != 80 || dst.imag_precision() != 112) {
+        std::abort();
+    }
+
+    auto a = mpfrxx::mpc_class::with_precision(96, 128, 1.0, 2.0);
+    auto b = mpfrxx::mpc_class::with_precision(96, 128, 3.0, -1.0);
+    auto c = mpfrxx::mpc_class::with_precision(96, 128, -0.5, 4.0);
+    auto chain_dst = mpfrxx::mpc_class::with_precision(80, 112);
+    chain_dst = a + b + c;
+    if (chain_dst.real_precision() != 80 || chain_dst.imag_precision() != 112) {
+        std::abort();
+    }
+    if (std::abs(chain_dst.real_to_double() - 3.5) > 1e-12 ||
+        std::abs(chain_dst.imag_to_double() - 5.0) > 1e-12) {
+        std::abort();
+    }
+
+    auto add_assign = a;
+    add_assign += b;
+    if (add_assign.real_precision() != a.real_precision() ||
+        add_assign.imag_precision() != a.imag_precision() ||
+        std::abs(add_assign.real_to_double() - 4.0) > 1e-12 ||
+        std::abs(add_assign.imag_to_double() - 1.0) > 1e-12) {
+        std::abort();
+    }
+
+    auto sub_assign = a;
+    sub_assign -= b;
+    if (sub_assign.real_precision() != a.real_precision() ||
+        sub_assign.imag_precision() != a.imag_precision() ||
+        std::abs(sub_assign.real_to_double() + 2.0) > 1e-12 ||
+        std::abs(sub_assign.imag_to_double() - 3.0) > 1e-12) {
+        std::abort();
+    }
+
+    auto mul_assign = a;
+    mul_assign *= b;
+    if (mul_assign.real_precision() != a.real_precision() ||
+        mul_assign.imag_precision() != a.imag_precision() ||
+        std::abs(mul_assign.real_to_double() - 5.0) > 1e-12 ||
+        std::abs(mul_assign.imag_to_double() - 5.0) > 1e-12) {
+        std::abort();
+    }
+
+    auto div_assign = a;
+    div_assign /= b;
+    if (div_assign.real_precision() != a.real_precision() ||
+        div_assign.imag_precision() != a.imag_precision() ||
+        std::abs(div_assign.real_to_double() - 0.1) > 1e-12 ||
+        std::abs(div_assign.imag_to_double() - 0.7) > 1e-12) {
+        std::abort();
+    }
+
+    auto expr_assign = a;
+    expr_assign += b + c;
+    if (expr_assign.real_precision() != a.real_precision() ||
+        expr_assign.imag_precision() != a.imag_precision() ||
+        std::abs(expr_assign.real_to_double() - 3.5) > 1e-12 ||
+        std::abs(expr_assign.imag_to_double() - 5.0) > 1e-12) {
         std::abort();
     }
 

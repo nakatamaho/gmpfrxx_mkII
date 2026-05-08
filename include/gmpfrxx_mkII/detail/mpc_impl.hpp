@@ -611,6 +611,23 @@ void mpc_evaluate(
     }
 }
 
+template <typename Op, typename Rhs>
+void mpc_compound_assign(mpfrxx::mpc_class& lhs, Rhs&& rhs)
+{
+    auto operand = make_mpc_operand(std::forward<Rhs>(rhs));
+    using operand_type = std::decay_t<decltype(operand)>;
+    const mpc_expression_precision_bits precision{lhs.real_precision(), lhs.imag_precision()};
+    const mpc_rnd_t rnd = mpfrxx::mpc_class::default_rounding();
+    if constexpr (std::is_same_v<operand_type, object_leaf<mpfrxx::mpc_class>>) {
+        mpc_apply_binary<Op>(lhs.mpc_data(), lhs.mpc_data(), operand.get().mpc_data(), rnd);
+    } else {
+        mpc_t value;
+        mpc_evaluate_to_temporary(value, operand, precision, rnd);
+        mpc_apply_binary<Op>(lhs.mpc_data(), lhs.mpc_data(), value, rnd);
+        mpc_clear(value);
+    }
+}
+
 template <typename Lhs, typename Rhs, std::enable_if_t<
                                     is_mpc_expression_operand_v<Lhs> &&
                                         is_mpc_expression_operand_v<Rhs> &&
@@ -812,28 +829,28 @@ inline bool operator!=(Scalar lhs, const mpc_class& rhs)
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
 inline mpc_class& operator+=(mpc_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs + std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpc_compound_assign<gmpfrxx_mkII::detail::add_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
 inline mpc_class& operator-=(mpc_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs - std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpc_compound_assign<gmpfrxx_mkII::detail::sub_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
 inline mpc_class& operator*=(mpc_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs * std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpc_compound_assign<gmpfrxx_mkII::detail::mul_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
 inline mpc_class& operator/=(mpc_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs / std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpc_compound_assign<gmpfrxx_mkII::detail::div_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 

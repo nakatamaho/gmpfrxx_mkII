@@ -29,10 +29,36 @@
 #include <gmpxx_mkII.h>
 
 #include <algorithm>
+#include <atomic>
+#include <cassert>
 #include <cstdlib>
+
+namespace {
+
+std::atomic<int> alloc_count{0};
+
+void* count_alloc(std::size_t n)
+{
+    ++alloc_count;
+    return std::malloc(n);
+}
+
+void* count_realloc(void* p, std::size_t, std::size_t n)
+{
+    return std::realloc(p, n);
+}
+
+void count_free(void* p, std::size_t)
+{
+    std::free(p);
+}
+
+} // namespace
 
 int main()
 {
+    mp_set_memory_functions(count_alloc, count_realloc, count_free);
+
     auto low = gmpxx::mpfc_class::with_precision(96, 128);
     auto high = gmpxx::mpfc_class::with_precision(192, 224);
 
@@ -57,6 +83,79 @@ int main()
         mixed.imag_precision() != std::max(real.precision(), low.imag_precision())) {
         std::abort();
     }
+
+    auto a = gmpxx::mpfc_class::with_precision(256, 1.25, 2.5);
+    auto b = gmpxx::mpfc_class::with_precision(256, -0.5, 4.0);
+    auto c = gmpxx::mpfc_class::with_precision(256, 3.0, -1.25);
+    auto sum_dst = gmpxx::mpfc_class::with_precision(256);
+
+    alloc_count = 0;
+    sum_dst = a + b;
+    const int binary_add_allocations = alloc_count.load();
+    assert(sum_dst == gmpxx::mpfc_class::with_precision(256, 0.75, 6.5));
+    assert(binary_add_allocations == 0);
+
+    alloc_count = 0;
+    sum_dst = a + b + c;
+    const int add_chain_allocations = alloc_count.load();
+    assert(sum_dst == gmpxx::mpfc_class::with_precision(256, 3.75, 5.25));
+    assert(add_chain_allocations == 0);
+
+    auto mul_dst = gmpxx::mpfc_class::with_precision(256);
+    alloc_count = 0;
+    mul_dst = a * b;
+    const int binary_mul_allocations = alloc_count.load();
+    assert(mul_dst == gmpxx::mpfc_class::with_precision(256, -10.625, 3.75));
+    assert(binary_mul_allocations == 1);
+
+    auto div_expected_real = gmpxx::mpf_class::with_precision(256, 15.0);
+    mpf_div_ui(div_expected_real.mpf_data(), div_expected_real.mpf_data(), 26);
+    auto div_expected_imag = gmpxx::mpf_class::with_precision(256, -5.0);
+    mpf_div_ui(div_expected_imag.mpf_data(), div_expected_imag.mpf_data(), 13);
+    gmpxx::mpfc_class div_expected(div_expected_real, div_expected_imag);
+
+    auto div_dst = gmpxx::mpfc_class::with_precision(256);
+    alloc_count = 0;
+    div_dst = a / b;
+    const int binary_div_allocations = alloc_count.load();
+    assert(div_dst == div_expected);
+    assert(binary_div_allocations == 2);
+
+    auto alias_mul = a;
+    alias_mul = alias_mul * b;
+    assert(alias_mul == mul_dst);
+
+    auto alias_div = a;
+    alias_div = alias_div / b;
+    assert(alias_div == div_expected);
+
+    auto add_assign = a;
+    alloc_count = 0;
+    add_assign += b;
+    const int add_assign_allocations = alloc_count.load();
+    assert(add_assign == gmpxx::mpfc_class::with_precision(256, 0.75, 6.5));
+    assert(add_assign_allocations == 0);
+
+    auto sub_assign = a;
+    alloc_count = 0;
+    sub_assign -= b;
+    const int sub_assign_allocations = alloc_count.load();
+    assert(sub_assign == gmpxx::mpfc_class::with_precision(256, 1.75, -1.5));
+    assert(sub_assign_allocations == 0);
+
+    auto mul_assign = a;
+    alloc_count = 0;
+    mul_assign *= b;
+    const int mul_assign_allocations = alloc_count.load();
+    assert(mul_assign == mul_dst);
+    assert(mul_assign_allocations == 3);
+
+    auto div_assign = a;
+    alloc_count = 0;
+    div_assign /= b;
+    const int div_assign_allocations = alloc_count.load();
+    assert(div_assign == div_expected);
+    assert(div_assign_allocations == 4);
 
     return 0;
 }

@@ -600,6 +600,37 @@ void mpfc_evaluate(gmpxx::mpfc_class& dest, const unary_expr<neg_op, Expr, Resul
     mpf_neg(mpfc_imag_ref(dest).mpf_data(), mpfc_imag_ref(dest).mpf_data());
 }
 
+inline bool mpfc_expression_references(
+    const gmpxx::mpfc_class& target,
+    const object_leaf<gmpxx::mpfc_class>& expr)
+{
+    return &target == &expr.get();
+}
+
+inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const object_leaf<gmpxx::mpf_class>&)
+{
+    return false;
+}
+
+template <typename T, typename Result>
+bool mpfc_expression_references(const gmpxx::mpfc_class&, const scalar_leaf<T, Result>&)
+{
+    return false;
+}
+
+template <typename Op, typename Expr, typename Result>
+bool mpfc_expression_references(const gmpxx::mpfc_class& target, const unary_expr<Op, Expr, Result>& expr)
+{
+    return mpfc_expression_references(target, expr.expr());
+}
+
+template <typename Op, typename Lhs, typename Rhs, typename Result>
+bool mpfc_expression_references(const gmpxx::mpfc_class& target, const binary_expr<Op, Lhs, Rhs, Result>& expr)
+{
+    return mpfc_expression_references(target, expr.lhs()) ||
+           mpfc_expression_references(target, expr.rhs());
+}
+
 template <typename Op>
 void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, const gmpxx::mpfc_class& rhs)
 {
@@ -610,6 +641,22 @@ void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, co
         mpf_sub(mpfc_real_ref(dest).mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
         mpf_sub(mpfc_imag_ref(dest).mpf_data(), lhs.imag().mpf_data(), rhs.imag().mpf_data());
     } else if constexpr (std::is_same_v<Op, mul_op>) {
+        if (&dest != &lhs && &dest != &rhs) {
+            mpf_t temp;
+            mpf_init2(temp, dest.precision());
+
+            mpf_mul(mpfc_real_ref(dest).mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
+            mpf_mul(temp, lhs.imag().mpf_data(), rhs.imag().mpf_data());
+            mpf_sub(mpfc_real_ref(dest).mpf_data(), mpfc_real_ref(dest).mpf_data(), temp);
+
+            mpf_mul(mpfc_imag_ref(dest).mpf_data(), lhs.real().mpf_data(), rhs.imag().mpf_data());
+            mpf_mul(temp, lhs.imag().mpf_data(), rhs.real().mpf_data());
+            mpf_add(mpfc_imag_ref(dest).mpf_data(), mpfc_imag_ref(dest).mpf_data(), temp);
+
+            mpf_clear(temp);
+            return;
+        }
+
         mpf_t real_part;
         mpf_t imag_part;
         mpf_t temp;
@@ -632,6 +679,32 @@ void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, co
         mpf_clear(imag_part);
         mpf_clear(real_part);
     } else if constexpr (std::is_same_v<Op, div_op>) {
+        if (&dest != &lhs && &dest != &rhs) {
+            mpf_t denominator;
+            mpf_t temp;
+            const mp_bitcnt_t precision = dest.precision();
+            mpf_init2(denominator, precision);
+            mpf_init2(temp, precision);
+
+            mpf_mul(denominator, rhs.real().mpf_data(), rhs.real().mpf_data());
+            mpf_mul(temp, rhs.imag().mpf_data(), rhs.imag().mpf_data());
+            mpf_add(denominator, denominator, temp);
+
+            mpf_mul(mpfc_real_ref(dest).mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
+            mpf_mul(temp, lhs.imag().mpf_data(), rhs.imag().mpf_data());
+            mpf_add(mpfc_real_ref(dest).mpf_data(), mpfc_real_ref(dest).mpf_data(), temp);
+            mpf_div(mpfc_real_ref(dest).mpf_data(), mpfc_real_ref(dest).mpf_data(), denominator);
+
+            mpf_mul(mpfc_imag_ref(dest).mpf_data(), lhs.imag().mpf_data(), rhs.real().mpf_data());
+            mpf_mul(temp, lhs.real().mpf_data(), rhs.imag().mpf_data());
+            mpf_sub(mpfc_imag_ref(dest).mpf_data(), mpfc_imag_ref(dest).mpf_data(), temp);
+            mpf_div(mpfc_imag_ref(dest).mpf_data(), mpfc_imag_ref(dest).mpf_data(), denominator);
+
+            mpf_clear(temp);
+            mpf_clear(denominator);
+            return;
+        }
+
         mpf_t denominator;
         mpf_t real_part;
         mpf_t imag_part;
@@ -667,6 +740,17 @@ void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, co
     }
 }
 
+template <typename Expr>
+void mpfc_evaluate_to_temporary(
+    gmpxx::mpfc_class& temp,
+    const Expr& expr,
+    mp_bitcnt_t real_precision,
+    mp_bitcnt_t imag_precision)
+{
+    temp = gmpxx::mpfc_class::with_precision(real_precision, imag_precision);
+    mpfc_evaluate(temp, expr);
+}
+
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpfc_evaluate(gmpxx::mpfc_class& dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
 {
@@ -676,11 +760,42 @@ void mpfc_evaluate(gmpxx::mpfc_class& dest, const binary_expr<Op, Lhs, Rhs, Resu
     const mp_bitcnt_t imag_precision =
         mpfc_expression_precision_max(mpfc_expression_imag_precision(expr.lhs()),
                                       mpfc_expression_imag_precision(expr.rhs()));
-    gmpxx::mpfc_class lhs = gmpxx::mpfc_class::with_precision(real_precision, imag_precision);
-    gmpxx::mpfc_class rhs = gmpxx::mpfc_class::with_precision(real_precision, imag_precision);
-    mpfc_evaluate(lhs, expr.lhs());
-    mpfc_evaluate(rhs, expr.rhs());
-    mpfc_apply_binary<Op>(dest, lhs, rhs);
+    if (mpfc_expression_references(dest, expr)) {
+        gmpxx::mpfc_class lhs;
+        gmpxx::mpfc_class rhs;
+        mpfc_evaluate_to_temporary(lhs, expr.lhs(), real_precision, imag_precision);
+        mpfc_evaluate_to_temporary(rhs, expr.rhs(), real_precision, imag_precision);
+        mpfc_apply_binary<Op>(dest, lhs, rhs);
+    } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpfc_class>> &&
+                         std::is_same_v<Rhs, object_leaf<gmpxx::mpfc_class>>) {
+        mpfc_apply_binary<Op>(dest, expr.lhs().get(), expr.rhs().get());
+    } else if constexpr (std::is_same_v<Rhs, object_leaf<gmpxx::mpfc_class>>) {
+        mpfc_evaluate(dest, expr.lhs());
+        mpfc_apply_binary<Op>(dest, dest, expr.rhs().get());
+    } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpfc_class>> &&
+                         (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
+        mpfc_evaluate(dest, expr.rhs());
+        mpfc_apply_binary<Op>(dest, expr.lhs().get(), dest);
+    } else {
+        gmpxx::mpfc_class rhs;
+        mpfc_evaluate(dest, expr.lhs());
+        mpfc_evaluate_to_temporary(rhs, expr.rhs(), real_precision, imag_precision);
+        mpfc_apply_binary<Op>(dest, dest, rhs);
+    }
+}
+
+template <typename Op, typename Rhs>
+void mpfc_compound_assign(gmpxx::mpfc_class& lhs, Rhs&& rhs)
+{
+    auto operand = make_mpfc_operand(std::forward<Rhs>(rhs));
+    using operand_type = std::decay_t<decltype(operand)>;
+    if constexpr (std::is_same_v<operand_type, object_leaf<gmpxx::mpfc_class>>) {
+        mpfc_apply_binary<Op>(lhs, lhs, operand.get());
+    } else {
+        gmpxx::mpfc_class value = gmpxx::mpfc_class::with_precision(lhs.real_precision(), lhs.imag_precision());
+        mpfc_evaluate(value, operand);
+        mpfc_apply_binary<Op>(lhs, lhs, value);
+    }
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
@@ -769,9 +884,13 @@ mpfc_class::mpfc_class(const Expr& expr)
 template <typename Expr, typename>
 mpfc_class& mpfc_class::operator=(const Expr& expr)
 {
-    mpfc_class temp = mpfc_class::with_precision(real_precision(), imag_precision());
-    gmpfrxx_mkII::detail::mpfc_evaluate(temp, expr);
-    swap(temp);
+    if (gmpfrxx_mkII::detail::mpfc_expression_references(*this, expr)) {
+        mpfc_class temp = mpfc_class::with_precision(real_precision(), imag_precision());
+        gmpfrxx_mkII::detail::mpfc_evaluate(temp, expr);
+        swap(temp);
+    } else {
+        gmpfrxx_mkII::detail::mpfc_evaluate(*this, expr);
+    }
     return *this;
 }
 
@@ -783,28 +902,28 @@ using ::gmpfrxx_mkII::detail::operator/;
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<Rhs>, int> = 0>
 inline mpfc_class& operator+=(mpfc_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs + std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpfc_compound_assign<gmpfrxx_mkII::detail::add_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<Rhs>, int> = 0>
 inline mpfc_class& operator-=(mpfc_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs - std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpfc_compound_assign<gmpfrxx_mkII::detail::sub_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<Rhs>, int> = 0>
 inline mpfc_class& operator*=(mpfc_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs * std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpfc_compound_assign<gmpfrxx_mkII::detail::mul_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
 template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<Rhs>, int> = 0>
 inline mpfc_class& operator/=(mpfc_class& lhs, Rhs&& rhs)
 {
-    lhs = lhs / std::forward<Rhs>(rhs);
+    gmpfrxx_mkII::detail::mpfc_compound_assign<gmpfrxx_mkII::detail::div_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
 }
 
