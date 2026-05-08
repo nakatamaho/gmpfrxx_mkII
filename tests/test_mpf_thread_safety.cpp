@@ -35,17 +35,23 @@
 
 namespace {
 
-void require_default_visible_to_threads()
+void require_default_precision_is_thread_local()
 {
-    constexpr mp_bitcnt_t precision = 777;
-    gmpxx::set_default_mpf_precision_bits(precision);
+    constexpr mp_bitcnt_t main_precision = 777;
+    constexpr mp_bitcnt_t worker_precision = 333;
+    gmpxx::set_default_mpf_precision_bits(main_precision);
 
     std::atomic<int> mismatches{0};
     std::vector<std::thread> threads;
     for (int i = 0; i < 8; ++i) {
         threads.emplace_back([&] {
+            if (gmpxx::default_mpf_precision_bits() != 512) {
+                ++mismatches;
+            }
+            gmpxx::set_default_mpf_precision_bits(worker_precision);
             gmpxx::mpf_class value;
-            if (value.precision() < precision) {
+            if (gmpxx::default_mpf_precision_bits() != worker_precision ||
+                value.precision() < worker_precision) {
                 ++mismatches;
             }
         });
@@ -56,36 +62,38 @@ void require_default_visible_to_threads()
     if (mismatches.load() != 0) {
         std::abort();
     }
+    if (gmpxx::default_mpf_precision_bits() != main_precision) {
+        std::abort();
+    }
 }
 
-void require_concurrent_default_precision_access()
+void require_parallel_default_precision_mutation_is_thread_local()
 {
-    std::atomic<bool> stop{false};
     std::atomic<int> mismatches{0};
-    std::thread writer([&] {
-        for (int i = 0; i < 2000; ++i) {
-            gmpxx::set_default_mpf_precision_bits((i % 2) == 0 ? 257 : 769);
-        }
-        stop.store(true, std::memory_order_release);
-    });
+    gmpxx::set_default_mpf_precision_bits(641);
 
-    std::vector<std::thread> readers;
+    std::vector<std::thread> threads;
     for (int i = 0; i < 8; ++i) {
-        readers.emplace_back([&] {
-            while (!stop.load(std::memory_order_acquire)) {
-                const mp_bitcnt_t precision = gmpxx::default_mpf_precision_bits();
-                if (precision != 257 && precision != 769 && precision != 777) {
+        threads.emplace_back([&, i] {
+            const mp_bitcnt_t first = static_cast<mp_bitcnt_t>(257 + i);
+            const mp_bitcnt_t second = static_cast<mp_bitcnt_t>(769 + i);
+            for (int j = 0; j < 2000; ++j) {
+                const mp_bitcnt_t expected = (j % 2) == 0 ? first : second;
+                gmpxx::set_default_mpf_precision_bits(expected);
+                if (gmpxx::default_mpf_precision_bits() != expected) {
                     ++mismatches;
                 }
             }
         });
     }
 
-    writer.join();
-    for (auto& thread : readers) {
+    for (auto& thread : threads) {
         thread.join();
     }
     if (mismatches.load() != 0) {
+        std::abort();
+    }
+    if (gmpxx::default_mpf_precision_bits() != 641) {
         std::abort();
     }
 }
@@ -133,8 +141,8 @@ void require_parallel_expression_materialization()
 
 int main()
 {
-    require_default_visible_to_threads();
-    require_concurrent_default_precision_access();
+    require_default_precision_is_thread_local();
+    require_parallel_default_precision_mutation_is_thread_local();
     require_isolation_from_gmp_global_default();
     require_parallel_expression_materialization();
     return 0;

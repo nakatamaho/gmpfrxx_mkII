@@ -35,7 +35,6 @@
 #include <gmpfrxx_mkII/detail/zq_impl.hpp>
 
 #include <algorithm>
-#include <atomic>
 #include <cerrno>
 #include <cctype>
 #include <cmath>
@@ -85,29 +84,27 @@ inline mp_bitcnt_t load_default_mpf_precision_bits_from_environment() noexcept
     return precision;
 }
 
-inline std::atomic<mp_bitcnt_t>& default_mpf_precision_bits_storage()
+inline mp_bitcnt_t& default_mpf_precision_bits_storage()
 {
-    static std::atomic<mp_bitcnt_t> precision{load_default_mpf_precision_bits_from_environment()};
+    thread_local mp_bitcnt_t precision = load_default_mpf_precision_bits_from_environment();
     return precision;
 }
 
 inline mp_bitcnt_t default_mpf_precision_bits()
 {
-    return default_mpf_precision_bits_storage().load(std::memory_order_acquire);
+    return default_mpf_precision_bits_storage();
 }
 
 inline void set_default_mpf_precision_bits(mp_bitcnt_t precision)
 {
     if (precision > 0) {
-        default_mpf_precision_bits_storage().store(precision, std::memory_order_release);
+        default_mpf_precision_bits_storage() = precision;
     }
 }
 
 inline void reload_default_mpf_precision_bits_from_environment()
 {
-    default_mpf_precision_bits_storage().store(
-        load_default_mpf_precision_bits_from_environment(),
-        std::memory_order_release);
+    default_mpf_precision_bits_storage() = load_default_mpf_precision_bits_from_environment();
 }
 
 inline std::uintmax_t mpf_mp_exp_negative_magnitude(mp_exp_t value) noexcept
@@ -402,6 +399,20 @@ public:
     signed long get_si() const
     {
         return mpf_get_si(value_);
+    }
+
+    std::uint64_t get_u64() const
+    {
+        gmpfrxx_mkII::detail::scoped_mpz_t integer;
+        mpz_set_f(integer.get(), value_);
+        return gmpfrxx_mkII::detail::mpz_get_uint64_checked(integer.get());
+    }
+
+    std::int64_t get_i64() const
+    {
+        gmpfrxx_mkII::detail::scoped_mpz_t integer;
+        mpz_set_f(integer.get(), value_);
+        return gmpfrxx_mkII::detail::mpz_get_int64_checked(integer.get());
     }
 
     void set_prec(mp_bitcnt_t precision)
