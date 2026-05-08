@@ -270,17 +270,23 @@ void test_taylor_denominator_uint64_helpers()
     const mp_bitcnt_t precision = 192;
     const std::uint64_t k = UINT64_C(32768);
     const std::uint64_t sin_den1 = gmpxx::mpf_math_detail::checked_taylor_counter_product(UINT64_C(2), k);
-    const std::uint64_t sin_den2 = sin_den1 + UINT64_C(1);
+    const std::uint64_t sin_den2 = gmpxx::mpf_math_detail::checked_taylor_counter_add(sin_den1, UINT64_C(1));
     const std::uint64_t sin_den = gmpxx::mpf_math_detail::checked_taylor_counter_product(sin_den1, sin_den2);
     const std::uint64_t cos_den = gmpxx::mpf_math_detail::checked_taylor_counter_product(sin_den1 - UINT64_C(1), sin_den1);
+    const std::uint64_t odd_den = gmpxx::mpf_math_detail::checked_taylor_odd_denominator(k);
 
     static_assert(UINT64_C(4295032832) > std::numeric_limits<std::uint32_t>::max(), "");
     assert(sin_den == UINT64_C(4295032832));
     assert(cos_den == UINT64_C(4294901760));
+    assert(odd_den == UINT64_C(65537));
     assert_mpf_equal(gmpxx::mpf_math_detail::make_u64(sin_den, precision),
                      gmpxx::mpf_class("4295032832", precision));
     assert_mpf_equal(gmpxx::mpf_math_detail::make_u64(cos_den, precision),
                      gmpxx::mpf_class("4294901760", precision));
+    assert_mpf_equal(gmpxx::mpf_math_detail::make_u64(odd_den, precision),
+                     gmpxx::mpf_class("65537", precision));
+    assert(gmpxx::mpf_math_detail::checked_taylor_shift_count(17, odd_den) ==
+           static_cast<mp_bitcnt_t>(UINT64_C(1114129)));
 
     bool product_threw = false;
     try {
@@ -290,6 +296,33 @@ void test_taylor_denominator_uint64_helpers()
         product_threw = true;
     }
     assert(product_threw);
+
+    bool add_threw = false;
+    try {
+        (void)gmpxx::mpf_math_detail::checked_taylor_counter_add(
+            std::numeric_limits<std::uint64_t>::max(), UINT64_C(1));
+    } catch (const std::overflow_error&) {
+        add_threw = true;
+    }
+    assert(add_threw);
+
+    bool odd_threw = false;
+    try {
+        (void)gmpxx::mpf_math_detail::checked_taylor_odd_denominator(
+            (std::numeric_limits<std::uint64_t>::max() / UINT64_C(2)) + UINT64_C(1));
+    } catch (const std::overflow_error&) {
+        odd_threw = true;
+    }
+    assert(odd_threw);
+
+    bool shift_threw = false;
+    try {
+        (void)gmpxx::mpf_math_detail::checked_taylor_shift_count(
+            std::numeric_limits<mp_bitcnt_t>::max(), UINT64_C(2));
+    } catch (const std::overflow_error&) {
+        shift_threw = true;
+    }
+    assert(shift_threw);
 
     bool counter_threw = false;
     std::uint64_t counter = std::numeric_limits<std::uint64_t>::max();

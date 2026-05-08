@@ -2045,6 +2045,78 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPF Taylor counter overflow recheck:
+DONE
+
+Implemented features:
+- Rechecked the MPF Taylor loops called out in A2.  `exp_taylor_reduced`,
+  `expm1_taylor_small`, and `sincos_taylor_small` already used
+  `std::uint64_t` counters with checked multiplication before materializing
+  denominators.
+- Added a checked addition helper for Taylor counters and used it in the
+  sine/cosine denominator path, so `(2*k) + 1` is guarded as explicitly as
+  `(2*k) * (2*k+1)`.
+- Extended the same checked-counter policy to the remaining MPF series loops
+  that still used `unsigned long k` with denominator arithmetic:
+  `log1p_taylor_small`, `log1p_atanh_series`, and `atan_taylor_small`.
+- Extended the same guard style to theta/log2 shift-count updates, replacing
+  raw `q_exponent * (2*k + c)` arithmetic with checked `std::uint64_t`
+  intermediate arithmetic followed by an `mp_bitcnt_t` range check.
+- Rechecked 32-bit integer-width coverage.  MPF expression scalar leaves
+  normalize signed integral scalars to `std::int64_t` and unsigned integral
+  scalars to `std::uint64_t`, with GMP `mpz` fallback when `long`/`unsigned
+  long` is narrower than the value.  The remaining theta/log2 scale conversion
+  was moved from `unsigned long` to `make_u64`.
+
+Tests added:
+- Extended `tests/test_mpf_math_functions.cpp` with coverage for checked
+  Taylor addition, odd-denominator construction, and shift-count overflow.
+- Extended `tests/test_mpf_basic.cpp` with focused `std::int32_t::min()` and
+  `std::uint32_t::max()` scalar and expression-scalar coverage.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `tests/test_mpf_basic.cpp`
+- `tests/test_mpf_math_functions.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "exp_taylor_reduced|expm1_taylor_small|sincos_taylor_small|make_ui\\(|make_u64|checked_.*increment|checked_.*product|uint64_t|unsigned long" include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_math_functions.cpp tests/test_mpf_transcendent_functions.cpp`
+- `sed -n '60,110p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '695,875p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '465,515p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '985,1010p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `rg -n "for \\(unsigned long k|2ul \\* k|make_ui\\([^,]*\\*[^,]*," include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `cmake --build build -j --target test_mpf_math_functions test_mpf_transcendent_functions`
+- `ctest --test-dir build -R 'test_mpf_math_functions|test_mpf_transcendent_functions' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `rg -n "uint32|int32|unsigned long|signed long|static_cast<unsigned long>|static_cast<long>|make_ui\\(|mpf_set_ui|mpf_set_si|mpz_set_ui|mpz_set_si|mpq_set_ui|mpq_set_si" include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/integer_conversion.hpp tests`
+- `rg -n "static_cast<unsigned long>\\(|for \\(unsigned long k|2ul \\* k|make_ui\\([^,]*\\*[^,]*," include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `rg -n "int32_t|uint32_t|INT32|UINT32" tests/test_type_conversions.cpp tests/test_construction_copy.cpp tests/test_gmpxx_mkII.cpp tests/test_mpfrxx_mkII.cpp tests/test_mpf_math_functions.cpp`
+- `rg -n "normalized_mpf_scalar|is_supported_mpf_scalar|scalar_leaf" include/gmpfrxx_mkII/detail/type_traits.hpp include/gmpfrxx_mkII/detail/expr.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `cmake --build build -j --target test_mpf_basic test_mpf_math_functions`
+- `ctest --test-dir build -R 'test_mpf_basic|test_mpf_math_functions' --output-on-failure`
+
+Pass/fail result:
+- Initial scan found no remaining `unsigned long` counters in the original A2
+  functions, but did find related `log1p`/`atan`/theta series arithmetic.
+- Final `rg -n "for \\(unsigned long k|2ul \\* k|make_ui\\([^,]*\\*[^,]*," include/gmpfrxx_mkII/detail/math_mpf.hpp`: PASS, no matches.
+- `cmake --build build -j --target test_mpf_math_functions test_mpf_transcendent_functions`: PASS.
+- `ctest --test-dir build -R 'test_mpf_math_functions|test_mpf_transcendent_functions' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+- `git diff --check`: PASS.
+- 32-bit width scan: PASS after replacing the theta/log2 `q_exponent`
+  materialization with `make_u64`; remaining `static_cast<unsigned long>`
+  cases are bounded small `int` values in Spouge gamma terms.
+- `cmake --build build -j --target test_mpf_basic test_mpf_math_functions`: PASS.
+- `ctest --test-dir build -R 'test_mpf_basic|test_mpf_math_functions' --output-on-failure`: PASS, 2/2 tests passed.
+
+Known issues:
+- None.
+
 Post-phase string constructor base-policy parity:
 DONE
 

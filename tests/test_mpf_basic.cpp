@@ -255,6 +255,8 @@ int main()
         check_scalar(x, int{-1});
         check_scalar(x, std::numeric_limits<int>::max());
         check_scalar(x, std::numeric_limits<int>::min());
+        check_scalar(x, std::numeric_limits<std::int32_t>::min());
+        check_scalar(x, std::numeric_limits<std::uint32_t>::max());
         check_scalar(x, long{17});
         check_scalar(x, -19LL);
         check_scalar(x, std::numeric_limits<long long>::max());
@@ -269,6 +271,8 @@ int main()
         check_scalar(x, 1e+100);
 
         check_expression_scalar(x, y, 5LL);
+        check_expression_scalar(x, y, std::numeric_limits<std::int32_t>::min());
+        check_expression_scalar(x, y, std::numeric_limits<std::uint32_t>::max());
         check_expression_scalar(x, y, 0.5);
     }
 

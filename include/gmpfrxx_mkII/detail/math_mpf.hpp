@@ -92,6 +92,28 @@ inline std::uint64_t checked_taylor_counter_product(std::uint64_t lhs, std::uint
     return lhs * rhs;
 }
 
+inline std::uint64_t checked_taylor_counter_add(std::uint64_t lhs, std::uint64_t rhs)
+{
+    if (rhs > std::numeric_limits<std::uint64_t>::max() - lhs) {
+        throw std::overflow_error("MPF Taylor denominator exceeds uint64_t");
+    }
+    return lhs + rhs;
+}
+
+inline std::uint64_t checked_taylor_odd_denominator(std::uint64_t k)
+{
+    return checked_taylor_counter_add(checked_taylor_counter_product(std::uint64_t{2}, k), std::uint64_t{1});
+}
+
+inline mp_bitcnt_t checked_taylor_shift_count(mp_bitcnt_t scale, std::uint64_t factor)
+{
+    const std::uint64_t shift = checked_taylor_counter_product(static_cast<std::uint64_t>(scale), factor);
+    if (shift > static_cast<std::uint64_t>(std::numeric_limits<mp_bitcnt_t>::max())) {
+        throw std::overflow_error("MPF Taylor shift count exceeds mp_bitcnt_t");
+    }
+    return static_cast<mp_bitcnt_t>(shift);
+}
+
 inline void increment_taylor_counter(std::uint64_t& counter)
 {
     if (counter == std::numeric_limits<std::uint64_t>::max()) {
@@ -381,13 +403,16 @@ inline mpf_class theta3_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t 
     mpf_class term = make_ui(1, precision);
     mpf_div_2exp(term.mpf_data(), term.mpf_data(), q_exponent);
 
-    for (unsigned long k = 1;; ++k) {
+    std::uint64_t k = 1;
+    for (;;) {
         mpf_class contribution = mul_ui(term, 2ul, precision);
         if (mpf_cmp(contribution.mpf_data(), threshold.mpf_data()) < 0) {
             break;
         }
         sum = add(sum, contribution, precision);
-        mpf_div_2exp(term.mpf_data(), term.mpf_data(), q_exponent * (2ul * k + 1ul));
+        mpf_div_2exp(term.mpf_data(), term.mpf_data(),
+                     checked_taylor_shift_count(q_exponent, checked_taylor_odd_denominator(k)));
+        increment_taylor_counter(k);
     }
     return sum;
 }
@@ -400,13 +425,17 @@ inline mpf_class theta2_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t 
     mpf_class term = sqrt_prec(sqrt_prec(q, precision), precision);
     mpf_class sum = make_ui(0, precision);
 
-    for (unsigned long k = 0;; ++k) {
+    std::uint64_t k = 0;
+    for (;;) {
         mpf_class contribution = mul_ui(term, 2ul, precision);
         if (mpf_cmp(contribution.mpf_data(), threshold.mpf_data()) < 0) {
             break;
         }
         sum = add(sum, contribution, precision);
-        mpf_div_2exp(term.mpf_data(), term.mpf_data(), q_exponent * (2ul * k + 2ul));
+        const std::uint64_t factor =
+            checked_taylor_counter_add(checked_taylor_counter_product(std::uint64_t{2}, k), std::uint64_t{2});
+        mpf_div_2exp(term.mpf_data(), term.mpf_data(), checked_taylor_shift_count(q_exponent, factor));
+        increment_taylor_counter(k);
     }
     return sum;
 }
@@ -420,7 +449,7 @@ inline mpf_class compute_log_two_theta_agm(mp_bitcnt_t target_precision)
     mpf_class theta2 = theta2_from_power_of_two_q(q_exponent, work);
     mpf_class theta3 = theta3_from_power_of_two_q(q_exponent, work);
     mpf_class agm_value = agm_converged(sqr(theta2, work), sqr(theta3, work), work);
-    mpf_class q_scale = make_ui(static_cast<unsigned long>(q_exponent), work);
+    mpf_class q_scale = make_u64(static_cast<std::uint64_t>(q_exponent), work);
     mpf_class denominator = mul(q_scale, agm_value, work);
     return set_prec_copy(div(pi(work), denominator, work), target);
 }
@@ -474,16 +503,18 @@ inline mpf_class log1p_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
     mpf_class sum = set_prec_copy(x, precision);
     mpf_class power = set_prec_copy(x, precision);
 
-    for (unsigned long k = 2;; ++k) {
+    std::uint64_t k = 2;
+    for (;;) {
         power = mul(power, x, precision);
-        mpf_class term = div(power, make_ui(k, precision), precision);
-        if ((k & 1ul) == 0ul) {
+        mpf_class term = div(power, make_u64(k, precision), precision);
+        if ((k & std::uint64_t{1}) == std::uint64_t{0}) {
             term = sub(make_ui(0, precision), term, precision);
         }
         sum = add(sum, term, precision);
         if (mpf_cmp(abs_prec(term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
             break;
         }
+        increment_taylor_counter(k);
     }
     return sum;
 }
@@ -500,14 +531,16 @@ inline mpf_class log1p_atanh_series(const mpf_class& x, mp_bitcnt_t precision)
     mpf_class sum = set_prec_copy(y, precision);
     mpf_class term = set_prec_copy(y, precision);
 
-    for (unsigned long k = 1;; ++k) {
+    std::uint64_t k = 1;
+    for (;;) {
         term = mul(term, y2, precision);
-        const unsigned long denominator = 2ul * k + 1ul;
-        mpf_class contribution = div(term, make_ui(denominator, precision), precision);
+        const std::uint64_t denominator = checked_taylor_odd_denominator(k);
+        mpf_class contribution = div(term, make_u64(denominator, precision), precision);
         sum = add(sum, contribution, precision);
         if (mpf_cmp(abs_prec(contribution, precision).mpf_data(), epsilon.mpf_data()) < 0) {
             break;
         }
+        increment_taylor_counter(k);
     }
     return mul_ui(sum, 2ul, precision);
 }
@@ -840,7 +873,7 @@ inline sincos_result sincos_taylor_small(const mpf_class& x, mp_bitcnt_t precisi
     std::uint64_t k = 1;
     for (;;) {
         const std::uint64_t sin_den1 = checked_taylor_counter_product(std::uint64_t{2}, k);
-        const std::uint64_t sin_den2 = sin_den1 + 1u;
+        const std::uint64_t sin_den2 = checked_taylor_counter_add(sin_den1, std::uint64_t{1});
         const std::uint64_t sin_den = checked_taylor_counter_product(sin_den1, sin_den2);
         sin_term = div(mul(sin_term, x2, precision), make_u64(sin_den, precision), precision);
         sin_term = sub(make_ui(0, precision), sin_term, precision);
@@ -995,16 +1028,18 @@ inline mpf_class atan_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
     mpf_class sum = set_prec_copy(x, precision);
     mpf_class power = set_prec_copy(x, precision);
 
-    for (unsigned long k = 1;; ++k) {
+    std::uint64_t k = 1;
+    for (;;) {
         power = mul(power, x2, precision);
-        mpf_class contribution = div(power, make_ui(2ul * k + 1ul, precision), precision);
-        if ((k & 1ul) == 1ul) {
+        mpf_class contribution = div(power, make_u64(checked_taylor_odd_denominator(k), precision), precision);
+        if ((k & std::uint64_t{1}) == std::uint64_t{1}) {
             contribution = sub(make_ui(0, precision), contribution, precision);
         }
         sum = add(sum, contribution, precision);
         if (mpf_cmp(abs_prec(contribution, precision).mpf_data(), epsilon.mpf_data()) < 0) {
             break;
         }
+        increment_taylor_counter(k);
     }
     return sum;
 }
