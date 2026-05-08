@@ -26,6 +26,7 @@
 # SUCH DAMAGE.
 
 import argparse
+import math
 import pathlib
 import re
 import sys
@@ -109,6 +110,40 @@ def select_rows(rows, openmp):
     return [row for row in rows if is_openmp_variant(row) == openmp]
 
 
+def aggregate_rows(rows):
+    grouped = {}
+    order = []
+    for row in rows:
+        key = (row["kernel"], row["variant"])
+        if key not in grouped:
+            grouped[key] = {
+                "kernel": row["kernel"],
+                "variant": row["variant"],
+                "mflops_values": [],
+            }
+            order.append(key)
+        grouped[key]["mflops_values"].append(row["mflops"])
+
+    aggregated = []
+    for key in order:
+        row = grouped[key]
+        values = row["mflops_values"]
+        mean = sum(values) / len(values)
+        if len(values) > 1:
+            variance = sum((value - mean) ** 2 for value in values) / (len(values) - 1)
+            stdev = math.sqrt(variance)
+        else:
+            stdev = 0.0
+        aggregated.append({
+            "kernel": row["kernel"],
+            "variant": row["variant"],
+            "mflops": mean,
+            "mflops_stdev": stdev,
+            "samples": len(values),
+        })
+    return aggregated
+
+
 def plot_kernel(rows, kernel, title_suffix, output_base, group_label):
     kernel_rows = [row for row in rows if row["kernel"] == kernel]
     if not kernel_rows:
@@ -116,21 +151,23 @@ def plot_kernel(rows, kernel, title_suffix, output_base, group_label):
 
     labels = [row["variant"] for row in kernel_rows]
     values = [row["mflops"] for row in kernel_rows]
+    errors = [row["mflops_stdev"] for row in kernel_rows]
     colors = [variant_color(row["variant"]) for row in kernel_rows]
+    top = max(value + error for value, error in zip(values, errors))
 
     plt.figure(figsize=(max(9, 0.72 * len(labels)), 6))
-    bars = plt.bar(labels, values, color=colors)
+    bars = plt.bar(labels, values, color=colors, yerr=errors, capsize=4)
     plt.ylabel("MFLOPS", fontsize=13, fontweight="bold")
     plt.title(f"{kernel} {group_label} benchmark {title_suffix}",
               fontsize=13, fontweight="bold")
     plt.xticks(rotation=20, ha="right", fontsize=11, fontweight="bold")
     plt.yticks(fontsize=11, fontweight="bold")
-    plt.ylim(0, max(values) * 1.15 if max(values) > 0 else 1)
+    plt.ylim(0, top * 1.18 if top > 0 else 1)
 
-    for bar, value in zip(bars, values):
+    for bar, value, error in zip(bars, values, errors):
         plt.text(
             bar.get_x() + bar.get_width() / 2,
-            bar.get_height(),
+            bar.get_height() + error,
             f"{value:.2f}",
             ha="center",
             va="bottom",
@@ -140,7 +177,6 @@ def plot_kernel(rows, kernel, title_suffix, output_base, group_label):
 
     plt.tight_layout()
     plt.savefig(f"{output_base}_{kernel}.png", dpi=150)
-    plt.savefig(f"{output_base}_{kernel}.pdf")
     plt.close()
 
 
@@ -150,21 +186,23 @@ def plot_summary(rows, title_suffix, output_base, group_label):
 
     labels = [f"{row['kernel']}\n{row['variant']}" for row in rows]
     values = [row["mflops"] for row in rows]
+    errors = [row["mflops_stdev"] for row in rows]
     colors = [variant_color(row["variant"]) for row in rows]
+    top = max(value + error for value, error in zip(values, errors))
 
     plt.figure(figsize=(max(12, 0.58 * len(labels)), 7))
-    bars = plt.bar(labels, values, color=colors)
+    bars = plt.bar(labels, values, color=colors, yerr=errors, capsize=3)
 
     plt.ylabel("MFLOPS", fontsize=13, fontweight="bold")
     plt.title(f"GMP {group_label} benchmark summary {title_suffix}", fontsize=13,
               fontweight="bold")
     plt.xticks(rotation=65, ha="right", fontsize=8, fontweight="bold")
     plt.yticks(fontsize=11, fontweight="bold")
-    plt.ylim(0, max(values) * 1.15 if max(values) > 0 else 1)
-    for bar, value in zip(bars, values):
+    plt.ylim(0, top * 1.18 if top > 0 else 1)
+    for bar, value, error in zip(bars, values, errors):
         plt.text(
             bar.get_x() + bar.get_width() / 2,
-            bar.get_height(),
+            bar.get_height() + error,
             f"{value:.1f}",
             ha="center",
             va="bottom",
@@ -173,7 +211,6 @@ def plot_summary(rows, title_suffix, output_base, group_label):
         )
     plt.tight_layout()
     plt.savefig(f"{output_base}_summary.png", dpi=150)
-    plt.savefig(f"{output_base}_summary.pdf")
     plt.close()
 
 
@@ -191,7 +228,9 @@ def main():
             continue
 
         precision = params.get("precision", "unknown")
-        title_suffix = f"on {cpu_name} (prec={precision})"
+        repeat = params.get("repeat")
+        repeat_suffix = f", n={repeat}" if repeat else ""
+        title_suffix = f"on {cpu_name} (prec={precision}{repeat_suffix})"
         output_base = args.output_dir / (
             f"{log.stem}_{filename_token(os_name)}_{filename_token(cpu_name)}"
         )
@@ -200,7 +239,7 @@ def main():
             (False, "serial", "serial"),
             (True, "OpenMP", "openmp"),
         ]:
-            group_rows = select_rows(rows, openmp)
+            group_rows = aggregate_rows(select_rows(rows, openmp))
             group_base = pathlib.Path(f"{output_base}_{suffix}")
             plot_summary(group_rows, title_suffix, group_base, group_label)
             for kernel in ["Rdot", "Raxpy", "Rgemv", "Rgemm"]:

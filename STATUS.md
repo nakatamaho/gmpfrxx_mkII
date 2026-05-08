@@ -2045,6 +2045,59 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase benchmark repeat aggregation and error bars:
+DONE
+
+Implemented features:
+- Added a repeat-count argument to `benchmarks/common/run_benchmarks.sh`.
+  The default repeat count is 10, and each benchmark executable invocation is
+  recorded as `RUN i/n` under the same `COMMAND` label.
+- Updated `benchmarks/common/plot.py` to aggregate repeated `MFLOPS` samples by
+  `(kernel, variant)`, plot the sample mean, and draw sample standard deviation
+  error bars.
+- Kept plot output PNG-only in the shared plotter, matching the curated
+  benchmark-artifact policy.
+- Updated `benchmarks/README.md` to document the repeat-count argument,
+  error-bar semantics, and PNG-only output.
+- Generated a new 10-repeat GMP benchmark artifact set under
+  `benchmarks/gmp/results_raw/20260508_fixed_precision_fastpath_repeat10/`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/common/plot.py`
+- `benchmarks/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `python3 benchmarks/common/plot.py benchmarks/gmp/results_raw/20260508_fixed_precision_fastpath/benchmark_20260508_132306.log --output-dir /tmp/gmpfrxx_plot_smoke`
+- `benchmarks/common/run_benchmarks.sh build_bench_release 512 1000000 1000000 300 300 80 80 80 benchmarks/gmp/results_raw/20260508_fixed_precision_fastpath_repeat10 10`
+- `find benchmarks/gmp/results_raw/20260508_fixed_precision_fastpath_repeat10 -maxdepth 1 -type f | sort`
+- `find benchmarks/gmp/results_raw/20260508_fixed_precision_fastpath_repeat10 -type f -name '*.pdf'`
+- `rg -n "BENCHMARK_PARAMS|RUN 10/10|MFLOPS" benchmarks/gmp/results_raw/20260508_fixed_precision_fastpath_repeat10/*.log`
+- `bash -n benchmarks/common/run_benchmarks.sh`
+- `python3 -m py_compile benchmarks/common/plot.py`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Existing-log plot smoke: PASS.
+- 10-repeat benchmark run: PASS; generated 1 raw log and 10 PNG plots.
+- PDF artifact check: PASS, no PDFs in the new repeat10 result directory.
+- `bash -n benchmarks/common/run_benchmarks.sh`: PASS.
+- `python3 -m py_compile benchmarks/common/plot.py`: PASS.
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 142/142 tests passed.
+
+Known issues:
+- The benchmark result set is intentionally machine- and load-dependent.  The
+  error bars show observed jitter for this run; they are not a cross-machine
+  performance guarantee.
+
 Post-phase MPF exact rational conversion temporary reduction:
 DONE
 

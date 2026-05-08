@@ -41,6 +41,7 @@ rgemm_m="${7:-500}"
 rgemm_k="${8:-500}"
 rgemm_n="${9:-500}"
 output_dir="${10:-${benchmark_root}/gmp/results_raw}"
+repeat_count="${11:-10}"
 
 mkdir -p "${output_dir}"
 log_file="${output_dir}/benchmark_$(date +%Y%m%d_%H%M%S).log"
@@ -65,9 +66,12 @@ run_one() {
         exit 1
     fi
 
-    echo "COMMAND ${label} ${exe} $*"
-    /usr/bin/time -f "WALL_SECONDS %e" "${exe}" "$@"
-    echo
+    for ((run = 1; run <= repeat_count; ++run)); do
+        echo "COMMAND ${label} ${exe} $*"
+        echo "RUN ${run}/${repeat_count}"
+        /usr/bin/time -f "WALL_SECONDS %e" "${exe}" "$@"
+        echo
+    done
 }
 
 run_variants() {
@@ -178,7 +182,7 @@ run_variants() {
     else
         uname -m
     fi
-    echo "BENCHMARK_PARAMS precision=${precision} rdot_n=${rdot_n} raxpy_n=${raxpy_n} rgemv_m=${rgemv_m} rgemv_n=${rgemv_n} rgemm_m=${rgemm_m} rgemm_k=${rgemm_k} rgemm_n=${rgemm_n}"
+    echo "BENCHMARK_PARAMS precision=${precision} rdot_n=${rdot_n} raxpy_n=${raxpy_n} rgemv_m=${rgemv_m} rgemv_n=${rgemv_n} rgemm_m=${rgemm_m} rgemm_k=${rgemm_k} rgemm_n=${rgemm_n} repeat=${repeat_count}"
     echo
 
     run_variants Rdot gmp/00_Rdot "${rdot_n}" "${precision}"

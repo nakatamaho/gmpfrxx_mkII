@@ -23,20 +23,25 @@ Run the full sample dimensions inherited from `go.sh`:
 ```bash
 benchmarks/common/run_benchmarks.sh build_bench_release 512 \
     100000000 100000000 4000 4000 500 500 500 \
-    benchmarks/gmp/results_raw/Linux_Ryzen_3970X_32-Core
+    benchmarks/gmp/results_raw/Linux_Ryzen_3970X_32-Core 10
 ```
 
-The plotter writes serial and OpenMP graphs separately:
+The final argument is the repeat count.  The default is `10`; the plotter
+aggregates repeated `MFLOPS` samples by variant and draws sample standard
+deviation error bars.
 
-- `*_serial_summary.{png,pdf}` and `*_serial_<kernel>.{png,pdf}`
-- `*_openmp_summary.{png,pdf}` and `*_openmp_<kernel>.{png,pdf}`
+The plotter writes serial and OpenMP PNG graphs separately:
+
+- `*_serial_summary.png` and `*_serial_<kernel>.png`
+- `*_openmp_summary.png` and `*_openmp_<kernel>.png`
 
 The raw log is the authoritative result.  The plotted `MFLOPS` values measure
 the timed kernel body, not allocation, random initialization, or verification.
 Use `WALL_SECONDS` in the log when total executable time matters.
 
-Generated result directories such as `benchmarks/gmp/results_raw/` are ignored
-by Git.
+Generated result directories such as `benchmarks/gmp/results_raw/` are kept
+available for curated commits.  Check the staged file list before committing a
+large benchmark run.
 
 GMP benchmark directories:
 
