@@ -50,6 +50,33 @@
 namespace gmpfrxx_mkII {
 namespace detail {
 
+class gmp_randstate_holder {
+public:
+    gmp_randstate_holder() noexcept = default;
+
+    ~gmp_randstate_holder()
+    {
+        if (initialized_) {
+            gmp_randclear(state);
+        }
+    }
+
+    gmp_randstate_holder(const gmp_randstate_holder&) = delete;
+    gmp_randstate_holder& operator=(const gmp_randstate_holder&) = delete;
+    gmp_randstate_holder(gmp_randstate_holder&&) = delete;
+    gmp_randstate_holder& operator=(gmp_randstate_holder&&) = delete;
+
+    void mark_initialized() noexcept
+    {
+        initialized_ = true;
+    }
+
+    gmp_randstate_t state;
+
+private:
+    bool initialized_ = false;
+};
+
 class gmp_allocated_string {
 public:
     explicit gmp_allocated_string(char* value) noexcept : value_(value) {}
@@ -1176,6 +1203,26 @@ inline bool operator!=(const mpz_class& lhs, const mpz_class& rhs)
     return !(lhs == rhs);
 }
 
+inline bool operator<(const mpz_class& lhs, const mpz_class& rhs)
+{
+    return mpz_cmp(lhs.mpz_data(), rhs.mpz_data()) < 0;
+}
+
+inline bool operator<=(const mpz_class& lhs, const mpz_class& rhs)
+{
+    return mpz_cmp(lhs.mpz_data(), rhs.mpz_data()) <= 0;
+}
+
+inline bool operator>(const mpz_class& lhs, const mpz_class& rhs)
+{
+    return mpz_cmp(lhs.mpz_data(), rhs.mpz_data()) > 0;
+}
+
+inline bool operator>=(const mpz_class& lhs, const mpz_class& rhs)
+{
+    return mpz_cmp(lhs.mpz_data(), rhs.mpz_data()) >= 0;
+}
+
 inline bool operator==(const mpq_class& lhs, const mpq_class& rhs)
 {
     return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) == 0;
@@ -1184,6 +1231,26 @@ inline bool operator==(const mpq_class& lhs, const mpq_class& rhs)
 inline bool operator!=(const mpq_class& lhs, const mpq_class& rhs)
 {
     return !(lhs == rhs);
+}
+
+inline bool operator<(const mpq_class& lhs, const mpq_class& rhs)
+{
+    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) < 0;
+}
+
+inline bool operator<=(const mpq_class& lhs, const mpq_class& rhs)
+{
+    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) <= 0;
+}
+
+inline bool operator>(const mpq_class& lhs, const mpq_class& rhs)
+{
+    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) > 0;
+}
+
+inline bool operator>=(const mpq_class& lhs, const mpq_class& rhs)
+{
+    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) >= 0;
 }
 
 inline mpz_class::mpz_class(const mpq_class& value)
@@ -1488,6 +1555,14 @@ template <typename Lhs, typename Rhs>
 inline constexpr bool is_zq_comparison_pair_v =
     is_zq_comparison_pair<Lhs, Rhs>::value;
 
+template <typename T>
+struct is_zq_direct_integral_comparison_scalar
+    : std::bool_constant<is_supported_expression_integral_v<T>> {};
+
+template <typename T>
+inline constexpr bool is_zq_direct_integral_comparison_scalar_v =
+    is_zq_direct_integral_comparison_scalar<std::remove_cv_t<T>>::value;
+
 inline object_leaf<gmpxx::mpz_class> make_zq_operand(const gmpxx::mpz_class& value)
 {
     return object_leaf<gmpxx::mpz_class>(value);
@@ -1551,48 +1626,194 @@ inline gmpxx::mpq_class zq_comparison_value(T value)
     }
 }
 
-template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
-inline int cmp(Lhs&& lhs, Rhs&& rhs)
+inline int cmp(const gmpxx::mpz_class& lhs, const gmpxx::mpz_class& rhs)
 {
-    const gmpxx::mpq_class left = zq_comparison_value(std::forward<Lhs>(lhs));
-    const gmpxx::mpq_class right = zq_comparison_value(std::forward<Rhs>(rhs));
+    return mpz_cmp(lhs.mpz_data(), rhs.mpz_data());
+}
+
+inline int cmp(const gmpxx::mpq_class& lhs, const gmpxx::mpq_class& rhs)
+{
+    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data());
+}
+
+inline int cmp(const gmpxx::mpq_class& lhs, const gmpxx::mpz_class& rhs)
+{
+    return mpq_cmp_z(lhs.mpq_data(), rhs.mpz_data());
+}
+
+inline int cmp(const gmpxx::mpz_class& lhs, const gmpxx::mpq_class& rhs)
+{
+    return -mpq_cmp_z(rhs.mpq_data(), lhs.mpz_data());
+}
+
+inline int zq_cmp_mpz_unsigned_long(const mpz_t lhs, unsigned long rhs)
+{
+    return mpz_cmp_ui(lhs, rhs);
+}
+
+inline int zq_cmp_mpz_signed_long(const mpz_t lhs, long rhs)
+{
+    return mpz_cmp_si(lhs, rhs);
+}
+
+template <typename T, std::enable_if_t<is_zq_direct_integral_comparison_scalar_v<T>, int> = 0>
+inline int zq_cmp_mpz_integral(const mpz_t lhs, T rhs)
+{
+    using value_type = std::remove_cv_t<T>;
+    if constexpr (std::is_signed_v<value_type>) {
+        if (rhs < 0) {
+            if constexpr (sizeof(value_type) <= sizeof(long)) {
+                return zq_cmp_mpz_signed_long(lhs, static_cast<long>(rhs));
+            } else {
+                if (rhs >= static_cast<value_type>(std::numeric_limits<long>::min())) {
+                    return zq_cmp_mpz_signed_long(lhs, static_cast<long>(rhs));
+                }
+                const gmpxx::mpz_class rhs_z(rhs);
+                return mpz_cmp(lhs, rhs_z.mpz_data());
+            }
+        }
+    }
+
+    using unsigned_type = std::make_unsigned_t<value_type>;
+    const auto magnitude = static_cast<unsigned_type>(rhs);
+    if constexpr (sizeof(unsigned_type) <= sizeof(unsigned long)) {
+        return zq_cmp_mpz_unsigned_long(lhs, static_cast<unsigned long>(magnitude));
+    } else {
+        if (magnitude <= static_cast<unsigned_type>(std::numeric_limits<unsigned long>::max())) {
+            return zq_cmp_mpz_unsigned_long(lhs, static_cast<unsigned long>(magnitude));
+        }
+        const gmpxx::mpz_class rhs_z(rhs);
+        return mpz_cmp(lhs, rhs_z.mpz_data());
+    }
+}
+
+template <typename T, std::enable_if_t<is_zq_direct_integral_comparison_scalar_v<T>, int> = 0>
+inline int zq_cmp_mpq_integral(const mpq_t lhs, T rhs)
+{
+    using value_type = std::remove_cv_t<T>;
+    if constexpr (std::is_signed_v<value_type>) {
+        if (rhs < 0) {
+            if constexpr (sizeof(value_type) <= sizeof(long)) {
+                return mpq_cmp_si(lhs, static_cast<long>(rhs), 1UL);
+            } else {
+                if (rhs >= static_cast<value_type>(std::numeric_limits<long>::min())) {
+                    return mpq_cmp_si(lhs, static_cast<long>(rhs), 1UL);
+                }
+                const gmpxx::mpz_class rhs_z(rhs);
+                return mpq_cmp_z(lhs, rhs_z.mpz_data());
+            }
+        }
+    }
+
+    using unsigned_type = std::make_unsigned_t<value_type>;
+    const auto magnitude = static_cast<unsigned_type>(rhs);
+    if constexpr (sizeof(unsigned_type) <= sizeof(unsigned long)) {
+        return mpq_cmp_ui(lhs, static_cast<unsigned long>(magnitude), 1UL);
+    } else {
+        if (magnitude <= static_cast<unsigned_type>(std::numeric_limits<unsigned long>::max())) {
+            return mpq_cmp_ui(lhs, static_cast<unsigned long>(magnitude), 1UL);
+        }
+        const gmpxx::mpz_class rhs_z(rhs);
+        return mpq_cmp_z(lhs, rhs_z.mpz_data());
+    }
+}
+
+inline int cmp(const gmpxx::mpz_class& lhs, double rhs)
+{
+    return mpz_cmp_d(lhs.mpz_data(), rhs);
+}
+
+inline int cmp(double lhs, const gmpxx::mpz_class& rhs)
+{
+    return -mpz_cmp_d(rhs.mpz_data(), lhs);
+}
+
+template <
+    typename T,
+    std::enable_if_t<std::is_floating_point_v<std::remove_cv_t<T>> &&
+                         !std::is_same_v<std::remove_cv_t<T>, long double>,
+                     int> = 0>
+inline int cmp(const gmpxx::mpz_class& lhs, T rhs)
+{
+    return mpz_cmp_d(lhs.mpz_data(), static_cast<double>(rhs));
+}
+
+template <
+    typename T,
+    std::enable_if_t<std::is_floating_point_v<std::remove_cv_t<T>> &&
+                         !std::is_same_v<std::remove_cv_t<T>, long double>,
+                     int> = 0>
+inline int cmp(T lhs, const gmpxx::mpz_class& rhs)
+{
+    return -mpz_cmp_d(rhs.mpz_data(), static_cast<double>(lhs));
+}
+
+template <typename T, std::enable_if_t<is_zq_direct_integral_comparison_scalar_v<T>, int> = 0>
+inline int cmp(const gmpxx::mpz_class& lhs, T rhs)
+{
+    return zq_cmp_mpz_integral(lhs.mpz_data(), rhs);
+}
+
+template <typename T, std::enable_if_t<is_zq_direct_integral_comparison_scalar_v<T>, int> = 0>
+inline int cmp(T lhs, const gmpxx::mpz_class& rhs)
+{
+    return -zq_cmp_mpz_integral(rhs.mpz_data(), lhs);
+}
+
+template <typename T, std::enable_if_t<is_zq_direct_integral_comparison_scalar_v<T>, int> = 0>
+inline int cmp(const gmpxx::mpq_class& lhs, T rhs)
+{
+    return zq_cmp_mpq_integral(lhs.mpq_data(), rhs);
+}
+
+template <typename T, std::enable_if_t<is_zq_direct_integral_comparison_scalar_v<T>, int> = 0>
+inline int cmp(T lhs, const gmpxx::mpq_class& rhs)
+{
+    return -zq_cmp_mpq_integral(rhs.mpq_data(), lhs);
+}
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
+inline int cmp(const Lhs& lhs, const Rhs& rhs)
+{
+    const gmpxx::mpq_class left = zq_comparison_value(lhs);
+    const gmpxx::mpq_class right = zq_comparison_value(rhs);
     return mpq_cmp(left.mpq_data(), right.mpq_data());
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
-inline bool operator==(Lhs&& lhs, Rhs&& rhs)
+inline bool operator==(const Lhs& lhs, const Rhs& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) == 0;
+    return cmp(lhs, rhs) == 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
-inline bool operator!=(Lhs&& lhs, Rhs&& rhs)
+inline bool operator!=(const Lhs& lhs, const Rhs& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) != 0;
+    return cmp(lhs, rhs) != 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
-inline bool operator<(Lhs&& lhs, Rhs&& rhs)
+inline bool operator<(const Lhs& lhs, const Rhs& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) < 0;
+    return cmp(lhs, rhs) < 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
-inline bool operator<=(Lhs&& lhs, Rhs&& rhs)
+inline bool operator<=(const Lhs& lhs, const Rhs& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) <= 0;
+    return cmp(lhs, rhs) <= 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
-inline bool operator>(Lhs&& lhs, Rhs&& rhs)
+inline bool operator>(const Lhs& lhs, const Rhs& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) > 0;
+    return cmp(lhs, rhs) > 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
-inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
+inline bool operator>=(const Lhs& lhs, const Rhs& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) >= 0;
+    return cmp(lhs, rhs) >= 0;
 }
 
 template <typename Op, typename LhsResult, typename RhsResult>
@@ -1617,6 +1838,32 @@ inline unsigned long zq_shift_count_from_mpz(const mpz_t value)
     }
     return mpz_get_ui(value);
 }
+
+template <typename T>
+unsigned long zq_shift_count_from_scalar(T value)
+{
+    static_assert(std::is_integral_v<T>, "shift count scalar must be integral");
+    if constexpr (std::is_signed_v<T>) {
+        if (value < 0) {
+            throw std::overflow_error("shift count does not fit unsigned long");
+        }
+    }
+    using unsigned_type = std::make_unsigned_t<T>;
+    const auto magnitude = static_cast<unsigned_type>(value);
+    if (magnitude > static_cast<unsigned_type>(std::numeric_limits<unsigned long>::max())) {
+        throw std::overflow_error("shift count does not fit unsigned long");
+    }
+    return static_cast<unsigned long>(magnitude);
+}
+
+template <typename T>
+struct is_zq_shift_scalar_leaf : std::false_type {};
+
+template <typename T>
+struct is_zq_shift_scalar_leaf<scalar_leaf<T, gmpxx::mpz_class>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_zq_shift_scalar_leaf_v = is_zq_shift_scalar_leaf<std::decay_t<T>>::value;
 
 inline void mpz_evaluate(mpz_t dest, const object_leaf<gmpxx::mpz_class>& expr)
 {
@@ -2159,15 +2406,25 @@ template <typename Expr, typename>
 mpz_class::mpz_class(const Expr& expr)
 {
     mpz_init(value_);
-    gmpfrxx_mkII::detail::mpz_evaluate(value_, expr);
+    try {
+        gmpfrxx_mkII::detail::mpz_evaluate(value_, expr);
+    } catch (...) {
+        mpz_clear(value_);
+        throw;
+    }
 }
 
 template <typename Expr, typename, typename>
 mpz_class::mpz_class(const Expr& expr)
 {
     mpz_init(value_);
-    mpq_class temp(expr);
-    mpz_tdiv_q(value_, mpq_numref(temp.mpq_data()), mpq_denref(temp.mpq_data()));
+    try {
+        mpq_class temp(expr);
+        mpz_tdiv_q(value_, mpq_numref(temp.mpq_data()), mpq_denref(temp.mpq_data()));
+    } catch (...) {
+        mpz_clear(value_);
+        throw;
+    }
 }
 
 template <typename Expr, typename>
@@ -2186,8 +2443,13 @@ template <typename Expr, typename>
 mpq_class::mpq_class(const Expr& expr)
 {
     mpq_init(value_);
-    gmpfrxx_mkII::detail::mpq_evaluate(value_, expr);
-    mpq_canonicalize(value_);
+    try {
+        gmpfrxx_mkII::detail::mpq_evaluate(value_, expr);
+        mpq_canonicalize(value_);
+    } catch (...) {
+        mpq_clear(value_);
+        throw;
+    }
 }
 
 template <typename Expr, typename>

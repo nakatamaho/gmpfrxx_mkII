@@ -118,5 +118,53 @@ int main()
     assert(qdst == qexpected);
     assert(add_chain_allocations == 0);
 
+    alloc_count = 0;
+    assert(zb < zc);
+    assert(zc > zb);
+    assert(zb <= zb);
+    assert(zc >= zb);
+    assert(cmp(zb, zc) < 0);
+    const int mpz_order_allocations = alloc_count.load();
+    assert(mpz_order_allocations == 0);
+
+    alloc_count = 0;
+    assert(zc > 20);
+    assert(20 < zc);
+    assert(zc != 20);
+    assert(cmp(zc, 20) > 0);
+    assert(cmp(20, zc) < 0);
+    const int mpz_scalar_compare_allocations = alloc_count.load();
+    assert(mpz_scalar_compare_allocations == 0);
+
+    alloc_count = 0;
+    assert(zc > 20.5);
+    assert(20.5 < zc);
+    assert(cmp(zc, 20.5) > 0);
+    assert(cmp(20.5, zc) < 0);
+    const int mpz_double_compare_allocations = alloc_count.load();
+    assert(mpz_double_compare_allocations == 0);
+
+    mpfrxx::mpq_class qz(zb);
+    mpfrxx::mpq_class qhalf("3/2");
+
+    alloc_count = 0;
+    assert(qz == zb);
+    assert(zb == qz);
+    assert(qhalf < zb);
+    assert(zb > qhalf);
+    assert(cmp(qz, zb) == 0);
+    assert(cmp(zb, qz) == 0);
+    const int mpz_mpq_compare_allocations = alloc_count.load();
+    assert(mpz_mpq_compare_allocations == 0);
+
+    alloc_count = 0;
+    assert(qhalf > 1);
+    assert(1 < qhalf);
+    assert(qhalf != 2);
+    assert(cmp(qhalf, 1) > 0);
+    assert(cmp(1, qhalf) < 0);
+    const int mpq_scalar_compare_allocations = alloc_count.load();
+    assert(mpq_scalar_compare_allocations == 0);
+
     return 0;
 }

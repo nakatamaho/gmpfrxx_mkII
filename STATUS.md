@@ -1,3 +1,209 @@
+Post-phase expression-constructor exception safety and random expression lifetime:
+DONE
+
+Implemented features:
+- Added clear-on-throw guards to expression-template constructors that own raw
+  GMP/MPFR/MPC storage:
+  - `gmpxx::mpz_class(const Expr&)`
+  - `gmpxx::mpq_class(const Expr&)`
+  - `gmpxx::mpf_class(const Expr&)`
+  - `gmpxx::mpf_class(const Expr&, mp_bitcnt_t)`
+  - `mpfrxx::mpfr_class(const Expr&)`
+  - `mpfrxx::mpfr_class(const Expr&, mpfr_prec_t)`
+  - `mpfrxx::mpc_class(const Expr&)`
+- Added the same guard to the MPF constructor path that materializes exact Z/Q
+  expression results before assigning them into the initialized `mpf_t`.
+- Left `gmpxx::mpfc_class(const Expr&)` unchanged because it owns two
+  `mpf_class` members; if its constructor body throws, the already-constructed
+  member objects are destroyed by C++ object construction unwinding.
+- Reworked `gmpxx::gmp_randclass` and `mpfrxx::gmp_randclass` to hold their GMP
+  random state through a shared `gmp_randstate_holder`.
+- Reworked `random_mpf_expr` and `random_mpfr_expr` to hold a `shared_ptr` to
+  that state holder instead of a raw `gmp_randclass*`, so random expressions
+  remain valid even if the originating `gmp_randclass` object has already gone
+  out of scope.
+
+Missing features:
+- No synthetic throwing GMP allocator regression was added.  The constructors
+  now use the standard `try { evaluate; } catch (...) { clear; throw; }`
+  pattern around initialized raw storage.
+
+Tests added:
+- Extended `tests/test_random.cpp` with a regression where a
+  `random_mpf_expr` outlives the local `gmp_randclass` that produced it.
+- Extended `tests/test_mpfr_random.cpp` with the same lifetime regression for
+  `random_mpfr_expr`.
+
+Exact commands run:
+- `rg -n "class\\(const .*Expr|template <.*Expr|mp[czqfr]*_class\\(.*expr|_evaluate\\(value_|random_.*expr|get_f\\(|get_z_bits|get_z_range|gmp_randclass|state_" include/gmpfrxx_mkII/detail include tests`
+- `sed -n '900,930p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '752,790p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1908,1950p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '2160,2202p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '2360,2495p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1080,1198p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1190,1395p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `cmake --build build -j --target test_random test_mpfr_random test_mpf_fixed_precision_materialization test_mpfr_fixed_precision_materialization test_gmpxx_mkII test_mpfrxx_mkII`
+- `ctest --test-dir build -R 'test_random|test_mpfr_random|test_mpf_fixed_precision_materialization|test_mpfr_fixed_precision_materialization|test_gmpxx_mkII|test_mpfrxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_random test_mpfr_random test_mpf_fixed_precision_materialization test_mpfr_fixed_precision_materialization test_gmpxx_mkII test_mpfrxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_random|test_mpfr_random|test_mpf_fixed_precision_materialization|test_mpfr_fixed_precision_materialization|test_gmpxx_mkII|test_mpfrxx_mkII' --output-on-failure`: PASS, 6/6 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
+Post-phase MPC stream output component materialization:
+DONE
+
+Implemented features:
+- Removed the two `mpfr_class` temporaries from `mpc_class` stream insertion.
+- `operator<<(std::ostream&, const mpc_class&)` now formats
+  `mpc_realref(value.mpc_data())` and `mpc_imagref(value.mpc_data())` directly
+  as `mpfr_srcptr` components.
+- Kept the existing MPFR stream formatting policy by reusing
+  `mpfr_stream_text`, preserving fixed/scientific/defaultfloat, precision,
+  uppercase, showpoint, showpos, and locale decimal-point behavior.
+- Kept MPC complex output width behavior unchanged: stream width is consumed
+  by the complex value as a whole and is not applied separately to the real
+  and imaginary components.
+- Removed the now-unused `<sstream>` include from `mpc_impl.hpp`.
+
+Missing features:
+- `mpc_get_str` is still not used for ostream output because it does not match
+  the current iostream formatting surface without additional formatting
+  reconstruction.
+
+Tests added:
+- No new test file was needed.  Existing `tests/test_mpc_io.cpp` already covers
+  default, scientific, showpos/fixed, expression output, and locale decimal
+  output for MPC streams.
+
+Exact commands run:
+- `rg -n "operator<<\\(std::ostream&.*mpc|mpc_get_str|mpfr_class\\(mpc_realref|print_mpc|mpc_realref\\(value" include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpc_io.cpp tests/test_mpfr_string_io.cpp`
+- `sed -n '1288,1325p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1040,1128p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `cmake --build build -j --target test_mpc_io test_mpc_basic test_mpfr_string_io`
+- `ctest --test-dir build -R 'test_mpc_io|test_mpc_basic|test_mpfr_string_io' --output-on-failure`
+- `rg -n "mpfr_class\\(mpc_(real|imag)ref|mpc_format_component|operator<<\\(std::ostream& out, const mpc_class" include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpc_io test_mpc_basic test_mpfr_string_io`: PASS.
+- `ctest --test-dir build -R 'test_mpc_io|test_mpc_basic|test_mpfr_string_io' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
+Post-phase Z/Q direct comparison fast paths:
+DONE
+
+Implemented features:
+- Added direct `mpz_class` ordering operators for `<`, `<=`, `>`, and `>=`
+  using `mpz_cmp`.
+- Added direct `mpq_class` ordering operators for `<`, `<=`, `>`, and `>=`
+  using `mpq_cmp`.
+- Added direct `cmp` overloads for:
+  - `mpz_class` vs `mpz_class` through `mpz_cmp`
+  - `mpq_class` vs `mpq_class` through `mpq_cmp`
+  - `mpq_class` vs `mpz_class` through `mpq_cmp_z`
+  - `mpz_class` vs `mpq_class` through `mpq_cmp_z`
+  - `mpz_class` vs supported integral scalars through `mpz_cmp_si` /
+    `mpz_cmp_ui` when the scalar fits `long` / `unsigned long`
+  - `mpq_class` vs supported integral scalars through `mpq_cmp_si` /
+    `mpq_cmp_ui` when the scalar fits `long` / `unsigned long`
+  - `mpz_class` vs `float` / `double` through `mpz_cmp_d`
+- Kept too-wide integral comparison fallback exact by materializing one
+  `mpz_class`, not two `mpq_class` values.
+- Changed generic Z/Q comparison operators and generic `cmp` to take operands
+  by `const&`, preventing forwarding-reference overloads from hijacking direct
+  exact-object comparison paths.
+
+Missing features:
+- Floating-point scalar comparisons with `mpq_class` still use the existing
+  exact rational materialization path because GMP has no `mpq_cmp_d`.
+
+Tests added:
+- Extended `tests/test_mpz_mpq_alloc_count.cpp` with zero-allocation checks for
+  `mpz/mpz` ordering, `mpz` vs integral scalar comparison, `mpz` vs `double`
+  comparison, `mpz/mpq` mixed comparison, and `mpq` vs integral scalar
+  comparison.
+
+Exact commands run:
+- `rg -n "inline bool operator|bool operator|int cmp\\(|mpq_cmp|mpz_cmp|cmp\\(" include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1120,1585p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `rg -n "mpq_cmp_z|mpq_cmp_ui|mpq_cmp_si|mpz_cmp_d|mpz_cmp_si|mpz_cmp_ui" /usr/include/gmp.h /usr/include/x86_64-linux-gnu/gmp.h`
+- `cmake --build build -j --target test_mpz_mpq_alloc_count test_comparisons test_mpfr_comparisons test_gmpxx_mkII test_mpfrxx_mkII`
+- `ctest --test-dir build -R 'test_mpz_mpq_alloc_count|test_comparisons|test_mpfr_comparisons|test_gmpxx_mkII|test_mpfrxx_mkII' --output-on-failure`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpz_mpq_alloc_count test_comparisons test_mpfr_comparisons test_gmpxx_mkII test_mpfrxx_mkII`: PASS.
+- `ctest --test-dir build -R 'test_mpz_mpq_alloc_count|test_comparisons|test_mpfr_comparisons|test_gmpxx_mkII|test_mpfrxx_mkII' --output-on-failure`: PASS, 5/5 tests passed.
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
+Post-phase MPFC alias review and scalar shift-expression fast path:
+DONE
+
+Implemented features:
+- Rechecked the B6 concern for `mpfc_class` expression evaluation.  The current
+  MPFC evaluator already has `mpfc_expression_references` alias detection and
+  direct non-aliasing binary-expression evaluation paths, so it no longer
+  always routes through two `mpfc_class` temporaries.
+- Rechecked the B7 compound-shift concern.  `mpf_class::operator<<=`,
+  `mpf_class::operator>>=`, `mpfr_class::operator<<=`, and
+  `mpfr_class::operator>>=` already call the direct `*_mul_2exp` /
+  `*_div_2exp` or `mpfr_*_2ui` paths without an `mpz_t` roundtrip.
+- Removed the remaining scalar shift-expression roundtrip for `dst = a << 7`
+  and `dst = a >> 3` in MPF and MPFR expression evaluation.
+- Added `zq_shift_count_from_scalar` and scalar-leaf detection so integral
+  shift counts are checked directly against `unsigned long` without
+  materializing a temporary `mpz_t`.
+
+Missing features:
+- Non-scalar shift counts, such as `mpz_class` or expression RHS values, still
+  use the checked `mpz_t` path by design.
+
+Tests added:
+- Extended `tests/test_mpf_scalar_alloc_count.cpp` with zero-allocation checks
+  for `dst = a << 7` and `dst = a >> 3`.
+- Extended `tests/test_mpfr_scalar_alloc_count.cpp` with the same
+  zero-allocation checks for MPFR scalar shift expressions.
+
+Exact commands run:
+- `rg -n "mpfc_expression_references|mpfc_evaluate|operator<<=|operator>>=|scalar_leaf<std::uint64_t, mpz_class>|zq_shift_count_from_mpz" include/gmpfrxx_mkII/detail tests STATUS.md`
+- `sed -n '600,705p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1600,1665p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1870,1925p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpf_scalar_alloc_count.cpp tests/test_mpfr_scalar_alloc_count.cpp`
+- `cmake --build build -j --target test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count test_mpfc_precision_policy`
+- `ctest --test-dir build -R 'test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count|test_mpfc_precision_policy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count test_mpfc_precision_policy`: PASS.
+- `ctest --test-dir build -R 'test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count|test_mpfc_precision_policy' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
 Post-phase MPFR whitespace parsing and MPC exponent-range guards:
 DONE
 

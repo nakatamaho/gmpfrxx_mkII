@@ -88,6 +88,14 @@ int main()
     require_alloc_count(1);
 
     alloc_count = 0;
+    dst = a << 7;
+    require_alloc_count(0);
+
+    alloc_count = 0;
+    dst = a >> 3;
+    require_alloc_count(0);
+
+    alloc_count = 0;
     dst <<= 7;
     require_alloc_count(0);
 

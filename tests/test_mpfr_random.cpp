@@ -366,6 +366,20 @@ void test_exponential_statistics()
     assert(std::abs(variance - expected_variance) < 0.22);
 }
 
+void test_random_mpfr_expr_outlives_randclass()
+{
+    auto expr = [] {
+        mpfrxx::gmp_randclass r(gmp_randinit_default);
+        r.seed(4242ul);
+        return r.get_fr(static_cast<mpfr_prec_t>(192));
+    }();
+
+    const mpfrxx::mpfr_class value(expr);
+    assert(value.get_prec() == 192);
+    assert(mpfr_sgn(value.mpfr_data()) >= 0);
+    assert(mpfr_cmp_ui(value.mpfr_data(), 1) < 0);
+}
+
 } // namespace
 
 int main()
@@ -381,5 +395,6 @@ int main()
     test_uniform_statistics();
     test_normal_statistics();
     test_exponential_statistics();
+    test_random_mpfr_expr_outlives_randclass();
     return 0;
 }

@@ -276,6 +276,20 @@ void test_f_statistics()
     assert(std::abs(variance - expected_variance) < 0.02);
 }
 
+void test_random_mpf_expr_outlives_randclass()
+{
+    auto expr = [] {
+        gmpxx::gmp_randclass r(gmp_randinit_default);
+        r.seed(4242ul);
+        return r.get_f(static_cast<mp_bitcnt_t>(192));
+    }();
+
+    const gmpxx::mpf_class value(expr);
+    assert(value.get_prec() == 192);
+    assert(mpf_sgn(value.get_mpf_t()) >= 0);
+    assert(mpf_cmp_ui(value.get_mpf_t(), 1) < 0);
+}
+
 } // namespace
 
 int main()
@@ -289,5 +303,6 @@ int main()
     test_lc_constructors();
     test_z_range_statistics();
     test_f_statistics();
+    test_random_mpf_expr_outlives_randclass();
     return 0;
 }

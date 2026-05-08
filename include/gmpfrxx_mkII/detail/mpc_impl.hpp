@@ -38,7 +38,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <locale>
-#include <sstream>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -765,10 +764,15 @@ mpc_class::mpc_class(const Expr& expr)
 {
     const auto precision = gmpfrxx_mkII::detail::mpc_expression_precision(expr);
     mpc_init3(value_, precision.real, precision.imag);
-    const auto context = gmpfrxx_mkII::detail::current_eval_context(
-        gmpfrxx_mkII::detail::mpc_context_precision(precision));
-    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
-    gmpfrxx_mkII::detail::mpc_evaluate(value_, expr, precision, default_rounding());
+    try {
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(
+            gmpfrxx_mkII::detail::mpc_context_precision(precision));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        gmpfrxx_mkII::detail::mpc_evaluate(value_, expr, precision, default_rounding());
+    } catch (...) {
+        mpc_clear(value_);
+        throw;
+    }
 }
 
 template <typename Expr, typename>
@@ -1282,19 +1286,18 @@ inline mpc_class rootofunity(unsigned long order, unsigned long index)
 
 namespace detail {
 
-inline std::string mpc_format_component(std::ostream& out, const mpfr_class& value)
+inline std::string mpc_format_component(std::ostream& out, mpfr_srcptr value)
 {
-    std::ostringstream component;
-    component.imbue(out.getloc());
-    component.flags(out.flags());
-    component.precision(out.precision());
-    component.fill(out.fill());
-    component << value;
-
-    std::string text = component.str();
+    std::string text = gmpfrxx_mkII::detail::mpfr_stream_text(value, out);
+    if (text.empty()) {
+        return {};
+    }
     const char decimal_point = std::use_facet<std::numpunct<char>>(out.getloc()).decimal_point();
-    if (decimal_point != '.') {
-        std::replace(text.begin(), text.end(), '.', decimal_point);
+    if (decimal_point != '.' && text.find('.') != std::string::npos) {
+        text[text.find('.')] = decimal_point;
+    }
+    if ((out.flags() & std::ios_base::showpos) && mpfr_sgn(value) >= 0) {
+        text.insert(0, "+");
     }
     return text;
 }
@@ -1304,10 +1307,13 @@ inline std::string mpc_format_component(std::ostream& out, const mpfr_class& val
 inline std::ostream& operator<<(std::ostream& out, const mpc_class& value)
 {
     out.width(0);
-    const mpfr_class real(mpc_realref(value.mpc_data()), value.real_precision());
-    const mpfr_class imag(mpc_imagref(value.mpc_data()), value.imag_precision());
-    out << '(' << detail::mpc_format_component(out, real) << ','
-        << detail::mpc_format_component(out, imag) << ')';
+    const std::string real = detail::mpc_format_component(out, mpc_realref(value.mpc_data()));
+    const std::string imag = detail::mpc_format_component(out, mpc_imagref(value.mpc_data()));
+    if (real.empty() || imag.empty()) {
+        out.setstate(std::ios_base::badbit);
+        return out;
+    }
+    out << '(' << real << ',' << imag << ')';
     return out;
 }
 

@@ -42,6 +42,7 @@
 #include <cstring>
 #include <istream>
 #include <limits>
+#include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -261,12 +262,17 @@ public:
                          int> = 0>
     mpf_class(const Expr& expr) : mpf_class(precision_tag{}, default_mpf_precision_bits())
     {
-        using result_type = typename std::decay_t<Expr>::result_type;
-        result_type value(expr);
-        if constexpr (std::is_same_v<result_type, mpz_class>) {
-            mpf_set_z(value_, value.mpz_data());
-        } else {
-            mpf_set_q(value_, value.mpq_data());
+        try {
+            using result_type = typename std::decay_t<Expr>::result_type;
+            result_type value(expr);
+            if constexpr (std::is_same_v<result_type, mpz_class>) {
+                mpf_set_z(value_, value.mpz_data());
+            } else {
+                mpf_set_q(value_, value.mpq_data());
+            }
+        } catch (...) {
+            mpf_clear(value_);
+            throw;
         }
     }
 
@@ -1033,13 +1039,6 @@ class random_mpf_expr {
 public:
     using result_type = mpf_class;
 
-    random_mpf_expr(gmp_randclass& state, mp_bitcnt_t requested_precision, bool has_requested_precision) noexcept
-        : state_(&state),
-          requested_precision_(requested_precision),
-          has_requested_precision_(has_requested_precision)
-    {
-    }
-
     mp_bitcnt_t materialization_precision() const noexcept
     {
         return has_requested_precision_ ? requested_precision_ : default_mpf_precision_bits();
@@ -1048,7 +1047,19 @@ public:
     void generate(mpf_t dest, mp_bitcnt_t destination_precision) const;
 
 private:
-    gmp_randclass* state_;
+    friend class gmp_randclass;
+
+    random_mpf_expr(
+        std::shared_ptr<gmpfrxx_mkII::detail::gmp_randstate_holder> state,
+        mp_bitcnt_t requested_precision,
+        bool has_requested_precision) noexcept
+        : state_(std::move(state)),
+          requested_precision_(requested_precision),
+          has_requested_precision_(has_requested_precision)
+    {
+    }
+
+    std::shared_ptr<gmpfrxx_mkII::detail::gmp_randstate_holder> state_;
     mp_bitcnt_t requested_precision_;
     bool has_requested_precision_;
 };
@@ -1082,20 +1093,26 @@ inline mpq_class& mpq_class::operator=(const mpf_class& value)
 class gmp_randclass {
 public:
     gmp_randclass()
+        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
     {
-        gmp_randinit_default(state_);
+        gmp_randinit_default(state_->state);
+        state_->mark_initialized();
     }
 
     explicit gmp_randclass(void (*randinit)(gmp_randstate_t))
+        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
     {
-        randinit(state_);
+        randinit(state_->state);
+        state_->mark_initialized();
     }
 
     gmp_randclass(int (*randinit)(gmp_randstate_t, mp_bitcnt_t), mp_bitcnt_t size)
+        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
     {
-        if (randinit(state_, size) == 0) {
+        if (randinit(state_->state, size) == 0) {
             throw std::length_error("gmp_randinit_lc_2exp_size failed");
         }
+        state_->mark_initialized();
     }
 
     gmp_randclass(
@@ -1103,26 +1120,27 @@ public:
         const mpz_class& a,
         unsigned long c,
         mp_bitcnt_t m2exp)
+        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
     {
-        randinit(state_, a.mpz_data(), c, m2exp);
+        randinit(state_->state, a.mpz_data(), c, m2exp);
+        state_->mark_initialized();
     }
 
     gmp_randclass(gmp_randalg_t alg, mp_bitcnt_t size)
+        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
     {
         if (alg == GMP_RAND_ALG_DEFAULT || alg == GMP_RAND_ALG_LC ||
             alg == static_cast<gmp_randalg_t>(0)) {
-            if (gmp_randinit_lc_2exp_size(state_, size) == 0) {
+            if (gmp_randinit_lc_2exp_size(state_->state, size) == 0) {
                 throw std::length_error("gmp_randinit_lc_2exp_size failed");
             }
+            state_->mark_initialized();
         } else {
             throw std::invalid_argument("unsupported GMP random algorithm");
         }
     }
 
-    ~gmp_randclass()
-    {
-        gmp_randclear(state_);
-    }
+    ~gmp_randclass() = default;
 
     gmp_randclass(const gmp_randclass&) = delete;
     gmp_randclass& operator=(const gmp_randclass&) = delete;
@@ -1131,18 +1149,18 @@ public:
 
     void seed(unsigned long value)
     {
-        gmp_randseed_ui(state_, value);
+        gmp_randseed_ui(state_->state, value);
     }
 
     void seed(const mpz_class& value)
     {
-        gmp_randseed(state_, value.mpz_data());
+        gmp_randseed(state_->state, value.mpz_data());
     }
 
     mpz_class get_z_bits(mp_bitcnt_t bits)
     {
         mpz_class result;
-        mpz_urandomb(result.mpz_data(), state_, bits);
+        mpz_urandomb(result.mpz_data(), state_->state, bits);
         return result;
     }
 
@@ -1163,18 +1181,18 @@ public:
             throw std::invalid_argument("random range limit must be positive");
         }
         mpz_class result;
-        mpz_urandomm(result.mpz_data(), state_, limit.mpz_data());
+        mpz_urandomm(result.mpz_data(), state_->state, limit.mpz_data());
         return result;
     }
 
     random_mpf_expr get_f() noexcept
     {
-        return random_mpf_expr(*this, 0, false);
+        return random_mpf_expr(state_, 0, false);
     }
 
     random_mpf_expr get_f(mp_bitcnt_t precision) noexcept
     {
-        return random_mpf_expr(*this, precision, true);
+        return random_mpf_expr(state_, precision, true);
     }
 
     random_mpf_expr get_f(const mpf_class& prototype) noexcept
@@ -1183,15 +1201,13 @@ public:
     }
 
 private:
-    friend class random_mpf_expr;
-
-    gmp_randstate_t state_;
+    std::shared_ptr<gmpfrxx_mkII::detail::gmp_randstate_holder> state_;
 };
 
 inline void random_mpf_expr::generate(mpf_t dest, mp_bitcnt_t destination_precision) const
 {
     const mp_bitcnt_t random_bits = has_requested_precision_ ? requested_precision_ : destination_precision;
-    mpf_urandomb(dest, state_->state_, random_bits);
+    mpf_urandomb(dest, state_->state, random_bits);
 }
 
 } // namespace gmpxx
@@ -1733,11 +1749,17 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
     }
 
     if constexpr (std::is_same_v<Op, shl_op> || std::is_same_v<Op, shr_op>) {
-        mpz_t bits_value;
-        mpz_init(bits_value);
         mpf_evaluate(dest, expr.lhs(), eval_precision);
-        mpz_evaluate(bits_value, expr.rhs());
-        const unsigned long shift_count = zq_shift_count_from_mpz(bits_value);
+        unsigned long shift_count = 0;
+        if constexpr (is_zq_shift_scalar_leaf_v<Rhs>) {
+            shift_count = zq_shift_count_from_scalar(expr.rhs().value());
+        } else {
+            mpz_t bits_value;
+            mpz_init(bits_value);
+            mpz_evaluate(bits_value, expr.rhs());
+            shift_count = zq_shift_count_from_mpz(bits_value);
+            mpz_clear(bits_value);
+        }
         if constexpr (std::is_same_v<Op, shl_op>) {
             gmpxx::ensure_mpf_shift_result_exponent_fits(
                 dest, shift_count, true, "mpf left shift result exponent is too large");
@@ -1747,7 +1769,6 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
                 dest, shift_count, false, "mpf right shift result exponent is too small");
             mpf_div_2exp(dest, dest, shift_count);
         }
-        mpz_clear(bits_value);
         return;
     } else {
         if (mpf_expression_references(dest, expr)) {
@@ -1919,14 +1940,24 @@ mpf_class::mpf_class(const Expr& expr)
 {
     const mp_bitcnt_t precision = gmpfrxx_mkII::detail::mpf_materialization_precision(expr);
     mpf_init2(value_, precision);
-    gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+    try {
+        gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+    } catch (...) {
+        mpf_clear(value_);
+        throw;
+    }
 }
 
 template <typename Expr, typename>
 mpf_class::mpf_class(const Expr& expr, mp_bitcnt_t precision)
 {
     mpf_init2(value_, precision);
-    gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+    try {
+        gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+    } catch (...) {
+        mpf_clear(value_);
+        throw;
+    }
 }
 
 template <typename Expr, typename>
