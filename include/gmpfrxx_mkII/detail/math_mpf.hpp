@@ -1276,9 +1276,6 @@ inline mpf_class compute_pow(const mpf_class& x_input, const mpf_class& y_input,
     const mpf_class one = make_ui(1, work);
 
     if (mpf_cmp(y.mpf_data(), zero.mpf_data()) == 0) {
-        if (mpf_cmp(x.mpf_data(), zero.mpf_data()) == 0) {
-            throw std::domain_error("pow(0, 0) is undefined");
-        }
         return make_ui(1, target);
     }
 
@@ -1286,7 +1283,7 @@ inline mpf_class compute_pow(const mpf_class& x_input, const mpf_class& y_input,
         if (mpf_cmp(y.mpf_data(), zero.mpf_data()) > 0) {
             return make_ui(0, target);
         }
-        throw std::domain_error("pow(0, y) is undefined for y <= 0");
+        throw std::domain_error("pow(0, y) cannot return infinity for y < 0");
     }
 
     mpz_class integer_exponent;

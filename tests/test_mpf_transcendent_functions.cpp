@@ -733,6 +733,8 @@ void require_exact_special_value_cases()
     require_zero(gmpxx::atan(zero));
     require_zero(gmpxx::atan2(zero, one));
     require_close_bits(gmpxx::pow(two, three), gmpxx::mpf_class(8, precision), precision, 120);
+    require_close_bits(gmpxx::pow(zero, zero), one, precision, 120);
+    require_close_bits(gmpxx::pow(zero, three), zero, precision, 120);
     require_close_bits(gmpxx::pow(two, gmpxx::mpf_class(-3, precision)),
                        gmpxx::mpf_class("0.125", precision),
                        precision,
@@ -1134,7 +1136,7 @@ int main()
 
     bool saw_pow_domain_error = false;
     try {
-        (void)gmpxx::pow(gmpxx::mpf_class(0, precision), gmpxx::mpf_class(0, precision));
+        (void)gmpxx::pow(gmpxx::mpf_class(-2, precision), gmpxx::mpf_class("0.5", precision));
     } catch (const std::domain_error&) {
         saw_pow_domain_error = true;
     }
@@ -1144,7 +1146,7 @@ int main()
 
     saw_pow_domain_error = false;
     try {
-        (void)gmpxx::pow(gmpxx::mpf_class(-2, precision), gmpxx::mpf_class("0.5", precision));
+        (void)gmpxx::pow(gmpxx::mpf_class(0, precision), gmpxx::mpf_class(-1, precision));
     } catch (const std::domain_error&) {
         saw_pow_domain_error = true;
     }

@@ -100,8 +100,9 @@ void test_mpf_domain_exceptions()
     require_throws<std::domain_error>([] {
         (void)gmpxx::log(gmpxx::mpf_class(-1, 256));
     });
+    assert(gmpxx::pow(gmpxx::mpf_class(0, 256), gmpxx::mpf_class(0, 256)) == gmpxx::mpf_class(1, 256));
     require_throws<std::domain_error>([] {
-        (void)gmpxx::pow(gmpxx::mpf_class(0, 256), gmpxx::mpf_class(0, 256));
+        (void)gmpxx::pow(gmpxx::mpf_class(0, 256), gmpxx::mpf_class(-1, 256));
     });
     require_throws<std::domain_error>([] {
         (void)gmpxx::gamma(gmpxx::mpf_class(0, 256));

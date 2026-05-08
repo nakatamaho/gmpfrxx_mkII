@@ -121,6 +121,22 @@ int main()
             std::abort();
         }
         require_equal(r, ref);
+
+        mpf_set(ref, r.get_mpf_t());
+        mpf_mul_2exp(ref, ref, 5);
+        r <<= 5;
+        if (r.precision() != precision) {
+            std::abort();
+        }
+        require_equal(r, ref);
+
+        mpf_set(ref, r.get_mpf_t());
+        mpf_div_2exp(ref, ref, 3);
+        r >>= 3;
+        if (r.precision() != precision) {
+            std::abort();
+        }
+        require_equal(r, ref);
         mpf_clear(ref);
     }
     return 0;

@@ -1952,13 +1952,13 @@ inline mpf_class& operator/=(mpf_class& lhs, Rhs&& rhs)
 
 inline mpf_class& operator<<=(mpf_class& value, unsigned long bits)
 {
-    value = gmpfrxx_mkII::detail::operator<<(value, bits);
+    value.mul_2exp(bits);
     return value;
 }
 
 inline mpf_class& operator>>=(mpf_class& value, unsigned long bits)
 {
-    value = gmpfrxx_mkII::detail::operator>>(value, bits);
+    value.div_2exp(bits);
     return value;
 }
 

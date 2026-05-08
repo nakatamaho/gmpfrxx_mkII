@@ -2045,6 +2045,412 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPZ binary expression allocation fast path:
+DONE
+
+Implemented features:
+- Reworked `mpz_evaluate(binary_expr<...>)` so non-aliasing MPZ binary
+  expressions evaluate directly into the destination where possible instead
+  of always allocating two `mpz_t` temporaries.
+- Added MPZ expression reference detection. If the destination appears inside
+  the expression tree, evaluation keeps the conservative temporary path to
+  preserve alias safety.
+- Added a shared `mpz_apply_binary` helper for MPZ arithmetic, bitwise, and
+  shift operations.
+- Matched the MPF evaluator shape for leaf/leaf, expression/leaf,
+  leaf/expression, and expression/expression cases.
+
+Tests added:
+- Extended `tests/test_mpz_addmul_alloc_count.cpp` with zero-allocation
+  checks for preallocated `dst = a + b` and `dst = a + b + c`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `tests/test_mpz_addmul_alloc_count.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1450,1565p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1620,1705p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1480,1565p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1565,1645p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1,220p' tests/test_mpz_addmul_alloc_count.cpp`
+- `cmake --build build -j --target test_mpz_addmul_alloc_count test_mpz_arithmetic test_mixed_type_arithmetic`
+- `ctest --test-dir build -R 'test_mpz_addmul_alloc_count|test_mpz_arithmetic|test_mixed_type_arithmetic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpz_addmul_alloc_count test_mpz_arithmetic test_mixed_type_arithmetic`: PASS.
+- `ctest --test-dir build -R 'test_mpz_addmul_alloc_count|test_mpz_arithmetic|test_mixed_type_arithmetic' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- Aliasing expression assignment intentionally keeps the conservative
+  temporary path; the zero-allocation claim applies to non-aliasing,
+  preallocated destinations.
+
+Post-phase MPQ binary expression allocation fast path:
+DONE
+
+Implemented features:
+- Reworked `mpq_evaluate(binary_expr<...>)` so non-aliasing MPQ binary
+  expressions evaluate directly into the destination where possible instead
+  of always allocating two `mpq_t` temporaries.
+- Added MPQ expression reference detection. If the destination appears inside
+  the expression tree, evaluation keeps the conservative temporary path to
+  preserve alias safety.
+- Added shared `mpq_apply_binary`, `mpq_evaluate_to_temporary`, and
+  `mpq_apply_shift` helpers.
+- Optimized MPQ shifts to evaluate the left-hand side into the destination
+  and avoid the previous left-hand `mpq_t` temporary.
+
+Tests added:
+- Extended `tests/test_mpz_mpq_alloc_count.cpp` with zero-allocation checks
+  for preallocated `qdst = qa + qb` and `qdst = qa + qb + qc`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `tests/test_mpz_mpq_alloc_count.cpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1740,1825p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1,180p' tests/test_mpz_mpq_alloc_count.cpp`
+- `sed -n '1,180p' tests/test_mpq_arithmetic.cpp`
+- `rg -n "mpq_evaluate\\(|mpq_add\\(|mpq_mul\\(|mpq_init\\(" include/gmpfrxx_mkII/detail/zq_impl.hpp tests`
+- `sed -n '76,92p' tests/CMakeLists.txt`
+- `cmake --build build -j --target test_mpz_mpq_alloc_count test_mpq_arithmetic test_mixed_type_arithmetic`
+- `ctest --test-dir build -R 'test_mpz_mpq_alloc_count|test_mpq_arithmetic|test_mixed_type_arithmetic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpz_mpq_alloc_count test_mpq_arithmetic test_mixed_type_arithmetic`: PASS.
+- `ctest --test-dir build -R 'test_mpz_mpq_alloc_count|test_mpq_arithmetic|test_mixed_type_arithmetic' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- Aliasing expression assignment intentionally keeps the conservative
+  temporary path; the zero-allocation claim applies to non-aliasing,
+  preallocated destinations.
+
+Post-phase MPQ redundant canonicalize cleanup:
+DONE
+
+Implemented features:
+- Removed the redundant `mpq_canonicalize(dest)` from the MPQ
+  add/sub/mul/div evaluator helper. GMP `mpq_add`, `mpq_sub`, `mpq_mul`, and
+  `mpq_div` already return canonical results.
+- Kept canonicalization in the MPQ shift helper because shifts mutate the
+  numerator or denominator directly and can introduce a common factor.
+
+Tests added:
+- None; this is a performance cleanup covered by existing MPQ arithmetic,
+  canonicalization, mixed-type, and allocation-count tests.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1770,1855p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `rg -n "mpq_apply_binary|mpq_canonicalize\\(dest\\)|mpq_add\\(|mpq_sub\\(|mpq_mul\\(|mpq_div\\(" include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `cmake --build build -j --target test_mpz_mpq_alloc_count test_mpq_arithmetic test_mpq_canonicalization test_mixed_type_arithmetic`
+- `ctest --test-dir build -R 'test_mpz_mpq_alloc_count|test_mpq_arithmetic|test_mpq_canonicalization|test_mixed_type_arithmetic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpz_mpq_alloc_count test_mpq_arithmetic test_mpq_canonicalization test_mixed_type_arithmetic`: PASS.
+- `ctest --test-dir build -R 'test_mpz_mpq_alloc_count|test_mpq_arithmetic|test_mpq_canonicalization|test_mixed_type_arithmetic' --output-on-failure`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- None.
+
+Post-phase MPFC/MPC binary expression allocation fast path:
+DONE
+
+Implemented features:
+- Reworked `mpfc_evaluate(binary_expr<...>)` so non-aliasing MPFC binary
+  expressions can evaluate directly into the destination instead of always
+  materializing left and right `mpfc_class` temporaries.
+- Added MPFC expression reference detection. If the destination appears inside
+  the expression tree, evaluation keeps the conservative temporary path to
+  preserve alias safety.
+- Changed `mpfc_class::operator=(expression)` to evaluate directly into the
+  existing object for non-aliasing expressions while preserving the existing
+  destination precision policy. Aliasing assignment still uses a temporary.
+- Confirmed MPC already used the MPFR-style alias detection and binary
+  evaluator fast path; added focused left-associative chain regression
+  coverage for MPC precision and value preservation.
+
+Tests added:
+- Extended `tests/test_mpfc_precision_policy.cpp` with zero-allocation checks
+  for preallocated `sum_dst = a + b` and `sum_dst = a + b + c`.
+- Extended `tests/test_mpc_precision_policy.cpp` with left-associative
+  `chain_dst = a + b + c` coverage.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_mpfc_precision_policy.cpp`
+- `tests/test_mpc_precision_policy.cpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '440,620p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '460,700p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '680,720p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1,120p' tests/test_mpc_precision_policy.cpp`
+- `sed -n '1,120p' tests/test_mpfc_precision_policy.cpp`
+- `cmake --build build -j --target test_mpfc_precision_policy test_mpfc_basic test_mpc_precision_policy test_mpc_aliasing`
+- `ctest --test-dir build -R 'test_mpfc_precision_policy|test_mpfc_basic|test_mpc_precision_policy|test_mpc_aliasing' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfc_precision_policy test_mpfc_basic test_mpc_precision_policy test_mpc_aliasing`: PASS.
+- `ctest --test-dir build -R 'test_mpfc_precision_policy|test_mpfc_basic|test_mpc_precision_policy|test_mpc_aliasing' --output-on-failure`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- MPFC `mul` and `div` still allocate operation-internal `mpf_t`
+  temporaries for the complex arithmetic formula. This phase removes the
+  unconditional left/right operand materialization where safe.
+
+Post-phase MPFC mul/div operation-internal temporary reduction:
+DONE
+
+Implemented features:
+- Added non-aliasing fast paths inside `mpfc_apply_binary<mul_op>` and
+  `mpfc_apply_binary<div_op>`.
+- Reduced non-aliasing MPFC multiplication from three operation-internal
+  `mpf_t` temporaries to one `mpf_t` temporary.
+- Reduced non-aliasing MPFC division from four operation-internal `mpf_t`
+  temporaries to two `mpf_t` temporaries.
+- Kept the previous conservative temporary formulas for aliasing cases where
+  `dest` is the same object as `lhs` or `rhs`.
+
+Tests added:
+- Extended `tests/test_mpfc_precision_policy.cpp` with allocation-count
+  checks for preallocated `mul_dst = a * b` and `div_dst = a / b`.
+- Added MPFC alias regression checks for `alias_mul = alias_mul * b` and
+  `alias_div = alias_div / b`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_mpfc_precision_policy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '632,700p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '70,130p' tests/test_mpfc_precision_policy.cpp`
+- `cmake --build build -j --target test_mpfc_precision_policy test_mpfc_basic`
+- `ctest --test-dir build -R 'test_mpfc_precision_policy|test_mpfc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfc_precision_policy test_mpfc_basic`: PASS.
+- `ctest --test-dir build -R 'test_mpfc_precision_policy|test_mpfc_basic' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- Non-aliasing MPFC `mul` and `div` still need temporary storage for the
+  complex arithmetic formula itself. This phase minimizes, but does not
+  eliminate, those formula temporaries.
+
+Post-phase MPFC compound assignment direct evaluation:
+DONE
+
+Implemented features:
+- Added `mpfc_compound_assign<Op>` mirroring the MPF/MPFR compound-assignment
+  pattern.
+- Reworked `mpfc_class` `operator+=`, `operator-=`, `operator*=`, and
+  `operator/=` to avoid `lhs = lhs op rhs` expression assignment and the
+  associated temporary `mpfc_class` plus swap.
+- `+=` and `-=` with an `mpfc_class` right-hand side now apply directly
+  in-place with zero allocation.
+- `*=` and `/=` now call the alias-safe `mpfc_apply_binary` path directly;
+  they still use formula temporaries because the destination is also the
+  left operand.
+
+Tests added:
+- Extended `tests/test_mpfc_precision_policy.cpp` with allocation-count
+  checks for `+=`, `-=`, `*=`, and `/=`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_mpfc_precision_policy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "operator\\+=|operator-=|operator\\*=|operator/=|mpfc_compound|mpfr_compound|mpf_compound" include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/test_mpfc_precision_policy.cpp tests/test_compound_assign.cpp`
+- `sed -n '780,875p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1660,1730p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `cmake --build build -j --target test_mpfc_precision_policy test_mpfc_basic test_compound_assign`
+- `ctest --test-dir build -R 'test_mpfc_precision_policy|test_mpfc_basic|test_compound_assign' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfc_precision_policy test_mpfc_basic test_compound_assign`: PASS.
+- `ctest --test-dir build -R 'test_mpfc_precision_policy|test_mpfc_basic|test_compound_assign' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- MPFC `*=` and `/=` necessarily take the alias-safe formula path because the
+  destination is also the left operand. This removes the extra expression
+  assignment object and swap, not the formula temporaries.
+
+Post-phase MPC compound assignment direct evaluation:
+DONE
+
+Implemented features:
+- Added `mpc_compound_assign<Op>` mirroring the MPF/MPFR compound-assignment
+  pattern.
+- Reworked `mpc_class` `operator+=`, `operator-=`, `operator*=`, and
+  `operator/=` to avoid `lhs = lhs op rhs` expression assignment.
+- `mpc_class` right-hand operands now call `mpc_add`, `mpc_sub`, `mpc_mul`,
+  or `mpc_div` directly with `lhs.mpc_data()` as both destination and left
+  operand.
+- Expression and non-MPC right-hand operands are evaluated into one `mpc_t`
+  temporary at the destination precision before applying the operation.
+
+Tests added:
+- Extended `tests/test_mpc_precision_policy.cpp` with value and precision
+  checks for `+=`, `-=`, `*=`, `/=`, and expression RHS compound assignment.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_mpc_precision_policy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '120,210p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '360,455p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1,160p' tests/test_mpc_precision_policy.cpp`
+- `cmake --build build -j --target test_mpc_precision_policy test_mpc_basic test_mpc_aliasing`
+- `ctest --test-dir build -R 'test_mpc_precision_policy|test_mpc_basic|test_mpc_aliasing' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpc_precision_policy test_mpc_basic test_mpc_aliasing`: PASS.
+- `ctest --test-dir build -R 'test_mpc_precision_policy|test_mpc_basic|test_mpc_aliasing' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- None.
+
+Post-phase MPF/MPFR direct shift compound assignment:
+DONE
+
+Implemented features:
+- Reworked `gmpxx::mpf_class` `operator<<=` and `operator>>=` to call the
+  direct `mul_2exp` / `div_2exp` member helpers instead of assigning from a
+  shift expression.
+- Reworked `mpfrxx::mpfr_class` `operator<<=` and `operator>>=` to call
+  `mpfr_mul_2ui` / `mpfr_div_2ui` directly with the current evaluation
+  context and exponent range guard.
+- Preserved destination precision for both MPF and MPFR shift compound
+  assignment.
+
+Tests added:
+- Extended `tests/test_mpf_power_of_two_fusion.cpp` with value and precision
+  checks for `<<=` and `>>=`.
+- Extended `tests/test_mpf_scalar_alloc_count.cpp` and
+  `tests/test_mpfr_scalar_alloc_count.cpp` with zero-allocation checks for
+  `<<=` and `>>=`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/test_mpf_power_of_two_fusion.cpp`
+- `tests/test_mpf_scalar_alloc_count.cpp`
+- `tests/test_mpfr_scalar_alloc_count.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "shl_op|shr_op|operator<<=|operator>>=|mul_2exp|div_2exp|mpf_apply_binary|mpfr_apply_binary" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpf_power_of_two_fusion.cpp tests/test_mpfr_power_of_two_fusion.cpp tests/test_mpf_precision_policy.cpp tests/test_mpfr_precision_policy.cpp`
+- `sed -n '1500,1610p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1950,1975p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1720,1835p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '2178,2205p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `cmake --build build -j --target test_mpf_power_of_two_fusion test_mpfr_power_of_two_fusion test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count`
+- `ctest --test-dir build -R 'test_mpf_power_of_two_fusion|test_mpfr_power_of_two_fusion|test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpf_power_of_two_fusion test_mpfr_power_of_two_fusion test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count`: PASS.
+- `ctest --test-dir build -R 'test_mpf_power_of_two_fusion|test_mpfr_power_of_two_fusion|test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count' --output-on-failure`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- None.
+
+Post-phase MPF pow zero semantics:
+DONE
+
+Implemented features:
+- Changed `gmpxx::pow(mpf_class(0), mpf_class(0))` to return `1`,
+  matching `std::pow(0, 0)` and the IEEE-style real pow convention.
+- Kept `gmpxx::pow(mpf_class(0), negative)` as `std::domain_error` because
+  GMP `mpf_class` has no infinity representation to return.
+- Clarified the negative zero-base exception message to describe the MPF
+  infinity limitation rather than the `0^0` case.
+
+Tests added:
+- Added focused MPF coverage for `pow(0, 0) == 1` and `pow(0, positive) == 0`.
+- Added focused MPF coverage that `pow(0, negative)` remains a domain error.
+
+Tests updated:
+- `tests/test_mpf_transcendent_functions.cpp`
+- `tests/test_exception_support.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1258,1285p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '1285,1315p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '710,750p' tests/test_mpf_transcendent_functions.cpp`
+- `sed -n '1120,1160p' tests/test_mpf_transcendent_functions.cpp`
+- `cmake --build build -j --target test_mpf_transcendent_functions`
+- `ctest --test-dir build -R test_mpf_transcendent_functions --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+- `cmake --build build -j --target test_exception_support`
+- `ctest --test-dir build -R 'test_exception_support|test_mpf_transcendent_functions' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpf_transcendent_functions`: PASS.
+- `ctest --test-dir build -R test_mpf_transcendent_functions --output-on-failure`: PASS, 1/1 test passed.
+- Initial `ctest --test-dir build --output-on-failure`: FAIL because
+  `tests/test_exception_support.cpp` still expected `pow(0, 0)` to throw;
+  the stale expectation was updated.
+- `cmake --build build -j --target test_exception_support`: PASS.
+- `ctest --test-dir build -R 'test_exception_support|test_mpf_transcendent_functions' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- `pow(0, negative)` intentionally differs from `std::pow`, which can return
+  `+inf`; GMP `mpf_class` cannot represent infinities.
+
 Post-phase MPFC/MPC component accessor policy:
 DONE
 

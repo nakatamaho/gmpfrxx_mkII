@@ -2178,13 +2178,17 @@ inline mpfr_class& operator/=(mpfr_class& lhs, Rhs&& rhs)
 
 inline mpfr_class& operator<<=(mpfr_class& value, unsigned long bits)
 {
-    value = gmpfrxx_mkII::detail::operator<<(value, bits);
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(value.precision());
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+    mpfr_mul_2ui(value.mpfr_data(), value.mpfr_data(), bits, context.rounding_mode);
     return value;
 }
 
 inline mpfr_class& operator>>=(mpfr_class& value, unsigned long bits)
 {
-    value = gmpfrxx_mkII::detail::operator>>(value, bits);
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(value.precision());
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+    mpfr_div_2ui(value.mpfr_data(), value.mpfr_data(), bits, context.rounding_mode);
     return value;
 }
 
