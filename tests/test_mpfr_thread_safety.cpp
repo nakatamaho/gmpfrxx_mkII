@@ -147,6 +147,35 @@ void require_parallel_expression_materialization()
     }
 }
 
+void require_parallel_exponent_range_guards()
+{
+    std::atomic<int> mismatches{0};
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 8; ++i) {
+        threads.emplace_back([&, i] {
+            for (int j = 0; j < 200; ++j) {
+                if (((i + j) % 2) == 0) {
+                    mpfrxx::set_default_exponent_range(-40, 40);
+                } else {
+                    mpfrxx::set_default_exponent_range(-80, 80);
+                }
+                const mpfrxx::mpfr_class a("1.25", 192);
+                const mpfrxx::mpfr_class b("2.5", 192);
+                const mpfrxx::mpfr_class value = a * b + mpfrxx::mpfr_class("0.875", 192);
+                if (value.precision() != 192 || mpfr_cmp_d(value.get_mpfr_t(), 4.0) != 0) {
+                    ++mismatches;
+                }
+            }
+        });
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
+    if (mismatches.load() != 0) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main()
@@ -155,5 +184,6 @@ int main()
     require_concurrent_default_options_access();
     require_isolation_from_mpfr_global_default();
     require_parallel_expression_materialization();
+    require_parallel_exponent_range_guards();
     return 0;
 }

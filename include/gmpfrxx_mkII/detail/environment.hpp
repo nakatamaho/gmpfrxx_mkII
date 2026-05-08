@@ -167,10 +167,18 @@ inline parsed_mpfr_environment load_mpfr_environment() noexcept
     return result;
 }
 
+inline std::mutex& mpfr_exponent_range_mutex()
+{
+    static std::mutex mutex;
+    return mutex;
+}
+
 class mpfr_exponent_range_guard {
 public:
     mpfr_exponent_range_guard(mpfr_exp_t emin, mpfr_exp_t emax)
-        : old_emin_(mpfr_get_emin()), old_emax_(mpfr_get_emax())
+        : lock_(mpfr_exponent_range_mutex()),
+          old_emin_(mpfr_get_emin()),
+          old_emax_(mpfr_get_emax())
     {
         active_ = (old_emin_ != emin) || (old_emax_ != emax);
         if (active_) {
@@ -191,6 +199,7 @@ public:
     }
 
 private:
+    std::unique_lock<std::mutex> lock_;
     mpfr_exp_t old_emin_;
     mpfr_exp_t old_emax_;
     bool active_{false};
