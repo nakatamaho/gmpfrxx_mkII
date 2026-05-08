@@ -217,15 +217,9 @@ struct mpfr_default_options {
     mpfr_rnd_t rounding_mode;
 };
 
-inline std::mutex& mpfr_default_options_mutex()
-{
-    static std::mutex mutex;
-    return mutex;
-}
-
 inline mpfr_default_options& mutable_mpfr_default_options_unlocked()
 {
-    static mpfr_default_options options = [] {
+    thread_local mpfr_default_options options = [] {
         const auto loaded = ::gmpfrxx_mkII::detail::load_mpfr_environment();
         return mpfr_default_options{
             loaded.precision,
@@ -240,7 +234,6 @@ inline mpfr_default_options& mutable_mpfr_default_options_unlocked()
 inline void reload_mpfr_defaults_from_environment()
 {
     const auto loaded = ::gmpfrxx_mkII::detail::load_mpfr_environment();
-    const std::lock_guard<std::mutex> lock(mpfr_default_options_mutex());
     mutable_mpfr_default_options_unlocked() = mpfr_default_options{
         loaded.precision,
         loaded.emin,
@@ -251,7 +244,6 @@ inline void reload_mpfr_defaults_from_environment()
 
 inline mpfr_default_options default_options()
 {
-    const std::lock_guard<std::mutex> lock(mpfr_default_options_mutex());
     return mutable_mpfr_default_options_unlocked();
 }
 
@@ -268,7 +260,6 @@ inline mpfr_prec_t default_prec()
 inline void set_default_precision_bits(mpfr_prec_t precision)
 {
     if (precision >= MPFR_PREC_MIN) {
-        const std::lock_guard<std::mutex> lock(mpfr_default_options_mutex());
         mutable_mpfr_default_options_unlocked().precision_bits = precision;
     }
 }
@@ -280,7 +271,6 @@ inline mpfr_rnd_t default_rounding_mode()
 
 inline void set_default_rounding_mode(mpfr_rnd_t rounding)
 {
-    const std::lock_guard<std::mutex> lock(mpfr_default_options_mutex());
     mutable_mpfr_default_options_unlocked().rounding_mode = rounding;
 }
 
@@ -297,7 +287,6 @@ inline mpfr_exp_t default_emax()
 inline void set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax)
 {
     if (emin <= emax) {
-        const std::lock_guard<std::mutex> lock(mpfr_default_options_mutex());
         mutable_mpfr_default_options_unlocked().emin = emin;
         mutable_mpfr_default_options_unlocked().emax = emax;
     }

@@ -35,24 +35,76 @@
 
 namespace {
 
-void require_default_visible_to_threads()
+void require_default_precision_is_thread_local()
 {
-    constexpr mpfr_prec_t precision = 333;
-    mpfrxx::set_default_precision_bits(precision);
+    constexpr mpfr_prec_t main_precision = 333;
+    constexpr mpfr_prec_t worker_precision = 777;
+    mpfrxx::set_default_precision_bits(main_precision);
     mpfrxx::set_default_rounding_mode(MPFR_RNDN);
 
     std::atomic<int> mismatches{0};
     std::vector<std::thread> threads;
     for (int i = 0; i < 8; ++i) {
         threads.emplace_back([&] {
+            if (mpfrxx::default_precision_bits() != 512) {
+                ++mismatches;
+            }
+            mpfrxx::set_default_precision_bits(worker_precision);
             mpfrxx::mpfr_class value;
-            if (value.precision() != precision) {
+            if (value.precision() != worker_precision) {
                 ++mismatches;
             }
         });
     }
     for (auto& thread : threads) {
         thread.join();
+    }
+    if (mpfrxx::default_precision_bits() != main_precision) {
+        ++mismatches;
+    }
+    if (mismatches.load() != 0) {
+        std::abort();
+    }
+}
+
+void require_default_options_are_thread_local()
+{
+    std::atomic<int> mismatches{0};
+    mpfrxx::set_default_precision_bits(257);
+    mpfrxx::set_default_rounding_mode(MPFR_RNDU);
+    mpfrxx::set_default_exponent_range(-40, 40);
+
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 8; ++i) {
+        threads.emplace_back([&, i] {
+            const mpfr_prec_t precision = (i % 2) == 0 ? 193 : 307;
+            const mpfr_rnd_t rounding = (i % 2) == 0 ? MPFR_RNDU : MPFR_RNDD;
+            const mpfr_exp_t bound = (i % 2) == 0 ? 40 : 80;
+            mpfrxx::set_default_precision_bits(precision);
+            mpfrxx::set_default_rounding_mode(rounding);
+            mpfrxx::set_default_exponent_range(-bound, bound);
+            for (int j = 0; j < 200; ++j) {
+                const auto options = mpfrxx::default_options();
+                if (options.precision_bits != precision ||
+                    options.rounding_mode != rounding ||
+                    options.emin != -bound ||
+                    options.emax != bound) {
+                    ++mismatches;
+                }
+            }
+        });
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    const auto main_options = mpfrxx::default_options();
+    if (main_options.precision_bits != 257 ||
+        main_options.rounding_mode != MPFR_RNDU ||
+        main_options.emin != -40 ||
+        main_options.emax != 40) {
+        ++mismatches;
     }
     if (mismatches.load() != 0) {
         std::abort();
@@ -61,26 +113,21 @@ void require_default_visible_to_threads()
 
 void require_concurrent_default_options_access()
 {
-    std::atomic<bool> stop{false};
     std::atomic<int> mismatches{0};
-    mpfrxx::set_default_precision_bits(257);
-    mpfrxx::set_default_rounding_mode(MPFR_RNDU);
-    mpfrxx::set_default_exponent_range(-40, 40);
-    std::thread writer([&] {
-        for (int i = 0; i < 2000; ++i) {
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 8; ++i) {
+        threads.emplace_back([&, i] {
+            const mpfr_prec_t precision = (i % 2) == 0 ? 257 : 769;
             if ((i % 2) == 0) {
+                mpfrxx::set_default_precision_bits(precision);
+                mpfrxx::set_default_rounding_mode(MPFR_RNDU);
                 mpfrxx::set_default_exponent_range(-40, 40);
             } else {
+                mpfrxx::set_default_precision_bits(precision);
+                mpfrxx::set_default_rounding_mode(MPFR_RNDD);
                 mpfrxx::set_default_exponent_range(-80, 80);
             }
-        }
-        stop.store(true, std::memory_order_release);
-    });
-
-    std::vector<std::thread> readers;
-    for (int i = 0; i < 8; ++i) {
-        readers.emplace_back([&] {
-            while (!stop.load(std::memory_order_acquire)) {
+            for (int j = 0; j < 2000; ++j) {
                 const auto options = mpfrxx::default_options();
                 const bool first =
                     options.precision_bits == 257 &&
@@ -88,8 +135,8 @@ void require_concurrent_default_options_access()
                     options.emin == -40 &&
                     options.emax == 40;
                 const bool second =
-                    options.precision_bits == 257 &&
-                    options.rounding_mode == MPFR_RNDU &&
+                    options.precision_bits == 769 &&
+                    options.rounding_mode == MPFR_RNDD &&
                     options.emin == -80 &&
                     options.emax == 80;
                 if (!first && !second) {
@@ -99,8 +146,7 @@ void require_concurrent_default_options_access()
         });
     }
 
-    writer.join();
-    for (auto& thread : readers) {
+    for (auto& thread : threads) {
         thread.join();
     }
     if (mismatches.load() != 0) {
@@ -180,7 +226,8 @@ void require_parallel_exponent_range_guards()
 
 int main()
 {
-    require_default_visible_to_threads();
+    require_default_precision_is_thread_local();
+    require_default_options_are_thread_local();
     require_concurrent_default_options_access();
     require_isolation_from_mpfr_global_default();
     require_parallel_expression_materialization();

@@ -33,7 +33,6 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <mutex>
 
 #include <mpc.h>
 
@@ -97,28 +96,20 @@ inline mpc_default_options load_mpc_defaults_from_environment()
     return result;
 }
 
-inline std::mutex& mpc_default_options_mutex()
-{
-    static std::mutex mutex;
-    return mutex;
-}
-
 inline mpc_default_options& mutable_mpc_default_options_unlocked()
 {
-    static mpc_default_options options = load_mpc_defaults_from_environment();
+    thread_local mpc_default_options options = load_mpc_defaults_from_environment();
     return options;
 }
 
 inline void reload_mpc_defaults_from_environment()
 {
     const auto loaded = load_mpc_defaults_from_environment();
-    const std::lock_guard<std::mutex> lock(mpc_default_options_mutex());
     mutable_mpc_default_options_unlocked() = loaded;
 }
 
 inline mpc_default_options default_mpc_options()
 {
-    const std::lock_guard<std::mutex> lock(mpc_default_options_mutex());
     return mutable_mpc_default_options_unlocked();
 }
 
@@ -143,7 +134,6 @@ inline mpfr_prec_t default_mpc_precision_bits()
 inline void set_default_mpc_precision_bits(mpfr_prec_t precision)
 {
     if (precision >= MPFR_PREC_MIN) {
-        const std::lock_guard<std::mutex> lock(mpc_default_options_mutex());
         mutable_mpc_default_options_unlocked().real_precision_bits = precision;
         mutable_mpc_default_options_unlocked().imag_precision_bits = precision;
     }
@@ -152,7 +142,6 @@ inline void set_default_mpc_precision_bits(mpfr_prec_t precision)
 inline void set_default_mpc_precision_bits(mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
 {
     if (real_precision >= MPFR_PREC_MIN && imag_precision >= MPFR_PREC_MIN) {
-        const std::lock_guard<std::mutex> lock(mpc_default_options_mutex());
         mutable_mpc_default_options_unlocked().real_precision_bits = real_precision;
         mutable_mpc_default_options_unlocked().imag_precision_bits = imag_precision;
     }
@@ -176,14 +165,12 @@ inline mpc_rnd_t default_mpc_rounding_mode()
 
 inline void set_default_mpc_rounding_mode(mpfr_rnd_t rounding)
 {
-    const std::lock_guard<std::mutex> lock(mpc_default_options_mutex());
     mutable_mpc_default_options_unlocked().real_rounding_mode = rounding;
     mutable_mpc_default_options_unlocked().imag_rounding_mode = rounding;
 }
 
 inline void set_default_mpc_rounding_mode(mpfr_rnd_t real_rounding, mpfr_rnd_t imag_rounding)
 {
-    const std::lock_guard<std::mutex> lock(mpc_default_options_mutex());
     mutable_mpc_default_options_unlocked().real_rounding_mode = real_rounding;
     mutable_mpc_default_options_unlocked().imag_rounding_mode = imag_rounding;
 }
