@@ -2103,6 +2103,19 @@ void mpz_addmul_apply_object_scalar(
             }
             return;
         }
+        if (scalar.value() < 0) {
+            const auto value = scalar.value();
+            const std::uint64_t magnitude =
+                static_cast<std::uint64_t>(-(value + 1)) + std::uint64_t{1};
+            if (magnitude <= static_cast<std::uint64_t>(std::numeric_limits<unsigned long>::max())) {
+                if (subtract) {
+                    mpz_addmul_ui(dest, object.get().mpz_data(), static_cast<unsigned long>(magnitude));
+                } else {
+                    mpz_submul_ui(dest, object.get().mpz_data(), static_cast<unsigned long>(magnitude));
+                }
+                return;
+            }
+        }
     }
 
     const gmpxx::mpz_class scalar_value(scalar.value());

@@ -2045,6 +2045,55 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPF rational helper rename and negative MPZ addmul fast path:
+DONE
+
+Implemented features:
+- Renamed the internal MPF rational conversion helper from
+  `mpf_set_q_exact` to `mpf_set_q_at_precision`, matching its actual behavior:
+  the numerator and denominator are exact inputs, but the final MPF quotient is
+  rounded to the destination/evaluation precision.
+- Extended the MPZ direct addmul/submul scalar path for negative signed
+  scalars whose magnitude fits `unsigned long`.
+- `x += a * (-3)` now maps to `mpz_submul_ui(x, a, 3)`.
+- `x -= a * (-3)` now maps to `mpz_addmul_ui(x, a, 3)`.
+- The signed magnitude computation avoids overflow for the minimum signed
+  value by using `-(value + 1) + 1`.
+
+Tests added:
+- Extended `tests/test_mpz_addmul_alloc_count.cpp` with zero-allocation
+  checks for negative signed scalar addmul/submul cases.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `tests/test_mpz_addmul_alloc_count.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpf_set_q_exact|mpz_addmul_apply_object_scalar|addmul|submul|mul_apply_object_scalar" include tests STATUS.md`
+- `sed -n '1500,1785p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1420,1510p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1,220p' tests/test_mpz_addmul_fusion.cpp`
+- `sed -n '1,220p' tests/test_mpz_addmul_alloc_count.cpp`
+- `sed -n '2028,2140p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `cmake --build build -j --target test_mpz_addmul_alloc_count test_mpf_basic test_mixed_zq_mpf_promotion`
+- `ctest --test-dir build -R 'test_mpz_addmul_alloc_count|test_mpf_basic|test_mixed_zq_mpf_promotion' --output-on-failure`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpz_addmul_alloc_count test_mpf_basic test_mixed_zq_mpf_promotion`: PASS.
+- `ctest --test-dir build -R 'test_mpz_addmul_alloc_count|test_mpf_basic|test_mixed_zq_mpf_promotion' --output-on-failure`: PASS, 3/3 tests passed.
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- Negative signed scalar magnitudes larger than `unsigned long` still fall
+  back to the general `mpz_class` scalar path, as before.
+
 Post-phase benchmark repeat aggregation and error bars:
 DONE
 
@@ -2148,11 +2197,11 @@ Known issues:
   and direct-product `+=`/`-=` compound assignment.  More general nested
   expression scratch reuse remains a separate optimization.
 
-Post-phase MPF exact rational conversion temporary reduction:
+Post-phase MPF rational-at-precision conversion temporary reduction:
 DONE
 
 Implemented features:
-- Reduced `mpf_set_q_exact` from two `mpf_t` temporaries to one by loading
+- Reduced `mpf_set_q_at_precision` from two `mpf_t` temporaries to one by loading
   the rational numerator directly into the destination and only materializing
   the denominator as a temporary before division.
 - Preserved destination precision and the exact numerator/denominator
@@ -2170,7 +2219,7 @@ Tests updated:
 
 Exact commands run:
 - `sed -n '1325,1385p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
-- `rg -n "mpf_set_q_exact|mpq.*mpf|set_q|mpf_set_q|mpq_class" tests include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `rg -n "mpf_set_q_at_precision|mpq.*mpf|set_q|mpf_set_q|mpq_class" tests include/gmpfrxx_mkII/detail/mpf_impl.hpp`
 - `sed -n '1388,1428p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
 - `cmake --build build -j --target test_mpf_scalar_alloc_count test_mixed_type_arithmetic test_construction_copy`

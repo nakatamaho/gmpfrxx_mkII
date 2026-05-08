@@ -1429,7 +1429,7 @@ inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpf_class>& expr, 
     mpf_set(dest, expr.get().mpf_data());
 }
 
-inline void mpf_set_q_exact(mpf_t dest, const mpq_t value, mp_bitcnt_t eval_precision)
+inline void mpf_set_q_at_precision(mpf_t dest, const mpq_t value, mp_bitcnt_t eval_precision)
 {
     mpf_t denominator;
     mpf_init2(denominator, eval_precision);
@@ -1446,7 +1446,7 @@ inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpz_class>& expr, 
 
 inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpq_class>& expr, mp_bitcnt_t eval_precision)
 {
-    mpf_set_q_exact(dest, expr.get().mpq_data(), eval_precision);
+    mpf_set_q_at_precision(dest, expr.get().mpq_data(), eval_precision);
 }
 
 inline void mpf_evaluate(mpf_t dest, const gmpxx::random_mpf_expr& expr, mp_bitcnt_t eval_precision)
@@ -1727,7 +1727,7 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
         mpq_t exact;
         mpq_init(exact);
         mpq_evaluate(exact, expr);
-        mpf_set_q_exact(dest, exact, eval_precision);
+        mpf_set_q_at_precision(dest, exact, eval_precision);
         mpq_clear(exact);
         return;
     }

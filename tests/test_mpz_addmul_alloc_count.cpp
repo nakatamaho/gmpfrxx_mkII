@@ -104,5 +104,25 @@ int main()
     assert(a == expected);
     assert(submul_ui_allocations == 0);
 
+    mpz_set(expected.mpz_data(), a.mpz_data());
+    mpz_submul_ui(expected.mpz_data(), b.mpz_data(), 3UL);
+    mpz_realloc2(a.mpz_data(), static_cast<mp_bitcnt_t>(mpz_sizeinbase(expected.mpz_data(), 2) + 64));
+
+    alloc_count = 0;
+    a += b * -3LL;
+    const int add_negative_scalar_allocations = alloc_count.load();
+    assert(a == expected);
+    assert(add_negative_scalar_allocations == 0);
+
+    mpz_set(expected.mpz_data(), a.mpz_data());
+    mpz_addmul_ui(expected.mpz_data(), b.mpz_data(), 3UL);
+    mpz_realloc2(a.mpz_data(), static_cast<mp_bitcnt_t>(mpz_sizeinbase(expected.mpz_data(), 2) + 64));
+
+    alloc_count = 0;
+    a -= -3LL * b;
+    const int sub_negative_scalar_allocations = alloc_count.load();
+    assert(a == expected);
+    assert(sub_negative_scalar_allocations == 0);
+
     return 0;
 }
