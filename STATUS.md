@@ -2088,6 +2088,250 @@ Known issues:
   covered by value/precision tests and implementation review rather than a
   hard allocation-count assertion.
 
+Post-phase fixed-precision benchmark naming cleanup:
+DONE
+
+Implemented features:
+- Removed the previous no-precision-change macro name from tracked source
+  files.
+- Renamed benchmark fixed-precision variants to the
+  `*_mkII_FIXED_PRECISION_FASTPATH` suffix.
+- Benchmark fixed-precision targets now define only
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
+- Updated benchmark runner scripts, plot helpers, benchmark READMEs, and
+  affected tests/status text to use the fixed-precision fast-path naming.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/README.md`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/common/plot.py`
+- `benchmarks/gmp/*/README.md`
+- `benchmarks/gmp/*/go.sh`
+- `benchmarks/gmp/*/plot.py`
+- `tests/test_gmpxx_mkII.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- Searched tracked files for the previous no-precision-change macro and
+  target suffix names.
+- Replaced tracked benchmark macro/target suffix uses with fixed-precision
+  fast-path naming.
+- Rechecked tracked files for the previous no-precision-change naming.
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH test_mpf_fixed_precision_tls_scratch test_mpf_fixed_precision_materialization`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000 512`
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpf_fixed_precision_materialization' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Final tracked-file search for the previous no-precision-change naming:
+  PASS, no tracked matches.
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j --target Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH test_mpf_fixed_precision_tls_scratch test_mpf_fixed_precision_materialization`: PASS.
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000 512`: PASS, `DIFF` OK.
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000 512`: PASS, `DIFF` OK.
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpf_fixed_precision_materialization' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 142/142 tests passed.
+
+Known issues:
+- Historical raw benchmark logs, if any, may still mention old target names
+  as archived measurement data.
+
+Post-phase MPF fixed-precision materialization fast path:
+DONE
+
+Implemented features:
+- Added `mpf_materialization_precision(expr)` for `mpf_class` expression
+  construction.
+- When `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is enabled, MPF
+  expression materialization skips the runtime leaf-precision walk and uses
+  `gmpxx::default_mpf_precision_bits()` directly.
+- `random_mpf_expr` remains excluded from this shortcut so explicit
+  `get_f(precision)` materialization requests keep their requested precision.
+- Default builds keep the existing max-leaf precision policy.
+
+Tests added:
+- Added `tests/test_mpf_fixed_precision_materialization.cpp`, compiled with
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`, to verify expression
+  construction uses default materialization precision instead of max leaf
+  precision and that assignment still preserves destination precision.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `tests/CMakeLists.txt`
+- `tests/test_mpf_fixed_precision_materialization.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,120p' include/gmpfrxx_mkII/detail/config.hpp`
+- `sed -n '1348,1400p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `rg -n "mpf_class::mpf_class\\(const Expr|mpf_expression_precision\\(expr\\)|assume_fixed_precision_fastpath" include tests benchmarks/gmp/00_Rdot`
+- `rg -n "random_mpf_expr|materialization_precision|default_mpf_precision_bits\\(" include/gmpfrxx_mkII/detail/mpf_impl.hpp tests/test_mpf* benchmarks/gmp/00_Rdot`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpf_fixed_precision_materialization test_mpf_precision_policy test_mpf_scalar_alloc_count`
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_materialization|test_mpf_precision_policy|test_mpf_scalar_alloc_count' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- First focused ctest run exposed an overly strict test assertion: GMP rounds
+  `mpf_init2(160)` up internally, so the test now compares against an actual
+  default-constructed object precision.
+- `cmake --build build -j --target test_mpf_fixed_precision_materialization test_mpf_precision_policy test_mpf_scalar_alloc_count`: PASS.
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_materialization|test_mpf_precision_policy|test_mpf_scalar_alloc_count' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 141/141 tests passed.
+
+Known issues:
+- This removes the constructor-side precision walk under the fixed precision
+  build option.  Direct `lhs += a * b` product temporary reuse is tracked in
+  the following TLS scratch phase.
+
+Post-phase MPF fixed-precision TLS scratch pool:
+DONE
+
+Implemented features:
+- Added a small `thread_local` MPF scratch pool used only when
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is enabled.
+- Optimized direct `mpf_class += mpf_class * mpf_class` and
+  `mpf_class -= mpf_class * mpf_class` compound assignments to reuse a TLS
+  product scratch instead of allocating and clearing a product `mpf_t` on each
+  call.
+- The operation still performs the same two-step MPF semantics: first compute
+  the product at destination precision, then add or subtract it from the
+  destination.  It does not introduce fused arithmetic.
+- The pool stores four per-thread slots for nested expression evaluation and
+  falls back to an operation-local temporary when all slots are busy.
+- Scratch slots restore their allocated precision before `mpf_clear`; borrowed
+  slots use `mpf_set_prec_raw` so a previously larger slot does not silently
+  compute the product at a higher precision.
+- Slots above 1 Mi bit precision are not retained in the TLS pool.  Those use
+  a fallback temporary that is cleared at the end of the operation.
+
+Tests added:
+- Added `tests/test_mpf_fixed_precision_tls_scratch.cpp`, compiled with
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`, to verify `+= a * b` and
+  `-= a * b` match explicit `mpf_mul` followed by `mpf_add`/`mpf_sub`, and
+  that steady-state direct multiply compound assignment performs zero GMP
+  allocations after the TLS scratch is warmed.
+- Renamed benchmark fixed-precision variants to
+  `*_mkII_FIXED_PRECISION_FASTPATH`.
+- Removed the previous no-precision-change macro from tracked source files.
+  Benchmark fixed-precision targets now define only the canonical
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `benchmarks/CMakeLists.txt`
+- `tests/CMakeLists.txt`
+- `tests/test_mpf_fixed_precision_tls_scratch.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,220p' tests/test_mpf_alloc_count.cpp`
+- `sed -n '1,220p' tests/test_mpf_scalar_alloc_count.cpp`
+- `rg -n "thread_local|scratch|mp_set_memory_functions|alloc_count|RUN_SERIAL" include/gmpfrxx_mkII/detail tests benchmarks/gmp/00_Rdot`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpf_fixed_precision_tls_scratch test_mpf_fixed_precision_materialization test_mpf_alloc_count test_mpf_scalar_alloc_count`
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpf_fixed_precision_materialization|test_mpf_alloc_count|test_mpf_scalar_alloc_count' --output-on-failure`
+- `g++ -std=c++17 -O3 -Iinclude -Ibenchmarks/common -Ibenchmarks/gmp/00_Rdot benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp -lgmp -o /tmp/rdot_mpf_normal`
+- `g++ -std=c++17 -O3 -DGMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH -Iinclude -Ibenchmarks/common -Ibenchmarks/gmp/00_Rdot benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp -lgmp -o /tmp/rdot_mpf_fastpath`
+- `g++ -std=c++17 -O3 -DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS -Iinclude -Ibenchmarks/common -Ibenchmarks/gmp/00_Rdot benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp -lgmp -o /tmp/rdot_mpf_normal_count`
+- `g++ -std=c++17 -O3 -DGMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH -DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS -Iinclude -Ibenchmarks/common -Ibenchmarks/gmp/00_Rdot benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp -lgmp -o /tmp/rdot_mpf_fastpath_count`
+- `/tmp/rdot_mpf_normal_count 10000 512`
+- `/tmp/rdot_mpf_fastpath_count 10000 512`
+- `/tmp/rdot_mpf_normal 1000000 512`
+- `/tmp/rdot_mpf_fastpath 1000000 512`
+- Repeated `/tmp/rdot_mpf_normal 1000000 512` five times.
+- Repeated `/tmp/rdot_mpf_fastpath 1000000 512` five times.
+- `cmake --build build -j --target Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH test_mpf_fixed_precision_tls_scratch`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 1000000 512`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 1000000 512`
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpf_fixed_precision_materialization' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j --target test_mpf_fixed_precision_tls_scratch test_mpf_fixed_precision_materialization test_mpf_alloc_count test_mpf_scalar_alloc_count`: PASS.
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpf_fixed_precision_materialization|test_mpf_alloc_count|test_mpf_scalar_alloc_count' --output-on-failure`: PASS, 4/4 tests passed.
+- Operation counts for `Rdot_gmp_kernel_01` at N=10000, precision=512:
+  normal `mkII` had `init2=10001`, `clear=10001`, `add=10000`,
+  `mul=10000`; fixed-precision TLS scratch had `init2=2`, `clear=1`,
+  `add=10000`, `mul=10000`.
+- Timing sample for an ad-hoc O3 build at N=1000000, precision=512:
+  normal `mkII` ran around 0.072-0.075 s; fixed-precision TLS scratch ran
+  around 0.067-0.069 s.
+- Timing sample for CMake Debug targets at N=1000000, precision=512:
+  `Rdot_gmp_kernel_01_mkII` took 0.127347 s and
+  `Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH` took 0.123643 s.
+- `cmake --build build -j --target Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH test_mpf_fixed_precision_tls_scratch`: PASS.
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpf_fixed_precision_materialization' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 142/142 tests passed.
+
+Known issues:
+- The TLS scratch fast path is intentionally narrow.  It currently covers only
+  direct `mpf_class` leaf products in compound add/sub, matching the Rdot
+  kernel pattern.  More general expression products still use the conservative
+  temporary path.
+
+Post-phase MPFR addmul fast path review:
+DONE
+
+Implemented features:
+- Reviewed `mpfr_class` compound assignment for an `lhs += a * b` addmul-style
+  fast path.
+- Did not add an `mpfr_fma` rewrite under
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.  Fixed precision removes
+  precision-propagation work, but it does not make fused multiply-add
+  semantically equivalent to the current expression-template evaluation.
+- The current implementation preserves the existing two-step semantics:
+  materialize the product at destination precision, then add it to the
+  destination using the active rounding mode.
+
+Tests added:
+- None.  This phase is a policy/implementation review that intentionally keeps
+  runtime behavior unchanged.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpfr_fma|mpfr_fms|fma\\(|fmma|mpfr_compound_assign|is_mpz_addmul_direct|addmul_direct|binary_expr<mul_op" include/gmpfrxx_mkII/detail tests benchmarks`
+- `sed -n '1685,1810p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1908,1940p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1,180p' tests/test_mpfr_compound_assign.cpp`
+- `sed -n '1,160p' tests/test_mpfr_scalar_alloc_count.cpp`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpfr_compound_assign test_mpfr_scalar_alloc_count`
+- `ctest --test-dir build -R 'test_mpfr_compound_assign|test_mpfr_scalar_alloc_count' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j --target test_mpfr_compound_assign test_mpfr_scalar_alloc_count`: PASS.
+- `ctest --test-dir build -R 'test_mpfr_compound_assign|test_mpfr_scalar_alloc_count' --output-on-failure`: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+
+Known issues:
+- MPFR has `mpfr_fma`, but using it as a transparent replacement for
+  `lhs += a * b` changes rounding semantics.  A fused operation should only be
+  exposed through an explicit fused API or a separate, clearly documented
+  semantic-changing build option.
+
 Post-phase MPZ binary expression allocation fast path:
 DONE
 
@@ -2922,7 +3166,7 @@ Exact commands run:
 - `perl -0pi ... benchmarks/mpfr/00_Rdot/*.cpp benchmarks/mpfr/00_Rdot/Rdot.hpp`
 - `rg -n "mpf_|gmp_printf|benchmark_mpf|USE_ORIGINAL|#if|#endif|gmpxx|mpf_class|mpf_t|get_mpf|mpfr_set_default_prec" benchmarks/mpfr/00_Rdot`
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
-- `cmake --build build -j --target Rdot_mpfr_C_native_01 Rdot_mpfr_C_native_openmp_01 Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_01_mkII_NOPRECCHANGE Rdot_mpfr_kernel_02_mkII Rdot_mpfr_kernel_02_mkII_NOPRECCHANGE Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_03_mkII_NOPRECCHANGE Rdot_mpfr_kernel_04_mkII Rdot_mpfr_kernel_04_mkII_NOPRECCHANGE Rdot_mpfr_kernel_openmp_01_mkII Rdot_mpfr_kernel_openmp_01_mkII_NOPRECCHANGE Rdot_mpfr_kernel_openmp_02_mkII Rdot_mpfr_kernel_openmp_02_mkII_NOPRECCHANGE`
+- `cmake --build build -j --target Rdot_mpfr_C_native_01 Rdot_mpfr_C_native_openmp_01 Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_02_mkII Rdot_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_04_mkII Rdot_mpfr_kernel_04_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_openmp_01_mkII Rdot_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_openmp_02_mkII Rdot_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH`
 - `for exe in build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_*; do "$exe" 12 128 | tail -n 1; done`
 - `ctest --test-dir build --output-on-failure`
 
@@ -3651,12 +3895,12 @@ Exact commands run:
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
 - `cmake --build build -j --target Rdot_gmp_kernel_01_mkII`
 - `rg -n "gmpxx_defaults::set_initial_default_prec|set_initial_default_prec|set_default_mpf_precision_bits|mpf_set_default_prec" benchmarks`
-- `cmake --build build -j --target bench_gmp_arithmetic bench_mpfr_mpc_arithmetic Rdot_gmp_C_native_01 Rdot_gmp_C_native_openmp_01 Rdot_gmp_kernel_01_orig Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_mkII_NOPRECCHANGE Rdot_gmp_kernel_02_orig Rdot_gmp_kernel_02_mkII Rdot_gmp_kernel_02_mkII_NOPRECCHANGE Rdot_gmp_kernel_03_orig Rdot_gmp_kernel_03_mkII Rdot_gmp_kernel_03_mkII_NOPRECCHANGE Rdot_gmp_kernel_04_orig Rdot_gmp_kernel_04_mkII Rdot_gmp_kernel_04_mkII_NOPRECCHANGE Rdot_gmp_kernel_openmp_01_orig Rdot_gmp_kernel_openmp_01_mkII Rdot_gmp_kernel_openmp_01_mkII_NOPRECCHANGE Rdot_gmp_kernel_openmp_02_orig Rdot_gmp_kernel_openmp_02_mkII Rdot_gmp_kernel_openmp_02_mkII_NOPRECCHANGE`
+- `cmake --build build -j --target bench_gmp_arithmetic bench_mpfr_mpc_arithmetic Rdot_gmp_C_native_01 Rdot_gmp_C_native_openmp_01 Rdot_gmp_kernel_01_orig Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_02_orig Rdot_gmp_kernel_02_mkII Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_03_orig Rdot_gmp_kernel_03_mkII Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_04_orig Rdot_gmp_kernel_04_mkII Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_01_orig Rdot_gmp_kernel_openmp_01_mkII Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_02_orig Rdot_gmp_kernel_openmp_02_mkII Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH`
 - `cmake --build build -j`
 - `bash benchmarks/run_benchmarks.sh build 128 8 8 4 4 3 3 3 /tmp/gmpfrxx_benchmark_smoke`
 - `ctest --test-dir build --output-on-failure`
 - `git diff --check`
-- `cmake --build build -j --target Rgemv_gmp_kernel_openmp_02_mkII Rgemv_gmp_kernel_openmp_02_mkII_NOPRECCHANGE Rgemv_gmp_kernel_openmp_02_orig Rgemm_gmp_C_native_openmp_02`
+- `cmake --build build -j --target Rgemv_gmp_kernel_openmp_02_mkII Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_02_orig Rgemm_gmp_C_native_openmp_02`
 - `rg -n "critical|nowait|Compute alpha \\* A \\* B|Compute alpha \\* A \\* x" benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_02.cpp`
 
 Pass/fail result:

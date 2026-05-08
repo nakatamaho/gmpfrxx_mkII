@@ -10,7 +10,7 @@ C = alpha * A * B + beta * C
 
 with random `mpf` data at a fixed precision.  It compares raw `mpf_t`,
 upstream `gmpxx.h`, `gmpxx_mkII`, and `gmpxx_mkII` built with
-`GMPXX_MKII_NOPRECCHANGE`.
+`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
 
 ## Build
 
@@ -67,7 +67,7 @@ Variant names:
 - `C_native_openmp`: raw `mpf_t` implementation with OpenMP.
 - `*_orig`: upstream `gmpxx.h`.
 - `*_mkII`: this header with the default precision policy.
-- `*_mkII_NOPRECCHANGE`: this header with `GMPXX_MKII_NOPRECCHANGE`.
+- `*_mkII_FIXED_PRECISION_FASTPATH`: this header with `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
 - `*_openmp_*`: OpenMP variant where the eager benchmark provided one.
 
 ## Recorded go.sh Sample

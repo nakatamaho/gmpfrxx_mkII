@@ -10,7 +10,7 @@ y = alpha * A * x + beta * y
 
 with random `mpf` data at a fixed precision.  It compares raw `mpf_t`,
 upstream `gmpxx.h`, `gmpxx_mkII`, and `gmpxx_mkII` built with
-`GMPXX_MKII_NOPRECCHANGE`.
+`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
 
 ## Build
 
@@ -67,7 +67,7 @@ Variant names:
 - `C_native_openmp`: raw `mpf_t` implementation with OpenMP.
 - `*_orig`: upstream `gmpxx.h`.
 - `*_mkII`: this header with the default precision policy.
-- `*_mkII_NOPRECCHANGE`: this header with `GMPXX_MKII_NOPRECCHANGE`.
+- `*_mkII_FIXED_PRECISION_FASTPATH`: this header with `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
 - `*_openmp_*`: OpenMP variant where the eager benchmark provided one.
 
 ## Recorded go.sh Sample
@@ -91,7 +91,7 @@ Results are stored in [../results_raw/Linux_Ryzen_3970X_32-Core/](../results_raw
 - [OpenMP PDF](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_openmp_Rgemv.pdf)
 
 `kernel_openmp_02` reports `Result NG` for `orig`, `mkII`, and
-`mkII_NOPRECCHANGE` in that run.  The same failure across all three variants
+`mkII_FIXED_PRECISION_FASTPATH` in that run.  The same failure across all three variants
 indicates a benchmark-variant issue in this ported OpenMP case, not a
 `gmpxx_mkII`-specific difference.
 

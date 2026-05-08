@@ -7,7 +7,7 @@ The benchmark tree is split by numeric backend.
 - `gmp/`: eager BLAS-like GMP/MPF benchmark programs ported to this
   repository.  The top-level CMake build creates raw `mpf_t`, upstream
   `gmpxx.h`, `gmpxx_mkII`, `gmpxx_mkII` with
-  `GMPXX_MKII_NOPRECCHANGE`, and OpenMP variants where available.
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`, and OpenMP variants where available.
 - `mpfr/`: reserved for MPFR/MPC benchmarks.
 - `common/`: shared runner and plotting helpers.
 

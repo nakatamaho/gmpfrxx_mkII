@@ -704,7 +704,7 @@ void test_get_si() {
     std::cout << "test_get_si passed." << std::endl;
 }
 void test_mpf_class_constructor_precision() {
-#if !defined GMPXX_MKII_NOPRECCHANGE
+#if !defined GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     mpf_class f1(1.5); // default precision
     assert(f1.get_prec() == gmpxx_defaults::get_default_prec());
     mpf_class f2(1.5, 1024); // 1024 bits (at least)
@@ -2311,7 +2311,7 @@ void test_mpf_class_const_pi() {
     std::cout << "Pi matched 3rd in " << raised_matched << " decimal digits" << std::endl;
     assert(raised_default_pi.get_prec() > low_default_pi.get_prec());
     assert(raised_matched > low_default_matched && "default precision was not raised");
-#if !defined GMPXX_MKII_NOPRECCHANGE
+#if !defined GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     mpf_class pi_2048(0.0, 2048);
     pi_2048 = const_pi(2048);
     decimal_digits = floor(std::log10(2) * 2048);
@@ -2385,7 +2385,7 @@ void test_mpf_class_const_log2() {
     std::cout << "log2 matched 3rd in " << raised_matched << " decimal digits" << std::endl;
     assert(raised_default_log2.get_prec() > low_default_log2.get_prec());
     assert(raised_matched > low_default_matched && "default precision was not raised");
-#if !defined GMPXX_MKII_NOPRECCHANGE
+#if !defined GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     mpf_class log2_2048(0.0, 2048);
     log2_2048 = const_log2(2048);
     decimal_digits = floor(std::log10(2) * 2048);
@@ -2618,7 +2618,7 @@ void test_casts() {
     std::cout << "test_casts passed." << std::endl;
 }
 void test_precisions_mixed() {
-#if !defined GMPXX_MKII_NOPRECCHANGE
+#if !defined GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     {
         mp_exp_t _exp = 1024;
         mpf_class a(10, _exp);
@@ -2825,7 +2825,7 @@ void test_misc() {
         gmp_printf("%.78Ff\n", g.get_mpf_t());
         mpf_set_default_prec(512);
     }
-#if defined GMPXX_MKII_NOPRECCHANGE
+#if defined GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     {
         // Another clear difference between the original macro-based implementation and my C++17 implementation
         // r2.get_f() knows the precision of f in the original implementation, whereas my implementation does not.

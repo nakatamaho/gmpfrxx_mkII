@@ -104,7 +104,7 @@ for file_path in file_paths:
     # Determine colors based on operation types
     colors = []
     for op in operations:
-        if 'mkII_NOPRECCHANGE' in op:
+        if 'mkII_FIXED_PRECISION_FASTPATH' in op:
             colors.append('red')
         elif 'mkII' in op:
             colors.append('green')
@@ -120,7 +120,7 @@ for file_path in file_paths:
 
     openmp_colors = []
     for op in openmp_operations:
-        if 'mkII_NOPRECCHANGE' in op:
+        if 'mkII_FIXED_PRECISION_FASTPATH' in op:
             openmp_colors.append('red')
         elif 'mkII' in op:
             openmp_colors.append('green')
@@ -137,7 +137,7 @@ for file_path in file_paths:
     # Determine colors for singlecore operations
     singlecore_colors = []
     for op in singlecore_operations:
-        if 'mkII_NOPRECCHANGE' in op:
+        if 'mkII_FIXED_PRECISION_FASTPATH' in op:
             singlecore_colors.append('red')
         elif 'mkII' in op:
             singlecore_colors.append('green')
@@ -168,7 +168,7 @@ for file_path in file_paths:
     plt.subplots_adjust(bottom=0.4, right=0.75)
 
     # Add legend bars on the right side
-    legend_labels = ['native C', 'orig(gmpxx.h)', 'mkII(gmpxx_mkII.h)', 'mkII_NOPRECCHANGE(gmpxx_mkII.h)']
+    legend_labels = ['native C', 'orig(gmpxx.h)', 'mkII(gmpxx_mkII.h)', 'mkII_FIXED_PRECISION_FASTPATH(gmpxx_mkII.h)']
     legend_colors = ['gray', 'blue', 'green', 'red' ]
     for color, label in zip(legend_colors, legend_labels):
         plt.plot([], [], color=color, label=label, linewidth=10)
