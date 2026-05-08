@@ -58,6 +58,38 @@ void require_default_visible_to_threads()
     }
 }
 
+void require_concurrent_default_precision_access()
+{
+    std::atomic<bool> stop{false};
+    std::atomic<int> mismatches{0};
+    std::thread writer([&] {
+        for (int i = 0; i < 2000; ++i) {
+            gmpxx::set_default_mpf_precision_bits((i % 2) == 0 ? 257 : 769);
+        }
+        stop.store(true, std::memory_order_release);
+    });
+
+    std::vector<std::thread> readers;
+    for (int i = 0; i < 8; ++i) {
+        readers.emplace_back([&] {
+            while (!stop.load(std::memory_order_acquire)) {
+                const mp_bitcnt_t precision = gmpxx::default_mpf_precision_bits();
+                if (precision != 257 && precision != 769 && precision != 777) {
+                    ++mismatches;
+                }
+            }
+        });
+    }
+
+    writer.join();
+    for (auto& thread : readers) {
+        thread.join();
+    }
+    if (mismatches.load() != 0) {
+        std::abort();
+    }
+}
+
 void require_isolation_from_gmp_global_default()
 {
     const mp_bitcnt_t original_gmp_default = mpf_get_default_prec();
@@ -102,6 +134,7 @@ void require_parallel_expression_materialization()
 int main()
 {
     require_default_visible_to_threads();
+    require_concurrent_default_precision_access();
     require_isolation_from_gmp_global_default();
     require_parallel_expression_materialization();
     return 0;

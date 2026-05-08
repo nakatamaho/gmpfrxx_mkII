@@ -29,7 +29,10 @@
 #include <mpfrxx_mkII.h>
 #include <mpcxx_mkII.h>
 
+#include <atomic>
 #include <cstdlib>
+#include <thread>
+#include <vector>
 
 int main()
 {
@@ -70,6 +73,59 @@ int main()
     }
     if (mpfrxx::default_mpc_rounding_mode() != MPC_RND(MPFR_RNDD, MPFR_RNDZ)) {
         std::abort();
+    }
+
+    {
+        std::atomic<bool> stop{false};
+        std::atomic<int> mismatches{0};
+        std::thread writer([&] {
+            for (int i = 0; i < 2000; ++i) {
+                if ((i % 2) == 0) {
+                    mpfrxx::set_default_mpc_precision_bits(193, 257);
+                } else {
+                    mpfrxx::set_default_mpc_precision_bits(307, 409);
+                }
+            }
+            stop.store(true, std::memory_order_release);
+        });
+
+        std::vector<std::thread> readers;
+        for (int i = 0; i < 8; ++i) {
+            readers.emplace_back([&] {
+                while (!stop.load(std::memory_order_acquire)) {
+                    const auto options = mpfrxx::default_mpc_options();
+                    const bool initial =
+                        options.real_precision_bits == 192 &&
+                        options.imag_precision_bits == 224 &&
+                        options.real_rounding_mode == MPFR_RNDD &&
+                        options.imag_rounding_mode == MPFR_RNDZ;
+                    const bool first =
+                        options.real_precision_bits == 193 &&
+                        options.imag_precision_bits == 257 &&
+                        options.real_rounding_mode == MPFR_RNDD &&
+                        options.imag_rounding_mode == MPFR_RNDZ;
+                    const bool second =
+                        options.real_precision_bits == 307 &&
+                        options.imag_precision_bits == 409 &&
+                        options.real_rounding_mode == MPFR_RNDD &&
+                        options.imag_rounding_mode == MPFR_RNDZ;
+                    if (!initial && !first && !second) {
+                        ++mismatches;
+                    }
+                }
+            });
+        }
+
+        writer.join();
+        for (auto& thread : readers) {
+            thread.join();
+        }
+        if (mismatches.load() != 0) {
+            std::abort();
+        }
+
+        mpfrxx::set_default_mpc_precision_bits(192, 224);
+        mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDD, MPFR_RNDZ);
     }
 
     mpfrxx::mpc_class value;

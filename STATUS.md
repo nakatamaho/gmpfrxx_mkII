@@ -1,3 +1,148 @@
+Post-phase MPF math loop bounds and pi literal fast path:
+DONE
+
+Implemented features:
+- Removed unused `mpf_math_detail::apply_unary`; it had no call sites and was
+  a leftover double-backed helper.
+- Removed the now-unused `make_from_double` helper from `math_mpf.hpp`.
+- Added a common MPF iteration-limit helper and applied it to convergence-only
+  loops:
+  - `compute_pi_gauss_legendre`
+  - `agm_converged`
+  - `theta3_from_power_of_two_q`
+  - `theta2_from_power_of_two_q`
+  - `log1p_taylor_small`
+  - `log1p_atanh_series`
+  - `exp_taylor_reduced`
+  - `expm1_taylor_small`
+  - `sincos_taylor_small`
+  - `atan_taylor_small`
+  - `compute_atan` argument reduction
+- Convergence loops now throw `std::runtime_error` with the function name if
+  the iteration limit is exceeded.
+- The iteration limit is `max(64, 16 * precision)`.  A first pass using
+  `max(64, precision)` was too tight for existing high-precision
+  `log1p_atanh_series` coverage.
+- Changed `has_hardcoded_pi()` from exact precision matches
+  (`512/1024/2048`) to a conservative decimal-literal capacity check.  The
+  current 1000-decimal-digit pi literal is now used for non-standard
+  precisions such as 600 and 1500 bits, while larger requests such as 4096
+  bits still use the Gauss-Legendre cache path.
+
+Missing features:
+- `log_two` still uses exact hardcoded precision matches.  This phase only
+  addressed the reported pi literal behavior.
+
+Tests added:
+- Extended `tests/test_mpf_pi.cpp` to verify that 600-bit and 1500-bit pi
+  requests use the hardcoded-literal eligibility path and still match the
+  reference prefix.
+- Existing MPF math/transcendent tests cover the bounded convergence loops on
+  normal inputs.
+
+Exact commands run:
+- `rg -n "apply_unary|compute_pi_gauss_legendre|sincos_taylor_small|exp_taylor_reduced|expm1_taylor_small|compute_log|while \\(|for \\(" include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '600,840p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '1120,1205p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '120,240p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '240,560p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '840,1045p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '1,90p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `rg -n "has_hardcoded_pi|hardcoded_pi|pi_decimal_literal|compute_pi_gauss_legendre|for \\(;;\\)|while \\(true\\)" include/gmpfrxx_mkII/detail/math_mpf.hpp tests`
+- `awk '/return "3\\.1415/{flag=1} flag{print} /9216420199";/{flag=0}' include/gmpfrxx_mkII/detail/math_mpf.hpp | tr -cd '0-9' | wc -c`
+- `sed -n '500,575p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '1128,1192p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '1368,1395p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `rg -n "mpf_math_detail::apply_unary|apply_unary\\(" include tests examples`
+- `rg -n "apply_unary|make_from_double\\(" include/gmpfrxx_mkII/detail/math_mpf.hpp include tests`
+- `rg -n "for \\(;;\\)|while \\(true\\)" include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '1,160p' tests/test_mpf_pi.cpp`
+- `sed -n '160,280p' tests/test_mpf_pi.cpp`
+- `sed -n '1,180p' tests/test_mpf_math_functions.cpp`
+- `cmake --build build -j --target test_mpf_pi test_mpf_math_functions test_mpf_transcendent_functions test_mpf_extended_transcendent_functions`
+- `ctest --test-dir build -R 'test_mpf_pi|test_mpf_math_functions|test_mpf_transcendent_functions|test_mpf_extended_transcendent_functions' --output-on-failure`
+- `cmake --build build -j --target test_mpf_transcendent_functions`
+- `ctest --test-dir build -R 'test_mpf_pi|test_mpf_math_functions|test_mpf_transcendent_functions|test_mpf_extended_transcendent_functions' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- First focused CTest with `max(64, precision)`: FAIL, `test_mpf_transcendent_functions`
+  hit `log1p_atanh_series failed to converge within iteration limit`.
+- After increasing the limit to `max(64, 16 * precision)`,
+  `ctest --test-dir build -R 'test_mpf_pi|test_mpf_math_functions|test_mpf_transcendent_functions|test_mpf_extended_transcendent_functions' --output-on-failure`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
+Post-phase thread-safe default options and common-type macro consolidation:
+DONE
+
+Implemented features:
+- Made `gmpxx::default_mpf_precision_bits()` storage atomic, with synchronized
+  loads and stores from the public setter and environment reload path.
+- Made MPFR default options (`precision_bits`, `emin`, `emax`,
+  `rounding_mode`) copy-in/copy-out under a mutex, so readers no longer race
+  with `set_default_*` or `reload_mpfr_defaults_from_environment()`.
+- Made MPC default options (`real_precision_bits`, `imag_precision_bits`,
+  `real_rounding_mode`, `imag_rounding_mode`) copy-in/copy-out under a mutex.
+  `reload_mpc_defaults_from_environment()` computes inherited MPFR defaults
+  before taking the MPC mutex to avoid nested lock surprises.
+- Added `include/gmpfrxx_mkII/detail/common_type_macros.hpp` and moved the
+  duplicated `GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(S)` definitions there.
+- Updated `zq_impl.hpp`, `mpf_impl.hpp`, and `mpfc_impl.hpp` to include the
+  shared common-type macro header instead of redefining the macros locally.
+
+Missing features:
+- This removes C++ data races on the wrapper-owned default stores.  It does
+  not make multiple independent setter calls an atomic transaction; callers
+  that need a consistent multi-field snapshot should use `default_options()`
+  or `default_mpc_options()`.
+
+Tests added:
+- Extended `tests/test_mpf_thread_safety.cpp` with concurrent MPF default
+  precision writer/reader coverage.
+- Extended `tests/test_mpfr_thread_safety.cpp` with concurrent MPFR exponent
+  range writer/reader coverage through `default_options()`.
+- Extended `tests/test_mpc_environment.cpp` with concurrent MPC real/imag
+  precision writer/reader coverage through `default_mpc_options()`.
+
+Exact commands run:
+- `git status --short`
+- `sed -n '1,140p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '180,320p' include/gmpfrxx_mkII/detail/environment.hpp`
+- `sed -n '1,170p' include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `sed -n '170,260p' include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `sed -n '1260,1360p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '620,690p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '240,300p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1,60p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '26,50p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `rg -n "default_emin\\(|default_emax\\(|default_options\\(\\)" include tests`
+- `rg -n "default_mpc_(real|imag)_precision_bits\\(|default_mpc_(real|imag)_rounding_mode\\(|default_mpc_rounding_mode\\(|default_mpc_options\\(\\)" include tests`
+- `rg -n "thread|default.*thread|set_default" tests/test_*thread* tests/test_mpf_thread_safety.cpp tests/test_mpfr_thread_safety.cpp 2>/dev/null`
+- `sed -n '1,180p' tests/test_mpf_thread_safety.cpp`
+- `sed -n '1,190p' tests/test_mpfr_thread_safety.cpp`
+- `rg -n "mpf_thread_safety|mpfr_thread_safety|mpc_.*thread|mpc_environment" CMakeLists.txt tests/CMakeLists.txt`
+- `sed -n '1,140p' tests/test_mpc_environment.cpp`
+- `rg -n "#define GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE|#undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE|mutable_default_mpf_precision_bits\\(" include tests`
+- `git diff --stat`
+- `cmake --build build -j --target test_mpf_thread_safety test_mpfr_thread_safety test_mpc_environment test_common_type`
+- `ctest --test-dir build -R 'test_mpf_thread_safety|test_mpfr_thread_safety|test_mpc_environment|test_common_type' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpf_thread_safety test_mpfr_thread_safety test_mpc_environment test_common_type`: PASS.
+- `ctest --test-dir build -R 'test_mpf_thread_safety|test_mpfr_thread_safety|test_mpc_environment|test_common_type' --output-on-failure`: PASS, 5/5 tests passed because the regex also matched `test_mpc_environment_invalid`.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
 Post-phase expression-constructor exception safety and random expression lifetime:
 DONE
 

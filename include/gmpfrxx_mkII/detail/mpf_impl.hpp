@@ -29,11 +29,13 @@
 #ifndef GMPFRXX_MKII_DETAIL_MPF_IMPL_HPP
 #define GMPFRXX_MKII_DETAIL_MPF_IMPL_HPP
 
+#include <gmpfrxx_mkII/detail/common_type_macros.hpp>
 #include <gmpfrxx_mkII/detail/expr.hpp>
 #include <gmpfrxx_mkII/detail/integer_conversion.hpp>
 #include <gmpfrxx_mkII/detail/zq_impl.hpp>
 
 #include <algorithm>
+#include <atomic>
 #include <cerrno>
 #include <cctype>
 #include <cmath>
@@ -83,27 +85,29 @@ inline mp_bitcnt_t load_default_mpf_precision_bits_from_environment() noexcept
     return precision;
 }
 
-inline mp_bitcnt_t& mutable_default_mpf_precision_bits()
+inline std::atomic<mp_bitcnt_t>& default_mpf_precision_bits_storage()
 {
-    static mp_bitcnt_t precision = load_default_mpf_precision_bits_from_environment();
+    static std::atomic<mp_bitcnt_t> precision{load_default_mpf_precision_bits_from_environment()};
     return precision;
 }
 
 inline mp_bitcnt_t default_mpf_precision_bits()
 {
-    return mutable_default_mpf_precision_bits();
+    return default_mpf_precision_bits_storage().load(std::memory_order_acquire);
 }
 
 inline void set_default_mpf_precision_bits(mp_bitcnt_t precision)
 {
     if (precision > 0) {
-        mutable_default_mpf_precision_bits() = precision;
+        default_mpf_precision_bits_storage().store(precision, std::memory_order_release);
     }
 }
 
 inline void reload_default_mpf_precision_bits_from_environment()
 {
-    mutable_default_mpf_precision_bits() = load_default_mpf_precision_bits_from_environment();
+    default_mpf_precision_bits_storage().store(
+        load_default_mpf_precision_bits_from_environment(),
+        std::memory_order_release);
 }
 
 inline std::uintmax_t mpf_mp_exp_negative_magnitude(mp_exp_t value) noexcept
@@ -634,34 +638,6 @@ struct common_type<gmpxx::mpf_class, gmpxx::mpf_class> {
     using type = gmpxx::mpf_class;
 };
 
-#define GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, SCALAR) \
-    template <>                                                \
-    struct common_type<CLASS, SCALAR> {                        \
-        using type = CLASS;                                    \
-    };                                                         \
-    template <>                                                \
-    struct common_type<SCALAR, CLASS> {                        \
-        using type = CLASS;                                    \
-    }
-
-#define GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(CLASS)              \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, char);            \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, signed char);     \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned char);   \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, wchar_t);         \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, char16_t);        \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, char32_t);        \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, short);           \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned short);  \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, int);             \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned int);    \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, long);            \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned long);   \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, long long);       \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, unsigned long long); \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, float);           \
-    GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE(CLASS, double)
-
 GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(gmpxx::mpf_class);
 
 template <>
@@ -673,9 +649,6 @@ struct numeric_limits<gmpxx::mpf_class> {
     static constexpr bool is_bounded = false;
     static constexpr bool is_modulo = false;
 };
-
-#undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES
-#undef GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPE
 
 } // namespace std
 

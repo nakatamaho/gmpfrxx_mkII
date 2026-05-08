@@ -59,6 +59,55 @@ void require_default_visible_to_threads()
     }
 }
 
+void require_concurrent_default_options_access()
+{
+    std::atomic<bool> stop{false};
+    std::atomic<int> mismatches{0};
+    mpfrxx::set_default_precision_bits(257);
+    mpfrxx::set_default_rounding_mode(MPFR_RNDU);
+    mpfrxx::set_default_exponent_range(-40, 40);
+    std::thread writer([&] {
+        for (int i = 0; i < 2000; ++i) {
+            if ((i % 2) == 0) {
+                mpfrxx::set_default_exponent_range(-40, 40);
+            } else {
+                mpfrxx::set_default_exponent_range(-80, 80);
+            }
+        }
+        stop.store(true, std::memory_order_release);
+    });
+
+    std::vector<std::thread> readers;
+    for (int i = 0; i < 8; ++i) {
+        readers.emplace_back([&] {
+            while (!stop.load(std::memory_order_acquire)) {
+                const auto options = mpfrxx::default_options();
+                const bool first =
+                    options.precision_bits == 257 &&
+                    options.rounding_mode == MPFR_RNDU &&
+                    options.emin == -40 &&
+                    options.emax == 40;
+                const bool second =
+                    options.precision_bits == 257 &&
+                    options.rounding_mode == MPFR_RNDU &&
+                    options.emin == -80 &&
+                    options.emax == 80;
+                if (!first && !second) {
+                    ++mismatches;
+                }
+            }
+        });
+    }
+
+    writer.join();
+    for (auto& thread : readers) {
+        thread.join();
+    }
+    if (mismatches.load() != 0) {
+        std::abort();
+    }
+}
+
 void require_isolation_from_mpfr_global_default()
 {
     const mpfr_prec_t original_mpfr_default = mpfr_get_default_prec();
@@ -103,6 +152,7 @@ void require_parallel_expression_materialization()
 int main()
 {
     require_default_visible_to_threads();
+    require_concurrent_default_options_access();
     require_isolation_from_mpfr_global_default();
     require_parallel_expression_materialization();
     return 0;

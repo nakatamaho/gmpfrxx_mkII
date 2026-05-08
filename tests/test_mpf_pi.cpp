@@ -140,6 +140,11 @@ int main()
         std::abort();
     }
     require_pi_prefix(pi_96_again, 25);
+    if (!gmpxx::mpf_math_detail::has_hardcoded_pi(static_cast<mp_bitcnt_t>(600)) ||
+        !gmpxx::mpf_math_detail::has_hardcoded_pi(static_cast<mp_bitcnt_t>(1500)) ||
+        gmpxx::mpf_math_detail::has_hardcoded_pi(static_cast<mp_bitcnt_t>(4096))) {
+        std::abort();
+    }
 
     const auto default_pi = gmpxx::const_pi();
     if (default_pi.precision() < gmpxx::default_mpf_precision_bits()) {
@@ -153,7 +158,7 @@ int main()
     gmpxx::mpf_class pi_512_before = gmpxx::mpf_class::with_precision(512);
     gmpxx::mpf_class pi_1024_before = gmpxx::mpf_class::with_precision(1024);
     gmpxx::mpf_class pi_2048_before = gmpxx::mpf_class::with_precision(2048);
-    for (mp_bitcnt_t precision : std::array<mp_bitcnt_t, 4>{{512, 1024, 2048, 4096}}) {
+    for (mp_bitcnt_t precision : std::array<mp_bitcnt_t, 6>{{512, 600, 1024, 1500, 2048, 4096}}) {
         const auto value = gmpxx::pi(precision);
         if (value.precision() < precision) {
             std::abort();

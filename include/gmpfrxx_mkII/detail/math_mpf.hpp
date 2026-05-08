@@ -37,6 +37,7 @@
 #include <limits>
 #include <mutex>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 
 namespace gmpxx {
@@ -51,6 +52,23 @@ inline mp_bitcnt_t normalize_target_precision(mp_bitcnt_t precision)
     return std::max(precision, minimum_target_precision);
 }
 
+inline std::uint64_t iteration_limit_for_precision(mp_bitcnt_t precision)
+{
+    constexpr std::uint64_t minimum_iterations = 64;
+    constexpr std::uint64_t precision_multiplier = 16;
+    const std::uintmax_t precision_value = static_cast<std::uintmax_t>(precision);
+    const std::uintmax_t max_value = static_cast<std::uintmax_t>(std::numeric_limits<std::uint64_t>::max());
+    if (precision_value > max_value / precision_multiplier) {
+        throw std::overflow_error("MPF iteration limit exceeds uint64_t");
+    }
+    return std::max(minimum_iterations, static_cast<std::uint64_t>(precision_value * precision_multiplier));
+}
+
+[[noreturn]] inline void throw_iteration_limit_exceeded(const char* function_name)
+{
+    throw std::runtime_error(std::string(function_name) + " failed to converge within iteration limit");
+}
+
 inline unsigned long ceil_log2_precision(mp_bitcnt_t value)
 {
     if (value <= 1) {
@@ -63,13 +81,6 @@ inline unsigned long ceil_log2_precision(mp_bitcnt_t value)
         ++bits;
     }
     return bits;
-}
-
-inline mpf_class make_from_double(double value, mp_bitcnt_t precision)
-{
-    mpf_class result = mpf_class::with_precision(precision);
-    mpf_set_d(result.mpf_data(), value);
-    return result;
 }
 
 inline mpf_class make_ui(unsigned long value, mp_bitcnt_t precision)
@@ -243,14 +254,10 @@ inline const char* pi_decimal_literal()
 
 inline bool has_hardcoded_pi(mp_bitcnt_t target_precision)
 {
-    switch (target_precision) {
-    case 512:
-    case 1024:
-    case 2048:
-        return true;
-    default:
-        return false;
-    }
+    constexpr mp_bitcnt_t decimal_digits = 1000;
+    constexpr mp_bitcnt_t fractional_digits = decimal_digits - 1;
+    constexpr mp_bitcnt_t conservative_bits = (fractional_digits * 332) / 100;
+    return target_precision <= conservative_bits;
 }
 
 inline mpf_class hardcoded_pi(mp_bitcnt_t target_precision)
@@ -279,7 +286,8 @@ inline mpf_class compute_pi_gauss_legendre(mp_bitcnt_t target_precision)
     mpf_class pi_previous = zero;
     mpf_class pi_current = zero;
 
-    while (true) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(work);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         mpf_class a_next = average(a, b, work);
         mpf_class b_next = sqrt_prec(mul(a, b, work), work);
         mpf_class diff = sub(a, a_next, work);
@@ -297,11 +305,11 @@ inline mpf_class compute_pi_gauss_legendre(mp_bitcnt_t target_precision)
         pi_previous = pi_current;
         pi_current = div(numerator, denominator, work);
         if (mpf_cmp(abs_prec(sub(pi_current, pi_previous, work), work).mpf_data(), epsilon.mpf_data()) < 0) {
-            break;
+            return set_prec_copy(pi_current, target);
         }
     }
 
-    return set_prec_copy(pi_current, target);
+    throw_iteration_limit_exceeded("compute_pi_gauss_legendre");
 }
 
 struct pi_cache_state {
@@ -385,7 +393,8 @@ inline mpf_class agm_converged(const mpf_class& lhs, const mpf_class& rhs, mp_bi
     mpf_class epsilon = make_ui(1, precision);
     mpf_div_2exp(epsilon.mpf_data(), epsilon.mpf_data(), precision);
 
-    while (true) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         mpf_class a_next = average(a, b, precision);
         mpf_class b_next = sqrt_prec(mul(a, b, precision), precision);
         if (mpf_cmp(abs_prec(sub(a_next, b_next, precision), precision).mpf_data(), epsilon.mpf_data()) < 0) {
@@ -394,6 +403,7 @@ inline mpf_class agm_converged(const mpf_class& lhs, const mpf_class& rhs, mp_bi
         a = a_next;
         b = b_next;
     }
+    throw_iteration_limit_exceeded("agm_converged");
 }
 
 inline mpf_class theta3_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t precision)
@@ -404,17 +414,18 @@ inline mpf_class theta3_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t 
     mpf_div_2exp(term.mpf_data(), term.mpf_data(), q_exponent);
 
     std::uint64_t k = 1;
-    for (;;) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         mpf_class contribution = mul_ui(term, 2ul, precision);
         if (mpf_cmp(contribution.mpf_data(), threshold.mpf_data()) < 0) {
-            break;
+            return sum;
         }
         sum = add(sum, contribution, precision);
         mpf_div_2exp(term.mpf_data(), term.mpf_data(),
                      checked_taylor_shift_count(q_exponent, checked_taylor_odd_denominator(k)));
         increment_taylor_counter(k);
     }
-    return sum;
+    throw_iteration_limit_exceeded("theta3_from_power_of_two_q");
 }
 
 inline mpf_class theta2_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t precision)
@@ -426,10 +437,11 @@ inline mpf_class theta2_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t 
     mpf_class sum = make_ui(0, precision);
 
     std::uint64_t k = 0;
-    for (;;) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         mpf_class contribution = mul_ui(term, 2ul, precision);
         if (mpf_cmp(contribution.mpf_data(), threshold.mpf_data()) < 0) {
-            break;
+            return sum;
         }
         sum = add(sum, contribution, precision);
         const std::uint64_t factor =
@@ -437,7 +449,7 @@ inline mpf_class theta2_from_power_of_two_q(mp_bitcnt_t q_exponent, mp_bitcnt_t 
         mpf_div_2exp(term.mpf_data(), term.mpf_data(), checked_taylor_shift_count(q_exponent, factor));
         increment_taylor_counter(k);
     }
-    return sum;
+    throw_iteration_limit_exceeded("theta2_from_power_of_two_q");
 }
 
 inline mpf_class compute_log_two_theta_agm(mp_bitcnt_t target_precision)
@@ -504,7 +516,8 @@ inline mpf_class log1p_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
     mpf_class power = set_prec_copy(x, precision);
 
     std::uint64_t k = 2;
-    for (;;) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         power = mul(power, x, precision);
         mpf_class term = div(power, make_u64(k, precision), precision);
         if ((k & std::uint64_t{1}) == std::uint64_t{0}) {
@@ -512,11 +525,11 @@ inline mpf_class log1p_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
         }
         sum = add(sum, term, precision);
         if (mpf_cmp(abs_prec(term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
-            break;
+            return sum;
         }
         increment_taylor_counter(k);
     }
-    return sum;
+    throw_iteration_limit_exceeded("log1p_taylor_small");
 }
 
 inline mpf_class log1p_atanh_series(const mpf_class& x, mp_bitcnt_t precision)
@@ -532,17 +545,18 @@ inline mpf_class log1p_atanh_series(const mpf_class& x, mp_bitcnt_t precision)
     mpf_class term = set_prec_copy(y, precision);
 
     std::uint64_t k = 1;
-    for (;;) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         term = mul(term, y2, precision);
         const std::uint64_t denominator = checked_taylor_odd_denominator(k);
         mpf_class contribution = div(term, make_u64(denominator, precision), precision);
         sum = add(sum, contribution, precision);
         if (mpf_cmp(abs_prec(contribution, precision).mpf_data(), epsilon.mpf_data()) < 0) {
-            break;
+            return mul_ui(sum, 2ul, precision);
         }
         increment_taylor_counter(k);
     }
-    return mul_ui(sum, 2ul, precision);
+    throw_iteration_limit_exceeded("log1p_atanh_series");
 }
 
 inline mpf_class compute_log1p(const mpf_class& x_input, mp_bitcnt_t target_precision)
@@ -850,15 +864,16 @@ inline mpf_class exp_taylor_reduced(const mpf_class& x, mp_bitcnt_t precision)
     mpf_class sum = make_ui(1, precision);
     mpf_class term = make_ui(1, precision);
     std::uint64_t n = 1;
-    for (;;) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         term = div(mul(term, x, precision), make_u64(n, precision), precision);
         sum = add(sum, term, precision);
         if (mpf_cmp(abs_prec(term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
-            break;
+            return sum;
         }
         increment_taylor_counter(n);
     }
-    return sum;
+    throw_iteration_limit_exceeded("exp_taylor_reduced");
 }
 
 inline mpf_class compute_exp(const mpf_class& x_input, mp_bitcnt_t target_precision)
@@ -905,15 +920,16 @@ inline mpf_class expm1_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
     mpf_class sum = set_prec_copy(x, precision);
     mpf_class term = set_prec_copy(x, precision);
     std::uint64_t n = 2;
-    for (;;) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         term = div(mul(term, x, precision), make_u64(n, precision), precision);
         sum = add(sum, term, precision);
         if (mpf_cmp(abs_prec(term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
-            break;
+            return sum;
         }
         increment_taylor_counter(n);
     }
-    return sum;
+    throw_iteration_limit_exceeded("expm1_taylor_small");
 }
 
 inline mpf_class compute_expm1(const mpf_class& x_input, mp_bitcnt_t target_precision)
@@ -980,7 +996,8 @@ inline sincos_result sincos_taylor_small(const mpf_class& x, mp_bitcnt_t precisi
     mpf_class cos_term = make_ui(1, precision);
 
     std::uint64_t k = 1;
-    for (;;) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         const std::uint64_t sin_den1 = checked_taylor_counter_product(std::uint64_t{2}, k);
         const std::uint64_t sin_den2 = checked_taylor_counter_add(sin_den1, std::uint64_t{1});
         const std::uint64_t sin_den = checked_taylor_counter_product(sin_den1, sin_den2);
@@ -997,11 +1014,11 @@ inline sincos_result sincos_taylor_small(const mpf_class& x, mp_bitcnt_t precisi
 
         if (mpf_cmp(abs_prec(sin_term, precision).mpf_data(), epsilon.mpf_data()) < 0 &&
             mpf_cmp(abs_prec(cos_term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
-            break;
+            return result;
         }
         increment_taylor_counter(k);
     }
-    return result;
+    throw_iteration_limit_exceeded("sincos_taylor_small");
 }
 
 inline void ensure_trig_constants(mp_bitcnt_t target_precision)
@@ -1138,7 +1155,8 @@ inline mpf_class atan_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
     mpf_class power = set_prec_copy(x, precision);
 
     std::uint64_t k = 1;
-    for (;;) {
+    const std::uint64_t max_iterations = iteration_limit_for_precision(precision);
+    for (std::uint64_t iteration = 0; iteration < max_iterations; ++iteration) {
         power = mul(power, x2, precision);
         mpf_class contribution = div(power, make_u64(checked_taylor_odd_denominator(k), precision), precision);
         if ((k & std::uint64_t{1}) == std::uint64_t{1}) {
@@ -1146,11 +1164,11 @@ inline mpf_class atan_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
         }
         sum = add(sum, contribution, precision);
         if (mpf_cmp(abs_prec(contribution, precision).mpf_data(), epsilon.mpf_data()) < 0) {
-            break;
+            return sum;
         }
         increment_taylor_counter(k);
     }
-    return sum;
+    throw_iteration_limit_exceeded("atan_taylor_small");
 }
 
 inline mpf_class compute_atan(const mpf_class& x_input, mp_bitcnt_t target_precision)
@@ -1169,16 +1187,19 @@ inline mpf_class compute_atan(const mpf_class& x_input, mp_bitcnt_t target_preci
     const mpf_class ax = negate ? sub(zero, x, work) : x;
 
     mpf_class y = set_prec_copy(ax, work);
-    unsigned long reductions = 0;
+    std::uint64_t reductions = 0;
     const mpf_class threshold = div(one, make_ui(2, work), work);
     while (mpf_cmp(y.mpf_data(), threshold.mpf_data()) > 0) {
+        if (reductions >= iteration_limit_for_precision(work)) {
+            throw_iteration_limit_exceeded("compute_atan argument reduction");
+        }
         mpf_class sqrt_term = sqrt_prec(add(one, sqr(y, work), work), work);
         y = div(y, add(one, sqrt_term, work), work);
         ++reductions;
     }
 
     mpf_class result = atan_taylor_small(y, work);
-    for (unsigned long i = 0; i < reductions; ++i) {
+    for (std::uint64_t i = 0; i < reductions; ++i) {
         result = mul_ui(result, 2ul, work);
     }
 
@@ -1374,12 +1395,6 @@ inline mpf_class gamma_spouge_positive(const mpf_class& x, mp_bitcnt_t target_pr
         sum,
         work);
     return set_prec_copy(result, target);
-}
-
-template <typename Function>
-inline mpf_class apply_unary(const mpf_class& value, Function function)
-{
-    return make_from_double(function(value.to_double()), value.precision());
 }
 
 } // namespace mpf_math_detail
