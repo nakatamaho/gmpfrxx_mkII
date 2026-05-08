@@ -2280,6 +2280,28 @@ struct is_mpfr_comparison_pair
           (is_mpfr_comparison_non_scalar<Lhs>::value ||
            is_mpfr_comparison_non_scalar<Rhs>::value)> {};
 
+class scoped_mpfr_t {
+public:
+    explicit scoped_mpfr_t(mpfr_prec_t precision)
+    {
+        mpfr_init2(value_, precision);
+    }
+
+    scoped_mpfr_t(const scoped_mpfr_t&) = delete;
+    scoped_mpfr_t& operator=(const scoped_mpfr_t&) = delete;
+
+    ~scoped_mpfr_t()
+    {
+        mpfr_clear(value_);
+    }
+
+    mpfr_ptr get() noexcept { return value_; }
+    mpfr_srcptr get() const noexcept { return value_; }
+
+private:
+    mpfr_t value_;
+};
+
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline int cmp(Lhs&& lhs, Rhs&& rhs)
 {
@@ -2295,16 +2317,11 @@ inline int cmp(Lhs&& lhs, Rhs&& rhs)
     const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
     const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
 
-    mpfr_t lhs_value;
-    mpfr_t rhs_value;
-    mpfr_init2(lhs_value, precision);
-    mpfr_init2(rhs_value, precision);
-    gmpfrxx_mkII::detail::mpfr_evaluate(lhs_value, left, precision, context.rounding_mode);
-    gmpfrxx_mkII::detail::mpfr_evaluate(rhs_value, right, precision, context.rounding_mode);
-    const int result = mpfr_cmp(lhs_value, rhs_value);
-    mpfr_clear(rhs_value);
-    mpfr_clear(lhs_value);
-    return result;
+    scoped_mpfr_t lhs_value(precision);
+    scoped_mpfr_t rhs_value(precision);
+    gmpfrxx_mkII::detail::mpfr_evaluate(lhs_value.get(), left, precision, context.rounding_mode);
+    gmpfrxx_mkII::detail::mpfr_evaluate(rhs_value.get(), right, precision, context.rounding_mode);
+    return mpfr_cmp(lhs_value.get(), rhs_value.get());
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>

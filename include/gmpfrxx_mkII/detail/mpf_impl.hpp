@@ -1998,6 +1998,28 @@ inline void mpf_compare_evaluate(
     gmpfrxx_mkII::detail::mpf_evaluate(dest, expr, precision);
 }
 
+class scoped_mpf_t {
+public:
+    explicit scoped_mpf_t(mp_bitcnt_t precision)
+    {
+        mpf_init2(value_, precision);
+    }
+
+    scoped_mpf_t(const scoped_mpf_t&) = delete;
+    scoped_mpf_t& operator=(const scoped_mpf_t&) = delete;
+
+    ~scoped_mpf_t()
+    {
+        mpf_clear(value_);
+    }
+
+    mpf_ptr get() noexcept { return value_; }
+    mpf_srcptr get() const noexcept { return value_; }
+
+private:
+    mpf_t value_;
+};
+
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline int cmp(Lhs&& lhs, Rhs&& rhs)
 {
@@ -2010,16 +2032,11 @@ inline int cmp(Lhs&& lhs, Rhs&& rhs)
         precision = default_mpf_precision_bits();
     }
 
-    mpf_t lhs_value;
-    mpf_t rhs_value;
-    mpf_init2(lhs_value, precision);
-    mpf_init2(rhs_value, precision);
-    mpf_compare_evaluate(lhs_value, left, precision);
-    mpf_compare_evaluate(rhs_value, right, precision);
-    const int result = mpf_cmp(lhs_value, rhs_value);
-    mpf_clear(rhs_value);
-    mpf_clear(lhs_value);
-    return result;
+    scoped_mpf_t lhs_value(precision);
+    scoped_mpf_t rhs_value(precision);
+    mpf_compare_evaluate(lhs_value.get(), left, precision);
+    mpf_compare_evaluate(rhs_value.get(), right, precision);
+    return mpf_cmp(lhs_value.get(), rhs_value.get());
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>

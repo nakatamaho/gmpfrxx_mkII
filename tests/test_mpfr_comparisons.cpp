@@ -31,6 +31,7 @@
 #include <cassert>
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
 #include <type_traits>
 
 namespace {
@@ -51,6 +52,17 @@ void check_consistency(const L& lhs, const R& rhs)
     assert((lhs <= rhs) == (r <= 0));
     assert((lhs > rhs) == (r > 0));
     assert((lhs >= rhs) == (r >= 0));
+}
+
+template <typename Function>
+void require_invalid_argument(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::invalid_argument&) {
+        return;
+    }
+    std::abort();
 }
 
 void assert_same_mpfr_value(const mpfrxx::mpfr_class& got, mpfr_srcptr expected)
@@ -117,6 +129,16 @@ void test_mpfr_expression_comparisons()
 
     check_consistency(one_point_two_five + one_point_two_five, two_point_five);
     check_consistency(two + half, two_point_five);
+}
+
+void test_mpfr_comparison_exception_path()
+{
+    const mpfrxx::mpfr_class value("1.25", 128);
+
+    require_invalid_argument([&] {
+        const bool result = value < (value << -1);
+        (void)result;
+    });
 }
 
 void test_mpfr_scalar_comparisons()
@@ -293,6 +315,7 @@ int main()
 {
     test_mpfr_objects_and_exact_operands();
     test_mpfr_expression_comparisons();
+    test_mpfr_comparison_exception_path();
     test_mpfr_scalar_comparisons();
     test_mpfr_sign_next_and_predicates();
     test_mpfr_comparison_helpers();
