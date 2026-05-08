@@ -35,6 +35,14 @@
 
 namespace {
 
+template <typename T, typename = void>
+struct has_public_set_prec_raw : std::false_type {};
+
+template <typename T>
+struct has_public_set_prec_raw<
+    T,
+    decltype(void(std::declval<T&>().set_prec_raw(std::declval<mp_bitcnt_t>())))> : std::true_type {};
+
 void require_mpf_equal(const gmpxx::mpf_class& got, mpf_srcptr expected)
 {
     if (mpf_cmp(got.mpf_data(), expected) != 0) {
@@ -50,10 +58,7 @@ int main()
                                     std::declval<mp_bitcnt_t>())),
                                void>::value,
                   "");
-    static_assert(std::is_same<decltype(std::declval<gmpxx::mpf_class&>().set_prec_raw(
-                                    std::declval<mp_bitcnt_t>())),
-                               void>::value,
-                  "");
+    static_assert(!has_public_set_prec_raw<gmpxx::mpf_class>::value, "");
 
     unsetenv("MPFXX_DEFAULT_PREC_BITS");
     gmpxx::reload_default_mpf_precision_bits_from_environment();
@@ -175,24 +180,6 @@ int main()
         }
         require_mpf_equal(value, ref);
         mpf_clear(ref);
-    }
-
-    {
-        gmpxx::mpf_class value("1.25", 256);
-        const mp_bitcnt_t allocated_prec = value.get_prec();
-
-        value.set_prec_raw(64);
-        if (value.get_prec() != 64) {
-            std::abort();
-        }
-        value = "1.5";
-        gmpxx::mpf_class expected("1.5", value.get_prec());
-        require_mpf_equal(value, expected.mpf_data());
-
-        value.set_prec_raw(allocated_prec);
-        if (value.get_prec() != allocated_prec) {
-            std::abort();
-        }
     }
 
     return 0;
