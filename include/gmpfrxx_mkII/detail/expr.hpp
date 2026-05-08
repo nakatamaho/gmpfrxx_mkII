@@ -31,6 +31,7 @@
 
 #include <gmpfrxx_mkII/detail/type_traits.hpp>
 
+#include <optional>
 #include <type_traits>
 #include <utility>
 
@@ -62,9 +63,43 @@ public:
 
     explicit object_leaf(const T& value) noexcept : value_(&value) {}
 
+    explicit object_leaf(T&& value)
+        : owned_(std::move(value)), value_(&*owned_)
+    {
+    }
+
+    object_leaf(const object_leaf& other)
+        : owned_(other.owned_), value_(owned_ ? &*owned_ : other.value_)
+    {
+    }
+
+    object_leaf(object_leaf&& other) noexcept(std::is_nothrow_move_constructible_v<T>)
+        : owned_(std::move(other.owned_)), value_(owned_ ? &*owned_ : other.value_)
+    {
+    }
+
+    object_leaf& operator=(const object_leaf& other)
+    {
+        if (this != &other) {
+            owned_ = other.owned_;
+            value_ = owned_ ? &*owned_ : other.value_;
+        }
+        return *this;
+    }
+
+    object_leaf& operator=(object_leaf&& other) noexcept(std::is_nothrow_move_assignable_v<T>)
+    {
+        if (this != &other) {
+            owned_ = std::move(other.owned_);
+            value_ = owned_ ? &*owned_ : other.value_;
+        }
+        return *this;
+    }
+
     const T& get() const noexcept { return *value_; }
 
 private:
+    std::optional<T> owned_;
     const T* value_;
 };
 

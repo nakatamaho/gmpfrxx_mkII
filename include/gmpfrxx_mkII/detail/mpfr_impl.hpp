@@ -1536,14 +1536,29 @@ inline object_leaf<mpfrxx::mpfr_class> make_mpfr_operand(const mpfrxx::mpfr_clas
     return object_leaf<mpfrxx::mpfr_class>(value);
 }
 
+inline object_leaf<mpfrxx::mpfr_class> make_mpfr_operand(mpfrxx::mpfr_class&& value)
+{
+    return object_leaf<mpfrxx::mpfr_class>(std::move(value));
+}
+
 inline object_leaf<gmpxx::mpz_class> make_mpfr_operand(const gmpxx::mpz_class& value)
 {
     return object_leaf<gmpxx::mpz_class>(value);
 }
 
+inline object_leaf<gmpxx::mpz_class> make_mpfr_operand(gmpxx::mpz_class&& value)
+{
+    return object_leaf<gmpxx::mpz_class>(std::move(value));
+}
+
 inline object_leaf<gmpxx::mpq_class> make_mpfr_operand(const gmpxx::mpq_class& value)
 {
     return object_leaf<gmpxx::mpq_class>(value);
+}
+
+inline object_leaf<gmpxx::mpq_class> make_mpfr_operand(gmpxx::mpq_class&& value)
+{
+    return object_leaf<gmpxx::mpq_class>(std::move(value));
 }
 
 template <typename Expr, typename = std::enable_if_t<is_expression_node_v<std::decay_t<Expr>>>>

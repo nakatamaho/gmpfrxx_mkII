@@ -456,9 +456,19 @@ inline object_leaf<gmpxx::mpfc_class> make_mpfc_operand(const gmpxx::mpfc_class&
     return object_leaf<gmpxx::mpfc_class>(value);
 }
 
+inline object_leaf<gmpxx::mpfc_class> make_mpfc_operand(gmpxx::mpfc_class&& value)
+{
+    return object_leaf<gmpxx::mpfc_class>(std::move(value));
+}
+
 inline object_leaf<gmpxx::mpf_class> make_mpfc_operand(const gmpxx::mpf_class& value)
 {
     return object_leaf<gmpxx::mpf_class>(value);
+}
+
+inline object_leaf<gmpxx::mpf_class> make_mpfc_operand(gmpxx::mpf_class&& value)
+{
+    return object_leaf<gmpxx::mpf_class>(std::move(value));
 }
 
 inline object_leaf<gmpxx::mpz_class> make_mpfc_operand(const gmpxx::mpz_class& value)
@@ -466,9 +476,19 @@ inline object_leaf<gmpxx::mpz_class> make_mpfc_operand(const gmpxx::mpz_class& v
     return object_leaf<gmpxx::mpz_class>(value);
 }
 
+inline object_leaf<gmpxx::mpz_class> make_mpfc_operand(gmpxx::mpz_class&& value)
+{
+    return object_leaf<gmpxx::mpz_class>(std::move(value));
+}
+
 inline object_leaf<gmpxx::mpq_class> make_mpfc_operand(const gmpxx::mpq_class& value)
 {
     return object_leaf<gmpxx::mpq_class>(value);
+}
+
+inline object_leaf<gmpxx::mpq_class> make_mpfc_operand(gmpxx::mpq_class&& value)
+{
+    return object_leaf<gmpxx::mpq_class>(std::move(value));
 }
 
 template <typename Expr, typename = std::enable_if_t<is_expression_node_v<std::decay_t<Expr>>>>
