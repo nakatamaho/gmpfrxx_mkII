@@ -34,6 +34,7 @@
 #include <gmpfrxx_mkII/detail/mpf_impl.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <istream>
 #include <ostream>
 #include <string>
@@ -673,6 +674,82 @@ bool mpfc_expression_references(const gmpxx::mpfc_class& target, const binary_ex
            mpfc_expression_references(target, expr.rhs());
 }
 
+inline int mpfc_compare_abs_for_division(mpf_srcptr lhs, mpf_srcptr rhs)
+{
+    const int lhs_sign = mpf_sgn(lhs);
+    const int rhs_sign = mpf_sgn(rhs);
+    if (lhs_sign == 0 || rhs_sign == 0) {
+        if (lhs_sign == rhs_sign) {
+            return 0;
+        }
+        return lhs_sign == 0 ? -1 : 1;
+    }
+
+    long lhs_exponent = 0;
+    long rhs_exponent = 0;
+    const double lhs_mantissa = std::fabs(mpf_get_d_2exp(&lhs_exponent, lhs));
+    const double rhs_mantissa = std::fabs(mpf_get_d_2exp(&rhs_exponent, rhs));
+    if (lhs_exponent < rhs_exponent) {
+        return -1;
+    }
+    if (lhs_exponent > rhs_exponent) {
+        return 1;
+    }
+    if (lhs_mantissa < rhs_mantissa) {
+        return -1;
+    }
+    if (lhs_mantissa > rhs_mantissa) {
+        return 1;
+    }
+    return 0;
+}
+
+inline void mpfc_divide_smith(
+    mpf_t real_dest,
+    mpf_t imag_dest,
+    const gmpxx::mpfc_class& lhs,
+    const gmpxx::mpfc_class& rhs,
+    mp_bitcnt_t precision)
+{
+    mpf_t ratio;
+    mpf_t scale;
+    mpf_init2(ratio, precision);
+    mpf_init2(scale, precision);
+
+    if (mpfc_compare_abs_for_division(rhs.imag().mpf_data(), rhs.real().mpf_data()) <= 0) {
+        mpf_div(ratio, rhs.imag().mpf_data(), rhs.real().mpf_data());
+
+        mpf_mul(scale, rhs.imag().mpf_data(), ratio);
+        mpf_add(scale, rhs.real().mpf_data(), scale);
+        mpf_ui_div(scale, 1, scale);
+
+        mpf_mul(real_dest, lhs.imag().mpf_data(), ratio);
+        mpf_add(real_dest, lhs.real().mpf_data(), real_dest);
+        mpf_mul(real_dest, real_dest, scale);
+
+        mpf_mul(imag_dest, lhs.real().mpf_data(), ratio);
+        mpf_sub(imag_dest, lhs.imag().mpf_data(), imag_dest);
+        mpf_mul(imag_dest, imag_dest, scale);
+    } else {
+        mpf_div(ratio, rhs.real().mpf_data(), rhs.imag().mpf_data());
+
+        mpf_mul(scale, rhs.real().mpf_data(), ratio);
+        mpf_add(scale, rhs.imag().mpf_data(), scale);
+        mpf_ui_div(scale, 1, scale);
+
+        mpf_mul(real_dest, lhs.real().mpf_data(), ratio);
+        mpf_add(real_dest, lhs.imag().mpf_data(), real_dest);
+        mpf_mul(real_dest, real_dest, scale);
+
+        mpf_mul(imag_dest, lhs.imag().mpf_data(), ratio);
+        mpf_sub(imag_dest, imag_dest, lhs.real().mpf_data());
+        mpf_mul(imag_dest, imag_dest, scale);
+    }
+
+    mpf_clear(scale);
+    mpf_clear(ratio);
+}
+
 template <typename Op>
 void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, const gmpxx::mpfc_class& rhs)
 {
@@ -722,61 +799,25 @@ void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, co
         mpf_clear(real_part);
     } else if constexpr (std::is_same_v<Op, div_op>) {
         if (&dest != &lhs && &dest != &rhs) {
-            mpf_t denominator;
-            mpf_t temp;
-            const mp_bitcnt_t precision = dest.precision();
-            mpf_init2(denominator, precision);
-            mpf_init2(temp, precision);
-
-            mpf_mul(denominator, rhs.real().mpf_data(), rhs.real().mpf_data());
-            mpf_mul(temp, rhs.imag().mpf_data(), rhs.imag().mpf_data());
-            mpf_add(denominator, denominator, temp);
-
-            mpf_mul(mpfc_real_ref(dest).mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
-            mpf_mul(temp, lhs.imag().mpf_data(), rhs.imag().mpf_data());
-            mpf_add(mpfc_real_ref(dest).mpf_data(), mpfc_real_ref(dest).mpf_data(), temp);
-            mpf_div(mpfc_real_ref(dest).mpf_data(), mpfc_real_ref(dest).mpf_data(), denominator);
-
-            mpf_mul(mpfc_imag_ref(dest).mpf_data(), lhs.imag().mpf_data(), rhs.real().mpf_data());
-            mpf_mul(temp, lhs.real().mpf_data(), rhs.imag().mpf_data());
-            mpf_sub(mpfc_imag_ref(dest).mpf_data(), mpfc_imag_ref(dest).mpf_data(), temp);
-            mpf_div(mpfc_imag_ref(dest).mpf_data(), mpfc_imag_ref(dest).mpf_data(), denominator);
-
-            mpf_clear(temp);
-            mpf_clear(denominator);
+            mpfc_divide_smith(mpfc_real_ref(dest).mpf_data(),
+                              mpfc_imag_ref(dest).mpf_data(),
+                              lhs,
+                              rhs,
+                              dest.precision());
             return;
         }
 
-        mpf_t denominator;
         mpf_t real_part;
         mpf_t imag_part;
-        mpf_t temp;
         const mp_bitcnt_t precision = dest.precision();
-        mpf_init2(denominator, precision);
         mpf_init2(real_part, precision);
         mpf_init2(imag_part, precision);
-        mpf_init2(temp, precision);
-
-        mpf_mul(denominator, rhs.real().mpf_data(), rhs.real().mpf_data());
-        mpf_mul(temp, rhs.imag().mpf_data(), rhs.imag().mpf_data());
-        mpf_add(denominator, denominator, temp);
-
-        mpf_mul(real_part, lhs.real().mpf_data(), rhs.real().mpf_data());
-        mpf_mul(temp, lhs.imag().mpf_data(), rhs.imag().mpf_data());
-        mpf_add(real_part, real_part, temp);
-        mpf_div(real_part, real_part, denominator);
-
-        mpf_mul(imag_part, lhs.imag().mpf_data(), rhs.real().mpf_data());
-        mpf_mul(temp, lhs.real().mpf_data(), rhs.imag().mpf_data());
-        mpf_sub(imag_part, imag_part, temp);
-        mpf_div(imag_part, imag_part, denominator);
+        mpfc_divide_smith(real_part, imag_part, lhs, rhs, precision);
 
         mpf_set(mpfc_real_ref(dest).mpf_data(), real_part);
         mpf_set(mpfc_imag_ref(dest).mpf_data(), imag_part);
-        mpf_clear(temp);
         mpf_clear(imag_part);
         mpf_clear(real_part);
-        mpf_clear(denominator);
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPFC expression operation");
     }

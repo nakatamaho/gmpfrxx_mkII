@@ -53,6 +53,19 @@ void count_free(void* p, std::size_t)
     std::free(p);
 }
 
+void assert_close_mpf(const gmpxx::mpf_class& got, const gmpxx::mpf_class& expected)
+{
+    gmpxx::mpf_class tolerance(1, std::max(got.precision(), expected.precision()));
+    mpf_div_2exp(tolerance.mpf_data(), tolerance.mpf_data(), 200);
+    assert(gmpxx::abs(got - expected) <= tolerance);
+}
+
+void assert_close_mpfc(const gmpxx::mpfc_class& got, const gmpxx::mpfc_class& expected)
+{
+    assert_close_mpf(got.real(), expected.real());
+    assert_close_mpf(got.imag(), expected.imag());
+}
+
 } // namespace
 
 int main()
@@ -118,7 +131,7 @@ int main()
     alloc_count = 0;
     div_dst = a / b;
     const int binary_div_allocations = alloc_count.load();
-    assert(div_dst == div_expected);
+    assert_close_mpfc(div_dst, div_expected);
     assert(binary_div_allocations == 2);
 
     auto alias_mul = a;
@@ -127,7 +140,7 @@ int main()
 
     auto alias_div = a;
     alias_div = alias_div / b;
-    assert(alias_div == div_expected);
+    assert_close_mpfc(alias_div, div_expected);
 
     auto add_assign = a;
     alloc_count = 0;
@@ -154,7 +167,7 @@ int main()
     alloc_count = 0;
     div_assign /= b;
     const int div_assign_allocations = alloc_count.load();
-    assert(div_assign == div_expected);
+    assert_close_mpfc(div_assign, div_expected);
     assert(div_assign_allocations == 4);
 
     return 0;

@@ -1,3 +1,56 @@
+Post-phase MPFC Smith division:
+DONE
+
+Implemented features:
+- Replaced `gmpxx::mpfc_class` division with Smith-style scaled complex
+  division.
+- Avoided forming `c*c + d*d` directly in the denominator.
+- Kept the non-alias division path at two temporary `mpf_t` values by using
+  only the Smith ratio and scale scratch values.
+- Preserved the alias-safe path by computing into temporary real/imaginary
+  components before assigning back to the destination.
+- Used an allocation-free `mpf_get_d_2exp` based magnitude comparison for the
+  Smith branch choice because this GMP environment does not provide
+  `mpf_cmpabs`.
+- Clarified README limitations: MPFC division is scaled, but MPFC remains an
+  MPF-backed convenience type without MPC-style correct rounding or systematic
+  guard-bit evaluation.
+
+Missing features:
+- `mpfc_class` multiplication still evaluates `ac - bd` and `ad + bc` at the
+  destination MPF precision without systematic guard bits.
+- `mpfc_class` inverse and transcendental functions still compose MPF-backed
+  formulas directly; cancellation-sensitive workloads should use
+  `mpfrxx::mpc_class`.
+
+Tests added:
+- Updated `tests/test_mpfc_precision_policy.cpp` division checks to compare
+  within MPF tolerance rather than bit-for-bit equality, because Smith division
+  changes the finite-precision operation order for non-binary-finite results.
+- Existing MPFC arithmetic smoke tests cover both Smith branch directions via
+  denominators where either the real or imaginary component is dominant.
+
+Exact commands run:
+- `sed -n '720,780p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp && sed -n '100,140p' tests/test_mpfc_precision_policy.cpp && sed -n '1,80p' tests/test_mpfc_basic.cpp`
+- `sed -n '1,170p' tests/test_mpfc_precision_policy.cpp`
+- `cmake --build build -j --target test_mpfc_basic test_mpfc_precision_policy test_mpfc_math && ctest --test-dir build -R 'test_mpfc_basic|test_mpfc_precision_policy|test_mpfc_math' --output-on-failure`
+- `cmake --build build -j --target test_mpfc_precision_policy && ctest --test-dir build -R 'test_mpfc_basic|test_mpfc_precision_policy|test_mpfc_math' --output-on-failure`
+
+Pass/fail result:
+- First focused build failed because this GMP environment does not expose
+  `mpf_cmpabs`; replaced the branch comparison with an allocation-free
+  `mpf_get_d_2exp` helper.
+- First focused ctest failed because the new operation order no longer matched
+  the old bit-for-bit expected value for a non-binary-finite quotient; changed
+  division assertions to MPF tolerance checks.
+- `cmake --build build -j --target test_mpfc_precision_policy`: PASS after fixes.
+- `ctest --test-dir build -R 'test_mpfc_basic|test_mpfc_precision_policy|test_mpfc_math' --output-on-failure`: PASS, 3/3 tests passed.
+
+Known issues:
+- Smith division improves scaling and avoids direct denominator squaring, but
+  it is still MPF finite-precision arithmetic and does not imply correct
+  rounding.
+
 Post-phase MPFC numeric caveats and stable sqrt:
 DONE
 

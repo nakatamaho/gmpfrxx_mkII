@@ -202,10 +202,10 @@ benchmarks/common/run_benchmarks.sh build 128 8 8 4 4 3 3 3
   helpers are GMP-only double-backed approximations. Full arbitrary-precision
   MPF transcendental algorithms are still future work.
 - `gmpxx::mpfc_class` is a GMP-only complex convenience type, not a replacement
-  for MPC. Its MPF-backed multiplication, division, and inverse/transcendental
-  formulas do not provide MPC-style correctly rounded complex arithmetic or
-  systematic guard-bit evaluation. Cancellation-sensitive workloads should use
-  `mpfrxx::mpc_class`.
+  for MPC. Division uses a Smith-style scaled formula, but MPF-backed
+  multiplication and inverse/transcendental formulas still do not provide
+  MPC-style correctly rounded complex arithmetic or systematic guard-bit
+  evaluation. Cancellation-sensitive workloads should use `mpfrxx::mpc_class`.
 - Stream input is not implemented for all wrapper families.
 - The project is compatibility-oriented, not a full `gmpxx.h` clone.
 
