@@ -35,6 +35,7 @@
 #include <cstring>
 #include <limits>
 #include <mutex>
+#include <stdexcept>
 
 #include <mpfr.h>
 
@@ -58,6 +59,11 @@ inline mpfr_rnd_t builtin_mpfr_default_rounding() noexcept
     return MPFR_RNDN;
 }
 
+inline bool valid_mpfr_precision(mpfr_prec_t precision) noexcept
+{
+    return precision >= MPFR_PREC_MIN && precision <= MPFR_PREC_MAX;
+}
+
 inline bool parse_mpfr_precision(const char* text, mpfr_prec_t& out) noexcept
 {
     if (text == nullptr || *text == '\0' || *text == '-') {
@@ -72,7 +78,8 @@ inline bool parse_mpfr_precision(const char* text, mpfr_prec_t& out) noexcept
     if (value > static_cast<unsigned long long>(std::numeric_limits<mpfr_prec_t>::max())) {
         return false;
     }
-    if (value < static_cast<unsigned long long>(MPFR_PREC_MIN)) {
+    if (value < static_cast<unsigned long long>(MPFR_PREC_MIN) ||
+        value > static_cast<unsigned long long>(MPFR_PREC_MAX)) {
         return false;
     }
     out = static_cast<mpfr_prec_t>(value);
@@ -96,6 +103,15 @@ inline bool parse_mpfr_exponent(const char* text, mpfr_exp_t& out) noexcept
     }
     out = static_cast<mpfr_exp_t>(value);
     return true;
+}
+
+inline bool valid_mpfr_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) noexcept
+{
+    return emin <= emax &&
+           emin >= mpfr_get_emin_min() &&
+           emin <= mpfr_get_emin_max() &&
+           emax >= mpfr_get_emax_min() &&
+           emax <= mpfr_get_emax_max();
 }
 
 inline bool parse_mpfr_rounding(const char* text, mpfr_rnd_t& out) noexcept
@@ -150,12 +166,12 @@ inline parsed_mpfr_environment load_mpfr_environment() noexcept
     mpfr_exp_t emax = result.emax;
     const bool has_emin = parse_mpfr_exponent(std::getenv("MPFRXX_EMIN"), emin);
     const bool has_emax = parse_mpfr_exponent(std::getenv("MPFRXX_EMAX"), emax);
-    if (has_emin && has_emax && emin <= emax) {
+    if (has_emin && has_emax && valid_mpfr_exponent_range(emin, emax)) {
         result.emin = emin;
         result.emax = emax;
-    } else if (has_emin && !has_emax && emin <= result.emax) {
+    } else if (has_emin && !has_emax && valid_mpfr_exponent_range(emin, result.emax)) {
         result.emin = emin;
-    } else if (!has_emin && has_emax && result.emin <= emax) {
+    } else if (!has_emin && has_emax && valid_mpfr_exponent_range(result.emin, emax)) {
         result.emax = emax;
     }
 
@@ -173,6 +189,31 @@ inline std::mutex& mpfr_exponent_range_mutex()
     return mutex;
 }
 
+inline bool set_mpfr_exponent_range_unlocked(mpfr_exp_t emin, mpfr_exp_t emax) noexcept
+{
+    if (!valid_mpfr_exponent_range(emin, emax)) {
+        return false;
+    }
+
+    const mpfr_exp_t current_emin = mpfr_get_emin();
+    const mpfr_exp_t current_emax = mpfr_get_emax();
+
+    if (emax > current_emax && mpfr_set_emax(emax) != 0) {
+        return false;
+    }
+    if (emin < current_emin && mpfr_set_emin(emin) != 0) {
+        return false;
+    }
+    if (emin >= current_emin && mpfr_set_emin(emin) != 0) {
+        return false;
+    }
+    if (emax <= current_emax && mpfr_set_emax(emax) != 0) {
+        return false;
+    }
+
+    return mpfr_get_emin() == emin && mpfr_get_emax() == emax;
+}
+
 class mpfr_exponent_range_guard {
 public:
     mpfr_exponent_range_guard(mpfr_exp_t emin, mpfr_exp_t emax)
@@ -182,8 +223,10 @@ public:
     {
         active_ = (old_emin_ != emin) || (old_emax_ != emax);
         if (active_) {
-            mpfr_set_emin(emin);
-            mpfr_set_emax(emax);
+            if (!set_mpfr_exponent_range_unlocked(emin, emax)) {
+                set_mpfr_exponent_range_unlocked(old_emin_, old_emax_);
+                throw std::runtime_error("failed to set MPFR exponent range");
+            }
         }
     }
 
@@ -193,8 +236,9 @@ public:
     ~mpfr_exponent_range_guard()
     {
         if (active_) {
-            mpfr_set_emin(old_emin_);
-            mpfr_set_emax(old_emax_);
+            if (!set_mpfr_exponent_range_unlocked(old_emin_, old_emax_)) {
+                std::abort();
+            }
         }
     }
 
@@ -259,7 +303,7 @@ inline mpfr_prec_t default_prec()
 
 inline void set_default_precision_bits(mpfr_prec_t precision)
 {
-    if (precision >= MPFR_PREC_MIN) {
+    if (::gmpfrxx_mkII::detail::valid_mpfr_precision(precision)) {
         mutable_mpfr_default_options_unlocked().precision_bits = precision;
     }
 }
@@ -286,7 +330,7 @@ inline mpfr_exp_t default_emax()
 
 inline void set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax)
 {
-    if (emin <= emax) {
+    if (::gmpfrxx_mkII::detail::valid_mpfr_exponent_range(emin, emax)) {
         mutable_mpfr_default_options_unlocked().emin = emin;
         mutable_mpfr_default_options_unlocked().emax = emax;
     }

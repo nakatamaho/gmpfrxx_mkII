@@ -29,6 +29,8 @@
 #include <mpfrxx_mkII.h>
 
 #include <cstdlib>
+#include <limits>
+#include <string>
 
 namespace {
 
@@ -92,6 +94,14 @@ int main()
     if (mpfrxx::default_precision_bits() != 113) {
         std::abort();
     }
+    if (MPFR_PREC_MAX < std::numeric_limits<mpfr_prec_t>::max()) {
+        const auto too_large_precision =
+            static_cast<mpfr_prec_t>(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
+        mpfrxx::set_default_precision_bits(too_large_precision);
+        if (mpfrxx::default_precision_bits() != 113) {
+            std::abort();
+        }
+    }
 
     mpfrxx::set_default_rounding_mode(MPFR_RNDU);
     auto rounded_up = mpfrxx::mpfr_class::with_precision(2, 1.25);
@@ -108,6 +118,22 @@ int main()
     mpfrxx::set_default_exponent_range(-20, 20);
     if (mpfrxx::default_emin() != -20 || mpfrxx::default_emax() != 20) {
         std::abort();
+    }
+    mpfrxx::set_default_exponent_range(20, -20);
+    if (mpfrxx::default_emin() != -20 || mpfrxx::default_emax() != 20) {
+        std::abort();
+    }
+    if (MPFR_EMIN_MIN > std::numeric_limits<mpfr_exp_t>::min()) {
+        mpfrxx::set_default_exponent_range(MPFR_EMIN_MIN - 1, 20);
+        if (mpfrxx::default_emin() != -20 || mpfrxx::default_emax() != 20) {
+            std::abort();
+        }
+    }
+    if (MPFR_EMAX_MAX < std::numeric_limits<mpfr_exp_t>::max()) {
+        mpfrxx::set_default_exponent_range(-20, MPFR_EMAX_MAX + 1);
+        if (mpfrxx::default_emin() != -20 || mpfrxx::default_emax() != 20) {
+            std::abort();
+        }
     }
 
     return 0;

@@ -30,6 +30,8 @@
 #include <mpcxx_mkII.h>
 
 #include <cstdlib>
+#include <limits>
+#include <string>
 
 int main()
 {
@@ -50,6 +52,24 @@ int main()
     }
     if (defaults.real_rounding_mode != MPFR_RNDA || defaults.imag_rounding_mode != MPFR_RNDA) {
         std::abort();
+    }
+
+    if (MPFR_PREC_MAX < std::numeric_limits<mpfr_prec_t>::max()) {
+        const std::string too_large_precision =
+            std::to_string(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
+        setenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS", too_large_precision.c_str(), 1);
+        setenv("MPFRXX_MPC_REAL_PRECISION_BITS", too_large_precision.c_str(), 1);
+        setenv("MPFRXX_MPC_IMAG_PRECISION_BITS", too_large_precision.c_str(), 1);
+        unsetenv("MPFRXX_MPC_ROUNDING_MODE");
+        unsetenv("MPFRXX_MPC_REAL_ROUNDING_MODE");
+        unsetenv("MPFRXX_MPC_IMAG_ROUNDING_MODE");
+        mpfrxx::reload_mpc_defaults_from_environment();
+
+        const auto oversized_defaults = mpfrxx::default_mpc_options();
+        if (oversized_defaults.real_precision_bits != 128 ||
+            oversized_defaults.imag_precision_bits != 128) {
+            std::abort();
+        }
     }
 
     return 0;

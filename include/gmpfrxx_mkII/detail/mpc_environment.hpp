@@ -133,7 +133,7 @@ inline mpfr_prec_t default_mpc_precision_bits()
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t precision)
 {
-    if (precision >= MPFR_PREC_MIN) {
+    if (::gmpfrxx_mkII::detail::valid_mpfr_precision(precision)) {
         mutable_mpc_default_options_unlocked().real_precision_bits = precision;
         mutable_mpc_default_options_unlocked().imag_precision_bits = precision;
     }
@@ -141,7 +141,8 @@ inline void set_default_mpc_precision_bits(mpfr_prec_t precision)
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
 {
-    if (real_precision >= MPFR_PREC_MIN && imag_precision >= MPFR_PREC_MIN) {
+    if (::gmpfrxx_mkII::detail::valid_mpfr_precision(real_precision) &&
+        ::gmpfrxx_mkII::detail::valid_mpfr_precision(imag_precision)) {
         mutable_mpc_default_options_unlocked().real_precision_bits = real_precision;
         mutable_mpc_default_options_unlocked().imag_precision_bits = imag_precision;
     }

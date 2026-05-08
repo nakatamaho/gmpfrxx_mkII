@@ -30,6 +30,7 @@
 #include <mpcxx_mkII.h>
 
 #include <cstdlib>
+#include <limits>
 
 namespace {
 
@@ -81,6 +82,24 @@ int main()
     mpfrxx::mpc_class value;
     if (value.real_precision() != 160 || value.imag_precision() != 192) {
         std::abort();
+    }
+
+    if (MPFR_PREC_MAX < std::numeric_limits<mpfr_prec_t>::max()) {
+        const auto too_large_precision =
+            static_cast<mpfr_prec_t>(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
+        mpfrxx::set_default_mpc_precision_bits(too_large_precision);
+        defaults = mpfrxx::default_mpc_options();
+        if (defaults.real_precision_bits != 160 || defaults.imag_precision_bits != 192) {
+            std::abort();
+        }
+
+        mpfrxx::set_default_mpc_precision_bits(
+            too_large_precision,
+            too_large_precision);
+        defaults = mpfrxx::default_mpc_options();
+        if (defaults.real_precision_bits != 160 || defaults.imag_precision_bits != 192) {
+            std::abort();
+        }
     }
 
     return 0;
