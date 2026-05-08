@@ -1,3 +1,75 @@
+Post-phase MPC constructor and assignment surface:
+DONE
+
+Implemented features:
+- Added direct `mpfrxx::mpc_class` construction from:
+  - `mpfrxx::mpfr_class`
+  - `mpfrxx::mpz_class`
+  - `mpfrxx::mpq_class`
+  - supported scalar real values (`int`, `uint64_t`, `float`, `double`, etc.;
+    `bool` remains rejected)
+  - supported scalar real/imag pairs
+  - `const char*` and `std::string`
+- Added matching assignment from:
+  - `mpfrxx::mpfr_class`
+  - `mpfrxx::mpz_class`
+  - `mpfrxx::mpq_class`
+  - supported scalar real values
+  - `const char*` and `std::string`
+- String construction and assignment now accept both the stream-compatible
+  `(real,imag)` form and an `a+bi` / `a-bi` suffix form.
+- String parsing preserves exponent signs such as `1.25e+2-3.75e-1i` when
+  finding the real/imaginary separator.
+- String assignment materializes into a temporary at the destination
+  precision, so failed parsing does not clobber the existing value.
+- Single-real construction and assignment set the imaginary part to zero.
+- `mpc_class(mpfr_class)` uses the MPFR value precision for both real and
+  imaginary components, matching the MPFC real-value constructor policy.
+
+Missing features:
+- The string parser intentionally supports practical wrapper forms rather than
+  every textual form accepted by `mpc_set_str`.
+
+Tests added:
+- Extended `tests/test_mpc_basic.cpp` with compile-time constructibility checks
+  for scalar, exact, MPFR, and string constructors.
+- Added runtime constructor coverage for `double`, `int`, `mpz_class`,
+  `mpq_class`, `mpfr_class`, stream-form strings, `a+bi` strings, exponent
+  strings, and base-0 hex strings.
+- Added assignment coverage for scalar, MPFR, exact values, `const char*`, and
+  `std::string`, including destination precision preservation.
+
+Exact commands run:
+- `sed -n '40,155p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1260,1345p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '60,150p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1,180p' tests/test_mpc_basic.cpp`
+- `sed -n '155,245p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `rg -n "mpc_set_|mpc_assign|make_mpc_operand|is_supported.*scalar|scalar_leaf<.*mpc" include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '280,520p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1318,1368p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1180,1235p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '640,780p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1368,1398p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '780,835p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `rg -n "void swap\\(mpc_class|swap\\(mpc_class|mpc_class::swap" include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '28,45p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `cmake --build build -j --target test_mpc_basic test_mpc_io test_mpc_defaults test_mpc_environment test_et_contract_mpc`
+- `ctest --test-dir build -R 'test_mpc_basic|test_mpc_io|test_mpc_defaults|test_mpc_environment|test_et_contract_mpc' --output-on-failure`
+- `cmake --build build -j --target test_mpc_basic`
+- `ctest --test-dir build -R 'test_mpc_basic|test_mpc_io|test_mpc_defaults|test_mpc_environment|test_et_contract_mpc' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpc_basic test_mpc_io test_mpc_defaults test_mpc_environment test_et_contract_mpc`: PASS.
+- `ctest --test-dir build -R 'test_mpc_basic|test_mpc_io|test_mpc_defaults|test_mpc_environment|test_et_contract_mpc' --output-on-failure`: PASS, 6/6 tests passed because the regex also matched `test_mpc_environment_invalid`.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
 Post-phase MPF/MPFC move noexcept consistency:
 DONE
 

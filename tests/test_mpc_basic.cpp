@@ -31,6 +31,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <string>
 #include <type_traits>
 #include <utility>
 
@@ -70,6 +71,14 @@ int main()
     mpfrxx::mpfr_class ctor_real = mpfrxx::mpfr_class::with_precision(192, 1.25);
     mpfrxx::mpfr_class ctor_imag = mpfrxx::mpfr_class::with_precision(224, -2.5);
     mpfrxx::mpc_class constructed(ctor_real, ctor_imag);
+    static_assert(std::is_constructible_v<mpfrxx::mpc_class, double>);
+    static_assert(std::is_constructible_v<mpfrxx::mpc_class, int>);
+    static_assert(std::is_constructible_v<mpfrxx::mpc_class, mpfrxx::mpz_class>);
+    static_assert(std::is_constructible_v<mpfrxx::mpc_class, mpfrxx::mpq_class>);
+    static_assert(std::is_constructible_v<mpfrxx::mpc_class, mpfrxx::mpfr_class>);
+    static_assert(std::is_constructible_v<mpfrxx::mpc_class, const char*>);
+    static_assert(std::is_constructible_v<mpfrxx::mpc_class, std::string>);
+    static_assert(!std::is_constructible_v<mpfrxx::mpc_class, bool>);
     static_assert(!has_real_member_accessor<mpfrxx::mpc_class>::value,
                   "mpc_class must not expose mutable real()/imag() component accessors");
     require_close(constructed.real_to_double(), 1.25);
@@ -77,6 +86,76 @@ int main()
     if (constructed.real_precision() != 192 || constructed.imag_precision() != 224) {
         std::abort();
     }
+
+    mpfrxx::mpc_class from_double(2.5);
+    require_close(from_double.real_to_double(), 2.5);
+    require_close(from_double.imag_to_double(), 0.0);
+
+    mpfrxx::mpc_class from_int(42);
+    require_close(from_int.real_to_double(), 42.0);
+    require_close(from_int.imag_to_double(), 0.0);
+
+    mpfrxx::mpc_class from_mpz(mpfrxx::mpz_class(5));
+    require_close(from_mpz.real_to_double(), 5.0);
+    require_close(from_mpz.imag_to_double(), 0.0);
+
+    mpfrxx::mpc_class from_mpq(exact_q);
+    require_close(from_mpq.real_to_double(), 0.5);
+    require_close(from_mpq.imag_to_double(), 0.0);
+
+    mpfrxx::mpc_class from_mpfr(ctor_real);
+    require_close(from_mpfr.real_to_double(), 1.25);
+    require_close(from_mpfr.imag_to_double(), 0.0);
+    if (from_mpfr.real_precision() != 192 || from_mpfr.imag_precision() != 192) {
+        std::abort();
+    }
+
+    mpfrxx::mpc_class from_stream_string("(3.125,-2.5)");
+    require_close(from_stream_string.real_to_double(), 3.125);
+    require_close(from_stream_string.imag_to_double(), -2.5);
+
+    mpfrxx::mpc_class from_i_string("3.125+2.5i");
+    require_close(from_i_string.real_to_double(), 3.125);
+    require_close(from_i_string.imag_to_double(), 2.5);
+
+    mpfrxx::mpc_class from_std_string(std::string("3.25-1.5i"));
+    require_close(from_std_string.real_to_double(), 3.25);
+    require_close(from_std_string.imag_to_double(), -1.5);
+
+    mpfrxx::mpc_class from_negative_i_string("-3.125-2.5i");
+    require_close(from_negative_i_string.real_to_double(), -3.125);
+    require_close(from_negative_i_string.imag_to_double(), -2.5);
+
+    mpfrxx::mpc_class from_exponent_i_string("1.25e+2-3.75e-1i");
+    require_close(from_exponent_i_string.real_to_double(), 125.0);
+    require_close(from_exponent_i_string.imag_to_double(), -0.375);
+
+    mpfrxx::mpc_class from_hex_string("0xff+0x1.8i");
+    require_close(from_hex_string.real_to_double(), 255.0);
+    require_close(from_hex_string.imag_to_double(), 1.5);
+
+    mpfrxx::mpc_class assigned = mpfrxx::mpc_class::with_precision(193, 257);
+    assigned = 2.5;
+    require_close(assigned.real_to_double(), 2.5);
+    require_close(assigned.imag_to_double(), 0.0);
+    if (assigned.real_precision() != 193 || assigned.imag_precision() != 257) {
+        std::abort();
+    }
+    assigned = ctor_real;
+    require_close(assigned.real_to_double(), 1.25);
+    require_close(assigned.imag_to_double(), 0.0);
+    assigned = exact_z;
+    require_close(assigned.real_to_double(), 7.0);
+    require_close(assigned.imag_to_double(), 0.0);
+    assigned = exact_q;
+    require_close(assigned.real_to_double(), 0.5);
+    require_close(assigned.imag_to_double(), 0.0);
+    assigned = "4.5-1.25i";
+    require_close(assigned.real_to_double(), 4.5);
+    require_close(assigned.imag_to_double(), -1.25);
+    assigned = std::string("6.5+0.75i");
+    require_close(assigned.real_to_double(), 6.5);
+    require_close(assigned.imag_to_double(), 0.75);
 
     mpfrxx::mpc_class result = z + w;
     require_close(result.real_to_double(), 4.0);

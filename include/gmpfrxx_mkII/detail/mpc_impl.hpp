@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <locale>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -51,6 +52,104 @@ inline void mpc_check_component_ranges(mpc_t value, mpc_rnd_t rnd)
 {
     mpfr_check_range(mpc_realref(value), 0, MPC_RND_RE(rnd));
     mpfr_check_range(mpc_imagref(value), 0, MPC_RND_IM(rnd));
+}
+
+inline bool mpc_is_component_separator(const std::string& text, std::size_t index)
+{
+    if (index == 0) {
+        return false;
+    }
+    const char current = text[index];
+    if (current != '+' && current != '-') {
+        return false;
+    }
+    const char previous = text[index - 1];
+    return previous != 'e' && previous != 'E' && previous != 'p' && previous != 'P';
+}
+
+inline bool mpc_split_i_suffix(const std::string& text, std::string& real, std::string& imag)
+{
+    if (text.empty() || (text.back() != 'i' && text.back() != 'I')) {
+        return false;
+    }
+
+    std::string body = text.substr(0, text.size() - 1);
+    for (std::size_t i = body.size(); i > 0; --i) {
+        const std::size_t index = i - 1;
+        if (mpc_is_component_separator(body, index)) {
+            real = body.substr(0, index);
+            imag = body.substr(index);
+            return true;
+        }
+    }
+
+    real = "0";
+    if (body.empty() || body == "+") {
+        imag = "1";
+    } else if (body == "-") {
+        imag = "-1";
+    } else {
+        imag = body;
+    }
+    return true;
+}
+
+inline bool mpc_split_string_components(const char* text, std::string& real, std::string& imag)
+{
+    const std::string trimmed = mpfr_trim_surrounding_whitespace(text);
+    if (trimmed.empty()) {
+        return false;
+    }
+
+    if (trimmed.front() == '(' && trimmed.back() == ')') {
+        const std::string inner = trimmed.substr(1, trimmed.size() - 2);
+        const std::size_t comma = inner.find(',');
+        if (comma == std::string::npos || inner.find(',', comma + 1) != std::string::npos) {
+            return false;
+        }
+        real = mpfr_trim_surrounding_whitespace(inner.substr(0, comma).c_str());
+        imag = mpfr_trim_surrounding_whitespace(inner.substr(comma + 1).c_str());
+        return !real.empty() && !imag.empty();
+    }
+
+    if (mpc_split_i_suffix(trimmed, real, imag)) {
+        real = mpfr_trim_surrounding_whitespace(real.c_str());
+        imag = mpfr_trim_surrounding_whitespace(imag.c_str());
+        return !real.empty() && !imag.empty();
+    }
+
+    real = trimmed;
+    imag = "0";
+    return true;
+}
+
+inline int mpc_set_string_components(mpc_t dest,
+                                     const char* text,
+                                     int base,
+                                     mpc_rnd_t rnd)
+{
+    std::string real_text;
+    std::string imag_text;
+    if (!mpc_split_string_components(text, real_text, imag_text)) {
+        return -1;
+    }
+
+    mpfr_t real;
+    mpfr_t imag;
+    mpfr_prec_t real_precision = 0;
+    mpfr_prec_t imag_precision = 0;
+    mpc_get_prec2(&real_precision, &imag_precision, dest);
+    mpfr_init2(real, real_precision);
+    mpfr_init2(imag, imag_precision);
+    const int real_status = mpfr_set_str(real, real_text.c_str(), base, MPC_RND_RE(rnd));
+    const int imag_status = mpfr_set_str(imag, imag_text.c_str(), base, MPC_RND_IM(rnd));
+    if (real_status == 0 && imag_status == 0) {
+        mpc_set_fr_fr(dest, real, imag, rnd);
+        mpc_check_component_ranges(dest, rnd);
+    }
+    mpfr_clear(imag);
+    mpfr_clear(real);
+    return real_status == 0 && imag_status == 0 ? 0 : -1;
 }
 
 } // namespace detail
@@ -93,6 +192,105 @@ public:
         gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
     }
 
+    explicit mpc_class(const mpfr_class& real)
+    {
+        mpc_init3(value_, real.precision(), real.precision());
+        try {
+            set_real_value(real);
+        } catch (...) {
+            mpc_clear(value_);
+            throw;
+        }
+    }
+
+    explicit mpc_class(const gmpxx::mpz_class& real)
+        : mpc_class(precision_tag{},
+                    mpfrxx::default_mpc_real_precision_bits(),
+                    mpfrxx::default_mpc_imag_precision_bits())
+    {
+        set_real_value(real);
+    }
+
+    explicit mpc_class(const gmpxx::mpq_class& real)
+        : mpc_class(precision_tag{},
+                    mpfrxx::default_mpc_real_precision_bits(),
+                    mpfrxx::default_mpc_imag_precision_bits())
+    {
+        set_real_value(real);
+    }
+
+    template <
+        typename Scalar,
+        typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<Scalar> ||
+                                    std::is_same_v<std::remove_cv_t<Scalar>, float> ||
+                                    std::is_same_v<std::remove_cv_t<Scalar>, double>>>
+    explicit mpc_class(Scalar real)
+        : mpc_class(precision_tag{},
+                    mpfrxx::default_mpc_real_precision_bits(),
+                    mpfrxx::default_mpc_imag_precision_bits())
+    {
+        set_real_value(real);
+    }
+
+    template <
+        typename RealScalar,
+        typename ImagScalar,
+        typename = std::enable_if_t<(gmpfrxx_mkII::detail::is_supported_expression_integral_v<RealScalar> ||
+                                     std::is_same_v<std::remove_cv_t<RealScalar>, float> ||
+                                     std::is_same_v<std::remove_cv_t<RealScalar>, double>) &&
+                                    (gmpfrxx_mkII::detail::is_supported_expression_integral_v<ImagScalar> ||
+                                     std::is_same_v<std::remove_cv_t<ImagScalar>, float> ||
+                                     std::is_same_v<std::remove_cv_t<ImagScalar>, double>)>>
+    mpc_class(RealScalar real, ImagScalar imag)
+        : mpc_class(mpfr_class(real, mpfrxx::default_mpc_real_precision_bits()),
+                    mpfr_class(imag, mpfrxx::default_mpc_imag_precision_bits()))
+    {
+    }
+
+    explicit mpc_class(const char* text)
+        : mpc_class(text,
+                    mpfrxx::default_mpc_real_precision_bits(),
+                    mpfrxx::default_mpc_imag_precision_bits(),
+                    0)
+    {
+    }
+
+    explicit mpc_class(const std::string& text)
+        : mpc_class(text.c_str())
+    {
+    }
+
+    mpc_class(const char* text, mpfr_prec_t precision, int base = 0)
+        : mpc_class(text, precision, precision, base)
+    {
+    }
+
+    mpc_class(const std::string& text, mpfr_prec_t precision, int base = 0)
+        : mpc_class(text.c_str(), precision, base)
+    {
+    }
+
+    mpc_class(const char* text, mpfr_prec_t real_precision, mpfr_prec_t imag_precision, int base)
+    {
+        mpc_init3(value_, real_precision, imag_precision);
+        try {
+            const auto context =
+                gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision, imag_precision));
+            const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+            if (gmpfrxx_mkII::detail::mpc_set_string_components(value_, text, base, default_rounding()) != 0) {
+                throw std::invalid_argument("invalid mpc_class string");
+            }
+        } catch (...) {
+            mpc_clear(value_);
+            throw;
+        }
+    }
+
+    mpc_class(const std::string& text, mpfr_prec_t real_precision, mpfr_prec_t imag_precision, int base = 0)
+        : mpc_class(text.c_str(), real_precision, imag_precision, base)
+    {
+    }
+
     template <
         typename Expr,
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
@@ -129,6 +327,47 @@ public:
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
                                     std::is_same_v<typename std::decay_t<Expr>::result_type, mpc_class>>>
     mpc_class& operator=(const Expr& expr);
+
+    mpc_class& operator=(const mpfr_class& real)
+    {
+        set_real_value(real);
+        return *this;
+    }
+
+    mpc_class& operator=(const gmpxx::mpz_class& real)
+    {
+        set_real_value(real);
+        return *this;
+    }
+
+    mpc_class& operator=(const gmpxx::mpq_class& real)
+    {
+        set_real_value(real);
+        return *this;
+    }
+
+    template <
+        typename Scalar,
+        typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<Scalar> ||
+                                    std::is_same_v<std::remove_cv_t<Scalar>, float> ||
+                                    std::is_same_v<std::remove_cv_t<Scalar>, double>>>
+    mpc_class& operator=(Scalar real)
+    {
+        set_real_value(real);
+        return *this;
+    }
+
+    mpc_class& operator=(const char* text)
+    {
+        mpc_class parsed(text, real_precision(), imag_precision(), 0);
+        mpc_swap(value_, parsed.value_);
+        return *this;
+    }
+
+    mpc_class& operator=(const std::string& text)
+    {
+        return *this = text.c_str();
+    }
 
     static mpc_class with_precision(mpfr_prec_t precision)
     {
@@ -219,6 +458,49 @@ private:
             gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision, imag_precision));
         const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpc_set_ui(value_, 0, default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
+    }
+
+    void set_real_value(const mpfr_class& real)
+    {
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpc_set_fr(value_, real.mpfr_data(), default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
+    }
+
+    void set_real_value(const gmpxx::mpz_class& real)
+    {
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpc_set_z(value_, real.mpz_data(), default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
+    }
+
+    void set_real_value(const gmpxx::mpq_class& real)
+    {
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        mpc_set_q(value_, real.mpq_data(), default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
+    }
+
+    template <typename Scalar>
+    void set_real_value(Scalar real)
+    {
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+        if constexpr (std::is_same_v<std::remove_cv_t<Scalar>, float> ||
+                      std::is_same_v<std::remove_cv_t<Scalar>, double>) {
+            mpc_set_d(value_, static_cast<double>(real), default_rounding());
+        } else {
+            const gmpxx::mpz_class integer(real);
+            mpc_set_z(value_, integer.mpz_data(), default_rounding());
+        }
         gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
     }
 
