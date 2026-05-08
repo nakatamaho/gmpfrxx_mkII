@@ -31,6 +31,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <limits>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 
@@ -55,6 +56,17 @@ void require_mpz_equal(const gmpxx::mpz_class& value, const gmpxx::mpz_class& ex
     if (mpz_cmp(value.mpz_data(), expected.mpz_data()) != 0) {
         std::abort();
     }
+}
+
+template <typename Function>
+void require_domain_error(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::domain_error&) {
+        return;
+    }
+    std::abort();
 }
 
 void check_binary(const gmpxx::mpq_class& a, const gmpxx::mpq_class& b)
@@ -106,6 +118,32 @@ void check_scalar(const gmpxx::mpq_class& a)
 
     mpq_clear(scalar);
     mpq_clear(ref);
+}
+
+void check_division_by_zero_throws()
+{
+    const gmpxx::mpq_class numerator("7/5");
+    const gmpxx::mpq_class zero(0);
+
+    require_domain_error([&] {
+        const gmpxx::mpq_class quotient = numerator / zero;
+        (void)quotient;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpq_class quotient = numerator;
+        quotient /= zero;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpq_class quotient = numerator;
+        quotient /= 0;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpq_class quotient = numerator;
+        quotient /= 0.0;
+    });
 }
 
 void check_shift_increment_and_mixed_zq()
@@ -235,6 +273,7 @@ int main()
     check_binary(large, neg_large);
     check_scalar(third);
     check_scalar(neg_large);
+    check_division_by_zero_throws();
     check_shift_increment_and_mixed_zq();
     check_accessors_nested_compound_and_unary();
     require_mpq_equal(third + 0.5, gmpxx::mpq_class("5/6"));

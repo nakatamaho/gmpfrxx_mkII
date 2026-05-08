@@ -1845,6 +1845,50 @@ struct is_zq_shift_scalar_leaf<scalar_leaf<T, gmpxx::mpz_class>> : std::true_typ
 template <typename T>
 inline constexpr bool is_zq_shift_scalar_leaf_v = is_zq_shift_scalar_leaf<std::decay_t<T>>::value;
 
+class scoped_mpz_t {
+public:
+    scoped_mpz_t()
+    {
+        mpz_init(value_);
+    }
+
+    scoped_mpz_t(const scoped_mpz_t&) = delete;
+    scoped_mpz_t& operator=(const scoped_mpz_t&) = delete;
+
+    ~scoped_mpz_t()
+    {
+        mpz_clear(value_);
+    }
+
+    mpz_ptr get() noexcept { return value_; }
+    mpz_srcptr get() const noexcept { return value_; }
+
+private:
+    mpz_t value_;
+};
+
+class scoped_mpq_t {
+public:
+    scoped_mpq_t()
+    {
+        mpq_init(value_);
+    }
+
+    scoped_mpq_t(const scoped_mpq_t&) = delete;
+    scoped_mpq_t& operator=(const scoped_mpq_t&) = delete;
+
+    ~scoped_mpq_t()
+    {
+        mpq_clear(value_);
+    }
+
+    mpq_ptr get() noexcept { return value_; }
+    mpq_srcptr get() const noexcept { return value_; }
+
+private:
+    mpq_t value_;
+};
+
 inline void mpz_evaluate(mpz_t dest, const object_leaf<gmpxx::mpz_class>& expr)
 {
     mpz_set(dest, expr.get().mpz_data());
@@ -1935,7 +1979,12 @@ template <typename Expr>
 void mpz_evaluate_to_temporary(mpz_t temp, const Expr& expr)
 {
     mpz_init(temp);
-    mpz_evaluate(temp, expr);
+    try {
+        mpz_evaluate(temp, expr);
+    } catch (...) {
+        mpz_clear(temp);
+        throw;
+    }
 }
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
@@ -1944,13 +1993,11 @@ void mpz_evaluate(mpz_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
     static_assert(std::is_same_v<Result, gmpxx::mpz_class>, "MPZ evaluation requires an MPZ expression");
 
     if (mpz_expression_references(dest, expr)) {
-        mpz_t lhs;
-        mpz_t rhs;
-        mpz_evaluate_to_temporary(lhs, expr.lhs());
-        mpz_evaluate_to_temporary(rhs, expr.rhs());
-        mpz_apply_binary<Op>(dest, lhs, rhs);
-        mpz_clear(rhs);
-        mpz_clear(lhs);
+        scoped_mpz_t lhs;
+        scoped_mpz_t rhs;
+        mpz_evaluate(lhs.get(), expr.lhs());
+        mpz_evaluate(rhs.get(), expr.rhs());
+        mpz_apply_binary<Op>(dest, lhs.get(), rhs.get());
     } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpz_class>> &&
                          std::is_same_v<Rhs, object_leaf<gmpxx::mpz_class>>) {
         mpz_apply_binary<Op>(dest, expr.lhs().get().mpz_data(), expr.rhs().get().mpz_data());
@@ -1961,11 +2008,10 @@ void mpz_evaluate(mpz_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
         mpz_evaluate(dest, expr.rhs());
         mpz_apply_binary<Op>(dest, expr.lhs().get().mpz_data(), dest);
     } else {
-        mpz_t rhs;
+        scoped_mpz_t rhs;
         mpz_evaluate(dest, expr.lhs());
-        mpz_evaluate_to_temporary(rhs, expr.rhs());
-        mpz_apply_binary<Op>(dest, dest, rhs);
-        mpz_clear(rhs);
+        mpz_evaluate(rhs.get(), expr.rhs());
+        mpz_apply_binary<Op>(dest, dest, rhs.get());
     }
 }
 
@@ -2044,6 +2090,9 @@ void mpq_apply_binary(mpq_t dest, const mpq_t lhs, const mpq_t rhs)
     } else if constexpr (std::is_same_v<Op, mul_op>) {
         mpq_mul(dest, lhs, rhs);
     } else if constexpr (std::is_same_v<Op, div_op>) {
+        if (mpq_sgn(rhs) == 0) {
+            throw std::domain_error("mpq division by zero");
+        }
         mpq_div(dest, lhs, rhs);
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPQ expression operation");
@@ -2054,7 +2103,12 @@ template <typename Expr>
 void mpq_evaluate_to_temporary(mpq_t temp, const Expr& expr)
 {
     mpq_init(temp);
-    mpq_evaluate(temp, expr);
+    try {
+        mpq_evaluate(temp, expr);
+    } catch (...) {
+        mpq_clear(temp);
+        throw;
+    }
 }
 
 inline void mpq_apply_shift(mpq_t dest, const mpz_t count, bool left_shift)
@@ -2075,22 +2129,18 @@ void mpq_evaluate(mpq_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
             mpq_evaluate(dest, expr.lhs());
             mpq_apply_shift(dest, expr.rhs().get().mpz_data(), std::is_same_v<Op, shl_op>);
         } else {
-            mpz_t rhs;
-            mpz_init(rhs);
+            scoped_mpz_t rhs;
             mpq_evaluate(dest, expr.lhs());
-            mpz_evaluate(rhs, expr.rhs());
-            mpq_apply_shift(dest, rhs, std::is_same_v<Op, shl_op>);
-            mpz_clear(rhs);
+            mpz_evaluate(rhs.get(), expr.rhs());
+            mpq_apply_shift(dest, rhs.get(), std::is_same_v<Op, shl_op>);
         }
         return;
     } else if (mpq_expression_references(dest, expr)) {
-        mpq_t lhs;
-        mpq_t rhs;
-        mpq_evaluate_to_temporary(lhs, expr.lhs());
-        mpq_evaluate_to_temporary(rhs, expr.rhs());
-        mpq_apply_binary<Op>(dest, lhs, rhs);
-        mpq_clear(rhs);
-        mpq_clear(lhs);
+        scoped_mpq_t lhs;
+        scoped_mpq_t rhs;
+        mpq_evaluate(lhs.get(), expr.lhs());
+        mpq_evaluate(rhs.get(), expr.rhs());
+        mpq_apply_binary<Op>(dest, lhs.get(), rhs.get());
     } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpq_class>> &&
                          std::is_same_v<Rhs, object_leaf<gmpxx::mpq_class>>) {
         mpq_apply_binary<Op>(dest, expr.lhs().get().mpq_data(), expr.rhs().get().mpq_data());
@@ -2101,11 +2151,10 @@ void mpq_evaluate(mpq_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
         mpq_evaluate(dest, expr.rhs());
         mpq_apply_binary<Op>(dest, expr.lhs().get().mpq_data(), dest);
     } else {
-        mpq_t rhs;
+        scoped_mpq_t rhs;
         mpq_evaluate(dest, expr.lhs());
-        mpq_evaluate_to_temporary(rhs, expr.rhs());
-        mpq_apply_binary<Op>(dest, dest, rhs);
-        mpq_clear(rhs);
+        mpq_evaluate(rhs.get(), expr.rhs());
+        mpq_apply_binary<Op>(dest, dest, rhs.get());
     }
 }
 
