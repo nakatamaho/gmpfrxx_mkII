@@ -317,7 +317,16 @@ public:
     mpc_class& operator=(mpc_class&& other) noexcept
     {
         if (this != &other) {
-            mpc_swap(value_, other.value_);
+            if (real_precision() == other.real_precision() &&
+                imag_precision() == other.imag_precision()) {
+                mpc_swap(value_, other.value_);
+            } else {
+                const auto context =
+                    gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+                const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+                mpc_set(value_, other.value_, default_rounding());
+                gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
+            }
         }
         return *this;
     }

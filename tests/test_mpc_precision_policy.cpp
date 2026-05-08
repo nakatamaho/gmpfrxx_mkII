@@ -31,6 +31,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <utility>
 
 int main()
 {
@@ -103,6 +104,26 @@ int main()
         expr_assign.imag_precision() != a.imag_precision() ||
         std::abs(expr_assign.real_to_double() - 3.5) > 1e-12 ||
         std::abs(expr_assign.imag_to_double() - 5.0) > 1e-12) {
+        std::abort();
+    }
+
+    auto move_same_prec = mpfrxx::mpc_class::with_precision(96, 128);
+    auto move_same_source = mpfrxx::mpc_class::with_precision(96, 128, 7.0, -8.0);
+    move_same_prec = std::move(move_same_source);
+    if (move_same_prec.real_precision() != 96 ||
+        move_same_prec.imag_precision() != 128 ||
+        std::abs(move_same_prec.real_to_double() - 7.0) > 1e-12 ||
+        std::abs(move_same_prec.imag_to_double() + 8.0) > 1e-12) {
+        std::abort();
+    }
+
+    auto move_dst = mpfrxx::mpc_class::with_precision(192, 224);
+    auto move_lower_prec = mpfrxx::mpc_class::with_precision(80, 112, 1.25, -2.5);
+    move_dst = std::move(move_lower_prec);
+    if (move_dst.real_precision() != 192 ||
+        move_dst.imag_precision() != 224 ||
+        std::abs(move_dst.real_to_double() - 1.25) > 1e-12 ||
+        std::abs(move_dst.imag_to_double() + 2.5) > 1e-12) {
         std::abort();
     }
 
