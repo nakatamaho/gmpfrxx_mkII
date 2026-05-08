@@ -297,16 +297,16 @@ public:
 
     mpf_class& operator=(const char* value)
     {
-        if (set_str(value, 0) != 0) {
-            throw std::invalid_argument("invalid mpf_class string");
+        if (set_str(value) != 0) {
+            throw std::invalid_argument("invalid mpf_class decimal string");
         }
         return *this;
     }
 
     mpf_class& operator=(const std::string& value)
     {
-        if (set_str(value, 0) != 0) {
-            throw std::invalid_argument("invalid mpf_class string");
+        if (set_str(value) != 0) {
+            throw std::invalid_argument("invalid mpf_class decimal string");
         }
         return *this;
     }

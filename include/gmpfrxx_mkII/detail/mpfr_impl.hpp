@@ -140,11 +140,11 @@ public:
     mpfr_class(bool) = delete;
     mpfr_class(bool, mpfr_prec_t) = delete;
 
-    explicit mpfr_class(const char* text) : mpfr_class(text, default_precision(), 10) {}
+    explicit mpfr_class(const char* text) : mpfr_class(text, default_precision(), 0) {}
 
-    explicit mpfr_class(const std::string& text) : mpfr_class(text.c_str(), default_precision(), 10) {}
+    explicit mpfr_class(const std::string& text) : mpfr_class(text.c_str(), default_precision(), 0) {}
 
-    mpfr_class(const char* text, mpfr_prec_t precision, int base = 10)
+    mpfr_class(const char* text, mpfr_prec_t precision, int base = 0)
     {
         mpfr_init2(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
@@ -152,11 +152,11 @@ public:
         const std::string parse_text = gmpfrxx_mkII::detail::mpfr_remove_grouping_whitespace(text);
         if (text == nullptr || mpfr_set_str(value_, parse_text.c_str(), base, context.rounding_mode) != 0) {
             mpfr_clear(value_);
-            throw std::invalid_argument("invalid mpfr_class decimal string");
+            throw std::invalid_argument("invalid mpfr_class string");
         }
     }
 
-    mpfr_class(const std::string& text, mpfr_prec_t precision, int base = 10)
+    mpfr_class(const std::string& text, mpfr_prec_t precision, int base = 0)
         : mpfr_class(text.c_str(), precision, base)
     {
     }
@@ -404,8 +404,8 @@ public:
 
     void set(const char* text)
     {
-        if (set_str(text) != 0) {
-            throw std::invalid_argument("invalid mpfr_class decimal string");
+        if (set_str(text, 0) != 0) {
+            throw std::invalid_argument("invalid mpfr_class string");
         }
     }
 

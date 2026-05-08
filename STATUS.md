@@ -2045,6 +2045,62 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase string constructor base-policy parity:
+DONE
+
+Implemented features:
+- Aligned `gmpxx::mpz_class` string construction with string assignment by
+  making constructor defaults use GMP base 0 auto-detection.  Inputs such as
+  `"0x10"` and `"020"` now behave consistently across construction and
+  assignment.
+- Aligned `gmpxx::mpq_class` string construction with string assignment by
+  making constructor defaults use GMP base 0 auto-detection for numerator and
+  denominator strings.
+- Aligned `mpfrxx::mpfr_class` string construction and throwing `set()` with
+  MPFR base 0 parsing, matching existing string assignment behavior and
+  accepting C99-style hexadecimal MPFR inputs such as `"0x1p+5"`.
+- Restored `gmpxx::mpf_class` string assignment to the same decimal/default
+  base policy as string construction.  This intentionally follows GMP MPF
+  string parsing policy instead of adopting `mpz`/MPFR-style auto-base input.
+- Rechecked upstream `t-iostream.cc`, `t-istream.cc`, and `t-ostream.cc`.
+  The stream tests exercise basefield-controlled formatted I/O separately
+  from string constructor/assignment defaults, so stream extraction/insertion
+  behavior was left unchanged.
+
+Tests added:
+- Added constructor/assignment base-policy regression coverage to
+  `tests/test_zq_string_io.cpp`, `tests/test_mpf_string_io.cpp`, and
+  `tests/test_mpfr_string_io.cpp`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/test_zq_string_io.cpp`
+- `tests/test_mpf_string_io.cpp`
+- `tests/test_mpfr_string_io.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "0x|base|set_str|istream|ostream|mpf|mpz|mpq" /home/docker/gmpxx_mkII/cxx/t-iostream.cc /home/docker/gmpxx_mkII/cxx/t-istream.cc /home/docker/gmpxx_mkII/cxx/t-ostream.cc`
+- `rg -n "class mpz_class|mpz_class\\(|operator=\\(const char|set\\(const char|set_str\\(|class mpq_class|mpq_class\\(" include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `rg -n "mpf_class\\(|operator=\\(const char|set\\(const char|set_str\\(" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `cmake --build build -j --target test_zq_string_io test_mpf_string_io test_mpfr_string_io`
+- `ctest --test-dir build -R 'test_zq_string_io|test_mpf_string_io|test_mpfr_string_io' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j --target test_zq_string_io test_mpf_string_io test_mpfr_string_io`: PASS.
+- `ctest --test-dir build -R 'test_zq_string_io|test_mpf_string_io|test_mpfr_string_io' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 140/140 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
 Post-phase MPFR Rdot benchmarks:
 DONE
 

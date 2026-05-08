@@ -71,6 +71,14 @@ int main()
     if (z.get_str() != "42") {
         std::abort();
     }
+    gmpxx::mpz_class z_from_hex("0x10");
+    if (z_from_hex.get_str() != "16") {
+        std::abort();
+    }
+    gmpxx::mpz_class z_from_octal(std::string("020"));
+    if (z_from_octal.get_str() != "16") {
+        std::abort();
+    }
     z = std::string("052");
     if (z.get_str() != "42") {
         std::abort();
@@ -104,6 +112,14 @@ int main()
     }
     q = "0x10/0x20";
     if (q.get_str() != "1/2") {
+        std::abort();
+    }
+    gmpxx::mpq_class q_from_hex("0x10/0x20");
+    if (q_from_hex.get_str() != "1/2") {
+        std::abort();
+    }
+    gmpxx::mpq_class q_from_octal(std::string("020/040"));
+    if (q_from_octal.get_str() != "1/2") {
         std::abort();
     }
     q = std::string("052/0104");

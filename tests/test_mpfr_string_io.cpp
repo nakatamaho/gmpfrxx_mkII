@@ -89,6 +89,10 @@ void require_string_accessors()
 
     mpfrxx::mpfr_class hex_value("ff", 192, 16);
     assert(hex_value.get_str() == "255");
+    mpfrxx::mpfr_class hex_constructor("0x1p+5", 192);
+    assert(hex_constructor.to_double() == 32.0);
+    mpfrxx::mpfr_class hex_string_constructor(std::string("0x1.8p+4"), 192);
+    assert(hex_string_constructor.to_double() == 24.0);
 
     value = "0x1p+5";
     assert(value.to_double() == 32.0);
@@ -104,6 +108,8 @@ void require_string_accessors()
 
     value = "0x1 p+5";
     assert(value.to_double() == 32.0);
+    value.set("0x1.8p+4");
+    assert(value.to_double() == 24.0);
 }
 
 void require_stream_output()

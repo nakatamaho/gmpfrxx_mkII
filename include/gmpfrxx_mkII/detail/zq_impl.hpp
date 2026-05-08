@@ -338,7 +338,7 @@ public:
 
     mpz_class(bool) = delete;
 
-    mpz_class(const char* value, int base = 10)
+    mpz_class(const char* value, int base = 0)
     {
         mpz_init(value_);
         if (value == nullptr || mpz_set_str(value_, value, base) != 0) {
@@ -347,7 +347,7 @@ public:
         }
     }
 
-    mpz_class(const std::string& value, int base = 10)
+    mpz_class(const std::string& value, int base = 0)
         : mpz_class(value.c_str(), base)
     {
     }
@@ -697,7 +697,7 @@ public:
 
     mpq_class(bool) = delete;
 
-    mpq_class(const char* value, int base = 10)
+    mpq_class(const char* value, int base = 0)
     {
         mpq_init(value_);
         if (value == nullptr ||
@@ -709,7 +709,7 @@ public:
         mpq_canonicalize(value_);
     }
 
-    mpq_class(const std::string& value, int base = 10)
+    mpq_class(const std::string& value, int base = 0)
         : mpq_class(value.c_str(), base)
     {
     }

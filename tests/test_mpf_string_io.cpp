@@ -219,6 +219,26 @@ int main()
     if (result.get_str() != "255") {
         std::abort();
     }
+    result = "123";
+    const std::string decimal_assignment_before = result.get_str();
+    bool hex_assignment_threw = false;
+    try {
+        result = "0x10";
+    } catch (const std::invalid_argument&) {
+        hex_assignment_threw = true;
+    }
+    if (!hex_assignment_threw || result.get_str() != decimal_assignment_before) {
+        std::abort();
+    }
+    hex_assignment_threw = false;
+    try {
+        result = std::string("0x10");
+    } catch (const std::invalid_argument&) {
+        hex_assignment_threw = true;
+    }
+    if (!hex_assignment_threw || result.get_str() != decimal_assignment_before) {
+        std::abort();
+    }
     result = std::string("052");
     if (result.to_double() != 52.0) {
         std::abort();
