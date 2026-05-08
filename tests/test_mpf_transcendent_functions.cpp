@@ -373,6 +373,17 @@ void require_gamma_spouge_term_policy()
         }
         previous_terms = terms;
     }
+
+    bool rejected_out_of_range_coefficient = false;
+    try {
+        (void)gmpxx::mpf_math_detail::gamma_spouge_coefficient(24, 24, 512);
+    } catch (const std::invalid_argument&) {
+        rejected_out_of_range_coefficient = true;
+    }
+    if (!rejected_out_of_range_coefficient) {
+        std::cerr << "Spouge coefficient accepted k >= a\n";
+        std::abort();
+    }
 }
 
 void require_close_double(const char* label, double got, double expected, double tolerance)

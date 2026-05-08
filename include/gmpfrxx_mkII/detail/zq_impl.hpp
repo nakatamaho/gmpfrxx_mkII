@@ -364,6 +364,10 @@ public:
     }
 
 #if defined(__SIZEOF_INT128__)
+    // Integer construction is intentionally implicit, including compiler
+    // extension 128-bit integers.  Floating construction remains explicit, and
+    // expression-template scalar leaves still reject __int128 so expression
+    // promotion stays bounded to the documented scalar set.
     mpz_class(__int128_t value)
     {
         mpz_init(value_);

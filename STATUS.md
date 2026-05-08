@@ -1,3 +1,44 @@
+Post-phase int128 constructor policy note and Spouge coefficient guard:
+DONE
+
+Implemented features:
+- Documented the `mpz_class` conversion policy near the 128-bit integer
+  constructors: integer construction is intentionally implicit, floating-point
+  construction remains explicit, and expression-template scalar leaves still
+  reject `__int128`.
+- Added an explicit `gamma_spouge_coefficient` precondition guard before
+  converting `a - k` to `unsigned long`.
+- The Spouge coefficient helper now rejects invalid internal calls with
+  `std::invalid_argument` unless `k == 0` or `0 < k < a`.
+
+Missing features:
+- None.
+
+Tests added:
+- Extended `tests/test_mpf_transcendent_functions.cpp` with a regression check
+  that `gamma_spouge_coefficient(k, a, work)` rejects `k >= a`.
+
+Exact commands run:
+- `rg -n "__int128|gamma_spouge_coefficient|gamma_spouge_terms|mpz_class\\(" include tests STATUS.md`
+- `sed -n '340,390p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1300,1345p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '350,385p' tests/test_mpf_transcendent_functions.cpp`
+- `git diff --check`
+- `cmake --build build -j --target test_mpf_transcendent_functions test_type_conversions compile_fail_test_int128_scalar`
+- `cmake --build build -j`
+- `ctest --test-dir build -R 'test_mpf_transcendent_functions|test_type_conversions|compile_fail_test_int128_scalar' --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `cmake --build build -j --target test_mpf_transcendent_functions test_type_conversions compile_fail_test_int128_scalar`: FAIL only because compile-fail tests are CTest entries, not build targets; `test_mpf_transcendent_functions` and `test_type_conversions` built before the target-name error.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build -R 'test_mpf_transcendent_functions|test_type_conversions|compile_fail_test_int128_scalar' --output-on-failure`: PASS, 3/3 tests passed.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
 MPF exp scaling exponent guard:
 DONE
 

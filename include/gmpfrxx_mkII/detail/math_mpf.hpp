@@ -1324,6 +1324,9 @@ inline mpf_class gamma_spouge_coefficient(int k, int a, mp_bitcnt_t work)
     if (k == 0) {
         return sqrt_prec(mul_ui(pi(work + 8), 2ul, work), work);
     }
+    if (k < 0 || a <= k) {
+        throw std::invalid_argument("Spouge coefficient requires 0 <= k < a");
+    }
 
     const mpf_class a_minus_k = make_ui(static_cast<unsigned long>(a - k), work);
     const mpf_class exponent = sub(make_ui(static_cast<unsigned long>(k), work), mpf_class("0.5", work), work);
