@@ -208,6 +208,62 @@ void test_real_operands_and_division() {
     assert(quotient.imag() == 1);
 }
 
+void test_exact_real_operands() {
+    using namespace gmpxx;
+
+    mpfc_class z(mpf_class(3, 192), mpf_class(4, 160));
+    mpz_class exact_z(4);
+    mpq_class exact_q(mpz_class(3), mpz_class(2));
+
+    mpfc_class sum_z_rhs = z + exact_z;
+    assert(sum_z_rhs.real() == 7);
+    assert(sum_z_rhs.imag() == 4);
+    assert(sum_z_rhs.real().get_prec() == z.real().get_prec());
+    assert(sum_z_rhs.imag().get_prec() == z.imag().get_prec());
+
+    mpfc_class sum_z_lhs = exact_z + z;
+    assert(sum_z_lhs.real() == 7);
+    assert(sum_z_lhs.imag() == 4);
+
+    mpfc_class diff_z_lhs = exact_z - z;
+    assert(diff_z_lhs.real() == 1);
+    assert(diff_z_lhs.imag() == -4);
+
+    mpfc_class sum_q_rhs = z + exact_q;
+    assert(sum_q_rhs.real() == mpf_class("4.5", 192));
+    assert(sum_q_rhs.imag() == 4);
+
+    mpfc_class sum_q_lhs = exact_q + z;
+    assert(sum_q_lhs.real() == mpf_class("4.5", 192));
+    assert(sum_q_lhs.imag() == 4);
+
+    mpfc_class product_q = exact_q * z;
+    assert(product_q.real() == mpf_class("4.5", 192));
+    assert(product_q.imag() == 6);
+
+    mpfc_class quotient_z = z / exact_z;
+    assert(quotient_z.real() == mpf_class("0.75", 192));
+    assert(quotient_z.imag() == 1);
+
+    mpfc_class chained = (exact_z + exact_q) + z;
+    assert(chained.real() == mpf_class("8.5", 192));
+    assert(chained.imag() == 4);
+
+    mpfc_class compound = z;
+    compound += exact_z;
+    assert(compound.real() == 7);
+    assert(compound.imag() == 4);
+    compound -= exact_q;
+    assert(compound.real() == mpf_class("5.5", 192));
+    assert(compound.imag() == 4);
+    compound *= exact_q;
+    assert(compound.real() == mpf_class("8.25", 192));
+    assert(compound.imag() == 6);
+    compound /= exact_z;
+    assert(compound.real() == mpf_class("2.0625", 192));
+    assert(compound.imag() == mpf_class("1.5", 160));
+}
+
 void test_assignment_preserves_destination_precision() {
     using namespace gmpxx;
 
@@ -326,6 +382,7 @@ int main() {
     test_swap();
     test_lazy_arithmetic();
     test_real_operands_and_division();
+    test_exact_real_operands();
     test_assignment_preserves_destination_precision();
     test_conjugate_norm_and_abs();
     test_comparison_and_free_helpers();

@@ -157,6 +157,8 @@ void compile_time_fingerprint()
 
     static_assert(gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<gmpxx::mpfc_class>);
     static_assert(gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<gmpxx::mpf_class>);
+    static_assert(gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<gmpxx::mpz_class>);
+    static_assert(gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<gmpxx::mpq_class>);
     static_assert(gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<int>);
     static_assert(!gmpfrxx_mkII::detail::is_mpfc_expression_operand_v<long double>);
 
@@ -186,10 +188,14 @@ void compile_time_fingerprint()
     using q_plus_mpfr = decltype(std::declval<const gmpxx::mpq_class&>() + std::declval<const mpfrxx::mpfr_class&>());
     using mpfr_plus_mpc = decltype(std::declval<const mpfrxx::mpfr_class&>() + std::declval<const mpfrxx::mpc_class&>());
     using mpf_plus_mpfc = decltype(std::declval<const gmpxx::mpf_class&>() + std::declval<const gmpxx::mpfc_class&>());
+    using z_plus_mpfc = decltype(std::declval<const gmpxx::mpz_class&>() + std::declval<const gmpxx::mpfc_class&>());
+    using q_plus_mpfc = decltype(std::declval<const gmpxx::mpq_class&>() + std::declval<const gmpxx::mpfc_class&>());
     static_assert(std::is_same_v<typename z_plus_mpf::result_type, gmpxx::mpf_class>);
     static_assert(std::is_same_v<typename q_plus_mpfr::result_type, mpfrxx::mpfr_class>);
     static_assert(std::is_same_v<typename mpfr_plus_mpc::result_type, mpfrxx::mpc_class>);
     static_assert(std::is_same_v<typename mpf_plus_mpfc::result_type, gmpxx::mpfc_class>);
+    static_assert(std::is_same_v<typename z_plus_mpfc::result_type, gmpxx::mpfc_class>);
+    static_assert(std::is_same_v<typename q_plus_mpfc::result_type, gmpxx::mpfc_class>);
 
     static_assert(std::is_same_v<gmpfrxx_mkII::detail::expression_result_type_t<mpf_add_int>, gmpxx::mpf_class>);
     static_assert(is_expression_node_v<decltype(-std::declval<const gmpxx::mpf_class&>())>);
@@ -231,6 +237,8 @@ void compile_time_fingerprint()
     static_assert(has_mpc_plus<int>::value);
     static_assert(!has_mpc_plus<long double>::value);
     static_assert(has_mpfc_plus<gmpxx::mpf_class>::value);
+    static_assert(has_mpfc_plus<gmpxx::mpz_class>::value);
+    static_assert(has_mpfc_plus<gmpxx::mpq_class>::value);
     static_assert(has_mpfc_plus<int>::value);
     static_assert(!has_mpfc_plus<long double>::value);
 

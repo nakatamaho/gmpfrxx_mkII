@@ -395,6 +395,12 @@ struct is_mpfc_expression_operand<gmpxx::mpfc_class> : std::true_type {};
 template <>
 struct is_mpfc_expression_operand<gmpxx::mpf_class> : std::true_type {};
 
+template <>
+struct is_mpfc_expression_operand<gmpxx::mpz_class> : std::true_type {};
+
+template <>
+struct is_mpfc_expression_operand<gmpxx::mpq_class> : std::true_type {};
+
 template <typename T>
 struct is_mpfc_expression_operand<
     T,
@@ -405,6 +411,18 @@ template <typename T>
 struct is_mpfc_expression_operand<
     T,
     std::enable_if_t<is_expression_node_v<T> && std::is_same_v<typename T::result_type, gmpxx::mpf_class>>>
+    : std::true_type {};
+
+template <typename T>
+struct is_mpfc_expression_operand<
+    T,
+    std::enable_if_t<is_expression_node_v<T> && std::is_same_v<typename T::result_type, gmpxx::mpz_class>>>
+    : std::true_type {};
+
+template <typename T>
+struct is_mpfc_expression_operand<
+    T,
+    std::enable_if_t<is_expression_node_v<T> && std::is_same_v<typename T::result_type, gmpxx::mpq_class>>>
     : std::true_type {};
 
 template <typename T>
@@ -442,6 +460,16 @@ inline object_leaf<gmpxx::mpf_class> make_mpfc_operand(const gmpxx::mpf_class& v
     return object_leaf<gmpxx::mpf_class>(value);
 }
 
+inline object_leaf<gmpxx::mpz_class> make_mpfc_operand(const gmpxx::mpz_class& value)
+{
+    return object_leaf<gmpxx::mpz_class>(value);
+}
+
+inline object_leaf<gmpxx::mpq_class> make_mpfc_operand(const gmpxx::mpq_class& value)
+{
+    return object_leaf<gmpxx::mpq_class>(value);
+}
+
 template <typename Expr, typename = std::enable_if_t<is_expression_node_v<std::decay_t<Expr>>>>
 std::decay_t<Expr> make_mpfc_operand(Expr&& expr)
 {
@@ -473,6 +501,26 @@ inline mp_bitcnt_t mpfc_expression_real_precision(const object_leaf<gmpxx::mpf_c
 inline mp_bitcnt_t mpfc_expression_imag_precision(const object_leaf<gmpxx::mpf_class>& expr)
 {
     return expr.get().precision();
+}
+
+inline mp_bitcnt_t mpfc_expression_real_precision(const object_leaf<gmpxx::mpz_class>&)
+{
+    return 0;
+}
+
+inline mp_bitcnt_t mpfc_expression_imag_precision(const object_leaf<gmpxx::mpz_class>&)
+{
+    return 0;
+}
+
+inline mp_bitcnt_t mpfc_expression_real_precision(const object_leaf<gmpxx::mpq_class>&)
+{
+    return 0;
+}
+
+inline mp_bitcnt_t mpfc_expression_imag_precision(const object_leaf<gmpxx::mpq_class>&)
+{
+    return 0;
 }
 
 template <typename T, typename Result>
@@ -542,6 +590,20 @@ inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpf_
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpz_class>& expr)
+{
+    mpf_set_z(mpfc_real_ref(dest).mpf_data(), expr.get().mpz_data());
+    mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
+}
+
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpq_class>& expr)
+{
+    mpf_set_q_at_precision(mpfc_real_ref(dest).mpf_data(),
+                           expr.get().mpq_data(),
+                           mpfc_real_ref(dest).precision());
+    mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
+}
+
 template <typename T, typename Result>
 void mpfc_evaluate(gmpxx::mpfc_class& dest, const scalar_leaf<T, Result>& expr)
 {
@@ -578,6 +640,16 @@ inline bool mpfc_expression_references(
 }
 
 inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const object_leaf<gmpxx::mpf_class>&)
+{
+    return false;
+}
+
+inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
+inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const object_leaf<gmpxx::mpq_class>&)
 {
     return false;
 }

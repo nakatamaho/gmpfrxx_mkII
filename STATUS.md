@@ -1,3 +1,98 @@
+Post-phase MPC move assignment precision semantics:
+DONE
+
+Implemented features:
+- Aligned `mpfrxx::mpc_class` move assignment with the destination-precision
+  semantics used by `gmpxx::mpf_class` and `mpfrxx::mpfr_class`.
+- `mpc_class::operator=(mpc_class&&)` now keeps the existing destination real
+  and imaginary precisions when the source precision differs.
+- The move-assignment fast path still uses `mpc_swap` when both real and
+  imaginary precisions match.
+- The differing-precision path now uses `mpc_set` under the destination
+  evaluation context and checks component exponent ranges.
+
+Missing features:
+- None.
+
+Tests added:
+- Extended `tests/test_mpc_precision_policy.cpp` to cover move assignment
+  from a same-precision source and from a lower-precision source.
+- The lower-precision source case verifies that destination precision remains
+  unchanged while the moved value is copied correctly.
+
+Exact commands run:
+- `rg -n "mpc_class\\(mpc_class&&|operator=\\(mpc_class&&|void swap\\(mpc_class|mpc_class& operator=|real_precision\\(\\)" include/gmpfrxx_mkII/detail/mpc_impl.hpp tests/test_mpc_basic.cpp tests/test_mpc_precision_policy.cpp tests/test_construction_copy.cpp && sed -n '60,150p' include/gmpfrxx_mkII/detail/mpc_impl.hpp && sed -n '1,220p' tests/test_mpc_precision_policy.cpp && sed -n '1,180p' tests/test_construction_copy.cpp`
+- `sed -n '150,335p' include/gmpfrxx_mkII/detail/mpc_impl.hpp && sed -n '180,270p' tests/test_mpc_basic.cpp`
+- `rg -n "mpfr_class& operator=\\(mpfr_class&&|mpf_class& operator=\\(mpf_class&&|mpfc_class& operator=\\(mpfc_class&&" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp && sed -n '180,235p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp && sed -n '180,235p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '229,255p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp && sed -n '302,325p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `rg -n "mpc_class" tests/test_construction_copy.cpp`
+- `cmake --build build -j --target test_mpc_precision_policy && ctest --test-dir build -R 'test_mpc_precision_policy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpc_precision_policy`: PASS.
+- `ctest --test-dir build -R 'test_mpc_precision_policy' --output-on-failure`: PASS, 1/1 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
+Post-phase MPFC exact real promotion:
+DONE
+
+Implemented features:
+- Treated the documented `mpfc + mpz/mpq -> mpfc` and
+  `mpz/mpq + mpfc -> mpfc` promotion rules as implementation gaps, not a
+  specification change.
+- Added `gmpxx::mpz_class` and `gmpxx::mpq_class` as valid MPFC expression
+  operands.
+- Added MPFC operand wrapping, precision propagation, alias-reference checks,
+  and real-only complex evaluation for exact `mpz_class` and `mpq_class`
+  leaves.
+- Exact real leaves evaluate as `(value, 0)` and do not contribute their own
+  precision; the surrounding MPFC/MPF operands or destination precision govern
+  materialization.
+- Exact Z/Q expression nodes may now participate in an MPFC expression when an
+  MPFC operand is present, for example `(z + q) + c`.
+
+Missing features:
+- None.
+
+Tests added:
+- Extended `tests/test_et_contract_mpfc.cpp` with `mpfc +/-/*// mpz/mpq`
+  expression-node formation checks, both operand orders, and an exact
+  subexpression promotion case.
+- Extended `tests/test_abi_fingerprint.cpp` to assert MPFC operand eligibility
+  and result type promotion for `mpz_class` and `mpq_class`.
+- Extended `tests/test_mpfc_basic.cpp` with runtime arithmetic, precision
+  preservation, exact subexpression, and compound-assignment coverage for
+  `mpfc_class` with `mpz_class` / `mpq_class`.
+
+Exact commands run:
+- `git status --short && sed -n '360,575p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp && sed -n '1,180p' tests/test_et_contract_mpfc.cpp && sed -n '1,220p' tests/test_mpfc_basic.cpp && sed -n '1,140p' tests/test_abi_fingerprint.cpp`
+- `sed -n '140,260p' tests/test_abi_fingerprint.cpp && sed -n '220,520p' tests/test_mpfc_basic.cpp && sed -n '575,735p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp && rg -n "mpf_set_q_at_precision|mpf_set_z" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1410,1445p' include/gmpfrxx_mkII/detail/mpf_impl.hpp && sed -n '735,825p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `cmake --build build -j --target test_et_contract_mpfc test_mpfc_basic test_abi_fingerprint test_common_type`
+- `ctest --test-dir build -R 'test_et_contract_mpfc|test_mpfc_basic|test_abi_fingerprint|test_common_type' --output-on-failure`
+- `cmake --build build -j --target test_mpfc_basic && ctest --test-dir build -R 'test_et_contract_mpfc|test_mpfc_basic|test_abi_fingerprint|test_common_type' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- First focused build exposed a missing `mpfc_expression_references` overload
+  for exact Z/Q leaves; fixed by adding false-returning exact-leaf overloads.
+- First focused ctest exposed a non-binary-finite expected value in the new
+  runtime test; fixed the test inputs to use binary-finite exact results.
+- `cmake --build build -j --target test_et_contract_mpfc test_mpfc_basic test_abi_fingerprint test_common_type`: PASS after fixes.
+- `ctest --test-dir build -R 'test_et_contract_mpfc|test_mpfc_basic|test_abi_fingerprint|test_common_type' --output-on-failure`: PASS, 4/4 tests passed after fixes.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
 Post-phase MPC constructor and assignment surface:
 DONE
 
