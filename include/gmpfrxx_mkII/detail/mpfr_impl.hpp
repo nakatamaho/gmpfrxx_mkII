@@ -53,19 +53,26 @@
 namespace gmpfrxx_mkII {
 namespace detail {
 
-inline std::string mpfr_remove_grouping_whitespace(const char* text)
+inline std::string mpfr_trim_surrounding_whitespace(const char* text)
 {
     if (text == nullptr) {
         return {};
     }
 
-    std::string result;
-    for (const unsigned char c : std::string(text)) {
-        if (!std::isspace(c)) {
-            result.push_back(static_cast<char>(c));
-        }
+    const char* first = text;
+    while (*first != '\0' && std::isspace(static_cast<unsigned char>(*first)) != 0) {
+        ++first;
     }
-    return result;
+
+    const char* last = first;
+    while (*last != '\0') {
+        ++last;
+    }
+    while (last != first && std::isspace(static_cast<unsigned char>(*(last - 1))) != 0) {
+        --last;
+    }
+
+    return std::string(first, last);
 }
 
 } // namespace detail
@@ -149,7 +156,7 @@ public:
         mpfr_init2(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
         const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
-        const std::string parse_text = gmpfrxx_mkII::detail::mpfr_remove_grouping_whitespace(text);
+        const std::string parse_text = gmpfrxx_mkII::detail::mpfr_trim_surrounding_whitespace(text);
         if (text == nullptr || mpfr_set_str(value_, parse_text.c_str(), base, context.rounding_mode) != 0) {
             mpfr_clear(value_);
             throw std::invalid_argument("invalid mpfr_class string");
@@ -424,7 +431,7 @@ public:
         mpfr_init2(temp, precision());
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
         const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
-        const std::string parse_text = gmpfrxx_mkII::detail::mpfr_remove_grouping_whitespace(text);
+        const std::string parse_text = gmpfrxx_mkII::detail::mpfr_trim_surrounding_whitespace(text);
         const int rc = mpfr_set_str(temp, parse_text.c_str(), base, context.rounding_mode);
         if (rc == 0) {
             mpfr_set(value_, temp, context.rounding_mode);

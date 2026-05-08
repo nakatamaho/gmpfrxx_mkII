@@ -1,3 +1,58 @@
+Post-phase MPFR whitespace parsing and MPC exponent-range guards:
+DONE
+
+Implemented features:
+- Replaced `mpfr_remove_grouping_whitespace` with
+  `mpfr_trim_surrounding_whitespace`.
+- MPFR string constructors and `set_str` now trim only leading/trailing
+  whitespace; whitespace inside the numeric token is no longer deleted.
+- Inputs such as `"3 14"`, `"1.25 00"`, and `"0x1 p+5"` are rejected instead
+  of being silently rewritten to a different value.
+- Added MPC exponent-range guard coverage around MPC-backed construction,
+  assignment, expression materialization, compound assignment, and public MPC
+  math helpers.
+- Added `mpc_check_component_ranges` so MPC result real/imag MPFR components
+  are checked under the wrapper MPFR exponent range after MPC C API calls.
+- MPF/MPFC remain outside `MPFRXX_EMIN`/`MPFRXX_EMAX` by design because they
+  are GMP MPF-backed, not MPFR-backed.
+
+Missing features:
+- None for the current MPFR/MPC exponent policy.
+
+Tests added:
+- Updated `tests/test_mpfr_string_io.cpp` to require surrounding whitespace
+  trimming while rejecting whitespace inside MPFR numeric tokens.
+- Extended `tests/test_mpc_environment.cpp` with a white-box guard-scope check
+  proving MPC math runs while the wrapper MPFR exponent range is installed and
+  restores the previous MPFR global range afterward.
+
+Exact commands run:
+- `sed -n '45,80p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `rg -n "mpfr_remove_grouping_whitespace|grouping whitespace|0x1 p|1.25 00|3 14|exponent_range_guard|default_emin|default_emax|emin|emax" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp tests STATUS.md`
+- `sed -n '1,120p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '96,120p' tests/test_mpfr_string_io.cpp`
+- `rg -n "mpc_(set|add|sub|mul|div|neg|sqr|sqrt|exp|log|sin|cos|tan|pow)|mpc_apply|mpc_evaluate|current_eval_context|exponent_range_guard" include/gmpfrxx_mkII/detail/mpc_impl.hpp tests/test_mpc*`
+- `sed -n '1,180p' include/gmpfrxx_mkII/detail/eval_context.hpp`
+- `sed -n '1,140p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '400,635p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '900,1180p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1,130p' tests/test_mpc_environment.cpp tests/test_mpc_environment_invalid.cpp tests/test_mpc_math.cpp`
+- `git diff --check`
+- `cmake --build build -j --target test_mpfr_string_io test_mpc_environment test_mpc_math`
+- `ctest --test-dir build -R 'test_mpfr_string_io|test_mpc_environment|test_mpc_math' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `cmake --build build -j --target test_mpfr_string_io test_mpc_environment test_mpc_math`: PASS.
+- `ctest --test-dir build -R 'test_mpfr_string_io|test_mpc_environment|test_mpc_math' --output-on-failure`: PASS, 4/4 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
 Post-phase string base parity regression review:
 DONE
 

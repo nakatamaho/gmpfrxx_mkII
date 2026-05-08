@@ -77,5 +77,30 @@ int main()
         std::abort();
     }
 
+    const mpfr_exp_t old_emin = mpfr_get_emin();
+    const mpfr_exp_t old_emax = mpfr_get_emax();
+    const mpfr_exp_t old_default_emin = mpfrxx::default_emin();
+    const mpfr_exp_t old_default_emax = mpfrxx::default_emax();
+
+    mpfrxx::set_default_exponent_range(old_emin, old_emax);
+    mpfrxx::mpc_class finite_argument = mpfrxx::mpc_class::with_precision(128, 100.0, 0.0);
+    mpfrxx::set_default_exponent_range(-20, 20);
+    bool saw_mpc_math_guard = false;
+    mpfrxx::mpc_class guarded_result = mpfrxx::detail::unary_mpc_math(
+        finite_argument,
+        [&saw_mpc_math_guard](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+            saw_mpc_math_guard = (mpfr_get_emin() == -20 && mpfr_get_emax() == 20);
+            mpc_set(rop, op, rnd);
+        });
+    (void)guarded_result;
+    if (!saw_mpc_math_guard) {
+        std::abort();
+    }
+
+    if (mpfr_get_emin() != old_emin || mpfr_get_emax() != old_emax) {
+        std::abort();
+    }
+    mpfrxx::set_default_exponent_range(old_default_emin, old_default_emax);
+
     return 0;
 }

@@ -103,15 +103,30 @@ void require_string_accessors()
     value = std::string("052");
     assert(value.to_double() == 52.0);
 
-    mpfrxx::mpfr_class grouped("0.33333 33333 33333", 192);
-    mpfrxx::mpfr_class ungrouped("0.333333333333333", 192);
-    assert(mpfr_cmp(grouped.mpfr_data(), ungrouped.mpfr_data()) == 0);
+    mpfrxx::mpfr_class surrounded("  1.25  ", 192);
+    assert(surrounded.get_str() == "1.25");
 
-    value.set("1.25 00");
-    assert(value.get_str() == "1.25");
+    bool interior_space_rejected = false;
+    try {
+        (void)mpfrxx::mpfr_class("3 14", 192);
+    } catch (const std::invalid_argument&) {
+        interior_space_rejected = true;
+    }
+    assert(interior_space_rejected);
 
-    value = "0x1 p+5";
-    assert(value.to_double() == 32.0);
+    const std::string whitespace_before = value.get_str();
+    assert(value.set_str("1.25 00") != 0);
+    assert(value.get_str() == whitespace_before);
+
+    interior_space_rejected = false;
+    try {
+        value = "0x1 p+5";
+    } catch (const std::invalid_argument&) {
+        interior_space_rejected = true;
+    }
+    assert(interior_space_rejected);
+    assert(value.get_str() == whitespace_before);
+
     value.set("0x1.8p+4");
     assert(value.to_double() == 24.0);
 }

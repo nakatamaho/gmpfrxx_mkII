@@ -45,6 +45,18 @@
 
 #include <mpc.h>
 
+namespace gmpfrxx_mkII {
+namespace detail {
+
+inline void mpc_check_component_ranges(mpc_t value, mpc_rnd_t rnd)
+{
+    mpfr_check_range(mpc_realref(value), 0, MPC_RND_RE(rnd));
+    mpfr_check_range(mpc_imagref(value), 0, MPC_RND_IM(rnd));
+}
+
+} // namespace detail
+} // namespace gmpfrxx_mkII
+
 namespace mpfrxx {
 
 class mpc_class {
@@ -59,7 +71,11 @@ public:
     mpc_class(const mpc_class& other)
     {
         mpc_init3(value_, other.real_precision(), other.imag_precision());
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(other.real_precision(), other.imag_precision()));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpc_set(value_, other.value_, default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
     }
 
     mpc_class(mpc_class&& other) noexcept
@@ -71,7 +87,11 @@ public:
     mpc_class(const mpfr_class& real, const mpfr_class& imag)
     {
         mpc_init3(value_, real.precision(), imag.precision());
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(real.precision(), imag.precision()));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpc_set_fr_fr(value_, real.mpfr_data(), imag.mpfr_data(), default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
     }
 
     template <
@@ -88,7 +108,11 @@ public:
     mpc_class& operator=(const mpc_class& other)
     {
         if (this != &other) {
+            const auto context =
+                gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+            const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
             mpc_set(value_, other.value_, default_rounding());
+            gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
         }
         return *this;
     }
@@ -120,14 +144,21 @@ public:
     static mpc_class with_precision(mpfr_prec_t precision, double real, double imag)
     {
         mpc_class result = with_precision(precision);
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpc_set_d_d(result.value_, real, imag, default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(result.value_, default_rounding());
         return result;
     }
 
     static mpc_class with_precision(mpfr_prec_t real_precision, mpfr_prec_t imag_precision, double real, double imag)
     {
         mpc_class result = with_precision(real_precision, imag_precision);
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision, imag_precision));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpc_set_d_d(result.value_, real, imag, default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(result.value_, default_rounding());
         return result;
     }
 
@@ -185,7 +216,11 @@ private:
     mpc_class(precision_tag, mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
     {
         mpc_init3(value_, real_precision, imag_precision);
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision, imag_precision));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpc_set_ui(value_, 0, default_rounding());
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
     }
 
     mpc_t value_;
@@ -239,6 +274,11 @@ struct mpc_expression_precision_bits {
     mpfr_prec_t real;
     mpfr_prec_t imag;
 };
+
+inline mpfr_prec_t mpc_context_precision(mpc_expression_precision_bits precision)
+{
+    return std::max({precision.real, precision.imag, mpfrxx::default_precision_bits()});
+}
 
 inline mpc_expression_precision_bits max_mpc_precision(
     mpc_expression_precision_bits lhs,
@@ -416,6 +456,7 @@ inline void mpc_evaluate(
     mpc_rnd_t rnd)
 {
     mpc_set(dest, expr.get().mpc_data(), rnd);
+    mpc_check_component_ranges(dest, rnd);
 }
 
 inline void mpc_evaluate(
@@ -425,6 +466,7 @@ inline void mpc_evaluate(
     mpc_rnd_t rnd)
 {
     mpc_set_fr(dest, expr.get().mpfr_data(), rnd);
+    mpc_check_component_ranges(dest, rnd);
 }
 
 inline void mpc_evaluate(
@@ -434,6 +476,7 @@ inline void mpc_evaluate(
     mpc_rnd_t rnd)
 {
     mpc_set_z(dest, expr.get().mpz_data(), rnd);
+    mpc_check_component_ranges(dest, rnd);
 }
 
 inline void mpc_evaluate(
@@ -443,6 +486,7 @@ inline void mpc_evaluate(
     mpc_rnd_t rnd)
 {
     mpc_set_q(dest, expr.get().mpq_data(), rnd);
+    mpc_check_component_ranges(dest, rnd);
 }
 
 template <typename T, typename Result>
@@ -454,10 +498,12 @@ void mpc_evaluate(
 {
     if constexpr (std::is_same_v<T, double>) {
         mpc_set_d(dest, expr.value(), rnd);
+        mpc_check_component_ranges(dest, rnd);
     } else if constexpr (std::is_same_v<T, std::int64_t> ||
                          std::is_same_v<T, std::uint64_t>) {
         const gmpxx::mpz_class integer(expr.value());
         mpc_set_z(dest, integer.mpz_data(), rnd);
+        mpc_check_component_ranges(dest, rnd);
     } else {
         static_assert(std::is_same_v<T, double>, "unsupported MPC scalar leaf");
     }
@@ -517,6 +563,7 @@ void mpc_apply_binary(mpc_t dest, const mpc_t lhs, const mpc_t rhs, mpc_rnd_t rn
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPC expression operation");
     }
+    mpc_check_component_ranges(dest, rnd);
 }
 
 template <typename Expr, typename Result>
@@ -538,6 +585,7 @@ void mpc_evaluate(
 {
     mpc_evaluate(dest, expr.expr(), eval_precision, rnd);
     mpc_neg(dest, dest, rnd);
+    mpc_check_component_ranges(dest, rnd);
 }
 
 template <typename Expr>
@@ -563,6 +611,7 @@ void mpc_evaluate(
         mpfr_init2(real, eval_precision.real);
         mpfr_evaluate(real, expr, eval_precision.real, MPC_RND_RE(rnd));
         mpc_set_fr(dest, real, rnd);
+        mpc_check_component_ranges(dest, rnd);
         mpfr_clear(real);
         return;
     } else if constexpr (std::is_same_v<Result, gmpxx::mpz_class>) {
@@ -570,6 +619,7 @@ void mpc_evaluate(
         mpz_init(exact);
         mpz_evaluate(exact, expr);
         mpc_set_z(dest, exact, rnd);
+        mpc_check_component_ranges(dest, rnd);
         mpz_clear(exact);
         return;
     } else if constexpr (std::is_same_v<Result, gmpxx::mpq_class>) {
@@ -577,6 +627,7 @@ void mpc_evaluate(
         mpq_init(exact);
         mpq_evaluate(exact, expr);
         mpc_set_q(dest, exact, rnd);
+        mpc_check_component_ranges(dest, rnd);
         mpq_clear(exact);
         return;
     }
@@ -618,6 +669,8 @@ void mpc_compound_assign(mpfrxx::mpc_class& lhs, Rhs&& rhs)
     using operand_type = std::decay_t<decltype(operand)>;
     const mpc_expression_precision_bits precision{lhs.real_precision(), lhs.imag_precision()};
     const mpc_rnd_t rnd = mpfrxx::mpc_class::default_rounding();
+    const auto context = current_eval_context(mpc_context_precision(precision));
+    const mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     if constexpr (std::is_same_v<operand_type, object_leaf<mpfrxx::mpc_class>>) {
         mpc_apply_binary<Op>(lhs.mpc_data(), lhs.mpc_data(), operand.get().mpc_data(), rnd);
     } else {
@@ -712,6 +765,9 @@ mpc_class::mpc_class(const Expr& expr)
 {
     const auto precision = gmpfrxx_mkII::detail::mpc_expression_precision(expr);
     mpc_init3(value_, precision.real, precision.imag);
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(
+        gmpfrxx_mkII::detail::mpc_context_precision(precision));
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     gmpfrxx_mkII::detail::mpc_evaluate(value_, expr, precision, default_rounding());
 }
 
@@ -722,6 +778,9 @@ mpc_class& mpc_class::operator=(const Expr& expr)
         this->real_precision(),
         this->imag_precision(),
     };
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(
+        gmpfrxx_mkII::detail::mpc_context_precision(precision));
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     gmpfrxx_mkII::detail::mpc_evaluate(value_, expr, precision, default_rounding());
     return *this;
 }
@@ -871,7 +930,11 @@ inline mpc_class unary_mpc_math(const Expr& expr, Function function)
 {
     const mpc_class operand = materialize_mpc_math_operand(expr);
     mpc_class result = mpc_class::with_precision(operand.real_precision(), operand.imag_precision());
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(
+        gmpfrxx_mkII::detail::mpc_context_precision({result.real_precision(), result.imag_precision()}));
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     function(result.mpc_data(), operand.mpc_data(), mpc_class::default_rounding());
+    gmpfrxx_mkII::detail::mpc_check_component_ranges(result.mpc_data(), mpc_class::default_rounding());
     return result;
 }
 
@@ -880,7 +943,10 @@ inline mpfr_class unary_mpc_real_math(const Expr& expr, mpfr_prec_t precision, F
 {
     const mpc_class operand = materialize_mpc_math_operand(expr);
     mpfr_class result = mpfr_class::with_precision(precision);
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     function(result.mpfr_data(), operand.mpc_data(), mpfrxx::default_rounding_mode());
+    mpfr_check_range(result.mpfr_data(), 0, mpfrxx::default_rounding_mode());
     return result;
 }
 
@@ -892,7 +958,11 @@ inline mpc_class binary_mpc_math(const Lhs& lhs, const Rhs& rhs, Function functi
     const mpfr_prec_t real_precision = std::max(left.real_precision(), right.real_precision());
     const mpfr_prec_t imag_precision = std::max(left.imag_precision(), right.imag_precision());
     mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(
+        gmpfrxx_mkII::detail::mpc_context_precision({real_precision, imag_precision}));
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     function(result.mpc_data(), left.mpc_data(), right.mpc_data(), mpc_class::default_rounding());
+    gmpfrxx_mkII::detail::mpc_check_component_ranges(result.mpc_data(), mpc_class::default_rounding());
     return result;
 }
 
@@ -909,7 +979,11 @@ inline mpc_class ternary_mpc_math(const A& a, const B& b, const C& c, Function f
                                                  second.imag_precision(),
                                                  third.imag_precision()});
     mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(
+        gmpfrxx_mkII::detail::mpc_context_precision({real_precision, imag_precision}));
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     function(result.mpc_data(), first.mpc_data(), second.mpc_data(), third.mpc_data(), mpc_class::default_rounding());
+    gmpfrxx_mkII::detail::mpc_check_component_ranges(result.mpc_data(), mpc_class::default_rounding());
     return result;
 }
 
@@ -1008,7 +1082,10 @@ inline mpfr_class real(const Expr& expr)
 {
     const mpc_class operand = detail::materialize_mpc_math_operand(expr);
     mpfr_class result = mpfr_class::with_precision(operand.real_precision());
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(operand.real_precision());
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     mpc_real(result.mpfr_data(), operand.mpc_data(), mpfrxx::default_rounding_mode());
+    mpfr_check_range(result.mpfr_data(), 0, mpfrxx::default_rounding_mode());
     return result;
 }
 
@@ -1021,7 +1098,10 @@ inline mpfr_class imag(const Expr& expr)
 {
     const mpc_class operand = detail::materialize_mpc_math_operand(expr);
     mpfr_class result = mpfr_class::with_precision(operand.imag_precision());
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(operand.imag_precision());
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     mpc_imag(result.mpfr_data(), operand.mpc_data(), mpfrxx::default_rounding_mode());
+    mpfr_check_range(result.mpfr_data(), 0, mpfrxx::default_rounding_mode());
     return result;
 }
 
@@ -1160,11 +1240,16 @@ inline std::pair<mpc_class, mpc_class> sin_cos(const Expr& expr)
     const mpc_class operand = detail::materialize_mpc_math_operand(expr);
     mpc_class sine = mpc_class::with_precision(operand.real_precision(), operand.imag_precision());
     mpc_class cosine = mpc_class::with_precision(operand.real_precision(), operand.imag_precision());
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(
+        gmpfrxx_mkII::detail::mpc_context_precision({operand.real_precision(), operand.imag_precision()}));
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     mpc_sin_cos(sine.mpc_data(),
                 cosine.mpc_data(),
                 operand.mpc_data(),
                 mpc_class::default_rounding(),
                 mpc_class::default_rounding());
+    gmpfrxx_mkII::detail::mpc_check_component_ranges(sine.mpc_data(), mpc_class::default_rounding());
+    gmpfrxx_mkII::detail::mpc_check_component_ranges(cosine.mpc_data(), mpc_class::default_rounding());
     return {std::move(sine), std::move(cosine)};
 }
 
@@ -1174,7 +1259,11 @@ inline mpc_class rootofunity(unsigned long order,
                              mpfr_prec_t imag_precision)
 {
     mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(
+        gmpfrxx_mkII::detail::mpc_context_precision({real_precision, imag_precision}));
+    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     mpc_rootofunity(result.mpc_data(), order, index, mpc_class::default_rounding());
+    gmpfrxx_mkII::detail::mpc_check_component_ranges(result.mpc_data(), mpc_class::default_rounding());
     return result;
 }
 
