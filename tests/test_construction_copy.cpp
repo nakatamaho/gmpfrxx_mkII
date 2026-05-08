@@ -52,7 +52,7 @@ void test_compile_time_surface()
     static_assert(std::is_default_constructible_v<gmpxx::mpf_class>);
     static_assert(std::is_copy_constructible_v<gmpxx::mpf_class>);
     static_assert(std::is_move_constructible_v<gmpxx::mpf_class>);
-    static_assert(!std::is_nothrow_move_constructible_v<gmpxx::mpf_class>);
+    static_assert(std::is_nothrow_move_constructible_v<gmpxx::mpf_class>);
     static_assert(std::is_copy_assignable_v<gmpxx::mpf_class>);
     static_assert(std::is_move_assignable_v<gmpxx::mpf_class>);
     static_assert(noexcept(std::declval<gmpxx::mpf_class&>() = std::declval<gmpxx::mpf_class&&>()));
@@ -77,6 +77,14 @@ void test_compile_time_surface()
     static_assert(std::is_constructible_v<gmpxx::mpf_class, const gmpxx::mpf_class&, mp_bitcnt_t>);
     static_assert(!std::is_constructible_v<gmpxx::mpf_class, bool>);
     static_assert(!std::is_constructible_v<gmpxx::mpf_class, bool, mp_bitcnt_t>);
+
+    static_assert(std::is_default_constructible_v<gmpxx::mpfc_class>);
+    static_assert(std::is_copy_constructible_v<gmpxx::mpfc_class>);
+    static_assert(std::is_move_constructible_v<gmpxx::mpfc_class>);
+    static_assert(std::is_nothrow_move_constructible_v<gmpxx::mpfc_class>);
+    static_assert(std::is_copy_assignable_v<gmpxx::mpfc_class>);
+    static_assert(std::is_move_assignable_v<gmpxx::mpfc_class>);
+    static_assert(noexcept(std::declval<gmpxx::mpfc_class&>() = std::declval<gmpxx::mpfc_class&&>()));
 
     static_assert(std::is_default_constructible_v<gmpxx::mpz_class>);
     static_assert(std::is_nothrow_default_constructible_v<gmpxx::mpz_class>);

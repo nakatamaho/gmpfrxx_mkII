@@ -1,3 +1,47 @@
+Post-phase MPF/MPFC move noexcept consistency:
+DONE
+
+Implemented features:
+- Marked `gmpxx::mpf_class` move constructor `noexcept`, matching its move
+  assignment operator and the existing `mpfrxx::mpfr_class` move constructor.
+- This makes `gmpxx::mpfc_class(mpfc_class&&) noexcept = default` valid with
+  its `mpf_class real_` and `mpf_class imag_` members, instead of depending on
+  a potentially non-noexcept member move constructor.
+
+Missing features:
+- None.
+
+Tests added:
+- Updated `tests/test_construction_copy.cpp` so `gmpxx::mpf_class` is asserted
+  as nothrow move constructible.
+- Added compile-time `mpfc_class` construction/assignment trait checks,
+  including `std::is_nothrow_move_constructible_v<gmpxx::mpfc_class>` and
+  `noexcept(mpfc = std::move(other))`.
+
+Exact commands run:
+- `rg -n "mpf_class\\(mpf_class&&|operator=\\(mpf_class&&|mpfc_class\\(mpfc_class&&|operator=\\(mpfc_class&&|mpfr_class\\(mpfr_class&&|is_nothrow_move" include tests`
+- `sed -n '140,190p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '90,135p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '110,160p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '50,80p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '88,108p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '40,115p' tests/test_construction_copy.cpp`
+- `rg -n "mpfc_class|nothrow_move_constructible" tests/test_construction_copy.cpp tests include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '24,38p' tests/test_construction_copy.cpp`
+- `cmake --build build -j --target test_construction_copy test_mpfc_basic test_abi_fingerprint`
+- `ctest --test-dir build -R 'test_construction_copy|test_mpfc_basic|test_abi_fingerprint' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_construction_copy test_mpfc_basic test_abi_fingerprint`: PASS.
+- `ctest --test-dir build -R 'test_construction_copy|test_mpfc_basic|test_abi_fingerprint' --output-on-failure`: PASS, 3/3 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
 Post-phase MPF math loop bounds and pi literal fast path:
 DONE
 

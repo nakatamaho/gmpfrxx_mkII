@@ -161,7 +161,7 @@ public:
         mpf_set(value_, other.value_);
     }
 
-    mpf_class(mpf_class&& other)
+    mpf_class(mpf_class&& other) noexcept
     {
         mpf_init2(value_, other.precision());
         mpf_swap(value_, other.value_);
