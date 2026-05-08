@@ -338,6 +338,20 @@ public:
         return mpfr_get_ui(value_, default_rounding());
     }
 
+    std::uint64_t get_u64() const
+    {
+        gmpfrxx_mkII::detail::scoped_mpz_t integer;
+        mpfr_get_z(integer.get(), value_, default_rounding());
+        return gmpfrxx_mkII::detail::mpz_get_uint64_checked(integer.get());
+    }
+
+    std::int64_t get_i64() const
+    {
+        gmpfrxx_mkII::detail::scoped_mpz_t integer;
+        mpfr_get_z(integer.get(), value_, default_rounding());
+        return gmpfrxx_mkII::detail::mpz_get_int64_checked(integer.get());
+    }
+
     bool fits_sint_p() const
     {
         return mpfr_fits_sint_p(value_, default_rounding()) != 0;

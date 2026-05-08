@@ -29,6 +29,7 @@
 #include <gmpfrxx_mkII.h>
 
 #include <cassert>
+#include <cstdint>
 #include <type_traits>
 
 namespace {
@@ -68,12 +69,16 @@ void require_gmp_common_types()
     require_common_type<gmpxx::mpfc_class, gmpxx::mpfc_class, gmpxx::mpfc_class>();
 
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, int>();
+    require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, std::int64_t>();
+    require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, std::uint64_t>();
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, unsigned long long>();
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, float>();
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, double>();
     require_common_type<gmpxx::mpq_class, gmpxx::mpq_class, int>();
     require_common_type<gmpxx::mpq_class, gmpxx::mpq_class, double>();
     require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, int>();
+    require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, std::int64_t>();
+    require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, std::uint64_t>();
     require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, double>();
     require_common_type<gmpxx::mpfc_class, gmpxx::mpfc_class, int>();
     require_common_type<gmpxx::mpfc_class, gmpxx::mpfc_class, double>();

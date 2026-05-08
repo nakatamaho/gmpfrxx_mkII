@@ -102,9 +102,13 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_d()), double>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_ui()), unsigned long>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_si()), signed long>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_u64()), std::uint64_t>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_i64()), std::int64_t>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_d()), double>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_ui()), unsigned long>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_si()), signed long>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_u64()), std::uint64_t>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_i64()), std::int64_t>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpq_class&>().get_d()), double>::value, "");
     static_assert(std::is_same<decltype(std::declval<gmpxx::mpq_class&>().get_num_mpz_t()), mpz_ptr>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpq_class&>().get_num_mpz_t()), mpz_srcptr>::value, "");
@@ -145,6 +149,13 @@ void test_mpz_integer_double_and_string_assignment()
     gmpxx::mpz_class from_u64(u64);
     if (from_i64.get_str() != "-9223372036854775807" ||
         from_u64.get_str() != "18446744073709551614") {
+        std::abort();
+    }
+    if (from_i64.get_i64() != i64 || from_u64.get_u64() != u64) {
+        std::abort();
+    }
+    if (gmpxx::mpz_class(std::numeric_limits<std::int64_t>::min()).get_i64() !=
+        std::numeric_limits<std::int64_t>::min()) {
         std::abort();
     }
 
@@ -358,7 +369,9 @@ void test_accessors_fit_queries_and_bool()
     }
 
     gmpxx::mpf_class f("123.456");
-    if (f.get_ui() != 123UL || f.get_si() != 123L || !f.fits_sint_p() || !f.fits_ulong_p()) {
+    if (f.get_ui() != 123UL || f.get_si() != 123L ||
+        f.get_u64() != 123 || f.get_i64() != 123 ||
+        !f.fits_sint_p() || !f.fits_ulong_p()) {
         std::abort();
     }
     if (gmpxx::mpf_class("-123.456").get_si() != -123L ||

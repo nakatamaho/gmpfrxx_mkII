@@ -96,6 +96,41 @@ target_link_libraries(gmpfrxx_mkII INTERFACE
 target_compile_features(gmpfrxx_mkII INTERFACE cxx_std_17)
 add_library(gmpfrxx_mkII::gmpfrxx_mkII ALIAS gmpfrxx_mkII)
 
+function(gmpfrxx_mkii_require_link_interface name)
+    cmake_parse_arguments(LINK_INTERFACE "" "" "REQUIRED;FORBIDDEN" ${ARGN})
+    get_target_property(actual_links ${name} INTERFACE_LINK_LIBRARIES)
+    if(NOT actual_links)
+        set(actual_links "")
+    endif()
+    foreach(required_item IN LISTS LINK_INTERFACE_REQUIRED)
+        if(NOT required_item IN_LIST actual_links)
+            message(FATAL_ERROR "${name} must link ${required_item}; actual: ${actual_links}")
+        endif()
+    endforeach()
+    foreach(forbidden_item IN LISTS LINK_INTERFACE_FORBIDDEN)
+        if(forbidden_item IN_LIST actual_links)
+            message(FATAL_ERROR "${name} must not link ${forbidden_item}; actual: ${actual_links}")
+        endif()
+    endforeach()
+endfunction()
+
+gmpfrxx_mkii_require_link_interface(
+    gmpxx_mkII
+    REQUIRED GMP::GMP
+    FORBIDDEN MPFR::MPFR MPC::MPC
+)
+
+gmpfrxx_mkii_require_link_interface(
+    mpfrxx_mkII
+    REQUIRED GMP::GMP MPFR::MPFR
+    FORBIDDEN MPC::MPC
+)
+
+gmpfrxx_mkii_require_link_interface(
+    mpcxx_mkII
+    REQUIRED mpfrxx_mkII::mpfrxx_mkII MPC::MPC
+)
+
 add_subdirectory(examples)
 add_subdirectory(benchmarks)
 

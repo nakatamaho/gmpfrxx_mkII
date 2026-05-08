@@ -77,6 +77,8 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().get_d()), double>::value, "");
     static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().get_si()), signed long>::value, "");
     static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().get_ui()), unsigned long>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().get_i64()), std::int64_t>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().get_u64()), std::uint64_t>::value, "");
     static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_sint_p()), bool>::value, "");
     static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_uint_p()), bool>::value, "");
     static_assert(std::is_same<decltype(std::declval<const mpfrxx::mpfr_class&>().fits_slong_p()), bool>::value, "");
@@ -213,6 +215,7 @@ void test_accessors_and_bool()
 
     const mpfrxx::mpfr_class small("123", 192);
     if (small.get_d() != 123.0 || small.get_si() != 123L || small.get_ui() != 123UL ||
+        small.get_i64() != 123 || small.get_u64() != 123 ||
         !small.fits_sint_p() || !small.fits_uint_p() ||
         !small.fits_slong_p() || !small.fits_ulong_p() ||
         !small.fits_sshort_p() || !small.fits_ushort_p()) {

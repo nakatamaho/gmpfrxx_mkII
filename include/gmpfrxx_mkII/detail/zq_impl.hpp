@@ -194,6 +194,49 @@ inline void gmp_read_optional_sign(std::istream& in, std::string& token)
     }
 }
 
+inline std::uint64_t mpz_get_uint64_checked(mpz_srcptr value)
+{
+    if (mpz_sgn(value) < 0 || mpz_sizeinbase(value, 2) > 64) {
+        throw std::overflow_error("mpz value does not fit in uint64_t");
+    }
+
+    std::uint64_t result = 0;
+    std::size_t count = 0;
+    mpz_export(&result, &count, -1, sizeof(result), 0, 0, value);
+    return result;
+}
+
+inline std::int64_t mpz_get_int64_checked(mpz_srcptr value)
+{
+    mpz_t limit;
+    mpz_init(limit);
+    mpz_ui_pow_ui(limit, 2u, 63u);
+
+    const int sign = mpz_sgn(value);
+    const bool too_large_positive = sign >= 0 && mpz_cmp(value, limit) >= 0;
+    mpz_neg(limit, limit);
+    const bool too_large_negative = sign < 0 && mpz_cmp(value, limit) < 0;
+    mpz_clear(limit);
+    if (too_large_positive || too_large_negative) {
+        throw std::overflow_error("mpz value does not fit in int64_t");
+    }
+
+    mpz_t magnitude;
+    mpz_init(magnitude);
+    mpz_abs(magnitude, value);
+    const std::uint64_t raw = mpz_get_uint64_checked(magnitude);
+    mpz_clear(magnitude);
+
+    if (sign < 0) {
+        constexpr std::uint64_t min_magnitude = (std::uint64_t{1} << 63);
+        if (raw == min_magnitude) {
+            return std::numeric_limits<std::int64_t>::min();
+        }
+        return -static_cast<std::int64_t>(raw);
+    }
+    return static_cast<std::int64_t>(raw);
+}
+
 inline bool gmp_read_digits_for_base(std::istream& in, std::string& token, int base)
 {
     bool saw_digit = false;
@@ -608,6 +651,16 @@ public:
     signed long get_si() const
     {
         return mpz_get_si(value_);
+    }
+
+    std::uint64_t get_u64() const
+    {
+        return gmpfrxx_mkII::detail::mpz_get_uint64_checked(value_);
+    }
+
+    std::int64_t get_i64() const
+    {
+        return gmpfrxx_mkII::detail::mpz_get_int64_checked(value_);
     }
 
     explicit operator bool() const noexcept
