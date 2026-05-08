@@ -1,3 +1,43 @@
+Post-phase MPF move and MPC API surface regression coverage:
+DONE
+
+Implemented features:
+- Confirmed `gmpxx::mpf_class` move construction and move assignment are
+  `noexcept`.
+- Added regression coverage for `std::vector<gmpxx::mpf_class>` reallocation
+  so the nothrow-move surface remains visible to standard containers and
+  values/precision survive capacity growth.
+- Confirmed `mpfrxx::mpc_class` already supports direct construction and
+  assignment from `mpfr_class`, `mpz_class`, `mpq_class`, supported integral
+  scalars, `float`/`double`, C strings, and `std::string`.
+- Added compile-time regression checks for the direct MPC assignment API.
+
+Missing features:
+- No timing-based vector benchmark was added.  Runtime timing would be noisy
+  in CTest; the stable contract is the `noexcept` move surface that lets
+  `std::vector` choose move during reallocation.
+
+Tests added:
+- Extended `tests/test_construction_copy.cpp` with a small MPF vector
+  reallocation test.
+- Extended `tests/test_mpc_basic.cpp` with `std::is_assignable_v` checks for
+  direct MPC scalar/exact/MPFR/string assignment and bool rejection.
+
+Exact commands run:
+- `cmake --build build -j --target test_construction_copy test_mpc_basic`
+- `ctest --test-dir build -R 'test_construction_copy|test_mpc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused ctest: PASS, 2/2 tests passed.
+- Full build: PASS.
+- Full ctest: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
 Post-phase MPC string API, comparison semantics, and SFINAE notes:
 DONE
 

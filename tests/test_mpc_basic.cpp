@@ -78,7 +78,15 @@ int main()
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, mpfrxx::mpfr_class>);
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, const char*>);
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, std::string>);
+    static_assert(std::is_assignable_v<mpfrxx::mpc_class&, double>);
+    static_assert(std::is_assignable_v<mpfrxx::mpc_class&, int>);
+    static_assert(std::is_assignable_v<mpfrxx::mpc_class&, mpfrxx::mpz_class>);
+    static_assert(std::is_assignable_v<mpfrxx::mpc_class&, mpfrxx::mpq_class>);
+    static_assert(std::is_assignable_v<mpfrxx::mpc_class&, mpfrxx::mpfr_class>);
+    static_assert(std::is_assignable_v<mpfrxx::mpc_class&, const char*>);
+    static_assert(std::is_assignable_v<mpfrxx::mpc_class&, std::string>);
     static_assert(!std::is_constructible_v<mpfrxx::mpc_class, bool>);
+    static_assert(!std::is_assignable_v<mpfrxx::mpc_class&, bool>);
     static_assert(!has_real_member_accessor<mpfrxx::mpc_class>::value,
                   "mpc_class must not expose mutable real()/imag() component accessors");
     require_close(constructed.real_to_double(), 1.25);

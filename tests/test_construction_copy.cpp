@@ -34,6 +34,7 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace {
 
@@ -192,6 +193,24 @@ void test_zq_mpf_implicit_conversions()
     assert_mpf_equal(from_q, gmpxx::mpf_class(gmpxx::mpq_class(33, 2)));
     assert_mpf_equal(from_neg_z, gmpxx::mpf_class(-42));
     assert_mpf_equal(from_neg_q, gmpxx::mpf_class(gmpxx::mpq_class(-33, 2)));
+}
+
+void test_mpf_vector_reallocation_uses_nothrow_move_surface()
+{
+    static_assert(std::is_nothrow_move_constructible_v<gmpxx::mpf_class>);
+
+    std::vector<gmpxx::mpf_class> values;
+    values.reserve(1);
+    values.emplace_back("1.25", 200);
+    const gmpxx::mpf_class expected_first(values.front());
+
+    const std::size_t old_capacity = values.capacity();
+    while (values.capacity() == old_capacity) {
+        values.emplace_back("2.5", 200);
+    }
+
+    assert_mpf_equal(values.front(), expected_first);
+    assert(values.front().precision() == expected_first.precision());
 }
 
 void test_expression_constructor_with_explicit_precision()
@@ -595,6 +614,7 @@ int main()
     test_zero_with_explicit_precision_replaces_precision_only_ctor();
     test_integral_constructor_with_explicit_precision();
     test_zq_mpf_implicit_conversions();
+    test_mpf_vector_reallocation_uses_nothrow_move_surface();
     test_expression_constructor_with_explicit_precision();
     test_raw_mpf_t_constructor();
     test_copy_and_move();
