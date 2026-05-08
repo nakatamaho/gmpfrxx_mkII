@@ -126,9 +126,7 @@ inline mpfr_prec_t default_mpc_imag_precision_bits()
 inline mpfr_prec_t default_mpc_precision_bits()
 {
     const auto options = default_mpc_options();
-    return options.real_precision_bits == options.imag_precision_bits
-        ? options.real_precision_bits
-        : std::min(options.real_precision_bits, options.imag_precision_bits);
+    return std::max(options.real_precision_bits, options.imag_precision_bits);
 }
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t precision)

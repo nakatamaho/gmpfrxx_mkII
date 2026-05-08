@@ -72,6 +72,9 @@ int main()
     if (defaults.real_precision_bits != 160 || defaults.imag_precision_bits != 192) {
         std::abort();
     }
+    if (mpfrxx::default_mpc_precision_bits() != 192) {
+        std::abort();
+    }
     if (defaults.real_rounding_mode != MPFR_RNDU || defaults.imag_rounding_mode != MPFR_RNDD) {
         std::abort();
     }
@@ -81,6 +84,9 @@ int main()
 
     mpfrxx::mpc_class value;
     if (value.real_precision() != 160 || value.imag_precision() != 192) {
+        std::abort();
+    }
+    if (value.precision() != 192) {
         std::abort();
     }
 
