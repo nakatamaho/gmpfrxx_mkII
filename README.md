@@ -53,6 +53,11 @@ MPFR or MPC at link time.
 `mpfrxx::mpc_class` is MPC-backed. Mixed arithmetic between these families is
 intentionally rejected.
 
+`mpfrxx::mpc_class` supports equality and inequality only.  Complex ordering
+operators such as `<`, `<=`, `>`, and `>=` are intentionally not defined.  MPC
+values with a NaN component compare unequal to themselves, matching the usual
+IEEE-style NaN equality rule.
+
 ## Expression Templates
 
 Public arithmetic operators return expression nodes. They do not eagerly return

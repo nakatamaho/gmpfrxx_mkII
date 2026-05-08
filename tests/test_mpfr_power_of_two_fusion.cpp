@@ -31,6 +31,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
 #include <type_traits>
 
 namespace {
@@ -60,6 +61,63 @@ void check_div_2ui(const mpfrxx::mpfr_class& got, const mpfrxx::mpfr_class& a, u
         mpfr_neg(ref.get_mpfr_t(), ref.get_mpfr_t(), mpfrxx::default_rounding_mode());
     }
     require_equal(got, ref);
+}
+
+template <typename Function>
+void require_overflow_error(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::overflow_error&) {
+        return;
+    }
+    std::abort();
+}
+
+void check_checked_mpfr_shift_count_apply()
+{
+    auto lhs = mpfrxx::mpfr_class::with_precision(256, 1);
+    auto rhs = mpfrxx::mpfr_class::with_precision(256, 5);
+    auto dest = mpfrxx::mpfr_class::with_precision(256);
+
+    gmpfrxx_mkII::detail::mpfr_apply_binary<gmpfrxx_mkII::detail::shl_op>(
+        dest.get_mpfr_t(),
+        lhs.get_mpfr_t(),
+        rhs.get_mpfr_t(),
+        mpfrxx::default_rounding_mode());
+    check_mul_2ui(dest, lhs, 5, false);
+
+    mpfr_set_si(rhs.get_mpfr_t(), -1, mpfrxx::default_rounding_mode());
+    require_overflow_error([&] {
+        gmpfrxx_mkII::detail::mpfr_apply_binary<gmpfrxx_mkII::detail::shr_op>(
+            dest.get_mpfr_t(),
+            lhs.get_mpfr_t(),
+            rhs.get_mpfr_t(),
+            mpfrxx::default_rounding_mode());
+    });
+
+    mpfr_set_d(rhs.get_mpfr_t(), 1.5, mpfrxx::default_rounding_mode());
+    require_overflow_error([&] {
+        gmpfrxx_mkII::detail::mpfr_apply_binary<gmpfrxx_mkII::detail::shl_op>(
+            dest.get_mpfr_t(),
+            lhs.get_mpfr_t(),
+            rhs.get_mpfr_t(),
+            mpfrxx::default_rounding_mode());
+    });
+
+    mpfr_set_ui(rhs.get_mpfr_t(), 1, mpfrxx::default_rounding_mode());
+    mpfr_mul_2ui(
+        rhs.get_mpfr_t(),
+        rhs.get_mpfr_t(),
+        std::numeric_limits<unsigned long>::digits,
+        mpfrxx::default_rounding_mode());
+    require_overflow_error([&] {
+        gmpfrxx_mkII::detail::mpfr_apply_binary<gmpfrxx_mkII::detail::shr_op>(
+            dest.get_mpfr_t(),
+            lhs.get_mpfr_t(),
+            rhs.get_mpfr_t(),
+            mpfrxx::default_rounding_mode());
+    });
 }
 
 } // namespace
@@ -100,6 +158,7 @@ int main()
         mpfr_ui_div(ref.get_mpfr_t(), 8, a.get_mpfr_t(), mpfrxx::default_rounding_mode());
         require_equal(got, ref);
     }
+    check_checked_mpfr_shift_count_apply();
     {
         auto r = mpfrxx::mpfr_class::with_precision(128, 1.5);
         const mpfr_prec_t precision = r.precision();

@@ -38,6 +38,10 @@ int main()
     auto z = mpfrxx::mpc_class::with_precision(96, 128, 1.0, 2.0);
     auto r = mpfrxx::mpfr_class::with_precision(160, 3.0);
 
+    if (z.precision() != 128) {
+        std::abort();
+    }
+
     mpfrxx::mpc_class materialized = z + r;
     if (materialized.real_precision() != 160 || materialized.imag_precision() != 128) {
         std::abort();

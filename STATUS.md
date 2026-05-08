@@ -1,3 +1,189 @@
+Post-phase MPC string API, comparison semantics, and SFINAE notes:
+DONE
+
+Implemented features:
+- Added a shared comment in `detail/expr.hpp` documenting why some public
+  operator templates use distinct dummy SFINAE parameter types across numeric
+  domains.
+- Added `mpfrxx::mpc_class::set_str(const char*, int)` and
+  `set_str(const std::string&, int)`.
+- `mpc_class::set_str` first tries GNU MPC `mpc_set_str`, then falls back to
+  this repo's existing `(real,imag)` / `a+bi` parser so native MPC strings and
+  existing stream-style strings both work.
+- Added `mpc_class::get_str(int, std::size_t)` backed by `mpc_get_str` and
+  `mpc_class::to_string(std::size_t)` as the decimal convenience wrapper.
+- Added `real_get_d()` and `imag_get_d()` aliases for the existing
+  `real_to_double()` and `imag_to_double()` accessors.
+- Changed string assignment to route through `set_str`, preserving destination
+  precision and throwing `std::invalid_argument` on invalid input.
+- Made `mpc_class` equality explicitly NaN-aware.  GNU MPC in this build
+  returns zero from `mpc_cmp(nan,nan)`, so the wrapper now checks NaN
+  components before calling `mpc_cmp`.
+- Documented that `mpc_class` has equality/inequality only, no ordering
+  operators, and that NaN components compare unequal.
+
+Missing features:
+- No single `get_d()` is provided for `mpc_class` because a complex value does
+  not have a single unambiguous double conversion.  Use `real_get_d()` and
+  `imag_get_d()`.
+
+Tests added:
+- Extended `tests/test_mpc_io.cpp` with `set_str`, `get_str`, `to_string`,
+  `real_get_d`, `imag_get_d`, round-trip parsing, base-0 hex parsing, invalid
+  input preservation, and throwing assignment checks.
+- Extended `tests/test_mpc_basic.cpp` to assert that an MPC value with a NaN
+  component compares unequal to itself and has no ordering operators.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpc_io test_mpc_basic`
+- `ctest --test-dir build -R 'test_mpc_io|test_mpc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- First focused ctest failed because GNU MPC `mpc_cmp(nan,nan)` returned zero
+  on this platform; fixed wrapper equality to check NaN components explicitly.
+- Focused build after the fix: PASS.
+- Focused ctest after the fix: PASS, 2/2 tests passed.
+- Full build: PASS.
+- Full ctest: PASS, 144/144 tests passed.
+
+Known issues:
+- None for the added MPC string API and equality semantics.
+
+Post-phase MPFC polar cleanup and unary negation simplification:
+DONE
+
+Implemented features:
+- Removed the unused local precision variable from `gmpxx::polar(mpf_class,
+  mpf_class)`.
+- Added unary-expression simplification for `-(+expr)` so odd-depth negation
+  chains such as `-(-(-x))` collapse back to a direct `neg_op` node instead
+  of leaving a nested `neg(pos(x))` shape.
+- Kept `mpz_class(__int128_t)` and `mpz_class(__uint128_t)` implicit by
+  policy, matching the existing integer-constructor rule.  Floating
+  construction remains explicit and expression-template scalar leaves still
+  reject `__int128`.
+
+Missing features:
+- None.
+
+Tests added:
+- Extended `tests/test_unary_minus_simplification.cpp` with static assertions
+  that three nested unary minuses on MPF and MPFR expressions produce a
+  `neg_op` expression node.
+- Extended `tests/test_type_conversions.cpp` to assert that `double` is not
+  implicitly convertible to `mpz_class`, while `__int128_t` and
+  `__uint128_t` are intentionally implicitly convertible when the compiler
+  supports them.
+
+Exact commands run:
+- `cmake --build build -j --target test_unary_minus_simplification test_type_conversions test_mpfc_basic`
+- `ctest --test-dir build -R 'test_unary_minus_simplification|test_type_conversions|test_mpfc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused ctest: PASS, 3/3 tests passed.
+- Full build: PASS.
+- Full ctest: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
+Post-phase checked MPFR shift counts and MPZ divide-by-zero:
+DONE
+
+Implemented features:
+- Replaced the generic MPFR shift apply path's direct `mpfr_get_ui` conversion
+  with a checked `mpfr_t` to `mpz_t` conversion followed by
+  `zq_shift_count_from_mpz`.
+- The generic `mpfr_apply_binary<shl_op/shr_op>` path now rejects NaN,
+  infinity, non-integer, negative, and `unsigned long`-overflowing shift
+  counts with C++ exceptions instead of relying on MPFR erange/truncation
+  behavior.
+- Added explicit divide-by-zero checks before `mpz_tdiv_q` in MPZ expression
+  evaluation and direct compound division.
+- Routed `mpz_class /= double` through the checked `mpz_class` compound
+  division path so `0.0` is handled consistently.
+
+Missing features:
+- MPZ modulo-by-zero still follows the existing GMP-style raw `mpz_tdiv_r`
+  path; this phase only changed division as requested.
+
+Tests added:
+- Extended `tests/test_mpfr_power_of_two_fusion.cpp` with direct regression
+  coverage for `mpfr_apply_binary<shl_op/shr_op>` using valid, negative,
+  fractional, and `unsigned long`-overflowing shift counts.
+- Extended `tests/test_mpz_arithmetic.cpp` to assert `std::domain_error` for
+  expression division by zero and compound division by `mpz_class`, integral,
+  and double zero operands.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpfr_power_of_two_fusion test_mpz_arithmetic`
+- `ctest --test-dir build -R 'test_mpfr_power_of_two_fusion|test_mpz_arithmetic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused ctest: PASS, 2/2 tests passed.
+- Full build: PASS.
+- Full ctest: PASS, 144/144 tests passed.
+
+Known issues:
+- None for the changed division and checked MPFR shift-count paths.
+
+Post-phase MPC precision max and integral scalar fast paths:
+DONE
+
+Implemented features:
+- Changed `mpfrxx::mpc_class::precision()` from the minimum component
+  precision to the maximum component precision.
+- This aligns MPC with `gmpxx::mpfc_class::precision()` and with internal MPC
+  expression contexts that already use the maximum real/imaginary precision.
+- Added direct `mpf_set_si` / `mpf_set_ui` fast paths in
+  `gmpxx::mpf_class::set_integral` when the public integral type fits in
+  `long` or `unsigned long`.
+- Added direct `mpfr_set_si` / `mpfr_set_ui` fast paths in
+  `mpfrxx::mpfr_class::set_integral` under the current destination precision
+  and rounding context.
+- Kept the existing `mpz_class` conversion fallback for wider public integer
+  types, preserving exact `int64_t` / `uint64_t` behavior on platforms where
+  they do not fit in C `long`.
+
+Missing features:
+- None.
+
+Tests added:
+- Extended `tests/test_mpc_precision_policy.cpp` to assert that mixed
+  real/imaginary MPC precision reports the maximum component precision.
+- Extended `tests/test_mpf_scalar_alloc_count.cpp` and
+  `tests/test_mpfr_scalar_alloc_count.cpp` with direct signed/unsigned long
+  construction and assignment checks.
+- Constructor cases now expect only the wrapper-owned value allocation, while
+  existing-object assignment from fitting integral values expects zero
+  allocations.
+
+Exact commands run:
+- `rg -n "precision\\(\\) const noexcept|set_integral\\(|mpf_set_si|mpfr_set_si|test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count|long_width" include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests && sed -n '390,420p' include/gmpfrxx_mkII/detail/mpc_impl.hpp && sed -n '560,620p' include/gmpfrxx_mkII/detail/mpf_impl.hpp && sed -n '1160,1205p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '540,575p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp && sed -n '1,180p' tests/test_mpf_scalar_alloc_count.cpp && sed -n '1,190p' tests/test_mpfr_scalar_alloc_count.cpp && sed -n '1,120p' tests/test_mpc_precision_policy.cpp`
+- `sed -n '35,55p' include/gmpfrxx_mkII/detail/mpf_impl.hpp && sed -n '35,60p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp && sed -n '120,180p' tests/test_mpc_precision_policy.cpp`
+- `cmake --build build -j --target test_mpc_precision_policy test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count test_construction_copy && ctest --test-dir build -R 'test_mpc_precision_policy|test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count|test_construction_copy' --output-on-failure`
+- `cmake --build build -j --target test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count && ctest --test-dir build -R 'test_mpc_precision_policy|test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count|test_construction_copy' --output-on-failure`
+
+Pass/fail result:
+- First focused ctest failed because the new constructor allocation tests
+  expected zero allocations but counted the unavoidable wrapper-owned
+  `mpf_init2` / `mpfr_init2` value allocation; corrected constructor
+  expectations to one allocation and kept assignment expectations at zero.
+- `cmake --build build -j --target test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count`: PASS after fixes.
+- `ctest --test-dir build -R 'test_mpc_precision_policy|test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count|test_construction_copy' --output-on-failure`: PASS, 4/4 tests passed.
+
+Known issues:
+- None.
+
 Post-phase MPFC Smith division:
 DONE
 

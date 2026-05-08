@@ -110,7 +110,6 @@ inline mpf_class arg(const mpfc_class& value)
 
 inline mpfc_class polar(const mpf_class& radius, const mpf_class& angle)
 {
-    const mp_bitcnt_t precision = std::max(radius.precision(), angle.precision());
     return mpfc_class(
         mpf_class(radius * cos(angle)),
         mpf_class(radius * sin(angle)));

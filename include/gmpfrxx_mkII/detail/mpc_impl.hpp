@@ -152,6 +152,12 @@ inline int mpc_set_string_components(mpc_t dest,
     return real_status == 0 && imag_status == 0 ? 0 : -1;
 }
 
+inline bool mpc_has_nan_component(mpc_srcptr value)
+{
+    return mpfr_nan_p(mpc_realref(value)) != 0 ||
+           mpfr_nan_p(mpc_imagref(value)) != 0;
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -368,8 +374,9 @@ public:
 
     mpc_class& operator=(const char* text)
     {
-        mpc_class parsed(text, real_precision(), imag_precision(), 0);
-        mpc_swap(value_, parsed.value_);
+        if (set_str(text, 0) != 0) {
+            throw std::invalid_argument("invalid mpc_class string");
+        }
         return *this;
     }
 
@@ -413,7 +420,7 @@ public:
     {
         const mpfr_prec_t real = real_precision();
         const mpfr_prec_t imag = imag_precision();
-        return real == imag ? real : std::min(real, imag);
+        return std::max(real, imag);
     }
 
     mpfr_prec_t real_precision() const noexcept
@@ -437,9 +444,64 @@ public:
         return mpfr_get_d(mpc_realref(value_), mpfrxx::default_rounding_mode());
     }
 
+    double real_get_d() const
+    {
+        return real_to_double();
+    }
+
     double imag_to_double() const
     {
         return mpfr_get_d(mpc_imagref(value_), mpfrxx::default_rounding_mode());
+    }
+
+    double imag_get_d() const
+    {
+        return imag_to_double();
+    }
+
+    int set_str(const char* text, int base = 0)
+    {
+        if (text == nullptr) {
+            return -1;
+        }
+
+        mpc_t temp;
+        mpc_init3(temp, real_precision(), imag_precision());
+        const auto context =
+            gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
+
+        int rc = mpc_set_str(temp, text, base, default_rounding());
+        if (rc != 0) {
+            rc = gmpfrxx_mkII::detail::mpc_set_string_components(temp, text, base, default_rounding());
+        }
+        if (rc == 0) {
+            mpc_set(value_, temp, default_rounding());
+            gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding());
+        }
+        mpc_clear(temp);
+        return rc == 0 ? 0 : -1;
+    }
+
+    int set_str(const std::string& text, int base = 0)
+    {
+        return set_str(text.c_str(), base);
+    }
+
+    std::string get_str(int base = 10, std::size_t n_digits = 0) const
+    {
+        char* raw = mpc_get_str(base, n_digits, value_, default_rounding());
+        if (raw == nullptr) {
+            throw std::runtime_error("mpc_get_str failed");
+        }
+        std::string result(raw);
+        mpc_free_str(raw);
+        return result;
+    }
+
+    std::string to_string(std::size_t n_digits = 0) const
+    {
+        return get_str(10, n_digits);
     }
 
     const mpc_t& mpc_data() const noexcept
@@ -1087,6 +1149,10 @@ using ::gmpfrxx_mkII::detail::operator/;
 
 inline bool operator==(const mpc_class& lhs, const mpc_class& rhs)
 {
+    if (gmpfrxx_mkII::detail::mpc_has_nan_component(lhs.mpc_data()) ||
+        gmpfrxx_mkII::detail::mpc_has_nan_component(rhs.mpc_data())) {
+        return false;
+    }
     return mpc_cmp(lhs.mpc_data(), rhs.mpc_data()) == 0;
 }
 
@@ -1097,6 +1163,10 @@ inline bool operator!=(const mpc_class& lhs, const mpc_class& rhs)
 
 inline bool operator==(const mpc_class& lhs, const mpfr_class& rhs)
 {
+    if (gmpfrxx_mkII::detail::mpc_has_nan_component(lhs.mpc_data()) ||
+        mpfr_nan_p(rhs.mpfr_data()) != 0) {
+        return false;
+    }
     return mpfr_cmp(mpc_realref(lhs.mpc_data()), rhs.mpfr_data()) == 0 &&
            mpfr_zero_p(mpc_imagref(lhs.mpc_data())) != 0;
 }

@@ -50,6 +50,11 @@ struct bit_xor_op {};
 struct shl_op {};
 struct shr_op {};
 
+// Some public operator templates intentionally use distinct dummy SFINAE
+// parameter types across numeric domains.  This keeps cross-domain candidates
+// from becoming identical redeclarations when multiple implementation headers
+// are included together.
+
 template <typename T>
 class object_leaf {
 public:
@@ -136,6 +141,18 @@ template <typename Expr, typename Result>
 inline auto operator-(unary_expr<neg_op, Expr, Result>&& expr)
 {
     return unary_expr<pos_op, Expr, Result>(std::move(expr).expr());
+}
+
+template <typename Expr, typename Result>
+inline auto operator-(const unary_expr<pos_op, Expr, Result>& expr)
+{
+    return unary_expr<neg_op, Expr, Result>(expr.expr());
+}
+
+template <typename Expr, typename Result>
+inline auto operator-(unary_expr<pos_op, Expr, Result>&& expr)
+{
+    return unary_expr<neg_op, Expr, Result>(std::move(expr).expr());
 }
 
 } // namespace detail

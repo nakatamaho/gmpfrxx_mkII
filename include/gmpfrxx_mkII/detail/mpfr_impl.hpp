@@ -562,8 +562,17 @@ private:
     {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
         const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
-        const gmpxx::mpz_class integer(value);
-        mpfr_set_z(value_, integer.mpz_data(), context.rounding_mode);
+        using value_type = std::remove_cv_t<T>;
+        if constexpr (std::is_signed_v<value_type> &&
+                      std::numeric_limits<value_type>::digits <= std::numeric_limits<long>::digits) {
+            mpfr_set_si(value_, static_cast<long>(value), context.rounding_mode);
+        } else if constexpr (std::is_unsigned_v<value_type> &&
+                             std::numeric_limits<value_type>::digits <= std::numeric_limits<unsigned long>::digits) {
+            mpfr_set_ui(value_, static_cast<unsigned long>(value), context.rounding_mode);
+        } else {
+            const gmpxx::mpz_class integer(value);
+            mpfr_set_z(value_, integer.mpz_data(), context.rounding_mode);
+        }
     }
 
     mpfr_t value_;
@@ -1729,6 +1738,27 @@ bool mpfr_expression_references(
            mpfr_expression_references(target, expr.rhs());
 }
 
+inline unsigned long mpfr_shift_count_from_mpfr(const mpfr_t value)
+{
+    if (mpfr_nan_p(value) || mpfr_inf_p(value) || mpfr_integer_p(value) == 0) {
+        throw std::overflow_error("shift count must be an integer");
+    }
+
+    mpz_t shift_count;
+    mpz_init(shift_count);
+    mpfr_get_z(shift_count, value, MPFR_RNDZ);
+
+    unsigned long bits = 0;
+    try {
+        bits = zq_shift_count_from_mpz(shift_count);
+    } catch (...) {
+        mpz_clear(shift_count);
+        throw;
+    }
+    mpz_clear(shift_count);
+    return bits;
+}
+
 template <typename Op>
 void mpfr_apply_binary(mpfr_t dest, const mpfr_t lhs, const mpfr_t rhs, mpfr_rnd_t rnd)
 {
@@ -1741,9 +1771,9 @@ void mpfr_apply_binary(mpfr_t dest, const mpfr_t lhs, const mpfr_t rhs, mpfr_rnd
     } else if constexpr (std::is_same_v<Op, div_op>) {
         mpfr_div(dest, lhs, rhs, rnd);
     } else if constexpr (std::is_same_v<Op, shl_op>) {
-        mpfr_mul_2ui(dest, lhs, mpfr_get_ui(rhs, MPFR_RNDZ), rnd);
+        mpfr_mul_2ui(dest, lhs, mpfr_shift_count_from_mpfr(rhs), rnd);
     } else if constexpr (std::is_same_v<Op, shr_op>) {
-        mpfr_div_2ui(dest, lhs, mpfr_get_ui(rhs, MPFR_RNDZ), rnd);
+        mpfr_div_2ui(dest, lhs, mpfr_shift_count_from_mpfr(rhs), rnd);
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPFR expression operation");
     }

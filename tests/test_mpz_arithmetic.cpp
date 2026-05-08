@@ -52,6 +52,17 @@ void require_mpz_equal(const gmpxx::mpz_class& value, const gmpxx::mpz_class& ex
     }
 }
 
+template <typename Function>
+void require_domain_error(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::domain_error&) {
+        return;
+    }
+    std::abort();
+}
+
 void check_binary(const gmpxx::mpz_class& a, const gmpxx::mpz_class& b)
 {
     mpz_t ref;
@@ -79,6 +90,32 @@ void check_binary(const gmpxx::mpz_class& a, const gmpxx::mpz_class& b)
     }
 
     mpz_clear(ref);
+}
+
+void check_division_by_zero_throws()
+{
+    const gmpxx::mpz_class numerator(42);
+    const gmpxx::mpz_class zero(0);
+
+    require_domain_error([&] {
+        const gmpxx::mpz_class quotient = numerator / zero;
+        (void)quotient;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpz_class quotient = numerator;
+        quotient /= zero;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpz_class quotient = numerator;
+        quotient /= 0;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpz_class quotient = numerator;
+        quotient /= 0.0;
+    });
 }
 
 void check_scalar(const gmpxx::mpz_class& a)
@@ -303,6 +340,7 @@ int main()
     check_binary(neg_huge, max_i);
     check_scalar(huge);
     check_scalar(neg_huge);
+    check_division_by_zero_throws();
     check_bitwise_and_shifts();
     check_increment_decrement();
     check_integer_helpers();

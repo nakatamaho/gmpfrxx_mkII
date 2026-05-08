@@ -32,6 +32,7 @@
 #include <cassert>
 #include <iomanip>
 #include <locale>
+#include <stdexcept>
 #include <sstream>
 
 namespace {
@@ -97,6 +98,46 @@ void test_input()
     assert(z.imag_precision() == imag_prec);
 }
 
+void test_string_api()
+{
+    mpfrxx::mpc_class z = mpfrxx::mpc_class::with_precision(128, 160);
+    assert(z.set_str("(1.25,-2.5)", 10) == 0);
+    assert_value(z, 1.25, -2.5);
+    assert(z.real_get_d() == z.real_to_double());
+    assert(z.imag_get_d() == z.imag_to_double());
+
+    const mpfr_prec_t real_prec = z.real_precision();
+    const mpfr_prec_t imag_prec = z.imag_precision();
+    const std::string native = z.get_str(10, 0);
+    assert(!native.empty());
+
+    mpfrxx::mpc_class roundtrip = mpfrxx::mpc_class::with_precision(real_prec, imag_prec);
+    assert(roundtrip.set_str(native, 10) == 0);
+    assert(roundtrip == z);
+    assert(roundtrip.real_precision() == real_prec);
+    assert(roundtrip.imag_precision() == imag_prec);
+
+    const std::string decimal = z.to_string();
+    assert(!decimal.empty());
+    assert(roundtrip.set_str(decimal, 10) == 0);
+    assert(roundtrip == z);
+
+    assert(z.set_str("0xff+0x1.8i", 0) == 0);
+    assert_value(z, 255.0, 1.5);
+
+    assert(z.set_str("not-a-complex-number", 10) != 0);
+    assert_value(z, 255.0, 1.5);
+
+    bool threw = false;
+    try {
+        z = "not-a-complex-number";
+    } catch (const std::invalid_argument&) {
+        threw = true;
+    }
+    assert(threw);
+    assert_value(z, 255.0, 1.5);
+}
+
 void test_failed_input_preserves_value()
 {
     const char* inputs[] = {
@@ -146,6 +187,7 @@ int main()
     test_output();
     test_expression_output();
     test_input();
+    test_string_api();
     test_failed_input_preserves_value();
     test_locale_decimal_point();
     return 0;

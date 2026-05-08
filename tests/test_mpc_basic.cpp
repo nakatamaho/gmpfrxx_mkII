@@ -204,6 +204,14 @@ int main()
     if (!(complex_three != 3) || !(3 != complex_three) || !(complex_three != mpfr_three)) {
         std::abort();
     }
+    auto nan_complex = mpfrxx::mpc_class::with_precision(160, 192, 0.0, 0.0);
+    mpfr_set_nan(mpc_realref(nan_complex.mpc_data()));
+    if (nan_complex == nan_complex) {
+        std::abort();
+    }
+    if (!(nan_complex != nan_complex)) {
+        std::abort();
+    }
     static_assert(!has_less_than<mpfrxx::mpc_class, mpfrxx::mpc_class>::value,
                   "mpc_class intentionally has no ordering comparison");
     static_assert(!has_less_than<mpfrxx::mpc_class, int>::value,

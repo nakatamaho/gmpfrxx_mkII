@@ -74,6 +74,22 @@ int main()
     auto dst = mpfrxx::mpfr_class::with_precision(precision);
 
     alloc_count = 0;
+    mpfrxx::mpfr_class from_signed_long(-42L, precision);
+    require_alloc_count(1);
+
+    alloc_count = 0;
+    mpfrxx::mpfr_class from_unsigned_long(42UL, precision);
+    require_alloc_count(1);
+
+    alloc_count = 0;
+    dst = -17L;
+    require_alloc_count(0);
+
+    alloc_count = 0;
+    dst = 17UL;
+    require_alloc_count(0);
+
+    alloc_count = 0;
     dst = a + 5LL;
     require_alloc_count(0);
 

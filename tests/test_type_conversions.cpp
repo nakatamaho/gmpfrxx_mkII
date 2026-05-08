@@ -75,6 +75,7 @@ std::string int128_to_string(__int128_t value)
 void test_compile_time_surface()
 {
     static_assert(std::is_constructible<gmpxx::mpz_class, double>::value, "");
+    static_assert(!std::is_convertible<double, gmpxx::mpz_class>::value, "");
     static_assert(std::is_constructible<gmpxx::mpz_class, std::int64_t>::value, "");
     static_assert(std::is_constructible<gmpxx::mpz_class, std::uint64_t>::value, "");
     static_assert(std::is_constructible<gmpxx::mpq_class, double>::value, "");
@@ -117,6 +118,8 @@ void test_compile_time_surface()
 #if defined(__SIZEOF_INT128__)
     static_assert(std::is_constructible<gmpxx::mpz_class, __int128_t>::value, "");
     static_assert(std::is_constructible<gmpxx::mpz_class, __uint128_t>::value, "");
+    static_assert(std::is_convertible<__int128_t, gmpxx::mpz_class>::value, "");
+    static_assert(std::is_convertible<__uint128_t, gmpxx::mpz_class>::value, "");
     static_assert(std::is_assignable<gmpxx::mpz_class&, __int128_t>::value, "");
     static_assert(std::is_assignable<gmpxx::mpz_class&, __uint128_t>::value, "");
     static_assert(std::is_assignable<gmpxx::mpq_class&, __int128_t>::value, "");

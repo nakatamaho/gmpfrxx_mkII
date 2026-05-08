@@ -597,8 +597,17 @@ private:
     template <typename T>
     void set_integral(T value)
     {
-        const mpz_class integer(value);
-        mpf_set_z(value_, integer.mpz_data());
+        using value_type = std::remove_cv_t<T>;
+        if constexpr (std::is_signed_v<value_type> &&
+                      std::numeric_limits<value_type>::digits <= std::numeric_limits<long>::digits) {
+            mpf_set_si(value_, static_cast<long>(value));
+        } else if constexpr (std::is_unsigned_v<value_type> &&
+                             std::numeric_limits<value_type>::digits <= std::numeric_limits<unsigned long>::digits) {
+            mpf_set_ui(value_, static_cast<unsigned long>(value));
+        } else {
+            const mpz_class integer(value);
+            mpf_set_z(value_, integer.mpz_data());
+        }
     }
 
     mpf_t value_;

@@ -37,6 +37,9 @@ namespace {
 template <typename T>
 using is_pos_expr = std::is_same<typename T::op_type, gmpfrxx_mkII::detail::pos_op>;
 
+template <typename T>
+using is_neg_expr = std::is_same<typename T::op_type, gmpfrxx_mkII::detail::neg_op>;
+
 void assert_equal(const gmpxx::mpf_class& lhs, const gmpxx::mpf_class& rhs)
 {
     assert(mpf_cmp(lhs.get_mpf_t(), rhs.get_mpf_t()) == 0);
@@ -198,6 +201,8 @@ int main()
                   decltype(-(-std::declval<const gmpxx::mpf_class&>()))>);
     static_assert(is_pos_expr<decltype(-(-std::declval<const gmpxx::mpf_class&>()))>::value);
     static_assert(is_pos_expr<decltype(-(-std::declval<const mpfrxx::mpfr_class&>()))>::value);
+    static_assert(is_neg_expr<decltype(-(-(-std::declval<const gmpxx::mpf_class&>())))>::value);
+    static_assert(is_neg_expr<decltype(-(-(-std::declval<const mpfrxx::mpfr_class&>())))>::value);
 
     check_unary_mpz_forms();
     check_unary_mpq_forms();

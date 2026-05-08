@@ -1902,6 +1902,9 @@ void mpz_apply_binary(mpz_t dest, const mpz_t lhs, const mpz_t rhs)
     } else if constexpr (std::is_same_v<Op, mul_op>) {
         mpz_mul(dest, lhs, rhs);
     } else if constexpr (std::is_same_v<Op, div_op>) {
+        if (mpz_sgn(rhs) == 0) {
+            throw std::domain_error("mpz division by zero");
+        }
         mpz_tdiv_q(dest, lhs, rhs);
     } else if constexpr (std::is_same_v<Op, bit_and_op>) {
         mpz_and(dest, lhs, rhs);
@@ -2495,6 +2498,9 @@ inline mpz_class& operator*=(mpz_class& lhs, Rhs&& rhs)
 
 inline mpz_class& operator/=(mpz_class& lhs, const mpz_class& rhs)
 {
+    if (mpz_sgn(rhs.mpz_data()) == 0) {
+        throw std::domain_error("mpz division by zero");
+    }
     mpz_tdiv_q(lhs.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
     return lhs;
 }
@@ -2859,8 +2865,7 @@ inline mpz_class& operator*=(mpz_class& lhs, double rhs)
 
 inline mpz_class& operator/=(mpz_class& lhs, double rhs)
 {
-    mpz_tdiv_q(lhs.mpz_data(), lhs.mpz_data(), mpz_class(rhs).mpz_data());
-    return lhs;
+    return lhs /= mpz_class(rhs);
 }
 
 inline mpz_class operator%(const mpz_class& lhs, const mpz_class& rhs)
