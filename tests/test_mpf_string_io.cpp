@@ -219,6 +219,15 @@ int main()
     if (result.get_str() != "255") {
         std::abort();
     }
+    bool hex_constructor_threw = false;
+    try {
+        (void)gmpxx::mpf_class("0x10");
+    } catch (const std::invalid_argument&) {
+        hex_constructor_threw = true;
+    }
+    if (!hex_constructor_threw) {
+        std::abort();
+    }
     result = "123";
     const std::string decimal_assignment_before = result.get_str();
     bool hex_assignment_threw = false;

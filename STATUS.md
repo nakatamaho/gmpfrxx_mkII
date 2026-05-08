@@ -1,3 +1,65 @@
+Post-phase string base parity regression review:
+DONE
+
+Implemented features:
+- Rechecked the A7 constructor/assignment base policy across `mpz_class`,
+  `mpq_class`, `mpf_class`, and `mpfr_class`.
+- Current `mpz_class` and `mpq_class` constructors and string assignments use
+  base 0 auto-detection consistently.
+- Current `mpfr_class` string constructors and string assignments use base 0
+  auto-detection consistently.
+- Current `mpf_class` string constructors and string assignments intentionally
+  use base 10 consistently, matching the GMP MPF decimal-string policy kept by
+  this wrapper.
+- Rechecked the A8 imaginary literal policy.  Current string `_mpfc_i` accepts
+  prefixed hexadecimal and binary forms by normalizing them to explicit GMP MPF
+  base-specific parsing, and string `_mpc_i` continues to use MPFR auto-base
+  parsing.
+
+Missing features:
+- None for the current policy.  MPF still intentionally does not accept C99
+  hex-float text such as `0x1p+5`; MPFR does.
+
+Tests added:
+- Extended `tests/test_mpf_string_io.cpp` to lock the MPF constructor side of
+  the base-10 policy: `mpf_class("0x10")` throws just like assignment from
+  `"0x10"` already did.
+- Extended `tests/test_mpfr_string_io.cpp` with MPFR constructor/assignment
+  coverage for `"0xff"` as a base-0 hexadecimal integer.
+
+Existing tests relied on:
+- `tests/test_zq_string_io.cpp` already covers `mpz_class` and `mpq_class`
+  constructor/assignment parity for prefixed hexadecimal and octal text.
+- `tests/test_user_defined_literals.cpp` already covers `"0xff"_mpfc_i` and
+  `"0x1.8"_mpfc_i`.
+- `tests/test_mpfr_user_defined_literals.cpp` already covers `"0xff"_mpc_i`.
+
+Exact commands run:
+- `rg -n "mpz_class\\(const char|mpq_class\\(const char|mpf_class\\(const char|mpfr_class\\(const char|operator=\\(const char|set_str\\(|set\\(value, 0|_mpfc_i|_mpc_i|parse_mpfc_imaginary_literal|parse_mpc_imaginary_literal" include/gmpfrxx_mkII/detail tests STATUS.md`
+- `sed -n '320,455p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '220,355p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '136,280p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '680,825p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '45,125p' tests/test_zq_string_io.cpp`
+- `sed -n '180,230p' tests/test_mpf_string_io.cpp`
+- `sed -n '60,95p' tests/test_mpfr_string_io.cpp`
+- `git diff --check`
+- `cmake --build build -j --target test_zq_string_io test_mpf_string_io test_mpfr_string_io test_user_defined_literals test_mpfr_user_defined_literals`
+- `ctest --test-dir build -R 'test_zq_string_io|test_mpf_string_io|test_mpfr_string_io|test_user_defined_literals|test_mpfr_user_defined_literals' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `cmake --build build -j --target test_zq_string_io test_mpf_string_io test_mpfr_string_io test_user_defined_literals test_mpfr_user_defined_literals`: PASS.
+- `ctest --test-dir build -R 'test_zq_string_io|test_mpf_string_io|test_mpfr_string_io|test_user_defined_literals|test_mpfr_user_defined_literals' --output-on-failure`: PASS, 5/5 tests passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 144/144 tests passed.
+
+Known issues:
+- None.  The apparent MPF/MPFR difference is intentional policy, not a
+  constructor/assignment mismatch within a class.
+
 Post-phase MPFC compound assignment review and literal precision note:
 DONE
 
