@@ -1,3 +1,500 @@
+Post-phase benchmark raw result directories split by backend:
+DONE
+
+Implemented features:
+- Moved the remaining top-level `benchmarks/results_raw/Linux_Ryzen_3970X_32-Core`
+  GMP benchmark result set into `benchmarks/gmp/results_raw/`.
+- Removed the now-empty top-level `benchmarks/results_raw/` directory.
+- Added `benchmarks/mpfr/results_raw/` as the MPFR/MPC raw-result location.
+- Updated benchmark documentation to state that raw results are backend-scoped:
+  `benchmarks/gmp/results_raw/` for GMP/MPF and
+  `benchmarks/mpfr/results_raw/` for MPFR/MPC.
+
+Missing features:
+- The current shared runner still runs the GMP benchmark families. MPFR/MPC
+  benchmark runner support remains future work.
+
+Tests added:
+- No compiled tests were added; this phase changes benchmark artifact layout
+  and documentation.
+
+Exact commands run:
+- `rg -n "results_raw|RESULT|benchmark|csv|json|\\.dat|\\.txt" benchmarks CMakeLists.txt cmake scripts .github`
+- `find benchmarks -maxdepth 3 -type f | sort | sed -n '1,220p'`
+- `find benchmarks -maxdepth 3 -type d | sort`
+- `sed -n '1,260p' benchmarks/common/run_benchmarks.sh`
+- `sed -n '1,220p' benchmarks/common/plot.py`
+- `sed -n '1,120p' benchmarks/README.md`
+- `find benchmarks/results_raw -maxdepth 2 -type f | sort | sed -n '1,80p'`
+- `rg -n "benchmarks/results_raw|results_raw" benchmarks --glob '!**/results_raw/**'`
+- `find benchmarks/gmp/results_raw -maxdepth 1 -mindepth 1 -type d -printf '%f\\n' | sort`
+- `find benchmarks/results_raw -maxdepth 1 -mindepth 1 -type d -printf '%f\\n' | sort`
+- `mkdir -p benchmarks/gmp/results_raw benchmarks/mpfr/results_raw && mv benchmarks/results_raw/Linux_Ryzen_3970X_32-Core benchmarks/gmp/results_raw/Linux_Ryzen_3970X_32-Core && rmdir benchmarks/results_raw`
+- `find benchmarks -maxdepth 3 -type d | sort`
+- `find benchmarks/gmp/results_raw -maxdepth 2 -type f | sort | sed -n '1,60p'`
+- `rg -n "benchmarks/results_raw" benchmarks --glob '!**/results_raw/**'`
+- `test ! -e benchmarks/results_raw && echo top_results_raw_absent`
+- `git status --short | sed -n '1,180p'`
+
+Pass/fail result:
+- Layout check: PASS. `benchmarks/results_raw` no longer exists.
+- GMP raw results check: PASS. Existing Linux Ryzen result set now lives under
+  `benchmarks/gmp/results_raw/Linux_Ryzen_3970X_32-Core/`.
+- MPFR raw directory check: PASS. `benchmarks/mpfr/results_raw/` exists.
+
+Known issues:
+- Existing GMP result files are large and remain untracked until intentionally
+  staged.
+
+Post-phase MPF defaults routed through GMP:
+DONE
+
+Implemented features:
+- Routed MPF default precision APIs through GMP:
+  `gmpxx::default_mpf_precision_bits()` now reads `mpf_get_default_prec()`,
+  and `gmpxx::set_default_mpf_precision_bits()` calls
+  `mpf_set_default_prec()`.
+- Changed `gmpxx::reload_default_mpf_precision_bits_from_environment()` to
+  parse `MPFXX_DEFAULT_PREC_BITS` and write the result to GMP with
+  `mpf_set_default_prec()`, falling back to the project default of 512 bits
+  when the variable is absent or invalid.
+- Added one-time MPF default initialization so ordinary wrapper default
+  construction starts from `MPFXX_DEFAULT_PREC_BITS` or 512 bits before reading
+  GMP's default precision.
+- Removed wrapper-owned MPF default precision storage. MPF default precision is
+  now GMP process-global state, matching the user's policy choice.
+- Updated MPF thread/default tests to verify routing to GMP's default precision
+  and to synchronize runtime mutation because GMP's default is process-global.
+- Updated precision and header-only state documentation to describe GMP as the
+  MPF default source of truth.
+
+Missing features:
+- GMP MPF default precision is process-global, not thread-local. Applications
+  that mutate it at runtime must synchronize those mutations or use explicit
+  object factories such as `mpf_class::with_precision(...)`.
+- GMP may round requested precision to an effective precision; tests now check
+  that the effective precision is at least the requested value where needed.
+
+Tests added:
+- Updated `tests/test_mpf_precision_policy.cpp` for GMP effective precision.
+- Updated `tests/test_mpf_thread_safety.cpp` to verify wrapper setters route to
+  `mpf_set_default_prec()` / `mpf_get_default_prec()` and to avoid unsynchronized
+  concurrent mutation of GMP process-global default state.
+- Updated MPF compatibility expectations in `tests/test_gmpxx_mkII.cpp`.
+
+Exact commands run:
+- `sed -n '45,90p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1,120p' tests/test_mpf_thread_safety.cpp`
+- `sed -n '55,110p' tests/test_mpf_precision_policy.cpp`
+- `sed -n '90,130p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `rg -n "mpf_set_default_prec|mpf_get_default_prec|default_mpf_precision_bits_storage|process-global|must not call ..." docs README.md tests include STATUS.md`
+- `cmake --build build -j --target test_mpf_precision_policy test_mpf_thread_safety test_mpf_fixed_precision_materialization test_gmpxx_mkII test_type_conversions test_construction_copy test_random`
+- `ctest --test-dir build -R 'test_mpf_precision_policy|test_mpf_thread_safety|test_mpf_fixed_precision_materialization|test_gmpxx_mkII|test_type_conversions|test_construction_copy|test_random' --output-on-failure`
+- `gdb -q -batch -ex run -ex bt --args ./build/tests/test_mpf_precision_policy`
+- `gdb -q -batch -ex run -ex bt --args ./build/tests/test_mpf_thread_safety`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused MPF default tests: initially FAIL while tests still expected
+  wrapper-owned/default-exact precision, then PASS after updating expectations
+  for GMP process-global and effective precision.
+- Full build: PASS.
+- Full ctest: PASS, 146/146 tests passed.
+
+Known issues:
+- `mpf_set_default_prec()` is GMP process-global state. This intentionally
+  resolves header-only DSO-local wrapper default divergence at the cost of
+  thread-local MPF defaults.
+
+Post-phase MPC defaults routed through MPFR/lib state and TLS detection:
+DONE
+
+Implemented features:
+- Removed wrapper-owned `thread_local mpc_default_options` storage by deleting
+  `mpfrxx::mutable_mpc_default_options_unlocked()`.
+- Routed MPC default precision APIs through MPFR default precision:
+  `default_mpc_*_precision_bits()` now read `mpfr_get_default_prec()` via the
+  MPFR wrapper APIs, and setters write with `mpfr_set_default_prec()`.
+- Routed MPC default rounding APIs through MPFR default rounding:
+  `default_mpc_rounding_mode()` now builds `MPC_RND(r, r)` from
+  `mpfr_get_default_rounding_mode()`, and single-rounding setters call
+  `mpfr_set_default_rounding_mode()`.
+- Preserved source-compatible two-argument MPC default setters without storing
+  state: two precision arguments collapse to `max(real, imag)`, and two
+  rounding arguments update MPFR only when both modes are equal.
+- Added CMake probes for `mpfr_buildopt_tls_p()` and `mpc_buildopt_tls_p()`.
+  The generated `build_config.hpp` exposes whether each probe API exists and
+  whether the library reports TLS enabled.
+- Added `gmpfrxx_mkII::detail::build_options` constants for the detected MPFR
+  and MPC TLS probe results.
+- Updated MPC default/environment/precision tests and documentation to reflect
+  that MPC defaults no longer have independent wrapper-owned real/imag state.
+
+Missing features:
+- GNU MPC in this environment does not expose `mpc_buildopt_tls_p()`, so CMake
+  records MPC TLS probe API availability as false. MPC arithmetic still uses
+  explicit per-call `mpc_rnd_t`; only wrapper default state was removed.
+- Unequal MPC default real/imag precision and mixed default real/imag rounding
+  cannot be represented without wrapper-owned state. Use explicit object
+  factories such as `mpc_class::with_precision(real, imag)` when unequal
+  component precision is required.
+- MPF/MPFC defaults still use wrapper-owned TLS by design; this phase only
+  changed MPFR-backed MPFR/MPC default state.
+
+Tests added:
+- Added `tests/test_library_tls_detection.cpp` to verify generated CMake TLS
+  probe results against MPFR/MPC buildopt APIs when those APIs exist.
+- Updated `tests/test_mpc_defaults.cpp` for MPFR-derived MPC defaults.
+- Updated `tests/test_mpc_environment.cpp` for max-collapsed precision,
+  representable rounding, and MPFR TLS per-thread behavior.
+- Updated `tests/test_mpc_precision_policy.cpp` for scalar promotion after
+  two-argument default precision collapse.
+
+Exact commands run:
+- `git status --short`
+- `sed -n '1,220p' include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `sed -n '1,180p' include/gmpfrxx_mkII/detail/config.hpp`
+- `sed -n '1,220p' CMakeLists.txt`
+- `sed -n '1,220p' tests/test_mpc_defaults.cpp`
+- `sed -n '1,260p' tests/test_mpc_environment.cpp`
+- `sed -n '1,220p' tests/test_mpc_precision_policy.cpp`
+- `sed -n '1,220p' tests/CMakeLists.txt`
+- `rg -n "mutable_mpc_default_options|default_mpc_|set_default_mpc|reload_mpc_defaults" include tests docs README.md STATUS.md`
+- `sed -n '1,220p' include/gmpfrxx_mkII/detail/environment.hpp`
+- `sed -n '220,340p' include/gmpfrxx_mkII/detail/environment.hpp`
+- `rg -n "mutable_mpc_default_options|thread_local mpc_default|default_real_prec|default_imag_prec|mpc_buildopt_tls_p|mpfr_buildopt_tls_p" include tests CMakeLists.txt`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `sed -n '1,80p' build/generated/gmpfrxx_mkII/detail/build_config.hpp`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- CMake configure: PASS. MPFR probe API found and reported TLS enabled
+  (`MPFR_HAS_BUILDOPT_TLS_P=1`, `MPFR_BUILDOPT_TLS=1`). MPC probe API not found
+  (`MPC_HAS_BUILDOPT_TLS_P=0`, `MPC_BUILDOPT_TLS=0`).
+- Full build: PASS.
+- Full ctest: PASS, 146/146 tests passed.
+
+Known issues:
+- MPC has no independently stored wrapper default real/imag precision or mixed
+  default rounding mode after this phase. This is intentional to avoid
+  DSO-local header-only TLS divergence.
+- Remaining header-only wrapper-owned state is documented in
+  `docs/header_only_state.md`.
+
+Post-phase MPFR defaults routed through libmpfr:
+DONE
+
+Implemented features:
+- Removed wrapper-owned `thread_local mpfr_default_options` storage by deleting
+  `mpfrxx::mutable_mpfr_default_options_unlocked()`.
+- Routed MPFR default precision APIs through libmpfr:
+  `mpfrxx::default_precision_bits()` / `default_prec()` read
+  `mpfr_get_default_prec()`, and `set_default_precision_bits()` calls
+  `mpfr_set_default_prec()`.
+- Routed MPFR default rounding APIs through libmpfr:
+  `default_rounding_mode()` reads `mpfr_get_default_rounding_mode()`, and
+  `set_default_rounding_mode()` calls `mpfr_set_default_rounding_mode()`.
+- Routed MPFR default exponent range APIs through libmpfr:
+  `default_emin()` / `default_emax()` read `mpfr_get_emin()` /
+  `mpfr_get_emax()`, and `set_default_exponent_range()` calls
+  `mpfr_set_emin()` / `mpfr_set_emax()` with ordering that preserves valid
+  intermediate ranges.
+- Changed `reload_mpfr_defaults_from_environment()` so environment parsing
+  writes directly to libmpfr default precision, rounding mode, and exponent
+  range for the current MPFR thread context.
+- Updated MPFR/MPC tests to assert routing to libmpfr defaults instead of
+  wrapper-local MPFR default state.
+- Added `docs/header_only_state.md` to document remaining header-only state and
+  clarify that MPFR default precision, rounding, and exponent range now follow
+  libmpfr state rather than wrapper-owned TLS.
+- Updated `docs/precision_policy.md` to describe libmpfr as the source of truth
+  for MPFR defaults.
+
+Missing features:
+- MPC defaults still use wrapper-owned `thread_local mpc_default_options`.
+  Separate real/imag MPC defaults cannot be represented directly by MPFR's
+  single default precision.
+- MPF/MPFC defaults still use wrapper-owned TLS because GMP MPF's
+  `mpf_set_default_prec()` is process-global and not an MPFR-backed API.
+- MPFR thread-local behavior depends on libmpfr being built thread-safe. If
+  libmpfr is not thread-safe, these defaults follow MPFR's global behavior.
+
+Tests added:
+- Extended `tests/test_mpfr_defaults.cpp` to prove wrapper default precision
+  and rounding setters update `mpfr_get_default_prec()` and
+  `mpfr_get_default_rounding_mode()`, and exponent-range setters update
+  `mpfr_get_emin()` / `mpfr_get_emax()`.
+- Updated `tests/test_mpfr_thread_safety.cpp` to prove wrapper default APIs
+  route to MPFR TLS and remain isolated per thread in the tested MPFR build.
+- Updated `tests/test_mpc_environment.cpp` to expect the MPFR TLS exponent
+  range to be visible during MPC helper calls.
+- Updated `tests/test_mpfr_environment_invalid.cpp` and
+  `tests/test_mpfr_type_conversions.cpp` to preserve and restore libmpfr
+  defaults around tests that intentionally mutate defaults.
+
+Exact commands run:
+- `rg -n "default_precision_bits\\(|default_prec\\(|set_default_precision_bits|default_rounding_mode\\(|set_default_rounding_mode|default_emin\\(|default_emax\\(|set_default_exponent_range|reload_mpfr_defaults_from_environment|default_options\\(\\)" include tests examples benchmarks docs README.md`
+- `sed -n '1,290p' include/gmpfrxx_mkII/detail/environment.hpp`
+- `git status --short`
+- `sed -n '1,170p' tests/test_mpfr_defaults.cpp`
+- `cmake --build build -j --target test_mpfr_defaults test_mpfr_environment test_mpfr_environment_invalid test_mpfr_thread_safety test_mpc_defaults test_mpc_environment test_mpc_environment_invalid test_mpfrxx_mkII`
+- `ctest --test-dir build -R 'test_mpfr_defaults|test_mpfr_environment|test_mpfr_environment_invalid|test_mpfr_thread_safety|test_mpc_defaults|test_mpc_environment|test_mpc_environment_invalid|test_mpfrxx_mkII' --output-on-failure`
+- `sed -n '1,150p' tests/test_mpfr_environment_invalid.cpp`
+- `sed -n '1,170p' tests/test_mpc_environment.cpp`
+- `sed -n '1,260p' tests/test_mpfr_thread_safety.cpp`
+- `rg -n "mutable_mpfr_default_options_unlocked|thread_local mpfr_default_options|mpfrxx::default.*thread-local|wrapper records thread-local|MPFR.*wrapper-owned" include docs README.md tests`
+- `sed -n '35,95p' docs/precision_policy.md`
+- `git diff -- include/gmpfrxx_mkII/detail/environment.hpp tests/test_mpfr_defaults.cpp tests/test_mpfr_environment_invalid.cpp tests/test_mpfr_thread_safety.cpp tests/test_mpc_environment.cpp docs/precision_policy.md docs/header_only_state.md`
+- `rg -n "thread_local" include/gmpfrxx_mkII/detail/environment.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_environment.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `sed -n '130,185p' tests/test_mpfr_type_conversions.cpp`
+- `sed -n '1,130p' tests/test_mpfr_type_conversions.cpp`
+- `sed -n '185,270p' tests/test_mpfr_type_conversions.cpp`
+- `sed -n '270,380p' tests/test_mpfr_type_conversions.cpp`
+- `cmake --build build -j --target test_mpfr_type_conversions`
+- `ctest --test-dir build -R 'test_mpfr_type_conversions' --output-on-failure`
+- `git status --short`
+- `rg -n "mutable_mpfr_default_options_unlocked|thread_local mpfr_default_options|mpfr_exponent_range_guard|mpfr_exponent_range_mutex|set_mpfr_exponent_range_unlocked" include tests docs`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Removed-symbol scan: PASS, no remaining
+  `mutable_mpfr_default_options_unlocked`, `thread_local mpfr_default_options`,
+  or removed MPFR exponent guard symbols in active include/test/doc files.
+- Focused MPFR/MPC default build: PASS.
+- Focused MPFR/MPC default ctest: initially FAIL while tests still expected
+  wrapper-local MPFR state, then PASS after test updates.
+- Focused `test_mpfr_type_conversions`: PASS after preserving/restoring
+  libmpfr defaults in that test.
+- CMake configure: PASS.
+- Full build: PASS.
+- Full ctest: PASS, 145/145 tests passed.
+
+Known issues:
+- `docs/header_only_state.md` documents remaining wrapper-owned header-only
+  state, including MPF/MPC defaults and MPF math caches. MPFR defaults are no
+  longer listed as wrapper-owned state.
+- `mpfrxx_mkII.h` still does not expose MPC directly; that pre-existing
+  header-boundary issue was not part of this MPFR default-state fix.
+
+Post-phase MPQ zero-denominator constructor guard:
+DONE
+
+Implemented features:
+- Added explicit zero-denominator validation to
+  `gmpxx::mpq_class(const mpz_class&, const mpz_class&)` before
+  `mpq_set_den()` and `mpq_canonicalize()`.
+- The integral numerator/denominator template constructor now inherits the
+  same protection because it delegates through the `mpz_class` pair
+  constructor.
+- Added the same defensive denominator validation to the raw
+  `mpq_class(mpq_srcptr)` constructor before canonicalization, so malformed
+  external `mpq_t` values cannot reach `mpq_canonicalize()` through this API.
+- Preserved the repository's current canonical-rational policy for constructed
+  `mpq_class` values; this phase only rejects denominator zero before GMP
+  canonicalization.
+
+Missing features:
+- Upstream `gmpxx` may expose some non-canonical construction paths, but this
+  repository's existing tests require constructor normalization for numerator
+  and denominator pairs. No compatibility switch was added.
+
+Tests added:
+- Extended `tests/test_mpq_canonicalization.cpp` to require
+  `std::invalid_argument` for both `mpq_class(mpz_class(1), mpz_class(0))` and
+  the integral template path `mpq_class(1, 0)`.
+
+Exact commands run:
+- `rg -n "mpq_class\\(|mpq_canonicalize|canonical" include/gmpfrxx_mkII/detail/zq_impl.hpp tests/test_mpq* tests/test_gmpxx_mkII.cpp`
+- `git status --short`
+- `sed -n '740,860p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1,180p' tests/test_mpq_basic.cpp`
+- `sed -n '1,150p' tests/test_mpq_canonicalization.cpp`
+- `sed -n '1,60p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `rg -n "invalid_argument|domain_error|zero denominator|denominator" include/gmpfrxx_mkII/detail/zq_impl.hpp tests/test_mpq*`
+- `cmake --build build -j --target test_mpq_canonicalization test_mpq_basic test_mpq_arithmetic test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_mpq_canonicalization|test_mpq_basic|test_mpq_arithmetic|test_gmpxx_mkII' --output-on-failure`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused ctest: PASS, 4/4 matching tests passed.
+- CMake configure: PASS.
+- Full build: PASS.
+- Full ctest: PASS, 145/145 tests passed.
+
+Known issues:
+- No source-wide audit was performed for every possible way to manufacture an
+  invalid raw `mpq_t` outside this wrapper. Public string and denominator-pair
+  constructors now reject zero denominators before canonicalization.
+
+Post-phase MPFR exponent-range global-state removal:
+DONE
+
+Implemented features:
+- Removed `gmpfrxx_mkII::detail::mpfr_exponent_range_guard`, its global
+  mutex, and the internal `mpfr_set_emin()`/`mpfr_set_emax()` mutate/restore
+  path.
+- Removed exponent-range guard construction from MPFR and MPC constructors,
+  assignment, expression materialization, compound assignment, stream input,
+  and math helper paths.
+- Kept wrapper-owned thread-local MPFR default `emin`/`emax` parsing,
+  validation, setters, and getters as configuration state, but ordinary
+  wrapper operations no longer mutate MPFR process-global exponent range.
+- Documented the process-global MPFR exponent-range boundary in
+  `docs/precision_policy.md`.
+
+Missing features:
+- MPFR does not provide per-object or per-call `emin`/`emax`; this phase does
+  not attempt to emulate wrapper-local exponent ranges. Applications that need
+  a non-default MPFR exponent range must manage MPFR's process-global range at
+  their own synchronization boundary.
+- `eval_context` still carries `emin`/`emax` for default-state visibility and
+  possible future policy work, but arithmetic no longer applies those fields to
+  MPFR global state.
+
+Tests added:
+- Updated `tests/test_mpfr_thread_safety.cpp` so parallel operations prove
+  wrapper default exponent-range changes do not mutate MPFR process-global
+  `emin`/`emax`.
+- Updated `tests/test_mpc_environment.cpp` so MPC math helper callbacks prove
+  MPFR process-global `emin`/`emax` remain unmodified while wrapper default
+  exponent-range state differs.
+
+Exact commands run:
+- `rg -n "mpfr_exponent_range_guard|emin|emax|mpfr_set_emin|mpfr_set_emax|get_emin|get_emax" include tests STATUS.md`
+- `rg -n "mutex|lock_guard|scoped_lock|default_precision|thread_local|environment" include/gmpfrxx_mkII/detail include/*.h tests`
+- `git status --short`
+- `sed -n '1,380p' include/gmpfrxx_mkII/detail/environment.hpp`
+- `sed -n '1,360p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `git diff -- include/gmpfrxx_mkII/detail/environment.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp tests/test_mpfr_thread_safety.cpp tests/test_mpfr_environment.cpp STATUS.md`
+- `sed -n '1,280p' tests/test_mpfr_thread_safety.cpp`
+- `sed -n '1,190p' tests/test_mpfr_environment.cpp`
+- `sed -n '1,190p' tests/test_mpc_environment.cpp`
+- `perl -0pi -e 's/^\\s*const (?:gmpfrxx_mkII::detail::)?mpfr_exponent_range_guard range_guard\\(context\\.emin, context\\.emax\\);\\n//mg' include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `rg -n "mpfr_exponent_range_guard|mpfr_exponent_range_mutex|set_mpfr_exponent_range_unlocked|std::mutex|#include <mutex>" include/gmpfrxx_mkII/detail/environment.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp tests`
+- `rg -n "mpfr_set_emin|mpfr_set_emax|mpfr_get_emin\\(|mpfr_get_emax\\(" include tests`
+- `git diff -- include/gmpfrxx_mkII/detail/environment.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp tests/test_mpfr_thread_safety.cpp tests/test_mpc_environment.cpp`
+- `cmake --build build -j --target test_mpfr_thread_safety test_mpfr_environment test_mpc_environment test_mpfrxx_mkII test_mpc_basic`
+- `ctest --test-dir build -R 'test_mpfr_thread_safety|test_mpfr_environment|test_mpc_environment|test_mpfrxx_mkII|test_mpc_basic' --output-on-failure`
+- `rg -n "exponent-range|exponent range|emin|emax|MPFRXX_EMIN|MPFRXX_EMAX|global|guard|mutex" docs README.md STATUS.md include tests`
+- `sed -n '1,220p' docs/precision_policy.md`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Guard-symbol source scan over active include/test files: PASS, no remaining
+  `mpfr_exponent_range_guard`, `mpfr_exponent_range_mutex`, or
+  `set_mpfr_exponent_range_unlocked` references.
+- Focused build: PASS.
+- Focused ctest: PASS, 7/7 matching tests passed.
+- CMake configure: PASS.
+- Full build: PASS.
+- Full ctest: PASS, 145/145 tests passed.
+
+Known issues:
+- Historical `STATUS.md` entries still describe the removed guard because they
+  record previous phases. This phase supersedes those entries.
+- `mpfrxx_mkII.h` still does not expose MPC directly; that pre-existing
+  header-boundary issue was not part of this fix.
+
+Post-phase MPFR/MPC constructor RAII guards and real-leaf MPC precision:
+DONE
+
+Implemented features:
+- Added `gmpfrxx_mkII::detail::scoped_mpfr_init` and used it in MPFR
+  constructors that initialize `mpfr_t` before running throwing setup or
+  conversion code.
+- Added `gmpfrxx_mkII::detail::scoped_mpc_init` and used it in MPC
+  constructors that initialize `mpc_t` before running throwing setup or
+  assignment code.
+- Changed `object_leaf<mpfrxx::mpfr_class>` precision inside MPC expressions
+  from `{mpfr_precision, 0}` to `{mpfr_precision, mpfr_precision}`, matching
+  the policy that real-valued leaves promoted into complex expressions
+  contribute to both component precisions.
+- Kept the prior scalar MPC expression precision fix, where scalar leaves use
+  both default MPC real and imaginary precisions.
+
+Missing features:
+- The remaining header-boundary blocker where `mpfrxx_mkII.h` does not expose
+  `mpfrxx::mpc_class` is still unresolved and tracked separately.
+
+Tests added:
+- Updated `tests/test_mpc_precision_policy.cpp` so `mpc + mpfr` expression
+  materialization expects the MPFR leaf precision in both real and imaginary
+  components.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpc_precision_policy test_mpfr_precision_policy test_mpc_basic test_mpfrxx_mkII`
+- `ctest --test-dir build -R 'test_mpc_precision_policy|test_mpfr_precision_policy|test_mpc_basic|test_mpfrxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused ctest: PASS, 4/4 tests passed.
+- Full build: PASS.
+- Full ctest: PASS, 145/145 tests passed.
+
+Known issues:
+- `mpfrxx_mkII.h` still does not expose MPC directly; the existing
+  compile-fail test still encodes that behavior.
+
+Post-phase MPFR/MPC constructor cleanup, MPC scalar precision, and TLS documentation:
+DONE
+
+Implemented features:
+- Wrapped MPFR constructors that call `mpfr_init2` before exponent-range setup
+  in `try`/`catch` cleanup blocks so `mpfr_clear` runs if the range guard or
+  conversion path throws.
+- Wrapped MPC constructors that call `mpc_init3` before exponent-range setup
+  in `try`/`catch` cleanup blocks so `mpc_clear` runs if setup or assignment
+  throws.
+- Changed MPC scalar expression precision from `{default_real, 0}` to
+  `{default_real, default_imag}` so scalar promotion contributes both
+  component precisions.
+- Documented the header-only function-local `thread_local` default-state
+  boundary across executable/shared-library instantiations.
+
+Missing features:
+- No compiled anchor was introduced for process-wide default state.  The
+  header-only TLS behavior is now documented; applications crossing dynamic
+  library boundaries must set defaults per boundary or use object-level
+  precision factories.
+- No synthetic exception-injection test was added for failing MPFR exponent
+  range setup; the cleanup paths are structural and were covered by compiling
+  the touched constructors through existing MPFR/MPC tests.
+
+Tests added:
+- Extended `tests/test_mpc_precision_policy.cpp` to verify that scalar
+  promotion into an MPC expression contributes both default real and default
+  imaginary component precisions.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpc_precision_policy test_mpfr_precision_policy test_mpc_basic test_mpfrxx_mkII`
+- `ctest --test-dir build -R 'test_mpc_precision_policy|test_mpfr_precision_policy|test_mpc_basic|test_mpfrxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused ctest: PASS, 4/4 tests passed.
+- Full build: PASS.
+- Full ctest: PASS, 145/145 tests passed.
+
+Known issues:
+- `mpfrxx_mkII.h` still does not expose MPC directly; this was a separate
+  previously identified header-boundary blocker and was not part of this
+  requested fix set.
+
 Post-phase MPF move and MPC API surface regression coverage:
 DONE
 
@@ -37,6 +534,89 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+Post-phase benchmark runner parity for MPFR:
+DONE
+
+Implemented features:
+- Split benchmark raw result directories by backend: GMP results live under
+  `benchmarks/gmp/results_raw`, and MPFR results live under
+  `benchmarks/mpfr/results_raw`.
+- Added `benchmarks/common/run_mpfr_benchmarks.sh` with the same log format,
+  repeat handling, host naming, and plot generation flow as the GMP runner.
+- Made `benchmarks/common/plot.py` backend-aware via `--backend` and kernel-list
+  aware via `--kernels`, so MPFR Rdot-only logs can be plotted without requiring
+  GMP Raxpy/Rgemv/Rgemm sections.
+- Kept the GMP runner behavior unchanged except for passing `--backend GMP` to
+  the shared plotter.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/README.md`
+- `benchmarks/mpfr/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `bash -n benchmarks/common/run_benchmarks.sh`
+- `bash -n benchmarks/common/run_mpfr_benchmarks.sh`
+- `python3 -m py_compile benchmarks/common/plot.py`
+- `cmake -S . -B build_bench_clean_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_clean_release -j`
+- `benchmarks/common/run_benchmarks.sh build_bench_clean_release 512 2000 2000 40 40 16 16 16 benchmarks/gmp/results_raw/clean_release_20260509_smoke 1`
+- `benchmarks/common/run_mpfr_benchmarks.sh build_bench_clean_release 512 2000 benchmarks/mpfr/results_raw/clean_release_20260509_smoke 1`
+- `find benchmarks/gmp/results_raw/clean_release_20260509_smoke -maxdepth 1 -type f | sort`
+- `find benchmarks/mpfr/results_raw/clean_release_20260509_smoke -maxdepth 1 -type f | sort`
+
+Pass/fail result:
+- `bash -n benchmarks/common/run_benchmarks.sh`: PASS.
+- `bash -n benchmarks/common/run_mpfr_benchmarks.sh`: PASS.
+- `python3 -m py_compile benchmarks/common/plot.py`: PASS.
+- `cmake -S . -B build_bench_clean_release -DCMAKE_BUILD_TYPE=Release`: PASS.
+- `cmake --build build_bench_clean_release -j`: PASS.
+- GMP clean Release smoke benchmark: PASS; generated log and serial/openmp PNG
+  plots under `benchmarks/gmp/results_raw/clean_release_20260509_smoke`.
+- MPFR clean Release smoke benchmark: PASS; generated log and serial/openmp PNG
+  plots under `benchmarks/mpfr/results_raw/clean_release_20260509_smoke`.
+
+Known issues:
+- The clean benchmark runs used smoke-size inputs for runner validation, not
+  full publication-size benchmark parameters.
+
+Post-phase Rdot production benchmark at reduced size:
+DONE
+
+Implemented features:
+- Ran GMP and MPFR Rdot-only benchmark sets at one decimal order below the
+  full publication Rdot size.
+- Generated raw logs and serial/OpenMP plots for both backends.
+
+Tests added:
+- None.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `/bin/bash -lc '... GMP Rdot-only benchmark loop ...'`
+- `benchmarks/common/run_mpfr_benchmarks.sh build_bench_clean_release 512 10000000 benchmarks/mpfr/results_raw/rdot_n1e7_20260509 10`
+- `python3 benchmarks/common/plot.py benchmarks/gmp/results_raw/rdot_n1e7_20260509/benchmark_rdot_n1e7_20260509_143146.log --output-dir benchmarks/gmp/results_raw/rdot_n1e7_20260509 --backend GMP --kernels Rdot`
+- `python3 -c '... aggregate benchmark logs ...'`
+- `find benchmarks/gmp/results_raw/rdot_n1e7_20260509 -maxdepth 1 -type f | sort`
+- `find benchmarks/mpfr/results_raw/rdot_n1e7_20260509 -maxdepth 1 -type f | sort`
+
+Pass/fail result:
+- GMP Rdot-only reduced production run: PASS; 20 variants, 10 repeats each,
+  `n=10000000`, precision 512.
+- MPFR Rdot-only reduced production run: PASS; 14 variants, 10 repeats each,
+  `n=10000000`, precision 512.
+- GMP plot generation: PASS.
+- MPFR plot generation: PASS.
+
+Known issues:
+- GMP Rdot-only run was executed with an ad hoc shell loop because the common
+  GMP runner currently runs all GMP kernels together.
 
 Post-phase MPC string API, comparison semantics, and SFINAE notes:
 DONE

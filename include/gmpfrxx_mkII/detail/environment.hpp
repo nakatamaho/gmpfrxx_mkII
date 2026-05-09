@@ -34,8 +34,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
-#include <mutex>
-#include <stdexcept>
 
 #include <mpfr.h>
 
@@ -51,12 +49,12 @@ struct parsed_mpfr_environment {
 
 inline mpfr_prec_t builtin_mpfr_default_precision() noexcept
 {
-    return 512;
+    return mpfr_get_default_prec();
 }
 
 inline mpfr_rnd_t builtin_mpfr_default_rounding() noexcept
 {
-    return MPFR_RNDN;
+    return mpfr_get_default_rounding_mode();
 }
 
 inline bool valid_mpfr_precision(mpfr_prec_t precision) noexcept
@@ -183,13 +181,7 @@ inline parsed_mpfr_environment load_mpfr_environment() noexcept
     return result;
 }
 
-inline std::mutex& mpfr_exponent_range_mutex()
-{
-    static std::mutex mutex;
-    return mutex;
-}
-
-inline bool set_mpfr_exponent_range_unlocked(mpfr_exp_t emin, mpfr_exp_t emax) noexcept
+inline bool set_mpfr_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) noexcept
 {
     if (!valid_mpfr_exponent_range(emin, emax)) {
         return false;
@@ -214,41 +206,6 @@ inline bool set_mpfr_exponent_range_unlocked(mpfr_exp_t emin, mpfr_exp_t emax) n
     return mpfr_get_emin() == emin && mpfr_get_emax() == emax;
 }
 
-class mpfr_exponent_range_guard {
-public:
-    mpfr_exponent_range_guard(mpfr_exp_t emin, mpfr_exp_t emax)
-        : lock_(mpfr_exponent_range_mutex()),
-          old_emin_(mpfr_get_emin()),
-          old_emax_(mpfr_get_emax())
-    {
-        active_ = (old_emin_ != emin) || (old_emax_ != emax);
-        if (active_) {
-            if (!set_mpfr_exponent_range_unlocked(emin, emax)) {
-                set_mpfr_exponent_range_unlocked(old_emin_, old_emax_);
-                throw std::runtime_error("failed to set MPFR exponent range");
-            }
-        }
-    }
-
-    mpfr_exponent_range_guard(const mpfr_exponent_range_guard&) = delete;
-    mpfr_exponent_range_guard& operator=(const mpfr_exponent_range_guard&) = delete;
-
-    ~mpfr_exponent_range_guard()
-    {
-        if (active_) {
-            if (!set_mpfr_exponent_range_unlocked(old_emin_, old_emax_)) {
-                std::abort();
-            }
-        }
-    }
-
-private:
-    std::unique_lock<std::mutex> lock_;
-    mpfr_exp_t old_emin_;
-    mpfr_exp_t old_emax_;
-    bool active_{false};
-};
-
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -261,34 +218,24 @@ struct mpfr_default_options {
     mpfr_rnd_t rounding_mode;
 };
 
-inline mpfr_default_options& mutable_mpfr_default_options_unlocked()
-{
-    thread_local mpfr_default_options options = [] {
-        const auto loaded = ::gmpfrxx_mkII::detail::load_mpfr_environment();
-        return mpfr_default_options{
-            loaded.precision,
-            loaded.emin,
-            loaded.emax,
-            loaded.rounding,
-        };
-    }();
-    return options;
-}
-
 inline void reload_mpfr_defaults_from_environment()
 {
     const auto loaded = ::gmpfrxx_mkII::detail::load_mpfr_environment();
-    mutable_mpfr_default_options_unlocked() = mpfr_default_options{
-        loaded.precision,
-        loaded.emin,
-        loaded.emax,
-        loaded.rounding,
-    };
+    if (::gmpfrxx_mkII::detail::valid_mpfr_precision(loaded.precision)) {
+        mpfr_set_default_prec(loaded.precision);
+    }
+    ::gmpfrxx_mkII::detail::set_mpfr_default_exponent_range(loaded.emin, loaded.emax);
+    mpfr_set_default_rounding_mode(loaded.rounding);
 }
 
 inline mpfr_default_options default_options()
 {
-    return mutable_mpfr_default_options_unlocked();
+    return mpfr_default_options{
+        mpfr_get_default_prec(),
+        mpfr_get_emin(),
+        mpfr_get_emax(),
+        mpfr_get_default_rounding_mode(),
+    };
 }
 
 inline mpfr_prec_t default_precision_bits()
@@ -304,7 +251,7 @@ inline mpfr_prec_t default_prec()
 inline void set_default_precision_bits(mpfr_prec_t precision)
 {
     if (::gmpfrxx_mkII::detail::valid_mpfr_precision(precision)) {
-        mutable_mpfr_default_options_unlocked().precision_bits = precision;
+        mpfr_set_default_prec(precision);
     }
 }
 
@@ -315,7 +262,7 @@ inline mpfr_rnd_t default_rounding_mode()
 
 inline void set_default_rounding_mode(mpfr_rnd_t rounding)
 {
-    mutable_mpfr_default_options_unlocked().rounding_mode = rounding;
+    mpfr_set_default_rounding_mode(rounding);
 }
 
 inline mpfr_exp_t default_emin()
@@ -330,10 +277,7 @@ inline mpfr_exp_t default_emax()
 
 inline void set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax)
 {
-    if (::gmpfrxx_mkII::detail::valid_mpfr_exponent_range(emin, emax)) {
-        mutable_mpfr_default_options_unlocked().emin = emin;
-        mutable_mpfr_default_options_unlocked().emax = emax;
-    }
+    ::gmpfrxx_mkII::detail::set_mpfr_default_exponent_range(emin, emax);
 }
 
 } // namespace mpfrxx

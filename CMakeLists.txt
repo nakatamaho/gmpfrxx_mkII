@@ -9,12 +9,79 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(CTest)
+include(CheckCXXSourceCompiles)
 
 find_package(Git QUIET)
 find_program(XZ_EXECUTABLE xz)
 find_package(GMP REQUIRED)
 find_package(MPFR REQUIRED)
 find_package(MPC REQUIRED)
+
+set(GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P 0)
+set(GMPFRXX_MKII_MPFR_BUILDOPT_TLS 0)
+set(GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P 0)
+set(GMPFRXX_MKII_MPC_BUILDOPT_TLS 0)
+
+set(CMAKE_REQUIRED_INCLUDES "${MPFR_INCLUDE_DIR}")
+set(CMAKE_REQUIRED_LIBRARIES "${MPFR_LIBRARY}")
+check_cxx_source_compiles("
+#include <mpfr.h>
+int main() { return mpfr_buildopt_tls_p() ? 0 : 1; }
+" GMPFRXX_MKII_HAVE_MPFR_BUILDOPT_TLS_P)
+unset(CMAKE_REQUIRED_INCLUDES)
+unset(CMAKE_REQUIRED_LIBRARIES)
+
+if(GMPFRXX_MKII_HAVE_MPFR_BUILDOPT_TLS_P)
+    set(GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P 1)
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/cmake_checks")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/cmake_checks/mpfr_tls.cpp" "
+#include <mpfr.h>
+int main() { return mpfr_buildopt_tls_p() ? 0 : 1; }
+")
+    try_run(
+        GMPFRXX_MKII_MPFR_TLS_RUN_RESULT
+        GMPFRXX_MKII_MPFR_TLS_COMPILE_RESULT
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_checks"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_checks/mpfr_tls.cpp"
+        CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${MPFR_INCLUDE_DIR}"
+        LINK_LIBRARIES "${MPFR_LIBRARY}"
+    )
+    if(GMPFRXX_MKII_MPFR_TLS_COMPILE_RESULT AND GMPFRXX_MKII_MPFR_TLS_RUN_RESULT EQUAL 0)
+        set(GMPFRXX_MKII_MPFR_BUILDOPT_TLS 1)
+    endif()
+endif()
+
+set(CMAKE_REQUIRED_INCLUDES "${MPC_INCLUDE_DIR};${MPFR_INCLUDE_DIR};${GMP_INCLUDE_DIR}")
+set(CMAKE_REQUIRED_LIBRARIES "${MPC_LIBRARY};${MPFR_LIBRARY};${GMP_LIBRARY}")
+check_cxx_source_compiles("
+#include <mpc.h>
+int main() { return mpc_buildopt_tls_p() ? 0 : 1; }
+" GMPFRXX_MKII_HAVE_MPC_BUILDOPT_TLS_P)
+unset(CMAKE_REQUIRED_INCLUDES)
+unset(CMAKE_REQUIRED_LIBRARIES)
+
+if(GMPFRXX_MKII_HAVE_MPC_BUILDOPT_TLS_P)
+    set(GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P 1)
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/cmake_checks")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/cmake_checks/mpc_tls.cpp" "
+#include <mpc.h>
+int main() { return mpc_buildopt_tls_p() ? 0 : 1; }
+")
+    try_run(
+        GMPFRXX_MKII_MPC_TLS_RUN_RESULT
+        GMPFRXX_MKII_MPC_TLS_COMPILE_RESULT
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_checks"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_checks/mpc_tls.cpp"
+        CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${MPC_INCLUDE_DIR};${MPFR_INCLUDE_DIR};${GMP_INCLUDE_DIR}"
+        LINK_LIBRARIES "${MPC_LIBRARY};${MPFR_LIBRARY};${GMP_LIBRARY}"
+    )
+    if(GMPFRXX_MKII_MPC_TLS_COMPILE_RESULT AND GMPFRXX_MKII_MPC_TLS_RUN_RESULT EQUAL 0)
+        set(GMPFRXX_MKII_MPC_BUILDOPT_TLS 1)
+    endif()
+endif()
+
+message(STATUS "MPFR buildopt TLS probe: has API=${GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P}, tls=${GMPFRXX_MKII_MPFR_BUILDOPT_TLS}")
+message(STATUS "MPC buildopt TLS probe: has API=${GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P}, tls=${GMPFRXX_MKII_MPC_BUILDOPT_TLS}")
 
 set(GMPFRXX_MKII_DIST_BASENAME "${PROJECT_NAME}-${PROJECT_VERSION}")
 set(GMPFRXX_MKII_DIST_TAR "${CMAKE_CURRENT_BINARY_DIR}/${GMPFRXX_MKII_DIST_BASENAME}.tar")
@@ -49,6 +116,12 @@ endif()
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gmpfrxx_mkII/detail/version.hpp.in"
     "${CMAKE_CURRENT_BINARY_DIR}/generated/gmpfrxx_mkII/detail/version.hpp"
+    @ONLY
+)
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gmpfrxx_mkII/detail/build_config.hpp.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/gmpfrxx_mkII/detail/build_config.hpp"
     @ONLY
 )
 

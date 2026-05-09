@@ -357,10 +357,18 @@ void test_mixed_exact_mpfr_conversion_legality()
 
 int main()
 {
+    const auto old_defaults = mpfrxx::default_options();
+    mpfrxx::set_default_precision_bits(512);
+    mpfrxx::set_default_rounding_mode(MPFR_RNDN);
+
     test_compile_time_surface();
     test_integral_string_and_raw_construction();
     test_exact_wrapper_construction_and_assignment();
     test_accessors_and_bool();
     test_mixed_exact_mpfr_conversion_legality();
+
+    mpfrxx::set_default_precision_bits(old_defaults.precision_bits);
+    mpfrxx::set_default_rounding_mode(old_defaults.rounding_mode);
+    mpfrxx::set_default_exponent_range(old_defaults.emin, old_defaults.emax);
     return 0;
 }

@@ -803,6 +803,10 @@ public:
     {
         mpq_init(value_);
         mpq_set(value_, value);
+        if (mpz_sgn(mpq_denref(value_)) == 0) {
+            mpq_clear(value_);
+            throw std::invalid_argument("mpq_class denominator must be nonzero");
+        }
         mpq_canonicalize(value_);
     }
 
@@ -815,6 +819,10 @@ public:
     mpq_class(const mpz_class& numerator, const mpz_class& denominator)
     {
         mpq_init(value_);
+        if (mpz_sgn(denominator.mpz_data()) == 0) {
+            mpq_clear(value_);
+            throw std::invalid_argument("mpq_class denominator must be nonzero");
+        }
         mpq_set_num(value_, numerator.mpz_data());
         mpq_set_den(value_, denominator.mpz_data());
         mpq_canonicalize(value_);

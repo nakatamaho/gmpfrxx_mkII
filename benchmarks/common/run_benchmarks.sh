@@ -191,4 +191,4 @@ run_variants() {
     run_variants Rgemm gmp/03_Rgemm "${rgemm_m}" "${rgemm_k}" "${rgemm_n}" "${precision}"
 } 2>&1 | tee "${log_file}"
 
-python3 "${script_dir}/plot.py" "${log_file}" --output-dir "${output_dir}"
+python3 "${script_dir}/plot.py" "${log_file}" --output-dir "${output_dir}" --backend GMP

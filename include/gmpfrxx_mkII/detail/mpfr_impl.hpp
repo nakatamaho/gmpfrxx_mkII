@@ -76,6 +76,34 @@ inline std::string mpfr_trim_surrounding_whitespace(const char* text)
     return std::string(first, last);
 }
 
+class scoped_mpfr_init {
+public:
+    scoped_mpfr_init(mpfr_t value, mpfr_prec_t precision)
+        : value_(value)
+    {
+        mpfr_init2(value_, precision);
+    }
+
+    scoped_mpfr_init(const scoped_mpfr_init&) = delete;
+    scoped_mpfr_init& operator=(const scoped_mpfr_init&) = delete;
+
+    ~scoped_mpfr_init()
+    {
+        if (active_) {
+            mpfr_clear(value_);
+        }
+    }
+
+    void release() noexcept
+    {
+        active_ = false;
+    }
+
+private:
+    mpfr_ptr value_;
+    bool active_{true};
+};
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -87,10 +115,10 @@ public:
 
     mpfr_class(const mpfr_class& other)
     {
-        mpfr_init2(value_, other.precision());
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, other.precision());
         const auto context = gmpfrxx_mkII::detail::current_eval_context(other.precision());
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set(value_, other.value_, context.rounding_mode);
+        init_guard.release();
     }
 
     mpfr_class(mpfr_class&& other) noexcept
@@ -103,10 +131,10 @@ public:
 
     mpfr_class(double value, mpfr_prec_t precision)
     {
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set_d(value_, value, context.rounding_mode);
+        init_guard.release();
     }
 
     mpfr_class(const gmpxx::mpz_class& value) : mpfr_class(value, default_precision()) {}
@@ -115,18 +143,18 @@ public:
 
     mpfr_class(const gmpxx::mpz_class& value, mpfr_prec_t precision)
     {
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set_z(value_, value.mpz_data(), context.rounding_mode);
+        init_guard.release();
     }
 
     mpfr_class(const gmpxx::mpq_class& value, mpfr_prec_t precision)
     {
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
+        init_guard.release();
     }
 
     template <
@@ -141,8 +169,9 @@ public:
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
     mpfr_class(T value, mpfr_prec_t precision)
     {
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         set_integral(value);
+        init_guard.release();
     }
 
     mpfr_class(bool) = delete;
@@ -154,14 +183,13 @@ public:
 
     mpfr_class(const char* text, mpfr_prec_t precision, int base = 0)
     {
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         const std::string parse_text = gmpfrxx_mkII::detail::mpfr_trim_surrounding_whitespace(text);
         if (text == nullptr || mpfr_set_str(value_, parse_text.c_str(), base, context.rounding_mode) != 0) {
-            mpfr_clear(value_);
             throw std::invalid_argument("invalid mpfr_class string");
         }
+        init_guard.release();
     }
 
     mpfr_class(const std::string& text, mpfr_prec_t precision, int base = 0)
@@ -172,26 +200,26 @@ public:
     explicit mpfr_class(mpfr_srcptr value)
     {
         const mpfr_prec_t precision = mpfr_get_prec(value);
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set(value_, value, context.rounding_mode);
+        init_guard.release();
     }
 
     mpfr_class(mpfr_srcptr value, mpfr_prec_t precision)
     {
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set(value_, value, context.rounding_mode);
+        init_guard.release();
     }
 
     mpfr_class(const mpfr_class& other, mpfr_prec_t precision)
     {
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set(value_, other.value_, context.rounding_mode);
+        init_guard.release();
     }
 
     template <
@@ -220,7 +248,6 @@ public:
     {
         if (this != &other) {
             const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-            const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
             mpfr_set(value_, other.value_, context.rounding_mode);
         }
         return *this;
@@ -233,7 +260,6 @@ public:
                 mpfr_swap(value_, other.value_);
             } else {
                 const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-                const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
                 mpfr_set(value_, other.value_, context.rounding_mode);
             }
         }
@@ -249,7 +275,6 @@ public:
     mpfr_class& operator=(const gmpxx::mpz_class& value)
     {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set_z(value_, value.mpz_data(), context.rounding_mode);
         return *this;
     }
@@ -257,7 +282,6 @@ public:
     mpfr_class& operator=(const gmpxx::mpq_class& value)
     {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
         return *this;
     }
@@ -298,7 +322,6 @@ public:
     {
         mpfr_class result = with_precision(precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set_d(result.value_, value, context.rounding_mode);
         return result;
     }
@@ -385,7 +408,6 @@ public:
     void set_prec(mpfr_prec_t precision)
     {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_prec_round(value_, precision, context.rounding_mode);
     }
 
@@ -412,7 +434,6 @@ public:
     void set(double value)
     {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set_d(value_, value, context.rounding_mode);
     }
 
@@ -445,7 +466,6 @@ public:
         mpfr_t temp;
         mpfr_init2(temp, precision());
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         const std::string parse_text = gmpfrxx_mkII::detail::mpfr_trim_surrounding_whitespace(text);
         const int rc = mpfr_set_str(temp, parse_text.c_str(), base, context.rounding_mode);
         if (rc == 0) {
@@ -565,17 +585,16 @@ private:
 
     mpfr_class(precision_tag, mpfr_prec_t precision)
     {
-        mpfr_init2(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set_ui(value_, 0, context.rounding_mode);
+        init_guard.release();
     }
 
     template <typename T>
     void set_integral(T value)
     {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         using value_type = std::remove_cv_t<T>;
         if constexpr (std::is_signed_v<value_type> &&
                       std::numeric_limits<value_type>::digits <= std::numeric_limits<long>::digits) {
@@ -1442,7 +1461,6 @@ inline std::istream& operator>>(std::istream& in, mpfr_ptr value)
     mpfrxx::mpfr_class tmp = mpfrxx::mpfr_class::with_precision(mpfr_get_prec(value));
     if (parsed_token && tmp.set_str(parse_token, base) == 0) {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(mpfr_get_prec(value));
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         mpfr_set(value, tmp.mpfr_data(), context.rounding_mode);
     } else {
         in.setstate(std::ios_base::failbit);
@@ -2203,7 +2221,6 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
 
     const mpfr_prec_t precision = lhs.precision();
     const auto context = current_eval_context(precision);
-    const mpfr_exponent_range_guard range_guard(context.emin, context.emax);
 
     if constexpr (std::is_same_v<operand_type, object_leaf<mpfrxx::mpfr_class>>) {
         mpfr_apply_binary<Op>(
@@ -2250,7 +2267,6 @@ mpfr_class::mpfr_class(const Expr& expr)
     mpfr_init2(value_, precision);
     try {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, context.rounding_mode);
     } catch (...) {
         mpfr_clear(value_);
@@ -2264,7 +2280,6 @@ mpfr_class::mpfr_class(const Expr& expr, mpfr_prec_t precision)
     mpfr_init2(value_, precision);
     try {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
         gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, context.rounding_mode);
     } catch (...) {
         mpfr_clear(value_);
@@ -2277,7 +2292,6 @@ mpfr_class& mpfr_class::operator=(const Expr& expr)
 {
     const mpfr_prec_t precision = this->precision();
     const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, context.rounding_mode);
     return *this;
 }
@@ -2341,7 +2355,6 @@ inline int cmp(Lhs&& lhs, Rhs&& rhs)
     }
 
     const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
 
     scoped_mpfr_t lhs_value(precision);
     scoped_mpfr_t rhs_value(precision);
@@ -2505,7 +2518,6 @@ inline mpfr_class& operator/=(mpfr_class& lhs, Rhs&& rhs)
 inline mpfr_class& operator<<=(mpfr_class& value, unsigned long bits)
 {
     const auto context = gmpfrxx_mkII::detail::current_eval_context(value.precision());
-    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     mpfr_mul_2ui(value.mpfr_data(), value.mpfr_data(), bits, context.rounding_mode);
     return value;
 }
@@ -2513,7 +2525,6 @@ inline mpfr_class& operator<<=(mpfr_class& value, unsigned long bits)
 inline mpfr_class& operator>>=(mpfr_class& value, unsigned long bits)
 {
     const auto context = gmpfrxx_mkII::detail::current_eval_context(value.precision());
-    const gmpfrxx_mkII::detail::mpfr_exponent_range_guard range_guard(context.emin, context.emax);
     mpfr_div_2ui(value.mpfr_data(), value.mpfr_data(), bits, context.rounding_mode);
     return value;
 }

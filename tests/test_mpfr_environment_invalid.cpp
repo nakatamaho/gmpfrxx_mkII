@@ -34,6 +34,10 @@
 
 int main()
 {
+    const auto old_defaults = mpfrxx::default_options();
+
+    mpfrxx::set_default_precision_bits(512);
+    mpfrxx::set_default_rounding_mode(MPFR_RNDN);
     const mpfr_exp_t initial_emin = mpfr_get_emin();
     const mpfr_exp_t initial_emax = mpfr_get_emax();
 
@@ -78,11 +82,12 @@ int main()
         mpfrxx::reload_mpfr_defaults_from_environment();
 
         const auto oversized_defaults = mpfrxx::default_options();
-        if (oversized_defaults.precision_bits != 512) {
+        if (oversized_defaults.precision_bits != valid_defaults.precision_bits) {
             std::abort();
         }
     }
 
+    mpfrxx::set_default_exponent_range(initial_emin, initial_emax);
     setenv("MPFRXX_DEFAULT_PRECISION_BITS", "96", 1);
     if (MPFR_EMIN_MIN > std::numeric_limits<mpfr_exp_t>::min()) {
         const std::string too_small_emin =
@@ -113,6 +118,10 @@ int main()
         invalid_emax_defaults.emax != initial_emax) {
         std::abort();
     }
+
+    mpfrxx::set_default_precision_bits(old_defaults.precision_bits);
+    mpfrxx::set_default_rounding_mode(old_defaults.rounding_mode);
+    mpfrxx::set_default_exponent_range(old_defaults.emin, old_defaults.emax);
 
     return 0;
 }

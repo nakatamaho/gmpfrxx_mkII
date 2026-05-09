@@ -46,12 +46,10 @@ void require_default_precision_is_thread_local()
     std::vector<std::thread> threads;
     for (int i = 0; i < 8; ++i) {
         threads.emplace_back([&] {
-            if (mpfrxx::default_precision_bits() != 512) {
-                ++mismatches;
-            }
             mpfrxx::set_default_precision_bits(worker_precision);
             mpfrxx::mpfr_class value;
-            if (value.precision() != worker_precision) {
+            if (value.precision() != worker_precision ||
+                mpfr_get_default_prec() != worker_precision) {
                 ++mismatches;
             }
         });
@@ -154,21 +152,26 @@ void require_concurrent_default_options_access()
     }
 }
 
-void require_isolation_from_mpfr_global_default()
+void require_default_precision_routes_to_mpfr_tls()
 {
-    const mpfr_prec_t original_mpfr_default = mpfr_get_default_prec();
-    constexpr mpfr_prec_t wrapper_precision = 192;
-    constexpr mpfr_prec_t mpfr_global_precision = 4096;
+    const mpfr_prec_t original_default = mpfr_get_default_prec();
+    constexpr mpfr_prec_t first_precision = 192;
+    constexpr mpfr_prec_t second_precision = 4096;
 
-    mpfrxx::set_default_precision_bits(wrapper_precision);
-    mpfr_set_default_prec(mpfr_global_precision);
-
-    mpfrxx::mpfr_class value;
-    if (value.precision() != wrapper_precision) {
+    mpfrxx::set_default_precision_bits(first_precision);
+    if (mpfr_get_default_prec() != first_precision) {
         std::abort();
     }
 
-    mpfr_set_default_prec(original_mpfr_default);
+    mpfr_set_default_prec(second_precision);
+
+    mpfrxx::mpfr_class value;
+    if (value.precision() != second_precision ||
+        mpfrxx::default_precision_bits() != second_precision) {
+        std::abort();
+    }
+
+    mpfr_set_default_prec(original_default);
 }
 
 void require_parallel_expression_materialization()
@@ -193,9 +196,11 @@ void require_parallel_expression_materialization()
     }
 }
 
-void require_parallel_exponent_range_guards()
+void require_parallel_exponent_range_defaults_route_to_mpfr_tls()
 {
     std::atomic<int> mismatches{0};
+    const mpfr_exp_t old_emin = mpfr_get_emin();
+    const mpfr_exp_t old_emax = mpfr_get_emax();
     std::vector<std::thread> threads;
     for (int i = 0; i < 8; ++i) {
         threads.emplace_back([&, i] {
@@ -205,10 +210,14 @@ void require_parallel_exponent_range_guards()
                 } else {
                     mpfrxx::set_default_exponent_range(-80, 80);
                 }
+                const mpfr_exp_t expected_bound = ((i + j) % 2) == 0 ? 40 : 80;
                 const mpfrxx::mpfr_class a("1.25", 192);
                 const mpfrxx::mpfr_class b("2.5", 192);
                 const mpfrxx::mpfr_class value = a * b + mpfrxx::mpfr_class("0.875", 192);
-                if (value.precision() != 192 || mpfr_cmp_d(value.get_mpfr_t(), 4.0) != 0) {
+                if (value.precision() != 192 ||
+                    mpfr_cmp_d(value.get_mpfr_t(), 4.0) != 0 ||
+                    mpfr_get_emin() != -expected_bound ||
+                    mpfr_get_emax() != expected_bound) {
                     ++mismatches;
                 }
             }
@@ -220,6 +229,9 @@ void require_parallel_exponent_range_guards()
     if (mismatches.load() != 0) {
         std::abort();
     }
+    if (mpfr_get_emin() != old_emin || mpfr_get_emax() != old_emax) {
+        std::abort();
+    }
 }
 
 } // namespace
@@ -229,8 +241,8 @@ int main()
     require_default_precision_is_thread_local();
     require_default_options_are_thread_local();
     require_concurrent_default_options_access();
-    require_isolation_from_mpfr_global_default();
+    require_default_precision_routes_to_mpfr_tls();
     require_parallel_expression_materialization();
-    require_parallel_exponent_range_guards();
+    require_parallel_exponent_range_defaults_route_to_mpfr_tls();
     return 0;
 }

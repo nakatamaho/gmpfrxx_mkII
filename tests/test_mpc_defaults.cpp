@@ -66,24 +66,25 @@ int main()
     }
 
     mpfrxx::set_default_mpc_precision_bits(160, 192);
+    mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU);
     mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU, MPFR_RNDD);
 
     defaults = mpfrxx::default_mpc_options();
-    if (defaults.real_precision_bits != 160 || defaults.imag_precision_bits != 192) {
+    if (defaults.real_precision_bits != 192 || defaults.imag_precision_bits != 192) {
         std::abort();
     }
     if (mpfrxx::default_mpc_precision_bits() != 192) {
         std::abort();
     }
-    if (defaults.real_rounding_mode != MPFR_RNDU || defaults.imag_rounding_mode != MPFR_RNDD) {
+    if (defaults.real_rounding_mode != MPFR_RNDU || defaults.imag_rounding_mode != MPFR_RNDU) {
         std::abort();
     }
-    if (mpfrxx::default_mpc_rounding_mode() != MPC_RND(MPFR_RNDU, MPFR_RNDD)) {
+    if (mpfrxx::default_mpc_rounding_mode() != MPC_RND(MPFR_RNDU, MPFR_RNDU)) {
         std::abort();
     }
 
     mpfrxx::mpc_class value;
-    if (value.real_precision() != 160 || value.imag_precision() != 192) {
+    if (value.real_precision() != 192 || value.imag_precision() != 192) {
         std::abort();
     }
     if (value.precision() != 192) {
@@ -95,7 +96,7 @@ int main()
             static_cast<mpfr_prec_t>(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
         mpfrxx::set_default_mpc_precision_bits(too_large_precision);
         defaults = mpfrxx::default_mpc_options();
-        if (defaults.real_precision_bits != 160 || defaults.imag_precision_bits != 192) {
+        if (defaults.real_precision_bits != 192 || defaults.imag_precision_bits != 192) {
             std::abort();
         }
 
@@ -103,7 +104,7 @@ int main()
             too_large_precision,
             too_large_precision);
         defaults = mpfrxx::default_mpc_options();
-        if (defaults.real_precision_bits != 160 || defaults.imag_precision_bits != 192) {
+        if (defaults.real_precision_bits != 192 || defaults.imag_precision_bits != 192) {
             std::abort();
         }
     }

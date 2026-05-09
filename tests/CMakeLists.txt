@@ -13,6 +13,7 @@ add_phase0_test(test_header_boundaries gmpfrxx_mkII)
 target_compile_definitions(test_header_boundaries PRIVATE
     GMPFRXX_MKII_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 )
+add_phase0_test(test_library_tls_detection gmpfrxx_mkII)
 add_phase0_test(test_version_info gmpfrxx_mkII)
 add_phase0_test(test_integer_model_diagnostics gmpxx_mkII)
 add_phase0_test(test_gmpxx_mkII gmpxx_mkII)

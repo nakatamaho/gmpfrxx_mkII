@@ -47,6 +47,15 @@ inline constexpr const char* git_commit_hash = GMPFRXX_MKII_GIT_COMMIT_HASH;
 } // namespace gmpfrxx_mkII
 #endif
 
+#if __has_include(<gmpfrxx_mkII/detail/build_config.hpp>)
+#include <gmpfrxx_mkII/detail/build_config.hpp>
+#else
+#define GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P 0
+#define GMPFRXX_MKII_MPFR_BUILDOPT_TLS 0
+#define GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P 0
+#define GMPFRXX_MKII_MPC_BUILDOPT_TLS 0
+#endif
+
 namespace gmpfrxx_mkII {
 namespace detail {
 
@@ -56,6 +65,10 @@ struct build_options {
 #else
     static constexpr bool assume_fixed_precision_fastpath = false;
 #endif
+    static constexpr bool mpfr_has_buildopt_tls_p = GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P != 0;
+    static constexpr bool mpfr_buildopt_tls = GMPFRXX_MKII_MPFR_BUILDOPT_TLS != 0;
+    static constexpr bool mpc_has_buildopt_tls_p = GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P != 0;
+    static constexpr bool mpc_buildopt_tls = GMPFRXX_MKII_MPC_BUILDOPT_TLS != 0;
 };
 
 } // namespace detail

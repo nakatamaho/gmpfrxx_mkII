@@ -38,7 +38,7 @@ int main()
     const mp_bitcnt_t default_object_precision = gmpxx::mpf_class().precision();
 
     const auto low = gmpxx::mpf_class::with_precision(96, 1.25);
-    const auto high = gmpxx::mpf_class::with_precision(384, 2.5);
+    const auto high = gmpxx::mpf_class::with_precision(768, 2.5);
     const gmpxx::mpf_class materialized = low + high;
 
     assert(materialized.precision() == high.precision());

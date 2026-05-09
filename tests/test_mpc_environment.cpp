@@ -29,6 +29,7 @@
 #include <mpfrxx_mkII.h>
 #include <mpcxx_mkII.h>
 
+#include <algorithm>
 #include <atomic>
 #include <cstdlib>
 #include <thread>
@@ -65,33 +66,36 @@ int main()
     mpfrxx::reload_mpc_defaults_from_environment();
 
     defaults = mpfrxx::default_mpc_options();
-    if (defaults.real_precision_bits != 192 || defaults.imag_precision_bits != 224) {
+    if (defaults.real_precision_bits != 224 || defaults.imag_precision_bits != 224) {
         std::abort();
     }
-    if (defaults.real_rounding_mode != MPFR_RNDD || defaults.imag_rounding_mode != MPFR_RNDZ) {
+    if (defaults.real_rounding_mode != MPFR_RNDU || defaults.imag_rounding_mode != MPFR_RNDU) {
         std::abort();
     }
-    if (mpfrxx::default_mpc_rounding_mode() != MPC_RND(MPFR_RNDD, MPFR_RNDZ)) {
+    if (mpfrxx::default_mpc_rounding_mode() != MPC_RND(MPFR_RNDU, MPFR_RNDU)) {
         std::abort();
     }
 
     {
         std::atomic<int> mismatches{0};
         mpfrxx::set_default_mpc_precision_bits(192, 224);
-        mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDD, MPFR_RNDZ);
+        mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDZ);
 
         std::vector<std::thread> threads;
         for (int i = 0; i < 8; ++i) {
             threads.emplace_back([&, i] {
                 const mpfr_prec_t real_precision = (i % 2) == 0 ? 193 : 307;
                 const mpfr_prec_t imag_precision = (i % 2) == 0 ? 257 : 409;
+                const mpfr_prec_t effective_precision = std::max(real_precision, imag_precision);
+                const mpfr_rnd_t rounding = (i % 2) == 0 ? MPFR_RNDU : MPFR_RNDD;
                 mpfrxx::set_default_mpc_precision_bits(real_precision, imag_precision);
+                mpfrxx::set_default_mpc_rounding_mode(rounding);
                 for (int j = 0; j < 2000; ++j) {
                     const auto options = mpfrxx::default_mpc_options();
-                    if (options.real_precision_bits != real_precision ||
-                        options.imag_precision_bits != imag_precision ||
-                        options.real_rounding_mode != MPFR_RNDD ||
-                        options.imag_rounding_mode != MPFR_RNDZ) {
+                    if (options.real_precision_bits != effective_precision ||
+                        options.imag_precision_bits != effective_precision ||
+                        options.real_rounding_mode != rounding ||
+                        options.imag_rounding_mode != rounding) {
                         ++mismatches;
                     }
                 }
@@ -102,9 +106,9 @@ int main()
             thread.join();
         }
         defaults = mpfrxx::default_mpc_options();
-        if (defaults.real_precision_bits != 192 ||
+        if (defaults.real_precision_bits != 224 ||
             defaults.imag_precision_bits != 224 ||
-            defaults.real_rounding_mode != MPFR_RNDD ||
+            defaults.real_rounding_mode != MPFR_RNDZ ||
             defaults.imag_rounding_mode != MPFR_RNDZ) {
             ++mismatches;
         }
@@ -114,7 +118,7 @@ int main()
     }
 
     mpfrxx::mpc_class value;
-    if (value.real_precision() != 192 || value.imag_precision() != 224) {
+    if (value.real_precision() != 224 || value.imag_precision() != 224) {
         std::abort();
     }
 
@@ -126,19 +130,19 @@ int main()
     mpfrxx::set_default_exponent_range(old_emin, old_emax);
     mpfrxx::mpc_class finite_argument = mpfrxx::mpc_class::with_precision(128, 100.0, 0.0);
     mpfrxx::set_default_exponent_range(-20, 20);
-    bool saw_mpc_math_guard = false;
-    mpfrxx::mpc_class guarded_result = mpfrxx::detail::unary_mpc_math(
+    bool saw_mpfr_tls_range = false;
+    mpfrxx::mpc_class result = mpfrxx::detail::unary_mpc_math(
         finite_argument,
-        [&saw_mpc_math_guard](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
-            saw_mpc_math_guard = (mpfr_get_emin() == -20 && mpfr_get_emax() == 20);
+        [&saw_mpfr_tls_range](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+            saw_mpfr_tls_range = (mpfr_get_emin() == -20 && mpfr_get_emax() == 20);
             mpc_set(rop, op, rnd);
         });
-    (void)guarded_result;
-    if (!saw_mpc_math_guard) {
+    (void)result;
+    if (!saw_mpfr_tls_range) {
         std::abort();
     }
 
-    if (mpfr_get_emin() != old_emin || mpfr_get_emax() != old_emax) {
+    if (mpfr_get_emin() != -20 || mpfr_get_emax() != 20) {
         std::abort();
     }
     mpfrxx::set_default_exponent_range(old_default_emin, old_default_emax);

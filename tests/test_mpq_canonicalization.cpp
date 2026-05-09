@@ -29,6 +29,7 @@
 #include <gmpxx_mkII.h>
 
 #include <cstdlib>
+#include <stdexcept>
 
 namespace {
 
@@ -48,6 +49,17 @@ void require_num_den(const gmpxx::mpq_class& value, long numerator, unsigned lon
     }
 }
 
+template <typename Function>
+void require_invalid_argument(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::invalid_argument&) {
+        return;
+    }
+    std::abort();
+}
+
 } // namespace
 
 int main()
@@ -57,6 +69,14 @@ int main()
 
     gmpxx::mpq_class sign(gmpxx::mpz_class(2), gmpxx::mpz_class(-4));
     require_num_den(sign, -1, 2);
+
+    require_invalid_argument([] {
+        (void)gmpxx::mpq_class(gmpxx::mpz_class(1), gmpxx::mpz_class(0));
+    });
+
+    require_invalid_argument([] {
+        (void)gmpxx::mpq_class(1, 0);
+    });
 
     gmpxx::mpq_class result = reduced + reduced;
     require_num_den(result, 1, 1);

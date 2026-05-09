@@ -1,0 +1,102 @@
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+BENCHMARK_PARAMS precision=512 rdot_n=2000 repeat=1
+
+COMMAND Rdot C_native_01 build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 2000 512
+RUN 1/1
+Elapsed time: 0.000255976 s
+MFLOPS: 15.6226
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot C_native_openmp_01 build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 2000 512
+RUN 1/1
+Elapsed time: 0.0114993 s
+MFLOPS: 0.347761
+DIFF: 1.73e-15 OK
+WALL_SECONDS 0.01
+
+COMMAND Rdot kernel_01_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 2000 512
+RUN 1/1
+Elapsed time: 0.000259503 s
+MFLOPS: 15.4102
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH 2000 512
+RUN 1/1
+Elapsed time: 0.000474401 s
+MFLOPS: 8.42958
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_02_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 2000 512
+RUN 1/1
+Elapsed time: 0.000292817 s
+MFLOPS: 13.657
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH 2000 512
+RUN 1/1
+Elapsed time: 0.000450166 s
+MFLOPS: 8.88339
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_03_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 2000 512
+RUN 1/1
+Elapsed time: 0.000249945 s
+MFLOPS: 15.9995
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH 2000 512
+RUN 1/1
+Elapsed time: 0.000375804 s
+MFLOPS: 10.6412
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_04_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 2000 512
+RUN 1/1
+Elapsed time: 0.000310681 s
+MFLOPS: 12.8717
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_FIXED_PRECISION_FASTPATH 2000 512
+RUN 1/1
+Elapsed time: 0.000466797 s
+MFLOPS: 8.56689
+DIFF: 6.874e-151 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_openmp_01_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 2000 512
+RUN 1/1
+Elapsed time: 0.0169189 s
+MFLOPS: 0.236363
+DIFF: 1.73e-15 OK
+WALL_SECONDS 0.02
+
+COMMAND Rdot kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 2000 512
+RUN 1/1
+Elapsed time: 0.0115074 s
+MFLOPS: 0.347514
+DIFF: 1.73e-15 OK
+WALL_SECONDS 0.01
+
+COMMAND Rdot kernel_openmp_02_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 2000 512
+RUN 1/1
+Elapsed time: 0.012647 s
+MFLOPS: 0.316203
+DIFF: 9.344e-16 OK
+WALL_SECONDS 0.01
+
+COMMAND Rdot kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 2000 512
+RUN 1/1
+Elapsed time: 0.0160991 s
+MFLOPS: 0.248398
+DIFF: 9.344e-16 OK
+WALL_SECONDS 0.02
+

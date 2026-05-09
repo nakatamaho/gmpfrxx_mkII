@@ -30,30 +30,33 @@
 
 #include <atomic>
 #include <cstdlib>
+#include <mutex>
 #include <thread>
 #include <vector>
 
 namespace {
 
-void require_default_precision_is_thread_local()
+void require_default_precision_is_user_managed_global()
 {
-    constexpr mp_bitcnt_t main_precision = 777;
-    constexpr mp_bitcnt_t worker_precision = 333;
-    gmpxx::set_default_mpf_precision_bits(main_precision);
+    gmpxx::set_default_mpf_precision_bits(777);
 
+    std::mutex mutex;
     std::atomic<int> mismatches{0};
     std::vector<std::thread> threads;
     for (int i = 0; i < 8; ++i) {
         threads.emplace_back([&] {
-            if (gmpxx::default_mpf_precision_bits() != 512) {
+            std::lock_guard<std::mutex> lock(mutex);
+            if (gmpxx::default_mpf_precision_bits() < 777) {
                 ++mismatches;
             }
-            gmpxx::set_default_mpf_precision_bits(worker_precision);
+            gmpxx::set_default_mpf_precision_bits(333);
             gmpxx::mpf_class value;
-            if (gmpxx::default_mpf_precision_bits() != worker_precision ||
-                value.precision() < worker_precision) {
+            const mp_bitcnt_t effective = gmpxx::default_mpf_precision_bits();
+            if (effective < 333 || mpf_get_default_prec() != effective ||
+                value.precision() < effective) {
                 ++mismatches;
             }
+            gmpxx::set_default_mpf_precision_bits(777);
         });
     }
     for (auto& thread : threads) {
@@ -62,13 +65,14 @@ void require_default_precision_is_thread_local()
     if (mismatches.load() != 0) {
         std::abort();
     }
-    if (gmpxx::default_mpf_precision_bits() != main_precision) {
+    if (gmpxx::default_mpf_precision_bits() < 777) {
         std::abort();
     }
 }
 
-void require_parallel_default_precision_mutation_is_thread_local()
+void require_parallel_default_precision_mutation_is_user_managed()
 {
+    std::mutex mutex;
     std::atomic<int> mismatches{0};
     gmpxx::set_default_mpf_precision_bits(641);
 
@@ -79,8 +83,10 @@ void require_parallel_default_precision_mutation_is_thread_local()
             const mp_bitcnt_t second = static_cast<mp_bitcnt_t>(769 + i);
             for (int j = 0; j < 2000; ++j) {
                 const mp_bitcnt_t expected = (j % 2) == 0 ? first : second;
+                std::lock_guard<std::mutex> lock(mutex);
                 gmpxx::set_default_mpf_precision_bits(expected);
-                if (gmpxx::default_mpf_precision_bits() != expected) {
+                const mp_bitcnt_t observed = gmpxx::default_mpf_precision_bits();
+                if (observed < expected || mpf_get_default_prec() != observed) {
                     ++mismatches;
                 }
             }
@@ -93,22 +99,23 @@ void require_parallel_default_precision_mutation_is_thread_local()
     if (mismatches.load() != 0) {
         std::abort();
     }
-    if (gmpxx::default_mpf_precision_bits() != 641) {
-        std::abort();
-    }
 }
 
-void require_isolation_from_gmp_global_default()
+void require_routes_to_gmp_global_default()
 {
     const mp_bitcnt_t original_gmp_default = mpf_get_default_prec();
-    constexpr mp_bitcnt_t wrapper_precision = 192;
     constexpr mp_bitcnt_t gmp_global_precision = 4096;
 
-    gmpxx::set_default_mpf_precision_bits(wrapper_precision);
+    gmpxx::set_default_mpf_precision_bits(192);
+    if (mpf_get_default_prec() < 192) {
+        std::abort();
+    }
+
     mpf_set_default_prec(gmp_global_precision);
 
     gmpxx::mpf_class value;
-    if (value.precision() < wrapper_precision || value.precision() == gmp_global_precision) {
+    if (gmpxx::default_mpf_precision_bits() != gmp_global_precision ||
+        value.precision() < gmp_global_precision) {
         std::abort();
     }
 
@@ -141,9 +148,9 @@ void require_parallel_expression_materialization()
 
 int main()
 {
-    require_default_precision_is_thread_local();
-    require_parallel_default_precision_mutation_is_thread_local();
-    require_isolation_from_gmp_global_default();
+    require_default_precision_is_user_managed_global();
+    require_parallel_default_precision_mutation_is_user_managed();
+    require_routes_to_gmp_global_default();
     require_parallel_expression_materialization();
     return 0;
 }

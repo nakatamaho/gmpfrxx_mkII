@@ -144,7 +144,7 @@ def aggregate_rows(rows):
     return aggregated
 
 
-def plot_kernel(rows, kernel, title_suffix, output_base, group_label):
+def plot_kernel(rows, kernel, title_suffix, output_base, group_label, backend):
     kernel_rows = [row for row in rows if row["kernel"] == kernel]
     if not kernel_rows:
         return
@@ -158,7 +158,7 @@ def plot_kernel(rows, kernel, title_suffix, output_base, group_label):
     plt.figure(figsize=(max(9, 0.72 * len(labels)), 6))
     bars = plt.bar(labels, values, color=colors, yerr=errors, capsize=4)
     plt.ylabel("MFLOPS", fontsize=13, fontweight="bold")
-    plt.title(f"{kernel} {group_label} benchmark {title_suffix}",
+    plt.title(f"{backend} {kernel} {group_label} benchmark {title_suffix}",
               fontsize=13, fontweight="bold")
     plt.xticks(rotation=20, ha="right", fontsize=11, fontweight="bold")
     plt.yticks(fontsize=11, fontweight="bold")
@@ -180,7 +180,7 @@ def plot_kernel(rows, kernel, title_suffix, output_base, group_label):
     plt.close()
 
 
-def plot_summary(rows, title_suffix, output_base, group_label):
+def plot_summary(rows, title_suffix, output_base, group_label, backend):
     if not rows:
         return
 
@@ -194,7 +194,7 @@ def plot_summary(rows, title_suffix, output_base, group_label):
     bars = plt.bar(labels, values, color=colors, yerr=errors, capsize=3)
 
     plt.ylabel("MFLOPS", fontsize=13, fontweight="bold")
-    plt.title(f"GMP {group_label} benchmark summary {title_suffix}", fontsize=13,
+    plt.title(f"{backend} {group_label} benchmark summary {title_suffix}", fontsize=13,
               fontweight="bold")
     plt.xticks(rotation=65, ha="right", fontsize=8, fontweight="bold")
     plt.yticks(fontsize=11, fontweight="bold")
@@ -218,6 +218,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("logs", nargs="+", type=pathlib.Path)
     parser.add_argument("--output-dir", type=pathlib.Path, default=pathlib.Path("."))
+    parser.add_argument("--backend", default="GMP")
+    parser.add_argument("--kernels", nargs="+", default=["Rdot", "Raxpy", "Rgemv", "Rgemm"])
     args = parser.parse_args()
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -241,10 +243,10 @@ def main():
         ]:
             group_rows = aggregate_rows(select_rows(rows, openmp))
             group_base = pathlib.Path(f"{output_base}_{suffix}")
-            plot_summary(group_rows, title_suffix, group_base, group_label)
-            for kernel in ["Rdot", "Raxpy", "Rgemv", "Rgemm"]:
+            plot_summary(group_rows, title_suffix, group_base, group_label, args.backend)
+            for kernel in args.kernels:
                 plot_kernel(group_rows, kernel, title_suffix, group_base,
-                            group_label)
+                            group_label, args.backend)
 
 
 if __name__ == "__main__":

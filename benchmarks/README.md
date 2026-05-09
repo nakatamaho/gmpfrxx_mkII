@@ -11,6 +11,12 @@ The benchmark tree is split by numeric backend.
 - `mpfr/`: reserved for MPFR/MPC benchmarks.
 - `common/`: shared runner and plotting helpers.
 
+Raw results are kept under each backend, not under the top-level benchmark
+directory:
+
+- `benchmarks/gmp/results_raw/`
+- `benchmarks/mpfr/results_raw/`
+
 Build from the repository root:
 
 ```bash
@@ -26,6 +32,13 @@ benchmarks/common/run_benchmarks.sh build_bench_release 512 \
     benchmarks/gmp/results_raw/Linux_Ryzen_3970X_32-Core 10
 ```
 
+Run the MPFR Rdot benchmark family with the same log and plot format:
+
+```bash
+benchmarks/common/run_mpfr_benchmarks.sh build_bench_release 512 \
+    100000000 benchmarks/mpfr/results_raw/Linux_Ryzen_3970X_32-Core 10
+```
+
 The final argument is the repeat count.  The default is `10`; the plotter
 aggregates repeated `MFLOPS` samples by variant and draws sample standard
 deviation error bars.
@@ -39,9 +52,9 @@ The raw log is the authoritative result.  The plotted `MFLOPS` values measure
 the timed kernel body, not allocation, random initialization, or verification.
 Use `WALL_SECONDS` in the log when total executable time matters.
 
-Generated result directories such as `benchmarks/gmp/results_raw/` are kept
-available for curated commits.  Check the staged file list before committing a
-large benchmark run.
+Generated result directories such as `benchmarks/gmp/results_raw/` and
+`benchmarks/mpfr/results_raw/` are kept available for curated commits.  Check
+the staged file list before committing a large benchmark run.
 
 GMP benchmark directories:
 

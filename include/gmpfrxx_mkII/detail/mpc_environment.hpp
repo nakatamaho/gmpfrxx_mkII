@@ -48,130 +48,130 @@ struct mpc_default_options {
 inline mpc_default_options load_mpc_defaults_from_environment()
 {
     const auto inherited = default_options();
-    mpc_default_options result{
-        inherited.precision_bits,
-        inherited.precision_bits,
-        inherited.rounding_mode,
-        inherited.rounding_mode,
-    };
-
     mpfr_prec_t precision = inherited.precision_bits;
-    if (::gmpfrxx_mkII::detail::parse_mpfr_precision(
-            std::getenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS"), precision)) {
-        result.real_precision_bits = precision;
-        result.imag_precision_bits = precision;
-    }
+    ::gmpfrxx_mkII::detail::parse_mpfr_precision(
+        std::getenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS"), precision);
 
-    mpfr_prec_t real_precision = result.real_precision_bits;
-    if (::gmpfrxx_mkII::detail::parse_mpfr_precision(
-            std::getenv("MPFRXX_MPC_REAL_PRECISION_BITS"), real_precision)) {
-        result.real_precision_bits = real_precision;
-    }
+    mpfr_prec_t real_precision = precision;
+    const bool has_real_precision =
+        ::gmpfrxx_mkII::detail::parse_mpfr_precision(
+            std::getenv("MPFRXX_MPC_REAL_PRECISION_BITS"), real_precision);
 
-    mpfr_prec_t imag_precision = result.imag_precision_bits;
-    if (::gmpfrxx_mkII::detail::parse_mpfr_precision(
-            std::getenv("MPFRXX_MPC_IMAG_PRECISION_BITS"), imag_precision)) {
-        result.imag_precision_bits = imag_precision;
+    mpfr_prec_t imag_precision = precision;
+    const bool has_imag_precision =
+        ::gmpfrxx_mkII::detail::parse_mpfr_precision(
+            std::getenv("MPFRXX_MPC_IMAG_PRECISION_BITS"), imag_precision);
+
+    if (has_real_precision && has_imag_precision) {
+        precision = std::max(real_precision, imag_precision);
+    } else if (has_real_precision) {
+        precision = real_precision;
+    } else if (has_imag_precision) {
+        precision = imag_precision;
     }
 
     mpfr_rnd_t rounding = inherited.rounding_mode;
-    if (::gmpfrxx_mkII::detail::parse_mpfr_rounding(
-            std::getenv("MPFRXX_MPC_ROUNDING_MODE"), rounding)) {
-        result.real_rounding_mode = rounding;
-        result.imag_rounding_mode = rounding;
+    ::gmpfrxx_mkII::detail::parse_mpfr_rounding(
+        std::getenv("MPFRXX_MPC_ROUNDING_MODE"), rounding);
+
+    mpfr_rnd_t real_rounding = rounding;
+    const bool has_real_rounding =
+        ::gmpfrxx_mkII::detail::parse_mpfr_rounding(
+            std::getenv("MPFRXX_MPC_REAL_ROUNDING_MODE"), real_rounding);
+
+    mpfr_rnd_t imag_rounding = rounding;
+    const bool has_imag_rounding =
+        ::gmpfrxx_mkII::detail::parse_mpfr_rounding(
+            std::getenv("MPFRXX_MPC_IMAG_ROUNDING_MODE"), imag_rounding);
+
+    if (has_real_rounding && has_imag_rounding && real_rounding == imag_rounding) {
+        rounding = real_rounding;
+    } else if (has_real_rounding && !has_imag_rounding) {
+        rounding = real_rounding;
+    } else if (!has_real_rounding && has_imag_rounding) {
+        rounding = imag_rounding;
     }
 
-    mpfr_rnd_t real_rounding = result.real_rounding_mode;
-    if (::gmpfrxx_mkII::detail::parse_mpfr_rounding(
-            std::getenv("MPFRXX_MPC_REAL_ROUNDING_MODE"), real_rounding)) {
-        result.real_rounding_mode = real_rounding;
-    }
-
-    mpfr_rnd_t imag_rounding = result.imag_rounding_mode;
-    if (::gmpfrxx_mkII::detail::parse_mpfr_rounding(
-            std::getenv("MPFRXX_MPC_IMAG_ROUNDING_MODE"), imag_rounding)) {
-        result.imag_rounding_mode = imag_rounding;
-    }
-
-    return result;
-}
-
-inline mpc_default_options& mutable_mpc_default_options_unlocked()
-{
-    thread_local mpc_default_options options = load_mpc_defaults_from_environment();
-    return options;
+    return mpc_default_options{
+        precision,
+        precision,
+        rounding,
+        rounding,
+    };
 }
 
 inline void reload_mpc_defaults_from_environment()
 {
     const auto loaded = load_mpc_defaults_from_environment();
-    mutable_mpc_default_options_unlocked() = loaded;
+    set_default_precision_bits(loaded.real_precision_bits);
+    set_default_rounding_mode(loaded.real_rounding_mode);
 }
 
 inline mpc_default_options default_mpc_options()
 {
-    return mutable_mpc_default_options_unlocked();
+    const auto inherited = default_options();
+    return mpc_default_options{
+        inherited.precision_bits,
+        inherited.precision_bits,
+        inherited.rounding_mode,
+        inherited.rounding_mode,
+    };
 }
 
 inline mpfr_prec_t default_mpc_real_precision_bits()
 {
-    return default_mpc_options().real_precision_bits;
+    return default_precision_bits();
 }
 
 inline mpfr_prec_t default_mpc_imag_precision_bits()
 {
-    return default_mpc_options().imag_precision_bits;
+    return default_precision_bits();
 }
 
 inline mpfr_prec_t default_mpc_precision_bits()
 {
-    const auto options = default_mpc_options();
-    return std::max(options.real_precision_bits, options.imag_precision_bits);
+    return default_precision_bits();
 }
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t precision)
 {
-    if (::gmpfrxx_mkII::detail::valid_mpfr_precision(precision)) {
-        mutable_mpc_default_options_unlocked().real_precision_bits = precision;
-        mutable_mpc_default_options_unlocked().imag_precision_bits = precision;
-    }
+    set_default_precision_bits(precision);
 }
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
 {
     if (::gmpfrxx_mkII::detail::valid_mpfr_precision(real_precision) &&
         ::gmpfrxx_mkII::detail::valid_mpfr_precision(imag_precision)) {
-        mutable_mpc_default_options_unlocked().real_precision_bits = real_precision;
-        mutable_mpc_default_options_unlocked().imag_precision_bits = imag_precision;
+        set_default_precision_bits(std::max(real_precision, imag_precision));
     }
 }
 
 inline mpfr_rnd_t default_mpc_real_rounding_mode()
 {
-    return default_mpc_options().real_rounding_mode;
+    return default_rounding_mode();
 }
 
 inline mpfr_rnd_t default_mpc_imag_rounding_mode()
 {
-    return default_mpc_options().imag_rounding_mode;
+    return default_rounding_mode();
 }
 
 inline mpc_rnd_t default_mpc_rounding_mode()
 {
-    const auto options = default_mpc_options();
-    return MPC_RND(options.real_rounding_mode, options.imag_rounding_mode);
+    const auto rounding = default_rounding_mode();
+    return MPC_RND(rounding, rounding);
 }
 
 inline void set_default_mpc_rounding_mode(mpfr_rnd_t rounding)
 {
-    mutable_mpc_default_options_unlocked().real_rounding_mode = rounding;
-    mutable_mpc_default_options_unlocked().imag_rounding_mode = rounding;
+    set_default_rounding_mode(rounding);
 }
 
 inline void set_default_mpc_rounding_mode(mpfr_rnd_t real_rounding, mpfr_rnd_t imag_rounding)
 {
-    mutable_mpc_default_options_unlocked().real_rounding_mode = real_rounding;
-    mutable_mpc_default_options_unlocked().imag_rounding_mode = imag_rounding;
+    if (real_rounding == imag_rounding) {
+        set_default_rounding_mode(real_rounding);
+    }
 }
 
 } // namespace mpfrxx

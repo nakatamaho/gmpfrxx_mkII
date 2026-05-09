@@ -4,41 +4,33 @@ This document records precision and rounding policies for `gmpfrxx_mkII`.
 
 ## `mpf_class` Precision
 
-GMP's `gmpxx.h` follows the process-global `mpf_set_default_prec()` model.
+GMP's `mpf_set_default_prec()` model is process-global in the tested GMP build.
+It is not suitable for per-thread numeric defaults.
 
-`gmpfrxx_mkII` does not follow that model.
+`gmpfrxx_mkII` routes MPF default precision through GMP's
+`mpf_get_default_prec()` and `mpf_set_default_prec()`. This makes GMP's
+process-global MPF default precision the single source of truth and avoids
+header-only DSO-local wrapper default state. Callers that mutate it at runtime
+are responsible for their own synchronization.
 
-Instead, `gmpfrxx_mkII` owns a thread-local default precision for `mpf_class`.
-
-Initial project default: **512 bits**.
-
-Recommended API:
-
-```cpp
-namespace gmpfrxx {
-
-class gmpxx_defaults {
-public:
-    static mp_bitcnt_t get_default_mpf_precision() noexcept;
-    static void set_default_mpf_precision(mp_bitcnt_t precision);
-};
-
-class scoped_mpf_default_precision {
-public:
-    explicit scoped_mpf_default_precision(mp_bitcnt_t precision);
-    ~scoped_mpf_default_precision();
-};
-
-}
-```
+Initial project default: **512 bits**, unless `MPFXX_DEFAULT_PREC_BITS` is set
+in the process environment before numeric code runs.
 
 Rules:
 
-1. `mpf_class()` uses `gmpxx_defaults::get_default_mpf_precision()`, initially 512 bits.
+1. `mpf_class()` uses the current GMP MPF default precision through `mpf_get_default_prec()`. The reload API sets it from `MPFXX_DEFAULT_PREC_BITS` when that parses as a positive precision, otherwise 512 bits.
 2. Existing-object assignment preserves the destination precision.
 3. New expression materialization uses the maximum precision of all `mpf_class` leaves in the expression tree.
 4. Intermediate temporaries use the selected evaluation precision.
-5. The library must not call `mpf_set_default_prec()`.
+5. Runtime MPF default setter and environment reload APIs call `mpf_set_default_prec()`.
+
+### Boundary policy
+
+MPF default precision is user-managed process-global ambient state. This
+preserves the convenience API and shares one default through libgmp rather than
+through header-defined wrapper storage. Applications that need deterministic
+precision across threads must synchronize default mutations or use explicit
+object factories such as `mpf_class::with_precision(...)`.
 
 ## `mpfc_class` Precision
 
@@ -54,7 +46,15 @@ Rules:
 
 ## `mpfr_class` Precision and Rounding
 
-`mpfr_class` uses MPFR precision, exponent range, and rounding facilities, but its ordinary default construction uses the project default precision, initially **512 bits**.
+`mpfr_class` uses MPFR precision and rounding facilities. Its ordinary default
+construction uses `mpfr_get_default_prec()` from libmpfr.
+
+MPFR owns default precision, default rounding mode, and `emin`/`emax` state.
+When MPFR is built with thread-safety enabled, that state is MPFR TLS. This
+wrapper does not keep separate MPFR default precision or rounding storage.
+`mpfrxx::set_default_precision_bits()` and
+`mpfrxx::set_default_rounding_mode()` are thin wrappers around
+`mpfr_set_default_prec()` and `mpfr_set_default_rounding_mode()`.
 
 Recommended API:
 
@@ -81,7 +81,7 @@ public:
 
 Rules:
 
-1. `mpfr_class()` uses `mpfr_defaults::get_default_precision()`, initially 512 bits. Prefer `mpfr_init2` over raw `mpfr_init` for wrapper-owned objects.
+1. `mpfr_class()` uses `mpfr_defaults::get_default_precision()`, which reads `mpfr_get_default_prec()`. Prefer `mpfr_init2` over raw `mpfr_init` for wrapper-owned objects when the implementation needs explicit precision.
 2. A single integral argument constructs a numeric value at the current project default precision. It must not be interpreted as a precision-only constructor.
 3. Precision-only construction must use an explicit tag or a named factory such as `mpfr_class::with_prec(bits)`.
 4. Value-plus-precision construction may use an unambiguous two-argument form such as `mpfr_class(value, precision)`.
@@ -89,6 +89,7 @@ Rules:
 6. Existing-object assignment preserves destination precision.
 7. New expression materialization uses the maximum precision of all `mpfr_class` leaves in the expression tree.
 8. Arithmetic must receive MPFR ternary return values internally, even if the public API does not expose them yet.
+9. Wrapper default `emin`/`emax` setters route to `mpfr_set_emin()` and `mpfr_set_emax()` and therefore follow MPFR's thread-safety model.
 
 ## `mpc_class` Precision and Rounding
 
@@ -104,7 +105,7 @@ An MPC number has separate real and imaginary component precisions.
 
 Rules:
 
-1. `mpc_class()` uses `mpfr_defaults::get_default_precision()` for both components by default; the initial component precision is 512 bits.
+1. `mpc_class()` uses `mpfr_get_default_prec()` for both components by default; the initial component precision is 512 bits when MPFR has not been changed.
 2. A single integral argument constructs a numeric complex value at the current project default component precisions. It must not mean equal-component precision.
 3. Two integral arguments construct a numeric complex value, not a pair of precisions.
 4. Precision-only construction must use explicit factories or tags, for example `mpc_class::with_prec(bits)` and `mpc_class::with_prec2(real_bits, imag_bits)`.
@@ -116,12 +117,15 @@ Rules:
 10. Use `mpc_get_prec2` to query component precisions.
 11. Use `mpc_get_prec` only when equal-component precision has already been established or when zero-for-unequal is intended.
 12. `mpc_set_prec` destroys the previous value by setting components to NaN; do not use it for precision-preserving assignment.
+13. The wrapper does not store independent MPC default real and imaginary precisions. Compatibility APIs that accept two default precisions collapse them to the maximum precision representable by MPFR's single default precision.
 
 ### Rounding
 
 MPC operations take an explicit `mpc_rnd_t`.
 
-A complex rounding mode is a pair of real rounding modes. The default wrapper policy should be thread-local and library-owned:
+A complex rounding mode is a pair of real rounding modes. The wrapper does not
+own a separate default MPC rounding state. The default MPC rounding pair is
+derived from `mpfr_get_default_rounding_mode()` for both components.
 
 ```cpp
 namespace gmpfrxx {
@@ -143,11 +147,12 @@ public:
 
 Rules:
 
-1. The initial default MPC rounding mode is `MPC_RNDNN`.
-2. Do not silently derive MPC rounding from MPFR rounding unless that policy is explicitly documented.
+1. The initial default MPC rounding mode is `MPC_RNDNN` when MPFR's default rounding mode is `MPFR_RNDN`.
+2. `mpc_defaults`-style APIs should route to `mpfr_get_default_rounding_mode()` and `mpfr_set_default_rounding_mode()` rather than wrapper-owned storage.
 3. Arithmetic must pass an explicit `mpc_rnd_t` to every MPC operation.
 4. MPC inexact return values must be captured internally.
 5. Use `MPC_INEX_RE` and `MPC_INEX_IM` to decompose the returned inexact status.
+6. Compatibility APIs that accept separate real and imaginary default rounding modes can only update MPFR's single default rounding mode when both modes are equal.
 
 ## Existing-object Assignment vs New Materialization
 

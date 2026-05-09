@@ -84,27 +84,33 @@ inline mp_bitcnt_t load_default_mpf_precision_bits_from_environment() noexcept
     return precision;
 }
 
-inline mp_bitcnt_t& default_mpf_precision_bits_storage()
+inline void initialize_default_mpf_precision_bits_once()
 {
-    thread_local mp_bitcnt_t precision = load_default_mpf_precision_bits_from_environment();
-    return precision;
+    static const bool initialized = [] {
+        mpf_set_default_prec(load_default_mpf_precision_bits_from_environment());
+        return true;
+    }();
+    (void)initialized;
 }
 
 inline mp_bitcnt_t default_mpf_precision_bits()
 {
-    return default_mpf_precision_bits_storage();
+    initialize_default_mpf_precision_bits_once();
+    return mpf_get_default_prec();
 }
 
 inline void set_default_mpf_precision_bits(mp_bitcnt_t precision)
 {
+    initialize_default_mpf_precision_bits_once();
     if (precision > 0) {
-        default_mpf_precision_bits_storage() = precision;
+        mpf_set_default_prec(precision);
     }
 }
 
 inline void reload_default_mpf_precision_bits_from_environment()
 {
-    default_mpf_precision_bits_storage() = load_default_mpf_precision_bits_from_environment();
+    initialize_default_mpf_precision_bits_once();
+    mpf_set_default_prec(load_default_mpf_precision_bits_from_environment());
 }
 
 inline std::uintmax_t mpf_mp_exp_negative_magnitude(mp_exp_t value) noexcept

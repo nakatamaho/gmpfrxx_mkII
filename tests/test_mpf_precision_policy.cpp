@@ -96,12 +96,13 @@ int main()
 
     gmpxx::set_default_mpf_precision_bits(160);
     gmpxx::mpf_class default_value;
-    if (default_value.precision() < 160) {
+    const mp_bitcnt_t effective_default = gmpxx::default_mpf_precision_bits();
+    if (effective_default < 160 || default_value.precision() < effective_default) {
         std::abort();
     }
 
     gmpxx::set_default_mpf_precision_bits(0);
-    if (gmpxx::default_mpf_precision_bits() != 160) {
+    if (gmpxx::default_mpf_precision_bits() != effective_default) {
         std::abort();
     }
 
