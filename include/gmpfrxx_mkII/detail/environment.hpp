@@ -29,6 +29,8 @@
 #ifndef GMPFRXX_MKII_DETAIL_ENVIRONMENT_HPP
 #define GMPFRXX_MKII_DETAIL_ENVIRONMENT_HPP
 
+#include <gmpfrxx_mkII/detail/config.hpp>
+
 #include <algorithm>
 #include <cerrno>
 #include <cstdlib>
@@ -209,18 +211,29 @@ inline bool set_mpfr_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) no
     return mpfr_get_emin() == emin && mpfr_get_emax() == emax;
 }
 
-inline void initialize_mpfr_defaults_once()
+inline void apply_mpfr_environment_defaults()
 {
-    static const bool initialized = [] {
-        const auto loaded = load_mpfr_environment();
-        if (valid_mpfr_precision(loaded.precision)) {
-            mpfr_set_default_prec(loaded.precision);
-        }
-        set_mpfr_default_exponent_range(loaded.emin, loaded.emax);
-        mpfr_set_default_rounding_mode(loaded.rounding);
-        return true;
-    }();
-    (void)initialized;
+    const auto loaded = load_mpfr_environment();
+    if (valid_mpfr_precision(loaded.precision)) {
+        mpfr_set_default_prec(loaded.precision);
+    }
+    set_mpfr_default_exponent_range(loaded.emin, loaded.emax);
+    mpfr_set_default_rounding_mode(loaded.rounding);
+}
+
+inline void initialize_mpfr_defaults_for_current_thread()
+{
+    // This wrapper requires a thread-safe MPFR build. In that configuration
+    // MPFR default precision, rounding mode, and exponent range are owned by
+    // libmpfr as thread-local state, so the environment-derived wrapper
+    // defaults must be applied once per thread rather than once per process.
+    // CMake verifies mpfr_buildopt_tls_p() at configure time; this header keeps
+    // the contract explicit for header-only users and future maintainers.
+    thread_local bool initialized_for_this_thread = false;
+    if (!initialized_for_this_thread) {
+        apply_mpfr_environment_defaults();
+        initialized_for_this_thread = true;
+    }
 }
 
 } // namespace detail
@@ -237,18 +250,13 @@ struct mpfr_default_options {
 
 inline void reload_mpfr_defaults_from_environment()
 {
-    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
-    const auto loaded = ::gmpfrxx_mkII::detail::load_mpfr_environment();
-    if (::gmpfrxx_mkII::detail::valid_mpfr_precision(loaded.precision)) {
-        mpfr_set_default_prec(loaded.precision);
-    }
-    ::gmpfrxx_mkII::detail::set_mpfr_default_exponent_range(loaded.emin, loaded.emax);
-    mpfr_set_default_rounding_mode(loaded.rounding);
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
+    ::gmpfrxx_mkII::detail::apply_mpfr_environment_defaults();
 }
 
 inline mpfr_default_options default_options()
 {
-    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     return mpfr_default_options{
         mpfr_get_default_prec(),
         mpfr_get_emin(),
@@ -269,7 +277,7 @@ inline mpfr_prec_t default_prec()
 
 inline void set_default_precision_bits(mpfr_prec_t precision)
 {
-    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     if (::gmpfrxx_mkII::detail::valid_mpfr_precision(precision)) {
         mpfr_set_default_prec(precision);
     }
@@ -282,7 +290,7 @@ inline mpfr_rnd_t default_rounding_mode()
 
 inline void set_default_rounding_mode(mpfr_rnd_t rounding)
 {
-    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     mpfr_set_default_rounding_mode(rounding);
 }
 
@@ -298,7 +306,7 @@ inline mpfr_exp_t default_emax()
 
 inline void set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax)
 {
-    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     ::gmpfrxx_mkII::detail::set_mpfr_default_exponent_range(emin, emax);
 }
 

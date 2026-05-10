@@ -535,6 +535,38 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFR/MPC default-state specification:
+DONE
+
+Implemented features:
+- Added `SPECIFICATIONS.md` to record the MPFR/MPC default-state contract.
+- Documented that MPFR default precision, rounding, and exponent range are
+  owned by libmpfr and initialized once per thread through MPFR TLS state.
+- Documented the MPFR TLS build requirement and the configure-time
+  `mpfr_buildopt_tls_p()` expectation.
+- Documented that MPFR default setters and reload affect only the calling
+  thread.
+- Documented that MPC defaults share MPFR TLS defaults and only symmetric
+  real/imaginary defaults are supported.
+
+Tests added:
+- None.
+
+Tests updated:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `ls`
+- `rg -n "SPEC|SPEF|default state|MPFR|MPC|TLS|thread" *.md docs include/gmpfrxx_mkII/detail/environment.hpp include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `git status --short`
+
+Pass/fail result:
+- Documentation update only; no runtime tests added in this phase.
+
+Known issues:
+- None.
+
 Post-phase MPFR TLS default-state hard requirement:
 DONE
 
@@ -12161,3 +12193,93 @@ Pass/fail result:
 
 Known issues:
 - MPC scalar precision policy remains unchanged in this phase.
+
+Post-phase MPFR per-thread default initialization:
+DONE
+
+Implemented features:
+- Replaced process-once MPFR environment default initialization with
+  per-thread initialization.
+- MPFR default precision, rounding mode, and exponent range are now applied
+  to libmpfr-owned TLS state once per thread on first wrapper default access.
+- `reload_mpfr_defaults_from_environment()` reloads the environment defaults
+  for the calling thread's MPFR TLS state.
+- Documented that MPC defaults intentionally share MPFR's libmpfr-owned TLS
+  default state and do not keep separate wrapper-side default storage.
+
+Tests added:
+- Added MPFR thread-safety coverage proving a worker thread receives the
+  wrapper 512-bit default on first use even after the main thread changes its
+  own MPFR default precision.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `tests/test_mpfr_thread_safety.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `nl -ba include/gmpfrxx_mkII/detail/environment.hpp | sed -n '190,300p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpc_environment.hpp | sed -n '95,205p'`
+- `nl -ba include/gmpfrxx_mkII/detail/config.hpp | sed -n '70,95p'`
+- `git status --short`
+- `rg -n "mpfr_buildopt_tls|mpfr_buildopt_tls_p|GMPFRXX_MKII_MPFR|initialize_mpfr_defaults_once|reload_mpfr_defaults_from_environment|test_mpfr_thread|test_mpfr_defaults|environment" CMakeLists.txt cmake include tests`
+- `sed -n '1,260p' tests/test_mpfr_thread_safety.cpp`
+- `sed -n '1,180p' tests/test_mpfr_defaults.cpp`
+- `sed -n '1,60p' include/gmpfrxx_mkII/detail/environment.hpp`
+- `git diff -- include/gmpfrxx_mkII/detail/environment.hpp include/gmpfrxx_mkII/detail/mpc_environment.hpp tests/test_mpfr_thread_safety.cpp`
+- `cmake --build build -j --target test_mpfr_thread_safety`
+- `ctest --test-dir build -R '^test_mpfr_thread_safety$' --output-on-failure`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfr_thread_safety`: PASS.
+- `ctest --test-dir build -R '^test_mpfr_thread_safety$' --output-on-failure`: PASS, 1/1 test passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 152/152 tests passed.
+
+Known issues:
+- None.
+
+Post-phase GMP MPF default-context specification:
+DONE
+
+Implemented features:
+- Documented that GMP `mpf_set_default_prec()` / `mpf_get_default_prec()` are
+  process-global ambient state, not TLS default state.
+- Documented that `gmpxx::mpf_class` default construction uses the wrapper
+  default precision policy and must not rely on GMP's ambient global default.
+- Documented the two GMP default-context modes:
+  frozen-env header-only mode and external-provider mode.
+- Documented that mutable thread-specific MPF defaults require external-provider
+  mode and exactly one provider implementation linked into the process.
+- Documented that provider objects must not be embedded into multiple shared
+  libraries, and that participating DSOs should observe the same provider token.
+
+Tests added:
+- None. Documentation-only phase.
+
+Tests updated:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' SPECIFICATIONS.md`
+- `sed -n '1,260p' include/gmpfrxx_mkII/detail/gmp_default_context.hpp`
+- `tail -n 80 STATUS.md`
+- `git diff --check`
+- `git status --short`
+- `tail -n 55 STATUS.md`
+- `rg -n "Post-phase GMP MPF default-context specification|Post-phase MPFR/MPC default-state specification|Post-phase MPFR per-thread" STATUS.md`
+- `ctest --test-dir build -R '^test_mpfr_thread_safety$' --output-on-failure`
+
+Pass/fail result:
+- Documentation update completed.
+- `git diff --check`: PASS.
+- `ctest --test-dir build -R '^test_mpfr_thread_safety$' --output-on-failure`: PASS, 1/1 test passed.
+
+Known issues:
+- None.

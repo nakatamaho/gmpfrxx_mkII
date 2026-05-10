@@ -117,6 +117,10 @@ inline void reload_mpc_defaults_from_environment()
 
 inline mpc_default_options default_mpc_options()
 {
+    // MPC defaults intentionally share MPFR's libmpfr-owned TLS default state.
+    // Separate real/imaginary defaults are not stored in this header; callers
+    // that need asymmetric component policy must pass explicit precision and
+    // rounding to the object or operation.
     const auto inherited = default_options();
     return mpc_default_options{
         inherited.precision_bits,

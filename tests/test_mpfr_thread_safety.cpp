@@ -35,6 +35,34 @@
 
 namespace {
 
+void require_wrapper_defaults_are_initialized_per_thread()
+{
+    mpfrxx::set_default_precision_bits(257);
+
+    std::atomic<int> mismatches{0};
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 8; ++i) {
+        threads.emplace_back([&] {
+            mpfrxx::mpfr_class value;
+            if (value.precision() != 512 ||
+                mpfrxx::default_precision_bits() != 512 ||
+                mpfr_get_default_prec() != 512) {
+                ++mismatches;
+            }
+        });
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    if (mpfrxx::default_precision_bits() != 257) {
+        ++mismatches;
+    }
+    if (mismatches.load() != 0) {
+        std::abort();
+    }
+}
+
 void require_default_precision_is_thread_local()
 {
     constexpr mpfr_prec_t main_precision = 333;
@@ -238,6 +266,7 @@ void require_parallel_exponent_range_defaults_route_to_mpfr_tls()
 
 int main()
 {
+    require_wrapper_defaults_are_initialized_per_thread();
     require_default_precision_is_thread_local();
     require_default_options_are_thread_local();
     require_concurrent_default_options_access();
