@@ -4,6 +4,67 @@ This file records behavioral contracts that are easy to lose when the
 implementation is header-only and spans GMP, MPFR, MPC, shared libraries, and
 thread-local library state.
 
+## Header Roles
+
+Public headers are split by required numeric backend and link dependency.
+
+| Header | Public API | Dependencies |
+| --- | --- | --- |
+| `gmpxx_mkII.h` | `gmpxx::mpz_class`, `gmpxx::mpq_class`, `gmpxx::mpf_class`, `gmpxx::mpfc_class` | GMP only |
+| `mpfrxx_mkII.h` | `mpfrxx::mpz_class`, `mpfrxx::mpq_class`, `mpfrxx::mpfr_class` | GMP + MPFR |
+| `mpcxx_mkII.h` | `mpfrxx::mpc_class` | GMP + MPFR + MPC |
+| `gmpfrxx_mkII.h` | combined aggregator | GMP + MPFR + MPC |
+
+`gmpxx_mkII.h` is intentionally GMP-only. It must not include `<mpfr.h>` or
+`<mpc.h>`, must not reference `mpfr_*`, `mpc_*`, or `mpc_t` symbols, and must
+not require MPFR or MPC at link time.
+
+`mpfrxx_mkII.h` is intentionally the real MPFR header. It requires GMP and
+MPFR, but it must not require GNU MPC. Applications that only use real MPFR
+arithmetic should not need to include `<mpc.h>` or link `-lmpc`.
+
+`mpcxx_mkII.h` is the opt-in complex MPC header. It is used when
+`mpfrxx::mpc_class` is needed and therefore requires GNU MPC and `-lmpc`.
+It is layered on top of `mpfrxx_mkII.h`.
+
+`gmpfrxx_mkII.h` is a convenience aggregator for users that want all supported
+types and accept the full GMP + MPFR + MPC dependency set.
+
+The GMP complex type is different by design: `gmpxx::mpfc_class` is implemented
+as two `gmpxx::mpf_class` components in the GMP-only wrapper. It remains
+header-only and does not require GNU MPC, so it is kept in `gmpxx_mkII.h`
+rather than split into a separate GMP-complex header.
+
+## Public Types
+
+| Type | Backend | Header |
+| --- | --- | --- |
+| `gmpxx::mpz_class` | GMP `mpz_t` | `gmpxx_mkII.h`, `mpfrxx_mkII.h`, `gmpfrxx_mkII.h` |
+| `gmpxx::mpq_class` | GMP `mpq_t` | `gmpxx_mkII.h`, `mpfrxx_mkII.h`, `gmpfrxx_mkII.h` |
+| `gmpxx::mpf_class` | GMP `mpf_t` | `gmpxx_mkII.h`, `gmpfrxx_mkII.h` |
+| `gmpxx::mpfc_class` | two `gmpxx::mpf_class` components | `gmpxx_mkII.h`, `gmpfrxx_mkII.h` |
+| `mpfrxx::mpfr_class` | MPFR `mpfr_t` | `mpfrxx_mkII.h`, `gmpfrxx_mkII.h` |
+| `mpfrxx::mpc_class` | GNU MPC `mpc_t` | `mpcxx_mkII.h`, `gmpfrxx_mkII.h` |
+
+`mpfrxx::mpz_class` and `mpfrxx::mpq_class` are aliases to the GMP-only
+`gmpxx` types, not separate wrapper classes:
+
+```cpp
+namespace mpfrxx {
+using ::gmpxx::mpz_class;
+using ::gmpxx::mpq_class;
+}
+```
+
+`gmpxx::mpfc_class` is GMP-only and separate from `mpfrxx::mpc_class`.
+`mpfrxx::mpc_class` is MPC-backed. Mixed arithmetic between these families is
+intentionally rejected.
+
+`mpfrxx::mpc_class` supports equality and inequality only. Complex ordering
+operators such as `<`, `<=`, `>`, and `>=` are intentionally not defined. MPC
+values with a NaN component compare unequal to themselves, matching the usual
+IEEE-style NaN equality rule.
+
 ## GMP MPF Default Precision
 
 GMP's `mpf_set_default_prec()` and `mpf_get_default_prec()` are process-global

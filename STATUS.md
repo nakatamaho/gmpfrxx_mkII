@@ -535,6 +535,45 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase header role specification:
+DONE
+
+Implemented features:
+- Documented the public header role split in `SPECIFICATIONS.md`.
+- Documented that `gmpxx_mkII.h` remains GMP-only and must not depend on MPFR
+  or MPC.
+- Documented that `mpfrxx_mkII.h` is the real MPFR header and does not require
+  GNU MPC or `-lmpc`.
+- Documented that `mpcxx_mkII.h` is the opt-in complex MPC header requiring
+  GNU MPC and `-lmpc`.
+- Documented public type ownership, `mpfrxx::mpz_class` /
+  `mpfrxx::mpq_class` aliasing, and the separation between GMP-only
+  `gmpxx::mpfc_class` and MPC-backed `mpfrxx::mpc_class`.
+- Documented that `mpfrxx::mpc_class` defines equality and inequality only,
+  with NaN components comparing unequal.
+
+Tests added:
+- None. Documentation-only phase.
+
+Tests updated:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg --files | rg '(^|/)include/.*(gmpxx|mpfrxx|mpcxx|gmpfrxx)_mkII\\.h$|(^|/)(gmpxx|mpfrxx|mpcxx|gmpfrxx)_mkII\\.h$'`
+- `sed -n '1,220p' SPECIFICATIONS.md`
+- `git status --short`
+- `sed -n '1,180p' include/mpfrxx_mkII.h`
+- `sed -n '1,180p' include/mpcxx_mkII.h`
+- `sed -n '1,180p' include/gmpxx_mkII.h`
+- `sed -n '1,180p' include/gmpfrxx_mkII.h`
+
+Pass/fail result:
+- Documentation update completed.
+
+Known issues:
+- None.
+
 Post-phase MPFR/MPC default-state specification:
 DONE
 
