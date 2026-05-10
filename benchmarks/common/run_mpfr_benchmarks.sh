@@ -36,6 +36,12 @@ precision="${2:-512}"
 rdot_n="${3:-100000000}"
 output_dir="${4:-${benchmark_root}/mpfr/results_raw}"
 repeat_count="${5:-10}"
+raxpy_n="${6:-${rdot_n}}"
+rgemv_m="${7:-4000}"
+rgemv_n="${8:-4000}"
+rgemm_m="${9:-500}"
+rgemm_k="${10:-500}"
+rgemm_n="${11:-500}"
 
 mkdir -p "${output_dir}"
 log_file="${output_dir}/benchmark_$(date +%Y%m%d_%H%M%S).log"
@@ -94,6 +100,54 @@ run_variants() {
             "Rdot_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
         )
         ;;
+    Raxpy)
+        executables=(
+            "Raxpy_mpfr_C_native_01"
+            "Raxpy_mpfr_C_native_openmp_01"
+            "Raxpy_mpfr_kernel_01_mkII"
+            "Raxpy_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Raxpy_mpfr_kernel_02_mkII"
+            "Raxpy_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Raxpy_mpfr_kernel_openmp_01_mkII"
+            "Raxpy_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Raxpy_mpfr_kernel_openmp_02_mkII"
+            "Raxpy_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+        )
+        ;;
+    Rgemv)
+        executables=(
+            "Rgemv_mpfr_C_native_01"
+            "Rgemv_mpfr_C_native_openmp_01"
+            "Rgemv_mpfr_kernel_01_mkII"
+            "Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemv_mpfr_kernel_02_mkII"
+            "Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemv_mpfr_kernel_openmp_01_mkII"
+            "Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemv_mpfr_kernel_openmp_02_mkII"
+            "Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+        )
+        ;;
+    Rgemm)
+        executables=(
+            "Rgemm_mpfr_C_native_01"
+            "Rgemm_mpfr_C_native_02"
+            "Rgemm_mpfr_C_native_openmp_01"
+            "Rgemm_mpfr_C_native_openmp_02"
+            "Rgemm_mpfr_kernel_01_mkII"
+            "Rgemm_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_02_mkII"
+            "Rgemm_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_03_mkII"
+            "Rgemm_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_openmp_01_mkII"
+            "Rgemm_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_openmp_02_mkII"
+            "Rgemm_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_openmp_03_mkII"
+            "Rgemm_mpfr_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH"
+        )
+        ;;
     esac
 
     for exe in "${executables[@]}"; do
@@ -108,10 +162,13 @@ run_variants() {
     else
         uname -m
     fi
-    echo "BENCHMARK_PARAMS precision=${precision} rdot_n=${rdot_n} repeat=${repeat_count}"
+    echo "BENCHMARK_PARAMS precision=${precision} rdot_n=${rdot_n} raxpy_n=${raxpy_n} rgemv_m=${rgemv_m} rgemv_n=${rgemv_n} rgemm_m=${rgemm_m} rgemm_k=${rgemm_k} rgemm_n=${rgemm_n} repeat=${repeat_count}"
     echo
 
     run_variants Rdot mpfr/00_Rdot "${rdot_n}" "${precision}"
+    run_variants Raxpy mpfr/01_Raxpy "${raxpy_n}" "${precision}"
+    run_variants Rgemv mpfr/02_Rgemv "${rgemv_m}" "${rgemv_n}" "${precision}"
+    run_variants Rgemm mpfr/03_Rgemm "${rgemm_m}" "${rgemm_k}" "${rgemm_n}" "${precision}"
 } 2>&1 | tee "${log_file}"
 
-python3 "${script_dir}/plot.py" "${log_file}" --output-dir "${output_dir}" --backend MPFR --kernels Rdot
+python3 "${script_dir}/plot.py" "${log_file}" --output-dir "${output_dir}" --backend MPFR --kernels Rdot Raxpy Rgemv Rgemm

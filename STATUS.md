@@ -535,6 +535,112 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFR Raxpy benchmark port:
+DONE
+
+Implemented features:
+- Added MPFR Raxpy benchmark sources under `benchmarks/mpfr/01_Raxpy`.
+- Ported the GMP Raxpy benchmark variants to MPFR:
+  C native, C native OpenMP, mkII kernel 01/02, and mkII OpenMP kernel 01/02.
+- Added fixed-precision-fastpath builds for the mkII MPFR Raxpy variants.
+- Registered MPFR Raxpy targets in `benchmarks/CMakeLists.txt`.
+- Extended `benchmarks/common/run_mpfr_benchmarks.sh` to run and plot both
+  Rdot and Raxpy.  The optional sixth argument overrides the Raxpy vector
+  size; otherwise it uses the Rdot vector size.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/README.md`
+- `benchmarks/mpfr/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build_bench_clean_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_clean_release -j --target Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_kernel_01_mkII Raxpy_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Raxpy_mpfr_kernel_02_mkII Raxpy_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH Raxpy_mpfr_kernel_openmp_01_mkII Raxpy_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Raxpy_mpfr_kernel_openmp_02_mkII Raxpy_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH`
+- `benchmarks/common/run_mpfr_benchmarks.sh build_bench_clean_release 512 200 benchmarks/mpfr/results_raw/raxpy_port_smoke_20260509 1`
+
+Pass/fail result:
+- CMake configure: PASS.
+- All new MPFR Raxpy benchmark targets built successfully.
+- MPFR Rdot/Raxpy smoke run: PASS; every Raxpy variant printed `Result OK`,
+  and Rdot variants printed `OK`.
+
+Known issues:
+- MPFR Rgemv and Rgemm benchmark families are still not ported.
+
+Post-phase MPFR Rgemv benchmark port:
+DONE
+
+Implemented features:
+- Added MPFR Rgemv benchmark sources under `benchmarks/mpfr/02_Rgemv`.
+- Ported the GMP Rgemv benchmark variants to MPFR:
+  C native, C native OpenMP, mkII kernel 01/02, and mkII OpenMP kernel 01/02.
+- Added fixed-precision-fastpath builds for the mkII MPFR Rgemv variants.
+- Registered MPFR Rgemv targets in `benchmarks/CMakeLists.txt`.
+- Extended `benchmarks/common/run_mpfr_benchmarks.sh` to run and plot Rdot,
+  Raxpy, and Rgemv.  The optional seventh and eighth arguments override Rgemv
+  row and column counts.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/README.md`
+- `benchmarks/mpfr/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build_bench_clean_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_clean_release -j --target Rgemv_mpfr_C_native_01 Rgemv_mpfr_C_native_openmp_01 Rgemv_mpfr_kernel_01_mkII Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_02_mkII Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_01_mkII Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_02_mkII Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH`
+- `benchmarks/common/run_mpfr_benchmarks.sh build_bench_clean_release 512 50 benchmarks/mpfr/results_raw/rgemv_port_smoke_20260510 1 50 8 7`
+
+Pass/fail result:
+- CMake configure: PASS.
+- All new MPFR Rgemv benchmark targets built successfully.
+- MPFR Rdot/Raxpy/Rgemv smoke run: PASS; every Rgemv variant printed
+  `Result OK`, and Rdot variants printed `OK`.
+
+Known issues:
+- MPFR Rgemm benchmark family is still not ported.
+
+Post-phase MPFR Rgemm benchmark port:
+DONE
+
+Implemented features:
+- Added MPFR Rgemm benchmark sources under `benchmarks/mpfr/03_Rgemm`.
+- Ported the GMP Rgemm benchmark variants to MPFR:
+  C native 01/02, C native OpenMP 01/02, mkII kernel 01/02/03, and mkII
+  OpenMP kernel 01/02/03.
+- Added fixed-precision-fastpath builds for the mkII MPFR Rgemm variants.
+- Registered MPFR Rgemm targets in `benchmarks/CMakeLists.txt`.
+- Extended `benchmarks/common/run_mpfr_benchmarks.sh` to run and plot Rdot,
+  Raxpy, Rgemv, and Rgemm.  The optional ninth through eleventh arguments
+  override Rgemm `m`, `k`, and `n`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/README.md`
+- `benchmarks/mpfr/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build_bench_clean_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_clean_release -j --target Rgemm_mpfr_C_native_01 Rgemm_mpfr_C_native_02 Rgemm_mpfr_C_native_openmp_01 Rgemm_mpfr_C_native_openmp_02 Rgemm_mpfr_kernel_01_mkII Rgemm_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rgemm_mpfr_kernel_02_mkII Rgemm_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rgemm_mpfr_kernel_03_mkII Rgemm_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rgemm_mpfr_kernel_openmp_01_mkII Rgemm_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rgemm_mpfr_kernel_openmp_02_mkII Rgemm_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemm_mpfr_kernel_openmp_03_mkII Rgemm_mpfr_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH`
+- `benchmarks/common/run_mpfr_benchmarks.sh build_bench_clean_release 512 30 benchmarks/mpfr/results_raw/rgemm_port_smoke_20260510 1 30 6 5 4 3 5`
+
+Pass/fail result:
+- CMake configure: PASS.
+- All new MPFR Rgemm benchmark targets built successfully.
+- MPFR Rdot/Raxpy/Rgemv/Rgemm smoke run: PASS; every Rgemm variant printed
+  `Result OK`, and Rdot variants printed `OK`.
+
+Known issues:
+- None.
+
 Post-phase benchmark runner parity for MPFR:
 DONE
 
@@ -11439,6 +11545,38 @@ Pass/fail result:
 - `cmake --build build -j`: PASS.
 - `ctest --test-dir build --output-on-failure`: PASS, 119/119 tests passed.
 - `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+Post-phase GMP/MPFR scaled-full benchmark tier timing:
+DONE
+
+Implemented features:
+- Added `scaled-full` benchmark tier documentation for GMP and MPFR.
+- Documented measured wall time on the Ryzen Threadripper 3970X benchmark
+  host for GMP, MPFR, and sequential GMP+MPFR scaled-full runs.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `mkdir -p benchmarks/gmp/results_raw/scaled_full_20260510`
+- `mkdir -p benchmarks/mpfr/results_raw/scaled_full_20260510`
+- `/usr/bin/time -f 'TOTAL_WALL_SECONDS %e' benchmarks/common/run_benchmarks.sh build_bench_clean_release 512 10000000 10000000 1000 1000 200 200 200 benchmarks/gmp/results_raw/scaled_full_20260510 10`
+- `/usr/bin/time -f 'TOTAL_WALL_SECONDS %e' benchmarks/common/run_mpfr_benchmarks.sh build_bench_clean_release 512 10000000 benchmarks/mpfr/results_raw/scaled_full_20260510 10 10000000 1000 1000 200 200 200`
+
+Pass/fail result:
+- GMP scaled-full benchmark: PASS, `TOTAL_WALL_SECONDS 2258.85`.
+- MPFR scaled-full benchmark: PASS, `TOTAL_WALL_SECONDS 2736.24`.
+- Sequential GMP+MPFR scaled-full total: `4995.09` seconds.
+- Result logs and plots were written under
+  `benchmarks/gmp/results_raw/scaled_full_20260510/` and
+  `benchmarks/mpfr/results_raw/scaled_full_20260510/`.
 
 Known issues:
 - None.

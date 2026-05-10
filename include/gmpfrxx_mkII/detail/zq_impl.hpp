@@ -774,7 +774,7 @@ public:
         mpq_set(value_, other.value_);
     }
 
-    mpq_class(mpq_class&& other)
+    mpq_class(mpq_class&& other) noexcept
     {
         mpq_init(value_);
         mpq_swap(value_, other.value_);

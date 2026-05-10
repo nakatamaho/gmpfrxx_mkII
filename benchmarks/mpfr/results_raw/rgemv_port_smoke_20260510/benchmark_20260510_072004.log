@@ -1,0 +1,261 @@
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+BENCHMARK_PARAMS precision=512 rdot_n=50 raxpy_n=50 rgemv_m=8 rgemv_n=7 repeat=1
+
+COMMAND Rdot C_native_01 build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 50 512
+RUN 1/1
+Elapsed time: 2.3044e-05 s
+MFLOPS: 4.29613
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot C_native_openmp_01 build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 50 512
+RUN 1/1
+Elapsed time: 0.0712991 s
+MFLOPS: 0.00138852
+DIFF: 2.6e-17 OK
+WALL_SECONDS 0.07
+
+COMMAND Rdot kernel_01_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 50 512
+RUN 1/1
+Elapsed time: 2.3083e-05 s
+MFLOPS: 4.28887
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 2.5328e-05 s
+MFLOPS: 3.90872
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_02_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 50 512
+RUN 1/1
+Elapsed time: 2.5048e-05 s
+MFLOPS: 3.95241
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 2.4467e-05 s
+MFLOPS: 4.04627
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_03_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 50 512
+RUN 1/1
+Elapsed time: 1.7102e-05 s
+MFLOPS: 5.7888
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 2.0989e-05 s
+MFLOPS: 4.71676
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_04_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 50 512
+RUN 1/1
+Elapsed time: 2.0649e-05 s
+MFLOPS: 4.79442
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 2.1541e-05 s
+MFLOPS: 4.59589
+DIFF: 1.193e-153 OK
+WALL_SECONDS 0.00
+
+COMMAND Rdot kernel_openmp_01_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 50 512
+RUN 1/1
+Elapsed time: 0.0879517 s
+MFLOPS: 0.00112562
+DIFF: 2.6e-17 OK
+WALL_SECONDS 0.09
+
+COMMAND Rdot kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 0.0277475 s
+MFLOPS: 0.00356789
+DIFF: 2.6e-17 OK
+WALL_SECONDS 0.03
+
+COMMAND Rdot kernel_openmp_02_mkII build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 50 512
+RUN 1/1
+Elapsed time: 0.0432346 s
+MFLOPS: 0.00228983
+DIFF: 1.646e-17 OK
+WALL_SECONDS 0.05
+
+COMMAND Rdot kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 0.0691094 s
+MFLOPS: 0.00143251
+DIFF: 1.646e-17 OK
+WALL_SECONDS 0.07
+
+COMMAND Raxpy C_native_01 build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 50 512
+RUN 1/1
+Elapsed time: 1.608e-05 s
+MFLOPS: 6.21891
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Raxpy C_native_openmp_01 build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 50 512
+RUN 1/1
+Elapsed time: 0.0589932 s
+MFLOPS: 0.00169511
+L1 Norm of difference: 2.212e-16
+Result OK
+WALL_SECONDS 0.06
+
+COMMAND Raxpy kernel_01_mkII build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 50 512
+RUN 1/1
+Elapsed time: 1.8194e-05 s
+MFLOPS: 5.49632
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Raxpy kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 1.8845e-05 s
+MFLOPS: 5.30645
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Raxpy kernel_02_mkII build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 50 512
+RUN 1/1
+Elapsed time: 1.8054e-05 s
+MFLOPS: 5.53894
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Raxpy kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 0.00104943 s
+MFLOPS: 0.0952901
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Raxpy kernel_openmp_01_mkII build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 50 512
+RUN 1/1
+Elapsed time: 0.0437153 s
+MFLOPS: 0.00228753
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.05
+
+COMMAND Raxpy kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 0.0216942 s
+MFLOPS: 0.00460953
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.03
+
+COMMAND Raxpy kernel_openmp_02_mkII build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 50 512
+RUN 1/1
+Elapsed time: 0.0210982 s
+MFLOPS: 0.00473975
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.03
+
+COMMAND Raxpy kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 50 512
+RUN 1/1
+Elapsed time: 0.0667649 s
+MFLOPS: 0.00149779
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.07
+
+COMMAND Rgemv C_native_01 build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01 8 7 512
+RUN 1/1
+Elapsed time: 3.0067e-05 s
+MFLOPS: 3.72501
+L1 Norm of difference: 1.492e-154
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Rgemv C_native_openmp_01 build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01 8 7 512
+RUN 1/1
+Elapsed time: 0.0337002 s
+MFLOPS: 0.00332342
+L1 Norm of difference: 2.517e-16
+Result OK
+WALL_SECONDS 0.04
+
+COMMAND Rgemv kernel_01_mkII build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_mkII 8 7 512
+RUN 1/1
+Elapsed time: 3.8162e-05 s
+MFLOPS: 2.93486
+L1 Norm of difference: 2.61e-154
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Rgemv kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH 8 7 512
+RUN 1/1
+Elapsed time: 3.153e-05 s
+MFLOPS: 3.55217
+L1 Norm of difference: 2.61e-154
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Rgemv kernel_02_mkII build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_mkII 8 7 512
+RUN 1/1
+Elapsed time: 2.2302e-05 s
+MFLOPS: 5.02197
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Rgemv kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH 8 7 512
+RUN 1/1
+Elapsed time: 2.1961e-05 s
+MFLOPS: 5.09995
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 0.00
+
+COMMAND Rgemv kernel_openmp_01_mkII build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_mkII 8 7 512
+RUN 1/1
+Elapsed time: 0.031078 s
+MFLOPS: 0.00360384
+L1 Norm of difference: 2.793e-16
+Result OK
+WALL_SECONDS 0.03
+
+COMMAND Rgemv kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 8 7 512
+RUN 1/1
+Elapsed time: 0.0447024 s
+MFLOPS: 0.00250546
+L1 Norm of difference: 2.793e-16
+Result OK
+WALL_SECONDS 0.05
+
+COMMAND Rgemv kernel_openmp_02_mkII build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_mkII 8 7 512
+RUN 1/1
+Elapsed time: 0.0263385 s
+MFLOPS: 0.00425233
+L1 Norm of difference: 2.793e-16
+Result OK
+WALL_SECONDS 0.03
+
+COMMAND Rgemv kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_clean_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 8 7 512
+RUN 1/1
+Elapsed time: 0.0440007 s
+MFLOPS: 0.00254542
+L1 Norm of difference: 2.793e-16
+Result OK
+WALL_SECONDS 0.05

@@ -99,7 +99,7 @@ void test_compile_time_surface()
 
     static_assert(std::is_default_constructible_v<gmpxx::mpq_class>);
     static_assert(std::is_copy_constructible_v<gmpxx::mpq_class>);
-    static_assert(!std::is_nothrow_move_constructible_v<gmpxx::mpq_class>);
+    static_assert(std::is_nothrow_move_constructible_v<gmpxx::mpq_class>);
     static_assert(std::is_copy_assignable_v<gmpxx::mpq_class>);
     static_assert(std::is_move_assignable_v<gmpxx::mpq_class>);
     static_assert(noexcept(std::declval<gmpxx::mpq_class&>() = std::declval<gmpxx::mpq_class&&>()));
@@ -211,6 +211,23 @@ void test_mpf_vector_reallocation_uses_nothrow_move_surface()
 
     assert_mpf_equal(values.front(), expected_first);
     assert(values.front().precision() == expected_first.precision());
+}
+
+void test_mpq_vector_reallocation_uses_nothrow_move_surface()
+{
+    static_assert(std::is_nothrow_move_constructible_v<gmpxx::mpq_class>);
+
+    std::vector<gmpxx::mpq_class> values;
+    values.reserve(1);
+    values.emplace_back(3, 7);
+    const gmpxx::mpq_class expected_first(values.front());
+
+    const std::size_t old_capacity = values.capacity();
+    while (values.capacity() == old_capacity) {
+        values.emplace_back(5, 11);
+    }
+
+    assert(values.front() == expected_first);
 }
 
 void test_expression_constructor_with_explicit_precision()
@@ -615,6 +632,7 @@ int main()
     test_integral_constructor_with_explicit_precision();
     test_zq_mpf_implicit_conversions();
     test_mpf_vector_reallocation_uses_nothrow_move_surface();
+    test_mpq_vector_reallocation_uses_nothrow_move_surface();
     test_expression_constructor_with_explicit_precision();
     test_raw_mpf_t_constructor();
     test_copy_and_move();
