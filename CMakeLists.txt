@@ -83,6 +83,22 @@ endif()
 message(STATUS "MPFR buildopt TLS probe: has API=${GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P}, tls=${GMPFRXX_MKII_MPFR_BUILDOPT_TLS}")
 message(STATUS "MPC buildopt TLS probe: has API=${GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P}, tls=${GMPFRXX_MKII_MPC_BUILDOPT_TLS}")
 
+if(NOT GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P)
+    message(FATAL_ERROR
+        "MPFR must provide mpfr_buildopt_tls_p(). "
+        "gmpfrxx_mkII uses libmpfr's thread-local default precision, "
+        "rounding mode, and exponent range as the MPFR default-state owner."
+    )
+endif()
+
+if(NOT GMPFRXX_MKII_MPFR_BUILDOPT_TLS)
+    message(FATAL_ERROR
+        "MPFR was built without TLS support. "
+        "gmpfrxx_mkII requires MPFR TLS because MPFR default precision, "
+        "rounding mode, and exponent range are routed through libmpfr."
+    )
+endif()
+
 set(GMPFRXX_MKII_DIST_BASENAME "${PROJECT_NAME}-${PROJECT_VERSION}")
 set(GMPFRXX_MKII_DIST_TAR "${CMAKE_CURRENT_BINARY_DIR}/${GMPFRXX_MKII_DIST_BASENAME}.tar")
 set(GMPFRXX_MKII_DIST_ARCHIVE "${GMPFRXX_MKII_DIST_TAR}.xz")

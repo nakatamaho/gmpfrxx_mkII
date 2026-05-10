@@ -49,6 +49,14 @@ int main()
 {
     const auto old_defaults = mpfrxx::default_options();
 
+    if (mpfrxx::default_precision_bits() != 512) {
+        std::abort();
+    }
+    mpfrxx::mpfr_class initial_default_value;
+    if (initial_default_value.precision() != 512) {
+        std::abort();
+    }
+
     mpfrxx::set_default_precision_bits(512);
     mpfrxx::set_default_rounding_mode(MPFR_RNDN);
     clear_mpfr_environment();
