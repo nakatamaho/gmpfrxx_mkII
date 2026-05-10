@@ -135,8 +135,12 @@ add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_02.cpp
 
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_01.cpp
     Rdot_mpfr_C_native_01)
+add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_01_FMA.cpp
+    Rdot_mpfr_C_native_01_FMA)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_01.cpp
     Rdot_mpfr_C_native_openmp_01)
+add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_01_FMA.cpp
+    Rdot_mpfr_C_native_openmp_01_FMA)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01.cpp
     Rdot_mpfr_kernel_01)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_02.cpp

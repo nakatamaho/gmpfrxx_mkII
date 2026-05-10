@@ -1,3 +1,45 @@
+Post-phase MPFR Rdot C native FMA baselines:
+DONE
+
+Implemented features:
+- Added serial and OpenMP MPFR C native Rdot FMA baseline targets.
+- The normal C native targets keep the existing `mpfr_mul` plus `mpfr_add`
+  loop, while the FMA targets use `mpfr_fma(acc, x, y, acc, rnd)` and avoid
+  the extra temporary product.
+- Documented the new MPFR Rdot C native FMA target names in the benchmark
+  README.
+
+Tests added:
+- No new tests were added.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/README.md`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build-release-nocount -j --target Rdot_mpfr_C_native_01 Rdot_mpfr_C_native_01_FMA Rdot_mpfr_C_native_openmp_01 Rdot_mpfr_C_native_openmp_01_FMA`
+- `cmake --build build-release-nocount -j --target Rdot_mpfr_C_native_01_FMA Rdot_mpfr_C_native_openmp_01_FMA`
+- `build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 1000 512`
+- `build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 1000 512`
+- `git diff --check`
+
+Pass/fail result:
+- Initial multi-target build configured the new targets but stopped before the
+  new FMA target could be built by name.
+- Follow-up FMA target build: PASS.
+- Serial FMA smoke: PASS, `DIFF` OK.
+- OpenMP FMA smoke: PASS, `DIFF` OK.
+- `git diff --check`: PASS.
+
+Known issues:
+- FMA and non-FMA Rdot use different rounding paths, so bitwise equality is
+  not expected. The existing benchmark keeps the tolerance-based `DIFF` check.
+
 Post-phase remove Rdot fastpath-name variants:
 DONE
 

@@ -23,6 +23,11 @@ MPFR wrapper benchmark kernels are built in three wrapper configurations:
 Rdot MPFR kernels use the shorter `*_mkII` and `*_mkII_FMA` names instead of
 the legacy fixed-precision-fastpath names.
 
+MPFR Rdot also provides raw C native FMA baselines:
+
+- `Rdot_mpfr_C_native_01_FMA`
+- `Rdot_mpfr_C_native_openmp_01_FMA`
+
 Raw results are kept under each backend, not under the top-level benchmark
 directory:
 
