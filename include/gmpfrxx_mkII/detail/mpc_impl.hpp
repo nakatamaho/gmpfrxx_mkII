@@ -362,18 +362,28 @@ public:
             return *this;
         }
 
-        if (!valid_) {
-            std::memcpy(value_, other.value_, sizeof(value_));
-            valid_ = true;
-            other.valid_ = false;
-        } else if (real_precision() == other.real_precision() &&
-                   imag_precision() == other.imag_precision()) {
-            mpc_swap(value_, other.value_);
+        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else {
+                mpc_swap(value_, other.value_);
+            }
         } else {
-            const auto context =
-                gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
-            const int inex = mpc_set(value_, other.value_, default_rounding());
-            gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding(), inex);
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else if (real_precision() == other.real_precision() &&
+                       imag_precision() == other.imag_precision()) {
+                mpc_swap(value_, other.value_);
+            } else {
+                const auto context =
+                    gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+                const int inex = mpc_set(value_, other.value_, default_rounding());
+                gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding(), inex);
+            }
         }
         return *this;
     }
@@ -790,9 +800,9 @@ struct is_mpc_object_or_node<
 template <typename T>
 inline constexpr bool is_mpc_object_or_node_v = is_mpc_object_or_node<T>::value;
 
-inline object_leaf<mpfrxx::mpc_class> make_mpc_operand(const mpfrxx::mpc_class& value)
+inline borrowed_object_leaf<mpfrxx::mpc_class> make_mpc_operand(const mpfrxx::mpc_class& value)
 {
-    return object_leaf<mpfrxx::mpc_class>(value);
+    return borrowed_object_leaf<mpfrxx::mpc_class>(value);
 }
 
 inline object_leaf<mpfrxx::mpc_class> make_mpc_operand(mpfrxx::mpc_class&& value)
@@ -800,9 +810,9 @@ inline object_leaf<mpfrxx::mpc_class> make_mpc_operand(mpfrxx::mpc_class&& value
     return object_leaf<mpfrxx::mpc_class>(std::move(value));
 }
 
-inline object_leaf<mpfrxx::mpfr_class> make_mpc_operand(const mpfrxx::mpfr_class& value)
+inline borrowed_object_leaf<mpfrxx::mpfr_class> make_mpc_operand(const mpfrxx::mpfr_class& value)
 {
-    return object_leaf<mpfrxx::mpfr_class>(value);
+    return borrowed_object_leaf<mpfrxx::mpfr_class>(value);
 }
 
 inline object_leaf<mpfrxx::mpfr_class> make_mpc_operand(mpfrxx::mpfr_class&& value)
@@ -810,9 +820,9 @@ inline object_leaf<mpfrxx::mpfr_class> make_mpc_operand(mpfrxx::mpfr_class&& val
     return object_leaf<mpfrxx::mpfr_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpz_class> make_mpc_operand(const gmpxx::mpz_class& value)
+inline borrowed_object_leaf<gmpxx::mpz_class> make_mpc_operand(const gmpxx::mpz_class& value)
 {
-    return object_leaf<gmpxx::mpz_class>(value);
+    return borrowed_object_leaf<gmpxx::mpz_class>(value);
 }
 
 inline object_leaf<gmpxx::mpz_class> make_mpc_operand(gmpxx::mpz_class&& value)
@@ -820,9 +830,9 @@ inline object_leaf<gmpxx::mpz_class> make_mpc_operand(gmpxx::mpz_class&& value)
     return object_leaf<gmpxx::mpz_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpq_class> make_mpc_operand(const gmpxx::mpq_class& value)
+inline borrowed_object_leaf<gmpxx::mpq_class> make_mpc_operand(const gmpxx::mpq_class& value)
 {
-    return object_leaf<gmpxx::mpq_class>(value);
+    return borrowed_object_leaf<gmpxx::mpq_class>(value);
 }
 
 inline object_leaf<gmpxx::mpq_class> make_mpc_operand(gmpxx::mpq_class&& value)
@@ -848,7 +858,17 @@ inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<
     return mpc_expression_precision_bits{expr.get().real_precision(), expr.get().imag_precision()};
 }
 
+inline mpc_expression_precision_bits mpc_expression_precision(const borrowed_object_leaf<mpfrxx::mpc_class>& expr)
+{
+    return mpc_expression_precision_bits{expr.get().real_precision(), expr.get().imag_precision()};
+}
+
 inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<mpfrxx::mpfr_class>& expr)
+{
+    return mpc_expression_precision_bits{expr.get().precision(), expr.get().precision()};
+}
+
+inline mpc_expression_precision_bits mpc_expression_precision(const borrowed_object_leaf<mpfrxx::mpfr_class>& expr)
 {
     return mpc_expression_precision_bits{expr.get().precision(), expr.get().precision()};
 }
@@ -858,7 +878,17 @@ inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<
     return mpc_expression_precision_bits{0, 0};
 }
 
+inline mpc_expression_precision_bits mpc_expression_precision(const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return mpc_expression_precision_bits{0, 0};
+}
+
 inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<gmpxx::mpq_class>&)
+{
+    return mpc_expression_precision_bits{0, 0};
+}
+
+inline mpc_expression_precision_bits mpc_expression_precision(const borrowed_object_leaf<gmpxx::mpq_class>&)
 {
     return mpc_expression_precision_bits{0, 0};
 }
@@ -896,7 +926,27 @@ inline void mpc_evaluate(
 
 inline void mpc_evaluate(
     mpc_t dest,
+    const borrowed_object_leaf<mpfrxx::mpc_class>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
+{
+    const int inex = mpc_set(dest, expr.get().mpc_data(), rnd);
+    mpc_check_component_ranges(dest, rnd, inex);
+}
+
+inline void mpc_evaluate(
+    mpc_t dest,
     const object_leaf<mpfrxx::mpfr_class>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
+{
+    const int inex = mpc_set_fr(dest, expr.get().mpfr_data(), rnd);
+    mpc_check_component_ranges(dest, rnd, inex);
+}
+
+inline void mpc_evaluate(
+    mpc_t dest,
+    const borrowed_object_leaf<mpfrxx::mpfr_class>& expr,
     mpc_expression_precision_bits,
     mpc_rnd_t rnd)
 {
@@ -916,7 +966,27 @@ inline void mpc_evaluate(
 
 inline void mpc_evaluate(
     mpc_t dest,
+    const borrowed_object_leaf<gmpxx::mpz_class>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
+{
+    const int inex = mpc_set_z(dest, expr.get().mpz_data(), rnd);
+    mpc_check_component_ranges(dest, rnd, inex);
+}
+
+inline void mpc_evaluate(
+    mpc_t dest,
     const object_leaf<gmpxx::mpq_class>& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
+{
+    const int inex = mpc_set_q(dest, expr.get().mpq_data(), rnd);
+    mpc_check_component_ranges(dest, rnd, inex);
+}
+
+inline void mpc_evaluate(
+    mpc_t dest,
+    const borrowed_object_leaf<gmpxx::mpq_class>& expr,
     mpc_expression_precision_bits,
     mpc_rnd_t rnd)
 {
@@ -950,7 +1020,18 @@ inline bool mpc_expression_references(const mpc_t target, const object_leaf<mpfr
            static_cast<const void*>(&expr.get().mpc_data()[0]);
 }
 
+inline bool mpc_expression_references(const mpc_t target, const borrowed_object_leaf<mpfrxx::mpc_class>& expr)
+{
+    return static_cast<const void*>(&target[0]) ==
+           static_cast<const void*>(&expr.get().mpc_data()[0]);
+}
+
 inline bool mpc_expression_references(const mpc_t, const object_leaf<mpfrxx::mpfr_class>&)
+{
+    return false;
+}
+
+inline bool mpc_expression_references(const mpc_t, const borrowed_object_leaf<mpfrxx::mpfr_class>&)
 {
     return false;
 }
@@ -960,10 +1041,32 @@ inline bool mpc_expression_references(const mpc_t, const object_leaf<gmpxx::mpz_
     return false;
 }
 
+inline bool mpc_expression_references(const mpc_t, const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
 inline bool mpc_expression_references(const mpc_t, const object_leaf<gmpxx::mpq_class>&)
 {
     return false;
 }
+
+inline bool mpc_expression_references(const mpc_t, const borrowed_object_leaf<gmpxx::mpq_class>&)
+{
+    return false;
+}
+
+template <typename T>
+struct is_mpc_class_leaf : std::false_type {};
+
+template <>
+struct is_mpc_class_leaf<object_leaf<mpfrxx::mpc_class>> : std::true_type {};
+
+template <>
+struct is_mpc_class_leaf<borrowed_object_leaf<mpfrxx::mpc_class>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpc_class_leaf_v = is_mpc_class_leaf<std::decay_t<T>>::value;
 
 template <typename T, typename Result>
 bool mpc_expression_references(const mpc_t, const scalar_leaf<T, Result>&)
@@ -1098,13 +1201,13 @@ void mpc_evaluate(
         return;
     }
 
-    if constexpr (std::is_same_v<Lhs, object_leaf<mpfrxx::mpc_class>> &&
-                  std::is_same_v<Rhs, object_leaf<mpfrxx::mpc_class>>) {
+    if constexpr (is_mpc_class_leaf_v<Lhs> &&
+                  is_mpc_class_leaf_v<Rhs>) {
         mpc_apply_binary<Op>(dest, expr.lhs().get().mpc_data(), expr.rhs().get().mpc_data(), rnd);
-    } else if constexpr (std::is_same_v<Rhs, object_leaf<mpfrxx::mpc_class>>) {
+    } else if constexpr (is_mpc_class_leaf_v<Rhs>) {
         mpc_evaluate(dest, expr.lhs(), eval_precision, rnd);
         mpc_apply_binary<Op>(dest, dest, expr.rhs().get().mpc_data(), rnd);
-    } else if constexpr (std::is_same_v<Lhs, object_leaf<mpfrxx::mpc_class>> &&
+    } else if constexpr (is_mpc_class_leaf_v<Lhs> &&
                          (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
         mpc_evaluate(dest, expr.rhs(), eval_precision, rnd);
         mpc_apply_binary<Op>(dest, expr.lhs().get().mpc_data(), dest, rnd);
@@ -1124,7 +1227,7 @@ void mpc_compound_assign(mpfrxx::mpc_class& lhs, Rhs&& rhs)
     const mpc_expression_precision_bits precision{lhs.real_precision(), lhs.imag_precision()};
     const mpc_rnd_t rnd = mpfrxx::mpc_class::default_rounding();
     const auto context = current_eval_context(mpc_context_precision(precision));
-    if constexpr (std::is_same_v<operand_type, object_leaf<mpfrxx::mpc_class>>) {
+    if constexpr (is_mpc_class_leaf_v<operand_type>) {
         mpc_apply_binary<Op>(lhs.mpc_data(), lhs.mpc_data(), operand.get().mpc_data(), rnd);
     } else {
         scoped_mpc_temporary value(precision);

@@ -103,6 +103,19 @@ private:
     const T* value_;
 };
 
+template <typename T>
+class borrowed_object_leaf {
+public:
+    using result_type = T;
+
+    explicit borrowed_object_leaf(const T& value) noexcept : value_(&value) {}
+
+    const T& get() const noexcept { return *value_; }
+
+private:
+    const T* value_;
+};
+
 template <typename T, typename Result>
 class scalar_leaf {
 public:
@@ -157,6 +170,9 @@ private:
 template <typename T>
 struct is_expression_node<object_leaf<T>> : std::true_type {};
 
+template <typename T>
+struct is_expression_node<borrowed_object_leaf<T>> : std::true_type {};
+
 template <typename T, typename Result>
 struct is_expression_node<scalar_leaf<T, Result>> : std::true_type {};
 
@@ -200,6 +216,11 @@ struct common_type<gmpfrxx_mkII::detail::object_leaf<T>> {
     using type = T;
 };
 
+template <typename T>
+struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>> {
+    using type = T;
+};
+
 template <typename T, typename Result>
 struct common_type<gmpfrxx_mkII::detail::scalar_leaf<T, Result>> {
     using type = Result;
@@ -221,6 +242,14 @@ struct common_type<gmpfrxx_mkII::detail::object_leaf<T>, U>
 
 template <typename T, typename U>
 struct common_type<U, gmpfrxx_mkII::detail::object_leaf<T>>
+    : common_type<typename common_type<U>::type, T> {};
+
+template <typename T, typename U>
+struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>, U>
+    : common_type<T, typename common_type<U>::type> {};
+
+template <typename T, typename U>
+struct common_type<U, gmpfrxx_mkII::detail::borrowed_object_leaf<T>>
     : common_type<typename common_type<U>::type, T> {};
 
 template <typename T, typename Result, typename U>
@@ -252,6 +281,21 @@ struct common_type<gmpfrxx_mkII::detail::object_leaf<T>,
                    gmpfrxx_mkII::detail::object_leaf<U>>
     : common_type<T, U> {};
 
+template <typename T, typename U>
+struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>,
+                   gmpfrxx_mkII::detail::borrowed_object_leaf<U>>
+    : common_type<T, U> {};
+
+template <typename T, typename U>
+struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>,
+                   gmpfrxx_mkII::detail::object_leaf<U>>
+    : common_type<T, U> {};
+
+template <typename T, typename U>
+struct common_type<gmpfrxx_mkII::detail::object_leaf<T>,
+                   gmpfrxx_mkII::detail::borrowed_object_leaf<U>>
+    : common_type<T, U> {};
+
 template <typename T, typename LeftResult, typename U, typename RightResult>
 struct common_type<gmpfrxx_mkII::detail::scalar_leaf<T, LeftResult>,
                    gmpfrxx_mkII::detail::scalar_leaf<U, RightResult>>
@@ -264,6 +308,16 @@ struct common_type<gmpfrxx_mkII::detail::scalar_leaf<T, LeftResult>,
 
 template <typename T, typename U, typename RightResult>
 struct common_type<gmpfrxx_mkII::detail::object_leaf<T>,
+                   gmpfrxx_mkII::detail::scalar_leaf<U, RightResult>>
+    : common_type<T, RightResult> {};
+
+template <typename T, typename LeftResult, typename U>
+struct common_type<gmpfrxx_mkII::detail::scalar_leaf<T, LeftResult>,
+                   gmpfrxx_mkII::detail::borrowed_object_leaf<U>>
+    : common_type<LeftResult, U> {};
+
+template <typename T, typename U, typename RightResult>
+struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>,
                    gmpfrxx_mkII::detail::scalar_leaf<U, RightResult>>
     : common_type<T, RightResult> {};
 

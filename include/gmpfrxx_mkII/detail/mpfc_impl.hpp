@@ -463,9 +463,9 @@ struct is_mpfc_object_or_node<
 template <typename T>
 inline constexpr bool is_mpfc_object_or_node_v = is_mpfc_object_or_node<T>::value;
 
-inline object_leaf<gmpxx::mpfc_class> make_mpfc_operand(const gmpxx::mpfc_class& value)
+inline borrowed_object_leaf<gmpxx::mpfc_class> make_mpfc_operand(const gmpxx::mpfc_class& value)
 {
-    return object_leaf<gmpxx::mpfc_class>(value);
+    return borrowed_object_leaf<gmpxx::mpfc_class>(value);
 }
 
 inline object_leaf<gmpxx::mpfc_class> make_mpfc_operand(gmpxx::mpfc_class&& value)
@@ -473,9 +473,9 @@ inline object_leaf<gmpxx::mpfc_class> make_mpfc_operand(gmpxx::mpfc_class&& valu
     return object_leaf<gmpxx::mpfc_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpf_class> make_mpfc_operand(const gmpxx::mpf_class& value)
+inline borrowed_object_leaf<gmpxx::mpf_class> make_mpfc_operand(const gmpxx::mpf_class& value)
 {
-    return object_leaf<gmpxx::mpf_class>(value);
+    return borrowed_object_leaf<gmpxx::mpf_class>(value);
 }
 
 inline object_leaf<gmpxx::mpf_class> make_mpfc_operand(gmpxx::mpf_class&& value)
@@ -483,9 +483,9 @@ inline object_leaf<gmpxx::mpf_class> make_mpfc_operand(gmpxx::mpf_class&& value)
     return object_leaf<gmpxx::mpf_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpz_class> make_mpfc_operand(const gmpxx::mpz_class& value)
+inline borrowed_object_leaf<gmpxx::mpz_class> make_mpfc_operand(const gmpxx::mpz_class& value)
 {
-    return object_leaf<gmpxx::mpz_class>(value);
+    return borrowed_object_leaf<gmpxx::mpz_class>(value);
 }
 
 inline object_leaf<gmpxx::mpz_class> make_mpfc_operand(gmpxx::mpz_class&& value)
@@ -493,9 +493,9 @@ inline object_leaf<gmpxx::mpz_class> make_mpfc_operand(gmpxx::mpz_class&& value)
     return object_leaf<gmpxx::mpz_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpq_class> make_mpfc_operand(const gmpxx::mpq_class& value)
+inline borrowed_object_leaf<gmpxx::mpq_class> make_mpfc_operand(const gmpxx::mpq_class& value)
 {
-    return object_leaf<gmpxx::mpq_class>(value);
+    return borrowed_object_leaf<gmpxx::mpq_class>(value);
 }
 
 inline object_leaf<gmpxx::mpq_class> make_mpfc_operand(gmpxx::mpq_class&& value)
@@ -521,7 +521,17 @@ inline mp_bitcnt_t mpfc_expression_real_precision(const object_leaf<gmpxx::mpfc_
     return expr.get().real_precision();
 }
 
+inline mp_bitcnt_t mpfc_expression_real_precision(const borrowed_object_leaf<gmpxx::mpfc_class>& expr)
+{
+    return expr.get().real_precision();
+}
+
 inline mp_bitcnt_t mpfc_expression_imag_precision(const object_leaf<gmpxx::mpfc_class>& expr)
+{
+    return expr.get().imag_precision();
+}
+
+inline mp_bitcnt_t mpfc_expression_imag_precision(const borrowed_object_leaf<gmpxx::mpfc_class>& expr)
 {
     return expr.get().imag_precision();
 }
@@ -531,7 +541,17 @@ inline mp_bitcnt_t mpfc_expression_real_precision(const object_leaf<gmpxx::mpf_c
     return expr.get().precision();
 }
 
+inline mp_bitcnt_t mpfc_expression_real_precision(const borrowed_object_leaf<gmpxx::mpf_class>& expr)
+{
+    return expr.get().precision();
+}
+
 inline mp_bitcnt_t mpfc_expression_imag_precision(const object_leaf<gmpxx::mpf_class>& expr)
+{
+    return expr.get().precision();
+}
+
+inline mp_bitcnt_t mpfc_expression_imag_precision(const borrowed_object_leaf<gmpxx::mpf_class>& expr)
 {
     return expr.get().precision();
 }
@@ -541,7 +561,17 @@ inline mp_bitcnt_t mpfc_expression_real_precision(const object_leaf<gmpxx::mpz_c
     return 0;
 }
 
+inline mp_bitcnt_t mpfc_expression_real_precision(const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return 0;
+}
+
 inline mp_bitcnt_t mpfc_expression_imag_precision(const object_leaf<gmpxx::mpz_class>&)
+{
+    return 0;
+}
+
+inline mp_bitcnt_t mpfc_expression_imag_precision(const borrowed_object_leaf<gmpxx::mpz_class>&)
 {
     return 0;
 }
@@ -551,7 +581,17 @@ inline mp_bitcnt_t mpfc_expression_real_precision(const object_leaf<gmpxx::mpq_c
     return 0;
 }
 
+inline mp_bitcnt_t mpfc_expression_real_precision(const borrowed_object_leaf<gmpxx::mpq_class>&)
+{
+    return 0;
+}
+
 inline mp_bitcnt_t mpfc_expression_imag_precision(const object_leaf<gmpxx::mpq_class>&)
+{
+    return 0;
+}
+
+inline mp_bitcnt_t mpfc_expression_imag_precision(const borrowed_object_leaf<gmpxx::mpq_class>&)
 {
     return 0;
 }
@@ -637,7 +677,19 @@ inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpfc
     mpfc_imag_ref(dest) = expr.get().imag();
 }
 
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpfc_class>& expr)
+{
+    mpfc_real_ref(dest) = expr.get().real();
+    mpfc_imag_ref(dest) = expr.get().imag();
+}
+
 inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpf_class>& expr)
+{
+    mpfc_real_ref(dest) = expr.get();
+    mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
+}
+
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpf_class>& expr)
 {
     mpfc_real_ref(dest) = expr.get();
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
@@ -649,7 +701,21 @@ inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpz_
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpz_class>& expr)
+{
+    mpf_set_z(mpfc_real_ref(dest).mpf_data(), expr.get().mpz_data());
+    mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
+}
+
 inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpq_class>& expr)
+{
+    mpf_set_q_at_precision(mpfc_real_ref(dest).mpf_data(),
+                           expr.get().mpq_data(),
+                           mpfc_real_ref(dest).precision());
+    mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
+}
+
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpq_class>& expr)
 {
     mpf_set_q_at_precision(mpfc_real_ref(dest).mpf_data(),
                            expr.get().mpq_data(),
@@ -692,7 +758,19 @@ inline bool mpfc_expression_references(
     return &target == &expr.get();
 }
 
+inline bool mpfc_expression_references(
+    const gmpxx::mpfc_class& target,
+    const borrowed_object_leaf<gmpxx::mpfc_class>& expr)
+{
+    return &target == &expr.get();
+}
+
 inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const object_leaf<gmpxx::mpf_class>&)
+{
+    return false;
+}
+
+inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const borrowed_object_leaf<gmpxx::mpf_class>&)
 {
     return false;
 }
@@ -702,10 +780,32 @@ inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const object_le
     return false;
 }
 
+inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
 inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const object_leaf<gmpxx::mpq_class>&)
 {
     return false;
 }
+
+inline bool mpfc_expression_references(const gmpxx::mpfc_class&, const borrowed_object_leaf<gmpxx::mpq_class>&)
+{
+    return false;
+}
+
+template <typename T>
+struct is_mpfc_class_leaf : std::false_type {};
+
+template <>
+struct is_mpfc_class_leaf<object_leaf<gmpxx::mpfc_class>> : std::true_type {};
+
+template <>
+struct is_mpfc_class_leaf<borrowed_object_leaf<gmpxx::mpfc_class>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpfc_class_leaf_v = is_mpfc_class_leaf<std::decay_t<T>>::value;
 
 template <typename T, typename Result>
 bool mpfc_expression_references(const gmpxx::mpfc_class&, const scalar_leaf<T, Result>&)
@@ -901,13 +1001,13 @@ void mpfc_evaluate(gmpxx::mpfc_class& dest, const binary_expr<Op, Lhs, Rhs, Resu
         mpfc_evaluate_to_temporary(lhs, expr.lhs(), real_precision, imag_precision);
         mpfc_evaluate_to_temporary(rhs, expr.rhs(), real_precision, imag_precision);
         mpfc_apply_binary<Op>(dest, lhs, rhs);
-    } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpfc_class>> &&
-                         std::is_same_v<Rhs, object_leaf<gmpxx::mpfc_class>>) {
+    } else if constexpr (is_mpfc_class_leaf_v<Lhs> &&
+                         is_mpfc_class_leaf_v<Rhs>) {
         mpfc_apply_binary<Op>(dest, expr.lhs().get(), expr.rhs().get());
-    } else if constexpr (std::is_same_v<Rhs, object_leaf<gmpxx::mpfc_class>>) {
+    } else if constexpr (is_mpfc_class_leaf_v<Rhs>) {
         mpfc_evaluate(dest, expr.lhs());
         mpfc_apply_binary<Op>(dest, dest, expr.rhs().get());
-    } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpfc_class>> &&
+    } else if constexpr (is_mpfc_class_leaf_v<Lhs> &&
                          (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
         mpfc_evaluate(dest, expr.rhs());
         mpfc_apply_binary<Op>(dest, expr.lhs().get(), dest);
@@ -924,7 +1024,7 @@ void mpfc_compound_assign(gmpxx::mpfc_class& lhs, Rhs&& rhs)
 {
     auto operand = make_mpfc_operand(std::forward<Rhs>(rhs));
     using operand_type = std::decay_t<decltype(operand)>;
-    if constexpr (std::is_same_v<operand_type, object_leaf<gmpxx::mpfc_class>>) {
+    if constexpr (is_mpfc_class_leaf_v<operand_type>) {
         mpfc_apply_binary<Op>(lhs, lhs, operand.get());
     } else {
         gmpxx::mpfc_class value = gmpxx::mpfc_class::with_precision(lhs.real_precision(), lhs.imag_precision());

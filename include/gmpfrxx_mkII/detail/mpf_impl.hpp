@@ -1336,9 +1336,9 @@ struct is_mpf_object_or_node<
 template <typename T>
 inline constexpr bool is_mpf_object_or_node_v = is_mpf_object_or_node<T>::value;
 
-inline object_leaf<gmpxx::mpf_class> make_mpf_operand(const gmpxx::mpf_class& value)
+inline borrowed_object_leaf<gmpxx::mpf_class> make_mpf_operand(const gmpxx::mpf_class& value)
 {
-    return object_leaf<gmpxx::mpf_class>(value);
+    return borrowed_object_leaf<gmpxx::mpf_class>(value);
 }
 
 inline object_leaf<gmpxx::mpf_class> make_mpf_operand(gmpxx::mpf_class&& value)
@@ -1346,9 +1346,9 @@ inline object_leaf<gmpxx::mpf_class> make_mpf_operand(gmpxx::mpf_class&& value)
     return object_leaf<gmpxx::mpf_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpz_class> make_mpf_operand(const gmpxx::mpz_class& value)
+inline borrowed_object_leaf<gmpxx::mpz_class> make_mpf_operand(const gmpxx::mpz_class& value)
 {
-    return object_leaf<gmpxx::mpz_class>(value);
+    return borrowed_object_leaf<gmpxx::mpz_class>(value);
 }
 
 inline object_leaf<gmpxx::mpz_class> make_mpf_operand(gmpxx::mpz_class&& value)
@@ -1356,9 +1356,9 @@ inline object_leaf<gmpxx::mpz_class> make_mpf_operand(gmpxx::mpz_class&& value)
     return object_leaf<gmpxx::mpz_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpq_class> make_mpf_operand(const gmpxx::mpq_class& value)
+inline borrowed_object_leaf<gmpxx::mpq_class> make_mpf_operand(const gmpxx::mpq_class& value)
 {
-    return object_leaf<gmpxx::mpq_class>(value);
+    return borrowed_object_leaf<gmpxx::mpq_class>(value);
 }
 
 inline object_leaf<gmpxx::mpq_class> make_mpf_operand(gmpxx::mpq_class&& value)
@@ -1384,12 +1384,27 @@ inline mp_bitcnt_t mpf_expression_precision(const object_leaf<gmpxx::mpf_class>&
     return expr.get().precision();
 }
 
+inline mp_bitcnt_t mpf_expression_precision(const borrowed_object_leaf<gmpxx::mpf_class>& expr)
+{
+    return expr.get().precision();
+}
+
 inline mp_bitcnt_t mpf_expression_precision(const object_leaf<gmpxx::mpz_class>&)
 {
     return 0;
 }
 
+inline mp_bitcnt_t mpf_expression_precision(const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return 0;
+}
+
 inline mp_bitcnt_t mpf_expression_precision(const object_leaf<gmpxx::mpq_class>&)
+{
+    return 0;
+}
+
+inline mp_bitcnt_t mpf_expression_precision(const borrowed_object_leaf<gmpxx::mpq_class>&)
 {
     return 0;
 }
@@ -1416,6 +1431,19 @@ mp_bitcnt_t mpf_expression_precision(const binary_expr<Op, Lhs, Rhs, Result>& ex
 {
     return std::max(mpf_expression_precision(expr.lhs()), mpf_expression_precision(expr.rhs()));
 }
+
+template <typename T>
+struct is_mpf_class_leaf : std::false_type {};
+
+template <>
+struct is_mpf_class_leaf<object_leaf<gmpxx::mpf_class>> : std::true_type {};
+
+template <>
+struct is_mpf_class_leaf<borrowed_object_leaf<gmpxx::mpf_class>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpf_class_leaf_v =
+    is_mpf_class_leaf<std::decay_t<T>>::value;
 
 template <typename T>
 struct mpf_expression_contains_random : std::false_type {};
@@ -1448,6 +1476,11 @@ inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpf_class>& expr, 
     mpf_set(dest, expr.get().mpf_data());
 }
 
+inline void mpf_evaluate(mpf_t dest, const borrowed_object_leaf<gmpxx::mpf_class>& expr, mp_bitcnt_t)
+{
+    mpf_set(dest, expr.get().mpf_data());
+}
+
 inline void mpf_set_q_at_precision(mpf_t dest, const mpq_t value, mp_bitcnt_t eval_precision)
 {
     mpf_t denominator;
@@ -1463,7 +1496,17 @@ inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpz_class>& expr, 
     mpf_set_z(dest, expr.get().mpz_data());
 }
 
+inline void mpf_evaluate(mpf_t dest, const borrowed_object_leaf<gmpxx::mpz_class>& expr, mp_bitcnt_t)
+{
+    mpf_set_z(dest, expr.get().mpz_data());
+}
+
 inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpq_class>& expr, mp_bitcnt_t eval_precision)
+{
+    mpf_set_q_at_precision(dest, expr.get().mpq_data(), eval_precision);
+}
+
+inline void mpf_evaluate(mpf_t dest, const borrowed_object_leaf<gmpxx::mpq_class>& expr, mp_bitcnt_t eval_precision)
 {
     mpf_set_q_at_precision(dest, expr.get().mpq_data(), eval_precision);
 }
@@ -1503,12 +1546,28 @@ inline bool mpf_expression_references(const mpf_t target, const object_leaf<gmpx
            static_cast<const void*>(&expr.get().mpf_data()[0]);
 }
 
+inline bool mpf_expression_references(const mpf_t target, const borrowed_object_leaf<gmpxx::mpf_class>& expr)
+{
+    return static_cast<const void*>(&target[0]) ==
+           static_cast<const void*>(&expr.get().mpf_data()[0]);
+}
+
 inline bool mpf_expression_references(const mpf_t, const object_leaf<gmpxx::mpz_class>&)
 {
     return false;
 }
 
+inline bool mpf_expression_references(const mpf_t, const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
 inline bool mpf_expression_references(const mpf_t, const object_leaf<gmpxx::mpq_class>&)
+{
+    return false;
+}
+
+inline bool mpf_expression_references(const mpf_t, const borrowed_object_leaf<gmpxx::mpq_class>&)
 {
     return false;
 }
@@ -1645,13 +1704,13 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
             return;
         }
 
-        if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
-                      std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>>) {
+        if constexpr (is_mpf_class_leaf_v<Lhs> &&
+                      is_mpf_class_leaf_v<Rhs>) {
             mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
-        } else if constexpr (std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>>) {
+        } else if constexpr (is_mpf_class_leaf_v<Rhs>) {
             mpf_evaluate(dest, expr.lhs(), eval_precision);
             mpf_apply_binary<Op>(dest, dest, expr.rhs().get().mpf_data());
-        } else if constexpr (std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
+        } else if constexpr (is_mpf_class_leaf_v<Lhs> &&
                              (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
             mpf_evaluate(dest, expr.rhs(), eval_precision);
             mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), dest);
@@ -1674,8 +1733,8 @@ template <typename Op, typename Lhs, typename Rhs, typename Result>
 bool mpf_try_assign_direct_leaf_binary(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
 {
     if constexpr (std::is_same_v<Result, gmpxx::mpf_class> &&
-                  std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
-                  std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>> &&
+                  is_mpf_class_leaf_v<Lhs> &&
+                  is_mpf_class_leaf_v<Rhs> &&
                   (std::is_same_v<Op, add_op> ||
                    std::is_same_v<Op, sub_op> ||
                    std::is_same_v<Op, mul_op> ||
@@ -1693,8 +1752,8 @@ struct is_mpf_mul_direct_expr : std::false_type {};
 template <typename Lhs, typename Rhs>
 struct is_mpf_mul_direct_expr<binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>>
     : std::bool_constant<
-          std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
-          std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>>> {};
+          is_mpf_class_leaf_v<Lhs> &&
+          is_mpf_class_leaf_v<Rhs>> {};
 
 template <typename T>
 inline constexpr bool is_mpf_mul_direct_expr_v =
@@ -1831,7 +1890,7 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&&
 {
     auto operand = make_mpf_operand(std::forward<Rhs>(rhs));
     using operand_type = std::decay_t<decltype(operand)>;
-    if constexpr (std::is_same_v<operand_type, object_leaf<gmpxx::mpf_class>>) {
+    if constexpr (is_mpf_class_leaf_v<operand_type>) {
         mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), operand.get().mpf_data());
     } else if constexpr (
         is_mpf_mul_direct_expr_v<operand_type> &&

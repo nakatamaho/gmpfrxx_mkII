@@ -1,3 +1,50 @@
+Post-phase split MPF borrowed expression leaves:
+DONE
+
+Implemented features:
+- Added `borrowed_object_leaf<T>` for expression operands that only reference
+  existing lvalue objects.
+- Routed GMP MPF lvalue operands through borrowed leaves while keeping rvalue
+  operands on owning `object_leaf<T>`, preserving temporary lifetime safety.
+- Updated GMP MPF expression precision, evaluation, alias checks, direct
+  leaf-leaf assignment, and direct multiply compound-assignment detection to
+  accept both borrowed and owning MPF leaves.
+- Updated the ABI fingerprint test to reflect the new borrowed MPF lvalue leaf
+  type.
+
+Tests added:
+- No new tests were added.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/expr.hpp`
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `tests/test_abi_fingerprint.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_abi_fingerprint test_et_contract_mpf test_mpf_numeric_equivalence test_compound_assign test_mpf_aliasing`
+- `cmake --build build-release-nocount -j --target Raxpy_gmp_kernel_01_mkII`
+- `nm -C build-release-nocount/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII | rg "mpf_compound_assign|_Raxpy"`
+- `objdump -Cd build-release-nocount/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII | rg -n "<_Raxpy|__gmpf_get_prec|__gmpf_init2|__gmpf_mul|__gmpf_add|__gmpf_clear|cmpb"`
+- `ctest --test-dir build -R "test_abi_fingerprint|test_et_contract_mpf|test_mpf_numeric_equivalence|test_compound_assign|test_mpf_aliasing" --output-on-failure`
+- `build-release-nocount/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 1000 512`
+- `git diff --check`
+- Release/no-allocator-count Raxpy `5000000 512`, 5 runs each:
+  `Raxpy_gmp_kernel_01_orig` and `Raxpy_gmp_kernel_01_mkII`.
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused CTest: PASS, 8/8.
+- Raxpy smoke: PASS, `Result OK`.
+- `git diff --check`: PASS.
+- Best of 5 Release/no-allocator-count Raxpy `5000000 512`:
+  - `Raxpy_gmp_kernel_01_orig`: `29.3731 MFLOPS`
+  - `Raxpy_gmp_kernel_01_mkII`: `29.3350 MFLOPS`
+
+Known issues:
+- Borrowed leaves are currently used for the GMP MPF path. Other numeric
+  families still use the existing owning-capable `object_leaf<T>` path.
+
 Post-phase inline GMP MPF compound multiply assignment:
 DONE
 
@@ -1141,6 +1188,58 @@ Pass/fail result:
 - Focused ctest: PASS, 2/2 tests passed.
 - Full build: PASS.
 - Full ctest: PASS, 144/144 tests passed.
+
+Known issues:
+- None.
+
+Post-phase borrowed expression leaves for MPFR/MPC/MPFC:
+DONE
+
+Implemented features:
+- Extended borrowed lvalue expression leaves from GMP MPF to MPFR, MPC, and
+  GMP MPFC paths.
+- Kept rvalue operands as owning expression leaves, so temporary lifetime
+  safety is unchanged.
+- Updated MPFR/MPC/MPFC precision discovery, evaluation, alias detection, and
+  direct leaf fast paths to accept both owning and borrowed object leaves.
+- Added ABI fingerprint assertions covering borrowed MPFR, MPC, and MPFC
+  expression operands.
+
+Tests added:
+- None.
+
+Tests updated:
+- `tests/test_abi_fingerprint.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "make_mpfr_operand|object_leaf<mpfrxx::mpfr_class|is_mpfr_object_leaf|mpfr_try_assign_direct_leaf_binary|mpfr_compound_assign" include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `rg -n "make_mpc_operand|object_leaf<mpfrxx::mpc_class|is_mpc|mpc_compound_assign|mpc_evaluate" include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `rg -n "make_mpfc_operand|object_leaf<gmpxx::mpfc_class|is_mpfc|mpfc_compound_assign|mpfc_evaluate" include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1618,1820p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1938,2285p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '793,975p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '466,940p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `cmake --build build -j --target test_abi_fingerprint test_et_contract_mpfr test_et_contract_mpc test_et_contract_mpfc test_mpfr_numeric_equivalence test_mpc_basic test_mpfc_basic test_mpfr_compound_assign`
+- `ctest --test-dir build -R "test_abi_fingerprint|test_et_contract_mpfr|test_et_contract_mpc|test_et_contract_mpfc|test_mpfr_numeric_equivalence|test_mpc_basic|test_mpfc_basic|test_mpfr_compound_assign" --output-on-failure`
+- `git diff --check`
+- `cmake --build build-release-nocount -j --target Raxpy_mpfr_kernel_01_mkII Raxpy_mpfr_kernel_01_mkII_FMA`
+- `build-release-nocount/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 1000 512`
+- `build-release-nocount/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_FMA 1000 512`
+
+Pass/fail result:
+- Focused debug build: PASS.
+- Focused CTest: PASS, 9/9 tests passed.
+- `git diff --check`: PASS.
+- MPFR Raxpy release targets: PASS.
+- MPFR Raxpy smoke run: PASS, result OK.
+- MPFR Raxpy FMA smoke run: PASS, result OK.
+- Full debug build: PASS.
+- Initial full CTest exposed fixed-precision move-assignment allocation-count
+  regressions in MPFR and MPC; fixed by separating fastpath move assignment
+  from precision-preserving normal move assignment with `if constexpr`.
+- Rerun of failing alloc-count tests: PASS, 2/2 tests passed.
+- Final full CTest: PASS, 153/153 tests passed.
 
 Known issues:
 - None.

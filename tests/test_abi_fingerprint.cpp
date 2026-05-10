@@ -164,13 +164,13 @@ void compile_time_fingerprint()
 
     static_assert(is_expression_node_v<mpf_add_int>);
     static_assert(std::is_same_v<typename mpf_add_int::op_type, add_op>);
-    static_assert(std::is_same_v<typename mpf_add_int::lhs_type, object_leaf<gmpxx::mpf_class>>);
+    static_assert(std::is_same_v<typename mpf_add_int::lhs_type, gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpf_class>>);
     static_assert(std::is_same_v<typename mpf_add_int::rhs_type, scalar_leaf<std::int64_t, gmpxx::mpf_class>>);
     static_assert(std::is_same_v<typename mpf_add_int::result_type, gmpxx::mpf_class>);
 
     static_assert(std::is_same_v<typename mpf_mul_uint::op_type, mul_op>);
     static_assert(std::is_same_v<typename mpf_mul_uint::lhs_type, scalar_leaf<std::uint64_t, gmpxx::mpf_class>>);
-    static_assert(std::is_same_v<typename mpf_mul_uint::rhs_type, object_leaf<gmpxx::mpf_class>>);
+    static_assert(std::is_same_v<typename mpf_mul_uint::rhs_type, gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpf_class>>);
     static_assert(std::is_same_v<typename mpf_mul_uint::result_type, gmpxx::mpf_class>);
 
     static_assert(std::is_same_v<typename mpf_div_float::op_type, div_op>);
@@ -196,6 +196,12 @@ void compile_time_fingerprint()
     static_assert(std::is_same_v<typename mpf_plus_mpfc::result_type, gmpxx::mpfc_class>);
     static_assert(std::is_same_v<typename z_plus_mpfc::result_type, gmpxx::mpfc_class>);
     static_assert(std::is_same_v<typename q_plus_mpfc::result_type, gmpxx::mpfc_class>);
+    static_assert(std::is_same_v<typename q_plus_mpfr::lhs_type, gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpq_class>>);
+    static_assert(std::is_same_v<typename q_plus_mpfr::rhs_type, gmpfrxx_mkII::detail::borrowed_object_leaf<mpfrxx::mpfr_class>>);
+    static_assert(std::is_same_v<typename mpfr_plus_mpc::lhs_type, gmpfrxx_mkII::detail::borrowed_object_leaf<mpfrxx::mpfr_class>>);
+    static_assert(std::is_same_v<typename mpfr_plus_mpc::rhs_type, gmpfrxx_mkII::detail::borrowed_object_leaf<mpfrxx::mpc_class>>);
+    static_assert(std::is_same_v<typename mpf_plus_mpfc::lhs_type, gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpf_class>>);
+    static_assert(std::is_same_v<typename mpf_plus_mpfc::rhs_type, gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpfc_class>>);
 
     static_assert(std::is_same_v<gmpfrxx_mkII::detail::expression_result_type_t<mpf_add_int>, gmpxx::mpf_class>);
     static_assert(is_expression_node_v<decltype(-std::declval<const gmpxx::mpf_class&>())>);

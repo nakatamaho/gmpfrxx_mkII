@@ -279,15 +279,25 @@ public:
             return *this;
         }
 
-        if (!valid_) {
-            std::memcpy(value_, other.value_, sizeof(value_));
-            valid_ = true;
-            other.valid_ = false;
-        } else if (this->precision() == other.precision()) {
-            mpfr_swap(value_, other.value_);
+        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else {
+                mpfr_swap(value_, other.value_);
+            }
         } else {
-            const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-            mpfr_set(value_, other.value_, context.rounding_mode);
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else if (this->precision() == other.precision()) {
+                mpfr_swap(value_, other.value_);
+            } else {
+                const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
+                mpfr_set(value_, other.value_, context.rounding_mode);
+            }
         }
         return *this;
     }
@@ -1625,9 +1635,9 @@ struct is_mpfr_object_or_node<
 template <typename T>
 inline constexpr bool is_mpfr_object_or_node_v = is_mpfr_object_or_node<T>::value;
 
-inline object_leaf<mpfrxx::mpfr_class> make_mpfr_operand(const mpfrxx::mpfr_class& value)
+inline borrowed_object_leaf<mpfrxx::mpfr_class> make_mpfr_operand(const mpfrxx::mpfr_class& value)
 {
-    return object_leaf<mpfrxx::mpfr_class>(value);
+    return borrowed_object_leaf<mpfrxx::mpfr_class>(value);
 }
 
 inline object_leaf<mpfrxx::mpfr_class> make_mpfr_operand(mpfrxx::mpfr_class&& value)
@@ -1635,9 +1645,9 @@ inline object_leaf<mpfrxx::mpfr_class> make_mpfr_operand(mpfrxx::mpfr_class&& va
     return object_leaf<mpfrxx::mpfr_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpz_class> make_mpfr_operand(const gmpxx::mpz_class& value)
+inline borrowed_object_leaf<gmpxx::mpz_class> make_mpfr_operand(const gmpxx::mpz_class& value)
 {
-    return object_leaf<gmpxx::mpz_class>(value);
+    return borrowed_object_leaf<gmpxx::mpz_class>(value);
 }
 
 inline object_leaf<gmpxx::mpz_class> make_mpfr_operand(gmpxx::mpz_class&& value)
@@ -1645,9 +1655,9 @@ inline object_leaf<gmpxx::mpz_class> make_mpfr_operand(gmpxx::mpz_class&& value)
     return object_leaf<gmpxx::mpz_class>(std::move(value));
 }
 
-inline object_leaf<gmpxx::mpq_class> make_mpfr_operand(const gmpxx::mpq_class& value)
+inline borrowed_object_leaf<gmpxx::mpq_class> make_mpfr_operand(const gmpxx::mpq_class& value)
 {
-    return object_leaf<gmpxx::mpq_class>(value);
+    return borrowed_object_leaf<gmpxx::mpq_class>(value);
 }
 
 inline object_leaf<gmpxx::mpq_class> make_mpfr_operand(gmpxx::mpq_class&& value)
@@ -1673,12 +1683,27 @@ inline mpfr_prec_t mpfr_expression_precision(const object_leaf<mpfrxx::mpfr_clas
     return expr.get().precision();
 }
 
+inline mpfr_prec_t mpfr_expression_precision(const borrowed_object_leaf<mpfrxx::mpfr_class>& expr)
+{
+    return expr.get().precision();
+}
+
 inline mpfr_prec_t mpfr_expression_precision(const object_leaf<gmpxx::mpz_class>&)
 {
     return 0;
 }
 
+inline mpfr_prec_t mpfr_expression_precision(const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return 0;
+}
+
 inline mpfr_prec_t mpfr_expression_precision(const object_leaf<gmpxx::mpq_class>&)
+{
+    return 0;
+}
+
+inline mpfr_prec_t mpfr_expression_precision(const borrowed_object_leaf<gmpxx::mpq_class>&)
 {
     return 0;
 }
@@ -1743,6 +1768,15 @@ inline void mpfr_evaluate(
 
 inline void mpfr_evaluate(
     mpfr_t dest,
+    const borrowed_object_leaf<mpfrxx::mpfr_class>& expr,
+    mpfr_prec_t,
+    mpfr_rnd_t rnd)
+{
+    mpfr_set(dest, expr.get().mpfr_data(), rnd);
+}
+
+inline void mpfr_evaluate(
+    mpfr_t dest,
     const object_leaf<gmpxx::mpz_class>& expr,
     mpfr_prec_t,
     mpfr_rnd_t rnd)
@@ -1752,7 +1786,25 @@ inline void mpfr_evaluate(
 
 inline void mpfr_evaluate(
     mpfr_t dest,
+    const borrowed_object_leaf<gmpxx::mpz_class>& expr,
+    mpfr_prec_t,
+    mpfr_rnd_t rnd)
+{
+    mpfr_set_z(dest, expr.get().mpz_data(), rnd);
+}
+
+inline void mpfr_evaluate(
+    mpfr_t dest,
     const object_leaf<gmpxx::mpq_class>& expr,
+    mpfr_prec_t,
+    mpfr_rnd_t rnd)
+{
+    mpfr_set_q(dest, expr.get().mpq_data(), rnd);
+}
+
+inline void mpfr_evaluate(
+    mpfr_t dest,
+    const borrowed_object_leaf<gmpxx::mpq_class>& expr,
     mpfr_prec_t,
     mpfr_rnd_t rnd)
 {
@@ -1804,12 +1856,30 @@ inline bool mpfr_expression_references(
            static_cast<const void*>(&expr.get().mpfr_data()[0]);
 }
 
+inline bool mpfr_expression_references(
+    const mpfr_t target,
+    const borrowed_object_leaf<mpfrxx::mpfr_class>& expr)
+{
+    return static_cast<const void*>(&target[0]) ==
+           static_cast<const void*>(&expr.get().mpfr_data()[0]);
+}
+
 inline bool mpfr_expression_references(const mpfr_t, const object_leaf<gmpxx::mpz_class>&)
 {
     return false;
 }
 
+inline bool mpfr_expression_references(const mpfr_t, const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
 inline bool mpfr_expression_references(const mpfr_t, const object_leaf<gmpxx::mpq_class>&)
+{
+    return false;
+}
+
+inline bool mpfr_expression_references(const mpfr_t, const borrowed_object_leaf<gmpxx::mpq_class>&)
 {
     return false;
 }
@@ -1947,6 +2017,9 @@ struct is_mpfr_object_leaf : std::false_type {};
 
 template <>
 struct is_mpfr_object_leaf<object_leaf<mpfrxx::mpfr_class>> : std::true_type {};
+
+template <>
+struct is_mpfr_object_leaf<borrowed_object_leaf<mpfrxx::mpfr_class>> : std::true_type {};
 
 template <typename T>
 inline constexpr bool is_mpfr_object_leaf_v = is_mpfr_object_leaf<std::decay_t<T>>::value;
@@ -2109,13 +2182,13 @@ void mpfr_evaluate(
         return;
     }
 
-    if constexpr (std::is_same_v<Lhs, object_leaf<mpfrxx::mpfr_class>> &&
-                  std::is_same_v<Rhs, object_leaf<mpfrxx::mpfr_class>>) {
+    if constexpr (is_mpfr_object_leaf_v<Lhs> &&
+                  is_mpfr_object_leaf_v<Rhs>) {
         mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
-    } else if constexpr (std::is_same_v<Rhs, object_leaf<mpfrxx::mpfr_class>>) {
+    } else if constexpr (is_mpfr_object_leaf_v<Rhs>) {
         mpfr_evaluate(dest, expr.lhs(), eval_precision, rnd);
         mpfr_apply_binary<Op>(dest, dest, expr.rhs().get().mpfr_data(), rnd);
-    } else if constexpr (std::is_same_v<Lhs, object_leaf<mpfrxx::mpfr_class>> &&
+    } else if constexpr (is_mpfr_object_leaf_v<Lhs> &&
                          (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
         mpfr_evaluate(dest, expr.rhs(), eval_precision, rnd);
         mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), dest, rnd);
@@ -2140,8 +2213,8 @@ bool mpfr_try_assign_direct_leaf_binary(
     mpfr_rnd_t rnd)
 {
     if constexpr (std::is_same_v<Result, mpfrxx::mpfr_class> &&
-                  std::is_same_v<Lhs, object_leaf<mpfrxx::mpfr_class>> &&
-                  std::is_same_v<Rhs, object_leaf<mpfrxx::mpfr_class>> &&
+                  is_mpfr_object_leaf_v<Lhs> &&
+                  is_mpfr_object_leaf_v<Rhs> &&
                   (std::is_same_v<Op, add_op> ||
                    std::is_same_v<Op, sub_op> ||
                    std::is_same_v<Op, mul_op> ||
@@ -2270,7 +2343,7 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
     const mpfr_prec_t precision = lhs.precision();
     const auto context = current_eval_context(precision);
 
-    if constexpr (std::is_same_v<operand_type, object_leaf<mpfrxx::mpfr_class>>) {
+    if constexpr (is_mpfr_object_leaf_v<operand_type>) {
         mpfr_apply_binary<Op>(
             lhs.mpfr_data(),
             lhs.mpfr_data(),
