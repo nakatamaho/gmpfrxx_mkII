@@ -62,6 +62,20 @@ add_phase0_test(test_mpfr_transcendent_functions mpfrxx_mkII)
 add_phase0_test(test_et_contract_mpf gmpxx_mkII)
 add_phase0_test(test_mpf_basic gmpxx_mkII)
 add_phase0_test(test_mpf_precision_policy gmpxx_mkII)
+add_phase0_test(test_mpf_default_precision_env gmpxx_mkII)
+set_tests_properties(test_mpf_default_precision_env PROPERTIES
+    ENVIRONMENT "GMPXX_MKII_DEFAULT_MPF_PREC_BITS=1024"
+)
+add_executable(test_mpf_default_precision_invalid_env test_mpf_default_precision_invalid_env.cpp)
+target_link_libraries(test_mpf_default_precision_invalid_env PRIVATE gmpxx_mkII)
+add_test(
+    NAME test_mpf_default_precision_invalid_env
+    COMMAND "${CMAKE_COMMAND}"
+        -DTEST_EXECUTABLE=$<TARGET_FILE:test_mpf_default_precision_invalid_env>
+        -DTEST_ENVIRONMENT=GMPXX_MKII_DEFAULT_MPF_PREC_BITS=abc
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/expect_process_failure.cmake"
+)
+add_phase0_test(test_mpf_external_provider gmpxx_mkII_default_context_provider)
 add_phase0_test(test_mpf_aliasing gmpxx_mkII)
 add_phase0_test(test_mpf_string_io gmpxx_mkII)
 add_phase0_test(test_mpf_alloc_count gmpxx_mkII)
@@ -159,3 +173,17 @@ add_compile_fail_test(test_mpfc_plus_mpfr gmpfrxx_mkII)
 add_compile_fail_test(test_mpfr_plus_mpfc gmpfrxx_mkII)
 add_compile_fail_test(test_mpfc_plus_mpc gmpfrxx_mkII)
 add_compile_fail_test(test_mpc_plus_mpfc gmpfrxx_mkII)
+
+add_test(
+    NAME link_fail_mpf_external_provider_missing
+    COMMAND ${CMAKE_CXX_COMPILER}
+        -std=c++17
+        -DGMPXX_MKII_DEFAULT_CONTEXT_MODE=GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
+        -I${CMAKE_SOURCE_DIR}/include
+        -I${CMAKE_BINARY_DIR}/generated
+        -I${GMP_INCLUDE_DIR}
+        "${CMAKE_CURRENT_SOURCE_DIR}/test_mpf_external_provider_missing.cpp"
+        ${GMP_LIBRARY}
+        -o "${CMAKE_CURRENT_BINARY_DIR}/test_mpf_external_provider_missing"
+)
+set_tests_properties(link_fail_mpf_external_provider_missing PROPERTIES WILL_FAIL TRUE)

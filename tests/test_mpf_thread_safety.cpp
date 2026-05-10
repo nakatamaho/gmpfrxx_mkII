@@ -29,97 +29,50 @@
 #include <gmpxx_mkII.h>
 
 #include <atomic>
-#include <cstdlib>
-#include <mutex>
 #include <thread>
 #include <vector>
 
 namespace {
 
-void require_default_precision_is_user_managed_global()
+void require_gmp_global_default_does_not_pollute_wrapper_default()
 {
-    gmpxx::set_default_mpf_precision_bits(777);
+    const mp_bitcnt_t wrapper_default = gmpxx::default_mpf_precision_bits();
+    const mp_bitcnt_t original_gmp_default = mpf_get_default_prec();
 
-    std::mutex mutex;
+    mpf_set_default_prec(37);
+
+    gmpxx::mpf_class value;
+    if (gmpxx::default_mpf_precision_bits() != wrapper_default ||
+        value.precision() < wrapper_default ||
+        value.precision() == 37) {
+        std::abort();
+    }
+
+    mpf_set_default_prec(original_gmp_default);
+}
+
+void require_parallel_default_construction_uses_frozen_wrapper_default()
+{
+    const mp_bitcnt_t wrapper_default = gmpxx::default_mpf_precision_bits();
     std::atomic<int> mismatches{0};
     std::vector<std::thread> threads;
     for (int i = 0; i < 8; ++i) {
         threads.emplace_back([&] {
-            std::lock_guard<std::mutex> lock(mutex);
-            if (gmpxx::default_mpf_precision_bits() < 777) {
-                ++mismatches;
-            }
-            gmpxx::set_default_mpf_precision_bits(333);
-            gmpxx::mpf_class value;
-            const mp_bitcnt_t effective = gmpxx::default_mpf_precision_bits();
-            if (effective < 333 || mpf_get_default_prec() != effective ||
-                value.precision() < effective) {
-                ++mismatches;
-            }
-            gmpxx::set_default_mpf_precision_bits(777);
-        });
-    }
-    for (auto& thread : threads) {
-        thread.join();
-    }
-    if (mismatches.load() != 0) {
-        std::abort();
-    }
-    if (gmpxx::default_mpf_precision_bits() < 777) {
-        std::abort();
-    }
-}
-
-void require_parallel_default_precision_mutation_is_user_managed()
-{
-    std::mutex mutex;
-    std::atomic<int> mismatches{0};
-    gmpxx::set_default_mpf_precision_bits(641);
-
-    std::vector<std::thread> threads;
-    for (int i = 0; i < 8; ++i) {
-        threads.emplace_back([&, i] {
-            const mp_bitcnt_t first = static_cast<mp_bitcnt_t>(257 + i);
-            const mp_bitcnt_t second = static_cast<mp_bitcnt_t>(769 + i);
             for (int j = 0; j < 2000; ++j) {
-                const mp_bitcnt_t expected = (j % 2) == 0 ? first : second;
-                std::lock_guard<std::mutex> lock(mutex);
-                gmpxx::set_default_mpf_precision_bits(expected);
-                const mp_bitcnt_t observed = gmpxx::default_mpf_precision_bits();
-                if (observed < expected || mpf_get_default_prec() != observed) {
+                gmpxx::mpf_class value;
+                if (gmpxx::default_mpf_precision_bits() != wrapper_default ||
+                    value.precision() < wrapper_default) {
                     ++mismatches;
                 }
             }
         });
     }
-
     for (auto& thread : threads) {
         thread.join();
     }
     if (mismatches.load() != 0) {
         std::abort();
     }
-}
-
-void require_routes_to_gmp_global_default()
-{
-    const mp_bitcnt_t original_gmp_default = mpf_get_default_prec();
-    constexpr mp_bitcnt_t gmp_global_precision = 4096;
-
-    gmpxx::set_default_mpf_precision_bits(192);
-    if (mpf_get_default_prec() < 192) {
-        std::abort();
-    }
-
-    mpf_set_default_prec(gmp_global_precision);
-
-    gmpxx::mpf_class value;
-    if (gmpxx::default_mpf_precision_bits() != gmp_global_precision ||
-        value.precision() < gmp_global_precision) {
-        std::abort();
-    }
-
-    mpf_set_default_prec(original_gmp_default);
 }
 
 void require_parallel_expression_materialization()
@@ -148,9 +101,8 @@ void require_parallel_expression_materialization()
 
 int main()
 {
-    require_default_precision_is_user_managed_global();
-    require_parallel_default_precision_mutation_is_user_managed();
-    require_routes_to_gmp_global_default();
+    require_gmp_global_default_does_not_pollute_wrapper_default();
+    require_parallel_default_construction_uses_frozen_wrapper_default();
     require_parallel_expression_materialization();
     return 0;
 }

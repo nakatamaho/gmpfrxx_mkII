@@ -31,6 +31,7 @@
 
 #include <gmpfrxx_mkII/detail/common_type_macros.hpp>
 #include <gmpfrxx_mkII/detail/expr.hpp>
+#include <gmpfrxx_mkII/detail/gmp_default_context.hpp>
 #include <gmpfrxx_mkII/detail/integer_conversion.hpp>
 #include <gmpfrxx_mkII/detail/zq_impl.hpp>
 
@@ -53,65 +54,6 @@
 #include <gmp.h>
 
 namespace gmpxx {
-
-inline mp_bitcnt_t builtin_default_mpf_precision_bits() noexcept
-{
-    return 512;
-}
-
-inline bool parse_mpf_precision_bits(const char* text, mp_bitcnt_t& out) noexcept
-{
-    if (text == nullptr || *text == '\0' || *text == '-') {
-        return false;
-    }
-    errno = 0;
-    char* end = nullptr;
-    const unsigned long long value = std::strtoull(text, &end, 10);
-    if (errno != 0 || end == text || *end != '\0' || value == 0) {
-        return false;
-    }
-    if (value > static_cast<unsigned long long>(std::numeric_limits<mp_bitcnt_t>::max())) {
-        return false;
-    }
-    out = static_cast<mp_bitcnt_t>(value);
-    return true;
-}
-
-inline mp_bitcnt_t load_default_mpf_precision_bits_from_environment() noexcept
-{
-    mp_bitcnt_t precision = builtin_default_mpf_precision_bits();
-    parse_mpf_precision_bits(std::getenv("MPFXX_DEFAULT_PREC_BITS"), precision);
-    return precision;
-}
-
-inline void initialize_default_mpf_precision_bits_once()
-{
-    static const bool initialized = [] {
-        mpf_set_default_prec(load_default_mpf_precision_bits_from_environment());
-        return true;
-    }();
-    (void)initialized;
-}
-
-inline mp_bitcnt_t default_mpf_precision_bits()
-{
-    initialize_default_mpf_precision_bits_once();
-    return mpf_get_default_prec();
-}
-
-inline void set_default_mpf_precision_bits(mp_bitcnt_t precision)
-{
-    initialize_default_mpf_precision_bits_once();
-    if (precision > 0) {
-        mpf_set_default_prec(precision);
-    }
-}
-
-inline void reload_default_mpf_precision_bits_from_environment()
-{
-    initialize_default_mpf_precision_bits_once();
-    mpf_set_default_prec(load_default_mpf_precision_bits_from_environment());
-}
 
 inline std::uintmax_t mpf_mp_exp_negative_magnitude(mp_exp_t value) noexcept
 {

@@ -49,7 +49,7 @@ struct parsed_mpfr_environment {
 
 inline mpfr_prec_t builtin_mpfr_default_precision() noexcept
 {
-    return mpfr_get_default_prec();
+    return 512;
 }
 
 inline mpfr_rnd_t builtin_mpfr_default_rounding() noexcept
@@ -155,9 +155,12 @@ inline parsed_mpfr_environment load_mpfr_environment() noexcept
         builtin_mpfr_default_rounding(),
     };
 
+    const char* precision_text = std::getenv("MPFRXX_DEFAULT_PRECISION_BITS");
     mpfr_prec_t precision = result.precision;
-    if (parse_mpfr_precision(std::getenv("MPFRXX_DEFAULT_PRECISION_BITS"), precision)) {
+    if (parse_mpfr_precision(precision_text, precision)) {
         result.precision = precision;
+    } else if (precision_text != nullptr) {
+        result.precision = mpfr_get_default_prec();
     }
 
     mpfr_exp_t emin = result.emin;
@@ -206,6 +209,20 @@ inline bool set_mpfr_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) no
     return mpfr_get_emin() == emin && mpfr_get_emax() == emax;
 }
 
+inline void initialize_mpfr_defaults_once()
+{
+    static const bool initialized = [] {
+        const auto loaded = load_mpfr_environment();
+        if (valid_mpfr_precision(loaded.precision)) {
+            mpfr_set_default_prec(loaded.precision);
+        }
+        set_mpfr_default_exponent_range(loaded.emin, loaded.emax);
+        mpfr_set_default_rounding_mode(loaded.rounding);
+        return true;
+    }();
+    (void)initialized;
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -220,6 +237,7 @@ struct mpfr_default_options {
 
 inline void reload_mpfr_defaults_from_environment()
 {
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
     const auto loaded = ::gmpfrxx_mkII::detail::load_mpfr_environment();
     if (::gmpfrxx_mkII::detail::valid_mpfr_precision(loaded.precision)) {
         mpfr_set_default_prec(loaded.precision);
@@ -230,6 +248,7 @@ inline void reload_mpfr_defaults_from_environment()
 
 inline mpfr_default_options default_options()
 {
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
     return mpfr_default_options{
         mpfr_get_default_prec(),
         mpfr_get_emin(),
@@ -250,6 +269,7 @@ inline mpfr_prec_t default_prec()
 
 inline void set_default_precision_bits(mpfr_prec_t precision)
 {
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
     if (::gmpfrxx_mkII::detail::valid_mpfr_precision(precision)) {
         mpfr_set_default_prec(precision);
     }
@@ -262,6 +282,7 @@ inline mpfr_rnd_t default_rounding_mode()
 
 inline void set_default_rounding_mode(mpfr_rnd_t rounding)
 {
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
     mpfr_set_default_rounding_mode(rounding);
 }
 
@@ -277,6 +298,7 @@ inline mpfr_exp_t default_emax()
 
 inline void set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax)
 {
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_once();
     ::gmpfrxx_mkII::detail::set_mpfr_default_exponent_range(emin, emax);
 }
 

@@ -535,6 +535,282 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFR default one-time initialization:
+DONE
+
+Implemented features:
+- Added one-time MPFR default initialization on first wrapper default access.
+- `mpfrxx::default_precision_bits()` and default `mpfr_class` construction now
+  initialize libmpfr's default precision to the wrapper default 512 bits without
+  requiring an explicit `reload_mpfr_defaults_from_environment()` call.
+- Removed the explicit reload call from `example16_mpfr_thread_context`; the
+  example still reports the main thread default as 512.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `examples/example16_mpfr_thread_context.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target example16_mpfr_thread_context test_mpfr_defaults test_mpfr_environment test_mpfr_precision_policy`
+- `build/examples/example16_mpfr_thread_context`
+- `ctest --test-dir build -R 'example16_mpfr_thread_context|test_mpfr_defaults|test_mpfr_environment|test_mpfr_precision_policy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Manual example run: PASS.  Without an explicit reload call, output showed
+  `thread-a` using default 160, `thread-b` using default 768, and the main
+  thread default remaining 512.
+- Focused CTest: PASS, 5/5 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 152/152 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+Post-phase MPFR default precision correction:
+DONE
+
+Implemented features:
+- Restored the wrapper built-in MPFR default precision fallback to 512 bits
+  instead of inheriting libmpfr's raw C default precision.
+- Kept MPFR default state routed through libmpfr: reload with no
+  `MPFRXX_DEFAULT_PRECISION_BITS` now sets the libmpfr default precision to
+  512, while an invalid precision environment value preserves the current
+  libmpfr default precision.
+- Updated `example16_mpfr_thread_context` to reload wrapper MPFR defaults at
+  startup so the main thread shows the wrapper default 512-bit precision before
+  worker threads use their own MPFR TLS defaults.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `examples/example16_mpfr_thread_context.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target example16_mpfr_thread_context test_mpfr_defaults test_mpfr_environment`
+- `build/examples/example16_mpfr_thread_context`
+- `ctest --test-dir build -R 'example16_mpfr_thread_context|test_mpfr_defaults|test_mpfr_environment' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Initial focused CTest: FAIL in `test_mpfr_defaults` because invalid
+  `MPFRXX_DEFAULT_PRECISION_BITS` fell back to 512 instead of preserving the
+  current libmpfr default precision.
+- Updated invalid-env handling to preserve the current libmpfr default.
+- Focused CTest retry: PASS, 4/4 tests passed.
+- Manual example run: PASS.  Output showed `thread-a` using default 160,
+  `thread-b` using default 768, and the main thread default remaining 512.
+- Full build: PASS.
+- Full CTest: PASS, 152/152 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+Post-phase GMP default-context provider shared owner:
+DONE
+
+Implemented features:
+- Changed `gmpxx_mkII_default_context_provider` from a static library target to
+  a shared library target, making the provider a single runtime owner for the
+  mutable default-context storage.
+- Updated README wording to require a dedicated provider shared library or one
+  designated owner, and to warn against embedding the provider object into
+  multiple shared libraries.
+
+Tests added:
+- None.
+
+Tests updated:
+- `CMakeLists.txt`
+- `README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target gmpxx_mkII_default_context_provider example16_mpf_thread_context test_mpf_external_provider`
+- `ctest --test-dir build -R 'example16_mpf_thread_context|test_mpf_external_provider|link_fail_mpf_external_provider_missing' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Provider/example/external-provider build: PASS.  The provider now links as
+  `libgmpxx_mkII_default_context_provider.so`.
+- Focused provider CTest: PASS, 3/3 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 151/151 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- A user can still manually compile the provider source into multiple DSOs
+  outside this CMake target.  The documented supported configuration is one
+  dedicated provider shared library or one designated owner.
+
+Post-phase MPFR threaded default-precision example:
+DONE
+
+Implemented features:
+- Added `examples/example16_mpfr_thread_context.cpp`, an MPFR variant of the
+  threaded AGM pi example.
+- The example uses `mpfrxx::set_default_precision_bits()` in two worker threads
+  with 160-bit and 768-bit defaults, relying on libmpfr's default precision
+  state rather than a wrapper provider.
+- Preserved result precision when transferring worker results back to the main
+  thread by move-constructing the result object instead of assigning into an
+  existing `mpfr_class`, whose assignment intentionally preserves left-hand-side
+  precision.
+
+Tests added:
+- Added CTest coverage for `example16_mpfr_thread_context`.
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target example16_mpfr_thread_context`
+- `ctest --test-dir build -R example16_mpfr_thread_context --output-on-failure`
+- `build/examples/example16_mpfr_thread_context`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j --target example16_mpfr_thread_context`: PASS.
+- `ctest --test-dir build -R example16_mpfr_thread_context --output-on-failure`: PASS, 1/1 test passed.
+- Manual example run: PASS.  Output showed `thread-a` using default 160,
+  `thread-b` using default 768, and the main thread default remaining 53.
+- Full build: PASS.
+- Full CTest: PASS, 152/152 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+Post-phase GMP-only MPF default precision context:
+DONE
+
+Implemented features:
+- Added GMP-only default-context mode selection macros with frozen-env mode as
+  the default and external-provider mode as an opt-in build mode.
+- Added a GMP-only default-context implementation for `mpf_class` default
+  construction.  Frozen-env mode reads
+  `GMPXX_MKII_DEFAULT_MPF_PREC_BITS`, then
+  `GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS`, then the legacy
+  `MPFXX_DEFAULT_PREC_BITS`, and otherwise uses 512 bits.
+- Treats the frozen-env value as immutable after first use and fail-fast aborts
+  on invalid environment values.
+- Changed GMP `mpf_class` default construction to use explicit wrapper policy
+  precision via `mpf_init2`, avoiding GMP's process-global MPF default.
+- Added unsafe compatibility wrappers for the GMP C global default with names
+  that explicitly mark them as ambient GMP-global APIs.
+- Added an optional C ABI external-provider implementation with provider-owned
+  thread-local storage and no header fallback.
+- Added a GMP-only scoped default MPF precision guard for external-provider
+  mode.
+- Documented frozen-env and external-provider modes in `README.md`.
+
+Tests added:
+- `tests/test_mpf_default_precision_env.cpp`
+- `tests/test_mpf_default_precision_invalid_env.cpp`
+- `tests/test_mpf_external_provider.cpp`
+- `tests/test_mpf_external_provider_missing.cpp`
+- `tests/expect_process_failure.cmake`
+
+Tests updated:
+- `tests/test_mpf_precision_policy.cpp`
+- `tests/test_mpf_thread_safety.cpp`
+- `tests/test_gmpxx_mkII.cpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpf_precision_policy test_mpf_default_precision_env test_mpf_default_precision_invalid_env test_mpf_external_provider test_mpf_thread_safety test_mpf_fixed_precision_materialization test_random`
+- `ctest --test-dir build -R 'test_mpf_precision_policy|test_mpf_default_precision_env|test_mpf_default_precision_invalid_env|test_mpf_external_provider|link_fail_mpf_external_provider_missing|test_mpf_thread_safety|test_mpf_fixed_precision_materialization|test_random' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `cmake --build build -j --target test_gmpxx_mkII`
+- `ctest --test-dir build -R 'test_gmpxx_mkII|test_mpf_precision_policy|test_mpf_default_precision_env|test_mpf_default_precision_invalid_env|test_mpf_external_provider|link_fail_mpf_external_provider_missing|test_mpf_thread_safety' --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+- `rg -n "#include <mpfr.h>|#include <mpc.h>|mpfr_|mpc_|mpc_t" include/gmpxx_mkII.h include/gmpfrxx_mkII/detail/gmp_default_context.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp src/gmpxx_mkII_default_context_provider.cpp`
+- `rg -n "mpf_set_default_prec|mpf_get_default_prec" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/gmp_default_context.hpp src/gmpxx_mkII_default_context_provider.cpp`
+- `git diff --check`
+
+Pass/fail result:
+- Targeted GMP MPF default-context build: PASS.
+- Targeted GMP MPF default-context CTest: PASS, 8/8 tests passed.
+- Full build: PASS.
+- Initial full CTest: FAIL because existing `test_gmpxx_mkII` constant-cache
+  tests assumed runtime GMP global default precision mutation affected wrapper
+  default precision.
+- Updated those tests to use explicit precision overloads.
+- Retried targeted CTest: PASS, 7/7 tests passed.
+- Retried full CTest: PASS, 150/150 tests passed.
+- GMP-only MPFR/MPC source scan: PASS, no matches.
+- GMP global default source scan: PASS, only the unsafe ambient GMP wrapper
+  functions reference `mpf_set_default_prec` and `mpf_get_default_prec`.
+- `git diff --check`: PASS.
+
+Known issues:
+- In frozen-env mode, `set_default_mpf_precision_bits()` remains as a source
+  compatibility no-op.  Use explicit precision construction or external-provider
+  mode for mutable thread-local defaults.
+
+Post-phase GMP MPF threaded default-context example:
+DONE
+
+Implemented features:
+- Added `examples/example16_mpf_thread_context.cpp`, a two-thread
+  Gauss-Legendre / Brent-Salamin pi example derived from `example04_mpf`.
+- Linked the example with the optional GMP default-context provider so each
+  worker thread can use a different wrapper default MPF precision.
+- The example demonstrates `gmpxx::default_mpf_precision_guard` with
+  160-bit and 768-bit worker defaults while the main thread remains at the
+  provider initial default.
+
+Tests added:
+- Added CTest coverage for `example16_mpf_thread_context`.
+
+Tests updated:
+- `examples/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target example16_mpf_thread_context`
+- `ctest --test-dir build -R example16_mpf_thread_context --output-on-failure`
+- `build/examples/example16_mpf_thread_context`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j --target example16_mpf_thread_context`: PASS.
+- `ctest --test-dir build -R example16_mpf_thread_context --output-on-failure`: PASS, 1/1 test passed.
+- Manual example run: PASS.  Output showed `thread-a` using default 160,
+  `thread-b` using default 768, and the main thread default remaining 512.
+- Full build: PASS.
+- Full CTest: PASS, 151/151 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
 Post-phase MPFR Raxpy benchmark port:
 DONE
 

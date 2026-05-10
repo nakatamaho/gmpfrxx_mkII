@@ -2289,14 +2289,8 @@ void test_mpf_class_const_pi() {
     assert(cached_matched >= first_matched && "not accurate");
 
     std::uint64_t low_requested = 64;
-    mpf_class low_default_pi =
-        value_from_new_thread_initial_prec(low_requested, [] {
-            return const_pi();
-        });
-    mpf_class raised_default_pi =
-        value_from_new_thread_initial_prec(low_requested * 2u, [] {
-            return const_pi();
-        });
+    mpf_class low_default_pi = const_pi(low_requested);
+    mpf_class raised_default_pi = const_pi(low_requested * 2u);
 
     int low_default_matched =
         matching_decimal_digits(
@@ -2310,7 +2304,7 @@ void test_mpf_class_const_pi() {
               << " decimal digits" << std::endl;
     std::cout << "Pi matched 3rd in " << raised_matched << " decimal digits" << std::endl;
     assert(raised_default_pi.get_prec() > low_default_pi.get_prec());
-    assert(raised_matched > low_default_matched && "default precision was not raised");
+    assert(raised_matched > low_default_matched && "explicit precision was not raised");
 #if !defined GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     mpf_class pi_2048(0.0, 2048);
     pi_2048 = const_pi(2048);
@@ -2363,14 +2357,8 @@ void test_mpf_class_const_log2() {
     assert(cached_matched >= first_matched && "not accurate");
 
     std::uint64_t low_requested = 64;
-    mpf_class low_default_log2 =
-        value_from_new_thread_initial_prec(low_requested, [] {
-            return const_log2();
-        });
-    mpf_class raised_default_log2 =
-        value_from_new_thread_initial_prec(low_requested * 2u, [] {
-            return const_log2();
-        });
+    mpf_class low_default_log2 = const_log2(low_requested);
+    mpf_class raised_default_log2 = const_log2(low_requested * 2u);
 
     int low_default_matched =
         matching_decimal_digits(
@@ -2384,7 +2372,7 @@ void test_mpf_class_const_log2() {
               << " decimal digits" << std::endl;
     std::cout << "log2 matched 3rd in " << raised_matched << " decimal digits" << std::endl;
     assert(raised_default_log2.get_prec() > low_default_log2.get_prec());
-    assert(raised_matched > low_default_matched && "default precision was not raised");
+    assert(raised_matched > low_default_matched && "explicit precision was not raised");
 #if !defined GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     mpf_class log2_2048(0.0, 2048);
     log2_2048 = const_log2(2048);

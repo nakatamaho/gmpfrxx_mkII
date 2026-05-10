@@ -135,6 +135,21 @@ target_link_libraries(gmpxx_mkII INTERFACE GMP::GMP)
 target_compile_features(gmpxx_mkII INTERFACE cxx_std_17)
 add_library(gmpxx_mkII::gmpxx_mkII ALIAS gmpxx_mkII)
 
+add_library(gmpxx_mkII_default_context_provider SHARED
+    src/gmpxx_mkII_default_context_provider.cpp
+)
+target_include_directories(gmpxx_mkII_default_context_provider PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
+    $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(gmpxx_mkII_default_context_provider PUBLIC GMP::GMP)
+target_compile_features(gmpxx_mkII_default_context_provider PUBLIC cxx_std_17)
+target_compile_definitions(gmpxx_mkII_default_context_provider PUBLIC
+    GMPXX_MKII_DEFAULT_CONTEXT_MODE=GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
+)
+add_library(gmpxx_mkII::default_context_provider ALIAS gmpxx_mkII_default_context_provider)
+
 add_library(mpfrxx_mkII INTERFACE)
 target_include_directories(mpfrxx_mkII INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

@@ -31,6 +31,22 @@
 
 #include <ostream>
 
+#define GMPXX_MKII_DEFAULT_CONTEXT_FROZEN_ENV 0
+#define GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER 1
+
+#ifndef GMPXX_MKII_DEFAULT_CONTEXT_MODE
+#define GMPXX_MKII_DEFAULT_CONTEXT_MODE GMPXX_MKII_DEFAULT_CONTEXT_FROZEN_ENV
+#endif
+
+#if GMPXX_MKII_DEFAULT_CONTEXT_MODE != GMPXX_MKII_DEFAULT_CONTEXT_FROZEN_ENV && \
+    GMPXX_MKII_DEFAULT_CONTEXT_MODE != GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
+#error "GMPXX_MKII_DEFAULT_CONTEXT_MODE must be GMPXX_MKII_DEFAULT_CONTEXT_FROZEN_ENV or GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER"
+#endif
+
+#ifndef GMPXX_MKII_API
+#define GMPXX_MKII_API
+#endif
+
 #if __has_include(<gmpfrxx_mkII/detail/version.hpp>)
 #include <gmpfrxx_mkII/detail/version.hpp>
 #else
@@ -69,6 +85,7 @@ struct build_options {
     static constexpr bool mpfr_buildopt_tls = GMPFRXX_MKII_MPFR_BUILDOPT_TLS != 0;
     static constexpr bool mpc_has_buildopt_tls_p = GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P != 0;
     static constexpr bool mpc_buildopt_tls = GMPFRXX_MKII_MPC_BUILDOPT_TLS != 0;
+    static constexpr int gmp_default_context_mode = GMPXX_MKII_DEFAULT_CONTEXT_MODE;
 };
 
 } // namespace detail

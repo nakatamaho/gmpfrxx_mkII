@@ -91,6 +91,12 @@ target_link_libraries(example15_mpf PRIVATE gmpxx_mkII)
 add_executable(example15_mpfr example15_mpfr.cpp)
 target_link_libraries(example15_mpfr PRIVATE mpfrxx_mkII)
 
+add_executable(example16_mpf_thread_context example16_mpf_thread_context.cpp)
+target_link_libraries(example16_mpf_thread_context PRIVATE gmpxx_mkII_default_context_provider)
+
+add_executable(example16_mpfr_thread_context example16_mpfr_thread_context.cpp)
+target_link_libraries(example16_mpfr_thread_context PRIVATE mpfrxx_mkII)
+
 add_test(NAME example01 COMMAND example01)
 add_test(NAME example02_mpf COMMAND example02_mpf)
 add_test(NAME example02_mpfr COMMAND example02_mpfr)
@@ -124,3 +130,5 @@ add_test(NAME example15_mpf COMMAND example15_mpf --digits 32)
 add_test(NAME example15_mpfr COMMAND example15_mpfr --digits 32)
 add_test(NAME example15_mpf_bbp COMMAND example15_mpf --constant pi --start 16 --digits 16 --method bbp)
 add_test(NAME example15_mpfr_bbp COMMAND example15_mpfr --constant pi --start 16 --digits 16 --method bbp)
+add_test(NAME example16_mpf_thread_context COMMAND example16_mpf_thread_context)
+add_test(NAME example16_mpfr_thread_context COMMAND example16_mpfr_thread_context)

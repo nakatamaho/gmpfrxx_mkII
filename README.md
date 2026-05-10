@@ -109,11 +109,40 @@ auto c = mpfrxx::mpc_class::with_precision(256, 320);
 Existing-object assignment preserves destination precision. New expression
 materialization uses the maximum relevant leaf precision.
 
+### GMP MPF Default Context
+
+`gmpxx::mpf_class` has two GMP-only default-context modes.
+
+Frozen-env mode is the default.  It is header-only and reads the default MPF
+precision from the environment on first use in each linked image.  The
+environment is treated as immutable after process startup / first use; changing
+it at runtime is unsupported.  This mode does not follow GMP's process-global
+`mpf_set_default_prec()` state, and default construction uses explicit
+`mpf_init2()` with the wrapper precision.
+
+External-provider mode is opt-in with:
+
+```cpp
+GMPXX_MKII_DEFAULT_CONTEXT_MODE=GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
+```
+
+It requires exactly one linked provider implementation, such as the
+`gmpxx_mkII_default_context_provider` shared library target.  The provider owns
+mutable storage and may use `thread_local` internally.  A missing provider is a
+link error.  Do not embed the provider object file into multiple shared
+libraries; the provider must be a single dedicated shared library, or one
+designated owner such as MPLAPACK.
+
+Changing the default precision affects only subsequently constructed objects.
+Assignment to an existing `mpf_class` preserves the left-hand-side precision.
+
 ## Environment
 
 Supported environment variables:
 
 ```text
+GMPXX_MKII_DEFAULT_MPF_PREC_BITS
+GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS
 MPFXX_DEFAULT_PREC_BITS
 MPFRXX_DEFAULT_PRECISION_BITS
 MPFRXX_EMIN
@@ -126,6 +155,11 @@ MPFRXX_MPC_ROUNDING_MODE
 MPFRXX_MPC_REAL_ROUNDING_MODE
 MPFRXX_MPC_IMAG_ROUNDING_MODE
 ```
+
+For GMP MPF defaults, `GMPXX_MKII_DEFAULT_MPF_PREC_BITS` has priority over
+`GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS`, which has priority over the legacy
+`MPFXX_DEFAULT_PREC_BITS` name.  Invalid GMP MPF precision environment values
+fail fast.
 
 The fixed-precision fast path is a compile-time option:
 

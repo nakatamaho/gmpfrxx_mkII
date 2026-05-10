@@ -29,7 +29,6 @@
 #include <gmpxx_mkII.h>
 
 #include <algorithm>
-#include <cstdlib>
 #include <type_traits>
 #include <utility>
 
@@ -60,44 +59,29 @@ int main()
                   "");
     static_assert(!has_public_set_prec_raw<gmpxx::mpf_class>::value, "");
 
-    unsetenv("MPFXX_DEFAULT_PREC_BITS");
-    gmpxx::reload_default_mpf_precision_bits_from_environment();
-
     if (gmpxx::default_mpf_precision_bits() != 512) {
         std::abort();
     }
 
     gmpxx::mpf_class builtin_default;
-    if (builtin_default.precision() < 512) {
+    if (builtin_default.precision() < gmpxx::default_mpf_precision_bits()) {
         std::abort();
     }
 
-    setenv("MPFXX_DEFAULT_PREC_BITS", "320", 1);
-    gmpxx::reload_default_mpf_precision_bits_from_environment();
-    if (gmpxx::default_mpf_precision_bits() != 320) {
-        std::abort();
-    }
-    gmpxx::mpf_class env_default;
-    if (env_default.precision() < 320) {
-        std::abort();
-    }
-
-    setenv("MPFXX_DEFAULT_PREC_BITS", "0", 1);
+    mpf_set_default_prec(37);
     gmpxx::reload_default_mpf_precision_bits_from_environment();
     if (gmpxx::default_mpf_precision_bits() != 512) {
         std::abort();
     }
-
-    setenv("MPFXX_DEFAULT_PREC_BITS", "not-a-number", 1);
-    gmpxx::reload_default_mpf_precision_bits_from_environment();
-    if (gmpxx::default_mpf_precision_bits() != 512) {
+    gmpxx::mpf_class after_gmp_global_change;
+    if (after_gmp_global_change.precision() < 512 || after_gmp_global_change.precision() == 37) {
         std::abort();
     }
 
     gmpxx::set_default_mpf_precision_bits(160);
     gmpxx::mpf_class default_value;
     const mp_bitcnt_t effective_default = gmpxx::default_mpf_precision_bits();
-    if (effective_default < 160 || default_value.precision() < effective_default) {
+    if (effective_default != 512 || default_value.precision() < effective_default) {
         std::abort();
     }
 
