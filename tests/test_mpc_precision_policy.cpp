@@ -47,7 +47,7 @@ int main()
         std::abort();
     }
 
-    mpfrxx::set_default_mpc_precision_bits(80, 112);
+    mpfrxx::set_default_mpc_precision_bits(112);
     auto lower_precision_complex = mpfrxx::mpc_class::with_precision(48, 64, 1.0, 2.0);
     mpfrxx::mpc_class scalar_promoted = 7 + lower_precision_complex;
     if (scalar_promoted.real_precision() != 112 || scalar_promoted.imag_precision() != 112) {

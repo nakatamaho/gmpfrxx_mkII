@@ -31,8 +31,8 @@
 
 #include <gmpfrxx_mkII/detail/environment.hpp>
 
-#include <algorithm>
 #include <cstdlib>
+#include <stdexcept>
 
 #include <mpc.h>
 
@@ -63,7 +63,11 @@ inline mpc_default_options load_mpc_defaults_from_environment()
             std::getenv("MPFRXX_MPC_IMAG_PRECISION_BITS"), imag_precision);
 
     if (has_real_precision && has_imag_precision) {
-        precision = std::max(real_precision, imag_precision);
+        if (real_precision != imag_precision) {
+            throw std::invalid_argument(
+                "MPC default precision uses the shared MPFR default; real and imaginary precision must match");
+        }
+        precision = real_precision;
     } else if (has_real_precision) {
         precision = real_precision;
     } else if (has_imag_precision) {
@@ -84,7 +88,11 @@ inline mpc_default_options load_mpc_defaults_from_environment()
         ::gmpfrxx_mkII::detail::parse_mpfr_rounding(
             std::getenv("MPFRXX_MPC_IMAG_ROUNDING_MODE"), imag_rounding);
 
-    if (has_real_rounding && has_imag_rounding && real_rounding == imag_rounding) {
+    if (has_real_rounding && has_imag_rounding) {
+        if (real_rounding != imag_rounding) {
+            throw std::invalid_argument(
+                "MPC default rounding uses the shared MPFR default; real and imaginary rounding modes must match");
+        }
         rounding = real_rounding;
     } else if (has_real_rounding && !has_imag_rounding) {
         rounding = real_rounding;
@@ -140,9 +148,13 @@ inline void set_default_mpc_precision_bits(mpfr_prec_t precision)
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
 {
+    if (real_precision != imag_precision) {
+        throw std::invalid_argument(
+            "MPC default precision uses the shared MPFR default; real and imaginary precision must match");
+    }
     if (::gmpfrxx_mkII::detail::valid_mpfr_precision(real_precision) &&
         ::gmpfrxx_mkII::detail::valid_mpfr_precision(imag_precision)) {
-        set_default_precision_bits(std::max(real_precision, imag_precision));
+        set_default_precision_bits(real_precision);
     }
 }
 
@@ -169,9 +181,11 @@ inline void set_default_mpc_rounding_mode(mpfr_rnd_t rounding)
 
 inline void set_default_mpc_rounding_mode(mpfr_rnd_t real_rounding, mpfr_rnd_t imag_rounding)
 {
-    if (real_rounding == imag_rounding) {
-        set_default_rounding_mode(real_rounding);
+    if (real_rounding != imag_rounding) {
+        throw std::invalid_argument(
+            "MPC default rounding uses the shared MPFR default; real and imaginary rounding modes must match");
     }
+    set_default_rounding_mode(real_rounding);
 }
 
 } // namespace mpfrxx

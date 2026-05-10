@@ -31,6 +31,7 @@
 
 #include <cstdlib>
 #include <limits>
+#include <stdexcept>
 
 namespace {
 
@@ -65,9 +66,21 @@ int main()
         std::abort();
     }
 
-    mpfrxx::set_default_mpc_precision_bits(160, 192);
+    try {
+        mpfrxx::set_default_mpc_precision_bits(160, 192);
+        std::abort();
+    } catch (const std::invalid_argument&) {
+    }
+
     mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU);
-    mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU, MPFR_RNDD);
+    try {
+        mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU, MPFR_RNDD);
+        std::abort();
+    } catch (const std::invalid_argument&) {
+    }
+
+    mpfrxx::set_default_mpc_precision_bits(192, 192);
+    mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU, MPFR_RNDU);
 
     defaults = mpfrxx::default_mpc_options();
     if (defaults.real_precision_bits != 192 || defaults.imag_precision_bits != 192) {

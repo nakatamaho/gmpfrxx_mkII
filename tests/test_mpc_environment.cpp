@@ -29,9 +29,9 @@
 #include <mpfrxx_mkII.h>
 #include <mpcxx_mkII.h>
 
-#include <algorithm>
 #include <atomic>
 #include <cstdlib>
+#include <stdexcept>
 #include <thread>
 #include <vector>
 
@@ -63,6 +63,16 @@ int main()
     setenv("MPFRXX_MPC_ROUNDING_MODE", "RNDU", 1);
     setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "RNDD", 1);
     setenv("MPFRXX_MPC_IMAG_ROUNDING_MODE", "RNDZ", 1);
+    try {
+        mpfrxx::reload_mpc_defaults_from_environment();
+        std::abort();
+    } catch (const std::invalid_argument&) {
+    }
+
+    setenv("MPFRXX_MPC_REAL_PRECISION_BITS", "224", 1);
+    setenv("MPFRXX_MPC_IMAG_PRECISION_BITS", "224", 1);
+    setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "RNDU", 1);
+    setenv("MPFRXX_MPC_IMAG_ROUNDING_MODE", "RNDU", 1);
     mpfrxx::reload_mpc_defaults_from_environment();
 
     defaults = mpfrxx::default_mpc_options();
@@ -78,22 +88,25 @@ int main()
 
     {
         std::atomic<int> mismatches{0};
-        mpfrxx::set_default_mpc_precision_bits(192, 224);
+        try {
+            mpfrxx::set_default_mpc_precision_bits(192, 224);
+            std::abort();
+        } catch (const std::invalid_argument&) {
+        }
+        mpfrxx::set_default_mpc_precision_bits(224, 224);
         mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDZ);
 
         std::vector<std::thread> threads;
         for (int i = 0; i < 8; ++i) {
             threads.emplace_back([&, i] {
                 const mpfr_prec_t real_precision = (i % 2) == 0 ? 193 : 307;
-                const mpfr_prec_t imag_precision = (i % 2) == 0 ? 257 : 409;
-                const mpfr_prec_t effective_precision = std::max(real_precision, imag_precision);
                 const mpfr_rnd_t rounding = (i % 2) == 0 ? MPFR_RNDU : MPFR_RNDD;
-                mpfrxx::set_default_mpc_precision_bits(real_precision, imag_precision);
+                mpfrxx::set_default_mpc_precision_bits(real_precision, real_precision);
                 mpfrxx::set_default_mpc_rounding_mode(rounding);
                 for (int j = 0; j < 2000; ++j) {
                     const auto options = mpfrxx::default_mpc_options();
-                    if (options.real_precision_bits != effective_precision ||
-                        options.imag_precision_bits != effective_precision ||
+                    if (options.real_precision_bits != real_precision ||
+                        options.imag_precision_bits != real_precision ||
                         options.real_rounding_mode != rounding ||
                         options.imag_rounding_mode != rounding) {
                         ++mismatches;
