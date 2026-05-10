@@ -169,17 +169,19 @@ Assignment to an existing `mpf_class` preserves the left-hand-side precision.
 range through libmpfr's default state.  The wrapper does not define
 header-owned `thread_local` MPFR default storage.
 
-The wrapper initial default precision is 512 bits.  On first wrapper default
-access, gmpfrxx_mkII initializes libmpfr's default precision from
+The wrapper initial default precision is 512 bits.  On wrapper default access,
+gmpfrxx_mkII initializes libmpfr's default precision from
 `MPFRXX_DEFAULT_PRECISION_BITS` when it is valid, otherwise from the 512-bit
-wrapper default.  Runtime calls such as
+wrapper default, only if libmpfr's current thread-local default state still has
+MPFR's library-initial values.  Runtime calls such as
 `mpfrxx::set_default_precision_bits()` update libmpfr's thread-local default
 state and affect only subsequently constructed MPFR objects in that thread.
 
 This policy requires an MPFR build with TLS support.  CMake checks
 `mpfr_buildopt_tls_p()` and fails configuration if libmpfr does not report TLS.
 Shared-library users must ensure all images use the same libmpfr shared
-library; wrapper-owned DSO-local MPFR default storage is intentionally avoided.
+library; wrapper-owned DSO-local MPFR default storage and DSO-local
+initialization flags are intentionally avoided.
 
 ### MPC Default Context
 

@@ -54,6 +54,11 @@ inline mpfr_prec_t builtin_mpfr_default_precision() noexcept
     return 512;
 }
 
+inline mpfr_prec_t mpfr_library_default_precision() noexcept
+{
+    return 53;
+}
+
 inline mpfr_rnd_t builtin_mpfr_default_rounding() noexcept
 {
     return mpfr_get_default_rounding_mode();
@@ -221,18 +226,25 @@ inline void apply_mpfr_environment_defaults()
     mpfr_set_default_rounding_mode(loaded.rounding);
 }
 
+inline bool mpfr_default_state_is_library_initial() noexcept
+{
+    return mpfr_get_default_prec() == mpfr_library_default_precision() &&
+           mpfr_get_default_rounding_mode() == MPFR_RNDN &&
+           mpfr_get_emin() == MPFR_EMIN_DEFAULT &&
+           mpfr_get_emax() == MPFR_EMAX_DEFAULT;
+}
+
 inline void initialize_mpfr_defaults_for_current_thread()
 {
     // This wrapper requires a thread-safe MPFR build. In that configuration
     // MPFR default precision, rounding mode, and exponent range are owned by
-    // libmpfr as thread-local state, so the environment-derived wrapper
-    // defaults must be applied once per thread rather than once per process.
-    // CMake verifies mpfr_buildopt_tls_p() at configure time; this header keeps
-    // the contract explicit for header-only users and future maintainers.
-    thread_local bool initialized_for_this_thread = false;
-    if (!initialized_for_this_thread) {
+    // libmpfr as thread-local state. Do not use a wrapper-owned thread_local
+    // "initialized" flag here: inline function-local TLS can be DSO-local on
+    // some platforms. The libmpfr state itself is the source of truth, so apply
+    // wrapper environment defaults only while that state still has MPFR's
+    // library-initial values.
+    if (mpfr_default_state_is_library_initial()) {
         apply_mpfr_environment_defaults();
-        initialized_for_this_thread = true;
     }
 }
 

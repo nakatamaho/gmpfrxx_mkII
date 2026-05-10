@@ -59,6 +59,7 @@ target_compile_definitions(test_mpfr_compound_assign PRIVATE
 )
 add_phase0_test(test_mpfr_exception_support mpcxx_mkII)
 add_phase0_test(test_mpfr_defaults mpfrxx_mkII)
+add_phase0_test(test_mpfr_initialization_sentinel mpfrxx_mkII)
 add_phase0_test(test_mpfr_environment mpfrxx_mkII)
 add_phase0_test(test_mpfr_environment_invalid mpfrxx_mkII)
 add_phase0_test(test_mpfr_string_io mpfrxx_mkII)
