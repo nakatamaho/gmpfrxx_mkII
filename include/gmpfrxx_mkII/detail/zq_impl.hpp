@@ -1237,6 +1237,8 @@ inline std::istream& operator>>(std::istream& in, mpq_class& value)
     const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
 
     mpq_class tmp;
+    // Match gmpxx.h extraction semantics: stream input uses mpq_set_str
+    // directly and intentionally does not canonicalize the parsed rational.
     if (parsed_token && mpq_set_str(tmp.get_mpq_t(), parse_token.c_str(), base) == 0) {
         value.swap(tmp);
     } else {
@@ -1433,6 +1435,8 @@ inline std::istream& operator>>(std::istream& in, mpq_ptr value)
     const std::string parse_token = gmpfrxx_mkII::detail::gmp_strip_leading_plus(std::move(token));
 
     gmpxx::mpq_class tmp;
+    // Match gmpxx.h extraction semantics: stream input uses mpq_set_str
+    // directly and intentionally does not canonicalize the parsed rational.
     if (parsed_token && mpq_set_str(tmp.get_mpq_t(), parse_token.c_str(), base) == 0) {
         mpq_set(value, tmp.get_mpq_t());
     } else {

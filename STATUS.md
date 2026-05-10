@@ -12075,3 +12075,39 @@ Known issues:
 - `mpfrxx::cmp` intentionally remains a three-way helper backed by
   `mpfr_cmp`; callers needing unordered status should use the boolean
   comparison operators or the NaN-aware comparison result helper.
+
+Post-phase MPQ stream extraction canonicalization comment:
+DONE
+
+Implemented features:
+- Documented that `mpq_class` and raw `mpq_ptr` stream extraction
+  intentionally use `mpq_set_str` directly, matching `gmpxx.h` semantics.
+- Kept the existing non-canonicalizing extraction behavior unchanged.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "operator>>\\(.*mpq|set_str\\(|mpq_set_str|mpq_canonicalize|print_mpq|read.*mpq" include/gmpfrxx_mkII/detail tests README.md STATUS.md`
+- `git status --short`
+- `nl -ba include/gmpfrxx_mkII/detail/zq_impl.hpp | sed -n '1218,1245p;1428,1442p'`
+- `cmake --build build -j --target test_zq_string_io`
+- `git diff --check`
+- `ctest --test-dir build -R '^test_zq_string_io$' --output-on-failure`
+- `cmake --build build -j`
+- `git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_zq_string_io`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build -R '^test_zq_string_io$' --output-on-failure`: PASS, 1/1 test passed.
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 152/152 tests passed.
+
+Known issues:
+- None.
