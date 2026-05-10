@@ -33,6 +33,8 @@
 #include <atomic>
 #include <gmp.h>
 
+#include "benchmark_allocator_counter.hpp"
+
 #if defined(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS)
 
 namespace benchmark_mpf_operation_counter {
@@ -130,6 +132,7 @@ inline void counted_mpf_mul(mpf_ptr result, mpf_srcptr lhs, mpf_srcptr rhs) {
 }
 
 inline void begin_kernel() {
+    benchmark_allocator_counter::begin_kernel();
     kernel_baseline() = read_counters();
 }
 
@@ -156,6 +159,7 @@ inline void print_kernel(const char *label) {
               << " clear=" << (end.clear - start.clear)
               << " add=" << (end.add - start.add)
               << " mul=" << (end.mul - start.mul) << std::endl;
+    benchmark_allocator_counter::print_kernel(label);
 }
 
 } // namespace benchmark_mpf_operation_counter
@@ -170,9 +174,9 @@ inline void print_kernel(const char *label) {
 
 namespace benchmark_mpf_operation_counter {
 
-inline void begin_kernel() {}
+inline void begin_kernel() { benchmark_allocator_counter::begin_kernel(); }
 inline void print(const char *) {}
-inline void print_kernel(const char *) {}
+inline void print_kernel(const char *label) { benchmark_allocator_counter::print_kernel(label); }
 
 } // namespace benchmark_mpf_operation_counter
 

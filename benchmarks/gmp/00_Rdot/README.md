@@ -60,6 +60,17 @@ Each executable prints `Elapsed time` and `MFLOPS`.  Higher MFLOPS is better
 when comparing runs with the same vector size, precision, compiler flags, and
 machine.
 
+Rdot executables also print a timed-kernel allocator profile:
+
+```text
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=... realloc=... free=... alloc_bytes=... realloc_old_bytes=... realloc_new_bytes=... free_bytes=...
+```
+
+These counts come from GMP's allocator callback API and measure actual heap
+traffic during the timed dot-product body.  They are deliberately separate from
+the optional init/clear operation counters enabled by
+`-DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS=ON`.
+
 Variant names:
 
 - `C_native`: raw `mpf_t` implementation.

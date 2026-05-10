@@ -1,3 +1,144 @@
+Post-phase Rdot allocator profiling:
+DONE
+
+Implemented features:
+- Added `benchmarks/common/benchmark_allocator_counter.hpp`, a benchmark-only
+  GMP allocator counter based on `mp_set_memory_functions()`.
+- Rdot benchmark executables now install the allocator counter before the
+  first GMP allocation and print `BENCH_ALLOC_COUNTS` for the timed kernel.
+- Integrated allocator baseline/printing with the existing Rdot operation
+  counter calls while keeping init/clear macro counters opt-in.
+- Added allocator profiling to GMP and MPFR Rdot serial and OpenMP variants.
+
+Tests added:
+- No compiled unit tests were added; this phase instruments benchmark
+  executables.
+
+Tests updated:
+- `benchmarks/common/benchmark_allocator_counter.hpp`
+- `benchmarks/common/mpf_operation_counter.hpp`
+- `benchmarks/common/mpfr_operation_counter.hpp`
+- `benchmarks/gmp/00_Rdot/*.cpp`
+- `benchmarks/mpfr/00_Rdot/*.cpp`
+- `benchmarks/README.md`
+- `benchmarks/gmp/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target Rdot_gmp_C_native_01 Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_C_native_01 Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 1000 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 1000 512`
+- `cmake --build build -j`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 1000 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 1000 512`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Representative Rdot GMP/MPFR benchmark builds: PASS.
+- Representative Rdot runs print `BENCH_ALLOC_COUNTS`: PASS.
+- Full build: PASS.
+- Full CTest: PASS, 154/154.
+- Whitespace check: PASS.
+
+Known issues:
+- `BENCH_ALLOC_COUNTS` measures actual GMP allocator traffic. Direct
+  `mpf_init2`/`mpfr_init2` and clear operation counts remain available only
+  through the existing opt-in macro counters, because those counters rewrite C
+  API calls in benchmark translation units.
+
+Post-phase moved-from assignment guards:
+DONE
+
+Implemented features:
+- Reinitialized `mpf_class`, `mpfr_class`, and `mpc_class` when scalar,
+  string, expression, or selected value assignments target a moved-from object.
+- Made copy construction and copy assignment from moved-from `mpf_class`,
+  `mpfr_class`, and `mpc_class` deterministic by treating the source as zero
+  with wrapper default precision instead of passing precision 0 to GMP/MPFR/MPC.
+- Routed `mpfc_class` assignments through component assignment so moved-from
+  `mpf_class` components are restored before use.
+
+Tests added:
+- Extended allocation-count tests for `mpf_class`, `mpfr_class`, and
+  `mpc_class` to cover moved-from reassignment and copy-from-moved sources.
+- Extended `test_mpfc_basic` to cover assignment into moved-from `mpfc_class`
+  objects.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_mpf_alloc_count.cpp`
+- `tests/test_mpfr_alloc_count.cpp`
+- `tests/test_mpc_alloc_count.cpp`
+- `tests/test_mpfc_basic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpf_alloc_count test_mpfr_alloc_count test_mpc_alloc_count test_mpfc_basic test_mpfr_initialization_sentinel`
+- `ctest --test-dir build -R 'test_mpf_alloc_count|test_mpfr_alloc_count|test_mpc_alloc_count|test_mpfc_basic|test_mpfr_initialization_sentinel' --output-on-failure`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted moved-from assignment and MPFR sentinel tests: PASS.
+- Whitespace check: PASS.
+- Full build: PASS.
+- Full CTest: PASS, 154/154.
+
+Known issues:
+- Copying from a moved-from numeric object yields a valid zero value with
+  default precision. This is intentional defensive behavior for an otherwise
+  unspecified moved-from value.
+
+Post-phase MPFR default initialization sentinel:
+DONE
+
+Implemented features:
+- Removed the inline function-local `thread_local` initialization flag from
+  `initialize_mpfr_defaults_for_current_thread()`.
+- Added a libmpfr-state sentinel: wrapper environment defaults are applied only
+  when the calling thread's MPFR default precision, rounding mode, `emin`, and
+  `emax` still match MPFR's library-initial values.
+- Documented that libmpfr TLS default state is the source of truth across DSO
+  boundaries; the wrapper must not own a DSO-local initialization flag.
+
+Tests added:
+- `tests/test_mpfr_initialization_sentinel.cpp`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `tests/CMakeLists.txt`
+- `README.md`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "initialize_mpfr_defaults_for_current_thread|apply_mpfr_environment_defaults|set_default_precision_bits|default_options|mpfr_get_default_prec|mpfr_set_default_prec" include/gmpfrxx_mkII/detail include`
+- `sed -n '1,280p' include/gmpfrxx_mkII/detail/environment.hpp`
+- `sed -n '278,340p' include/gmpfrxx_mkII/detail/environment.hpp`
+- `rg -n "MPFR default|initialize_mpfr_defaults_for_current_thread|reload_mpfr_defaults_from_environment|set_default_precision_bits|default_options|MPFRXX_DEFAULT_PRECISION_BITS" tests include README.md SPECIFICATIONS.md STATUS.md`
+- `sed -n '1,220p' tests/test_mpfr_defaults.cpp && sed -n '1,220p' tests/test_mpfr_environment.cpp`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpfr_initialization_sentinel test_mpfr_defaults test_mpfr_environment test_mpfr_thread_safety`
+- `ctest --test-dir build -R 'test_mpfr_initialization_sentinel|test_mpfr_defaults|test_mpfr_environment|test_mpfr_thread_safety' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFR default tests: PASS.
+- Full build: PASS.
+- Full CTest: PASS, 154/154.
+
+Known issues:
+- The sentinel intentionally treats any pre-existing change to MPFR default
+  state as application-owned state and leaves it alone. Applications that reset
+  all MPFR defaults exactly to library-initial values before wrapper access can
+  still trigger wrapper environment initialization.
+
 Post-phase benchmark raw result directories split by backend:
 DONE
 

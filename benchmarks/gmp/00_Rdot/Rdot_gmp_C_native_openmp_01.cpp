@@ -30,6 +30,8 @@
 #include <chrono>
 #include <gmp.h>
 
+#include "benchmark_allocator_counter.hpp"
+
 #if defined USE_ORIGINAL_GMPXX
 #include <gmpxx.h>
 #else
@@ -88,6 +90,7 @@ void clear_mpf_vec(mpf_t *vec, int n) {
 }
 
 int main(int argc, char **argv) {
+    benchmark_allocator_counter::install();
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
@@ -121,9 +124,11 @@ int main(int argc, char **argv) {
         vec2_mpf_class[i] = mpf_class(vec2[i]);
     }
 
+    benchmark_allocator_counter::begin_kernel();
     auto start = std::chrono::high_resolution_clock::now();
     _Rdot(N, vec1, 1, vec2, 1, &_ans);
     auto end = std::chrono::high_resolution_clock::now();
+    benchmark_allocator_counter::print_kernel("timed_kernel");
 
     ans = Rdot(N, vec1_mpf_class, 1, vec2_mpf_class, 1);
 

@@ -86,6 +86,7 @@ void clear_mpfr_vec(mpfr_t *vec, int n) {
 }
 
 int main(int argc, char **argv) {
+    benchmark_allocator_counter::install();
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 

@@ -75,6 +75,20 @@ The raw log is the authoritative result.  The plotted `MFLOPS` values measure
 the timed kernel body, not allocation, random initialization, or verification.
 Use `WALL_SECONDS` in the log when total executable time matters.
 
+Rdot benchmark executables install a GMP allocator counter before the first GMP
+allocation and print a timed-kernel profile line:
+
+```text
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=... realloc=... free=... alloc_bytes=... realloc_old_bytes=... realloc_new_bytes=... free_bytes=...
+```
+
+This counter observes actual GMP/MPFR heap traffic through
+`mp_set_memory_functions()` and does not instrument wrapper internals.  If
+direct init/clear operation counts are needed for diagnosis, configure with
+`-DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS=ON` or
+`-DGMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS=ON`; those opt-in counters use
+benchmark-local macro wrapping and are not enabled in normal benchmark builds.
+
 Generated result directories such as `benchmarks/gmp/results_raw/` and
 `benchmarks/mpfr/results_raw/` are kept available for curated commits.  Check
 the staged file list before committing a large benchmark run.
