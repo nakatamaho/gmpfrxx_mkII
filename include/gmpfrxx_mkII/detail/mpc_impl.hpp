@@ -362,28 +362,18 @@ public:
             return *this;
         }
 
-        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else {
-                mpc_swap(value_, other.value_);
-            }
+        if (!valid_) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            valid_ = true;
+            other.valid_ = false;
+        } else if (real_precision() == other.real_precision() &&
+                   imag_precision() == other.imag_precision()) {
+            mpc_swap(value_, other.value_);
         } else {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else if (real_precision() == other.real_precision() &&
-                       imag_precision() == other.imag_precision()) {
-                mpc_swap(value_, other.value_);
-            } else {
-                const auto context =
-                    gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
-                const int inex = mpc_set(value_, other.value_, default_rounding());
-                gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding(), inex);
-            }
+            const auto context =
+                gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
+            const int inex = mpc_set(value_, other.value_, default_rounding());
+            gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding(), inex);
         }
         return *this;
     }

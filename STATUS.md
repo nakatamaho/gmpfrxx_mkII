@@ -1,3 +1,101 @@
+Post-phase disable fixed-precision fastpath macro:
+DONE
+
+Implemented features:
+- Disabled `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` for MPFR and MPC
+  move assignment by removing the swap-only branch.
+- GMP MPF, MPFR, and MPC move assignment now all preserve left-hand-side
+  precision for valid destinations.
+- Stopped benchmark targets from defining
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`; FMA variants now only add
+  `MPFRXX_ENABLE_FMA`.
+- Updated README and SPECIFICATIONS to document that the fixed-precision
+  fastpath macro is currently disabled/reserved.
+
+Tests added:
+- No new tests were added.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/README.md`
+- `README.md`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpfr_numeric_equivalence test_mpc_basic test_mpc_precision_policy test_mpf_numeric_equivalence test_compound_assign test_mpfr_compound_assign`
+- `ctest --test-dir build -R "test_mpfr_numeric_equivalence|test_mpc_basic|test_mpc_precision_policy|test_mpf_numeric_equivalence|test_compound_assign|test_mpfr_compound_assign" --output-on-failure`
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused tests: PASS, 6/6.
+
+Known issues:
+- Legacy benchmark target names containing `FIXED_PRECISION_FASTPATH` remain
+  for continuity, but they no longer define the disabled macro.
+
+Post-phase direct multiply compound assignment:
+DONE
+
+Implemented features:
+- Added a GMP MPF direct compound-assignment specialization for direct
+  leaf-leaf multiply expressions:
+  `a += b * c` and `a -= b * c`.
+- The GMP path uses a scoped local temporary and calls `mpf_mul` followed by
+  `mpf_add` or `mpf_sub`, avoiding the generic recursive expression evaluator
+  while keeping header-owned TLS scratch pools removed.
+- Added the analogous MPFR direct multiply compound path for non-FMA builds:
+  `mpfr_mul` followed by `mpfr_add` or `mpfr_sub`.
+- Kept the existing MPFR `MPFRXX_ENABLE_FMA` path using native `mpfr_fma` /
+  adjusted `mpfr_fms` for the same expression shape.
+
+Tests added:
+- No new unit tests were added; existing compound-assignment, allocation-count,
+  and numeric-equivalence tests cover the affected behavior.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpf_alloc_count test_mpfr_alloc_count test_compound_assign test_mpfr_compound_assign test_mpf_numeric_equivalence test_mpfr_numeric_equivalence`
+- `git diff --check`
+- `ctest --test-dir build -R "test_mpf_alloc_count|test_mpfr_alloc_count|test_compound_assign|test_mpfr_compound_assign|test_mpf_numeric_equivalence|test_mpfr_numeric_equivalence" --output-on-failure`
+- `cmake --build build-release-nocount -j --target Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_03_mkII Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH_FMA`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- Release/no-allocator-count Rdot `100000 512` benchmarks, 3 runs per listed
+  variant.
+
+Pass/fail result:
+- Focused tests: PASS, 6/6.
+- Full build: PASS.
+- Full CTest: PASS, 153/153.
+- Whitespace check: PASS.
+- Best of 3 Release/no-allocator-count Rdot `100000 512`:
+  - `GMP_kernel01_orig`: `27.6801 MFLOPS`
+  - `GMP_kernel01_mkII`: `27.3689 MFLOPS`
+  - `GMP_kernel01_mkII_assume`: `23.969 MFLOPS`
+  - `GMP_kernel03_orig`: `32.5501 MFLOPS`
+  - `GMP_kernel03_mkII`: `32.3836 MFLOPS`
+  - `GMP_kernel03_mkII_assume`: `28.7573 MFLOPS`
+  - `MPFR_C_native`: `15.4542 MFLOPS`
+  - `MPFR_kernel01_mkII`: `14.061 MFLOPS`
+  - `MPFR_kernel01_mkII_assume`: `14.6144 MFLOPS`
+  - `MPFR_kernel01_mkII_assume_FMA`: `17.6206 MFLOPS`
+  - `MPFR_kernel03_mkII`: `15.3644 MFLOPS`
+  - `MPFR_kernel03_mkII_assume`: `15.5625 MFLOPS`
+  - `MPFR_kernel03_mkII_assume_FMA`: `15.6834 MFLOPS`
+
+Known issues:
+- The direct GMP path closes most of the `kernel_01` gap in the normal build.
+  The fixed-precision assume build is slower in these measurements and needs a
+  separate investigation before treating that macro as a performance win for
+  GMP MPF Rdot.
+
 Post-phase remove MPF/MPFR scratch pools:
 DONE
 

@@ -279,25 +279,15 @@ public:
             return *this;
         }
 
-        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else {
-                mpfr_swap(value_, other.value_);
-            }
+        if (!valid_) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            valid_ = true;
+            other.valid_ = false;
+        } else if (this->precision() == other.precision()) {
+            mpfr_swap(value_, other.value_);
         } else {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else if (this->precision() == other.precision()) {
-                mpfr_swap(value_, other.value_);
-            } else {
-                const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-                mpfr_set(value_, other.value_, context.rounding_mode);
-            }
+            const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
+            mpfr_set(value_, other.value_, context.rounding_mode);
         }
         return *this;
     }
@@ -2009,6 +1999,30 @@ void mpfr_compound_submul_fma_apply(
 }
 
 template <typename Lhs, typename Rhs>
+void mpfr_compound_mul_apply(
+    mpfr_t dest,
+    const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
+    mpfr_prec_t precision,
+    mpfr_rnd_t rnd)
+{
+    scoped_mpfr_temporary product(precision);
+    mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+    mpfr_add(dest, dest, product.get(), rnd);
+}
+
+template <typename Lhs, typename Rhs>
+void mpfr_compound_submul_apply(
+    mpfr_t dest,
+    const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
+    mpfr_prec_t precision,
+    mpfr_rnd_t rnd)
+{
+    scoped_mpfr_temporary product(precision);
+    mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+    mpfr_sub(dest, dest, product.get(), rnd);
+}
+
+template <typename Lhs, typename Rhs>
 void mpfr_fmma_direct_apply(
     mpfr_t dest,
     const binary_expr<add_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
@@ -2237,19 +2251,34 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
             operand.get().mpfr_data(),
             context.rounding_mode);
     } else if constexpr (
-        build_options::enable_mpfr_fma &&
         is_mpfr_mul_direct_expr_v<operand_type> &&
         (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
-        if constexpr (std::is_same_v<Op, add_op>) {
-            mpfr_compound_fma_apply(
-                lhs.mpfr_data(),
-                operand,
-                context.rounding_mode);
+        if constexpr (build_options::enable_mpfr_fma) {
+            if constexpr (std::is_same_v<Op, add_op>) {
+                mpfr_compound_fma_apply(
+                    lhs.mpfr_data(),
+                    operand,
+                    context.rounding_mode);
+            } else {
+                mpfr_compound_submul_fma_apply(
+                    lhs.mpfr_data(),
+                    operand,
+                    context.rounding_mode);
+            }
         } else {
-            mpfr_compound_submul_fma_apply(
-                lhs.mpfr_data(),
-                operand,
-                context.rounding_mode);
+            if constexpr (std::is_same_v<Op, add_op>) {
+                mpfr_compound_mul_apply(
+                    lhs.mpfr_data(),
+                    operand,
+                    precision,
+                    context.rounding_mode);
+            } else {
+                mpfr_compound_submul_apply(
+                    lhs.mpfr_data(),
+                    operand,
+                    precision,
+                    context.rounding_mode);
+            }
         }
     } else {
         scoped_mpfr_temporary value(precision);

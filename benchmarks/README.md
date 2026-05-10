@@ -6,17 +6,18 @@ The benchmark tree is split by numeric backend.
 
 - `gmp/`: eager BLAS-like GMP/MPF benchmark programs ported to this
   repository.  The top-level CMake build creates raw `mpf_t`, upstream
-  `gmpxx.h`, `gmpxx_mkII`, `gmpxx_mkII` with
-  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`, and OpenMP variants where available.
+  `gmpxx.h`, `gmpxx_mkII`, and OpenMP variants where available.  Legacy
+  `*_FIXED_PRECISION_FASTPATH` target names are currently built without
+  defining `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
 - `mpfr/`: reserved for MPFR/MPC benchmarks.
 - `common/`: shared runner and plotting helpers.
 
 MPFR wrapper benchmark kernels are built in three wrapper configurations:
 
 - `*_mkII`: normal precision-policy build.
-- `*_mkII_FIXED_PRECISION_FASTPATH`: normal build plus
-  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
-- `*_mkII_FIXED_PRECISION_FASTPATH_FMA`: fixed-precision fast path plus
+- `*_mkII_FIXED_PRECISION_FASTPATH`: currently the same wrapper build as
+  `*_mkII`; the fixed-precision fastpath macro is disabled.
+- `*_mkII_FIXED_PRECISION_FASTPATH_FMA`: normal wrapper build plus
   `MPFRXX_ENABLE_FMA`, enabling MPFR fused multiply-add/subtract expression
   paths where the wrapper can safely apply them.
 

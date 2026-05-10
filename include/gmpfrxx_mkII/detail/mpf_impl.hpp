@@ -269,24 +269,14 @@ public:
             return *this;
         }
 
-        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else {
-                mpf_swap(value_, other.value_);
-            }
+        if (!valid_) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            valid_ = true;
+            other.valid_ = false;
+        } else if (precision() == other.precision()) {
+            mpf_swap(value_, other.value_);
         } else {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else if (precision() == other.precision()) {
-                mpf_swap(value_, other.value_);
-            } else {
-                mpf_set(value_, other.value_);
-            }
+            mpf_set(value_, other.value_);
         }
         return *this;
     }
@@ -1700,6 +1690,41 @@ bool mpf_try_assign_direct_leaf_binary(mpf_t dest, const binary_expr<Op, Lhs, Rh
     }
 }
 
+template <typename T>
+struct is_mpf_mul_direct_expr : std::false_type {};
+
+template <typename Lhs, typename Rhs>
+struct is_mpf_mul_direct_expr<binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>>
+    : std::bool_constant<
+          std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
+          std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>>> {};
+
+template <typename T>
+inline constexpr bool is_mpf_mul_direct_expr_v =
+    is_mpf_mul_direct_expr<std::decay_t<T>>::value;
+
+template <typename Lhs, typename Rhs>
+void mpf_compound_mul_apply(
+    mpf_t dest,
+    const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
+    mp_bitcnt_t precision)
+{
+    scoped_mpf_temporary product(precision);
+    mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+    mpf_add(dest, dest, product.get());
+}
+
+template <typename Lhs, typename Rhs>
+void mpf_compound_submul_apply(
+    mpf_t dest,
+    const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
+    mp_bitcnt_t precision)
+{
+    scoped_mpf_temporary product(precision);
+    mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+    mpf_sub(dest, dest, product.get());
+}
+
 template <typename Lhs, typename Rhs, std::enable_if_t<
                                     is_mpf_expression_operand_v<Lhs> &&
                                         is_mpf_expression_operand_v<Rhs> &&
@@ -1811,9 +1836,19 @@ void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&& rhs)
     using operand_type = std::decay_t<decltype(operand)>;
     if constexpr (std::is_same_v<operand_type, object_leaf<gmpxx::mpf_class>>) {
         mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), operand.get().mpf_data());
+    } else if constexpr (
+        is_mpf_mul_direct_expr_v<operand_type> &&
+        (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
+        const mp_bitcnt_t precision = lhs.precision();
+        if constexpr (std::is_same_v<Op, add_op>) {
+            mpf_compound_mul_apply(lhs.mpf_data(), operand, precision);
+        } else {
+            mpf_compound_submul_apply(lhs.mpf_data(), operand, precision);
+        }
     } else {
-        scoped_mpf_temporary value(lhs.precision());
-        mpf_evaluate(value.get(), operand, lhs.precision());
+        const mp_bitcnt_t precision = lhs.precision();
+        scoped_mpf_temporary value(precision);
+        mpf_evaluate(value.get(), operand, precision);
         mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), value.get());
     }
 }

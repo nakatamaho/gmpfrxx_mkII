@@ -110,15 +110,11 @@ This policy is important for expression-template rvalue capture and for
 must not add another GMP/MPFR/MPC allocation on top of the allocation already
 needed to create the temporary value.
 
-Move assignment has two precision policies:
-
-- In the normal precision-policy build, move assignment to a valid destination
-  preserves the left-hand-side precision. This matches ordinary assignment
-  semantics for existing objects.
-- In `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` builds, move assignment to
-  a valid destination uses `mpf_swap`, `mpfr_swap`, or `mpc_swap`. This avoids
-  clearing the destination's old backend storage in the hot path and
-  intentionally does not preserve the left-hand-side precision.
+Move assignment to a valid destination preserves the left-hand-side precision.
+This matches ordinary assignment semantics for existing objects. The
+`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro is currently disabled for
+floating wrapper move assignment and must not change `gmpxx::mpf_class`,
+`mpfrxx::mpfr_class`, or `mpfrxx::mpc_class` precision semantics.
 
 If the destination is already moved-from and owns no valid backend object, move
 assignment may directly steal the source storage because there is no valid
@@ -138,7 +134,8 @@ MPFRXX_ENABLE_FMA
 
 GMP MPF has no wrapper fused multiply-add option. In particular, the wrapper
 must not keep a header-owned TLS scratch pool for MPF compound assignment.
-`a += b * c` and `a -= b * c` use ordinary MPF expression evaluation.
+`a += b * c` and `a -= b * c` may use a direct multiply-then-add/subtract
+specialization, but it still follows MPF's two-step rounding behavior.
 
 `MPFRXX_ENABLE_FMA` enables MPFR's fused operations for supported expression
 shapes. `a += b * c` maps to `mpfr_fma`; `a -= b * c` maps to `mpfr_fms`
@@ -146,10 +143,11 @@ with the rounding-mode adjustment required for the negated result.
 Materializing `a * b + c * d` maps to `mpfr_fmma`, and materializing
 `a * b - c * d` maps to `mpfr_fmms`.
 
-These options are separate from
-`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` because enabling them changes
-numeric semantics, especially for MPFR where fused evaluation performs one
-rounding instead of materializing the product and then adding or subtracting.
+These options are separate from the disabled
+`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro because enabling FMA
+changes numeric semantics, especially for MPFR where fused evaluation performs
+one rounding instead of materializing the product and then adding or
+subtracting.
 
 ## GMP MPF Default Precision
 

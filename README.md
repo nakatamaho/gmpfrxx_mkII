@@ -222,13 +222,14 @@ For GMP MPF defaults, `GMPXX_MKII_DEFAULT_MPF_PREC_BITS` has priority over
 `MPFXX_DEFAULT_PREC_BITS` name.  Invalid GMP MPF precision environment values
 fail fast.
 
-The fixed-precision fast path is a compile-time option:
+The fixed-precision fast path macro is currently disabled:
 
 ```text
 GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
 ```
 
-It is not a runtime environment variable.
+It is not a runtime environment variable, and current wrapper builds do not use
+it to change floating move-assignment or arithmetic semantics.
 
 Compound-assignment multiply fusion is controlled by separate compile-time
 options because it can change rounding semantics:
