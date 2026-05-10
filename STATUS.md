@@ -1,3 +1,44 @@
+Post-phase inline GMP MPF compound multiply assignment:
+DONE
+
+Implemented features:
+- Added a portable `GMPFRXX_MKII_ALWAYS_INLINE` helper macro.
+- Marked the GMP MPF direct multiply compound-assignment helpers as
+  always-inline candidates so `y += alpha * x` can be flattened into the
+  caller loop.
+- Verified that the `Raxpy_gmp_kernel_01_mkII` executable no longer exports a
+  separate `mpf_compound_assign<add_op, binary_expr<mul_op,...>>` symbol.
+
+Tests added:
+- No new tests were added.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/config.hpp`
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build-release-nocount -j --target Raxpy_gmp_kernel_01_mkII`
+- `nm -C build-release-nocount/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII | rg "mpf_compound_assign|mpf_compound_mul_apply|_Raxpy"`
+- `objdump -Cd build-release-nocount/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII | rg -n "<_Raxpy|mpf_compound_assign|__gmpf_get_prec|__gmpf_init2|__gmpf_mul|__gmpf_add|__gmpf_clear"`
+- `objdump -Cd build-release-nocount/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII --start-address=0x6330 --stop-address=0x6508`
+- `ctest --test-dir build -R "test_mpf_numeric_equivalence|test_compound_assign|test_mpf_aliasing" --output-on-failure`
+- `build-release-nocount/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 1000 512`
+- Release/no-allocator-count Raxpy `5000000 512`, 5 runs each:
+  `Raxpy_gmp_kernel_01_orig` and `Raxpy_gmp_kernel_01_mkII`.
+
+Pass/fail result:
+- Focused MPF tests: PASS, 3/3.
+- Raxpy smoke: PASS, `Result OK`.
+- Disassembly check: PASS, no separate `mpf_compound_assign` symbol remained.
+- Best of 5 Release/no-allocator-count Raxpy `5000000 512`:
+  - `Raxpy_gmp_kernel_01_orig`: `29.1365 MFLOPS`
+  - `Raxpy_gmp_kernel_01_mkII`: `28.3677 MFLOPS`
+
+Known issues:
+- The helper call is gone, but stack cleanup flag branches for expression-node
+  ownership remain visible in the hot loop.
+
 Post-phase MPFR Raxpy FMA benchmark variants:
 DONE
 

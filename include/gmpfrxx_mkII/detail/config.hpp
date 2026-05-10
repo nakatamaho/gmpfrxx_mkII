@@ -47,6 +47,16 @@
 #define GMPXX_MKII_API
 #endif
 
+#ifndef GMPFRXX_MKII_ALWAYS_INLINE
+#if defined(_MSC_VER)
+#define GMPFRXX_MKII_ALWAYS_INLINE __forceinline
+#elif defined(__GNUC__) || defined(__clang__)
+#define GMPFRXX_MKII_ALWAYS_INLINE inline __attribute__((always_inline))
+#else
+#define GMPFRXX_MKII_ALWAYS_INLINE inline
+#endif
+#endif
+
 #if __has_include(<gmpfrxx_mkII/detail/version.hpp>)
 #include <gmpfrxx_mkII/detail/version.hpp>
 #else

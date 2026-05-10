@@ -1701,7 +1701,7 @@ inline constexpr bool is_mpf_mul_direct_expr_v =
     is_mpf_mul_direct_expr<std::decay_t<T>>::value;
 
 template <typename Lhs, typename Rhs>
-void mpf_compound_mul_apply(
+GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_mul_apply(
     mpf_t dest,
     const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
     mp_bitcnt_t precision)
@@ -1712,7 +1712,7 @@ void mpf_compound_mul_apply(
 }
 
 template <typename Lhs, typename Rhs>
-void mpf_compound_submul_apply(
+GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_submul_apply(
     mpf_t dest,
     const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
     mp_bitcnt_t precision)
@@ -1827,7 +1827,7 @@ auto operator>>(Lhs&& lhs, Bits bits)
 }
 
 template <typename Op, typename Rhs>
-void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&& rhs)
+GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&& rhs)
 {
     auto operand = make_mpf_operand(std::forward<Rhs>(rhs));
     using operand_type = std::decay_t<decltype(operand)>;
