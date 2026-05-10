@@ -6,9 +6,8 @@ The benchmark tree is split by numeric backend.
 
 - `gmp/`: eager BLAS-like GMP/MPF benchmark programs ported to this
   repository.  The top-level CMake build creates raw `mpf_t`, upstream
-  `gmpxx.h`, `gmpxx_mkII`, and OpenMP variants where available.  Legacy
-  `*_FIXED_PRECISION_FASTPATH` target names are currently built without
-  defining `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
+  `gmpxx.h`, `gmpxx_mkII`, and OpenMP variants where available.  Rdot omits
+  the legacy fixed-precision-fastpath target names.
 - `mpfr/`: reserved for MPFR/MPC benchmarks.
 - `common/`: shared runner and plotting helpers.
 
@@ -20,6 +19,9 @@ MPFR wrapper benchmark kernels are built in three wrapper configurations:
 - `*_mkII_FIXED_PRECISION_FASTPATH_FMA`: normal wrapper build plus
   `MPFRXX_ENABLE_FMA`, enabling MPFR fused multiply-add/subtract expression
   paths where the wrapper can safely apply them.
+
+Rdot MPFR kernels use the shorter `*_mkII` and `*_mkII_FMA` names instead of
+the legacy fixed-precision-fastpath names.
 
 Raw results are kept under each backend, not under the top-level benchmark
 directory:

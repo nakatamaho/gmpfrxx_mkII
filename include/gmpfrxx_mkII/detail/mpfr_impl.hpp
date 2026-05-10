@@ -2127,6 +2127,32 @@ void mpfr_evaluate(
     }
 }
 
+template <typename Expr>
+bool mpfr_try_assign_direct_leaf_binary(mpfr_t, const Expr&, mpfr_rnd_t)
+{
+    return false;
+}
+
+template <typename Op, typename Lhs, typename Rhs, typename Result>
+bool mpfr_try_assign_direct_leaf_binary(
+    mpfr_t dest,
+    const binary_expr<Op, Lhs, Rhs, Result>& expr,
+    mpfr_rnd_t rnd)
+{
+    if constexpr (std::is_same_v<Result, mpfrxx::mpfr_class> &&
+                  std::is_same_v<Lhs, object_leaf<mpfrxx::mpfr_class>> &&
+                  std::is_same_v<Rhs, object_leaf<mpfrxx::mpfr_class>> &&
+                  (std::is_same_v<Op, add_op> ||
+                   std::is_same_v<Op, sub_op> ||
+                   std::is_same_v<Op, mul_op> ||
+                   std::is_same_v<Op, div_op>)) {
+        mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+        return true;
+    } else {
+        return false;
+    }
+}
+
 template <typename Lhs, typename Rhs, std::enable_if_t<
                                     is_mpfr_expression_operand_v<Lhs> &&
                                         is_mpfr_expression_operand_v<Rhs> &&
@@ -2328,6 +2354,9 @@ mpfr_class& mpfr_class::operator=(const Expr& expr)
     ensure_valid_for_assignment();
     const mpfr_prec_t precision = this->precision();
     const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+    if (gmpfrxx_mkII::detail::mpfr_try_assign_direct_leaf_binary(value_, expr, context.rounding_mode)) {
+        return *this;
+    }
     gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, context.rounding_mode);
     return *this;
 }

@@ -80,6 +80,11 @@ function(add_kernel_variants subdir source base)
     add_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH)
 endfunction()
 
+function(add_rdot_kernel_variants subdir source base)
+    add_gmpxx_variant(${subdir} ${source} ${base})
+    add_mkii_variant(${subdir} ${source} ${base} mkII)
+endfunction()
+
 function(add_native_benchmark subdir source target)
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
@@ -91,7 +96,8 @@ function(add_mpfr_mkii_variant subdir source base suffix)
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
-    if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH_FMA")
+    if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH_FMA" OR
+       suffix STREQUAL "mkII_FMA")
         target_compile_definitions(${target} PRIVATE
             MPFRXX_ENABLE_FMA)
     endif()
@@ -101,6 +107,11 @@ function(add_mpfr_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH_FMA)
+endfunction()
+
+function(add_mpfr_rdot_kernel_variants subdir source base)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FMA)
 endfunction()
 
 function(add_mpfr_native_benchmark subdir source target)
@@ -113,30 +124,30 @@ add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_01.cpp
     Rdot_gmp_C_native_01)
 add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_01.cpp
     Rdot_gmp_C_native_openmp_01)
-add_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_01.cpp Rdot_gmp_kernel_01)
-add_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_02.cpp Rdot_gmp_kernel_02)
-add_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_03.cpp Rdot_gmp_kernel_03)
-add_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_04.cpp Rdot_gmp_kernel_04)
-add_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_01.cpp
+add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_01.cpp Rdot_gmp_kernel_01)
+add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_02.cpp Rdot_gmp_kernel_02)
+add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_03.cpp Rdot_gmp_kernel_03)
+add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_04.cpp Rdot_gmp_kernel_04)
+add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_01.cpp
     Rdot_gmp_kernel_openmp_01)
-add_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_02.cpp
+add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_02.cpp
     Rdot_gmp_kernel_openmp_02)
 
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_01.cpp
     Rdot_mpfr_C_native_01)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_01.cpp
     Rdot_mpfr_C_native_openmp_01)
-add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01.cpp
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01.cpp
     Rdot_mpfr_kernel_01)
-add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_02.cpp
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_02.cpp
     Rdot_mpfr_kernel_02)
-add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_03.cpp
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_03.cpp
     Rdot_mpfr_kernel_03)
-add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_04.cpp
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_04.cpp
     Rdot_mpfr_kernel_04)
-add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
     Rdot_mpfr_kernel_openmp_01)
-add_mpfr_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_02.cpp
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_02.cpp
     Rdot_mpfr_kernel_openmp_02)
 
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp

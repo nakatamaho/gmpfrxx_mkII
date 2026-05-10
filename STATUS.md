@@ -1,3 +1,80 @@
+Post-phase remove Rdot fastpath-name variants:
+DONE
+
+Implemented features:
+- Split Rdot benchmark variant registration from the other benchmark families.
+- GMP Rdot now builds only `*_orig` and `*_mkII` wrapper variants.
+- MPFR Rdot now builds `*_mkII` and `*_mkII_FMA`, removing the legacy
+  `*_mkII_FIXED_PRECISION_FASTPATH*` names from Rdot.
+- Updated the GMP Rdot runner, GMP Rdot plot legend, and benchmark
+  documentation to stop advertising Rdot fastpath-name variants.
+
+Tests added:
+- No new tests were added.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/README.md`
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/gmp/00_Rdot/go.sh`
+- `benchmarks/gmp/00_Rdot/plot.py`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build-release-nocount -j --target Rdot_gmp_kernel_01_mkII Rdot_gmp_kernel_03_mkII Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_01_mkII_FMA Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_03_mkII_FMA`
+- `cmake --build build-release-nocount --target help`
+- `/bin/bash -lc 'cmake --build build-release-nocount --target help | rg "Rdot_.*FIXED_PRECISION_FASTPATH"'`
+- `git diff --check`
+
+Pass/fail result:
+- Focused Rdot benchmark target build: PASS.
+- Rdot legacy fixed-precision-fastpath target scan: PASS, no matches.
+- `git diff --check`: PASS.
+
+Known issues:
+- Non-Rdot benchmark families still keep the legacy
+  `*_mkII_FIXED_PRECISION_FASTPATH*` target names for continuity.
+
+Post-phase direct leaf-leaf expression assignment:
+DONE
+
+Implemented features:
+- Let GMP MPF existing-object assignment from direct leaf-leaf binary
+  expressions call the backend operation directly even when the destination is
+  one of the operands. GMP MPF arithmetic permits destination overlap for these
+  operations.
+- Added the same direct assignment path for MPFR leaf-leaf binary expressions,
+  using the current destination precision and rounding mode.
+- This targets loops such as `templ = x[i] * y[i]; acc += templ;`, where the
+  first assignment can now bypass the generic recursive expression evaluator.
+
+Tests added:
+- No new tests were added.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpf_numeric_equivalence test_mpfr_numeric_equivalence test_alias_safety test_compound_assign test_mpfr_compound_assign`
+- `ctest --test-dir build -R "test_mpf_numeric_equivalence|test_mpfr_numeric_equivalence|test_alias_safety|test_compound_assign|test_mpfr_compound_assign" --output-on-failure`
+- `cmake --build build-release-nocount -j --target Rdot_gmp_kernel_03_mkII Rdot_mpfr_kernel_03_mkII`
+- Release/no-allocator-count Rdot kernel03 `100000 1024` benchmarks, 3 runs
+  per listed variant.
+
+Pass/fail result:
+- Focused build: PASS.
+- Focused tests: PASS, 5/5.
+- Best of 3 Release/no-allocator-count Rdot kernel03 `100000 1024`:
+  - `GMP_kernel03_mkII` with `GMPXX_MKII_DEFAULT_MPF_PREC_BITS=1024`:
+    `11.8464 MFLOPS`
+  - `MPFR_kernel03_mkII`: `8.22549 MFLOPS`
+
+Known issues:
+- New expression materialization still follows the max-precision policy and is
+  intentionally not routed through this existing-object assignment fast path.
+
 Post-phase disable fixed-precision fastpath macro:
 DONE
 

@@ -1680,9 +1680,6 @@ bool mpf_try_assign_direct_leaf_binary(mpf_t dest, const binary_expr<Op, Lhs, Rh
                    std::is_same_v<Op, sub_op> ||
                    std::is_same_v<Op, mul_op> ||
                    std::is_same_v<Op, div_op>)) {
-        if (mpf_expression_references(dest, expr)) {
-            return false;
-        }
         mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
         return true;
     } else {
