@@ -1895,7 +1895,7 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&&
     } else if constexpr (
         is_mpf_mul_direct_expr_v<operand_type> &&
         (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
-        const mp_bitcnt_t precision = lhs.precision();
+        const mp_bitcnt_t precision = mpf_get_prec(lhs.mpf_data());
         if constexpr (std::is_same_v<Op, add_op>) {
             mpf_compound_mul_apply(lhs.mpf_data(), operand, precision);
         } else {

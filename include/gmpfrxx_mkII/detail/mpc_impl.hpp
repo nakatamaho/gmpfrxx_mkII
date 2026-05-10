@@ -1224,7 +1224,10 @@ void mpc_compound_assign(mpfrxx::mpc_class& lhs, Rhs&& rhs)
 {
     auto operand = make_mpc_operand(std::forward<Rhs>(rhs));
     using operand_type = std::decay_t<decltype(operand)>;
-    const mpc_expression_precision_bits precision{lhs.real_precision(), lhs.imag_precision()};
+    mpfr_prec_t real_precision = 0;
+    mpfr_prec_t imag_precision = 0;
+    mpc_get_prec2(&real_precision, &imag_precision, lhs.mpc_data());
+    const mpc_expression_precision_bits precision{real_precision, imag_precision};
     const mpc_rnd_t rnd = mpfrxx::mpc_class::default_rounding();
     const auto context = current_eval_context(mpc_context_precision(precision));
     if constexpr (is_mpc_class_leaf_v<operand_type>) {

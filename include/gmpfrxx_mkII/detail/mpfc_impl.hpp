@@ -1027,7 +1027,9 @@ void mpfc_compound_assign(gmpxx::mpfc_class& lhs, Rhs&& rhs)
     if constexpr (is_mpfc_class_leaf_v<operand_type>) {
         mpfc_apply_binary<Op>(lhs, lhs, operand.get());
     } else {
-        gmpxx::mpfc_class value = gmpxx::mpfc_class::with_precision(lhs.real_precision(), lhs.imag_precision());
+        const mp_bitcnt_t real_precision = mpf_get_prec(mpfc_real_ref(lhs).mpf_data());
+        const mp_bitcnt_t imag_precision = mpf_get_prec(mpfc_imag_ref(lhs).mpf_data());
+        gmpxx::mpfc_class value = gmpxx::mpfc_class::with_precision(real_precision, imag_precision);
         mpfc_evaluate(value, operand);
         mpfc_apply_binary<Op>(lhs, lhs, value);
     }

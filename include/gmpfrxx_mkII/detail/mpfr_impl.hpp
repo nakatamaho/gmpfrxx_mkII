@@ -2340,7 +2340,7 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
     auto operand = make_mpfr_operand(std::forward<Rhs>(rhs));
     using operand_type = std::decay_t<decltype(operand)>;
 
-    const mpfr_prec_t precision = lhs.precision();
+    const mpfr_prec_t precision = mpfr_get_prec(lhs.mpfr_data());
     const auto context = current_eval_context(precision);
 
     if constexpr (is_mpfr_object_leaf_v<operand_type>) {
