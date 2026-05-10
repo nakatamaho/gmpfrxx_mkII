@@ -2351,6 +2351,35 @@ private:
     mpfr_t value_;
 };
 
+struct mpfr_comparison_result {
+    int order;
+    bool has_nan;
+};
+
+template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
+inline mpfr_comparison_result cmp_with_nan_status(Lhs&& lhs, Rhs&& rhs)
+{
+    auto left = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Lhs>(lhs));
+    auto right = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Rhs>(rhs));
+    mpfr_prec_t precision = std::max(
+        gmpfrxx_mkII::detail::mpfr_expression_precision(left),
+        gmpfrxx_mkII::detail::mpfr_expression_precision(right));
+    if (precision == 0) {
+        precision = mpfr_class::default_precision();
+    }
+
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+
+    scoped_mpfr_t lhs_value(precision);
+    scoped_mpfr_t rhs_value(precision);
+    gmpfrxx_mkII::detail::mpfr_evaluate(lhs_value.get(), left, precision, context.rounding_mode);
+    gmpfrxx_mkII::detail::mpfr_evaluate(rhs_value.get(), right, precision, context.rounding_mode);
+    if (mpfr_nan_p(lhs_value.get()) != 0 || mpfr_nan_p(rhs_value.get()) != 0) {
+        return {0, true};
+    }
+    return {mpfr_cmp(lhs_value.get(), rhs_value.get()), false};
+}
+
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline int cmp(Lhs&& lhs, Rhs&& rhs)
 {
@@ -2375,37 +2404,43 @@ inline int cmp(Lhs&& lhs, Rhs&& rhs)
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline bool operator==(Lhs&& lhs, Rhs&& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) == 0;
+    const auto result = cmp_with_nan_status(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
+    return !result.has_nan && result.order == 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline bool operator!=(Lhs&& lhs, Rhs&& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) != 0;
+    const auto result = cmp_with_nan_status(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
+    return result.has_nan || result.order != 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline bool operator<(Lhs&& lhs, Rhs&& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) < 0;
+    const auto result = cmp_with_nan_status(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
+    return !result.has_nan && result.order < 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline bool operator<=(Lhs&& lhs, Rhs&& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) <= 0;
+    const auto result = cmp_with_nan_status(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
+    return !result.has_nan && result.order <= 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline bool operator>(Lhs&& lhs, Rhs&& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) > 0;
+    const auto result = cmp_with_nan_status(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
+    return !result.has_nan && result.order > 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
 {
-    return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) >= 0;
+    const auto result = cmp_with_nan_status(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
+    return !result.has_nan && result.order >= 0;
 }
 
 template <

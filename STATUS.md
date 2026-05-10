@@ -12031,3 +12031,47 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+Post-phase MPFR NaN comparison semantics:
+DONE
+
+Implemented features:
+- Added NaN-aware MPFR comparison evaluation for boolean comparison
+  operators.
+- `mpfrxx::mpfr_class` comparisons now treat unordered operands with
+  IEEE/MPFR semantics: equality is false, inequality is true, and ordered
+  comparisons are false when either side is NaN.
+- Kept the existing `mpfrxx::cmp` three-way helper unchanged for source
+  compatibility.
+
+Tests added:
+- Added MPFR NaN comparison coverage for object/object, object/scalar,
+  scalar/object, and expression comparisons.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/test_mpfr_comparisons.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "inline int cmp|operator==|operator!=|operator<=|operator>=|test_mpfr_comparisons|mpfr_cmp|mpfr_nan_p" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests STATUS.md`
+- `git status --short`
+- `sed -n '2325,2420p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1,340p' tests/test_mpfr_comparisons.cpp`
+- `cmake --build build -j --target test_mpfr_comparisons`
+- `ctest --test-dir build -R test_mpfr_comparisons --output-on-failure`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j --target test_mpfr_comparisons`: PASS.
+- `ctest --test-dir build -R test_mpfr_comparisons --output-on-failure`: PASS, 1/1 test passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 152/152 tests passed.
+
+Known issues:
+- `mpfrxx::cmp` intentionally remains a three-way helper backed by
+  `mpfr_cmp`; callers needing unordered status should use the boolean
+  comparison operators or the NaN-aware comparison result helper.

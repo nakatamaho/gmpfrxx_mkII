@@ -153,6 +153,49 @@ void test_mpfr_scalar_comparisons()
     check_consistency(5.5, f);
 }
 
+void test_mpfr_nan_comparisons()
+{
+    mpfrxx::mpfr_class nan = mpfrxx::mpfr_class::with_precision(128);
+    mpfr_set_nan(nan.mpfr_data());
+    const mpfrxx::mpfr_class one("1.0", 128);
+
+    assert(!(nan == one));
+    assert(!(one == nan));
+    assert(nan != one);
+    assert(one != nan);
+    assert(!(nan < one));
+    assert(!(nan <= one));
+    assert(!(nan > one));
+    assert(!(nan >= one));
+    assert(!(one < nan));
+    assert(!(one <= nan));
+    assert(!(one > nan));
+    assert(!(one >= nan));
+
+    assert(!(nan == nan));
+    assert(nan != nan);
+    assert(!(nan < nan));
+    assert(!(nan <= nan));
+    assert(!(nan > nan));
+    assert(!(nan >= nan));
+
+    assert(!(nan == 0));
+    assert(nan != 0);
+    assert(!(0 == nan));
+    assert(0 != nan);
+    assert(!(nan < 0));
+    assert(!(nan <= 0));
+    assert(!(0 < nan));
+    assert(!(0 <= nan));
+
+    assert(!((nan + one) == one));
+    assert((nan + one) != one);
+    assert(!((nan + one) < one));
+    assert(!((nan + one) <= one));
+    assert(!((nan + one) > one));
+    assert(!((nan + one) >= one));
+}
+
 void test_mpfr_sign_next_and_predicates()
 {
     using mpfrxx::mpfr_class;
@@ -317,6 +360,7 @@ int main()
     test_mpfr_expression_comparisons();
     test_mpfr_comparison_exception_path();
     test_mpfr_scalar_comparisons();
+    test_mpfr_nan_comparisons();
     test_mpfr_sign_next_and_predicates();
     test_mpfr_comparison_helpers();
     return 0;
