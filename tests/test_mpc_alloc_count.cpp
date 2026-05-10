@@ -95,6 +95,52 @@ int main()
     }
     require_value(moved, 1.5, -2.5);
 
+    auto copied_from_moved_source =
+        mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 6.5, -7.5);
+    mpfrxx::mpc_class copied_from_moved_owner(std::move(copied_from_moved_source));
+    mpfrxx::mpc_class copied_from_moved(copied_from_moved_source);
+    if (copied_from_moved.real_precision() != mpfrxx::default_mpc_real_precision_bits() ||
+        copied_from_moved.imag_precision() != mpfrxx::default_mpc_imag_precision_bits()) {
+        std::abort();
+    }
+    require_value(copied_from_moved, 0.0, 0.0);
+    auto assigned_from_moved = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 3.0, 4.0);
+    assigned_from_moved = copied_from_moved_source;
+    if (assigned_from_moved.real_precision() != real_precision ||
+        assigned_from_moved.imag_precision() != imag_precision) {
+        std::abort();
+    }
+    require_value(assigned_from_moved, 0.0, 0.0);
+    (void)copied_from_moved_owner;
+
+    movable = 7.5;
+    if (movable.real_precision() != mpfrxx::default_mpc_real_precision_bits() ||
+        movable.imag_precision() != mpfrxx::default_mpc_imag_precision_bits()) {
+        std::abort();
+    }
+    require_value(movable, 7.5, 0.0);
+
+    auto moved_string_source = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 1.0, 2.0);
+    mpfrxx::mpc_class moved_string_sink(std::move(moved_string_source));
+    moved_string_source = "(11.5 -12.5)";
+    if (moved_string_source.real_precision() != mpfrxx::default_mpc_real_precision_bits() ||
+        moved_string_source.imag_precision() != mpfrxx::default_mpc_imag_precision_bits()) {
+        std::abort();
+    }
+    require_value(moved_string_source, 11.5, -12.5);
+
+    auto moved_expr_source = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 1.0, 2.0);
+    mpfrxx::mpc_class moved_expr_sink(std::move(moved_expr_source));
+    const auto expr_rhs = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 2.5, -3.5);
+    moved_expr_source = moved + expr_rhs;
+    if (moved_expr_source.real_precision() != mpfrxx::default_mpc_real_precision_bits() ||
+        moved_expr_source.imag_precision() != mpfrxx::default_mpc_imag_precision_bits()) {
+        std::abort();
+    }
+    require_value(moved_expr_source, 4.0, -6.0);
+    (void)moved_string_sink;
+    (void)moved_expr_sink;
+
     auto move_dst = mpfrxx::mpc_class::with_precision(96, 128, -1.0, -1.0);
     auto move_src = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 2.5, -3.5);
     alloc_count = 0;

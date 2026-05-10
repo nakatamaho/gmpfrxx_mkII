@@ -128,6 +128,34 @@ void test_construction_and_accessors() {
     assert(z.imag().get_prec() == mpf_class(-4, 128).get_prec());
     assert(z.get_prec() == z.real().get_prec());
 
+    mpfc_class moved_lhs(mpf_class(1, 192), mpf_class(2, 160));
+    mpfc_class moved_owner(std::move(moved_lhs));
+    moved_lhs = mpf_class(3, 224);
+    assert(moved_lhs.real().precision() == default_mpf_precision_bits());
+    assert(moved_lhs.imag().precision() == default_mpf_precision_bits());
+    assert(moved_lhs.real() == 3);
+    assert(moved_lhs.imag() == 0);
+
+    mpfc_class moved_scalar_lhs(mpf_class(1, 192), mpf_class(2, 160));
+    mpfc_class moved_scalar_owner(std::move(moved_scalar_lhs));
+    moved_scalar_lhs = 4;
+    assert(moved_scalar_lhs.real().precision() == default_mpf_precision_bits());
+    assert(moved_scalar_lhs.imag().precision() == default_mpf_precision_bits());
+    assert(moved_scalar_lhs.real() == 4);
+    assert(moved_scalar_lhs.imag() == 0);
+
+    mpfc_class moved_expr_lhs(mpf_class(1, 192), mpf_class(2, 160));
+    mpfc_class moved_expr_owner(std::move(moved_expr_lhs));
+    const mpfc_class expr_base(mpf_class(3, 192), mpf_class(-4, 128));
+    moved_expr_lhs = expr_base + mpfc_class(mpf_class(1, 192), mpf_class(2, 128));
+    assert(moved_expr_lhs.real().precision() == default_mpf_precision_bits());
+    assert(moved_expr_lhs.imag().precision() == default_mpf_precision_bits());
+    assert(moved_expr_lhs.real() == 4);
+    assert(moved_expr_lhs.imag() == -2);
+    (void)moved_owner;
+    (void)moved_scalar_owner;
+    (void)moved_expr_owner;
+
     z.real(mpf_class(5, 160));
     z.imag(mpf_class(6, 160));
     assert(z.real() == 5);

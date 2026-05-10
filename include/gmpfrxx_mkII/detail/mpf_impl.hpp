@@ -102,8 +102,13 @@ public:
 
     mpf_class(const mpf_class& other)
     {
-        mpf_init2(value_, other.precision());
-        mpf_set(value_, other.value_);
+        const mp_bitcnt_t precision = other.valid_ ? other.precision() : default_mpf_precision_bits();
+        mpf_init2(value_, precision);
+        if (other.valid_) {
+            mpf_set(value_, other.value_);
+        } else {
+            mpf_set_ui(value_, 0);
+        }
     }
 
     mpf_class(mpf_class&& other) noexcept
@@ -245,10 +250,15 @@ public:
     {
         if (this != &other) {
             if (!valid_) {
-                mpf_init2(value_, other.precision());
+                const mp_bitcnt_t precision = other.valid_ ? other.precision() : default_mpf_precision_bits();
+                mpf_init2(value_, precision);
                 valid_ = true;
             }
-            mpf_set(value_, other.value_);
+            if (other.valid_) {
+                mpf_set(value_, other.value_);
+            } else {
+                mpf_set_ui(value_, 0);
+            }
         }
         return *this;
     }
@@ -289,18 +299,20 @@ public:
 
     mpf_class& operator=(double value)
     {
-        mpf_set_d(value_, value);
+        set(value);
         return *this;
     }
 
     mpf_class& operator=(const mpz_class& value)
     {
+        ensure_valid_for_assignment();
         mpf_set_z(value_, value.mpz_data());
         return *this;
     }
 
     mpf_class& operator=(const mpq_class& value)
     {
+        ensure_valid_for_assignment();
         mpf_set_q(value_, value.mpq_data());
         return *this;
     }
@@ -390,6 +402,12 @@ public:
 
     void set_prec(mp_bitcnt_t precision)
     {
+        if (!valid_) {
+            mpf_init2(value_, precision);
+            mpf_set_ui(value_, 0);
+            valid_ = true;
+            return;
+        }
         mpf_set_prec(value_, precision);
     }
 
@@ -442,6 +460,7 @@ public:
 
     void set_epsilon()
     {
+        ensure_valid_for_assignment();
         mpf_set_ui(value_, 1);
         const mp_bitcnt_t bits = precision();
         if (bits > 0) {
@@ -451,6 +470,7 @@ public:
 
     void set(double value)
     {
+        ensure_valid_for_assignment();
         mpf_set_d(value_, value);
     }
 
@@ -487,6 +507,7 @@ public:
             return -1;
         }
 
+        ensure_valid_for_assignment();
         mpf_t temp;
         mpf_init2(temp, precision());
         const int rc = mpf_set_str(temp, value, base);
@@ -586,6 +607,7 @@ private:
     template <typename T>
     void set_integral(T value)
     {
+        ensure_valid_for_assignment();
         using value_type = std::remove_cv_t<T>;
         if constexpr (std::is_signed_v<value_type> &&
                       std::numeric_limits<value_type>::digits <= std::numeric_limits<long>::digits) {
@@ -596,6 +618,15 @@ private:
         } else {
             const mpz_class integer(value);
             mpf_set_z(value_, integer.mpz_data());
+        }
+    }
+
+    void ensure_valid_for_assignment()
+    {
+        if (!valid_) {
+            mpf_init2(value_, default_mpf_precision_bits());
+            mpf_set_ui(value_, 0);
+            valid_ = true;
         }
     }
 
@@ -1965,6 +1996,7 @@ mpf_class::mpf_class(const Expr& expr, mp_bitcnt_t precision)
 template <typename Expr, typename>
 mpf_class& mpf_class::operator=(const Expr& expr)
 {
+    ensure_valid_for_assignment();
     const mp_bitcnt_t precision = this->precision();
     gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
     return *this;

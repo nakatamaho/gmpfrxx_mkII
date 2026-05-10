@@ -124,16 +124,18 @@ public:
 
     mpfc_class& operator=(const mpf_class& real_value)
     {
+        ensure_valid_for_assignment();
         real_ = real_value;
-        mpf_set_ui(imag_.mpf_data(), 0);
+        imag_ = 0;
         return *this;
     }
 
     template <typename Scalar, typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpf_scalar_v<Scalar>>>
     mpfc_class& operator=(Scalar real_value)
     {
+        ensure_valid_for_assignment();
         gmpfrxx_mkII::detail::mpfc_assign_scalar(real_, real_value);
-        mpf_set_ui(imag_.mpf_data(), 0);
+        imag_ = 0;
         return *this;
     }
 
@@ -214,6 +216,16 @@ private:
 
     mpf_class real_;
     mpf_class imag_;
+
+    void ensure_valid_for_assignment()
+    {
+        if (real_.precision() == 0) {
+            real_ = mpf_class::with_precision(default_mpf_precision_bits());
+        }
+        if (imag_.precision() == 0) {
+            imag_ = mpf_class::with_precision(default_mpf_precision_bits());
+        }
+    }
 };
 
 } // namespace gmpxx
@@ -1007,6 +1019,7 @@ mpfc_class::mpfc_class(const Expr& expr)
 template <typename Expr, typename>
 mpfc_class& mpfc_class::operator=(const Expr& expr)
 {
+    ensure_valid_for_assignment();
     if (gmpfrxx_mkII::detail::mpfc_expression_references(*this, expr)) {
         mpfc_class temp = mpfc_class::with_precision(real_precision(), imag_precision());
         gmpfrxx_mkII::detail::mpfc_evaluate(temp, expr);
