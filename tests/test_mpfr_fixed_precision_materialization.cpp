@@ -33,6 +33,7 @@
 int main()
 {
     static_assert(gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath);
+    static_assert(gmpfrxx_mkII::detail::build_options::enable_mpfr_fma);
 
     mpfrxx::set_default_precision_bits(160);
     const mpfr_prec_t default_object_precision = mpfrxx::mpfr_class().precision();
@@ -53,6 +54,38 @@ int main()
     mpfr_add(expected, low.mpfr_data(), high.mpfr_data(), rnd);
     assert(mpfr_cmp(materialized.mpfr_data(), expected) == 0);
     mpfr_clear(expected);
+
+    const mpfrxx::mpfr_class left_a("1.00000011920928955078125", 96);
+    const mpfrxx::mpfr_class left_b("1.00000011920928955078125", 160);
+    const mpfrxx::mpfr_class right_a("1.00000011920928955078125", 224);
+    const mpfrxx::mpfr_class right_b("1.00000011920928955078125", 384);
+    const mpfr_prec_t fused_precision = right_b.precision();
+
+    const mpfrxx::mpfr_class fused_add = left_a * left_b + right_a * right_b;
+    const mpfrxx::mpfr_class fused_sub = left_a * left_b - right_a * right_b;
+    assert(fused_add.precision() == fused_precision);
+    assert(fused_sub.precision() == fused_precision);
+
+    mpfr_t expected_fmma;
+    mpfr_t expected_fmms;
+    mpfr_init2(expected_fmma, fused_precision);
+    mpfr_init2(expected_fmms, fused_precision);
+    mpfr_fmma(expected_fmma,
+              left_a.mpfr_data(),
+              left_b.mpfr_data(),
+              right_a.mpfr_data(),
+              right_b.mpfr_data(),
+              rnd);
+    mpfr_fmms(expected_fmms,
+              left_a.mpfr_data(),
+              left_b.mpfr_data(),
+              right_a.mpfr_data(),
+              right_b.mpfr_data(),
+              rnd);
+    assert(mpfr_cmp(fused_add.mpfr_data(), expected_fmma) == 0);
+    assert(mpfr_cmp(fused_sub.mpfr_data(), expected_fmms) == 0);
+    mpfr_clear(expected_fmms);
+    mpfr_clear(expected_fmma);
 
     auto destination = mpfrxx::mpfr_class::with_precision(224, 0.0);
     const mpfr_prec_t destination_precision = destination.precision();

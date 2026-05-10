@@ -144,9 +144,11 @@ a += b * c;
 a -= b * c;
 ```
 
-`MPFRXX_ENABLE_FMA` enables MPFR's fused operations for the same expression
-shape. `a += b * c` maps to `mpfr_fma`; `a -= b * c` maps to `mpfr_fms`
+`MPFRXX_ENABLE_FMA` enables MPFR's fused operations for supported expression
+shapes. `a += b * c` maps to `mpfr_fma`; `a -= b * c` maps to `mpfr_fms`
 with the rounding-mode adjustment required for the negated result.
+Materializing `a * b + c * d` maps to `mpfr_fmma`, and materializing
+`a * b - c * d` maps to `mpfr_fmms`.
 
 These options are separate from
 `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` because enabling them changes

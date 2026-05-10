@@ -237,8 +237,8 @@ MPFRXX_ENABLE_FMA
 ```
 
 `GMPXX_ENABLE_FMA` enables the GMP MPF `a += b * c` and `a -= b * c` scratch
-paths. `MPFRXX_ENABLE_FMA` enables MPFR `mpfr_fma` / `mpfr_fms` paths for the
-same expression shape.
+paths. `MPFRXX_ENABLE_FMA` enables MPFR `mpfr_fma`, `mpfr_fms`,
+`mpfr_fmma`, and `mpfr_fmms` paths for supported fused expression shapes.
 
 ## Examples
 

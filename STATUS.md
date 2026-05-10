@@ -558,7 +558,7 @@ Implemented features:
 - Split multiply-fusion compound-assignment rewrites out of the fixed-precision
   fastpath flag. `GMPXX_ENABLE_FMA` now controls GMP MPF `a += b * c` and
   `a -= b * c` scratch paths, while `MPFRXX_ENABLE_FMA` controls the MPFR
-  `mpfr_fma` / `mpfr_fms` paths.
+  `mpfr_fma` / `mpfr_fms` / `mpfr_fmma` / `mpfr_fmms` paths.
 - Updated swap handling for `mpf_class` and `mpfr_class` so it remains safe
   when one side is moved-from.
 - Added allocation-count coverage proving direct move construction and vector
@@ -577,6 +577,7 @@ Tests updated:
 - `tests/CMakeLists.txt`
 - `tests/test_mpf_alloc_count.cpp`
 - `tests/test_mpfr_alloc_count.cpp`
+- `tests/test_mpfr_fixed_precision_materialization.cpp`
 - `tests/test_mpf_fixed_precision_tls_scratch.cpp`
 - `tests/test_mpfr_fixed_precision_tls_scratch.cpp`
 - `STATUS.md`
@@ -595,6 +596,8 @@ Exact commands run:
 - `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpfr_fixed_precision_tls_scratch|test_mpc_alloc_count|test_mpfc_precision_policy' --output-on-failure`
 - `cmake --build build -j --target test_mpf_fixed_precision_tls_scratch test_mpfr_fixed_precision_tls_scratch test_mpfr_compound_assign test_mpc_alloc_count`
 - `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpfr_fixed_precision_tls_scratch|test_mpfr_compound_assign|test_mpc_alloc_count' --output-on-failure`
+- `cmake --build build -j --target test_mpfr_fixed_precision_materialization test_mpfr_math`
+- `ctest --test-dir build -R 'test_mpfr_fixed_precision_materialization|test_mpfr_math' --output-on-failure`
 - `cmake --build build -j`
 - `ctest --test-dir build --output-on-failure`
 - `git diff --check`

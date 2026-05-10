@@ -2090,6 +2090,34 @@ void mpfr_compound_submul_fma_apply(
     mpfr_neg(dest, dest, MPFR_RNDN);
 }
 
+template <typename Lhs, typename Rhs>
+void mpfr_fmma_direct_apply(
+    mpfr_t dest,
+    const binary_expr<add_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
+    mpfr_rnd_t rnd)
+{
+    mpfr_fmma(dest,
+              expr.lhs().lhs().get().mpfr_data(),
+              expr.lhs().rhs().get().mpfr_data(),
+              expr.rhs().lhs().get().mpfr_data(),
+              expr.rhs().rhs().get().mpfr_data(),
+              rnd);
+}
+
+template <typename Lhs, typename Rhs>
+void mpfr_fmms_direct_apply(
+    mpfr_t dest,
+    const binary_expr<sub_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
+    mpfr_rnd_t rnd)
+{
+    mpfr_fmms(dest,
+              expr.lhs().lhs().get().mpfr_data(),
+              expr.lhs().rhs().get().mpfr_data(),
+              expr.rhs().lhs().get().mpfr_data(),
+              expr.rhs().rhs().get().mpfr_data(),
+              rnd);
+}
+
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpfr_evaluate(
     mpfr_t dest,
@@ -2123,6 +2151,19 @@ void mpfr_evaluate(
             mpfr_mul_2ui(dest, dest, shift_count, rnd);
         } else {
             mpfr_div_2ui(dest, dest, shift_count, rnd);
+        }
+        return;
+    }
+
+    if constexpr (
+        build_options::enable_mpfr_fma &&
+        is_mpfr_mul_direct_expr_v<Lhs> &&
+        is_mpfr_mul_direct_expr_v<Rhs> &&
+        (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
+        if constexpr (std::is_same_v<Op, add_op>) {
+            mpfr_fmma_direct_apply(dest, expr, rnd);
+        } else {
+            mpfr_fmms_direct_apply(dest, expr, rnd);
         }
         return;
     }

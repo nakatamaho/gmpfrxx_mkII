@@ -43,6 +43,7 @@ set_tests_properties(test_mpfr_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS all
 add_phase0_test(test_mpfr_fixed_precision_materialization mpfrxx_mkII)
 target_compile_definitions(test_mpfr_fixed_precision_materialization PRIVATE
     GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    MPFRXX_ENABLE_FMA
 )
 add_phase0_test(test_mpfr_fixed_precision_tls_scratch mpfrxx_mkII)
 target_compile_definitions(test_mpfr_fixed_precision_tls_scratch PRIVATE
