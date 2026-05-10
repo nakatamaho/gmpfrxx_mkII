@@ -192,6 +192,25 @@ stream output of expressions
 comparison of expressions
 ```
 
+Expression node lifetime rule:
+
+Do NOT bind expression templates to `auto` and let them outlive their operands.
+Expression nodes may hold raw references to lvalue operands.
+
+```cpp
+// BAD: e holds raw references to a and b.
+auto e = a + b;
+mutate_or_destroy(a);
+mpf_class r = e;  // dangling if a was destroyed; changed value if mutated
+
+// GOOD: evaluate immediately.
+mpf_class r = a + b;
+```
+
+`[[nodiscard]]` on expression node types is only a diagnostic aid for discarded
+expressions such as `a + b;`. It is not a lifetime-safety mechanism for
+`auto e = a + b;`.
+
 Do not implement eager arithmetic as the primary API:
 
 ```cpp

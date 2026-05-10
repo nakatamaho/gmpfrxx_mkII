@@ -37,6 +37,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <locale>
 #include <stdexcept>
 #include <string>
@@ -207,9 +208,12 @@ public:
     }
 
     mpc_class(mpc_class&& other) noexcept
+        : valid_(other.valid_)
     {
-        mpc_init3(value_, other.real_precision(), other.imag_precision());
-        mpc_swap(value_, other.value_);
+        if (valid_) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            other.valid_ = false;
+        }
     }
 
     mpc_class(const mpfr_class& real, const mpfr_class& imag)
@@ -328,12 +332,18 @@ public:
 
     ~mpc_class()
     {
-        mpc_clear(value_);
+        if (valid_) {
+            mpc_clear(value_);
+        }
     }
 
     mpc_class& operator=(const mpc_class& other)
     {
         if (this != &other) {
+            if (!valid_) {
+                mpc_init3(value_, other.real_precision(), other.imag_precision());
+                valid_ = true;
+            }
             const auto context =
                 gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
             const int inex = mpc_set(value_, other.value_, default_rounding());
@@ -344,9 +354,25 @@ public:
 
     mpc_class& operator=(mpc_class&& other) noexcept
     {
-        if (this != &other) {
-            if (real_precision() == other.real_precision() &&
-                imag_precision() == other.imag_precision()) {
+        if (this == &other || !other.valid_) {
+            return *this;
+        }
+
+        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else {
+                mpc_swap(value_, other.value_);
+            }
+        } else {
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else if (real_precision() == other.real_precision() &&
+                       imag_precision() == other.imag_precision()) {
                 mpc_swap(value_, other.value_);
             } else {
                 const auto context =
@@ -444,6 +470,9 @@ public:
 
     mpfr_prec_t real_precision() const noexcept
     {
+        if (!valid_) {
+            return 0;
+        }
         mpfr_prec_t real = 0;
         mpfr_prec_t imag = 0;
         mpc_get_prec2(&real, &imag, value_);
@@ -452,6 +481,9 @@ public:
 
     mpfr_prec_t imag_precision() const noexcept
     {
+        if (!valid_) {
+            return 0;
+        }
         mpfr_prec_t real = 0;
         mpfr_prec_t imag = 0;
         mpc_get_prec2(&real, &imag, value_);
@@ -591,6 +623,7 @@ private:
     }
 
     mpc_t value_;
+    bool valid_ = true;
 };
 
 } // namespace mpfrxx

@@ -92,6 +92,26 @@ contains lvalue operands must not outlive those operands, and evaluating it
 after those operands have been modified observes their current values.  Materialize
 to a wrapper object if a stable snapshot is needed.
 
+### Expression Template Pitfall
+
+Do not bind expression templates to `auto` and let them outlive their operands.
+Expression nodes may hold raw references to lvalue operands.
+
+```cpp
+// BAD: e holds raw references to a and b.
+auto e = a + b;
+mutate_or_destroy(a);
+gmpxx::mpf_class r = e;  // dangling if a was destroyed; changed value if mutated
+
+// GOOD: evaluate immediately.
+gmpxx::mpf_class r = a + b;
+```
+
+The expression-node types are marked `[[nodiscard]]`, so a standalone discarded
+expression such as `a + b;` can trigger a compiler diagnostic. This does not
+make storing expression nodes safe; it only catches accidental ignored
+expressions.
+
 ## Precision Policy
 
 Default floating precision is project-owned and starts at 512 bits for
@@ -207,6 +227,18 @@ GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
 ```
 
 It is not a runtime environment variable.
+
+Compound-assignment multiply fusion is controlled by separate compile-time
+options because it can change rounding semantics:
+
+```text
+GMPXX_ENABLE_FMA
+MPFRXX_ENABLE_FMA
+```
+
+`GMPXX_ENABLE_FMA` enables the GMP MPF `a += b * c` and `a -= b * c` scratch
+paths. `MPFRXX_ENABLE_FMA` enables MPFR `mpfr_fma` / `mpfr_fms` paths for the
+same expression shape.
 
 ## Examples
 

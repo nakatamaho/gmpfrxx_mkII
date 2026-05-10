@@ -118,7 +118,7 @@ private:
 };
 
 template <typename Op, typename Expr, typename Result>
-class unary_expr {
+class [[nodiscard]] unary_expr {
 public:
     using op_type = Op;
     using expr_type = Expr;
@@ -135,7 +135,7 @@ private:
 };
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
-class binary_expr {
+class [[nodiscard]] binary_expr {
 public:
     using op_type = Op;
     using lhs_type = Lhs;

@@ -65,6 +65,94 @@ operators such as `<`, `<=`, `>`, and `>=` are intentionally not defined. MPC
 values with a NaN component compare unequal to themselves, matching the usual
 IEEE-style NaN equality rule.
 
+## Expression Template Lifetime
+
+Public arithmetic operators return expression nodes. Expression nodes may borrow
+lvalue wrapper operands by raw reference and may own rvalue wrapper operands.
+
+Do not bind expression templates to `auto` and let them outlive their operands.
+This is a user-visible contract, not an implementation accident.
+
+```cpp
+// BAD: e holds raw references to a and b.
+auto e = a + b;
+mutate_or_destroy(a);
+gmpxx::mpf_class r = e;  // dangling if a was destroyed; changed value if mutated
+
+// GOOD: evaluate immediately.
+gmpxx::mpf_class r = a + b;
+```
+
+Materialize to a public numeric wrapper object whenever a stable value snapshot
+is needed:
+
+```cpp
+auto snapshot = gmpxx::mpf_class(a + b);
+```
+
+Expression node types should be marked `[[nodiscard]]` so standalone discarded
+expressions such as `a + b;` can produce compiler diagnostics. This does not
+make saved expression nodes lifetime-safe.
+
+## Move Semantics
+
+Public floating wrappers must be nothrow move-constructible.
+
+Move construction of backend-owned floating objects must not allocate a fresh
+backend object just to swap it with the source. The move constructors for
+`gmpxx::mpf_class`, `mpfrxx::mpfr_class`, and `mpfrxx::mpc_class` steal the
+backend object storage directly and leave the source wrapper in a valid
+moved-from state that owns no backend object. Destructors must therefore clear
+backend storage only when the wrapper currently owns valid storage.
+
+This policy is important for expression-template rvalue capture and for
+`std::vector` reallocation of high-precision values. A move from a temporary
+must not add another GMP/MPFR/MPC allocation on top of the allocation already
+needed to create the temporary value.
+
+Move assignment has two precision policies:
+
+- In the normal precision-policy build, move assignment to a valid destination
+  preserves the left-hand-side precision. This matches ordinary assignment
+  semantics for existing objects.
+- In `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` builds, move assignment to
+  a valid destination uses `mpf_swap`, `mpfr_swap`, or `mpc_swap`. This avoids
+  clearing the destination's old backend storage in the hot path and
+  intentionally does not preserve the left-hand-side precision.
+
+If the destination is already moved-from and owns no valid backend object, move
+assignment may directly steal the source storage because there is no valid
+backend object to swap with.
+
+`gmpxx::mpfc_class` follows the same move behavior through its two
+`gmpxx::mpf_class` components.
+
+## Fused Compound Assignment
+
+The fixed-precision fastpath flag must not control multiply-fusion semantics.
+These rewrites are controlled by explicit compile-time options:
+
+```text
+GMPXX_ENABLE_FMA
+MPFRXX_ENABLE_FMA
+```
+
+`GMPXX_ENABLE_FMA` enables direct GMP MPF scratch paths for:
+
+```cpp
+a += b * c;
+a -= b * c;
+```
+
+`MPFRXX_ENABLE_FMA` enables MPFR's fused operations for the same expression
+shape. `a += b * c` maps to `mpfr_fma`; `a -= b * c` maps to `mpfr_fms`
+with the rounding-mode adjustment required for the negated result.
+
+These options are separate from
+`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` because enabling them changes
+numeric semantics, especially for MPFR where fused evaluation performs one
+rounding instead of materializing the product and then adding or subtracting.
+
 ## GMP MPF Default Precision
 
 GMP's `mpf_set_default_prec()` and `mpf_get_default_prec()` are process-global

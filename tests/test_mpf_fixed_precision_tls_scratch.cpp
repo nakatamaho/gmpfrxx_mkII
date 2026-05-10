@@ -31,6 +31,7 @@
 #include <atomic>
 #include <cassert>
 #include <cstdlib>
+#include <utility>
 
 namespace {
 
@@ -57,9 +58,18 @@ void count_free(void* p, std::size_t)
 int main()
 {
     static_assert(gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath);
+    static_assert(gmpfrxx_mkII::detail::build_options::enable_gmp_fma);
     mp_set_memory_functions(count_alloc, count_realloc, count_free);
 
     constexpr mp_bitcnt_t precision = 256;
+    auto move_dst = gmpxx::mpf_class::with_precision(128, -1.0);
+    auto move_src = gmpxx::mpf_class::with_precision(precision, 3.5);
+    alloc_count = 0;
+    move_dst = std::move(move_src);
+    assert(alloc_count.load() == 0);
+    assert(move_dst.precision() == precision);
+    assert(mpf_cmp_d(move_dst.mpf_data(), 3.5) == 0);
+
     const auto x = gmpxx::mpf_class::with_precision(precision, 1.25);
     const auto y = gmpxx::mpf_class::with_precision(precision, 2.5);
     auto add_acc = gmpxx::mpf_class::with_precision(precision, 7.5);

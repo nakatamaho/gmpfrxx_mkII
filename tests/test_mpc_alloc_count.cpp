@@ -27,6 +27,7 @@
  */
 
 #include <mpfrxx_mkII.h>
+#include <mpcxx_mkII.h>
 
 #include <atomic>
 #include <cstdio>
@@ -64,55 +65,57 @@ void require_alloc_count(int expected)
     }
 }
 
+void require_value(const mpfrxx::mpc_class& value, double real, double imag)
+{
+    if (mpfr_cmp_d(mpc_realref(value.mpc_data()), real) != 0 ||
+        mpfr_cmp_d(mpc_imagref(value.mpc_data()), imag) != 0) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main()
 {
     mp_set_memory_functions(count_alloc, count_realloc, count_free);
 
-    constexpr mpfr_prec_t precision = 256;
-    const auto a = mpfrxx::mpfr_class::with_precision(precision, 1.5);
-    const auto b = mpfrxx::mpfr_class::with_precision(precision, 2.5);
-    const auto c = mpfrxx::mpfr_class::with_precision(precision, 3.5);
-    const auto d = mpfrxx::mpfr_class::with_precision(precision, 4.5);
-    auto dst = mpfrxx::mpfr_class::with_precision(precision);
+    static_assert(gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath);
+    static_assert(std::is_nothrow_move_constructible<mpfrxx::mpc_class>::value,
+                  "mpc_class move construction must remain noexcept");
 
-    static_assert(std::is_nothrow_move_constructible<mpfrxx::mpfr_class>::value,
-                  "mpfr_class move construction must remain noexcept");
+    constexpr mpfr_prec_t real_precision = 160;
+    constexpr mpfr_prec_t imag_precision = 192;
 
-    auto movable = mpfrxx::mpfr_class::with_precision(precision, 5.5);
+    auto movable = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 1.5, -2.5);
     alloc_count = 0;
-    mpfrxx::mpfr_class moved(std::move(movable));
+    mpfrxx::mpc_class moved(std::move(movable));
     require_alloc_count(0);
-    if (moved.precision() != precision || mpfr_cmp_d(moved.mpfr_data(), 5.5) != 0) {
+    if (moved.real_precision() != real_precision || moved.imag_precision() != imag_precision) {
         std::abort();
     }
+    require_value(moved, 1.5, -2.5);
 
-    std::vector<mpfrxx::mpfr_class> values;
+    auto move_dst = mpfrxx::mpc_class::with_precision(96, 128, -1.0, -1.0);
+    auto move_src = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 2.5, -3.5);
+    alloc_count = 0;
+    move_dst = std::move(move_src);
+    require_alloc_count(0);
+    if (move_dst.real_precision() != real_precision || move_dst.imag_precision() != imag_precision) {
+        std::abort();
+    }
+    require_value(move_dst, 2.5, -3.5);
+
+    std::vector<mpfrxx::mpc_class> values;
     values.reserve(1);
-    values.emplace_back(mpfrxx::mpfr_class::with_precision(precision, 6.5));
+    values.emplace_back(mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 3.5, 4.5));
     alloc_count = 0;
     values.reserve(8);
     require_alloc_count(0);
-    if (values.front().precision() != precision || mpfr_cmp_d(values.front().mpfr_data(), 6.5) != 0) {
+    if (values.front().real_precision() != real_precision ||
+        values.front().imag_precision() != imag_precision) {
         std::abort();
     }
-
-    alloc_count = 0;
-    dst = a + b;
-    require_alloc_count(0);
-
-    alloc_count = 0;
-    dst = a + b + c;
-    require_alloc_count(0);
-
-    alloc_count = 0;
-    dst = a + b + c + d;
-    require_alloc_count(0);
-
-    alloc_count = 0;
-    dst = (a + b) * (c + d);
-    require_alloc_count(1);
+    require_value(values.front(), 3.5, 4.5);
 
     return 0;
 }

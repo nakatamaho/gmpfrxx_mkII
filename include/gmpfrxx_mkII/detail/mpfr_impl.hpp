@@ -38,6 +38,7 @@
 #include <cctype>
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <ios>
 #include <istream>
 #include <limits>
@@ -122,9 +123,12 @@ public:
     }
 
     mpfr_class(mpfr_class&& other) noexcept
+        : valid_(other.valid_)
     {
-        mpfr_init2(value_, other.precision());
-        mpfr_swap(value_, other.value_);
+        if (valid_) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            other.valid_ = false;
+        }
     }
 
     mpfr_class(double value) : mpfr_class(value, default_precision()) {}
@@ -241,12 +245,18 @@ public:
 
     ~mpfr_class()
     {
-        mpfr_clear(value_);
+        if (valid_) {
+            mpfr_clear(value_);
+        }
     }
 
     mpfr_class& operator=(const mpfr_class& other)
     {
         if (this != &other) {
+            if (!valid_) {
+                mpfr_init2(value_, other.precision());
+                valid_ = true;
+            }
             const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
             mpfr_set(value_, other.value_, context.rounding_mode);
         }
@@ -255,8 +265,24 @@ public:
 
     mpfr_class& operator=(mpfr_class&& other) noexcept
     {
-        if (this != &other) {
-            if (this->precision() == other.precision()) {
+        if (this == &other || !other.valid_) {
+            return *this;
+        }
+
+        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else {
+                mpfr_swap(value_, other.value_);
+            }
+        } else {
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else if (this->precision() == other.precision()) {
                 mpfr_swap(value_, other.value_);
             } else {
                 const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
@@ -333,7 +359,7 @@ public:
 
     mpfr_prec_t precision() const noexcept
     {
-        return mpfr_get_prec(value_);
+        return valid_ ? mpfr_get_prec(value_) : 0;
     }
 
     mpfr_prec_t get_prec() const noexcept
@@ -567,7 +593,17 @@ public:
 
     void swap(mpfr_class& other) noexcept
     {
-        mpfr_swap(value_, other.value_);
+        if (valid_ && other.valid_) {
+            mpfr_swap(value_, other.value_);
+        } else if (valid_) {
+            std::memcpy(other.value_, value_, sizeof(value_));
+            other.valid_ = true;
+            valid_ = false;
+        } else if (other.valid_) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            valid_ = true;
+            other.valid_ = false;
+        }
     }
 
     static mpfr_prec_t default_precision() noexcept
@@ -609,6 +645,7 @@ private:
     }
 
     mpfr_t value_;
+    bool valid_ = true;
 };
 
 inline void swap(mpfr_class& lhs, mpfr_class& rhs) noexcept
@@ -2241,6 +2278,7 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
             operand.get().mpfr_data(),
             context.rounding_mode);
     } else if constexpr (
+        build_options::enable_mpfr_fma &&
         is_mpfr_mul_direct_expr_v<operand_type> &&
         (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
         if constexpr (std::is_same_v<Op, add_op>) {

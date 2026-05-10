@@ -31,6 +31,9 @@
 #include <atomic>
 #include <cstdio>
 #include <cstdlib>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace {
 
@@ -73,6 +76,27 @@ int main()
     const auto c = gmpxx::mpf_class::with_precision(precision, 3.5);
     const auto d = gmpxx::mpf_class::with_precision(precision, 4.5);
     auto dst = gmpxx::mpf_class::with_precision(precision);
+
+    static_assert(std::is_nothrow_move_constructible<gmpxx::mpf_class>::value,
+                  "mpf_class move construction must remain noexcept");
+
+    auto movable = gmpxx::mpf_class::with_precision(precision, 5.5);
+    alloc_count = 0;
+    gmpxx::mpf_class moved(std::move(movable));
+    require_alloc_count(0);
+    if (moved.precision() != precision || mpf_cmp_d(moved.mpf_data(), 5.5) != 0) {
+        std::abort();
+    }
+
+    std::vector<gmpxx::mpf_class> values;
+    values.reserve(1);
+    values.emplace_back(gmpxx::mpf_class::with_precision(precision, 6.5));
+    alloc_count = 0;
+    values.reserve(8);
+    require_alloc_count(0);
+    if (values.front().precision() != precision || mpf_cmp_d(values.front().mpf_data(), 6.5) != 0) {
+        std::abort();
+    }
 
     alloc_count = 0;
     dst = a + b;

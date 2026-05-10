@@ -47,11 +47,15 @@ target_compile_definitions(test_mpfr_fixed_precision_materialization PRIVATE
 add_phase0_test(test_mpfr_fixed_precision_tls_scratch mpfrxx_mkII)
 target_compile_definitions(test_mpfr_fixed_precision_tls_scratch PRIVATE
     GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    MPFRXX_ENABLE_FMA
 )
 set_tests_properties(test_mpfr_fixed_precision_tls_scratch PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpfr_type_conversions mpfrxx_mkII)
 add_phase0_test(test_mpfr_comparisons mpfrxx_mkII)
 add_phase0_test(test_mpfr_compound_assign mpfrxx_mkII)
+target_compile_definitions(test_mpfr_compound_assign PRIVATE
+    MPFRXX_ENABLE_FMA
+)
 add_phase0_test(test_mpfr_exception_support mpcxx_mkII)
 add_phase0_test(test_mpfr_defaults mpfrxx_mkII)
 add_phase0_test(test_mpfr_environment mpfrxx_mkII)
@@ -89,6 +93,7 @@ target_compile_definitions(test_mpf_fixed_precision_materialization PRIVATE
 add_phase0_test(test_mpf_fixed_precision_tls_scratch gmpxx_mkII)
 target_compile_definitions(test_mpf_fixed_precision_tls_scratch PRIVATE
     GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    GMPXX_ENABLE_FMA
 )
 set_tests_properties(test_mpf_fixed_precision_tls_scratch PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpf_long_width_dispatch gmpxx_mkII)
@@ -138,6 +143,11 @@ add_phase0_test(test_mpc_environment_invalid mpcxx_mkII)
 add_phase0_test(test_mpc_precision_policy mpcxx_mkII)
 add_phase0_test(test_mpc_io mpcxx_mkII)
 add_phase0_test(test_mpc_math mpcxx_mkII)
+add_phase0_test(test_mpc_alloc_count mpcxx_mkII)
+target_compile_definitions(test_mpc_alloc_count PRIVATE
+    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+)
+set_tests_properties(test_mpc_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 
 function(add_compile_fail_test name target)
     set(source "${CMAKE_CURRENT_SOURCE_DIR}/compile_fail/${name}.cpp")

@@ -107,9 +107,12 @@ public:
     }
 
     mpf_class(mpf_class&& other) noexcept
+        : valid_(other.valid_)
     {
-        mpf_init2(value_, other.precision());
-        mpf_swap(value_, other.value_);
+        if (valid_) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            other.valid_ = false;
+        }
     }
 
     mpf_class(double value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
@@ -233,12 +236,18 @@ public:
 
     ~mpf_class()
     {
-        mpf_clear(value_);
+        if (valid_) {
+            mpf_clear(value_);
+        }
     }
 
     mpf_class& operator=(const mpf_class& other)
     {
         if (this != &other) {
+            if (!valid_) {
+                mpf_init2(value_, other.precision());
+                valid_ = true;
+            }
             mpf_set(value_, other.value_);
         }
         return *this;
@@ -246,8 +255,24 @@ public:
 
     mpf_class& operator=(mpf_class&& other) noexcept
     {
-        if (this != &other) {
-            if (precision() == other.precision()) {
+        if (this == &other || !other.valid_) {
+            return *this;
+        }
+
+        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else {
+                mpf_swap(value_, other.value_);
+            }
+        } else {
+            if (!valid_) {
+                std::memcpy(value_, other.value_, sizeof(value_));
+                valid_ = true;
+                other.valid_ = false;
+            } else if (precision() == other.precision()) {
                 mpf_swap(value_, other.value_);
             } else {
                 mpf_set(value_, other.value_);
@@ -321,7 +346,7 @@ public:
 
     mp_bitcnt_t precision() const noexcept
     {
-        return mpf_get_prec(value_);
+        return valid_ ? mpf_get_prec(value_) : 0;
     }
 
     mp_bitcnt_t get_prec() const noexcept
@@ -536,7 +561,17 @@ public:
 
     void swap(mpf_class& other) noexcept
     {
-        mpf_swap(value_, other.value_);
+        if (valid_ && other.valid_) {
+            mpf_swap(value_, other.value_);
+        } else if (valid_) {
+            std::memcpy(other.value_, value_, sizeof(value_));
+            other.valid_ = true;
+            valid_ = false;
+        } else if (other.valid_) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            valid_ = true;
+            other.valid_ = false;
+        }
     }
 
 private:
@@ -565,6 +600,7 @@ private:
     }
 
     mpf_t value_;
+    bool valid_ = true;
 };
 
 inline void swap(mpf_class& lhs, mpf_class& rhs) noexcept
@@ -1878,7 +1914,7 @@ void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&& rhs)
     if constexpr (std::is_same_v<operand_type, object_leaf<gmpxx::mpf_class>>) {
         mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), operand.get().mpf_data());
     } else if constexpr (
-        build_options::assume_fixed_precision_fastpath &&
+        build_options::enable_gmp_fma &&
         is_mpf_mul_direct_expr_v<operand_type> &&
         (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
         if constexpr (std::is_same_v<Op, add_op>) {

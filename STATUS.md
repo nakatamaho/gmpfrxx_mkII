@@ -535,6 +535,150 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase zero-allocation move constructors:
+DONE
+
+Implemented features:
+- Changed `gmpxx::mpf_class`, `mpfrxx::mpfr_class`, and
+  `mpfrxx::mpc_class` move constructors to steal the backend object storage
+  directly instead of allocating a fresh backend object and swapping.
+- Added a moved-from validity flag so destructors do not clear stolen backend
+  storage.
+- Kept move assignment precision-preserving for valid left-hand-side objects
+  in the normal precision-policy build.
+- In `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` builds, move assignment
+  swaps backend object storage for valid left-hand-side objects in `mpf_class`,
+  `mpfr_class`, and `mpc_class`. This avoids clearing the old storage in the
+  hot path and intentionally does not preserve left-hand-side precision.
+- Invalid moved-from left-hand sides use direct storage steal because there is
+  no valid backend object to swap with; they can still be repopulated by object
+  assignment.
+- `mpfc_class` inherits the fastpath behavior through its two `mpf_class`
+  components.
+- Split multiply-fusion compound-assignment rewrites out of the fixed-precision
+  fastpath flag. `GMPXX_ENABLE_FMA` now controls GMP MPF `a += b * c` and
+  `a -= b * c` scratch paths, while `MPFRXX_ENABLE_FMA` controls the MPFR
+  `mpfr_fma` / `mpfr_fms` paths.
+- Updated swap handling for `mpf_class` and `mpfr_class` so it remains safe
+  when one side is moved-from.
+- Added allocation-count coverage proving direct move construction and vector
+  reallocation do not allocate GMP/MPFR/MPC backend storage.
+
+Tests added:
+- `tests/test_mpc_alloc_count.cpp`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `include/gmpfrxx_mkII/detail/config.hpp`
+- `README.md`
+- `SPECIFICATIONS.md`
+- `tests/CMakeLists.txt`
+- `tests/test_mpf_alloc_count.cpp`
+- `tests/test_mpfr_alloc_count.cpp`
+- `tests/test_mpf_fixed_precision_tls_scratch.cpp`
+- `tests/test_mpfr_fixed_precision_tls_scratch.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpf_class\\(mpf_class&&|mpfr_class\\(mpfr_class&&|mpc_class\\(mpc_class&&|mpfc_class\\(mpfc_class&&|~mpf_class|~mpfr_class|~mpc_class|operator=\\(.*&&|mpf_swap|mpfr_swap|mpc_swap|object_leaf" include/gmpfrxx_mkII/detail`
+- `sed -n '1,150p' include/gmpfrxx_mkII/detail/expr.hpp`
+- `sed -n '80,280p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '110,290p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '190,365p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '55,135p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpf_alloc_count test_mpfr_alloc_count test_mpc_alloc_count test_mpf_basic test_mpfr_expression_eval test_mpc_basic`
+- `ctest --test-dir build -R 'test_mpf_alloc_count|test_mpfr_alloc_count|test_mpc_alloc_count|test_mpf_basic|test_mpfr_expression_eval|test_mpc_basic' --output-on-failure`
+- `cmake --build build -j --target test_mpf_fixed_precision_tls_scratch test_mpfr_fixed_precision_tls_scratch test_mpc_alloc_count test_mpfc_precision_policy`
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpfr_fixed_precision_tls_scratch|test_mpc_alloc_count|test_mpfc_precision_policy' --output-on-failure`
+- `cmake --build build -j --target test_mpf_fixed_precision_tls_scratch test_mpfr_fixed_precision_tls_scratch test_mpfr_compound_assign test_mpc_alloc_count`
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_tls_scratch|test_mpfr_fixed_precision_tls_scratch|test_mpfr_compound_assign|test_mpc_alloc_count' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+- `git diff --stat`
+- `git status --short`
+
+Pass/fail result:
+- Configure: PASS.
+- Targeted build: PASS.
+- Targeted CTest: PASS, 6/6 tests passed.
+- Fastpath targeted build: PASS.
+- Fastpath targeted CTest: PASS, 4/4 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 153/153 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- Moved-from numeric objects are destructor-safe and assignment-safe for
+  object assignment paths, but ordinary numeric operations on moved-from
+  objects remain unsupported.
+
+Post-phase nodiscard expression nodes:
+DONE
+
+Implemented features:
+- Marked `unary_expr` and `binary_expr` as `[[nodiscard]]` so discarded
+  expression-template results such as a standalone `a + b;` can trigger
+  compiler diagnostics.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/expr.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '90,145p' include/gmpfrxx_mkII/detail/expr.hpp`
+- `sed -n '145,180p' include/gmpfrxx_mkII/detail/expr.hpp`
+- `cmake --build build -j --target test_et_contract_mpf test_et_contract_mpfr test_et_contract_mpc test_et_contract_mpfc test_mpf_basic test_mpfr_expression_eval test_mpc_basic`
+- `ctest --test-dir build -R 'test_et_contract_mpf|test_et_contract_mpfr|test_et_contract_mpc|test_et_contract_mpfc|test_mpf_basic|test_mpfr_expression_eval|test_mpc_basic' --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 8/8 tests passed.
+
+Known issues:
+- `[[nodiscard]]` is diagnostic-only and does not prevent storing an expression
+  node in `auto e = a + b;`.
+
+Post-phase expression-template lifetime documentation:
+DONE
+
+Implemented features:
+- Added README guidance warning users not to bind expression templates to
+  `auto` and let them outlive their operands.
+- Added the same lifetime rule to `AGENTS.md` for future implementation work.
+- Added the lifetime contract to `SPECIFICATIONS.md`.
+- Documented that `[[nodiscard]]` catches discarded expressions but does not
+  make saved expression nodes lifetime-safe.
+
+Tests added:
+- None. Documentation-only phase.
+
+Tests updated:
+- `README.md`
+- `AGENTS.md`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `ls -la README.md AGENTS.md SPECIFICATIONS.md`
+- `rg -n "Expression|expression|auto e|pitfall|lifetime|dangling|nodiscard|Header Roles" README.md AGENTS.md SPECIFICATIONS.md`
+- `git status --short`
+- `sed -n '55,105p' README.md`
+- `sed -n '160,210p' AGENTS.md`
+- `sed -n '1,95p' SPECIFICATIONS.md`
+
+Pass/fail result:
+- Documentation update completed.
+
+Known issues:
+- None.
+
 Post-phase header role specification:
 DONE
 
