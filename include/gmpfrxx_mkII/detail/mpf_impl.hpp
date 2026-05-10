@@ -1610,165 +1610,6 @@ private:
     mpf_t value_;
 };
 
-class mpf_thread_scratch_pool {
-public:
-    static constexpr std::size_t slot_count = 4;
-    static constexpr mp_bitcnt_t max_retained_precision = mp_bitcnt_t{1} << 20;
-
-    struct slot {
-        mpf_t value;
-        bool initialized = false;
-        bool in_use = false;
-        mp_bitcnt_t allocated_precision = 0;
-        mp_bitcnt_t active_precision = 0;
-    };
-
-    ~mpf_thread_scratch_pool()
-    {
-        for (auto& item : slots_) {
-            if (item.initialized) {
-                restore_allocated_precision(item);
-                mpf_clear(item.value);
-            }
-        }
-    }
-
-    slot* acquire(mp_bitcnt_t precision)
-    {
-        if (precision > max_retained_precision) {
-            return nullptr;
-        }
-
-        for (auto& item : slots_) {
-            if (!item.in_use) {
-                prepare(item, precision);
-                item.in_use = true;
-                return &item;
-            }
-        }
-        return nullptr;
-    }
-
-    static void release(slot& item) noexcept
-    {
-        restore_allocated_precision(item);
-        item.in_use = false;
-    }
-
-private:
-    static void restore_allocated_precision(slot& item) noexcept
-    {
-        if (item.initialized && item.active_precision != item.allocated_precision) {
-            mpf_set_prec_raw(item.value, item.allocated_precision);
-            item.active_precision = item.allocated_precision;
-        }
-    }
-
-    static void prepare(slot& item, mp_bitcnt_t precision)
-    {
-        if (!item.initialized) {
-            mpf_init2(item.value, precision);
-            item.initialized = true;
-            item.allocated_precision = mpf_get_prec(item.value);
-            item.active_precision = item.allocated_precision;
-        } else if (item.allocated_precision < precision) {
-            restore_allocated_precision(item);
-            mpf_set_prec(item.value, precision);
-            item.allocated_precision = mpf_get_prec(item.value);
-            item.active_precision = item.allocated_precision;
-        }
-
-        if (item.active_precision != precision) {
-            mpf_set_prec_raw(item.value, precision);
-            item.active_precision = precision;
-        }
-    }
-
-    slot slots_[slot_count]{};
-};
-
-inline mpf_thread_scratch_pool& mpf_current_thread_scratch_pool()
-{
-    thread_local mpf_thread_scratch_pool pool;
-    return pool;
-}
-
-class mpf_thread_scratch {
-public:
-    explicit mpf_thread_scratch(mp_bitcnt_t precision)
-        : slot_(mpf_current_thread_scratch_pool().acquire(precision))
-    {
-        if (slot_ == nullptr) {
-            mpf_init2(fallback_, precision);
-            using_fallback_ = true;
-        }
-    }
-
-    ~mpf_thread_scratch()
-    {
-        if (using_fallback_) {
-            mpf_clear(fallback_);
-        } else {
-            mpf_thread_scratch_pool::release(*slot_);
-        }
-    }
-
-    mpf_thread_scratch(const mpf_thread_scratch&) = delete;
-    mpf_thread_scratch& operator=(const mpf_thread_scratch&) = delete;
-
-    mpf_t& get() noexcept
-    {
-        return using_fallback_ ? fallback_ : slot_->value;
-    }
-
-private:
-    mpf_thread_scratch_pool::slot* slot_ = nullptr;
-    bool using_fallback_ = false;
-    mpf_t fallback_;
-};
-
-template <typename T>
-struct is_mpf_object_leaf : std::false_type {};
-
-template <>
-struct is_mpf_object_leaf<object_leaf<gmpxx::mpf_class>> : std::true_type {};
-
-template <typename T>
-inline constexpr bool is_mpf_object_leaf_v = is_mpf_object_leaf<std::decay_t<T>>::value;
-
-template <typename T>
-struct is_mpf_mul_direct_expr : std::false_type {};
-
-template <typename Lhs, typename Rhs>
-struct is_mpf_mul_direct_expr<binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>>
-    : std::bool_constant<is_mpf_object_leaf_v<Lhs> && is_mpf_object_leaf_v<Rhs>> {};
-
-template <typename T>
-inline constexpr bool is_mpf_mul_direct_expr_v =
-    is_mpf_mul_direct_expr<std::decay_t<T>>::value;
-
-template <typename Lhs, typename Rhs>
-void mpf_compound_mul_scratch_apply(
-    mpf_t dest,
-    const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
-    mp_bitcnt_t precision)
-{
-    mpf_thread_scratch product(precision);
-    mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
-    mpf_apply_binary<add_op>(dest, dest, product.get());
-}
-
-template <typename Lhs, typename Rhs>
-void mpf_compound_submul_scratch_apply(
-    mpf_t dest,
-    const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
-    mp_bitcnt_t precision)
-{
-    mpf_thread_scratch product(precision);
-    mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
-    mpf_apply_binary<sub_op>(dest, dest, product.get());
-}
-
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_bitcnt_t eval_precision)
 {
@@ -1830,6 +1671,32 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
             mpf_evaluate(rhs.get(), expr.rhs(), eval_precision);
             mpf_apply_binary<Op>(dest, dest, rhs.get());
         }
+    }
+}
+
+template <typename Expr>
+bool mpf_try_assign_direct_leaf_binary(mpf_t, const Expr&)
+{
+    return false;
+}
+
+template <typename Op, typename Lhs, typename Rhs, typename Result>
+bool mpf_try_assign_direct_leaf_binary(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
+{
+    if constexpr (std::is_same_v<Result, gmpxx::mpf_class> &&
+                  std::is_same_v<Lhs, object_leaf<gmpxx::mpf_class>> &&
+                  std::is_same_v<Rhs, object_leaf<gmpxx::mpf_class>> &&
+                  (std::is_same_v<Op, add_op> ||
+                   std::is_same_v<Op, sub_op> ||
+                   std::is_same_v<Op, mul_op> ||
+                   std::is_same_v<Op, div_op>)) {
+        if (mpf_expression_references(dest, expr)) {
+            return false;
+        }
+        mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -1944,15 +1811,6 @@ void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&& rhs)
     using operand_type = std::decay_t<decltype(operand)>;
     if constexpr (std::is_same_v<operand_type, object_leaf<gmpxx::mpf_class>>) {
         mpf_apply_binary<Op>(lhs.mpf_data(), lhs.mpf_data(), operand.get().mpf_data());
-    } else if constexpr (
-        build_options::enable_gmp_fma &&
-        is_mpf_mul_direct_expr_v<operand_type> &&
-        (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
-        if constexpr (std::is_same_v<Op, add_op>) {
-            mpf_compound_mul_scratch_apply(lhs.mpf_data(), operand, lhs.precision());
-        } else {
-            mpf_compound_submul_scratch_apply(lhs.mpf_data(), operand, lhs.precision());
-        }
     } else {
         scoped_mpf_temporary value(lhs.precision());
         mpf_evaluate(value.get(), operand, lhs.precision());
@@ -1997,6 +1855,9 @@ template <typename Expr, typename>
 mpf_class& mpf_class::operator=(const Expr& expr)
 {
     ensure_valid_for_assignment();
+    if (gmpfrxx_mkII::detail::mpf_try_assign_direct_leaf_binary(value_, expr)) {
+        return *this;
+    }
     const mp_bitcnt_t precision = this->precision();
     gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
     return *this;

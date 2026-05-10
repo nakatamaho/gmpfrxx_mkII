@@ -95,15 +95,21 @@ function(add_mpfr_mkii_variant subdir source base suffix)
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
-    if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH")
+    if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH" OR
+       suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH_FMA")
         target_compile_definitions(${target} PRIVATE
             GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH)
+    endif()
+    if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH_FMA")
+        target_compile_definitions(${target} PRIVATE
+            MPFRXX_ENABLE_FMA)
     endif()
 endfunction()
 
 function(add_mpfr_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH_FMA)
 endfunction()
 
 function(add_mpfr_native_benchmark subdir source target)

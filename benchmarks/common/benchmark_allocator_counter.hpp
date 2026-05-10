@@ -113,11 +113,15 @@ inline void counted_free(void* pointer, std::size_t size)
 
 inline void install()
 {
+#ifdef GMPFRXX_MKII_BENCHMARK_DISABLE_ALLOCATOR_COUNTER
+    return;
+#else
     bool& installed = installed_flag();
     if (!installed) {
         mp_set_memory_functions(counted_alloc, counted_realloc, counted_free);
         installed = true;
     }
+#endif
 }
 
 inline void begin_kernel()

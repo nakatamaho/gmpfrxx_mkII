@@ -1,3 +1,162 @@
+Post-phase remove MPF/MPFR scratch pools:
+DONE
+
+Implemented features:
+- Removed the MPF header-owned TLS scratch pool and the GMP MPF scratch
+  compound-assignment path.
+- Removed `GMPXX_ENABLE_FMA` / `build_options::enable_gmp_fma`; GMP MPF has
+  no wrapper fused multiply-add option now.
+- Removed the unused MPFR header-owned TLS scratch pool definitions. MPFR FMA
+  support continues to use native MPFR fused operations under
+  `MPFRXX_ENABLE_FMA`.
+- Renamed the MPFR fixed-precision allocation test from the old scratch name
+  to `test_mpfr_fixed_precision_fma_alloc_count`.
+- Deleted the obsolete MPF fixed-precision TLS scratch allocation test.
+- Updated `SPECIFICATIONS.md` to state that MPF compound assignment must not
+  keep a header-owned TLS scratch pool.
+
+Tests added:
+- No new behavior tests were added; the MPFR allocation test was renamed to
+  reflect that it tests native FMA allocation behavior, not scratch reuse.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/config.hpp`
+- `tests/CMakeLists.txt`
+- `tests/test_mpfr_fixed_precision_fma_alloc_count.cpp`
+- `tests/test_mpfr_fixed_precision_tls_scratch.cpp` removed by rename
+- `tests/test_mpf_fixed_precision_tls_scratch.cpp` removed
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpf_alloc_count test_mpf_fixed_precision_materialization test_mpfr_fixed_precision_fma_alloc_count test_mpfr_compound_assign Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH`
+- `git diff --check`
+- `ctest --test-dir build -R "test_mpf_(alloc_count|fixed_precision_materialization)|test_mpfr_fixed_precision_fma_alloc_count|test_mpfr_compound_assign" --output-on-failure`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 100000 512`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 100000 512`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused tests: PASS, 4/4.
+- Full build: PASS.
+- Full CTest: PASS, 153/153.
+- Scratch/GMP FMA source scan: no live references in `include`, `tests`,
+  `CMakeLists.txt`, `SPECIFICATIONS.md`, or `benchmarks`.
+- `Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 100000 512`:
+  alloc/free `100001/100001`, elapsed `0.0353801 s`, `5.65287 MFLOPS`,
+  `DIFF` OK.
+- `Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 100000 512`:
+  alloc/free `2/2`, elapsed `0.0290525 s`, `6.88406 MFLOPS`, `DIFF` OK.
+
+Known issues:
+- Removing the MPF scratch pool intentionally gives up the previous
+  allocation-free `a += b * c` scratch reuse path. The simpler implementation
+  avoids header-owned TLS state and leaves future GMP MPF optimization to
+  direct expression-assignment or benchmark-specific kernel changes.
+
+Post-phase MPF direct leaf binary assignment:
+DONE
+
+Implemented features:
+- Added an MPF expression-assignment fast path for direct leaf-leaf binary
+  expressions such as `out = a + b`, `out = a - b`, `out = a * b`, and
+  `out = a / b`.
+- The fast path calls the corresponding GMP `mpf_*` operation directly from
+  `mpf_class::operator=(Expr)` before entering the generic recursive
+  expression evaluator.
+- Self-aliasing assignments such as `x = x * y` continue to fall back to the
+  existing temporary-based evaluator, preserving the previous alias-safety
+  policy and destination-precision-preserving assignment semantics.
+
+Tests added:
+- No unit tests were added; this is an internal fast path for existing tested
+  expression-assignment behavior.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpf_alloc_count test_mpf_aliasing test_mpf_numeric_equivalence Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_03_mkII`
+- `git diff --check`
+- `ctest --test-dir build -R "test_mpf_(alloc_count|aliasing|numeric_equivalence)" --output-on-failure`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 1000 512`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 1000 512`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 100000 512`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 100000 512`
+- `build/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 100000 512`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused MPF tests: PASS, 3/3.
+- Full build: PASS.
+- Full CTest: PASS, 154/154.
+- `Rdot_gmp_kernel_03_mkII 100000 512`: alloc/free `2/2`,
+  elapsed `0.0300275 s`, `6.66053 MFLOPS`, `DIFF` OK.
+- `Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 100000 512`:
+  alloc/free `2/2`, elapsed `0.0289908 s`, `6.8987 MFLOPS`, `DIFF` OK.
+- `Rdot_gmp_kernel_03_orig 100000 512`: alloc/free `2/2`,
+  elapsed `0.00942289 s`, `21.2248 MFLOPS`, `DIFF` OK.
+- Whitespace check: PASS.
+
+Known issues:
+- This fast path removes generic evaluator dispatch from the simplest MPF
+  binary assignment case, but it does not close the remaining gap to the
+  original GMP wrapper kernel. The current benchmark still points to residual
+  wrapper overhead outside allocation traffic.
+
+Post-phase MPFR benchmark FMA variants:
+DONE
+
+Implemented features:
+- Added a third MPFR wrapper benchmark configuration for every MPFR kernel:
+  `*_mkII_FIXED_PRECISION_FASTPATH_FMA`.
+- The new variant enables both
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` and `MPFRXX_ENABLE_FMA`.
+- Updated the MPFR benchmark runner to execute the normal, fixed-precision
+  fast path, and fixed-precision fast path plus FMA variants.
+- Updated the shared plotter color map and benchmark documentation for the new
+  suffix.
+
+Tests added:
+- No unit tests were added; this phase adds benchmark targets and runner
+  entries.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `benchmarks/common/plot.py`
+- `benchmarks/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target Rdot_mpfr_kernel_01_mkII Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA Rdot_mpfr_kernel_03_mkII Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH_FMA`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 1000 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH 1000 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA 1000 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH_FMA 1000 512`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Representative MPFR Rdot variants: PASS.
+- `Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA 1000 512`
+  printed `BENCH_ALLOC_COUNTS ... alloc=1 ... free=1` and `DIFF` OK.
+- Full build: PASS.
+- Full CTest: PASS, 154/154.
+- Whitespace check: PASS.
+
+Known issues:
+- The new FMA benchmark variant is only generated for MPFR wrapper kernel
+  targets. Native C targets and GMP targets keep their existing variant sets.
+
 Post-phase Rdot allocator profiling:
 DONE
 

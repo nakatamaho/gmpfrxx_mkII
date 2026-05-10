@@ -45,12 +45,12 @@ target_compile_definitions(test_mpfr_fixed_precision_materialization PRIVATE
     GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     MPFRXX_ENABLE_FMA
 )
-add_phase0_test(test_mpfr_fixed_precision_tls_scratch mpfrxx_mkII)
-target_compile_definitions(test_mpfr_fixed_precision_tls_scratch PRIVATE
+add_phase0_test(test_mpfr_fixed_precision_fma_alloc_count mpfrxx_mkII)
+target_compile_definitions(test_mpfr_fixed_precision_fma_alloc_count PRIVATE
     GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
     MPFRXX_ENABLE_FMA
 )
-set_tests_properties(test_mpfr_fixed_precision_tls_scratch PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
+set_tests_properties(test_mpfr_fixed_precision_fma_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpfr_type_conversions mpfrxx_mkII)
 add_phase0_test(test_mpfr_comparisons mpfrxx_mkII)
 add_phase0_test(test_mpfr_compound_assign mpfrxx_mkII)
@@ -92,12 +92,6 @@ add_phase0_test(test_mpf_fixed_precision_materialization gmpxx_mkII)
 target_compile_definitions(test_mpf_fixed_precision_materialization PRIVATE
     GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
 )
-add_phase0_test(test_mpf_fixed_precision_tls_scratch gmpxx_mkII)
-target_compile_definitions(test_mpf_fixed_precision_tls_scratch PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
-    GMPXX_ENABLE_FMA
-)
-set_tests_properties(test_mpf_fixed_precision_tls_scratch PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpf_long_width_dispatch gmpxx_mkII)
 add_phase0_test(test_mpf_numeric_equivalence gmpxx_mkII)
 add_phase0_test(test_mpf_power_of_two_fusion gmpxx_mkII)

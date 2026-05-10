@@ -88,16 +88,22 @@ run_variants() {
             "Rdot_mpfr_C_native_openmp_01"
             "Rdot_mpfr_kernel_01_mkII"
             "Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rdot_mpfr_kernel_02_mkII"
             "Rdot_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rdot_mpfr_kernel_03_mkII"
             "Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rdot_mpfr_kernel_04_mkII"
             "Rdot_mpfr_kernel_04_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_mpfr_kernel_04_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rdot_mpfr_kernel_openmp_01_mkII"
             "Rdot_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rdot_mpfr_kernel_openmp_02_mkII"
             "Rdot_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
         )
         ;;
     Raxpy)
@@ -106,12 +112,16 @@ run_variants() {
             "Raxpy_mpfr_C_native_openmp_01"
             "Raxpy_mpfr_kernel_01_mkII"
             "Raxpy_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Raxpy_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Raxpy_mpfr_kernel_02_mkII"
             "Raxpy_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Raxpy_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Raxpy_mpfr_kernel_openmp_01_mkII"
             "Raxpy_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Raxpy_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Raxpy_mpfr_kernel_openmp_02_mkII"
             "Raxpy_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Raxpy_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
         )
         ;;
     Rgemv)
@@ -120,12 +130,16 @@ run_variants() {
             "Rgemv_mpfr_C_native_openmp_01"
             "Rgemv_mpfr_kernel_01_mkII"
             "Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rgemv_mpfr_kernel_02_mkII"
             "Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rgemv_mpfr_kernel_openmp_01_mkII"
             "Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rgemv_mpfr_kernel_openmp_02_mkII"
             "Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
         )
         ;;
     Rgemm)
@@ -136,16 +150,22 @@ run_variants() {
             "Rgemm_mpfr_C_native_openmp_02"
             "Rgemm_mpfr_kernel_01_mkII"
             "Rgemm_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rgemm_mpfr_kernel_02_mkII"
             "Rgemm_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rgemm_mpfr_kernel_03_mkII"
             "Rgemm_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rgemm_mpfr_kernel_openmp_01_mkII"
             "Rgemm_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rgemm_mpfr_kernel_openmp_02_mkII"
             "Rgemm_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rgemm_mpfr_kernel_openmp_03_mkII"
             "Rgemm_mpfr_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_mpfr_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH_FMA"
         )
         ;;
     esac

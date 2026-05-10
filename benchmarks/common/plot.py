@@ -95,6 +95,8 @@ def variant_color(variant):
         return "blue"
     if variant.endswith("_mkII"):
         return "green"
+    if variant.endswith("_mkII_FIXED_PRECISION_FASTPATH_FMA"):
+        return "purple"
     if variant.endswith("_mkII_FIXED_PRECISION_FASTPATH"):
         return "red"
     if "openmp" in variant:

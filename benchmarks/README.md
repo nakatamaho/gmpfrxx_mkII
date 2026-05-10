@@ -11,6 +11,15 @@ The benchmark tree is split by numeric backend.
 - `mpfr/`: reserved for MPFR/MPC benchmarks.
 - `common/`: shared runner and plotting helpers.
 
+MPFR wrapper benchmark kernels are built in three wrapper configurations:
+
+- `*_mkII`: normal precision-policy build.
+- `*_mkII_FIXED_PRECISION_FASTPATH`: normal build plus
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
+- `*_mkII_FIXED_PRECISION_FASTPATH_FMA`: fixed-precision fast path plus
+  `MPFRXX_ENABLE_FMA`, enabling MPFR fused multiply-add/subtract expression
+  paths where the wrapper can safely apply them.
+
 Raw results are kept under each backend, not under the top-level benchmark
 directory:
 

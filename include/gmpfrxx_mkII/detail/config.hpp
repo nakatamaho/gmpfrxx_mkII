@@ -81,11 +81,6 @@ struct build_options {
 #else
     static constexpr bool assume_fixed_precision_fastpath = false;
 #endif
-#ifdef GMPXX_ENABLE_FMA
-    static constexpr bool enable_gmp_fma = true;
-#else
-    static constexpr bool enable_gmp_fma = false;
-#endif
 #ifdef MPFRXX_ENABLE_FMA
     static constexpr bool enable_mpfr_fma = true;
 #else

@@ -133,16 +133,12 @@ The fixed-precision fastpath flag must not control multiply-fusion semantics.
 These rewrites are controlled by explicit compile-time options:
 
 ```text
-GMPXX_ENABLE_FMA
 MPFRXX_ENABLE_FMA
 ```
 
-`GMPXX_ENABLE_FMA` enables direct GMP MPF scratch paths for:
-
-```cpp
-a += b * c;
-a -= b * c;
-```
+GMP MPF has no wrapper fused multiply-add option. In particular, the wrapper
+must not keep a header-owned TLS scratch pool for MPF compound assignment.
+`a += b * c` and `a -= b * c` use ordinary MPF expression evaluation.
 
 `MPFRXX_ENABLE_FMA` enables MPFR's fused operations for supported expression
 shapes. `a += b * c` maps to `mpfr_fma`; `a -= b * c` maps to `mpfr_fms`
