@@ -53,6 +53,18 @@ void assert_equal(const mpfrxx::mpfr_class& got, const mpfr_t ref, mpfr_prec_t p
     assert(mpfr_cmp(got.mpfr_data(), ref) == 0);
 }
 
+mpfr_rnd_t dual_rounding_for_negated_result(mpfr_rnd_t rnd)
+{
+    switch (rnd) {
+    case MPFR_RNDU:
+        return MPFR_RNDD;
+    case MPFR_RNDD:
+        return MPFR_RNDU;
+    default:
+        return rnd;
+    }
+}
+
 template <typename Rhs>
 void check_rhs(char op, const Rhs& rhs)
 {
@@ -129,46 +141,83 @@ void check_compound_assignment_expression_fast_path()
     const mpfrxx::mpfr_class b("1.25", 384);
     const mpfrxx::mpfr_class c("2.5", 512);
 
-    mpfr_t product;
     mpfr_t ref;
-    mpfr_init2(product, precision);
     mpfr_init2(ref, precision);
-    mpfr_mul(product, b.mpfr_data(), c.mpfr_data(), rnd);
 
     {
         mpfrxx::mpfr_class a("7.5", precision);
-        mpfr_set(ref, a.mpfr_data(), rnd);
-        mpfr_add(ref, ref, product, rnd);
+        mpfr_fma(ref, b.mpfr_data(), c.mpfr_data(), a.mpfr_data(), rnd);
         a += b * c;
         assert_equal(a, ref, precision);
     }
 
     {
         mpfrxx::mpfr_class a("7.5", precision);
-        mpfr_set(ref, a.mpfr_data(), rnd);
-        mpfr_sub(ref, ref, product, rnd);
+        mpfr_fms(ref, b.mpfr_data(), c.mpfr_data(), a.mpfr_data(), dual_rounding_for_negated_result(rnd));
+        mpfr_neg(ref, ref, MPFR_RNDN);
         a -= b * c;
         assert_equal(a, ref, precision);
     }
 
     {
         mpfrxx::mpfr_class a("7.5", precision);
+        mpfr_t product;
+        mpfr_init2(product, precision);
+        mpfr_mul(product, b.mpfr_data(), c.mpfr_data(), rnd);
         mpfr_set(ref, a.mpfr_data(), rnd);
         mpfr_mul(ref, ref, product, rnd);
         a *= b * c;
         assert_equal(a, ref, precision);
+        mpfr_clear(product);
     }
 
     {
         mpfrxx::mpfr_class a("7.5", precision);
+        mpfr_t product;
+        mpfr_init2(product, precision);
+        mpfr_mul(product, b.mpfr_data(), c.mpfr_data(), rnd);
         mpfr_set(ref, a.mpfr_data(), rnd);
         mpfr_div(ref, ref, product, rnd);
         a /= b * c;
         assert_equal(a, ref, precision);
+        mpfr_clear(product);
     }
 
     mpfr_clear(ref);
-    mpfr_clear(product);
+}
+
+void check_compound_assignment_mul_expr_uses_fused_rounding(mpfr_rnd_t rnd)
+{
+    const mpfr_rnd_t old_rnd = mpfrxx::default_rounding_mode();
+    mpfrxx::set_default_rounding_mode(rnd);
+
+    const mpfr_prec_t precision = 24;
+    const mpfrxx::mpfr_class a0("1.00000011920928955078125", precision);
+    const mpfrxx::mpfr_class b("1.00000011920928955078125", precision);
+    const mpfrxx::mpfr_class c("1.00000011920928955078125", precision);
+
+    {
+        mpfr_t ref;
+        mpfr_init2(ref, precision);
+        mpfr_fma(ref, b.mpfr_data(), c.mpfr_data(), a0.mpfr_data(), rnd);
+        mpfrxx::mpfr_class a = a0;
+        a += b * c;
+        assert_equal(a, ref, precision);
+        mpfr_clear(ref);
+    }
+
+    {
+        mpfr_t ref;
+        mpfr_init2(ref, precision);
+        mpfr_fms(ref, b.mpfr_data(), c.mpfr_data(), a0.mpfr_data(), dual_rounding_for_negated_result(rnd));
+        mpfr_neg(ref, ref, MPFR_RNDN);
+        mpfrxx::mpfr_class a = a0;
+        a -= b * c;
+        assert_equal(a, ref, precision);
+        mpfr_clear(ref);
+    }
+
+    mpfrxx::set_default_rounding_mode(old_rnd);
 }
 
 void check_exact_lhs_mpfr_rhs()
@@ -216,6 +265,10 @@ int main()
     check_exact_rhs();
     check_self_alias_and_expression_rhs();
     check_compound_assignment_expression_fast_path();
+    check_compound_assignment_mul_expr_uses_fused_rounding(MPFR_RNDN);
+    check_compound_assignment_mul_expr_uses_fused_rounding(MPFR_RNDU);
+    check_compound_assignment_mul_expr_uses_fused_rounding(MPFR_RNDD);
+    check_compound_assignment_mul_expr_uses_fused_rounding(MPFR_RNDZ);
     check_exact_lhs_mpfr_rhs();
     return 0;
 }

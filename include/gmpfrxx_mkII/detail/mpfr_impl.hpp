@@ -2017,28 +2017,40 @@ template <typename T>
 inline constexpr bool is_mpfr_mul_direct_expr_v =
     is_mpfr_mul_direct_expr<std::decay_t<T>>::value;
 
-template <typename Lhs, typename Rhs>
-void mpfr_compound_mul_scratch_apply(
-    mpfr_t dest,
-    const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
-    mpfr_prec_t precision,
-    mpfr_rnd_t rnd)
+inline mpfr_rnd_t mpfr_dual_rounding_for_negated_result(mpfr_rnd_t rnd) noexcept
 {
-    mpfr_thread_scratch product(precision);
-    mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
-    mpfr_apply_binary<add_op>(dest, dest, product.get(), rnd);
+    switch (rnd) {
+    case MPFR_RNDU:
+        return MPFR_RNDD;
+    case MPFR_RNDD:
+        return MPFR_RNDU;
+    default:
+        return rnd;
+    }
 }
 
 template <typename Lhs, typename Rhs>
-void mpfr_compound_submul_scratch_apply(
+void mpfr_compound_fma_apply(
     mpfr_t dest,
     const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
-    mpfr_prec_t precision,
     mpfr_rnd_t rnd)
 {
-    mpfr_thread_scratch product(precision);
-    mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
-    mpfr_apply_binary<sub_op>(dest, dest, product.get(), rnd);
+    mpfr_fma(dest, expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), dest, rnd);
+}
+
+template <typename Lhs, typename Rhs>
+void mpfr_compound_submul_fma_apply(
+    mpfr_t dest,
+    const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
+    mpfr_rnd_t rnd)
+{
+    mpfr_fms(
+        dest,
+        expr.lhs().get().mpfr_data(),
+        expr.rhs().get().mpfr_data(),
+        dest,
+        mpfr_dual_rounding_for_negated_result(rnd));
+    mpfr_neg(dest, dest, MPFR_RNDN);
 }
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
@@ -2229,20 +2241,17 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
             operand.get().mpfr_data(),
             context.rounding_mode);
     } else if constexpr (
-        build_options::assume_fixed_precision_fastpath &&
         is_mpfr_mul_direct_expr_v<operand_type> &&
         (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
         if constexpr (std::is_same_v<Op, add_op>) {
-            mpfr_compound_mul_scratch_apply(
+            mpfr_compound_fma_apply(
                 lhs.mpfr_data(),
                 operand,
-                precision,
                 context.rounding_mode);
         } else {
-            mpfr_compound_submul_scratch_apply(
+            mpfr_compound_submul_fma_apply(
                 lhs.mpfr_data(),
                 operand,
-                precision,
                 context.rounding_mode);
         }
     } else {

@@ -52,6 +52,18 @@ void count_free(void* p, std::size_t)
     std::free(p);
 }
 
+mpfr_rnd_t dual_rounding_for_negated_result(mpfr_rnd_t rnd)
+{
+    switch (rnd) {
+    case MPFR_RNDU:
+        return MPFR_RNDD;
+    case MPFR_RNDD:
+        return MPFR_RNDU;
+    default:
+        return rnd;
+    }
+}
+
 } // namespace
 
 int main()
@@ -68,15 +80,11 @@ int main()
 
     mpfr_t expected_add;
     mpfr_t expected_sub;
-    mpfr_t product;
     mpfr_init2(expected_add, add_acc.precision());
     mpfr_init2(expected_sub, sub_acc.precision());
-    mpfr_init2(product, add_acc.precision());
-    mpfr_set(expected_add, add_acc.mpfr_data(), rnd);
-    mpfr_set(expected_sub, sub_acc.mpfr_data(), rnd);
-    mpfr_mul(product, x.mpfr_data(), y.mpfr_data(), rnd);
-    mpfr_add(expected_add, expected_add, product, rnd);
-    mpfr_sub(expected_sub, expected_sub, product, rnd);
+    mpfr_fma(expected_add, x.mpfr_data(), y.mpfr_data(), add_acc.mpfr_data(), rnd);
+    mpfr_fms(expected_sub, x.mpfr_data(), y.mpfr_data(), sub_acc.mpfr_data(), dual_rounding_for_negated_result(rnd));
+    mpfr_neg(expected_sub, expected_sub, MPFR_RNDN);
 
     add_acc += x * y;
     sub_acc -= x * y;
@@ -89,7 +97,6 @@ int main()
     const int steady_state_allocations = alloc_count.load();
     assert(steady_state_allocations == 0);
 
-    mpfr_clear(product);
     mpfr_clear(expected_sub);
     mpfr_clear(expected_add);
 
