@@ -535,6 +535,181 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFR TLS default-state hard requirement:
+DONE
+
+Implemented features:
+- Made MPFR TLS support a CMake configure-time hard requirement.  The wrapper
+  routes MPFR default precision, rounding mode, and exponent range through
+  libmpfr's default state, so non-TLS MPFR builds are unsupported.
+- Documented the MPFR default-context policy in `README.md`: libmpfr TLS is the
+  default-state owner, the wrapper does not define header-owned MPFR default
+  TLS, and the wrapper initializes the default precision to 512 bits on first
+  default access.
+- Added direct test coverage that MPFR default construction starts at the
+  wrapper 512-bit default without an explicit reload call.
+
+Tests added:
+- None.
+
+Tests updated:
+- `CMakeLists.txt`
+- `README.md`
+- `tests/test_mpfr_defaults.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpfr_defaults test_mpfr_thread_safety test_library_tls_detection example16_mpfr_thread_context`
+- `ctest --test-dir build -R 'test_mpfr_defaults|test_mpfr_thread_safety|test_library_tls_detection|example16_mpfr_thread_context' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Configure: PASS with `MPFR buildopt TLS probe: has API=1, tls=1`.
+- Focused build: PASS.
+- Focused CTest: PASS, 4/4 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 152/152 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+Post-phase expression leaf performance contract:
+DONE
+
+Implemented features:
+- Kept lvalue expression operands as borrowed leaves to preserve inner-loop
+  zero-allocation fast paths for existing wrapper objects.
+- Documented the expression lifetime contract in `README.md`: expression nodes
+  borrow lvalue operands, own rvalue operands, and saved lvalue expressions
+  must not outlive their referenced operands.
+- Backed out the owned-lvalue-leaf experiment because it made allocation-count
+  tests fail and would regress BLAS-style inner loops.
+
+Tests added:
+- None.
+
+Tests updated:
+- `README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpf_alloc_count test_mpfr_alloc_count test_mpf_scalar_alloc_count test_mpfr_scalar_alloc_count test_mpf_fixed_precision_tls_scratch test_mpfr_fixed_precision_tls_scratch test_mpfc_precision_policy test_mpz_addmul_alloc_count test_mpz_mpq_alloc_count test_temporary_expression_lifetime`
+- `ctest --test-dir build -R 'test_mpf_alloc_count|test_mpfr_alloc_count|test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count|test_mpf_fixed_precision_tls_scratch|test_mpfr_fixed_precision_tls_scratch|test_mpfc_precision_policy|test_mpz_addmul_alloc_count|test_mpz_mpq_alloc_count|test_temporary_expression_lifetime' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused allocation/lifetime build: PASS.
+- Focused allocation/lifetime CTest: PASS, 10/10 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 152/152 tests passed.
+
+Known issues:
+- Saved expressions containing lvalue wrapper operands are non-owning views.
+  Users must materialize to a wrapper object when they need a stable snapshot.
+
+Post-phase MPC default component policy:
+DONE
+
+Implemented features:
+- Enforced the current MPC default policy that default MPC precision and
+  rounding are backed by the shared libmpfr default state.
+- `set_default_mpc_precision_bits(real, imag)` now throws
+  `std::invalid_argument` when `real != imag` instead of silently using the
+  maximum precision for both components.
+- `set_default_mpc_rounding_mode(real, imag)` now throws
+  `std::invalid_argument` when the rounding modes differ instead of silently
+  doing nothing.
+- MPC environment loading now throws `std::invalid_argument` when both real and
+  imaginary component-specific precision or rounding variables are present and
+  disagree.
+- Documented that per-component defaults are not supported; use explicit
+  `mpc_class::with_precision(real, imag)` for individual objects that need
+  different component precision.
+
+Tests added:
+- Added exception coverage for mismatched MPC default precision and rounding
+  setters.
+- Added exception coverage for mismatched MPC real/imag environment defaults.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `tests/test_mpc_defaults.cpp`
+- `tests/test_mpc_environment.cpp`
+- `tests/test_mpc_precision_policy.cpp`
+- `README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,220p' include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `rg -n "mpc_default_options|set_default_mpc|default_mpc|rounding|real_precision|imag_precision|mpc_rnd" include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/environment.hpp include/gmpfrxx_mkII/detail/mpc_environment.hpp tests`
+- `cmake --build build -j --target test_mpc_defaults test_mpc_environment test_mpc_environment_invalid test_mpc_precision_policy`
+- `ctest --test-dir build -R 'test_mpc_defaults|test_mpc_environment|test_mpc_environment_invalid|test_mpc_precision_policy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused MPC default/environment build: PASS.
+- Focused MPC default/environment CTest: PASS, 4/4 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 152/152 tests passed.
+
+Known issues:
+- MPC per-component default precision/rounding is intentionally unsupported
+  while MPC defaults are routed through the shared libmpfr default state.
+
+Post-phase MPFR fused compound multiply assignment:
+DONE
+
+Implemented features:
+- Replaced the MPFR `a += b * c` direct multiply-expression compound path with
+  `mpfr_fma(a, b, c, a, rnd)`.
+- Replaced the MPFR `a -= b * c` direct multiply-expression compound path with
+  `mpfr_fms(a, b, c, a, dual_rnd)` followed by an exact sign negation.
+- Removed the `assume_fixed_precision_fastpath` dependency from MPFR direct
+  multiply-expression add/sub compound assignment.  The fused path is now used
+  whenever both multiply operands are MPFR object leaves.
+- Removed the old product scratch helpers for MPFR add/sub multiply compound
+  assignment.
+
+Tests added:
+- Added fused-rounding coverage for `a += b * c` and `a -= b * c` under
+  `MPFR_RNDN`, `MPFR_RNDU`, `MPFR_RNDD`, and `MPFR_RNDZ`.
+
+Tests updated:
+- Updated MPFR compound assignment references to compare against `mpfr_fma`
+  and dual-rounding `mpfr_fms` semantics.
+- Updated the fixed-precision scratch allocation test to expect fused MPFR
+  add/sub multiply results while preserving zero steady-state allocations.
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/test_mpfr_compound_assign.cpp`
+- `tests/test_mpfr_fixed_precision_tls_scratch.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '2180,2270p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `rg -n "mpfr_compound|fma|fms|addmul|submul|mul_scratch" include tests`
+- `cmake --build build -j --target test_mpfr_compound_assign test_mpfr_fixed_precision_tls_scratch test_mpfr_alloc_count`
+- `ctest --test-dir build -R 'test_mpfr_compound_assign|test_mpfr_fixed_precision_tls_scratch|test_mpfr_alloc_count' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused MPFR compound/allocation build: PASS.
+- Focused MPFR compound/allocation CTest: PASS, 3/3 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 152/152 tests passed.
+- Final full CTest after test reference adjustment: PASS, 152/152 tests passed.
+
+Known issues:
+- `a -= b * c` uses dual rounding for the intermediate `b*c - a` value before
+  exact negation; this is required for directed rounding correctness.
+
 Post-phase MPFR default one-time initialization:
 DONE
 

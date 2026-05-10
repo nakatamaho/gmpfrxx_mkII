@@ -85,6 +85,13 @@ Materialization is allowed through construction, assignment, explicit evaluation
 helpers, compound assignment operators, documented eager math functions, stream
 output of expressions, and comparison of expressions.
 
+Expression nodes borrow lvalue wrapper operands and own rvalue wrapper
+operands.  This keeps inner-loop expressions such as `dst = a + b` and
+`acc += x * y` allocation-light for existing objects.  A saved expression that
+contains lvalue operands must not outlive those operands, and evaluating it
+after those operands have been modified observes their current values.  Materialize
+to a wrapper object if a stable snapshot is needed.
+
 ## Precision Policy
 
 Default floating precision is project-owned and starts at 512 bits for
@@ -135,6 +142,38 @@ designated owner such as MPLAPACK.
 
 Changing the default precision affects only subsequently constructed objects.
 Assignment to an existing `mpf_class` preserves the left-hand-side precision.
+
+### MPFR Default Context
+
+`mpfrxx::mpfr_class` routes default precision, rounding mode, and exponent
+range through libmpfr's default state.  The wrapper does not define
+header-owned `thread_local` MPFR default storage.
+
+The wrapper initial default precision is 512 bits.  On first wrapper default
+access, gmpfrxx_mkII initializes libmpfr's default precision from
+`MPFRXX_DEFAULT_PRECISION_BITS` when it is valid, otherwise from the 512-bit
+wrapper default.  Runtime calls such as
+`mpfrxx::set_default_precision_bits()` update libmpfr's thread-local default
+state and affect only subsequently constructed MPFR objects in that thread.
+
+This policy requires an MPFR build with TLS support.  CMake checks
+`mpfr_buildopt_tls_p()` and fails configuration if libmpfr does not report TLS.
+Shared-library users must ensure all images use the same libmpfr shared
+library; wrapper-owned DSO-local MPFR default storage is intentionally avoided.
+
+### MPC Default Context
+
+`mpfrxx::mpc_class` default precision and rounding are derived from the same
+libmpfr default state used by `mpfrxx::mpfr_class`.  The wrapper does not keep
+separate mutable default state for MPC real and imaginary components.
+
+Default MPC real and imaginary precision therefore must match, and default MPC
+real and imaginary rounding modes must match.  Calls such as
+`mpfrxx::set_default_mpc_precision_bits(real, imag)` and
+`mpfrxx::set_default_mpc_rounding_mode(real, imag)` throw
+`std::invalid_argument` when the two component values differ.  Use explicit
+`mpfrxx::mpc_class::with_precision(real, imag)` construction when an individual
+object needs different real and imaginary precision.
 
 ## Environment
 
