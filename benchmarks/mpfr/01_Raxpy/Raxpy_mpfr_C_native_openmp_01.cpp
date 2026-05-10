@@ -39,16 +39,24 @@ void _Raxpy(int64_t n, const mpfr_t alpha, mpfr_t *x, int64_t incx, mpfr_t *y, i
 
 #pragma omp parallel
     {
+#ifndef MPFR_C_NATIVE_USE_FMA
         mpfr_t temp;
         mpfr_init(temp);
+#endif
 
 #pragma omp for
         for (int64_t i = 0; i < n; ++i) {
+#ifdef MPFR_C_NATIVE_USE_FMA
+            mpfr_fma(y[i], alpha, x[i], y[i], mpfrxx::default_rounding_mode());
+#else
             mpfr_mul(temp, alpha, x[i], mpfrxx::default_rounding_mode());
             mpfr_add(y[i], y[i], temp, mpfrxx::default_rounding_mode());
+#endif
         }
 
+#ifndef MPFR_C_NATIVE_USE_FMA
         mpfr_clear(temp);
+#endif
     }
 }
 

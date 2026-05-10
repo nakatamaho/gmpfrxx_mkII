@@ -28,6 +28,13 @@ MPFR Rdot also provides raw C native FMA baselines:
 - `Rdot_mpfr_C_native_01_FMA`
 - `Rdot_mpfr_C_native_openmp_01_FMA`
 
+MPFR Raxpy follows the same shorter naming policy.  It provides raw C native
+FMA baselines and wrapper FMA variants:
+
+- `Raxpy_mpfr_C_native_01_FMA`
+- `Raxpy_mpfr_C_native_openmp_01_FMA`
+- `Raxpy_mpfr_kernel_*_mkII_FMA`
+
 Raw results are kept under each backend, not under the top-level benchmark
 directory:
 

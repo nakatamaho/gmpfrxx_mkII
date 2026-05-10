@@ -87,6 +87,8 @@ def parse_log(path):
 
 
 def variant_color(variant):
+    if "C_native" in variant and variant.endswith("_FMA"):
+        return "darkviolet"
     if "C_native_openmp" in variant:
         return "dimgray"
     if "C_native" in variant:
@@ -95,6 +97,8 @@ def variant_color(variant):
         return "blue"
     if variant.endswith("_mkII"):
         return "green"
+    if variant.endswith("_mkII_FMA"):
+        return "purple"
     if variant.endswith("_mkII_FIXED_PRECISION_FASTPATH_FMA"):
         return "purple"
     if variant.endswith("_mkII_FIXED_PRECISION_FASTPATH"):

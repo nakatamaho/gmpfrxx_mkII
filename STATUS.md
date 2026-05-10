@@ -1,3 +1,55 @@
+Post-phase MPFR Raxpy FMA benchmark variants:
+DONE
+
+Implemented features:
+- Added serial and OpenMP MPFR C native Raxpy FMA baseline targets.
+- The normal C native Raxpy targets keep the existing `mpfr_mul` plus
+  `mpfr_add` path, while the FMA targets use
+  `mpfr_fma(y[i], alpha, x[i], y[i], rnd)`.
+- Switched MPFR Raxpy wrapper benchmark variants from the legacy
+  `*_mkII_FIXED_PRECISION_FASTPATH*` names to the short `*_mkII` and
+  `*_mkII_FMA` names.
+- Updated the MPFR benchmark runner, common plot colors, and benchmark README
+  for the new Raxpy target names.
+
+Tests added:
+- No new tests were added.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/README.md`
+- `benchmarks/common/plot.py`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build-release-nocount -j --target Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_01_FMA Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_01_FMA Raxpy_mpfr_kernel_01_mkII Raxpy_mpfr_kernel_01_mkII_FMA Raxpy_mpfr_kernel_02_mkII Raxpy_mpfr_kernel_02_mkII_FMA Raxpy_mpfr_kernel_openmp_01_mkII Raxpy_mpfr_kernel_openmp_01_mkII_FMA Raxpy_mpfr_kernel_openmp_02_mkII Raxpy_mpfr_kernel_openmp_02_mkII_FMA`
+- `cmake --build build-release-nocount -j --target Raxpy_mpfr_C_native_01_FMA Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_01_FMA Raxpy_mpfr_kernel_01_mkII Raxpy_mpfr_kernel_01_mkII_FMA Raxpy_mpfr_kernel_02_mkII Raxpy_mpfr_kernel_02_mkII_FMA Raxpy_mpfr_kernel_openmp_01_mkII Raxpy_mpfr_kernel_openmp_01_mkII_FMA Raxpy_mpfr_kernel_openmp_02_mkII Raxpy_mpfr_kernel_openmp_02_mkII_FMA`
+- `build-release-nocount/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 1000 512`
+- `build-release-nocount/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 1000 512`
+- `build-release-nocount/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_FMA 1000 512`
+- `build-release-nocount/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_FMA 1000 512`
+- `/bin/bash -lc 'cmake --build build-release-nocount --target help | rg "Raxpy_mpfr_.*FIXED_PRECISION_FASTPATH"'`
+
+Pass/fail result:
+- Initial multi-target build configured the new targets but stopped before the
+  newly generated FMA target could be built by name.
+- Follow-up Raxpy target build: PASS.
+- Serial C native FMA smoke: PASS, `Result OK`.
+- OpenMP C native FMA smoke: PASS, `Result OK`.
+- Serial wrapper FMA smoke: PASS, `Result OK`.
+- OpenMP wrapper FMA smoke: PASS, `Result OK`.
+- Raxpy legacy fixed-precision-fastpath target scan: PASS, no matches.
+
+Known issues:
+- FMA and non-FMA Raxpy use different rounding paths, so bitwise equality is
+  not expected between those target families. The benchmark uses the existing
+  tolerance-based L1 norm check.
+
 Post-phase MPFR Rdot C native FMA baselines:
 DONE
 

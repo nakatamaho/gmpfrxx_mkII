@@ -114,6 +114,11 @@ function(add_mpfr_rdot_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FMA)
 endfunction()
 
+function(add_mpfr_raxpy_kernel_variants subdir source base)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FMA)
+endfunction()
+
 function(add_mpfr_native_benchmark subdir source target)
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
@@ -156,15 +161,19 @@ add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_02.cpp
 
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp
     Raxpy_mpfr_C_native_01)
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01_FMA.cpp
+    Raxpy_mpfr_C_native_01_FMA)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_01.cpp
     Raxpy_mpfr_C_native_openmp_01)
-add_mpfr_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_01.cpp
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_01_FMA.cpp
+    Raxpy_mpfr_C_native_openmp_01_FMA)
+add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_01.cpp
     Raxpy_mpfr_kernel_01)
-add_mpfr_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_02.cpp
+add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_02.cpp
     Raxpy_mpfr_kernel_02)
-add_mpfr_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_01.cpp
+add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_01.cpp
     Raxpy_mpfr_kernel_openmp_01)
-add_mpfr_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_02.cpp
+add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_02.cpp
     Raxpy_mpfr_kernel_openmp_02)
 
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_01.cpp
