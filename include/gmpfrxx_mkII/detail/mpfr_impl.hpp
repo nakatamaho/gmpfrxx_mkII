@@ -1629,7 +1629,7 @@ inline mpfr_prec_t mpfr_expression_precision(const mpfrxx::random_mpfr_expr& exp
 template <typename T, typename Result>
 mpfr_prec_t mpfr_expression_precision(const scalar_leaf<T, Result>&)
 {
-    return mpfrxx::mpfr_class::default_precision();
+    return 0;
 }
 
 template <typename Op, typename Expr, typename Result>

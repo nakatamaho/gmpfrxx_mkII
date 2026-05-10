@@ -547,25 +547,45 @@ inline mp_bitcnt_t mpfc_expression_imag_precision(const object_leaf<gmpxx::mpq_c
 template <typename T, typename Result>
 mp_bitcnt_t mpfc_expression_real_precision(const scalar_leaf<T, Result>&)
 {
-    return gmpxx::default_mpf_precision_bits();
+    return 0;
 }
 
 template <typename T, typename Result>
 mp_bitcnt_t mpfc_expression_imag_precision(const scalar_leaf<T, Result>&)
 {
-    return gmpxx::default_mpf_precision_bits();
+    return 0;
 }
 
 template <typename T>
 mp_bitcnt_t mpfc_expression_real_precision(const scalar_leaf<T, gmpxx::mpf_class>&)
 {
-    return gmpxx::default_mpf_precision_bits();
+    return 0;
 }
 
 template <typename T>
 mp_bitcnt_t mpfc_expression_imag_precision(const scalar_leaf<T, gmpxx::mpf_class>&)
 {
-    return gmpxx::default_mpf_precision_bits();
+    return 0;
+}
+
+template <typename Expr>
+mp_bitcnt_t mpfc_materialization_real_precision(const Expr& expr)
+{
+    mp_bitcnt_t precision = mpfc_expression_real_precision(expr);
+    if (precision == 0) {
+        precision = gmpxx::default_mpf_precision_bits();
+    }
+    return precision;
+}
+
+template <typename Expr>
+mp_bitcnt_t mpfc_materialization_imag_precision(const Expr& expr)
+{
+    mp_bitcnt_t precision = mpfc_expression_imag_precision(expr);
+    if (precision == 0) {
+        precision = gmpxx::default_mpf_precision_bits();
+    }
+    return precision;
 }
 
 template <typename Op, typename Expr, typename Result>
@@ -978,8 +998,8 @@ namespace gmpxx {
 
 template <typename Expr, typename>
 mpfc_class::mpfc_class(const Expr& expr)
-    : real_(mpf_class::with_precision(gmpfrxx_mkII::detail::mpfc_expression_real_precision(expr))),
-      imag_(mpf_class::with_precision(gmpfrxx_mkII::detail::mpfc_expression_imag_precision(expr)))
+    : real_(mpf_class::with_precision(gmpfrxx_mkII::detail::mpfc_materialization_real_precision(expr))),
+      imag_(mpf_class::with_precision(gmpfrxx_mkII::detail::mpfc_materialization_imag_precision(expr)))
 {
     gmpfrxx_mkII::detail::mpfc_evaluate(*this, expr);
 }

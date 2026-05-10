@@ -44,6 +44,9 @@ int main()
     assert(materialized.precision() == high.precision());
     assert(materialized.precision() > default_object_precision);
 
+    const gmpxx::mpf_class scalar_materialized = low + 1;
+    assert(scalar_materialized.precision() == low.precision());
+
     mpf_t expected;
     mpf_init2(expected, high.precision());
     mpf_add(expected, low.mpf_data(), high.mpf_data());

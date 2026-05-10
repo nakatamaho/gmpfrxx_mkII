@@ -1345,7 +1345,7 @@ inline mp_bitcnt_t mpf_expression_precision(const gmpxx::random_mpf_expr& expr)
 template <typename T, typename Result>
 mp_bitcnt_t mpf_expression_precision(const scalar_leaf<T, Result>&)
 {
-    return gmpxx::default_mpf_precision_bits();
+    return 0;
 }
 
 template <typename Op, typename Expr, typename Result>
@@ -1901,7 +1901,10 @@ namespace gmpxx {
 template <typename Expr, typename>
 mpf_class::mpf_class(const Expr& expr)
 {
-    const mp_bitcnt_t precision = gmpfrxx_mkII::detail::mpf_materialization_precision(expr);
+    mp_bitcnt_t precision = gmpfrxx_mkII::detail::mpf_materialization_precision(expr);
+    if (precision == 0) {
+        precision = default_mpf_precision_bits();
+    }
     mpf_init2(value_, precision);
     try {
         gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);

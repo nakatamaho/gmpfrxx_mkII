@@ -45,6 +45,9 @@ int main()
     assert(materialized.precision() == high.precision());
     assert(materialized.precision() > default_object_precision);
 
+    const mpfrxx::mpfr_class scalar_materialized = low + 1;
+    assert(scalar_materialized.precision() == low.precision());
+
     mpfr_t expected;
     mpfr_init2(expected, high.precision());
     mpfr_add(expected, low.mpfr_data(), high.mpfr_data(), rnd);

@@ -81,6 +81,12 @@ int main()
         std::abort();
     }
 
+    gmpxx::mpfc_class scalar_materialized = low + 1;
+    if (scalar_materialized.real_precision() != low.real_precision() ||
+        scalar_materialized.imag_precision() != low.imag_precision()) {
+        std::abort();
+    }
+
     auto dst = gmpxx::mpfc_class::with_precision(80, 88);
     const auto dst_real_precision = dst.real_precision();
     const auto dst_imag_precision = dst.imag_precision();

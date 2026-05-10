@@ -12111,3 +12111,53 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+Post-phase scalar precision contribution policy:
+DONE
+
+Implemented features:
+- Changed MPF, MPFR, and MPFC scalar expression leaves to contribute zero
+  precision, matching exact integer and rational leaves.
+- Added MPF expression-constructor fallback so expression materialization
+  uses the wrapper default precision only when no operand contributes a
+  precision.
+- Added MPFC real/imaginary materialization precision helpers with the same
+  zero-precision fallback behavior.
+- Low-precision floating leaves mixed with scalar operands now preserve the
+  floating leaf precision instead of being promoted to the default precision.
+
+Tests added:
+- Added MPF, MPFR, and MPFC materialization checks for low-precision
+  floating leaf plus scalar expressions.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_mpf_fixed_precision_materialization.cpp`
+- `tests/test_mpfr_fixed_precision_materialization.cpp`
+- `tests/test_mpfc_precision_policy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,190p' tests/test_mpfc_precision_policy.cpp`
+- `sed -n '1,90p' tests/test_mpc_precision_policy.cpp`
+- `git status --short`
+- `sed -n '1,230p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `cmake --build build -j --target test_mpf_fixed_precision_materialization test_mpfr_fixed_precision_materialization test_mpfc_precision_policy test_mpf_basic test_mpfr_scalar_eval`
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_materialization|test_mpfr_fixed_precision_materialization|test_mpfc_precision_policy|test_mpf_basic|test_mpfr_scalar_eval' --output-on-failure`
+- `cmake --build build -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+- `git diff -- include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp tests/test_mpf_fixed_precision_materialization.cpp tests/test_mpfr_fixed_precision_materialization.cpp tests/test_mpfc_precision_policy.cpp`
+- `git status --short`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 5/5 tests passed.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 152/152 tests passed.
+
+Known issues:
+- MPC scalar precision policy remains unchanged in this phase.
