@@ -795,6 +795,37 @@ struct is_mpfc_class_leaf<borrowed_object_leaf<gmpxx::mpfc_class>> : std::true_t
 template <typename T>
 inline constexpr bool is_mpfc_class_leaf_v = is_mpfc_class_leaf<std::decay_t<T>>::value;
 
+template <typename Expr>
+inline constexpr bool mpfc_materialization_precision_is_nonzero_v = false;
+
+template <typename Op, typename Lhs, typename Rhs>
+inline constexpr bool mpfc_materialization_precision_is_nonzero_v<binary_expr<Op, Lhs, Rhs, gmpxx::mpfc_class>> =
+    is_mpfc_class_leaf_v<Lhs> && is_mpfc_class_leaf_v<Rhs>;
+
+template <typename Expr>
+mp_bitcnt_t mpfc_constructor_materialization_real_precision(const Expr& expr)
+{
+    mp_bitcnt_t precision = mpfc_expression_real_precision(expr);
+    if constexpr (!mpfc_materialization_precision_is_nonzero_v<std::decay_t<Expr>>) {
+        if (precision == 0) {
+            precision = gmpxx::default_mpf_precision_bits();
+        }
+    }
+    return precision;
+}
+
+template <typename Expr>
+mp_bitcnt_t mpfc_constructor_materialization_imag_precision(const Expr& expr)
+{
+    mp_bitcnt_t precision = mpfc_expression_imag_precision(expr);
+    if constexpr (!mpfc_materialization_precision_is_nonzero_v<std::decay_t<Expr>>) {
+        if (precision == 0) {
+            precision = gmpxx::default_mpf_precision_bits();
+        }
+    }
+    return precision;
+}
+
 template <typename T, typename Result>
 bool mpfc_expression_references(const gmpxx::mpfc_class&, const scalar_leaf<T, Result>&)
 {
@@ -1100,8 +1131,8 @@ namespace gmpxx {
 
 template <typename Expr, typename>
 mpfc_class::mpfc_class(const Expr& expr)
-    : real_(mpf_class::with_precision(gmpfrxx_mkII::detail::mpfc_materialization_real_precision(expr))),
-      imag_(mpf_class::with_precision(gmpfrxx_mkII::detail::mpfc_materialization_imag_precision(expr)))
+    : real_(mpf_class::with_precision(gmpfrxx_mkII::detail::mpfc_constructor_materialization_real_precision(expr))),
+      imag_(mpf_class::with_precision(gmpfrxx_mkII::detail::mpfc_constructor_materialization_imag_precision(expr)))
 {
     gmpfrxx_mkII::detail::mpfc_evaluate(*this, expr);
 }

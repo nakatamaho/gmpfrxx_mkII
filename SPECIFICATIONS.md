@@ -98,11 +98,15 @@ make saved expression nodes lifetime-safe.
 
 Public floating wrappers must be nothrow move-constructible.
 
-`mpfrxx::mpfr_class` and `mpfrxx::mpc_class` must not add an object-ownership
-flag or any other per-object layout state around the backend C object. Their
-size and alignment are part of the performance contract:
+`gmpxx::mpf_class`, `mpfrxx::mpfr_class`, and `mpfrxx::mpc_class` must not add
+an object-ownership flag or any other per-object layout state around the
+backend C object. Their size and alignment are part of the performance
+contract:
 
 ```cpp
+sizeof(gmpxx::mpf_class) == sizeof(mpf_t)
+alignof(gmpxx::mpf_class) == alignof(mpf_t)
+
 sizeof(mpfrxx::mpfr_class) == sizeof(mpfr_t)
 alignof(mpfrxx::mpfr_class) == alignof(mpfr_t)
 
@@ -112,30 +116,12 @@ alignof(mpfrxx::mpc_class) == alignof(mpc_t)
 
 This preserves dense array layout for BLAS-like kernels. For example,
 `mpfrxx::mpfr_class` arrays must have the same stride as `mpfr_t`, not a larger
-stride caused by a wrapper-side `bool valid_` and padding.
+stride caused by a wrapper-side `bool valid_` and padding. Likewise,
+`gmpxx::mpf_class` arrays must keep the same stride as `mpf_t`.
 
-`gmpxx::mpf_class` is different. On the common 64-bit GMP ABI, `mpf_t` is
-24 bytes. The wrapper may use the remaining padding to store moved-from
-ownership state, intentionally making the class 32 bytes while keeping
-8-byte alignment:
-
-```cpp
-sizeof(gmpxx::mpf_class) == 32
-alignof(gmpxx::mpf_class) == alignof(mpf_t)
-sizeof(gmpxx::mpfc_class) == 2 * sizeof(gmpxx::mpf_class)
-```
-
-This gives `gmpxx::mpf_class` arrays a 32-byte stride and
-`gmpxx::mpfc_class` arrays a 64-byte stride, while allowing zero-allocation
-move construction. The moved-from MPF object records enough precision metadata
-to be safely assigned to again.
-
-Move construction may transfer the backend object storage to the destination
-with a raw backend-object copy. MPFR and MPC moved-from sources must be
-immediately reinitialized as valid backend objects because adding wrapper-side
-ownership state would damage their array layout. MPF moved-from sources may be
-left as lightweight placeholders because the resulting 32-byte stride is the
-desired layout.
+Move construction keeps the moved-from source as a valid backend object by
+initializing destination storage and swapping backend values. This may allocate,
+but it avoids wrapper-side ownership metadata and keeps dense-array layout.
 
 Move assignment to a valid destination preserves the left-hand-side precision.
 This matches ordinary assignment semantics for existing objects. The

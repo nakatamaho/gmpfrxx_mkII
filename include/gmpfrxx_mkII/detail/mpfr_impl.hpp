@@ -38,7 +38,6 @@
 #include <cctype>
 #include <cmath>
 #include <cstdint>
-#include <cstring>
 #include <ios>
 #include <istream>
 #include <limits>
@@ -125,8 +124,8 @@ public:
 
     mpfr_class(mpfr_class&& other) noexcept
     {
-        std::memcpy(value_, other.value_, sizeof(value_));
-        mpfr_init2(other.value_, mpfr_get_prec(value_));
+        mpfr_init2(value_, other.precision());
+        mpfr_swap(value_, other.value_);
     }
 
     mpfr_class(double value) : mpfr_class(value, default_precision()) {}
@@ -1971,6 +1970,25 @@ template <typename T>
 inline constexpr bool is_mpfr_mul_direct_expr_v =
     is_mpfr_mul_direct_expr<std::decay_t<T>>::value;
 
+template <typename Expr>
+inline constexpr bool mpfr_materialization_precision_is_nonzero_v = false;
+
+template <typename Op, typename Lhs, typename Rhs>
+inline constexpr bool mpfr_materialization_precision_is_nonzero_v<binary_expr<Op, Lhs, Rhs, mpfrxx::mpfr_class>> =
+    is_mpfr_object_leaf_v<Lhs> && is_mpfr_object_leaf_v<Rhs>;
+
+template <typename Expr>
+mpfr_prec_t mpfr_constructor_materialization_precision(const Expr& expr)
+{
+    mpfr_prec_t precision = mpfr_materialization_precision(expr);
+    if constexpr (!mpfr_materialization_precision_is_nonzero_v<std::decay_t<Expr>>) {
+        if (precision == 0) {
+            precision = mpfrxx::default_precision_bits();
+        }
+    }
+    return precision;
+}
+
 inline mpfr_rnd_t mpfr_dual_rounding_for_negated_result(mpfr_rnd_t rnd) noexcept
 {
     switch (rnd) {
@@ -2330,10 +2348,7 @@ namespace mpfrxx {
 template <typename Expr, typename>
 mpfr_class::mpfr_class(const Expr& expr)
 {
-    mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_materialization_precision(expr);
-    if (precision == 0) {
-        precision = default_precision();
-    }
+    const mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_constructor_materialization_precision(expr);
     mpfr_init2(value_, precision);
     try {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);

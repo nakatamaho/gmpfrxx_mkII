@@ -37,7 +37,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <cstring>
 #include <locale>
 #include <stdexcept>
 #include <string>
@@ -209,11 +208,8 @@ public:
 
     mpc_class(mpc_class&& other) noexcept
     {
-        std::memcpy(value_, other.value_, sizeof(value_));
-        mpfr_prec_t real_precision = 0;
-        mpfr_prec_t imag_precision = 0;
-        mpc_get_prec2(&real_precision, &imag_precision, value_);
-        mpc_init3(other.value_, real_precision, imag_precision);
+        mpc_init3(value_, other.real_precision(), other.imag_precision());
+        mpc_swap(value_, other.value_);
     }
 
     mpc_class(const mpfr_class& real, const mpfr_class& imag)
@@ -1021,6 +1017,28 @@ struct is_mpc_class_leaf<borrowed_object_leaf<mpfrxx::mpc_class>> : std::true_ty
 template <typename T>
 inline constexpr bool is_mpc_class_leaf_v = is_mpc_class_leaf<std::decay_t<T>>::value;
 
+template <typename Expr>
+inline constexpr bool mpc_materialization_precision_is_nonzero_v = false;
+
+template <typename Op, typename Lhs, typename Rhs>
+inline constexpr bool mpc_materialization_precision_is_nonzero_v<binary_expr<Op, Lhs, Rhs, mpfrxx::mpc_class>> =
+    is_mpc_class_leaf_v<Lhs> && is_mpc_class_leaf_v<Rhs>;
+
+template <typename Expr>
+mpc_expression_precision_bits mpc_constructor_materialization_precision(const Expr& expr)
+{
+    auto precision = mpc_expression_precision(expr);
+    if constexpr (!mpc_materialization_precision_is_nonzero_v<std::decay_t<Expr>>) {
+        if (precision.real == 0) {
+            precision.real = mpfrxx::default_mpc_real_precision_bits();
+        }
+        if (precision.imag == 0) {
+            precision.imag = mpfrxx::default_mpc_imag_precision_bits();
+        }
+    }
+    return precision;
+}
+
 template <typename T, typename Result>
 bool mpc_expression_references(const mpc_t, const scalar_leaf<T, Result>&)
 {
@@ -1274,7 +1292,7 @@ namespace mpfrxx {
 template <typename Expr, typename>
 mpc_class::mpc_class(const Expr& expr)
 {
-    const auto precision = gmpfrxx_mkII::detail::mpc_expression_precision(expr);
+    const auto precision = gmpfrxx_mkII::detail::mpc_constructor_materialization_precision(expr);
     mpc_init3(value_, precision.real, precision.imag);
     try {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(
