@@ -1251,6 +1251,239 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase MPFR C-native benchmark rounding path:
+DONE
+
+Implemented features:
+- Replaced `mpfrxx::default_rounding_mode()` calls in MPFR C-native benchmark
+  kernels with direct `mpfr_get_default_rounding_mode()` reads.
+- Cached the MPFR rounding mode at the C-native kernel entry or OpenMP worker
+  entry before passing it to raw `mpfr_*` calls.
+- Updated the raw `Rdot_mpfr_kernel_05` benchmark to use direct MPFR rounding
+  access as well.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01.cpp`
+- `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01.cpp`
+- `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01.cpp`
+- `benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_01.cpp`
+- `benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_02.cpp`
+- `benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_01.cpp`
+- `benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_02.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpfrxx::default_rounding_mode\\(\\)|default_rounding_mode\\(\\)" benchmarks/mpfr`
+- `sed -n '40,90p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01.cpp`
+- `sed -n '40,95p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01.cpp`
+- `sed -n '28,70p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01.cpp`
+- `sed -n '30,68p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01.cpp`
+- `sed -n '18,45p' benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_01.cpp`
+- `sed -n '18,45p' benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_02.cpp`
+- `sed -n '18,48p' benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_01.cpp`
+- `sed -n '18,48p' benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_02.cpp`
+- `cmake --build build-release-nocount -j --target Rdot_mpfr_C_native_01 Rdot_mpfr_C_native_01_FMA Rdot_mpfr_C_native_openmp_01 Rdot_mpfr_C_native_openmp_01_FMA Rdot_mpfr_kernel_05_mkII Rdot_mpfr_kernel_05_mkII_FMA Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_01_FMA Rgemv_mpfr_C_native_01 Rgemm_mpfr_C_native_01 Rgemm_mpfr_C_native_02`
+- `cmake --build build-release-nocount -j --target Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_01_FMA Rgemv_mpfr_C_native_openmp_01 Rgemm_mpfr_C_native_openmp_01 Rgemm_mpfr_C_native_openmp_02`
+- `rg -n "mpfrxx::default_rounding_mode\\(\\)" benchmarks/mpfr`
+- `git diff --check`
+- `nm -C build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 | rg ' _Rdot| Rdot\\('`
+- `objdump -Cd build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 --start-address=0x3ae0 --stop-address=0x3b50`
+
+Pass/fail result:
+- `rg -n "mpfrxx::default_rounding_mode\\(\\)" benchmarks/mpfr`: PASS, no matches.
+- Modified MPFR C-native benchmark targets: PASS.
+- `git diff --check`: PASS.
+- Disassembly check: `Rdot_mpfr_C_native_01` hot loop now contains only
+  `mpfr_mul` and `mpfr_add` for arithmetic. Wrapper default/env checks are gone.
+
+Known issues:
+- OpenMP C-native benchmarks read MPFR default rounding mode once per worker
+  region or work item depending on loop structure. They no longer route through
+  the wrapper default API.
+
+Post-phase MPFR eval-context hot-path narrowing:
+DONE
+
+Implemented features:
+- Narrowed `gmpfrxx_mkII::detail::current_eval_context()` to read only the
+  MPFR default rounding mode needed by arithmetic calls.
+- Removed per-operation reads of MPFR default precision, `emin`, and `emax`
+  from the eval-context path. MPFR exponent range remains libmpfr-owned TLS
+  state and is not copied into arithmetic eval contexts.
+- Added `gmpfrxx_mkII::detail::current_rounding_mode()` as the direct MPFR
+  rounding getter used by `current_eval_context()`.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/eval_context.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '90,340p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '2328,2495p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '2288,2344p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1,90p' include/gmpfrxx_mkII/detail/eval_context.hpp`
+- `rg -n "\\.emin|\\.emax|context\\." include/gmpfrxx_mkII/detail`
+- `cmake --build build-release-nocount -j`
+- `rg -n "struct eval_context|current_eval_context|current_rounding_mode|\\.emin|\\.emax" include/gmpfrxx_mkII/detail/eval_context.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `ctest --test-dir build-release-nocount -R "test_mpfr_(precision_policy|compound_assign|numeric_equivalence|aliasing|environment|defaults|initialization_sentinel|thread_safety|comparisons)" --output-on-failure`
+- `nm -C build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII | rg ' _Rdot| Rdot\\('`
+- `nm -C build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII | rg ' _Rdot| Rdot\\('`
+- `nm -C build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII | rg ' _Rdot| Rdot\\('`
+- `objdump -Cd build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII --start-address=0x3930 --stop-address=0x3984`
+
+Pass/fail result:
+- `cmake --build build-release-nocount -j`: PASS.
+- Focused MPFR CTest run: PASS, 10/10 tests passed.
+- Disassembly check: `Rdot_mpfr_kernel_03_mkII` hot loop now contains
+  `mpfr_get_default_rounding_mode`, `mpfr_mul`, and `mpfr_add`; it no longer
+  contains `mpfr_get_default_prec`, `mpfr_get_emin`, or `mpfr_get_emax` in the
+  loop body.
+
+Known issues:
+- Public wrapper arithmetic still reads MPFR default rounding mode at each
+  operation. Kernels that need a fully fixed rounding mode should pass or cache
+  `mpfr_rnd_t` at the function entry and use raw MPFR calls in the inner loop.
+
+Post-phase MPFR MPC MPFC leaf precision fastpath:
+DONE
+
+Implemented features:
+- Added MPFR constructor materialization precision helper matching the MPF
+  leaf-leaf nonzero precision policy.
+- Added MPC constructor materialization precision helper.  For binary
+  expressions whose leaves are both `mpfrxx::mpc_class`, real and imaginary
+  precision are treated as known nonzero.
+- Added MPFC constructor materialization real/imag precision helpers.  For
+  binary expressions whose leaves are both `gmpxx::mpfc_class`, both component
+  precisions are treated as known nonzero.
+- Generic fallback to the default precision remains for scalar/exact
+  expressions that can contribute zero precision.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "expression_.*precision|materialization_precision|constructor_materialization_precision|is_.*class_leaf|class_leaf_v|mpfr_class::mpfr_class\\(const Expr|mpc_class::mpc_class\\(const Expr|mpfc_class::mpfc_class\\(const Expr" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1608,1705p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '2326,2342p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '780,875p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '1268,1284p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '500,665p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '1098,1118p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `cmake --build build -j --target test_mpfr_precision_policy test_mpfr_numeric_equivalence test_mpfr_aliasing test_mpc_precision_policy test_mpc_aliasing test_mpc_alloc_count test_mpfc_precision_policy test_mpfc_basic test_mpfc_math`
+- `ctest --test-dir build -R 'test_mpfr_precision_policy|test_mpfr_numeric_equivalence|test_mpfr_aliasing|test_mpc_precision_policy|test_mpc_aliasing|test_mpc_alloc_count|test_mpfc_precision_policy|test_mpfc_basic|test_mpfc_math' --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Focused MPFR/MPC/MPFC tests: PASS, 9/9.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+Post-phase remove floating zero-allocation moves:
+DONE
+
+Implemented features:
+- Removed MPF moved-from placeholder metadata and restored the dense
+  `sizeof(gmpxx::mpf_class) == sizeof(mpf_t)` layout.
+- Restored MPF move construction to `mpf_init2` plus `mpf_swap`, keeping the
+  moved-from object as a normal valid `mpf_t`.
+- Removed MPF moved-from validity guards from assignment, scalar setters,
+  precision setters, shift helpers, and compound-assignment fallback.
+- Replaced MPFR and MPC raw-copy move construction with `mpfr_init2`/`mpfr_swap`
+  and `mpc_init3`/`mpc_swap`.
+- `gmpxx::mpfc_class` follows the MPF behavior through its two `mpf_class`
+  components.
+- Updated layout and allocation-count tests and the move-semantics
+  specification.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_abi_fingerprint.cpp`
+- `tests/test_mpf_alloc_count.cpp`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "valid_|moved_from|is_valid\\(|ensure_valid|memcpy\\(|mpf_class\\(mpf_class&&|mpfr_class\\(mpfr_class&&|mpc_class\\(mpc_class&&|mpfc_class\\(mpfc_class&&|operator=\\(.*&&" include/gmpfrxx_mkII/detail tests SPECIFICATIONS.md STATUS.md`
+- `sed -n '80,145p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '240,290p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '560,650p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '115,140p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '250,275p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '200,220p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `sed -n '340,385p' include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `rg -n "ensure_valid_for_assignment|is_valid\\(|moved_from_precision_bits_|std::memcpy" include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `rg -n "std::memcpy|moved_from|valid_|ensure_valid|is_valid\\(" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp tests/test_abi_fingerprint.cpp tests/test_mpf_alloc_count.cpp SPECIFICATIONS.md`
+- `cmake --build build -j --target test_abi_fingerprint test_mpf_alloc_count test_mpfr_alloc_count test_mpc_alloc_count test_mpfc_basic test_construction_copy`
+- `ctest --test-dir build -R 'test_abi_fingerprint|test_mpf_alloc_count|test_mpfr_alloc_count|test_mpc_alloc_count|test_mpfc_basic|test_construction_copy' --output-on-failure`
+
+Pass/fail result:
+- Focused ABI/allocation/move-adjacent tests: PASS, 6/6.
+
+Known issues:
+- Move construction now allocates again for MPF/MPFR/MPC, by design. This
+  restores dense backend-sized wrapper layout and removes moved-from guard
+  branches from MPF hot paths.
+
+Post-phase MPF leaf precision fastpath:
+DONE
+
+Implemented features:
+- Added a constructor materialization precision helper for MPF expressions.
+- For binary expressions whose leaves are both `gmpxx::mpf_class`, the
+  constructor now treats materialization precision as known nonzero and skips
+  the generic `precision == 0 ? default : precision` fallback branch.
+- This removes the `or/jne` precision-zero check from the Rdot kernel_02 mkII
+  hot path while preserving the generic fallback for scalar/exact expressions.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpf_expression_precision|mpf_materialization_precision|scalar_leaf|is_mpf_class_leaf_v" include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1310,1425p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1990,2012p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `cmake --build build-release-nocount -j --target Rdot_gmp_kernel_02_mkII`
+- `nm -C build-release-nocount/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII | rg ' T _Rdot'`
+- `objdump -Cd build-release-nocount/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII --start-address=0x3290 --stop-address=0x3380`
+- `cmake --build build -j --target test_mpf_precision_policy test_mpf_alloc_count test_mpf_numeric_equivalence test_mpf_aliasing`
+- `ctest --test-dir build -R 'test_mpf_precision_policy|test_mpf_alloc_count|test_mpf_numeric_equivalence|test_mpf_aliasing' --output-on-failure`
+
+Pass/fail result:
+- ASM check: Rdot kernel_02 mkII hot loop now matches the original shape:
+  `get_prec`, `get_prec`, max, `init2`, `mul`, `add`, `clear`.
+- Focused MPF tests: PASS, 4/4.
+
+Known issues:
+- None.
+
 Post-phase GMP MPF direct leaf-binary construction:
 DONE
 

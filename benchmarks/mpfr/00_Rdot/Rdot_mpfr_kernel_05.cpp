@@ -48,7 +48,7 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
     }
 
     const mpfr_prec_t precision = n > 0 ? mpfr_get_prec(dx[0].mpfr_data()) : mpfrxx::default_precision_bits();
-    const mpfr_rnd_t rnd = mpfrxx::default_rounding_mode();
+    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
 
     mpfr_class temp = mpfr_class::with_precision(precision);
     mpfr_set_zero(temp.mpfr_data(), 0);

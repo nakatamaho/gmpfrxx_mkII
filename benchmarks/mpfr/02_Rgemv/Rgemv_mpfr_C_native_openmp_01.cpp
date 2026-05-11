@@ -39,22 +39,24 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t l
 
 #pragma omp parallel for
     for (int64_t i = 0; i < m; ++i) {
-        mpfr_mul(y[i], y[i], beta, mpfrxx::default_rounding_mode());
+        const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+        mpfr_mul(y[i], y[i], beta, rnd);
     }
 
 #pragma omp parallel for
     for (int64_t i = 0; i < m; ++i) {
+        const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
         mpfr_t temp;
         mpfr_t prod;
         mpfr_init(temp);
         mpfr_init(prod);
-        mpfr_set_ui(temp, 0, mpfrxx::default_rounding_mode());
+        mpfr_set_ui(temp, 0, rnd);
         for (int64_t j = 0; j < n; ++j) {
-            mpfr_mul(prod, A[i + j * lda], x[j], mpfrxx::default_rounding_mode());
-            mpfr_add(temp, temp, prod, mpfrxx::default_rounding_mode());
+            mpfr_mul(prod, A[i + j * lda], x[j], rnd);
+            mpfr_add(temp, temp, prod, rnd);
         }
-        mpfr_mul(temp, alpha, temp, mpfrxx::default_rounding_mode());
-        mpfr_add(y[i], y[i], temp, mpfrxx::default_rounding_mode());
+        mpfr_mul(temp, alpha, temp, rnd);
+        mpfr_add(y[i], y[i], temp, rnd);
         mpfr_clear(temp);
         mpfr_clear(prod);
     }
