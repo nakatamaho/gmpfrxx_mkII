@@ -104,13 +104,25 @@ public:
     {
         const mp_bitcnt_t precision = other.precision();
         mpf_init2(value_, precision);
-        mpf_set(value_, other.value_);
+        if (other.is_valid()) {
+            mpf_set(value_, other.value_);
+        } else {
+            mpf_set_ui(value_, 0);
+        }
     }
 
     mpf_class(mpf_class&& other) noexcept
     {
+        if (!other.is_valid()) {
+            mpf_init2(value_, other.moved_from_precision_bits_);
+            mpf_set_ui(value_, 0);
+            moved_from_precision_bits_ = 0;
+            return;
+        }
+
         std::memcpy(value_, other.value_, sizeof(value_));
-        mpf_init2(other.value_, mpf_get_prec(value_));
+        moved_from_precision_bits_ = 0;
+        other.moved_from_precision_bits_ = mpf_get_prec(value_);
     }
 
     mpf_class(double value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
@@ -234,13 +246,20 @@ public:
 
     ~mpf_class()
     {
-        mpf_clear(value_);
+        if (is_valid()) {
+            mpf_clear(value_);
+        }
     }
 
     mpf_class& operator=(const mpf_class& other)
     {
         if (this != &other) {
-            mpf_set(value_, other.value_);
+            ensure_valid_for_assignment();
+            if (other.is_valid()) {
+                mpf_set(value_, other.value_);
+            } else {
+                mpf_set_ui(value_, 0);
+            }
         }
         return *this;
     }
@@ -251,7 +270,17 @@ public:
             return *this;
         }
 
-        if (precision() == other.precision()) {
+        if (!other.is_valid()) {
+            ensure_valid_for_assignment();
+            mpf_set_ui(value_, 0);
+            return *this;
+        }
+
+        if (!is_valid()) {
+            std::memcpy(value_, other.value_, sizeof(value_));
+            moved_from_precision_bits_ = 0;
+            other.moved_from_precision_bits_ = mpf_get_prec(value_);
+        } else if (precision() == other.precision()) {
             mpf_swap(value_, other.value_);
         } else {
             mpf_set(value_, other.value_);
@@ -267,18 +296,21 @@ public:
 
     mpf_class& operator=(double value)
     {
+        ensure_valid_for_assignment();
         set(value);
         return *this;
     }
 
     mpf_class& operator=(const mpz_class& value)
     {
+        ensure_valid_for_assignment();
         mpf_set_z(value_, value.mpz_data());
         return *this;
     }
 
     mpf_class& operator=(const mpq_class& value)
     {
+        ensure_valid_for_assignment();
         mpf_set_q(value_, value.mpq_data());
         return *this;
     }
@@ -290,12 +322,14 @@ public:
                                                       (sizeof(T) <= sizeof(std::uint64_t))>>
     mpf_class& operator=(T value)
     {
+        ensure_valid_for_assignment();
         set_integral(value);
         return *this;
     }
 
     mpf_class& operator=(const char* value)
     {
+        ensure_valid_for_assignment();
         if (set_str(value) != 0) {
             throw std::invalid_argument("invalid mpf_class decimal string");
         }
@@ -304,6 +338,7 @@ public:
 
     mpf_class& operator=(const std::string& value)
     {
+        ensure_valid_for_assignment();
         if (set_str(value) != 0) {
             throw std::invalid_argument("invalid mpf_class decimal string");
         }
@@ -324,7 +359,7 @@ public:
 
     mp_bitcnt_t precision() const noexcept
     {
-        return mpf_get_prec(value_);
+        return is_valid() ? mpf_get_prec(value_) : moved_from_precision_bits_;
     }
 
     mp_bitcnt_t get_prec() const noexcept
@@ -368,7 +403,11 @@ public:
 
     void set_prec(mp_bitcnt_t precision)
     {
-        mpf_set_prec(value_, precision);
+        if (is_valid()) {
+            mpf_set_prec(value_, precision);
+        } else {
+            moved_from_precision_bits_ = precision;
+        }
     }
 
     bool fits_sint_p() const
@@ -408,18 +447,21 @@ public:
 
     void div_2exp(mp_bitcnt_t bits)
     {
+        ensure_valid_for_assignment();
         ensure_mpf_shift_result_exponent_fits(value_, bits, false, "mpf right shift result exponent is too small");
         mpf_div_2exp(value_, value_, bits);
     }
 
     void mul_2exp(mp_bitcnt_t bits)
     {
+        ensure_valid_for_assignment();
         ensure_mpf_shift_result_exponent_fits(value_, bits, true, "mpf left shift result exponent is too large");
         mpf_mul_2exp(value_, value_, bits);
     }
 
     void set_epsilon()
     {
+        ensure_valid_for_assignment();
         mpf_set_ui(value_, 1);
         const mp_bitcnt_t bits = precision();
         if (bits > 0) {
@@ -429,11 +471,13 @@ public:
 
     void set(double value)
     {
+        ensure_valid_for_assignment();
         mpf_set_d(value_, value);
     }
 
     void set(const char* value)
     {
+        ensure_valid_for_assignment();
         if (set_str(value) != 0) {
             throw std::invalid_argument("invalid mpf_class decimal string");
         }
@@ -539,7 +583,29 @@ public:
 
     void swap(mpf_class& other) noexcept
     {
-        mpf_swap(value_, other.value_);
+        if (is_valid() && other.is_valid()) {
+            mpf_swap(value_, other.value_);
+        } else if (!is_valid() && !other.is_valid()) {
+            std::swap(moved_from_precision_bits_, other.moved_from_precision_bits_);
+        } else if (is_valid()) {
+            const mp_bitcnt_t precision = mpf_get_prec(value_);
+            std::memcpy(other.value_, value_, sizeof(value_));
+            other.moved_from_precision_bits_ = 0;
+            moved_from_precision_bits_ = precision;
+        } else {
+            other.swap(*this);
+        }
+    }
+
+    void ensure_valid_for_assignment()
+    {
+        if (is_valid()) {
+            return;
+        }
+        const mp_bitcnt_t precision = moved_from_precision_bits_;
+        mpf_init2(value_, precision);
+        mpf_set_ui(value_, 0);
+        moved_from_precision_bits_ = 0;
     }
 
 private:
@@ -567,7 +633,13 @@ private:
         }
     }
 
+    bool is_valid() const noexcept
+    {
+        return moved_from_precision_bits_ == 0;
+    }
+
     mpf_t value_;
+    mp_bitcnt_t moved_from_precision_bits_ = 0;
 };
 
 inline void swap(mpf_class& lhs, mpf_class& rhs) noexcept
@@ -1605,6 +1677,125 @@ private:
     mpf_t value_;
 };
 
+class mpf_thread_scratch_pool {
+public:
+    static constexpr std::size_t slot_count = 4;
+    static constexpr mp_bitcnt_t max_retained_precision = mp_bitcnt_t{1} << 20;
+
+    struct slot {
+        mpf_t value;
+        bool initialized = false;
+        bool in_use = false;
+        mp_bitcnt_t allocated_precision = 0;
+        mp_bitcnt_t active_precision = 0;
+    };
+
+    ~mpf_thread_scratch_pool()
+    {
+        for (auto& item : slots_) {
+            if (item.initialized) {
+                restore_allocated_precision(item);
+                mpf_clear(item.value);
+            }
+        }
+    }
+
+    slot* acquire(mp_bitcnt_t precision)
+    {
+        if (precision > max_retained_precision) {
+            return nullptr;
+        }
+
+        for (auto& item : slots_) {
+            if (!item.in_use) {
+                prepare(item, precision);
+                item.in_use = true;
+                return &item;
+            }
+        }
+        return nullptr;
+    }
+
+    static void release(slot& item) noexcept
+    {
+        // Fixed-precision fast paths reuse the slot at the requested active
+        // precision. Restoring the allocation precision on every release would
+        // put mpf_set_prec_raw back into the hot loop.
+        item.in_use = false;
+    }
+
+private:
+    static void restore_allocated_precision(slot& item) noexcept
+    {
+        if (item.initialized && item.active_precision != item.allocated_precision) {
+            mpf_set_prec_raw(item.value, item.allocated_precision);
+            item.active_precision = item.allocated_precision;
+        }
+    }
+
+    static void prepare(slot& item, mp_bitcnt_t precision)
+    {
+        if (!item.initialized) {
+            mpf_init2(item.value, precision);
+            item.initialized = true;
+            item.allocated_precision = mpf_get_prec(item.value);
+            item.active_precision = item.allocated_precision;
+        } else if (item.allocated_precision < precision) {
+            restore_allocated_precision(item);
+            mpf_set_prec(item.value, precision);
+            item.allocated_precision = mpf_get_prec(item.value);
+            item.active_precision = item.allocated_precision;
+        }
+
+        if (item.active_precision != precision) {
+            mpf_set_prec_raw(item.value, precision);
+            item.active_precision = precision;
+        }
+    }
+
+    slot slots_[slot_count]{};
+};
+
+inline mpf_thread_scratch_pool& mpf_current_thread_scratch_pool()
+{
+    thread_local mpf_thread_scratch_pool pool;
+    return pool;
+}
+
+class mpf_thread_scratch {
+public:
+    explicit mpf_thread_scratch(mp_bitcnt_t precision)
+        : slot_(mpf_current_thread_scratch_pool().acquire(precision))
+    {
+        if (slot_ == nullptr) {
+            mpf_init2(fallback_, precision);
+            using_fallback_ = true;
+        }
+    }
+
+    mpf_thread_scratch(const mpf_thread_scratch&) = delete;
+    mpf_thread_scratch& operator=(const mpf_thread_scratch&) = delete;
+
+    ~mpf_thread_scratch()
+    {
+        if (using_fallback_) {
+            mpf_clear(fallback_);
+        } else {
+            mpf_thread_scratch_pool::release(*slot_);
+        }
+    }
+
+    mpf_ptr get() noexcept
+    {
+        return using_fallback_ ? fallback_ : slot_->value;
+    }
+
+private:
+    mpf_thread_scratch_pool::slot* slot_ = nullptr;
+    bool using_fallback_ = false;
+    mpf_t fallback_;
+};
+
 template <typename Op, typename Lhs, typename Rhs, typename Result>
 void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_bitcnt_t eval_precision)
 {
@@ -1670,13 +1861,15 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
 }
 
 template <typename Expr>
-bool mpf_try_assign_direct_leaf_binary(mpf_t, const Expr&)
+GMPFRXX_MKII_ALWAYS_INLINE bool mpf_try_assign_direct_leaf_binary(mpf_t, const Expr&)
 {
     return false;
 }
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
-bool mpf_try_assign_direct_leaf_binary(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
+GMPFRXX_MKII_ALWAYS_INLINE bool mpf_try_assign_direct_leaf_binary(
+    mpf_t dest,
+    const binary_expr<Op, Lhs, Rhs, Result>& expr)
 {
     if constexpr (std::is_same_v<Result, gmpxx::mpf_class> &&
                   is_mpf_class_leaf_v<Lhs> &&
@@ -1711,9 +1904,15 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_mul_apply(
     const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
     mp_bitcnt_t precision)
 {
-    scoped_mpf_temporary product(precision);
-    mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
-    mpf_add(dest, dest, product.get());
+    if constexpr (build_options::assume_fixed_precision_fastpath) {
+        mpf_thread_scratch product(precision);
+        mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+        mpf_add(dest, dest, product.get());
+    } else {
+        scoped_mpf_temporary product(precision);
+        mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+        mpf_add(dest, dest, product.get());
+    }
 }
 
 template <typename Lhs, typename Rhs>
@@ -1722,9 +1921,15 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_submul_apply(
     const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
     mp_bitcnt_t precision)
 {
-    scoped_mpf_temporary product(precision);
-    mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
-    mpf_sub(dest, dest, product.get());
+    if constexpr (build_options::assume_fixed_precision_fastpath) {
+        mpf_thread_scratch product(precision);
+        mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+        mpf_sub(dest, dest, product.get());
+    } else {
+        scoped_mpf_temporary product(precision);
+        mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+        mpf_sub(dest, dest, product.get());
+    }
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
@@ -1848,6 +2053,7 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_assign(gmpxx::mpf_class& lhs, Rhs&&
             mpf_compound_submul_apply(lhs.mpf_data(), operand, precision);
         }
     } else {
+        lhs.ensure_valid_for_assignment();
         const mp_bitcnt_t precision = lhs.precision();
         scoped_mpf_temporary value(precision);
         mpf_evaluate(value.get(), operand, precision);
@@ -1869,7 +2075,9 @@ mpf_class::mpf_class(const Expr& expr)
     }
     mpf_init2(value_, precision);
     try {
-        gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+        if (!gmpfrxx_mkII::detail::mpf_try_assign_direct_leaf_binary(value_, expr)) {
+            gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+        }
     } catch (...) {
         mpf_clear(value_);
         throw;
@@ -1881,7 +2089,9 @@ mpf_class::mpf_class(const Expr& expr, mp_bitcnt_t precision)
 {
     mpf_init2(value_, precision);
     try {
-        gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+        if (!gmpfrxx_mkII::detail::mpf_try_assign_direct_leaf_binary(value_, expr)) {
+            gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);
+        }
     } catch (...) {
         mpf_clear(value_);
         throw;
@@ -1891,8 +2101,12 @@ mpf_class::mpf_class(const Expr& expr, mp_bitcnt_t precision)
 template <typename Expr, typename>
 mpf_class& mpf_class::operator=(const Expr& expr)
 {
-    if (gmpfrxx_mkII::detail::mpf_try_assign_direct_leaf_binary(value_, expr)) {
-        return *this;
+    if (is_valid()) {
+        if (gmpfrxx_mkII::detail::mpf_try_assign_direct_leaf_binary(value_, expr)) {
+            return *this;
+        }
+    } else {
+        ensure_valid_for_assignment();
     }
     const mp_bitcnt_t precision = this->precision();
     gmpfrxx_mkII::detail::mpf_evaluate(value_, expr, precision);

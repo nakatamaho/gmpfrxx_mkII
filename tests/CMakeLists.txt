@@ -92,6 +92,11 @@ add_phase0_test(test_mpf_fixed_precision_materialization gmpxx_mkII)
 target_compile_definitions(test_mpf_fixed_precision_materialization PRIVATE
     GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
 )
+add_phase0_test(test_mpf_fixed_precision_tls_scratch gmpxx_mkII)
+target_compile_definitions(test_mpf_fixed_precision_tls_scratch PRIVATE
+    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+)
+set_tests_properties(test_mpf_fixed_precision_tls_scratch PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpf_long_width_dispatch gmpxx_mkII)
 add_phase0_test(test_mpf_numeric_equivalence gmpxx_mkII)
 add_phase0_test(test_mpf_power_of_two_fusion gmpxx_mkII)

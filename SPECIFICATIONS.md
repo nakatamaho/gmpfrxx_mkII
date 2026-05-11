@@ -98,14 +98,11 @@ make saved expression nodes lifetime-safe.
 
 Public floating wrappers must be nothrow move-constructible.
 
-`gmpxx::mpf_class`, `mpfrxx::mpfr_class`, and `mpfrxx::mpc_class` must not add
-an object-ownership flag or any other per-object layout state around the backend
-C object. Their size and alignment are part of the performance contract:
+`mpfrxx::mpfr_class` and `mpfrxx::mpc_class` must not add an object-ownership
+flag or any other per-object layout state around the backend C object. Their
+size and alignment are part of the performance contract:
 
 ```cpp
-sizeof(gmpxx::mpf_class) == sizeof(mpf_t)
-alignof(gmpxx::mpf_class) == alignof(mpf_t)
-
 sizeof(mpfrxx::mpfr_class) == sizeof(mpfr_t)
 alignof(mpfrxx::mpfr_class) == alignof(mpfr_t)
 
@@ -117,11 +114,28 @@ This preserves dense array layout for BLAS-like kernels. For example,
 `mpfrxx::mpfr_class` arrays must have the same stride as `mpfr_t`, not a larger
 stride caused by a wrapper-side `bool valid_` and padding.
 
+`gmpxx::mpf_class` is different. On the common 64-bit GMP ABI, `mpf_t` is
+24 bytes. The wrapper may use the remaining padding to store moved-from
+ownership state, intentionally making the class 32 bytes while keeping
+8-byte alignment:
+
+```cpp
+sizeof(gmpxx::mpf_class) == 32
+alignof(gmpxx::mpf_class) == alignof(mpf_t)
+sizeof(gmpxx::mpfc_class) == 2 * sizeof(gmpxx::mpf_class)
+```
+
+This gives `gmpxx::mpf_class` arrays a 32-byte stride and
+`gmpxx::mpfc_class` arrays a 64-byte stride, while allowing zero-allocation
+move construction. The moved-from MPF object records enough precision metadata
+to be safely assigned to again.
+
 Move construction may transfer the backend object storage to the destination
-with a raw backend-object copy, but the moved-from source must be immediately
-reinitialized as a valid backend object. That reinitialization may allocate. The
-layout and dense-array contract is more important than zero-allocation move
-construction for these wrapper classes.
+with a raw backend-object copy. MPFR and MPC moved-from sources must be
+immediately reinitialized as valid backend objects because adding wrapper-side
+ownership state would damage their array layout. MPF moved-from sources may be
+left as lightweight placeholders because the resulting 32-byte stride is the
+desired layout.
 
 Move assignment to a valid destination preserves the left-hand-side precision.
 This matches ordinary assignment semantics for existing objects. The
@@ -129,7 +143,7 @@ This matches ordinary assignment semantics for existing objects. The
 floating wrapper move assignment and must not change `gmpxx::mpf_class`,
 `mpfrxx::mpfr_class`, or `mpfrxx::mpc_class` precision semantics.
 
-`gmpxx::mpfc_class` follows the same move behavior through its two
+`gmpxx::mpfc_class` follows the MPF move behavior through its two
 `gmpxx::mpf_class` components.
 
 ## Fused Compound Assignment
@@ -141,10 +155,17 @@ These rewrites are controlled by explicit compile-time options:
 MPFRXX_ENABLE_FMA
 ```
 
-GMP MPF has no wrapper fused multiply-add option. In particular, the wrapper
-must not keep a header-owned TLS scratch pool for MPF compound assignment.
-`a += b * c` and `a -= b * c` may use a direct multiply-then-add/subtract
-specialization, but it still follows MPF's two-step rounding behavior.
+GMP MPF has no wrapper fused multiply-add option. `a += b * c` and
+`a -= b * c` may use a direct multiply-then-add/subtract specialization, but it
+still follows MPF's two-step rounding behavior. When
+`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is enabled, the direct
+leaf-product compound path may reuse a header-local thread scratch object for
+the intermediate product. This is a performance-only cache; it must not define
+public default precision state or change MPF precision semantics. In this mode
+the scratch slot may keep its active precision between uses; it is restored only
+when reallocated or cleared. Fixed-precision callers are expected to keep the
+same effective precision through the hot loop, so the cache must not restore
+the raw precision on every release.
 
 `MPFRXX_ENABLE_FMA` enables MPFR's fused operations for supported expression
 shapes. `a += b * c` maps to `mpfr_fma`; `a -= b * c` maps to `mpfr_fms`
@@ -152,7 +173,7 @@ with the rounding-mode adjustment required for the negated result.
 Materializing `a * b + c * d` maps to `mpfr_fmma`, and materializing
 `a * b - c * d` maps to `mpfr_fmms`.
 
-These options are separate from the disabled
+These options are separate from the
 `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro because enabling FMA
 changes numeric semantics, especially for MPFR where fused evaluation performs
 one rounding instead of materializing the product and then adding or

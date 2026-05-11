@@ -28,6 +28,7 @@
 
 #include <gmpfrxx_mkII.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <limits>
@@ -104,8 +105,12 @@ struct has_common_type_with_mpfr<
 
 void compile_time_fingerprint()
 {
-    static_assert(sizeof(gmpxx::mpf_class) == sizeof(mpf_t));
+    constexpr std::size_t expected_mpf_class_size =
+        ((sizeof(mpf_t) + sizeof(mp_bitcnt_t) + alignof(mpf_t) - 1) / alignof(mpf_t)) * alignof(mpf_t);
+    static_assert(sizeof(gmpxx::mpf_class) == expected_mpf_class_size);
     static_assert(alignof(gmpxx::mpf_class) == alignof(mpf_t));
+    static_assert(sizeof(gmpxx::mpfc_class) == 2 * sizeof(gmpxx::mpf_class));
+    static_assert(alignof(gmpxx::mpfc_class) == alignof(gmpxx::mpf_class));
     static_assert(sizeof(mpfrxx::mpfr_class) == sizeof(mpfr_t));
     static_assert(alignof(mpfrxx::mpfr_class) == alignof(mpfr_t));
     static_assert(sizeof(mpfrxx::mpc_class) == sizeof(mpc_t));

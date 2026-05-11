@@ -61,6 +61,10 @@ function(add_mkii_variant subdir source base suffix)
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE gmpxx_mkII::gmpxx_mkII)
+    if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH)
+    endif()
 endfunction()
 
 function(add_gmpxx_variant subdir source base)
@@ -83,6 +87,7 @@ endfunction()
 function(add_rdot_kernel_variants subdir source base)
     add_gmpxx_variant(${subdir} ${source} ${base})
     add_mkii_variant(${subdir} ${source} ${base} mkII)
+    add_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH)
 endfunction()
 
 function(add_native_benchmark subdir source target)
