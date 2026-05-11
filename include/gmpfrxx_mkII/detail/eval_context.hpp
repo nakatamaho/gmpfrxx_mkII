@@ -39,18 +39,18 @@ namespace detail {
 struct eval_context {
     mpfr_prec_t precision_bits;
     mpfr_rnd_t rounding_mode;
-    mpfr_exp_t emin;
-    mpfr_exp_t emax;
 };
+
+inline mpfr_rnd_t current_rounding_mode() noexcept
+{
+    return mpfr_get_default_rounding_mode();
+}
 
 inline eval_context current_eval_context(mpfr_prec_t precision_bits)
 {
-    const auto defaults = ::mpfrxx::default_options();
     return eval_context{
         precision_bits,
-        defaults.rounding_mode,
-        defaults.emin,
-        defaults.emax,
+        current_rounding_mode(),
     };
 }
 
