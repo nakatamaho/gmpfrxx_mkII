@@ -165,6 +165,33 @@ changes numeric semantics, especially for MPFR where fused evaluation performs
 one rounding instead of materializing the product and then adding or
 subtracting.
 
+## Stable MPFR Rounding Fast Path
+
+`GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` is an opt-in performance
+macro for code that does not change the MPFR default rounding mode during a
+numeric kernel on the same thread.
+
+When enabled, wrapper arithmetic reads a thread-local cached rounding value
+for `current_eval_context()`. The cache is initialized to `MPFR_RNDN`, then
+refreshed when wrapper environment defaults are applied and when callers use
+`mpfrxx::set_default_rounding_mode(...)`. Direct calls to
+`mpfr_set_default_rounding_mode(...)` are outside this fast-path contract
+unless the caller refreshes the wrapper state by using the wrapper setter
+before continuing.
+
+This option does not change precision, exponent range, or object-lifetime
+semantics. It only removes repeated default-rounding reads from wrapper
+arithmetic. It is intended for BLAS-like kernels whose rounding mode is fixed
+at function entry. Code that intentionally changes rounding mode between
+individual arithmetic operations must not enable this macro.
+
+`mpfrxx::rounding_mode_scope` changes the calling thread's MPFR default
+rounding mode for the lifetime of the scope and restores the previous value on
+destruction. It also updates the stable-rounding cache, so stable-rounding
+builds can place one scope around a numeric loop and avoid repeated MPFR
+default-rounding getter calls in wrapper arithmetic. Nested scopes are
+supported.
+
 ## GMP MPF Default Precision
 
 GMP's `mpf_set_default_prec()` and `mpf_get_default_prec()` are process-global

@@ -101,8 +101,13 @@ function(add_mpfr_mkii_variant subdir source base suffix)
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
+    if(suffix MATCHES "STABLE_ROUNDING")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE)
+    endif()
     if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH_FMA" OR
-       suffix STREQUAL "mkII_FMA")
+       suffix STREQUAL "mkII_FMA" OR
+       suffix STREQUAL "mkII_STABLE_ROUNDING_FMA")
         target_compile_definitions(${target} PRIVATE
             MPFRXX_ENABLE_FMA)
     endif()
@@ -116,7 +121,9 @@ endfunction()
 
 function(add_mpfr_rdot_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FMA)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA)
 endfunction()
 
 function(add_mpfr_raxpy_kernel_variants subdir source base)

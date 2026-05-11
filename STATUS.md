@@ -1,3 +1,64 @@
+Post-phase MPFR stable rounding fastpath:
+DONE
+
+Implemented features:
+- Added `GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` and
+  `build_options::assume_stable_mpfr_rounding_mode`.
+- In stable-rounding builds, MPFR wrapper arithmetic reads a thread-local
+  cached rounding value instead of calling `mpfr_get_default_rounding_mode()`
+  for every `current_eval_context()` request.
+- The cached value is constant-initialized to `MPFR_RNDN` and refreshed when
+  wrapper environment defaults are applied or
+  `mpfrxx::set_default_rounding_mode(...)` is called.
+- Added MPFR Rdot benchmark variants
+  `*_mkII_STABLE_ROUNDING` and `*_mkII_STABLE_ROUNDING_FMA`.
+- Added `mpfrxx::rounding_mode_scope` for scoped per-thread MPFR default
+  rounding. The scope also updates/restores the stable-rounding cache so a
+  numeric kernel can pin rounding at function entry.
+- Documented the fastpath contract in `SPECIFICATIONS.md` and
+  `benchmarks/README.md`.
+
+Tests added:
+- `tests/test_mpfr_rounding_scope.cpp`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/config.hpp`
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `include/gmpfrxx_mkII/detail/eval_context.hpp`
+- `tests/CMakeLists.txt`
+- `benchmarks/CMakeLists.txt`
+- `SPECIFICATIONS.md`
+- `benchmarks/README.md`
+
+Exact commands run:
+- `cmake -S . -B build-release-nocount -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS=OFF -DGMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS=OFF`
+- `cmake --build build-release-nocount -j --target Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA test_mpfr_compound_assign test_mpfr_numeric_equivalence`
+- `cmake --build build-release-nocount -j --target Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING test_mpfr_compound_assign test_mpfr_numeric_equivalence test_mpfr_rounding_scope test_mpfr_rounding_scope_stable`
+- `ctest --test-dir build-release-nocount -R "test_mpfr_compound_assign|test_mpfr_numeric_equivalence|test_mpfr_rounding_scope" --output-on-failure`
+- `for k in 01 02 03 04; do for s in mkII mkII_STABLE_ROUNDING; do exe=build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_${k}_${s}; echo "== kernel_${k}_${s}"; "$exe" 1000000 512 | rg "MFLOPS|DIFF"; done; done`
+- `nm -C build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING | rg ' T _Rdot'`
+- `objdump -Cd build-release-nocount/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING --start-address=0x3940 --stop-address=0x3990`
+
+Pass/fail result:
+- CMake regeneration: PASS.
+- Focused stable-rounding Rdot target build: PASS.
+- Focused MPFR tests: PASS, `4/4`.
+- Rdot `1000000 512` smoke comparison: PASS, all variants reported `DIFF`
+  `OK`.
+- Disassembly check: PASS. `Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING` hot loop
+  contains TLS rounding loads plus `mpfr_mul`/`mpfr_add`, with no
+  `mpfr_get_default_rounding_mode()` call inside the loop.
+
+Known issues:
+- Stable-rounding mode still loads the cached thread-local rounding value for
+  each wrapper operation. It removes function calls, but it does not make
+  generic wrapper expressions identical to raw kernels that keep `rnd` in a
+  register for the whole loop.
+- Code that changes MPFR rounding directly with `mpfr_set_default_rounding_mode`
+  while stable-rounding mode is enabled must refresh through
+  `mpfrxx::set_default_rounding_mode(...)` before continuing wrapper
+  arithmetic.
+
 Post-phase remove floating wrapper valid flag:
 DONE
 

@@ -64,6 +64,22 @@ inline mpfr_rnd_t builtin_mpfr_default_rounding() noexcept
     return mpfr_get_default_rounding_mode();
 }
 
+inline mpfr_rnd_t& stable_mpfr_rounding_mode_storage() noexcept
+{
+    static thread_local mpfr_rnd_t rounding = MPFR_RNDN;
+    return rounding;
+}
+
+inline mpfr_rnd_t stable_mpfr_rounding_mode() noexcept
+{
+    return stable_mpfr_rounding_mode_storage();
+}
+
+inline void refresh_stable_mpfr_rounding_mode() noexcept
+{
+    stable_mpfr_rounding_mode_storage() = mpfr_get_default_rounding_mode();
+}
+
 inline bool valid_mpfr_precision(mpfr_prec_t precision) noexcept
 {
     return precision >= MPFR_PREC_MIN && precision <= MPFR_PREC_MAX;
@@ -224,6 +240,7 @@ inline void apply_mpfr_environment_defaults()
     }
     set_mpfr_default_exponent_range(loaded.emin, loaded.emax);
     mpfr_set_default_rounding_mode(loaded.rounding);
+    refresh_stable_mpfr_rounding_mode();
 }
 
 inline bool mpfr_default_state_is_library_initial() noexcept
@@ -304,7 +321,35 @@ inline void set_default_rounding_mode(mpfr_rnd_t rounding)
 {
     ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     mpfr_set_default_rounding_mode(rounding);
+    ::gmpfrxx_mkII::detail::refresh_stable_mpfr_rounding_mode();
 }
+
+class rounding_mode_scope {
+public:
+    explicit rounding_mode_scope(mpfr_rnd_t rounding) noexcept
+        : old_rounding_(mpfr_get_default_rounding_mode()),
+          old_stable_rounding_(::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode())
+    {
+        ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
+        old_rounding_ = mpfr_get_default_rounding_mode();
+        old_stable_rounding_ = ::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode();
+        mpfr_set_default_rounding_mode(rounding);
+        ::gmpfrxx_mkII::detail::refresh_stable_mpfr_rounding_mode();
+    }
+
+    ~rounding_mode_scope() noexcept
+    {
+        mpfr_set_default_rounding_mode(old_rounding_);
+        ::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode_storage() = old_stable_rounding_;
+    }
+
+    rounding_mode_scope(const rounding_mode_scope&) = delete;
+    rounding_mode_scope& operator=(const rounding_mode_scope&) = delete;
+
+private:
+    mpfr_rnd_t old_rounding_;
+    mpfr_rnd_t old_stable_rounding_;
+};
 
 inline mpfr_exp_t default_emin()
 {

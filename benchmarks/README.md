@@ -21,7 +21,10 @@ MPFR wrapper benchmark kernels are built in three wrapper configurations:
   paths where the wrapper can safely apply them.
 
 Rdot MPFR kernels use the shorter `*_mkII` and `*_mkII_FMA` names instead of
-the legacy fixed-precision-fastpath names.
+the legacy fixed-precision-fastpath names. They also provide
+`*_mkII_STABLE_ROUNDING` and `*_mkII_STABLE_ROUNDING_FMA` variants, which
+define `GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` and assume the MPFR
+default rounding mode is not changed inside the benchmark kernel.
 
 MPFR Rdot also provides raw C native FMA baselines:
 

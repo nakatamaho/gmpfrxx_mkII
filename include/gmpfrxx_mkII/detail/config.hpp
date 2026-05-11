@@ -96,6 +96,11 @@ struct build_options {
 #else
     static constexpr bool enable_mpfr_fma = false;
 #endif
+#ifdef GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE
+    static constexpr bool assume_stable_mpfr_rounding_mode = true;
+#else
+    static constexpr bool assume_stable_mpfr_rounding_mode = false;
+#endif
     static constexpr bool mpfr_has_buildopt_tls_p = GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P != 0;
     static constexpr bool mpfr_buildopt_tls = GMPFRXX_MKII_MPFR_BUILDOPT_TLS != 0;
     static constexpr bool mpc_has_buildopt_tls_p = GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P != 0;
