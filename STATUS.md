@@ -1,3 +1,62 @@
+Post-phase remove floating wrapper valid flag:
+DONE
+
+Implemented features:
+- Removed wrapper-side `valid_` ownership flags from `gmpxx::mpf_class`,
+  `mpfrxx::mpfr_class`, and `mpfrxx::mpc_class`.
+- Restored dense backend-compatible layout for floating wrappers. The ABI
+  fingerprint test now checks that `mpf_class`, `mpfr_class`, and `mpc_class`
+  have the same size and alignment as `mpf_t`, `mpfr_t`, and `mpc_t`.
+- Changed move constructors to transfer backend object storage to the
+  destination and immediately reinitialize the moved-from source as a valid
+  backend object. This may allocate, but avoids adding per-object state that
+  widens array stride.
+- Simplified destructors, copy operations, scalar assignment, expression
+  assignment, and swap/move-assignment paths because wrappers always own a
+  valid backend object after construction.
+- Updated the move allocation-count tests to document the new tradeoff:
+  move construction can allocate to reinitialize the source, while array layout
+  remains backend-compatible.
+- Updated `SPECIFICATIONS.md` to record the no-wrapper-valid-flag layout
+  policy.
+
+Tests added:
+- No new test files were added.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_abi_fingerprint.cpp`
+- `tests/test_mpf_alloc_count.cpp`
+- `tests/test_mpfr_alloc_count.cpp`
+- `tests/test_mpc_alloc_count.cpp`
+- `tests/test_mpfc_basic.cpp`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `ctest --test-dir build -R 'test_abi_fingerprint|test_construction_copy|test_mpf_basic|test_mpfrxx_mkII|test_mpc_basic|test_mpfc_basic|test_mpf_alloc_count|test_mpfr_alloc_count|test_mpfr_fixed_precision_fma_alloc_count|test_mpc_alloc_count' --output-on-failure`
+- `cmake --build build-release-nocount -j --target Rdot_mpfr_kernel_05_mkII Rdot_mpfr_kernel_05_mkII_FMA`
+- `objdump -dr -C --no-show-raw-insn build-release-nocount/benchmarks/CMakeFiles/Rdot_mpfr_kernel_05_mkII.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp.o --start-address=0x2f0 --stop-address=0x338`
+- `objdump -dr -C --no-show-raw-insn build-release-nocount/benchmarks/CMakeFiles/Rdot_mpfr_kernel_05_mkII_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp.o --start-address=0x2a0 --stop-address=0x2e8`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused CTest: PASS, 10/10.
+- Release/no-allocator-count MPFR Rdot kernel05 rebuild: PASS.
+- Assembly check: PASS, MPFR wrapper array increments are `add $0x20` in both
+  non-FMA and FMA kernel05 hot loops.
+- Full debug build: PASS.
+- Full CTest: PASS, 153/153.
+
+Known issues:
+- Move construction is no longer zero-allocation for MPF/MPFR/MPC wrappers,
+  because the moved-from source is reinitialized to keep every wrapper object
+  backend-valid without a layout-widening ownership flag.
+
 Post-phase split MPF borrowed expression leaves:
 DONE
 
@@ -1191,6 +1250,62 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+Post-phase MPFR Rdot raw-kernel benchmark:
+DONE
+
+Implemented features:
+- Added `Rdot_mpfr_kernel_05`, an MPFR wrapper benchmark kernel that stores
+  inputs and results as `mpfrxx::mpfr_class` but exposes each object's
+  underlying `mpfr_t` inside the timed loop.
+- The kernel snapshots the current rounding mode once at function entry and
+  then calls `mpfr_mul`/`mpfr_add` directly in the non-FMA build.
+- The FMA variant uses `mpfr_fma` directly and keeps only one accumulator
+  object in the timed kernel.
+- Registered the new benchmark in CMake as `Rdot_mpfr_kernel_05_mkII` and
+  `Rdot_mpfr_kernel_05_mkII_FMA`.
+- Updated the MPFR benchmark runner's Rdot target list to use the current
+  `*_mkII` / `*_mkII_FMA` target names and include kernel 05.
+
+Tests added:
+- None. Benchmark-only phase.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp`
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "kernel_0[1-9]_mkII|Rdot_mpfr_kernel|Raxpy_mpfr_kernel|add_executable\\(Rdot_mpfr|add_executable\\(Raxpy_mpfr" benchmarks CMakeLists.txt`
+- `ls benchmarks/mpfr/00_Rdot benchmarks/mpfr/01_Raxpy`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04.cpp`
+- `sed -n '120,190p' benchmarks/CMakeLists.txt`
+- `sed -n '1,120p' benchmarks/CMakeLists.txt`
+- `sed -n '1,120p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02.cpp`
+- `sed -n '1,120p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03.cpp`
+- `sed -n '1,110p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01.cpp`
+- `sed -n '1,120p' benchmarks/mpfr/00_Rdot/Rdot.hpp`
+- `rg -n "mpfr_data\\(|get_mpfr_t\\(" include/gmpfrxx_mkII/detail/mpfr_impl.hpp | head -60`
+- `rg -n "#define MPFRXX_ENABLE_FMA|enable_mpfr_fma|MPFR_C_NATIVE_USE_FMA" include benchmarks CMakeLists.txt`
+- `sed -n '560,620p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '70,115p' benchmarks/common/run_mpfr_benchmarks.sh`
+- `git diff -- benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp benchmarks/CMakeLists.txt benchmarks/common/run_mpfr_benchmarks.sh`
+- `git status --short`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target Rdot_mpfr_kernel_05_mkII Rdot_mpfr_kernel_05_mkII_FMA`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 1000 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_FMA 1000 512`
+
+Pass/fail result:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j --target Rdot_mpfr_kernel_05_mkII Rdot_mpfr_kernel_05_mkII_FMA`: PASS.
+- `Rdot_mpfr_kernel_05_mkII 1000 512`: PASS, DIFF OK.
+- `Rdot_mpfr_kernel_05_mkII_FMA 1000 512`: PASS, DIFF OK.
+
+Known issues:
+- Full CTest was not run for this benchmark-only phase.
 
 Post-phase borrowed expression leaves for MPFR/MPC/MPFC:
 DONE

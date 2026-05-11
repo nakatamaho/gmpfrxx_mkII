@@ -98,27 +98,36 @@ make saved expression nodes lifetime-safe.
 
 Public floating wrappers must be nothrow move-constructible.
 
-Move construction of backend-owned floating objects must not allocate a fresh
-backend object just to swap it with the source. The move constructors for
-`gmpxx::mpf_class`, `mpfrxx::mpfr_class`, and `mpfrxx::mpc_class` steal the
-backend object storage directly and leave the source wrapper in a valid
-moved-from state that owns no backend object. Destructors must therefore clear
-backend storage only when the wrapper currently owns valid storage.
+`gmpxx::mpf_class`, `mpfrxx::mpfr_class`, and `mpfrxx::mpc_class` must not add
+an object-ownership flag or any other per-object layout state around the backend
+C object. Their size and alignment are part of the performance contract:
 
-This policy is important for expression-template rvalue capture and for
-`std::vector` reallocation of high-precision values. A move from a temporary
-must not add another GMP/MPFR/MPC allocation on top of the allocation already
-needed to create the temporary value.
+```cpp
+sizeof(gmpxx::mpf_class) == sizeof(mpf_t)
+alignof(gmpxx::mpf_class) == alignof(mpf_t)
+
+sizeof(mpfrxx::mpfr_class) == sizeof(mpfr_t)
+alignof(mpfrxx::mpfr_class) == alignof(mpfr_t)
+
+sizeof(mpfrxx::mpc_class) == sizeof(mpc_t)
+alignof(mpfrxx::mpc_class) == alignof(mpc_t)
+```
+
+This preserves dense array layout for BLAS-like kernels. For example,
+`mpfrxx::mpfr_class` arrays must have the same stride as `mpfr_t`, not a larger
+stride caused by a wrapper-side `bool valid_` and padding.
+
+Move construction may transfer the backend object storage to the destination
+with a raw backend-object copy, but the moved-from source must be immediately
+reinitialized as a valid backend object. That reinitialization may allocate. The
+layout and dense-array contract is more important than zero-allocation move
+construction for these wrapper classes.
 
 Move assignment to a valid destination preserves the left-hand-side precision.
 This matches ordinary assignment semantics for existing objects. The
 `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro is currently disabled for
 floating wrapper move assignment and must not change `gmpxx::mpf_class`,
 `mpfrxx::mpfr_class`, or `mpfrxx::mpc_class` precision semantics.
-
-If the destination is already moved-from and owns no valid backend object, move
-assignment may directly steal the source storage because there is no valid
-backend object to swap with.
 
 `gmpxx::mpfc_class` follows the same move behavior through its two
 `gmpxx::mpf_class` components.

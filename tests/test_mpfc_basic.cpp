@@ -129,27 +129,33 @@ void test_construction_and_accessors() {
     assert(z.get_prec() == z.real().get_prec());
 
     mpfc_class moved_lhs(mpf_class(1, 192), mpf_class(2, 160));
+    const mp_bitcnt_t moved_lhs_real_precision = moved_lhs.real().precision();
+    const mp_bitcnt_t moved_lhs_imag_precision = moved_lhs.imag().precision();
     mpfc_class moved_owner(std::move(moved_lhs));
     moved_lhs = mpf_class(3, 224);
-    assert(moved_lhs.real().precision() == default_mpf_precision_bits());
-    assert(moved_lhs.imag().precision() == default_mpf_precision_bits());
+    assert(moved_lhs.real().precision() == moved_lhs_real_precision);
+    assert(moved_lhs.imag().precision() == moved_lhs_imag_precision);
     assert(moved_lhs.real() == 3);
     assert(moved_lhs.imag() == 0);
 
     mpfc_class moved_scalar_lhs(mpf_class(1, 192), mpf_class(2, 160));
+    const mp_bitcnt_t moved_scalar_real_precision = moved_scalar_lhs.real().precision();
+    const mp_bitcnt_t moved_scalar_imag_precision = moved_scalar_lhs.imag().precision();
     mpfc_class moved_scalar_owner(std::move(moved_scalar_lhs));
     moved_scalar_lhs = 4;
-    assert(moved_scalar_lhs.real().precision() == default_mpf_precision_bits());
-    assert(moved_scalar_lhs.imag().precision() == default_mpf_precision_bits());
+    assert(moved_scalar_lhs.real().precision() == moved_scalar_real_precision);
+    assert(moved_scalar_lhs.imag().precision() == moved_scalar_imag_precision);
     assert(moved_scalar_lhs.real() == 4);
     assert(moved_scalar_lhs.imag() == 0);
 
     mpfc_class moved_expr_lhs(mpf_class(1, 192), mpf_class(2, 160));
+    const mp_bitcnt_t moved_expr_real_precision = moved_expr_lhs.real().precision();
+    const mp_bitcnt_t moved_expr_imag_precision = moved_expr_lhs.imag().precision();
     mpfc_class moved_expr_owner(std::move(moved_expr_lhs));
     const mpfc_class expr_base(mpf_class(3, 192), mpf_class(-4, 128));
     moved_expr_lhs = expr_base + mpfc_class(mpf_class(1, 192), mpf_class(2, 128));
-    assert(moved_expr_lhs.real().precision() == default_mpf_precision_bits());
-    assert(moved_expr_lhs.imag().precision() == default_mpf_precision_bits());
+    assert(moved_expr_lhs.real().precision() == moved_expr_real_precision);
+    assert(moved_expr_lhs.imag().precision() == moved_expr_imag_precision);
     assert(moved_expr_lhs.real() == 4);
     assert(moved_expr_lhs.imag() == -2);
     (void)moved_owner;

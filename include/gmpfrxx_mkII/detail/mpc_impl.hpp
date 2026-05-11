@@ -199,22 +199,21 @@ public:
 
     mpc_class(const mpc_class& other)
     {
-        const mpfr_prec_t real_precision = other.valid_ ? other.real_precision() : default_mpc_real_precision_bits();
-        const mpfr_prec_t imag_precision = other.valid_ ? other.imag_precision() : default_mpc_imag_precision_bits();
+        const mpfr_prec_t real_precision = other.real_precision();
+        const mpfr_prec_t imag_precision = other.imag_precision();
         gmpfrxx_mkII::detail::scoped_mpc_init init_guard(value_, real_precision, imag_precision);
-        const int inex = other.valid_ ? mpc_set(value_, other.value_, default_rounding())
-                                      : mpc_set_ui(value_, 0, default_rounding());
+        const int inex = mpc_set(value_, other.value_, default_rounding());
         gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding(), inex);
         init_guard.release();
     }
 
     mpc_class(mpc_class&& other) noexcept
-        : valid_(other.valid_)
     {
-        if (valid_) {
-            std::memcpy(value_, other.value_, sizeof(value_));
-            other.valid_ = false;
-        }
+        std::memcpy(value_, other.value_, sizeof(value_));
+        mpfr_prec_t real_precision = 0;
+        mpfr_prec_t imag_precision = 0;
+        mpc_get_prec2(&real_precision, &imag_precision, value_);
+        mpc_init3(other.value_, real_precision, imag_precision);
     }
 
     mpc_class(const mpfr_class& real, const mpfr_class& imag)
@@ -333,24 +332,13 @@ public:
 
     ~mpc_class()
     {
-        if (valid_) {
-            mpc_clear(value_);
-        }
+        mpc_clear(value_);
     }
 
     mpc_class& operator=(const mpc_class& other)
     {
         if (this != &other) {
-            if (!valid_) {
-                const mpfr_prec_t real_precision =
-                    other.valid_ ? other.real_precision() : default_mpc_real_precision_bits();
-                const mpfr_prec_t imag_precision =
-                    other.valid_ ? other.imag_precision() : default_mpc_imag_precision_bits();
-                mpc_init3(value_, real_precision, imag_precision);
-                valid_ = true;
-            }
-            const int inex = other.valid_ ? mpc_set(value_, other.value_, default_rounding())
-                                          : mpc_set_ui(value_, 0, default_rounding());
+            const int inex = mpc_set(value_, other.value_, default_rounding());
             gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding(), inex);
         }
         return *this;
@@ -358,24 +346,14 @@ public:
 
     mpc_class& operator=(mpc_class&& other) noexcept
     {
-        if (this == &other || !other.valid_) {
+        if (this == &other) {
             return *this;
         }
 
         if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else {
-                mpc_swap(value_, other.value_);
-            }
+            mpc_swap(value_, other.value_);
         } else {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else if (real_precision() == other.real_precision() &&
+            if (real_precision() == other.real_precision() &&
                        imag_precision() == other.imag_precision()) {
                 mpc_swap(value_, other.value_);
             } else {
@@ -474,9 +452,6 @@ public:
 
     mpfr_prec_t real_precision() const noexcept
     {
-        if (!valid_) {
-            return 0;
-        }
         mpfr_prec_t real = 0;
         mpfr_prec_t imag = 0;
         mpc_get_prec2(&real, &imag, value_);
@@ -485,9 +460,6 @@ public:
 
     mpfr_prec_t imag_precision() const noexcept
     {
-        if (!valid_) {
-            return 0;
-        }
         mpfr_prec_t real = 0;
         mpfr_prec_t imag = 0;
         mpc_get_prec2(&real, &imag, value_);
@@ -520,7 +492,6 @@ public:
             return -1;
         }
 
-        ensure_valid_for_assignment();
         mpc_t temp;
         mpc_init3(temp, real_precision(), imag_precision());
         const auto context =
@@ -589,7 +560,6 @@ private:
 
     void set_real_value(const mpfr_class& real)
     {
-        ensure_valid_for_assignment();
         const auto context =
             gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
         const int inex = mpc_set_fr(value_, real.mpfr_data(), default_rounding());
@@ -598,7 +568,6 @@ private:
 
     void set_real_value(const gmpxx::mpz_class& real)
     {
-        ensure_valid_for_assignment();
         const auto context =
             gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
         const int inex = mpc_set_z(value_, real.mpz_data(), default_rounding());
@@ -607,7 +576,6 @@ private:
 
     void set_real_value(const gmpxx::mpq_class& real)
     {
-        ensure_valid_for_assignment();
         const auto context =
             gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
         const int inex = mpc_set_q(value_, real.mpq_data(), default_rounding());
@@ -617,7 +585,6 @@ private:
     template <typename Scalar>
     void set_real_value(Scalar real)
     {
-        ensure_valid_for_assignment();
         const auto context =
             gmpfrxx_mkII::detail::current_eval_context(std::max(real_precision(), imag_precision()));
         if constexpr (std::is_same_v<std::remove_cv_t<Scalar>, float> ||
@@ -631,21 +598,7 @@ private:
         }
     }
 
-    void ensure_valid_for_assignment()
-    {
-        if (!valid_) {
-            const mpfr_prec_t real_precision = mpfrxx::default_mpc_real_precision_bits();
-            const mpfr_prec_t imag_precision = mpfrxx::default_mpc_imag_precision_bits();
-            gmpfrxx_mkII::detail::scoped_mpc_init init_guard(value_, real_precision, imag_precision);
-            const int inex = mpc_set_ui(value_, 0, default_rounding());
-            gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, default_rounding(), inex);
-            init_guard.release();
-            valid_ = true;
-        }
-    }
-
     mpc_t value_;
-    bool valid_ = true;
 };
 
 } // namespace mpfrxx
@@ -1336,7 +1289,6 @@ mpc_class::mpc_class(const Expr& expr)
 template <typename Expr, typename>
 mpc_class& mpc_class::operator=(const Expr& expr)
 {
-    ensure_valid_for_assignment();
     const gmpfrxx_mkII::detail::mpc_expression_precision_bits precision{
         this->real_precision(),
         this->imag_precision(),

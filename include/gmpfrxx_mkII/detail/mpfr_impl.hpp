@@ -116,24 +116,17 @@ public:
 
     mpfr_class(const mpfr_class& other)
     {
-        const mpfr_prec_t precision = other.valid_ ? other.precision() : default_precision();
+        const mpfr_prec_t precision = other.precision();
         gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-        if (other.valid_) {
-            mpfr_set(value_, other.value_, context.rounding_mode);
-        } else {
-            mpfr_set_ui(value_, 0, context.rounding_mode);
-        }
+        mpfr_set(value_, other.value_, context.rounding_mode);
         init_guard.release();
     }
 
     mpfr_class(mpfr_class&& other) noexcept
-        : valid_(other.valid_)
     {
-        if (valid_) {
-            std::memcpy(value_, other.value_, sizeof(value_));
-            other.valid_ = false;
-        }
+        std::memcpy(value_, other.value_, sizeof(value_));
+        mpfr_init2(other.value_, mpfr_get_prec(value_));
     }
 
     mpfr_class(double value) : mpfr_class(value, default_precision()) {}
@@ -250,49 +243,28 @@ public:
 
     ~mpfr_class()
     {
-        if (valid_) {
-            mpfr_clear(value_);
-        }
+        mpfr_clear(value_);
     }
 
     mpfr_class& operator=(const mpfr_class& other)
     {
         if (this != &other) {
-            if (!valid_) {
-                const mpfr_prec_t precision = other.valid_ ? other.precision() : default_precision();
-                mpfr_init2(value_, precision);
-                valid_ = true;
-            }
             const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
-            if (other.valid_) {
-                mpfr_set(value_, other.value_, context.rounding_mode);
-            } else {
-                mpfr_set_ui(value_, 0, context.rounding_mode);
-            }
+            mpfr_set(value_, other.value_, context.rounding_mode);
         }
         return *this;
     }
 
     mpfr_class& operator=(mpfr_class&& other) noexcept
     {
-        if (this == &other || !other.valid_) {
+        if (this == &other) {
             return *this;
         }
 
         if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else {
-                mpfr_swap(value_, other.value_);
-            }
+            mpfr_swap(value_, other.value_);
         } else {
-            if (!valid_) {
-                std::memcpy(value_, other.value_, sizeof(value_));
-                valid_ = true;
-                other.valid_ = false;
-            } else if (this->precision() == other.precision()) {
+            if (this->precision() == other.precision()) {
                 mpfr_swap(value_, other.value_);
             } else {
                 const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
@@ -310,7 +282,6 @@ public:
 
     mpfr_class& operator=(const gmpxx::mpz_class& value)
     {
-        ensure_valid_for_assignment();
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
         mpfr_set_z(value_, value.mpz_data(), context.rounding_mode);
         return *this;
@@ -318,7 +289,6 @@ public:
 
     mpfr_class& operator=(const gmpxx::mpq_class& value)
     {
-        ensure_valid_for_assignment();
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
         mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
         return *this;
@@ -371,7 +341,7 @@ public:
 
     mpfr_prec_t precision() const noexcept
     {
-        return valid_ ? mpfr_get_prec(value_) : 0;
+        return mpfr_get_prec(value_);
     }
 
     mpfr_prec_t get_prec() const noexcept
@@ -445,14 +415,6 @@ public:
 
     void set_prec(mpfr_prec_t precision)
     {
-        if (!valid_) {
-            gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
-            const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-            mpfr_set_ui(value_, 0, context.rounding_mode);
-            init_guard.release();
-            valid_ = true;
-            return;
-        }
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
         mpfr_prec_round(value_, precision, context.rounding_mode);
     }
@@ -479,7 +441,6 @@ public:
 
     void set(double value)
     {
-        ensure_valid_for_assignment();
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
         mpfr_set_d(value_, value, context.rounding_mode);
     }
@@ -510,7 +471,6 @@ public:
             return -1;
         }
 
-        ensure_valid_for_assignment();
         mpfr_t temp;
         mpfr_init2(temp, precision());
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
@@ -615,17 +575,7 @@ public:
 
     void swap(mpfr_class& other) noexcept
     {
-        if (valid_ && other.valid_) {
-            mpfr_swap(value_, other.value_);
-        } else if (valid_) {
-            std::memcpy(other.value_, value_, sizeof(value_));
-            other.valid_ = true;
-            valid_ = false;
-        } else if (other.valid_) {
-            std::memcpy(value_, other.value_, sizeof(value_));
-            valid_ = true;
-            other.valid_ = false;
-        }
+        mpfr_swap(value_, other.value_);
     }
 
     static mpfr_prec_t default_precision() noexcept
@@ -652,7 +602,6 @@ private:
     template <typename T>
     void set_integral(T value)
     {
-        ensure_valid_for_assignment();
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
         using value_type = std::remove_cv_t<T>;
         if constexpr (std::is_signed_v<value_type> &&
@@ -667,20 +616,7 @@ private:
         }
     }
 
-    void ensure_valid_for_assignment()
-    {
-        if (!valid_) {
-            const mpfr_prec_t precision = default_precision();
-            gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
-            const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-            mpfr_set_ui(value_, 0, context.rounding_mode);
-            init_guard.release();
-            valid_ = true;
-        }
-    }
-
     mpfr_t value_;
-    bool valid_ = true;
 };
 
 inline void swap(mpfr_class& lhs, mpfr_class& rhs) noexcept
@@ -2424,7 +2360,6 @@ mpfr_class::mpfr_class(const Expr& expr, mpfr_prec_t precision)
 template <typename Expr, typename>
 mpfr_class& mpfr_class::operator=(const Expr& expr)
 {
-    ensure_valid_for_assignment();
     const mpfr_prec_t precision = this->precision();
     const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
     if (gmpfrxx_mkII::detail::mpfr_try_assign_direct_leaf_binary(value_, expr, context.rounding_mode)) {

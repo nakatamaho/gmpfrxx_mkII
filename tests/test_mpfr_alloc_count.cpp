@@ -84,7 +84,7 @@ int main()
     auto movable = mpfrxx::mpfr_class::with_precision(precision, 5.5);
     alloc_count = 0;
     mpfrxx::mpfr_class moved(std::move(movable));
-    require_alloc_count(0);
+    require_alloc_count(1);
     if (moved.precision() != precision || mpfr_cmp_d(moved.mpfr_data(), 5.5) != 0) {
         std::abort();
     }
@@ -92,41 +92,39 @@ int main()
     auto copied_from_moved_source = mpfrxx::mpfr_class::with_precision(precision, 6.5);
     mpfrxx::mpfr_class copied_from_moved_owner(std::move(copied_from_moved_source));
     mpfrxx::mpfr_class copied_from_moved(copied_from_moved_source);
-    if (copied_from_moved.precision() != mpfrxx::default_precision_bits() ||
-        mpfr_cmp_ui(copied_from_moved.mpfr_data(), 0) != 0) {
+    if (copied_from_moved.precision() != precision) {
         std::abort();
     }
     auto assigned_from_moved = mpfrxx::mpfr_class::with_precision(precision, 3.0);
     assigned_from_moved = copied_from_moved_source;
-    if (assigned_from_moved.precision() != precision ||
-        mpfr_cmp_ui(assigned_from_moved.mpfr_data(), 0) != 0) {
+    if (assigned_from_moved.precision() != precision) {
         std::abort();
     }
     (void)copied_from_moved_owner;
 
     movable = 7.5;
-    if (movable.precision() != mpfrxx::default_precision_bits() ||
+    if (movable.precision() != precision ||
         mpfr_cmp_d(movable.mpfr_data(), 7.5) != 0) {
         std::abort();
     }
     auto moved_integral_source = mpfrxx::mpfr_class::with_precision(precision, 1.0);
     mpfrxx::mpfr_class moved_integral_sink(std::move(moved_integral_source));
     moved_integral_source = std::uint64_t{9};
-    if (moved_integral_source.precision() != mpfrxx::default_precision_bits() ||
+    if (moved_integral_source.precision() != precision ||
         mpfr_cmp_ui(moved_integral_source.mpfr_data(), 9) != 0) {
         std::abort();
     }
     auto moved_string_source = mpfrxx::mpfr_class::with_precision(precision, 1.0);
     mpfrxx::mpfr_class moved_string_sink(std::move(moved_string_source));
     moved_string_source = "11.5";
-    if (moved_string_source.precision() != mpfrxx::default_precision_bits() ||
+    if (moved_string_source.precision() != precision ||
         mpfr_cmp_d(moved_string_source.mpfr_data(), 11.5) != 0) {
         std::abort();
     }
     auto moved_expr_source = mpfrxx::mpfr_class::with_precision(precision, 1.0);
     mpfrxx::mpfr_class moved_expr_sink(std::move(moved_expr_source));
     moved_expr_source = a + b;
-    if (moved_expr_source.precision() != mpfrxx::default_precision_bits() ||
+    if (moved_expr_source.precision() != precision ||
         mpfr_cmp_d(moved_expr_source.mpfr_data(), 4.0) != 0) {
         std::abort();
     }
@@ -139,7 +137,7 @@ int main()
     values.emplace_back(mpfrxx::mpfr_class::with_precision(precision, 6.5));
     alloc_count = 0;
     values.reserve(8);
-    require_alloc_count(0);
+    require_alloc_count(1);
     if (values.front().precision() != precision || mpfr_cmp_d(values.front().mpfr_data(), 6.5) != 0) {
         std::abort();
     }

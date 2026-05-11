@@ -102,22 +102,15 @@ public:
 
     mpf_class(const mpf_class& other)
     {
-        const mp_bitcnt_t precision = other.valid_ ? other.precision() : default_mpf_precision_bits();
+        const mp_bitcnt_t precision = other.precision();
         mpf_init2(value_, precision);
-        if (other.valid_) {
-            mpf_set(value_, other.value_);
-        } else {
-            mpf_set_ui(value_, 0);
-        }
+        mpf_set(value_, other.value_);
     }
 
     mpf_class(mpf_class&& other) noexcept
-        : valid_(other.valid_)
     {
-        if (valid_) {
-            std::memcpy(value_, other.value_, sizeof(value_));
-            other.valid_ = false;
-        }
+        std::memcpy(value_, other.value_, sizeof(value_));
+        mpf_init2(other.value_, mpf_get_prec(value_));
     }
 
     mpf_class(double value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
@@ -241,39 +234,24 @@ public:
 
     ~mpf_class()
     {
-        if (valid_) {
-            mpf_clear(value_);
-        }
+        mpf_clear(value_);
     }
 
     mpf_class& operator=(const mpf_class& other)
     {
         if (this != &other) {
-            if (!valid_) {
-                const mp_bitcnt_t precision = other.valid_ ? other.precision() : default_mpf_precision_bits();
-                mpf_init2(value_, precision);
-                valid_ = true;
-            }
-            if (other.valid_) {
-                mpf_set(value_, other.value_);
-            } else {
-                mpf_set_ui(value_, 0);
-            }
+            mpf_set(value_, other.value_);
         }
         return *this;
     }
 
     mpf_class& operator=(mpf_class&& other) noexcept
     {
-        if (this == &other || !other.valid_) {
+        if (this == &other) {
             return *this;
         }
 
-        if (!valid_) {
-            std::memcpy(value_, other.value_, sizeof(value_));
-            valid_ = true;
-            other.valid_ = false;
-        } else if (precision() == other.precision()) {
+        if (precision() == other.precision()) {
             mpf_swap(value_, other.value_);
         } else {
             mpf_set(value_, other.value_);
@@ -295,14 +273,12 @@ public:
 
     mpf_class& operator=(const mpz_class& value)
     {
-        ensure_valid_for_assignment();
         mpf_set_z(value_, value.mpz_data());
         return *this;
     }
 
     mpf_class& operator=(const mpq_class& value)
     {
-        ensure_valid_for_assignment();
         mpf_set_q(value_, value.mpq_data());
         return *this;
     }
@@ -348,7 +324,7 @@ public:
 
     mp_bitcnt_t precision() const noexcept
     {
-        return valid_ ? mpf_get_prec(value_) : 0;
+        return mpf_get_prec(value_);
     }
 
     mp_bitcnt_t get_prec() const noexcept
@@ -392,12 +368,6 @@ public:
 
     void set_prec(mp_bitcnt_t precision)
     {
-        if (!valid_) {
-            mpf_init2(value_, precision);
-            mpf_set_ui(value_, 0);
-            valid_ = true;
-            return;
-        }
         mpf_set_prec(value_, precision);
     }
 
@@ -450,7 +420,6 @@ public:
 
     void set_epsilon()
     {
-        ensure_valid_for_assignment();
         mpf_set_ui(value_, 1);
         const mp_bitcnt_t bits = precision();
         if (bits > 0) {
@@ -460,7 +429,6 @@ public:
 
     void set(double value)
     {
-        ensure_valid_for_assignment();
         mpf_set_d(value_, value);
     }
 
@@ -497,7 +465,6 @@ public:
             return -1;
         }
 
-        ensure_valid_for_assignment();
         mpf_t temp;
         mpf_init2(temp, precision());
         const int rc = mpf_set_str(temp, value, base);
@@ -572,17 +539,7 @@ public:
 
     void swap(mpf_class& other) noexcept
     {
-        if (valid_ && other.valid_) {
-            mpf_swap(value_, other.value_);
-        } else if (valid_) {
-            std::memcpy(other.value_, value_, sizeof(value_));
-            other.valid_ = true;
-            valid_ = false;
-        } else if (other.valid_) {
-            std::memcpy(value_, other.value_, sizeof(value_));
-            valid_ = true;
-            other.valid_ = false;
-        }
+        mpf_swap(value_, other.value_);
     }
 
 private:
@@ -597,7 +554,6 @@ private:
     template <typename T>
     void set_integral(T value)
     {
-        ensure_valid_for_assignment();
         using value_type = std::remove_cv_t<T>;
         if constexpr (std::is_signed_v<value_type> &&
                       std::numeric_limits<value_type>::digits <= std::numeric_limits<long>::digits) {
@@ -611,17 +567,7 @@ private:
         }
     }
 
-    void ensure_valid_for_assignment()
-    {
-        if (!valid_) {
-            mpf_init2(value_, default_mpf_precision_bits());
-            mpf_set_ui(value_, 0);
-            valid_ = true;
-        }
-    }
-
     mpf_t value_;
-    bool valid_ = true;
 };
 
 inline void swap(mpf_class& lhs, mpf_class& rhs) noexcept
@@ -1945,7 +1891,6 @@ mpf_class::mpf_class(const Expr& expr, mp_bitcnt_t precision)
 template <typename Expr, typename>
 mpf_class& mpf_class::operator=(const Expr& expr)
 {
-    ensure_valid_for_assignment();
     if (gmpfrxx_mkII::detail::mpf_try_assign_direct_leaf_binary(value_, expr)) {
         return *this;
     }

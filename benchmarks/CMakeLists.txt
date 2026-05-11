@@ -154,6 +154,8 @@ add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_03.cpp
     Rdot_mpfr_kernel_03)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_04.cpp
     Rdot_mpfr_kernel_04)
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_05.cpp
+    Rdot_mpfr_kernel_05)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
     Rdot_mpfr_kernel_openmp_01)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_02.cpp

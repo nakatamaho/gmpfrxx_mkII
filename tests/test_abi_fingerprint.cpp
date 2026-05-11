@@ -104,6 +104,13 @@ struct has_common_type_with_mpfr<
 
 void compile_time_fingerprint()
 {
+    static_assert(sizeof(gmpxx::mpf_class) == sizeof(mpf_t));
+    static_assert(alignof(gmpxx::mpf_class) == alignof(mpf_t));
+    static_assert(sizeof(mpfrxx::mpfr_class) == sizeof(mpfr_t));
+    static_assert(alignof(mpfrxx::mpfr_class) == alignof(mpfr_t));
+    static_assert(sizeof(mpfrxx::mpc_class) == sizeof(mpc_t));
+    static_assert(alignof(mpfrxx::mpc_class) == alignof(mpc_t));
+
     using mpf_add_int = decltype(std::declval<const gmpxx::mpf_class&>() + 5LL);
     using mpf_mul_uint = decltype(5u * std::declval<const gmpxx::mpf_class&>());
     using mpf_div_float = decltype(std::declval<const gmpxx::mpf_class&>() / 0.5f);

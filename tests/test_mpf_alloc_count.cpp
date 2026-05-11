@@ -84,7 +84,7 @@ int main()
     auto movable = gmpxx::mpf_class::with_precision(precision, 5.5);
     alloc_count = 0;
     gmpxx::mpf_class moved(std::move(movable));
-    require_alloc_count(0);
+    require_alloc_count(1);
     if (moved.precision() != precision || mpf_cmp_d(moved.mpf_data(), 5.5) != 0) {
         std::abort();
     }
@@ -92,41 +92,39 @@ int main()
     auto copied_from_moved_source = gmpxx::mpf_class::with_precision(precision, 6.5);
     gmpxx::mpf_class copied_from_moved_owner(std::move(copied_from_moved_source));
     gmpxx::mpf_class copied_from_moved(copied_from_moved_source);
-    if (copied_from_moved.precision() != gmpxx::default_mpf_precision_bits() ||
-        mpf_cmp_ui(copied_from_moved.mpf_data(), 0) != 0) {
+    if (copied_from_moved.precision() != precision) {
         std::abort();
     }
     auto assigned_from_moved = gmpxx::mpf_class::with_precision(precision, 3.0);
     assigned_from_moved = copied_from_moved_source;
-    if (assigned_from_moved.precision() != precision ||
-        mpf_cmp_ui(assigned_from_moved.mpf_data(), 0) != 0) {
+    if (assigned_from_moved.precision() != precision) {
         std::abort();
     }
     (void)copied_from_moved_owner;
 
     movable = 7.5;
-    if (movable.precision() != gmpxx::default_mpf_precision_bits() ||
+    if (movable.precision() != precision ||
         mpf_cmp_d(movable.mpf_data(), 7.5) != 0) {
         std::abort();
     }
     auto moved_integral_source = gmpxx::mpf_class::with_precision(precision, 1.0);
     gmpxx::mpf_class moved_integral_sink(std::move(moved_integral_source));
     moved_integral_source = std::uint64_t{9};
-    if (moved_integral_source.precision() != gmpxx::default_mpf_precision_bits() ||
+    if (moved_integral_source.precision() != precision ||
         mpf_cmp_ui(moved_integral_source.mpf_data(), 9) != 0) {
         std::abort();
     }
     auto moved_string_source = gmpxx::mpf_class::with_precision(precision, 1.0);
     gmpxx::mpf_class moved_string_sink(std::move(moved_string_source));
     moved_string_source = "11.5";
-    if (moved_string_source.precision() != gmpxx::default_mpf_precision_bits() ||
+    if (moved_string_source.precision() != precision ||
         mpf_cmp_d(moved_string_source.mpf_data(), 11.5) != 0) {
         std::abort();
     }
     auto moved_expr_source = gmpxx::mpf_class::with_precision(precision, 1.0);
     gmpxx::mpf_class moved_expr_sink(std::move(moved_expr_source));
     moved_expr_source = a + b;
-    if (moved_expr_source.precision() != gmpxx::default_mpf_precision_bits() ||
+    if (moved_expr_source.precision() != precision ||
         mpf_cmp_d(moved_expr_source.mpf_data(), 4.0) != 0) {
         std::abort();
     }
@@ -139,7 +137,7 @@ int main()
     values.emplace_back(gmpxx::mpf_class::with_precision(precision, 6.5));
     alloc_count = 0;
     values.reserve(8);
-    require_alloc_count(0);
+    require_alloc_count(1);
     if (values.front().precision() != precision || mpf_cmp_d(values.front().mpf_data(), 6.5) != 0) {
         std::abort();
     }
