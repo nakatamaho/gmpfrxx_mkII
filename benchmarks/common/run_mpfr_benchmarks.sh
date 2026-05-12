@@ -109,13 +109,21 @@ run_variants() {
             "Raxpy_mpfr_C_native_openmp_01"
             "Raxpy_mpfr_C_native_openmp_01_FMA"
             "Raxpy_mpfr_kernel_01_mkII"
+            "Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING"
             "Raxpy_mpfr_kernel_01_mkII_FMA"
+            "Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA"
             "Raxpy_mpfr_kernel_02_mkII"
+            "Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING"
             "Raxpy_mpfr_kernel_02_mkII_FMA"
+            "Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA"
             "Raxpy_mpfr_kernel_openmp_01_mkII"
+            "Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING"
             "Raxpy_mpfr_kernel_openmp_01_mkII_FMA"
+            "Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA"
             "Raxpy_mpfr_kernel_openmp_02_mkII"
+            "Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING"
             "Raxpy_mpfr_kernel_openmp_02_mkII_FMA"
+            "Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA"
         )
         ;;
     Rgemv)

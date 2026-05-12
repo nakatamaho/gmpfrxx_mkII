@@ -128,7 +128,9 @@ endfunction()
 
 function(add_mpfr_raxpy_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FMA)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA)
 endfunction()
 
 function(add_mpfr_native_benchmark subdir source target)
@@ -250,16 +252,30 @@ add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_01.cpp
     Rgemm_gmp_C_native_01)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_02.cpp
     Rgemm_gmp_C_native_02)
+add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_04.cpp
+    Rgemm_gmp_C_native_04)
+add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_05.cpp
+    Rgemm_gmp_C_native_05)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_01.cpp
     Rgemm_gmp_C_native_openmp_01)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_02.cpp
     Rgemm_gmp_C_native_openmp_02)
+add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_04.cpp
+    Rgemm_gmp_C_native_openmp_04)
+add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_05.cpp
+    Rgemm_gmp_C_native_openmp_05)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_01.cpp Rgemm_gmp_kernel_01)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_02.cpp Rgemm_gmp_kernel_02)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_03.cpp Rgemm_gmp_kernel_03)
+add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_04.cpp Rgemm_gmp_kernel_04)
+add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_05.cpp Rgemm_gmp_kernel_05)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_01.cpp
-    Rgemm_gmp_kernel_openmp_01)
+                    Rgemm_gmp_kernel_openmp_01)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_02.cpp
-    Rgemm_gmp_kernel_openmp_02)
+                    Rgemm_gmp_kernel_openmp_02)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_03.cpp
-    Rgemm_gmp_kernel_openmp_03)
+                    Rgemm_gmp_kernel_openmp_03)
+add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_04.cpp
+                    Rgemm_gmp_kernel_openmp_04)
+add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_05.cpp
+                    Rgemm_gmp_kernel_openmp_05)

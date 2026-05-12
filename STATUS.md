@@ -1312,6 +1312,330 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase GMP Rgemm kernel 05 panel blocking:
+DONE
+
+Implemented features:
+- Added `Rgemm_gmp_kernel_05` as a GMP C++ wrapper column-panel Rgemm
+  benchmark with panel width 4.
+- Added `Rgemm_gmp_kernel_openmp_05`, parallelized by output column panels.
+- Reused only `scaled_b[4]` and one `prod` scratch object per thread instead
+  of using a 4x4 accumulator array.
+- Registered kernel 05 serial and OpenMP variants for upstream gmpxx, mkII,
+  and mkII fixed-precision fastpath benchmark builds.
+
+Missing features:
+- No C native 05 benchmark was added in this phase.
+- Panel width is fixed at 4; no `JB=2/8` tuning variants were added yet.
+
+Tests added:
+- None. This phase adds benchmark kernels.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_05.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05.cpp`
+- `benchmarks/gmp/03_Rgemm/go.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,240p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_04.cpp`
+- `sed -n '1,280p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04.cpp`
+- `sed -n '248,276p' benchmarks/CMakeLists.txt`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemm_gmp_kernel_05_orig Rgemm_gmp_kernel_05_mkII Rgemm_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_05_orig Rgemm_gmp_kernel_openmp_05_mkII Rgemm_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH`
+- `OMP_NUM_THREADS=4` correctness sweep for sizes `13`, `15`, and `64`
+  over all kernel 05 serial and OpenMP variants.
+- `OMP_NUM_THREADS=32 OMP_PROC_BIND=close OMP_PLACES=cores` comparison sweep
+  for sizes `64`, `128`, `256`, and `512` over mkII kernel 04/05 serial and
+  OpenMP variants.
+- `cmake --build build_bench_release -j`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Target build for all kernel 05 variants: PASS.
+- Correctness sweep at `13 13 13 512`, `15 15 15 512`, and `64 64 64 512`:
+  PASS, every variant printed `Result OK`.
+- Short CORE=32 comparison: PASS, every variant printed `Result OK`.
+- `cmake --build build_bench_release -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS,
+  156/156 tests passed.
+
+Known issues:
+- OpenMP kernel 05 has only `N / 4` panel tasks, so small `N` can underuse
+  32 cores.
+
+Post-phase GMP Rgemm C native kernel 05:
+DONE
+
+Implemented features:
+- Added `Rgemm_gmp_C_native_05` as a GMP C API column-panel Rgemm benchmark
+  with panel width 4.
+- Added `Rgemm_gmp_C_native_openmp_05` with one thread-local GMP scratch
+  workspace per OpenMP worker.
+- Reused only `scaled_b[4]` and one `prod` scratch value, matching the wrapper
+  kernel 05 algorithm.
+- Registered C native 05 targets in CMake and benchmark runner lists.
+
+Missing features:
+- No `JB=2/8` C native tuning variants were added yet.
+
+Tests added:
+- None. This phase adds benchmark kernels.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_05.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_05.cpp`
+- `benchmarks/gmp/03_Rgemm/go.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemm_gmp_C_native_05 Rgemm_gmp_C_native_openmp_05`
+- `OMP_NUM_THREADS=4` correctness sweep for sizes `13`, `15`, and `64`
+  over `Rgemm_gmp_C_native_05` and `Rgemm_gmp_C_native_openmp_05`.
+- `OMP_NUM_THREADS=32 OMP_PROC_BIND=close OMP_PLACES=cores` comparison sweep
+  for sizes `64`, `128`, `256`, and `512` over C native 04/05 serial and
+  OpenMP variants.
+- `cmake --build build_bench_release -j`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Target build for C native 05 variants: PASS.
+- Correctness sweep at `13 13 13 512`, `15 15 15 512`, and `64 64 64 512`:
+  PASS, every variant printed `Result OK`.
+- Short CORE=32 comparison: PASS, every variant printed `Result OK`.
+- `cmake --build build_bench_release -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS,
+  156/156 tests passed.
+
+Known issues:
+- OpenMP C native 05 also has only `N / 4` panel tasks, so small `N` can
+  underuse 32 cores.
+
+Post-phase GMP Rgemm OpenMP 04/05 benchmark sweep:
+DONE
+
+Implemented features:
+- Collected CORE=32 benchmark data for OpenMP Rgemm 04/05 variants through
+  `N=1024`, including prime-size tail cases.
+- Generated a CSV result file and a PNG plot for the sweep.
+
+Missing features:
+- No multi-run median/min/max aggregation was collected; each point is one run.
+
+Tests added:
+- None. Benchmark-only phase.
+
+Tests updated:
+- `benchmarks/results_raw/rgemm_gmp_openmp_04_05_core32_512.csv`
+- `benchmarks/results_raw/rgemm_gmp_openmp_04_05_core32_512.png`
+- `STATUS.md`
+
+Exact commands run:
+- `ls build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05_mkII`
+- `python3 -c 'import matplotlib; print(matplotlib.__version__)'`
+- `OMP_NUM_THREADS=32 OMP_PROC_BIND=close OMP_PLACES=cores` benchmark sweep
+  over sizes `64`, `127`, `128`, `192`, `256`, `257`, `384`, `509`, `512`,
+  `768`, `769`, `1009`, and `1024` for C native, upstream gmpxx, and mkII
+  OpenMP 04/05 variants.
+- Python/matplotlib plot generation from the CSV file.
+- Python CSV summary table generation.
+
+Pass/fail result:
+- Every benchmark point printed `Result OK`.
+- CSV written to
+  `benchmarks/results_raw/rgemm_gmp_openmp_04_05_core32_512.csv`.
+- Plot written to
+  `benchmarks/results_raw/rgemm_gmp_openmp_04_05_core32_512.png`.
+
+Known issues:
+- Benchmark timings are single-run measurements and include only each
+  executable's timed loop, not total wall time including reference checking.
+
+Post-phase GMP Rgemm native and wrapper 4x4 blocking:
+DONE
+
+Implemented features:
+- Added `Rgemm_gmp_C_native_04` as a GMP C API 4x4 blocked Rgemm benchmark.
+- Added `Rgemm_gmp_C_native_openmp_04` with one thread-local GMP scratch
+  workspace per OpenMP worker.
+- Reworked `Rgemm_gmp_kernel_04` and `Rgemm_gmp_kernel_openmp_04` to reuse
+  scratch objects across blocks instead of constructing temporaries inside
+  every 4x4 block.
+- Implemented Nath-style pointer redirecting for tail blocks by redirecting
+  out-of-range A/B reads to zero and out-of-range C writes to local sink
+  values.
+- Registered C native 04 targets in CMake and in the benchmark runner lists.
+
+Missing features:
+- No architecture-specific assembly micro-kernel was added.
+
+Tests added:
+- None. This phase adds benchmark kernels.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_04.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_04.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_04.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04.cpp`
+- `benchmarks/gmp/03_Rgemm/go.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_04.cpp`
+- `sed -n '1,300p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04.cpp`
+- `sed -n '245,272p' benchmarks/CMakeLists.txt`
+- `rg -n "get_prec|precision\\(" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp gmpxx_mkII.h.in`
+- `sed -n '140,190p' benchmarks/common/run_benchmarks.sh`
+- `sed -n '28,60p' benchmarks/gmp/03_Rgemm/go.sh`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemm_gmp_C_native_04 Rgemm_gmp_C_native_openmp_04 Rgemm_gmp_kernel_04_orig Rgemm_gmp_kernel_04_mkII Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_04_orig Rgemm_gmp_kernel_openmp_04_mkII Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH`
+- `OMP_NUM_THREADS=4` tail correctness sweep for sizes `13` and `15` over
+  `Rgemm_gmp_C_native_04`, `Rgemm_gmp_C_native_openmp_04`,
+  `Rgemm_gmp_kernel_04_orig`, `Rgemm_gmp_kernel_04_mkII`,
+  `Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH`,
+  `Rgemm_gmp_kernel_openmp_04_orig`, `Rgemm_gmp_kernel_openmp_04_mkII`, and
+  `Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH`.
+- `cmake --build build_bench_release -j`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Target build for all Rgemm 04 C native and wrapper variants: PASS.
+- Tail correctness sweep at `13 13 13 512`: PASS, every variant printed
+  `Result OK`.
+- Tail correctness sweep at `15 15 15 512`: PASS, every variant printed
+  `Result OK`.
+- `cmake --build build_bench_release -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS,
+  156/156 tests passed.
+
+Known issues:
+- None.
+
+Post-phase GMP Rgemm 4x4 blocking benchmark:
+DONE
+
+Implemented features:
+- Added `Rgemm_gmp_kernel_04` as a 4x4 blocked GMP Rgemm benchmark.
+- Added `Rgemm_gmp_kernel_openmp_04` with OpenMP parallelization over 4x4
+  output blocks.
+- Implemented tail handling with pointer redirection for incomplete 4x4
+  blocks, redirecting out-of-range A/B inputs to zero and out-of-range C
+  outputs to local sink objects.
+- Registered serial and OpenMP 04 variants for original GMP C++, mkII, and
+  mkII fixed-precision fastpath benchmark builds.
+- Added the 04 variants to the common GMP benchmark runner and the local
+  `benchmarks/gmp/03_Rgemm/go.sh` executable list.
+
+Missing features:
+- No tuned assembly or architecture-specific micro-kernel was added.
+
+Tests added:
+- None. This phase adds benchmark kernels.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_04.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04.cpp`
+- `benchmarks/gmp/03_Rgemm/go.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "Rgemm_gmp_kernel_0|03_Rgemm" benchmarks/CMakeLists.txt benchmarks/common/run_benchmarks.sh benchmarks/gmp/03_Rgemm/go.sh`
+- `sed -n '1,220p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_03.cpp`
+- `sed -n '1,280p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_03.cpp`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `git diff -- benchmarks/CMakeLists.txt benchmarks/common/run_benchmarks.sh benchmarks/gmp/03_Rgemm/go.sh`
+- `cmake --build build_bench_release -j --target Rgemm_gmp_kernel_04_orig Rgemm_gmp_kernel_04_mkII Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_04_orig Rgemm_gmp_kernel_openmp_04_mkII Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH`
+- `./build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_04_orig 5 6 7 128`
+- `./build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_04_mkII 5 6 7 128`
+- `./build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04_orig 5 6 7 128`
+- `./build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04_mkII 5 6 7 128`
+- `./build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 5 6 7 128`
+- `./build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 5 6 7 128`
+- `cmake --build build_bench_release -j`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build_bench_release -j --target ...`: PASS.
+- `Rgemm_gmp_kernel_04_orig 5 6 7 128`: PASS, `Result OK`.
+- `Rgemm_gmp_kernel_04_mkII 5 6 7 128`: PASS, `Result OK`.
+- `Rgemm_gmp_kernel_openmp_04_orig 5 6 7 128`: PASS, `Result OK`.
+- `Rgemm_gmp_kernel_openmp_04_mkII 5 6 7 128`: PASS, `Result OK`.
+- `Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 5 6 7 128`: PASS,
+  `Result OK`.
+- `Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 5 6 7 128`:
+  PASS, `Result OK`.
+- `cmake --build build_bench_release -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS,
+  156/156 tests passed.
+
+Known issues:
+- None.
+
+Post-phase MPFR Raxpy stable-rounding benchmark targets:
+DONE
+
+Implemented features:
+- Added stable-rounding and stable-rounding-plus-FMA target variants for MPFR
+  Raxpy kernels.
+- Added the new MPFR Raxpy stable-rounding variants to the common MPFR
+  benchmark runner.
+
+Benchmarks run:
+- Ran MPFR Raxpy with `N=10000000` and `precision=512`.
+- Measured `MFLOPS` for C native, C native FMA, C native OpenMP, C native
+  OpenMP FMA, and mkII Raxpy 01/02/OpenMP variants.
+- Each benchmark variant was run five times and summarized by maximum MFLOPS.
+- Extracted `_Raxpy` and OpenMP outlined-function disassembly call sites with
+  `nm -C` and `objdump -Cd --demangle`.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_01_FMA Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_01_FMA Raxpy_mpfr_kernel_01_mkII Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_01_mkII_FMA Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_02_mkII Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_02_mkII_FMA Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_openmp_01_mkII Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_openmp_01_mkII_FMA Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_openmp_02_mkII Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_openmp_02_mkII_FMA Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA -j`
+- `ctest --test-dir build --output-on-failure`
+- `ctest --test-dir build_bench_release --output-on-failure`
+- `cmake --build build_bench_release -j`
+- `ctest --test-dir build_bench_release --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Focused MPFR Raxpy benchmark target build: PASS.
+- MPFR Raxpy benchmark runs: PASS, all measured runs reported `Result OK`.
+- First `ctest --test-dir build --output-on-failure`: FAIL, the `build`
+  directory did not exist in this checkout.
+- First `ctest --test-dir build_bench_release --output-on-failure`: FAIL
+  because the directory had only benchmark targets built and many registered
+  example/test executables were not present.
+- `cmake --build build_bench_release -j`: PASS.
+- Final `ctest --test-dir build_bench_release --output-on-failure`: PASS,
+  156/156 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- MPFR Raxpy has no upstream `orig` benchmark target; comparison is against
+  C native baselines and mkII variants.
+
 Post-phase MPFR C-native benchmark rounding path:
 DONE
 

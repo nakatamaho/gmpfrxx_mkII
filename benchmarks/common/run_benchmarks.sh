@@ -146,8 +146,12 @@ run_variants() {
         executables=(
             "Rgemm_gmp_C_native_01"
             "Rgemm_gmp_C_native_02"
+            "Rgemm_gmp_C_native_04"
+            "Rgemm_gmp_C_native_05"
             "Rgemm_gmp_C_native_openmp_01"
             "Rgemm_gmp_C_native_openmp_02"
+            "Rgemm_gmp_C_native_openmp_04"
+            "Rgemm_gmp_C_native_openmp_05"
             "Rgemm_gmp_kernel_01_orig"
             "Rgemm_gmp_kernel_01_mkII"
             "Rgemm_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
@@ -157,6 +161,12 @@ run_variants() {
             "Rgemm_gmp_kernel_03_orig"
             "Rgemm_gmp_kernel_03_mkII"
             "Rgemm_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_gmp_kernel_04_orig"
+            "Rgemm_gmp_kernel_04_mkII"
+            "Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_gmp_kernel_05_orig"
+            "Rgemm_gmp_kernel_05_mkII"
+            "Rgemm_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH"
             "Rgemm_gmp_kernel_openmp_01_orig"
             "Rgemm_gmp_kernel_openmp_01_mkII"
             "Rgemm_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
@@ -166,6 +176,12 @@ run_variants() {
             "Rgemm_gmp_kernel_openmp_03_orig"
             "Rgemm_gmp_kernel_openmp_03_mkII"
             "Rgemm_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_gmp_kernel_openmp_04_orig"
+            "Rgemm_gmp_kernel_openmp_04_mkII"
+            "Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH"
+            "Rgemm_gmp_kernel_openmp_05_orig"
+            "Rgemm_gmp_kernel_openmp_05_mkII"
+            "Rgemm_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH"
         )
         ;;
     esac
