@@ -1312,6 +1312,107 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase GMP Rgemm kernel 06 fixed row blocking:
+DONE
+
+Implemented features:
+- Added GMP Rgemm kernel 06 as a column-panel kernel with fixed 256-row
+  blocking.
+- Added C native, upstream `gmpxx.h` orig, and `gmpxx_mkII` benchmark targets
+  for both serial and OpenMP execution.
+- Kernel 06 uses `min(M, 256)` as its row block size and keeps the existing
+  four-column panel over `B`.
+- OpenMP kernel 06 parallelizes over `(column panel, row block)` tasks.
+
+Tests added:
+- None. Benchmark-only phase.
+
+Tests updated:
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_06_common.hpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_06.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_06.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_06_common.hpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_06.cpp`
+- `benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_06.cpp`
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/gmp/03_Rgemm/go.sh`
+- `benchmarks/common/run_benchmarks.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `ps -eo pid,ppid,stat,etime,cmd | rg 'Rgemm_gmp|rgemm_gmp_openmp_02_04_05|python|bash'`
+- `ls benchmarks/gmp/03_Rgemm`
+- `sed -n '1,260p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05.cpp`
+- `rg -n "Rgemm_gmp_.*05|03_Rgemm|kernel_openmp_05|C_native_openmp_05" -S .`
+- `sed -n '1,260p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_05.cpp`
+- `sed -n '1,240p' benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_02.cpp`
+- `sed -n '235,290p' benchmarks/CMakeLists.txt`
+- `sed -n '1,140p' benchmarks/gmp/03_Rgemm/go.sh`
+- `git status --short`
+- `sed -n '1,130p' benchmarks/CMakeLists.txt`
+- `sed -n '1,220p' benchmarks/common/run_benchmarks.sh`
+- `cmake --build build_bench_release -j --target Rgemm_gmp_C_native_06 Rgemm_gmp_C_native_openmp_06 Rgemm_gmp_kernel_06_orig Rgemm_gmp_kernel_06_mkII Rgemm_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_06_orig Rgemm_gmp_kernel_openmp_06_mkII Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH`
+- `ls build_bench_release`
+- `sed -n '1,80p' build_bench_release/CMakeCache.txt`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemm_gmp_C_native_06 Rgemm_gmp_C_native_openmp_06 Rgemm_gmp_kernel_06_orig Rgemm_gmp_kernel_06_mkII Rgemm_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_06_orig Rgemm_gmp_kernel_openmp_06_mkII Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH`
+- `for exe in Rgemm_gmp_C_native_06 Rgemm_gmp_C_native_openmp_06 Rgemm_gmp_kernel_06_orig Rgemm_gmp_kernel_06_mkII Rgemm_gmp_kernel_openmp_06_orig Rgemm_gmp_kernel_openmp_06_mkII; do OMP_NUM_THREADS=4 ./build_bench_release/benchmarks/gmp/03_Rgemm/$exe 15 13 15 128 | rg "Fixed row|Elapsed time|MFLOPS|Result"; done`
+
+Pass/fail result:
+- Initial build before reconfigure: FAIL, build tree did not know the new
+  target names.
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`: PASS.
+- 06 benchmark target build: PASS.
+- `15 13 15 128` serial/OpenMP C native/orig/mkII smoke check: PASS, all
+  reported `Result OK`.
+
+Known issues:
+- An interrupted earlier benchmark left
+  `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_step31_core32_512.csv`
+  untracked in the worktree; this phase did not modify it.
+
+Post-phase GMP Rgemm OpenMP 02/04/05/06 sweep:
+DONE
+
+Implemented features:
+- Ran the GMP Rgemm OpenMP sweep for kernels 02, 04, 05, and fixed-256 06.
+- Covered C native, upstream `gmpxx.h` orig, and `gmpxx_mkII` variants.
+- Used sizes `13 + 31*k <= 1024`, plus `128,256,512,768,1024`.
+- Generated CSV, log, and PNG plot under `benchmarks/results_raw`.
+
+Tests added:
+- None. Benchmark-result phase.
+
+Tests updated:
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.csv`
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.log`
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.png`
+- `STATUS.md`
+
+Exact commands run:
+- `ps -eo pid,ppid,stat,etime,cmd | rg 'Rgemm_gmp|rgemm_gmp|python|bash'`
+- `kill 1259846 1260477`
+- `cmake --build build_bench_release -j --target Rgemm_gmp_C_native_openmp_02 Rgemm_gmp_C_native_openmp_04 Rgemm_gmp_C_native_openmp_05 Rgemm_gmp_C_native_openmp_06 Rgemm_gmp_kernel_openmp_02_orig Rgemm_gmp_kernel_openmp_02_mkII Rgemm_gmp_kernel_openmp_04_orig Rgemm_gmp_kernel_openmp_04_mkII Rgemm_gmp_kernel_openmp_05_orig Rgemm_gmp_kernel_openmp_05_mkII Rgemm_gmp_kernel_openmp_06_orig Rgemm_gmp_kernel_openmp_06_mkII`
+- `OMP_NUM_THREADS=32 OMP_PROC_BIND=close OMP_PLACES=cores` sweep over 38
+  sizes and 12 OpenMP variants, writing
+  `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.csv`.
+- `python3 -c '...'` to validate the CSV row count, error count, size count,
+  variant count, and best result.
+- `python3 -c '...'` to generate
+  `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.png`.
+- `python3 -c '...'` to summarize selected sizes and best-per-variant results.
+
+Pass/fail result:
+- Build: PASS.
+- Sweep: PASS, 456/456 rows reported `Result OK`.
+- CSV validation: PASS, 38 sizes and 12 variants.
+- Best overall result: `Rgemm_gmp_C_native_openmp_06`, `N=1024`,
+  883.060 MFLOPS.
+
+Known issues:
+- Single-run benchmark values have normal OpenMP placement and system-load
+  noise; no repeated-run max/min statistics were collected in this sweep.
+
 Post-phase GMP Rgemm kernel 05 panel blocking:
 DONE
 

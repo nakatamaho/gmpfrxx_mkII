@@ -1,0 +1,2850 @@
+# precision=512 OMP_NUM_THREADS=32 OMP_PROC_BIND=close OMP_PLACES=cores
+COMMAND N=13 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.00373485 s
+MFLOPS: 1.26698
+L1 Norm of difference: 1.1156e-152
+Result OK
+
+COMMAND N=13 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0032247 s
+MFLOPS: 1.46742
+L1 Norm of difference: 1.5322e-153
+Result OK
+
+COMMAND N=13 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.00370989 s
+MFLOPS: 1.27551
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=13 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 13
+Elapsed time: 0.00392987 s
+MFLOPS: 1.20411
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=13 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.00306586 s
+MFLOPS: 1.54345
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=13 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.00269751 s
+MFLOPS: 1.75421
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=13 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.00361126 s
+MFLOPS: 1.31035 12.7555
+L1 Norm of difference: 2.082e-153
+Result OK
+
+COMMAND N=13 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.00348037 s
+MFLOPS: 1.35963 13.5469
+L1 Norm of difference: 2.082e-153
+Result OK
+
+COMMAND N=13 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.00355929 s
+MFLOPS: 1.32948 16.4266
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=13 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.00345635 s
+MFLOPS: 1.36907 15.3006
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=13 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 13
+Elapsed time: 0.00362512 s
+MFLOPS: 1.30534
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=13 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 13
+Elapsed time: 0.00368699 s
+MFLOPS: 1.28343
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=44 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.00378621 s
+MFLOPS: 46.0196
+L1 Norm of difference: 1.2738e-150
+Result OK
+
+COMMAND N=44 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.00442982 s
+MFLOPS: 39.3334
+L1 Norm of difference: 1.6751e-151
+Result OK
+
+COMMAND N=44 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.00476113 s
+MFLOPS: 36.5964
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=44 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 44
+Elapsed time: 0.00464912 s
+MFLOPS: 37.4781
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=44 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.00426345 s
+MFLOPS: 40.8683
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=44 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.00422864 s
+MFLOPS: 41.2047
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=44 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.00333014 s
+MFLOPS: 52.3221 23.8571
+L1 Norm of difference: 1.536e-151
+Result OK
+
+COMMAND N=44 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.00375921 s
+MFLOPS: 46.3502 22.106
+L1 Norm of difference: 1.536e-151
+Result OK
+
+COMMAND N=44 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.00488974 s
+MFLOPS: 35.6338 28.4829
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=44 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.00466742 s
+MFLOPS: 37.3311 27.2094
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=44 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 44
+Elapsed time: 0.00451348 s
+MFLOPS: 38.6044
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=44 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 44
+Elapsed time: 0.00467093 s
+MFLOPS: 37.3031
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=75 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.00505334 s
+MFLOPS: 169.195
+L1 Norm of difference: 8.6629e-150
+Result OK
+
+COMMAND N=75 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.00574515 s
+MFLOPS: 148.821
+L1 Norm of difference: 4.4840e-151
+Result OK
+
+COMMAND N=75 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.00646146 s
+MFLOPS: 132.323
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=75 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 75
+Elapsed time: 0.00630715 s
+MFLOPS: 135.56
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=75 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.0053477 s
+MFLOPS: 159.882
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=75 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.00572917 s
+MFLOPS: 149.236
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=75 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.0076577 s
+MFLOPS: 111.652 23.9939
+L1 Norm of difference: 4.39e-151
+Result OK
+
+COMMAND N=75 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.00613293 s
+MFLOPS: 139.411 22.4494
+L1 Norm of difference: 4.39e-151
+Result OK
+
+COMMAND N=75 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.00643619 s
+MFLOPS: 132.843 28.5128
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=75 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.00643162 s
+MFLOPS: 132.937 27.8923
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=75 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 75
+Elapsed time: 0.00690668 s
+MFLOPS: 123.793
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=75 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 75
+Elapsed time: 0.00607285 s
+MFLOPS: 140.791
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=106 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.00829944 s
+MFLOPS: 289.719
+L1 Norm of difference: 2.7479e-149
+Result OK
+
+COMMAND N=106 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.00863234 s
+MFLOPS: 278.546
+L1 Norm of difference: 8.8784e-151
+Result OK
+
+COMMAND N=106 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.00895608 s
+MFLOPS: 268.477
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=106 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 106
+Elapsed time: 0.00935613 s
+MFLOPS: 256.998
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=106 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.00904898 s
+MFLOPS: 265.721
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=106 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.00963491 s
+MFLOPS: 249.562
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=106 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.00876132 s
+MFLOPS: 274.445 24.1039
+L1 Norm of difference: 8.71e-151
+Result OK
+
+COMMAND N=106 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.00953843 s
+MFLOPS: 252.086 22.2571
+L1 Norm of difference: 8.71e-151
+Result OK
+
+COMMAND N=106 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0093859 s
+MFLOPS: 256.183 28.7037
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=106 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.00967213 s
+MFLOPS: 248.601 27.6549
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=106 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 106
+Elapsed time: 0.00962928 s
+MFLOPS: 249.708
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=106 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 106
+Elapsed time: 0.00944173 s
+MFLOPS: 254.668
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=128 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.0111966 s
+MFLOPS: 377.533
+L1 Norm of difference: 5.0260e-149
+Result OK
+
+COMMAND N=128 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0120951 s
+MFLOPS: 349.486
+L1 Norm of difference: 1.2772e-150
+Result OK
+
+COMMAND N=128 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.0118566 s
+MFLOPS: 356.517
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=128 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 128
+Elapsed time: 0.0113905 s
+MFLOPS: 371.105
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=128 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.0106106 s
+MFLOPS: 398.381
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=128 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.0105867 s
+MFLOPS: 399.283
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=128 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.0123267 s
+MFLOPS: 342.919 24.1601
+L1 Norm of difference: 1.265e-150
+Result OK
+
+COMMAND N=128 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.0124959 s
+MFLOPS: 338.277 22.2769
+L1 Norm of difference: 1.265e-150
+Result OK
+
+COMMAND N=128 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0112492 s
+MFLOPS: 375.765 28.5178
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=128 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.0110737 s
+MFLOPS: 381.72 27.8192
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=128 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 128
+Elapsed time: 0.0111401 s
+MFLOPS: 379.448
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=128 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 128
+Elapsed time: 0.011259 s
+MFLOPS: 375.44
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=137 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.0121952 s
+MFLOPS: 424.778
+L1 Norm of difference: 6.2439e-149
+Result OK
+
+COMMAND N=137 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0112918 s
+MFLOPS: 458.76
+L1 Norm of difference: 1.4344e-150
+Result OK
+
+COMMAND N=137 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.0164317 s
+MFLOPS: 315.258
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=137 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 137
+Elapsed time: 0.0158057 s
+MFLOPS: 327.746
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=137 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.0132251 s
+MFLOPS: 391.698
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=137 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.0141902 s
+MFLOPS: 365.058
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=137 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.0145033 s
+MFLOPS: 357.176 24.2796
+L1 Norm of difference: 1.487e-150
+Result OK
+
+COMMAND N=137 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.0130284 s
+MFLOPS: 397.613 22.4001
+L1 Norm of difference: 1.487e-150
+Result OK
+
+COMMAND N=137 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0153766 s
+MFLOPS: 336.891 28.8065
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=137 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.0167599 s
+MFLOPS: 309.086 28.2465
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=137 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 137
+Elapsed time: 0.0184469 s
+MFLOPS: 280.819
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=137 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 137
+Elapsed time: 0.0136347 s
+MFLOPS: 379.931
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=168 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.0162003 s
+MFLOPS: 588.859
+L1 Norm of difference: 1.1861e-148
+Result OK
+
+COMMAND N=168 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0194159 s
+MFLOPS: 491.334
+L1 Norm of difference: 2.1863e-150
+Result OK
+
+COMMAND N=168 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.0240701 s
+MFLOPS: 396.331
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=168 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 168
+Elapsed time: 0.0211295 s
+MFLOPS: 451.488
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=168 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.0191609 s
+MFLOPS: 497.874
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=168 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.019473 s
+MFLOPS: 489.894
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=168 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.0183905 s
+MFLOPS: 518.73 24.4583
+L1 Norm of difference: 2.209e-150
+Result OK
+
+COMMAND N=168 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.0215918 s
+MFLOPS: 441.82 22.6739
+L1 Norm of difference: 2.209e-150
+Result OK
+
+COMMAND N=168 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0226283 s
+MFLOPS: 421.583 28.901
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=168 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.021474 s
+MFLOPS: 444.244 28.1813
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=168 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 168
+Elapsed time: 0.0209605 s
+MFLOPS: 455.127
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=168 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 168
+Elapsed time: 0.0209873 s
+MFLOPS: 454.546
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=199 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.024356 s
+MFLOPS: 650.37
+L1 Norm of difference: 2.0109e-148
+Result OK
+
+COMMAND N=199 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0269014 s
+MFLOPS: 588.832
+L1 Norm of difference: 3.0937e-150
+Result OK
+
+COMMAND N=199 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.0274321 s
+MFLOPS: 577.439
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=199 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 199
+Elapsed time: 0.0269844 s
+MFLOPS: 587.021
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=199 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.0268313 s
+MFLOPS: 590.37
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=199 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.0260994 s
+MFLOPS: 606.925
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=199 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.0290033 s
+MFLOPS: 546.158 24.3605
+L1 Norm of difference: 3.122e-150
+Result OK
+
+COMMAND N=199 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.0293875 s
+MFLOPS: 539.019 22.6153
+L1 Norm of difference: 3.122e-150
+Result OK
+
+COMMAND N=199 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0281287 s
+MFLOPS: 563.141 29.0441
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=199 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.030238 s
+MFLOPS: 523.857 28.1924
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=199 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 199
+Elapsed time: 0.0298558 s
+MFLOPS: 530.564
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=199 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 199
+Elapsed time: 0.029071 s
+MFLOPS: 544.887
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=230 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.0342228 s
+MFLOPS: 714.138
+L1 Norm of difference: 3.1510e-148
+Result OK
+
+COMMAND N=230 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0381676 s
+MFLOPS: 640.329
+L1 Norm of difference: 4.2148e-150
+Result OK
+
+COMMAND N=230 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.0356028 s
+MFLOPS: 686.457
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=230 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 230
+Elapsed time: 0.0362717 s
+MFLOPS: 673.798
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=230 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.0394903 s
+MFLOPS: 618.881
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=230 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.0387315 s
+MFLOPS: 631.006
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=230 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.0417401 s
+MFLOPS: 585.523 24.4049
+L1 Norm of difference: 4.055e-150
+Result OK
+
+COMMAND N=230 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.0447034 s
+MFLOPS: 546.71 22.5192
+L1 Norm of difference: 4.055e-150
+Result OK
+
+COMMAND N=230 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0380562 s
+MFLOPS: 642.204 28.9363
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=230 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.0373707 s
+MFLOPS: 653.983 28.1377
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=230 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 230
+Elapsed time: 0.0366826 s
+MFLOPS: 666.25
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=230 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 230
+Elapsed time: 0.0369149 s
+MFLOPS: 662.058
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=256 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.0473191 s
+MFLOPS: 711.88
+L1 Norm of difference: 4.3890e-148
+Result OK
+
+COMMAND N=256 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0507755 s
+MFLOPS: 663.421
+L1 Norm of difference: 5.1686e-150
+Result OK
+
+COMMAND N=256 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.0442523 s
+MFLOPS: 761.215
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=256 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.043608 s
+MFLOPS: 772.462
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=256 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.055619 s
+MFLOPS: 605.647
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=256 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.0475713 s
+MFLOPS: 708.105
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=256 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.0637677 s
+MFLOPS: 528.253 24.4607
+L1 Norm of difference: 5.245e-150
+Result OK
+
+COMMAND N=256 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.0585483 s
+MFLOPS: 575.345 22.5564
+L1 Norm of difference: 5.245e-150
+Result OK
+
+COMMAND N=256 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0460567 s
+MFLOPS: 731.392 28.8324
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=256 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.0444003 s
+MFLOPS: 758.678 28.1366
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=256 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.0452605 s
+MFLOPS: 744.259
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=256 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.0448984 s
+MFLOPS: 750.26
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=261 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.0455582 s
+MFLOPS: 783.512
+L1 Norm of difference: 4.6544e-148
+Result OK
+
+COMMAND N=261 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0564654 s
+MFLOPS: 632.164
+L1 Norm of difference: 5.4541e-150
+Result OK
+
+COMMAND N=261 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.0612419 s
+MFLOPS: 582.859
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=261 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.0589661 s
+MFLOPS: 605.354
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=261 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.054803 s
+MFLOPS: 651.34
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=261 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.0512553 s
+MFLOPS: 696.423
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=261 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.057306 s
+MFLOPS: 622.892 24.3029
+L1 Norm of difference: 5.505e-150
+Result OK
+
+COMMAND N=261 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.0619794 s
+MFLOPS: 575.924 22.5577
+L1 Norm of difference: 5.505e-150
+Result OK
+
+COMMAND N=261 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0643623 s
+MFLOPS: 554.601 29.1747
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=261 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.0648777 s
+MFLOPS: 550.196 28.2421
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=261 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.0653748 s
+MFLOPS: 546.012
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=261 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.0637511 s
+MFLOPS: 559.918
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=292 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.0600091 s
+MFLOPS: 832.619
+L1 Norm of difference: 6.5790e-148
+Result OK
+
+COMMAND N=292 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0732615 s
+MFLOPS: 682.005
+L1 Norm of difference: 6.6999e-150
+Result OK
+
+COMMAND N=292 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.0777183 s
+MFLOPS: 642.895
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=292 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.0735192 s
+MFLOPS: 679.615
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=292 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.0740368 s
+MFLOPS: 674.863
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=292 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.0741127 s
+MFLOPS: 674.172
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=292 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.0750418 s
+MFLOPS: 665.825 24.4655
+L1 Norm of difference: 6.819e-150
+Result OK
+
+COMMAND N=292 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.0851431 s
+MFLOPS: 586.832 22.4927
+L1 Norm of difference: 6.819e-150
+Result OK
+
+COMMAND N=292 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0822195 s
+MFLOPS: 607.699 29.0338
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=292 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.0829839 s
+MFLOPS: 602.101 28.3851
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=292 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.0785872 s
+MFLOPS: 635.787
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=292 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.0777957 s
+MFLOPS: 642.255
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=323 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.0891982 s
+MFLOPS: 757.921
+L1 Norm of difference: 8.9589e-148
+Result OK
+
+COMMAND N=323 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.0971974 s
+MFLOPS: 695.545
+L1 Norm of difference: 8.5011e-150
+Result OK
+
+COMMAND N=323 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.092103 s
+MFLOPS: 734.017
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=323 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.0922551 s
+MFLOPS: 732.807
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=323 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.0994301 s
+MFLOPS: 679.927
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=323 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.0943031 s
+MFLOPS: 716.893
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=323 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.10198 s
+MFLOPS: 662.925 24.0354
+L1 Norm of difference: 8.464e-150
+Result OK
+
+COMMAND N=323 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.111106 s
+MFLOPS: 608.475 22.5748
+L1 Norm of difference: 8.464e-150
+Result OK
+
+COMMAND N=323 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.0977413 s
+MFLOPS: 691.675 29.2276
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=323 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.100264 s
+MFLOPS: 674.275 28.3444
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=323 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.0970885 s
+MFLOPS: 696.325
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=323 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.097849 s
+MFLOPS: 690.913
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=354 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.110789 s
+MFLOPS: 803.099
+L1 Norm of difference: 1.1867e-147
+Result OK
+
+COMMAND N=354 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.124744 s
+MFLOPS: 713.253
+L1 Norm of difference: 1.0079e-149
+Result OK
+
+COMMAND N=354 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.11666 s
+MFLOPS: 762.678
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=354 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.117502 s
+MFLOPS: 757.217
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=354 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.12182 s
+MFLOPS: 730.376
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=354 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.122727 s
+MFLOPS: 724.981
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=354 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.133147 s
+MFLOPS: 668.244 24.0408
+L1 Norm of difference: 9.999e-150
+Result OK
+
+COMMAND N=354 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.146179 s
+MFLOPS: 608.666 22.247
+L1 Norm of difference: 9.999e-150
+Result OK
+
+COMMAND N=354 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.118404 s
+MFLOPS: 751.444 29.1215
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=354 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.119815 s
+MFLOPS: 742.595 28.0464
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=354 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.119493 s
+MFLOPS: 744.597
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=354 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.117825 s
+MFLOPS: 755.143
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=385 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.14878 s
+MFLOPS: 769.122
+L1 Norm of difference: 1.5345e-147
+Result OK
+
+COMMAND N=385 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.158902 s
+MFLOPS: 720.13
+L1 Norm of difference: 1.1922e-149
+Result OK
+
+COMMAND N=385 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.170347 s
+MFLOPS: 671.745
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=385 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.157206 s
+MFLOPS: 727.895
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=385 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.157328 s
+MFLOPS: 727.331
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=385 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.158944 s
+MFLOPS: 719.938
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=385 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.172854 s
+MFLOPS: 662.003 24.0191
+L1 Norm of difference: 1.18e-149
+Result OK
+
+COMMAND N=385 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.181929 s
+MFLOPS: 628.981 22.2341
+L1 Norm of difference: 1.18e-149
+Result OK
+
+COMMAND N=385 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.178307 s
+MFLOPS: 641.758 28.8638
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=385 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.183925 s
+MFLOPS: 622.154 28.2938
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=385 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.166297 s
+MFLOPS: 688.105
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=385 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.165394 s
+MFLOPS: 691.86
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=416 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.188056 s
+MFLOPS: 767.478
+L1 Norm of difference: 1.9416e-147
+Result OK
+
+COMMAND N=416 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.199903 s
+MFLOPS: 721.995
+L1 Norm of difference: 1.4074e-149
+Result OK
+
+COMMAND N=416 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.20034 s
+MFLOPS: 720.418
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=416 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.182046 s
+MFLOPS: 792.814
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=416 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.187892 s
+MFLOPS: 768.146
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=416 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.18752 s
+MFLOPS: 769.672
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=416 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.213449 s
+MFLOPS: 676.175 24.1142
+L1 Norm of difference: 1.344e-149
+Result OK
+
+COMMAND N=416 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.229903 s
+MFLOPS: 627.78 22.44
+L1 Norm of difference: 1.344e-149
+Result OK
+
+COMMAND N=416 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.212157 s
+MFLOPS: 680.292 28.9561
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=416 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.216092 s
+MFLOPS: 667.904 28.2499
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=416 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.194205 s
+MFLOPS: 743.177
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=416 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.192124 s
+MFLOPS: 751.228
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=447 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.251075 s
+MFLOPS: 713.049
+L1 Norm of difference: 2.4182e-147
+Result OK
+
+COMMAND N=447 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.243422 s
+MFLOPS: 735.468
+L1 Norm of difference: 1.5712e-149
+Result OK
+
+COMMAND N=447 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.232037 s
+MFLOPS: 771.554
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=447 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.208493 s
+MFLOPS: 858.682
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=447 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.230261 s
+MFLOPS: 777.503
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=447 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.230006 s
+MFLOPS: 778.365
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=447 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.284041 s
+MFLOPS: 630.292 24.0117
+L1 Norm of difference: 1.582e-149
+Result OK
+
+COMMAND N=447 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.294111 s
+MFLOPS: 608.711 22.268
+L1 Norm of difference: 1.582e-149
+Result OK
+
+COMMAND N=447 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.275995 s
+MFLOPS: 648.668 29.1015
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=447 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.249004 s
+MFLOPS: 718.98 28.2872
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=447 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.220788 s
+MFLOPS: 810.862
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=447 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.220104 s
+MFLOPS: 813.383
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=478 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.345901 s
+MFLOPS: 632.805
+L1 Norm of difference: 2.9661e-147
+Result OK
+
+COMMAND N=478 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.308418 s
+MFLOPS: 709.71
+L1 Norm of difference: 1.8254e-149
+Result OK
+
+COMMAND N=478 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.265874 s
+MFLOPS: 823.277
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=478 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.264164 s
+MFLOPS: 828.607
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=478 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.284595 s
+MFLOPS: 769.12
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=478 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.286749 s
+MFLOPS: 763.342
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=478 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.322721 s
+MFLOPS: 678.257 23.8954
+L1 Norm of difference: 1.756e-149
+Result OK
+
+COMMAND N=478 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.351287 s
+MFLOPS: 623.103 22.2997
+L1 Norm of difference: 1.756e-149
+Result OK
+
+COMMAND N=478 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.280468 s
+MFLOPS: 780.438 29.1058
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=478 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.327802 s
+MFLOPS: 667.743 28.3375
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=478 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.279489 s
+MFLOPS: 783.17
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=478 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.279738 s
+MFLOPS: 782.473
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=509 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.379293 s
+MFLOPS: 696.724
+L1 Norm of difference: 3.5901e-147
+Result OK
+
+COMMAND N=509 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.363923 s
+MFLOPS: 726.15
+L1 Norm of difference: 2.0416e-149
+Result OK
+
+COMMAND N=509 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.302954 s
+MFLOPS: 872.285
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=509 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.301501 s
+MFLOPS: 876.489
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=509 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.345338 s
+MFLOPS: 765.228
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=509 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.351738 s
+MFLOPS: 751.305
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=509 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.384146 s
+MFLOPS: 687.922 24.0333
+L1 Norm of difference: 2.035e-149
+Result OK
+
+COMMAND N=509 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.414815 s
+MFLOPS: 637.062 22.2305
+L1 Norm of difference: 2.035e-149
+Result OK
+
+COMMAND N=509 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.315981 s
+MFLOPS: 836.324 29.1284
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=509 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.325799 s
+MFLOPS: 811.121 28.3211
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=509 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.320723 s
+MFLOPS: 823.96
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=509 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.314905 s
+MFLOPS: 839.183
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=512 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.408277 s
+MFLOPS: 658.768
+L1 Norm of difference: 3.6548e-147
+Result OK
+
+COMMAND N=512 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.365688 s
+MFLOPS: 735.49
+L1 Norm of difference: 2.0818e-149
+Result OK
+
+COMMAND N=512 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.309411 s
+MFLOPS: 869.265
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=512 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.307423 s
+MFLOPS: 874.884
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=512 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.344181 s
+MFLOPS: 781.449
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=512 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.34983 s
+MFLOPS: 768.829
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=512 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.388933 s
+MFLOPS: 691.532 24.1515
+L1 Norm of difference: 2.083e-149
+Result OK
+
+COMMAND N=512 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.420461 s
+MFLOPS: 639.678 22.3431
+L1 Norm of difference: 2.083e-149
+Result OK
+
+COMMAND N=512 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.323767 s
+MFLOPS: 830.721 28.9537
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=512 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.331599 s
+MFLOPS: 811.099 27.8627
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=512 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.327191 s
+MFLOPS: 822.028
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=512 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.323642 s
+MFLOPS: 831.041
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=540 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.440454 s
+MFLOPS: 716.332
+L1 Norm of difference: 4.2970e-147
+Result OK
+
+COMMAND N=540 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.436371 s
+MFLOPS: 723.034
+L1 Norm of difference: 2.2590e-149
+Result OK
+
+COMMAND N=540 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.424304 s
+MFLOPS: 743.598
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=540 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.379628 s
+MFLOPS: 831.107
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=540 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.403524 s
+MFLOPS: 781.89
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=540 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.404716 s
+MFLOPS: 779.587
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=540 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.453665 s
+MFLOPS: 695.471 24.123
+L1 Norm of difference: 2.326e-149
+Result OK
+
+COMMAND N=540 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.49924 s
+MFLOPS: 631.983 22.1036
+L1 Norm of difference: 2.326e-149
+Result OK
+
+COMMAND N=540 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.458315 s
+MFLOPS: 688.416 29.1507
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=540 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.450624 s
+MFLOPS: 700.166 28.2425
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=540 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.401216 s
+MFLOPS: 786.386
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=540 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.397011 s
+MFLOPS: 794.717
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=571 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.56715 s
+MFLOPS: 657.659
+L1 Norm of difference: 5.0907e-147
+Result OK
+
+COMMAND N=571 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.518693 s
+MFLOPS: 719.097
+L1 Norm of difference: 2.5678e-149
+Result OK
+
+COMMAND N=571 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.476518 s
+MFLOPS: 782.743
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=571 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.465863 s
+MFLOPS: 800.645
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=571 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.48337 s
+MFLOPS: 771.647
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=571 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.477439 s
+MFLOPS: 781.232
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=571 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.54263 s
+MFLOPS: 687.376 24.0927
+L1 Norm of difference: 2.554e-149
+Result OK
+
+COMMAND N=571 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.587648 s
+MFLOPS: 634.718 22.2023
+L1 Norm of difference: 2.554e-149
+Result OK
+
+COMMAND N=571 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.495151 s
+MFLOPS: 753.287 29.0902
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=571 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.505477 s
+MFLOPS: 737.899 28.2134
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=571 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.486691 s
+MFLOPS: 766.382
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=571 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.483863 s
+MFLOPS: 770.861
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=602 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.676005 s
+MFLOPS: 646.533
+L1 Norm of difference: 5.9772e-147
+Result OK
+
+COMMAND N=602 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.602056 s
+MFLOPS: 725.945
+L1 Norm of difference: 2.8260e-149
+Result OK
+
+COMMAND N=602 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.5692 s
+MFLOPS: 767.848
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=602 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.524078 s
+MFLOPS: 833.959
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=602 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.560613 s
+MFLOPS: 779.609
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=602 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.567613 s
+MFLOPS: 769.995
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=602 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.634865 s
+MFLOPS: 688.428 24.0668
+L1 Norm of difference: 2.917e-149
+Result OK
+
+COMMAND N=602 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.685533 s
+MFLOPS: 637.547 22.3857
+L1 Norm of difference: 2.917e-149
+Result OK
+
+COMMAND N=602 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.551801 s
+MFLOPS: 792.06 29.1681
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=602 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.563161 s
+MFLOPS: 776.082 28.3126
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=602 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.552576 s
+MFLOPS: 790.949
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=602 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.557358 s
+MFLOPS: 784.163
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=633 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 0.801077 s
+MFLOPS: 634.238
+L1 Norm of difference: 6.9594e-147
+Result OK
+
+COMMAND N=633 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.698065 s
+MFLOPS: 727.832
+L1 Norm of difference: 3.1300e-149
+Result OK
+
+COMMAND N=633 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.583392 s
+MFLOPS: 870.896
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=633 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.576995 s
+MFLOPS: 880.551
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=633 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.650905 s
+MFLOPS: 780.565
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=633 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.661633 s
+MFLOPS: 767.908
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=633 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.738701 s
+MFLOPS: 687.793 24.0791
+L1 Norm of difference: 3.143e-149
+Result OK
+
+COMMAND N=633 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.798576 s
+MFLOPS: 636.224 22.3089
+L1 Norm of difference: 3.143e-149
+Result OK
+
+COMMAND N=633 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.608377 s
+MFLOPS: 835.13 29.0827
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=633 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.626151 s
+MFLOPS: 811.424 28.2907
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=633 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.617306 s
+MFLOPS: 823.05
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=633 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.607075 s
+MFLOPS: 836.92
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=664 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 1.0175 s
+MFLOPS: 576.305
+L1 Norm of difference: 8.0451e-147
+Result OK
+
+COMMAND N=664 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.810186 s
+MFLOPS: 723.774
+L1 Norm of difference: 3.4691e-149
+Result OK
+
+COMMAND N=664 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.764627 s
+MFLOPS: 766.899
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=664 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.687835 s
+MFLOPS: 852.518
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=664 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.759468 s
+MFLOPS: 772.109
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=664 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.756478 s
+MFLOPS: 775.16
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=664 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.847276 s
+MFLOPS: 692.091 23.9091
+L1 Norm of difference: 3.458e-149
+Result OK
+
+COMMAND N=664 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 0.930493 s
+MFLOPS: 630.195 22.2016
+L1 Norm of difference: 3.458e-149
+Result OK
+
+COMMAND N=664 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.799265 s
+MFLOPS: 733.664 28.6838
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=664 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.831426 s
+MFLOPS: 705.284 27.868
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=664 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.74144 s
+MFLOPS: 790.883
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=664 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.717453 s
+MFLOPS: 817.324
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=695 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 1.12201 s
+MFLOPS: 599.253
+L1 Norm of difference: 9.2392e-147
+Result OK
+
+COMMAND N=695 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 0.929455 s
+MFLOPS: 723.403
+L1 Norm of difference: 3.8265e-149
+Result OK
+
+COMMAND N=695 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.835167 s
+MFLOPS: 805.074
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=695 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.816255 s
+MFLOPS: 823.726
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=695 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.865592 s
+MFLOPS: 776.775
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=695 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 0.873252 s
+MFLOPS: 769.962
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=695 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 0.972701 s
+MFLOPS: 691.241 24.0815
+L1 Norm of difference: 3.815e-149
+Result OK
+
+COMMAND N=695 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 1.06829 s
+MFLOPS: 629.391 22.2957
+L1 Norm of difference: 3.815e-149
+Result OK
+
+COMMAND N=695 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.879746 s
+MFLOPS: 764.278 29.1229
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=695 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.906011 s
+MFLOPS: 742.122 28.2498
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=695 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.852008 s
+MFLOPS: 789.16
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=695 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.838151 s
+MFLOPS: 802.207
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=726 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 1.37953 s
+MFLOPS: 555.528
+L1 Norm of difference: 1.0544e-146
+Result OK
+
+COMMAND N=726 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 1.06618 s
+MFLOPS: 718.796
+L1 Norm of difference: 4.1210e-149
+Result OK
+
+COMMAND N=726 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.915543 s
+MFLOPS: 837.064
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=726 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.910992 s
+MFLOPS: 841.247
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=726 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 0.99772 s
+MFLOPS: 768.12
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=726 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 1.00504 s
+MFLOPS: 762.523
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=726 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 1.13361 s
+MFLOPS: 676.045 24.0398
+L1 Norm of difference: 4.117e-149
+Result OK
+
+COMMAND N=726 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 1.20482 s
+MFLOPS: 636.085 22.2751
+L1 Norm of difference: 4.117e-149
+Result OK
+
+COMMAND N=726 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 0.96014 s
+MFLOPS: 798.184 29.1231
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=726 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 0.98153 s
+MFLOPS: 780.79 27.8158
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=726 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 0.97521 s
+MFLOPS: 785.85
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=726 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 0.962016 s
+MFLOPS: 796.627
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=757 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 1.57612 s
+MFLOPS: 551.189
+L1 Norm of difference: 1.1970e-146
+Result OK
+
+COMMAND N=757 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 1.19802 s
+MFLOPS: 725.147
+L1 Norm of difference: 4.4467e-149
+Result OK
+
+COMMAND N=757 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 0.993523 s
+MFLOPS: 874.406
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=757 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 0.990693 s
+MFLOPS: 876.903
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=757 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 1.12679 s
+MFLOPS: 770.989
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=757 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 1.12531 s
+MFLOPS: 772.003
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=757 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 1.26135 s
+MFLOPS: 688.743 24.0222
+L1 Norm of difference: 4.564e-149
+Result OK
+
+COMMAND N=757 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 1.37051 s
+MFLOPS: 633.881 22.1957
+L1 Norm of difference: 4.564e-149
+Result OK
+
+COMMAND N=757 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 1.05153 s
+MFLOPS: 826.173 29.0287
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=757 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 1.07273 s
+MFLOPS: 809.841 28.2104
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=757 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 1.05025 s
+MFLOPS: 827.176
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=757 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 1.04228 s
+MFLOPS: 833.503
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=768 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 1.47252 s
+MFLOPS: 616.053
+L1 Norm of difference: 1.2504e-146
+Result OK
+
+COMMAND N=768 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 1.23176 s
+MFLOPS: 736.466
+L1 Norm of difference: 4.5817e-149
+Result OK
+
+COMMAND N=768 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 1.03237 s
+MFLOPS: 878.71
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=768 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 1.02952 s
+MFLOPS: 881.138
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=768 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 1.1673 s
+MFLOPS: 777.133
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=768 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 1.1635 s
+MFLOPS: 779.672
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=768 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 1.29233 s
+MFLOPS: 701.947 24.0841
+L1 Norm of difference: 4.684e-149
+Result OK
+
+COMMAND N=768 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 1.43149 s
+MFLOPS: 633.71 22.2124
+L1 Norm of difference: 4.684e-149
+Result OK
+
+COMMAND N=768 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 1.08457 s
+MFLOPS: 836.414 29.0138
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=768 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 1.10727 s
+MFLOPS: 819.265 28.2552
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=768 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 1.092 s
+MFLOPS: 830.721
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=768 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 1.07707 s
+MFLOPS: 842.238
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=788 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 1.61681 s
+MFLOPS: 606.037
+L1 Norm of difference: 1.3510e-146
+Result OK
+
+COMMAND N=788 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 1.35649 s
+MFLOPS: 722.341
+L1 Norm of difference: 4.8823e-149
+Result OK
+
+COMMAND N=788 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 1.25803 s
+MFLOPS: 778.877
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=788 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 1.13843 s
+MFLOPS: 860.702
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=788 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 1.26769 s
+MFLOPS: 772.939
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=788 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 1.27562 s
+MFLOPS: 768.135
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=788 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 1.41674 s
+MFLOPS: 691.625 24.1506
+L1 Norm of difference: 4.856e-149
+Result OK
+
+COMMAND N=788 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 1.55289 s
+MFLOPS: 630.985 22.2366
+L1 Norm of difference: 4.856e-149
+Result OK
+
+COMMAND N=788 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 1.31916 s
+MFLOPS: 742.781 29.1262
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=788 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 1.34775 s
+MFLOPS: 727.028 28.2504
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=788 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 1.21609 s
+MFLOPS: 805.738
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=788 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 1.19644 s
+MFLOPS: 818.972
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=819 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 1.92359 s
+MFLOPS: 571.871
+L1 Norm of difference: 1.5187e-146
+Result OK
+
+COMMAND N=819 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 1.52042 s
+MFLOPS: 723.517
+L1 Norm of difference: 5.2373e-149
+Result OK
+
+COMMAND N=819 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 1.3526 s
+MFLOPS: 813.285
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=819 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 1.28732 s
+MFLOPS: 854.529
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=819 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 1.45137 s
+MFLOPS: 757.94
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=819 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 1.43006 s
+MFLOPS: 769.231
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=819 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 1.59631 s
+MFLOPS: 689.121 24.0713
+L1 Norm of difference: 5.313e-149
+Result OK
+
+COMMAND N=819 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 1.73206 s
+MFLOPS: 635.109 22.2176
+L1 Norm of difference: 5.313e-149
+Result OK
+
+COMMAND N=819 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 1.4248 s
+MFLOPS: 772.074 29.117
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=819 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 1.46556 s
+MFLOPS: 750.599 28.2528
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=819 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 1.35815 s
+MFLOPS: 809.962
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=819 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 1.34895 s
+MFLOPS: 815.487
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=850 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 2.25048 s
+MFLOPS: 546.416
+L1 Norm of difference: 1.6993e-146
+Result OK
+
+COMMAND N=850 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 1.7832 s
+MFLOPS: 689.601
+L1 Norm of difference: 5.6559e-149
+Result OK
+
+COMMAND N=850 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 1.45464 s
+MFLOPS: 845.361
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=850 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 1.44758 s
+MFLOPS: 849.485
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=850 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 1.60747 s
+MFLOPS: 764.988
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=850 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 1.61499 s
+MFLOPS: 761.424
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=850 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 1.79143 s
+MFLOPS: 686.432 23.9226
+L1 Norm of difference: 5.721e-149
+Result OK
+
+COMMAND N=850 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 1.94287 s
+MFLOPS: 632.927 22.2253
+L1 Norm of difference: 5.721e-149
+Result OK
+
+COMMAND N=850 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 1.539 s
+MFLOPS: 799.024 29.0251
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=850 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 1.57567 s
+MFLOPS: 780.425 28.2808
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=850 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 1.5363 s
+MFLOPS: 800.427
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=850 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 1.52861 s
+MFLOPS: 804.452
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=881 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 2.44848 s
+MFLOPS: 559.183
+L1 Norm of difference: 1.8938e-146
+Result OK
+
+COMMAND N=881 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 1.91692 s
+MFLOPS: 714.245
+L1 Norm of difference: 6.0045e-149
+Result OK
+
+COMMAND N=881 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 1.57132 s
+MFLOPS: 871.339
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=881 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 1.56774 s
+MFLOPS: 873.326
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=881 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 1.7884 s
+MFLOPS: 765.57
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=881 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 1.78993 s
+MFLOPS: 764.917
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=881 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 2.00622 s
+MFLOPS: 682.451 23.963
+L1 Norm of difference: 6.133e-149
+Result OK
+
+COMMAND N=881 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 2.17009 s
+MFLOPS: 630.919 22.1939
+L1 Norm of difference: 6.133e-149
+Result OK
+
+COMMAND N=881 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 1.66494 s
+MFLOPS: 822.339 29.1124
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=881 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 1.70826 s
+MFLOPS: 801.487 28.2316
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=881 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 1.68966 s
+MFLOPS: 810.31
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=881 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 1.65954 s
+MFLOPS: 825.017
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=912 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 2.99101 s
+MFLOPS: 507.776
+L1 Norm of difference: 2.1023e-146
+Result OK
+
+COMMAND N=912 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 2.11164 s
+MFLOPS: 719.233
+L1 Norm of difference: 6.4864e-149
+Result OK
+
+COMMAND N=912 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 1.93488 s
+MFLOPS: 784.942
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=912 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 1.75154 s
+MFLOPS: 867.102
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=912 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 1.97853 s
+MFLOPS: 767.621
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=912 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 2.00672 s
+MFLOPS: 756.838
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=912 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 2.19887 s
+MFLOPS: 690.701 24.0806
+L1 Norm of difference: 6.63e-149
+Result OK
+
+COMMAND N=912 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 2.40786 s
+MFLOPS: 630.753 22.2077
+L1 Norm of difference: 6.63e-149
+Result OK
+
+COMMAND N=912 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 2.03616 s
+MFLOPS: 745.895 28.6775
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=912 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 2.07451 s
+MFLOPS: 732.109 28.3254
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=912 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 1.86781 s
+MFLOPS: 813.124
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=912 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 1.85293 s
+MFLOPS: 819.657
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=943 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 3.63544 s
+MFLOPS: 461.816
+L1 Norm of difference: 2.3262e-146
+Result OK
+
+COMMAND N=943 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 2.33521 s
+MFLOPS: 718.951
+L1 Norm of difference: 6.9344e-149
+Result OK
+
+COMMAND N=943 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 2.10328 s
+MFLOPS: 798.229
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=943 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 1.94838 s
+MFLOPS: 861.693
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=943 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 2.19702 s
+MFLOPS: 764.171
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=943 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 2.24009 s
+MFLOPS: 749.478
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=943 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 2.68917 s
+MFLOPS: 624.32 23.8324
+L1 Norm of difference: 6.947e-149
+Result OK
+
+COMMAND N=943 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 2.6719 s
+MFLOPS: 628.354 22.1931
+L1 Norm of difference: 6.947e-149
+Result OK
+
+COMMAND N=943 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 2.1776 s
+MFLOPS: 770.987 29.0993
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=943 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 2.22504 s
+MFLOPS: 754.548 28.3192
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=943 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 2.06414 s
+MFLOPS: 813.368
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=943 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 2.04472 s
+MFLOPS: 821.09
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=974 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 3.45795 s
+MFLOPS: 534.976
+L1 Norm of difference: 2.5646e-146
+Result OK
+
+COMMAND N=974 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 2.56131 s
+MFLOPS: 722.255
+L1 Norm of difference: 7.4292e-149
+Result OK
+
+COMMAND N=974 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 2.2022 s
+MFLOPS: 840.03
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=974 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 2.15333 s
+MFLOPS: 859.096
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=974 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 2.42855 s
+MFLOPS: 761.738
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=974 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 2.42698 s
+MFLOPS: 762.23
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=974 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 2.70455 s
+MFLOPS: 684.003 23.8968
+L1 Norm of difference: 7.51e-149
+Result OK
+
+COMMAND N=974 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 2.95192 s
+MFLOPS: 626.684 22.3065
+L1 Norm of difference: 7.51e-149
+Result OK
+
+COMMAND N=974 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 2.30318 s
+MFLOPS: 803.201 29.1189
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=974 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 2.38313 s
+MFLOPS: 776.257 28.3585
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=974 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 2.28168 s
+MFLOPS: 810.771
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=974 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 2.2711 s
+MFLOPS: 814.546
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 4.03986 s
+MFLOPS: 503.03
+L1 Norm of difference: 2.8189e-146
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 2.83803 s
+MFLOPS: 716.05
+L1 Norm of difference: 7.8586e-149
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 2.39544 s
+MFLOPS: 848.35
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 2.34819 s
+MFLOPS: 865.422
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 2.6725 s
+MFLOPS: 760.4
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 2.67619 s
+MFLOPS: 759.352
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 2.97242 s
+MFLOPS: 683.676 23.9517
+L1 Norm of difference: 8.129e-149
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 3.38471 s
+MFLOPS: 600.397 22.1115
+L1 Norm of difference: 8.129e-149
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 2.46969 s
+MFLOPS: 822.845 29.0573
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 2.52746 s
+MFLOPS: 804.037 28.2334
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 2.48493 s
+MFLOPS: 817.797
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1005 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 2.44797 s
+MFLOPS: 830.145
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_C_native_openmp_02
+Elapsed time: 4.50967 s
+MFLOPS: 476.66
+L1 Norm of difference: 2.9827e-146
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_C_native_openmp_04
+Elapsed time: 2.93575 s
+MFLOPS: 732.208
+L1 Norm of difference: 8.2043e-149
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_C_native_openmp_05
+Elapsed time: 2.46498 s
+MFLOPS: 872.049
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_C_native_openmp_06
+Fixed row block size: 256
+Elapsed time: 2.43424 s
+MFLOPS: 883.06
+L1 Norm of difference: 0.0000e+00
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_kernel_openmp_02_orig
+Elapsed time: 2.79014 s
+MFLOPS: 770.422
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_kernel_openmp_02_mkII
+Elapsed time: 2.80959 s
+MFLOPS: 765.087
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_kernel_openmp_04_orig
+Elapsed time: 3.11141 s
+MFLOPS: 690.87 23.9236
+L1 Norm of difference: 8.387e-149
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_kernel_openmp_04_mkII
+Elapsed time: 3.37326 s
+MFLOPS: 637.241 22.0583
+L1 Norm of difference: 8.387e-149
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_kernel_openmp_05_orig
+Elapsed time: 2.58597 s
+MFLOPS: 831.247 28.9732
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_kernel_openmp_05_mkII
+Elapsed time: 2.63401 s
+MFLOPS: 816.087 28.1521
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_kernel_openmp_06_orig
+Fixed row block size: 256
+Elapsed time: 2.6116 s
+MFLOPS: 823.088
+L1 Norm of difference: 0
+Result OK
+
+COMMAND N=1024 Rgemm_gmp_kernel_openmp_06_mkII
+Fixed row block size: 256
+Elapsed time: 2.57794 s
+MFLOPS: 833.835
+L1 Norm of difference: 0
+Result OK

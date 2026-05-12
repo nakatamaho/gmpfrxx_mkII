@@ -256,6 +256,8 @@ add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_04.cpp
     Rgemm_gmp_C_native_04)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_05.cpp
     Rgemm_gmp_C_native_05)
+add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_06.cpp
+    Rgemm_gmp_C_native_06)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_01.cpp
     Rgemm_gmp_C_native_openmp_01)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_02.cpp
@@ -264,11 +266,14 @@ add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_04.cpp
     Rgemm_gmp_C_native_openmp_04)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_05.cpp
     Rgemm_gmp_C_native_openmp_05)
+add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_06.cpp
+    Rgemm_gmp_C_native_openmp_06)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_01.cpp Rgemm_gmp_kernel_01)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_02.cpp Rgemm_gmp_kernel_02)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_03.cpp Rgemm_gmp_kernel_03)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_04.cpp Rgemm_gmp_kernel_04)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_05.cpp Rgemm_gmp_kernel_05)
+add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_06.cpp Rgemm_gmp_kernel_06)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_01.cpp
                     Rgemm_gmp_kernel_openmp_01)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_02.cpp
@@ -279,3 +284,5 @@ add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_04.cpp
                     Rgemm_gmp_kernel_openmp_04)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_05.cpp
                     Rgemm_gmp_kernel_openmp_05)
+add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_06.cpp
+                    Rgemm_gmp_kernel_openmp_06)
