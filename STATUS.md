@@ -1312,6 +1312,77 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase GMP Rdot OpenMP kernel shape alignment:
+DONE
+
+Implemented features:
+- Changed `Rdot_gmp_kernel_openmp_02.cpp` to match the serial `kernel_02`
+  source shape: loop-local `mpf_class templ = dx[i] * dy[i]` followed by
+  accumulation into a per-thread partial sum.
+- Added `Rdot_gmp_kernel_openmp_03.cpp` to match serial `kernel_03`: a
+  reusable per-thread product object assigned from `dx[i] * dy[i]`.
+- Added `Rdot_gmp_kernel_openmp_04.cpp` to match serial `kernel_04`: a
+  reusable per-thread product object assigned from `dx[i]`, multiplied
+  in place by `dy[i]`, and added to a per-thread partial sum.
+- Added CMake targets and benchmark-runner entries for OpenMP 03/04 across
+  upstream `gmpxx.h`, `gmpxx_mkII`, and fixed-precision fastpath variants.
+- Updated the Rdot README to document the 01/02/03/04 serial-to-OpenMP
+  mapping and to mark older `kernel_openmp_02` benchmark rows as historical
+  names for the current `kernel_openmp_04` source shape.
+
+Tests added:
+- None. Benchmark source and documentation phase.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04.cpp`
+- `benchmarks/gmp/00_Rdot/go.sh`
+- `benchmarks/gmp/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,240p' benchmarks/CMakeLists.txt`
+- `sed -n '1,140p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
+- `sed -n '1,140p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp`
+- `sed -n '1,150p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp`
+- `sed -n '1,150p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp`
+- `sed -n '1,160p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01.cpp`
+- `sed -n '1,160p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02.cpp`
+- `rg -n "Rdot_gmp_kernel_openmp|Rdot_gmp_kernel_0|00_Rdot" benchmarks CMakeLists.txt cmake`
+- `sed -n '70,115p' benchmarks/common/run_benchmarks.sh`
+- `sed -n '1,80p' benchmarks/gmp/00_Rdot/go.sh`
+- `git status --short`
+- `cmake --build build_bench_release -j --target Rdot_gmp_kernel_openmp_01_orig Rdot_gmp_kernel_openmp_01_mkII Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_02_orig Rdot_gmp_kernel_openmp_02_mkII Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_03_orig Rdot_gmp_kernel_openmp_03_mkII Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_04_orig Rdot_gmp_kernel_openmp_04_mkII Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH`
+- `cmake --build build_bench_release -j --target Rdot_gmp_kernel_openmp_03_orig Rdot_gmp_kernel_openmp_03_mkII Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_04_orig Rdot_gmp_kernel_openmp_04_mkII Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH`
+- `OMP_NUM_THREADS=4 /bin/bash -lc 'set -e; for exe in Rdot_gmp_kernel_openmp_01_orig Rdot_gmp_kernel_openmp_01_mkII Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_02_orig Rdot_gmp_kernel_openmp_02_mkII Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_03_orig Rdot_gmp_kernel_openmp_03_mkII Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH Rdot_gmp_kernel_openmp_04_orig Rdot_gmp_kernel_openmp_04_mkII Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH; do echo "COMMAND $exe"; build_bench_release/benchmarks/gmp/00_Rdot/$exe 1000 128 | tail -n 4; done'`
+- `tail -n 80 STATUS.md`
+- `git diff --check`
+- `cmake --build build -j`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- First `cmake --build build_bench_release ...` built OpenMP 01/02 targets
+  but failed to find newly configured OpenMP 03/04 targets before the CMake
+  regeneration was visible to that invocation.
+- Second `cmake --build build_bench_release ...` for OpenMP 03/04 targets:
+  PASS.
+- Smoke run for OpenMP 01/02/03/04 orig/mkII/fixed-fastpath variants at
+  `N=1000`, `precision=128`, `OMP_NUM_THREADS=4`: PASS, all 12 variants
+  reported `OK`.
+- Initial `cmake --build build -j`: FAIL, `build` directory did not exist.
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: PASS.
+- `cmake --build build -j`: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- None.
+
 Post-phase GMP Rdot README hotpath documentation:
 DONE
 
@@ -14368,3 +14439,62 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+Post-phase GMP Rdot 10M repeat10 OpenMP 01-04 benchmark refresh:
+DONE
+
+Implemented features:
+- Re-ran the GMP Rdot benchmark at `N=10000000`, 512-bit precision,
+  `repeat=10`, and `OMP_NUM_THREADS=32` after aligning OpenMP 01/02/03/04
+  kernel source shapes with the serial 01/02/03/04 kernels.
+- Added a new raw log, summary CSV, and serial/OpenMP plots under
+  `benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513`.
+- Updated `benchmarks/gmp/00_Rdot/README.md` so the recorded sample,
+  artifact links, analysis, and hotpath summary all refer to the new current
+  OpenMP 01/02/03/04 split.
+- Documented that OpenMP 01/02 remain allocation-bound while OpenMP 03/04
+  reuse one product object per thread and reach the C native OpenMP range.
+
+Tests added:
+- None. Benchmark artifact and documentation phase.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10.log`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513/summary_rdot_n1e7_512_openmp_01_04_repeat10.csv`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_serial_Rdot.png`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_serial_summary.png`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_openmp_summary.png`
+- `STATUS.md`
+
+Exact commands run:
+- `pgrep -af 'Rdot_gmp_|benchmark_rdot_n1e8|run_benchmarks'`
+- `git status --short`
+- `mkdir -p benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513`
+- `OMP_NUM_THREADS=32 /bin/bash -lc 'set -u; out="benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10.log"; ... run Rdot 01/02/03/04 variants 10 times ...'`
+- `python3 benchmarks/common/plot.py benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10.log --output-dir benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513 --backend GMP`
+- `find benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513 -maxdepth 1 -type f -printf '%f %s bytes\n' | sort`
+- `python3 - <<'PY' ... parse Rdot repeat10 log and write summary CSV ... PY`
+- `sed -n '1,330p' benchmarks/gmp/00_Rdot/README.md`
+- `sed -n '60,145p' benchmarks/gmp/00_Rdot/README.md && sed -n '250,340p' benchmarks/gmp/00_Rdot/README.md`
+- `tail -n 90 STATUS.md`
+- `rg -n "Post-phase GMP Rdot OpenMP|Post-phase GMP Rdot README|Post-phase GMP Rgemm" STATUS.md`
+- `wc -l STATUS.md && sed -n '1840,1905p' STATUS.md`
+- `tail -n 120 STATUS.md | head -n 120`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `pgrep`: PASS, no stale 100M benchmark process remained.
+- Rdot benchmark run: PASS, all 26 variants completed 10/10 runs and all runs
+  reported `OK`.
+- Plot generation: PASS, serial/OpenMP plot and summary images written.
+- Summary CSV generation: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- The interrupted 100M benchmark left an untracked partial artifact directory
+  under `benchmarks/gmp/results_raw/rdot_n1e8_openmp_01_04_20260513`; it is
+  not part of this benchmark refresh.

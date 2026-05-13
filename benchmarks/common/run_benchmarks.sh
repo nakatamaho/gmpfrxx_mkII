@@ -104,6 +104,12 @@ run_variants() {
             "Rdot_gmp_kernel_openmp_02_orig"
             "Rdot_gmp_kernel_openmp_02_mkII"
             "Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_gmp_kernel_openmp_03_orig"
+            "Rdot_gmp_kernel_openmp_03_mkII"
+            "Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_gmp_kernel_openmp_04_orig"
+            "Rdot_gmp_kernel_openmp_04_mkII"
+            "Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH"
         )
         ;;
     Raxpy)

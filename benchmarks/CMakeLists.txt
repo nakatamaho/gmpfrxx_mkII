@@ -151,6 +151,10 @@ add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_01.cpp
     Rdot_gmp_kernel_openmp_01)
 add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_02.cpp
     Rdot_gmp_kernel_openmp_02)
+add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_03.cpp
+    Rdot_gmp_kernel_openmp_03)
+add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_openmp_04.cpp
+    Rdot_gmp_kernel_openmp_04)
 
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_01.cpp
     Rdot_mpfr_C_native_01)

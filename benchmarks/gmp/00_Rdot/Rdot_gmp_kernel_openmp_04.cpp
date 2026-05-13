@@ -56,10 +56,12 @@ mpf_class _Rdot(int64_t n, mpf_class *dx, int64_t incx, mpf_class *dy, int64_t i
 #pragma omp parallel
     {
         mpf_class partial = 0.0;
+        mpf_class templ;
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < n; ++i) {
-            mpf_class templ = dx[i] * dy[i];
+            templ = dx[i];
+            templ *= dy[i];
             partial += templ;
         }
 

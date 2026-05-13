@@ -78,34 +78,45 @@ Variant names:
 - `*_mkII`: this header with the default precision policy.
 - `*_openmp_*`: OpenMP variant where the eager benchmark provided one.
 
-## Recorded go.sh Sample
+## Recorded Repeat-10 Sample
 
-![Rdot serial benchmark](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
+![Rdot serial benchmark](../results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
 
-![Rdot OpenMP benchmark](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png)
+![Rdot OpenMP benchmark](../results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png)
 
-The committed sample run uses the original `go.sh` dimensions:
+The current committed sample run uses:
 
 ```text
-N = 100000000, precision = 512
+N = 10000000, precision = 512, repeat = 10, OMP_NUM_THREADS = 32
 ```
 
-Results are stored in [../results_raw/Linux_Ryzen_3970X_32-Core/](../results_raw/Linux_Ryzen_3970X_32-Core/):
+Results are stored in
+[../results_raw/rdot_n1e7_openmp_01_04_20260513/](../results_raw/rdot_n1e7_openmp_01_04_20260513/):
 
-- [Raw log](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331.log)
-- [Serial plot](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
-- [Serial PDF](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_serial_Rdot.pdf)
-- [OpenMP plot](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png)
-- [OpenMP PDF](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_openmp_Rdot.pdf)
+- [Raw log](../results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10.log)
+- [Summary CSV](../results_raw/rdot_n1e7_openmp_01_04_20260513/summary_rdot_n1e7_512_openmp_01_04_repeat10.csv)
+- [Serial plot](../results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
+- [Serial summary plot](../results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_serial_summary.png)
+- [OpenMP plot](../results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png)
+- [OpenMP summary plot](../results_raw/rdot_n1e7_openmp_01_04_20260513/benchmark_rdot_n1e7_512_openmp_01_04_repeat10_Linux_Ryzen_3970X_32-Core_openmp_summary.png)
 
-All Rdot variants in that run report `Result OK`.
+All 26 Rdot variants in that run report `OK` in all 10 runs.
 
-The OpenMP variants improve the timed dot-product body by about 17-22x in the
-recorded run.  The full executable wall time improves much less, because the
-benchmark allocates and initializes two 100000000-element vectors before the
-timed kernel.  For non-OpenMP comparison, `kernel_03` is the strongest serial
-wrapper family in this run, and `mkII` is essentially tied with upstream
-`gmpxx.h` there.
+For serial comparison, `kernel_03` is the strongest wrapper family because it
+uses a reusable product object and keeps product initialization outside the
+loop.  `kernel_01` and `kernel_02` allocate one product object per element and
+therefore remain well below C native.  `kernel_01_mkII_FIXED_PRECISION_FASTPATH`
+removes that per-element allocation and returns close to the C native serial
+baseline.
+
+For OpenMP comparison, the current 01/02/03/04 split makes the source-shape
+effect explicit.  `kernel_openmp_01` and `kernel_openmp_02` still allocate per
+element and only reach about 43 MFLOPS despite 32 threads.  `kernel_openmp_03`
+and `kernel_openmp_04` reuse one product object per thread, reduce timed-kernel
+allocations to thread count scale, and run in the same range as raw C native
+OpenMP.  The full executable wall time improves much less than the timed
+kernel because each run allocates and initializes two 10000000-element vectors
+before timing `_Rdot()`.
 
 ## Kernel Shapes
 
@@ -122,7 +133,9 @@ unrolled expression and should not be mixed with the timed-kernel disassembly.
 | `kernel_03` | `templ = dx[i] * dy[i]; temp += templ;` | `templ` is constructed once before the loop and reused. | Best serial wrapper shape in the recorded runs: the loop has the same `mpf_mul` + `mpf_add` call shape as C native. |
 | `kernel_04` | `templ = dx[i]; templ *= dy[i]; temp += templ;` | `templ` is reused, but each iteration copies `dx[i]` before in-place multiply. | Avoids per-iteration construction but adds `mpf_set`; useful for separating product reuse from expression assignment. |
 | `kernel_openmp_01` | Per-thread `templ += dx[i] * dy[i];` | One accumulator per thread, final `critical` add. | Parallel version of the expression-friendly `kernel_01` shape. |
-| `kernel_openmp_02` | Per-thread `templl = dx[i]; templl *= dy[i]; tmpl += templl;` | One accumulator and one product object per thread, final `critical` add. | Parallel version of the reused-temporary/in-place multiply shape. |
+| `kernel_openmp_02` | Per-thread `mpf_class templ = dx[i] * dy[i]; partial += templ;` | One accumulator per thread and one loop-local product object per element, final `critical` add. | Parallel version of the loop-local-temporary `kernel_02` shape. |
+| `kernel_openmp_03` | Per-thread `templ = dx[i] * dy[i]; partial += templ;` | One accumulator and one reusable product object per thread, final `critical` add. | Parallel version of the reusable-expression-product `kernel_03` shape. |
+| `kernel_openmp_04` | Per-thread `templ = dx[i]; templ *= dy[i]; partial += templ;` | One accumulator and one reusable product object per thread, final `critical` add. | Parallel version of the reused-temporary/in-place multiply `kernel_04` shape. |
 
 For `kernel_01_mkII`, the fixed-precision fastpath build changes the product
 temporary from a scoped `mpf_init2` / `mpf_clear` object to thread-local scratch
@@ -239,43 +252,58 @@ copy before the multiply:
 33f6: jne    33c0
 ```
 
-The OpenMP kernels do not change the scalar GMP operation shape.  They split
-the vector loop across threads and then serialize only the final accumulation
-through `critical`, so the speedup comes from distributing many independent
-`mpf_mul` / `mpf_add` pairs, not from changing GMP's arithmetic cost.
+The OpenMP kernels mirror the serial source shapes.  `kernel_openmp_01` maps
+to serial `kernel_01`, `kernel_openmp_02` maps to serial `kernel_02`,
+`kernel_openmp_03` maps to serial `kernel_03`, and `kernel_openmp_04` maps to
+serial `kernel_04`.  They split the vector loop across threads and then
+serialize only the final accumulation through `critical`, so the speedup comes
+from distributing many independent `mpf_mul` / `mpf_add` pairs, not from
+changing GMP's arithmetic cost.
 
 ## Recorded Hotpath Run
 
-The repeat-10 run in
-[../results_raw/rdot_n1e7_20260509/](../results_raw/rdot_n1e7_20260509/)
+The current repeat-10 run in
+[../results_raw/rdot_n1e7_openmp_01_04_20260513/](../results_raw/rdot_n1e7_openmp_01_04_20260513/)
 uses:
 
 ```text
-N = 10000000, precision = 512, repeat = 10
+N = 10000000, precision = 512, repeat = 10, OMP_NUM_THREADS = 32
 ```
 
-Maximum MFLOPS in that log:
+Maximum and average MFLOPS in that log:
 
-| Variant | Max MFLOPS | Interpretation |
-|---------|------------|----------------|
-| `C_native_01` | 32.6331 | Raw serial baseline. |
-| `kernel_01_orig` | 27.8489 | Per-iteration product init/clear from expression materialization. |
-| `kernel_01_mkII` | 22.5465 | Same hotpath class as upstream `kernel_01`; wrapper default-precision machinery does not remove the loop temporary in the normal build. |
-| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 29.5412 | Faster than default `kernel_01_mkII` because repeated product allocation is avoided in the fixed-precision case. |
-| `kernel_02_orig` | 27.2624 | Loop-local `templ` construction remains expensive. |
-| `kernel_02_mkII` | 26.0789 | Same lifetime problem as `kernel_02_orig`. |
-| `kernel_03_orig` | 32.8438 | Reused product object; best serial wrapper result in this run. |
-| `kernel_03_mkII` | 31.0479 | Same loop call shape as C native and upstream `kernel_03`; remaining gap is setup/object-policy overhead around the loop. |
-| `kernel_04_orig` | 31.2640 | Reused product object plus an explicit `mpf_set` before multiply. |
-| `kernel_04_mkII` | 30.9857 | Similar to upstream `kernel_04`; extra `mpf_set` keeps it slightly behind the clean `kernel_03` shape. |
-| `C_native_openmp_01` | 462.748 | Raw OpenMP baseline. |
-| `kernel_openmp_01_orig` | 449.395 | Per-thread expression accumulator scales well despite wrapper overhead. |
-| `kernel_openmp_01_mkII` | 431.040 | Same source shape as serial `kernel_01`, but per-thread work amortizes overhead well. |
-| `kernel_openmp_02_orig` | 457.709 | Best wrapper OpenMP result in this run. |
-| `kernel_openmp_02_mkII` | 435.687 | Reused per-thread product object; close to `kernel_openmp_01_mkII`. |
+| Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
+|---------|------------|------------|----------------|
+| `C_native_01` | 33.279 | 32.716 | Raw serial baseline. |
+| `kernel_01_orig` | 28.144 | 27.688 | Per-element product allocation from expression materialization. |
+| `kernel_01_mkII` | 28.537 | 27.743 | Same allocation class as upstream `kernel_01`. |
+| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 32.506 | 31.646 | Fixed-precision scratch removes the per-element product allocation. |
+| `kernel_02_orig` | 27.547 | 27.147 | Loop-local `templ` construction remains expensive. |
+| `kernel_02_mkII` | 27.618 | 27.275 | Same lifetime problem as `kernel_02_orig`. |
+| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 27.987 | 27.290 | Fastpath does not help because the source explicitly constructs `templ` in the loop. |
+| `kernel_03_orig` | 33.079 | 32.746 | Reused product object; strongest serial upstream wrapper shape. |
+| `kernel_03_mkII` | 33.019 | 32.665 | Same loop call shape as C native and upstream `kernel_03`. |
+| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 33.627 | 32.936 | Best serial result in this run. |
+| `kernel_04_orig` | 31.758 | 31.301 | Reused product object plus an explicit `mpf_set` before multiply. |
+| `kernel_04_mkII` | 31.503 | 30.966 | Similar to upstream `kernel_04`; `mpf_set` keeps it behind `kernel_03`. |
+| `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 32.051 | 31.308 | Slightly better than default `mkII`, still below `kernel_03`. |
+| `C_native_openmp_01` | 586.399 | 536.847 | Raw OpenMP baseline. |
+| `kernel_openmp_01_orig` | 43.388 | 43.104 | Per-element expression temporary allocation dominates even with 32 threads. |
+| `kernel_openmp_01_mkII` | 43.396 | 43.093 | Same allocation class as upstream OpenMP 01. |
+| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 583.865 | 522.420 | Fixed-precision scratch removes the per-element allocation and reaches C native OpenMP range. |
+| `kernel_openmp_02_orig` | 43.349 | 43.185 | Parallel version of serial `kernel_02`; loop-local construction dominates. |
+| `kernel_openmp_02_mkII` | 43.051 | 42.896 | Same loop-local construction cost as upstream OpenMP 02. |
+| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 43.482 | 43.206 | Fastpath does not help explicit loop-local construction. |
+| `kernel_openmp_03_orig` | 582.196 | 504.927 | Reused product object per thread; reaches C native OpenMP range. |
+| `kernel_openmp_03_mkII` | 578.168 | 516.853 | Same source shape as serial `kernel_03`, parallelized. |
+| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 587.490 | 510.353 | Best max MFLOPS in this run. |
+| `kernel_openmp_04_orig` | 586.742 | 523.251 | Reused product object per thread with `mpf_set` before multiply. |
+| `kernel_openmp_04_mkII` | 586.888 | 500.311 | Same source shape as serial `kernel_04`, parallelized. |
+| `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH` | 583.145 | 505.720 | In the same range as C native OpenMP; no per-element allocation. |
 
-The main lesson is that `Rdot` is dominated by whether the product temporary is
-allocated inside the loop.  Expression-template syntax alone is not enough:
-`kernel_01` looks ideal at source level, but the default hotpath still performs
-`mpf_init2` / `mpf_clear` per element.  `kernel_03` is faster because it makes
-the product lifetime explicit and moves initialization outside the loop.
+The main lesson is unchanged but clearer after adding OpenMP 03/04: `Rdot` is
+dominated by whether the product temporary is allocated inside the timed loop.
+Expression-template syntax alone is not enough.  `kernel_01` looks ideal at
+source level, but the default hotpath still performs product materialization
+per element.  `kernel_03` and `kernel_openmp_03` are faster because they make
+the product lifetime explicit and move initialization outside the loop.
