@@ -114,7 +114,8 @@ The result artifacts are:
 
 - [CSV](../../results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.csv)
 - [Raw log](../../results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.log)
-- [Plot](../../results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.png)
+
+![GMP Rgemm OpenMP 02/04/05/06 sweep, 512-bit precision](../../results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.png)
 
 All 456 runs report `Result OK`.
 

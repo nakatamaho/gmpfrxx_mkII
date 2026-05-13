@@ -1312,6 +1312,35 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase GMP Rgemm README inline plot:
+DONE
+
+Implemented features:
+- Changed the recorded GMP Rgemm OpenMP 02/04/05/06 512-bit plot reference in
+  `benchmarks/gmp/03_Rgemm/README.md` from a plain link to an inline Markdown
+  image so the graph renders directly in the README.
+
+Tests added:
+- None. Documentation-only phase.
+
+Tests updated:
+- `benchmarks/gmp/03_Rgemm/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `rg -n "Plot|rgemm_gmp_openmp_02_04_05_06_step31_core32_512" benchmarks/gmp/03_Rgemm/README.md`
+- `git diff --check`
+- `git diff -- benchmarks/gmp/03_Rgemm/README.md`
+- `tail -80 STATUS.md`
+
+Pass/fail result:
+- Documentation update completed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
 Post-phase GMP Rgemm README 02/04/05/06 sweep notes:
 DONE
 
