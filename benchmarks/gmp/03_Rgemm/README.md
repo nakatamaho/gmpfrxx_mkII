@@ -98,3 +98,58 @@ than the vector kernels, so the OpenMP speedup is closer to what one expects
 from the available cores.  In serial mode, `kernel_03` is the fastest wrapper
 family in this run, while OpenMP makes the differences between wrapper
 variants smaller than the difference between serial and parallel execution.
+
+## Recorded OpenMP 02/04/05/06 Sweep
+
+Commit `f996de7` records a focused OpenMP sweep for Rgemm kernels `02`, `04`,
+`05`, and `06` at 512-bit precision. The run used 32 OpenMP threads and square
+matrices with sizes:
+
+```text
+N = M = K = 13 + 31*k, up to 1024
+extra sizes: 128, 256, 512, 768, 1024
+```
+
+The result artifacts are:
+
+- [CSV](../../results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.csv)
+- [Raw log](../../results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.log)
+- [Plot](../../results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_512.png)
+
+All 456 runs report `Result OK`.
+
+Kernel shapes:
+
+| Kernel | Shape | Intent | Observed behavior |
+|---|---|---|---|
+| `02` | Rank-1 update, `j -> p -> i` | Reuse `alpha * B[p,j]` across all rows. | Simple and stable; strong at small and mid sizes, especially for wrapper variants. |
+| `04` | 4x4 `C` tile accumulator | Accumulate a 4x4 output tile in scratch objects before writing back. | Usually weak for GMP `mpf_t`/`mpf_class`; the scratch accumulators are expensive objects, not CPU registers. |
+| `05` | Four-column `B` panel | Compute `alpha * B[p,j:j+3]` once and stream it over all rows. | Strong large-size C native path and often competitive for wrappers. |
+| `06` | Kernel `05` plus fixed 256-row blocking | Keep the four-column `B` panel and process rows in `min(M, 256)` chunks. | Best overall in the recorded sweep; also the best `gmpxx_mkII` wrapper result. |
+
+Representative winners:
+
+| Category | Variant | Size | MFLOPS |
+|---|---:|---:|---:|
+| Best overall | `Rgemm_gmp_C_native_openmp_06` | `N=1024` | `883.060` |
+| Best `gmpxx_mkII` wrapper | `Rgemm_gmp_kernel_openmp_06_mkII` | `N=768` | `842.238` |
+| Best upstream `gmpxx.h` wrapper | `Rgemm_gmp_kernel_openmp_05_orig` | `N=768` | `836.414` |
+
+Selected-size winners:
+
+| Size | Winner | MFLOPS |
+|---:|---|---:|
+| `128` | `Rgemm_gmp_kernel_openmp_02_mkII` | `399.283` |
+| `256` | `Rgemm_gmp_C_native_openmp_06` | `772.462` |
+| `512` | `Rgemm_gmp_C_native_openmp_06` | `874.884` |
+| `768` | `Rgemm_gmp_C_native_openmp_06` | `881.138` |
+| `1024` | `Rgemm_gmp_C_native_openmp_06` | `883.060` |
+
+The main conclusion from this sweep is that the 4x4 accumulator form in
+`kernel_04` does not translate well to GMP floating objects. In ordinary
+floating-point GEMM this would map naturally to registers, but each GMP
+accumulator is a managed multiple-precision object. The four-column panel in
+`kernel_05` is a better match because it reuses a small number of scaled `B`
+values without creating a 4x4 object accumulator. `kernel_06` keeps that
+structure and adds row blocking, which improves OpenMP work granularity and
+large-size behavior in this measurement.
