@@ -14498,3 +14498,46 @@ Known issues:
 - The interrupted 100M benchmark left an untracked partial artifact directory
   under `benchmarks/gmp/results_raw/rdot_n1e8_openmp_01_04_20260513`; it is
   not part of this benchmark refresh.
+
+Post-phase GMP Rdot OpenMP 03 hotpath documentation:
+DONE
+
+Implemented features:
+- Updated `benchmarks/gmp/00_Rdot/README.md` with a release-binary
+  disassembly comparison for `C_native_openmp_01`, `kernel_openmp_03_orig`,
+  `kernel_openmp_03_mkII`, and
+  `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH`.
+- Documented that these OpenMP 03 variants have the same timed inner-loop
+  shape: one `__gmpf_mul`, one `__gmpf_add`, pointer increments, and the loop
+  branch.
+- Documented that the small max-MFLOPS ordering differences in the repeat-10
+  run should be treated as OpenMP run-to-run variance, not as a different
+  arithmetic kernel.
+
+Tests added:
+- None. Documentation-only phase.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '120,340p' benchmarks/gmp/00_Rdot/README.md`
+- `tail -80 STATUS.md`
+- `git status --short`
+- `objdump -d --demangle --no-show-raw-insn --start-address=0x3430 --stop-address=0x35a0 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01`
+- `objdump -d --demangle --no-show-raw-insn --start-address=0x2f70 --stop-address=0x3130 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig`
+- `objdump -d --demangle --no-show-raw-insn --start-address=0x3400 --stop-address=0x35d0 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII`
+- `objdump -d --demangle --no-show-raw-insn --start-address=0x34a0 --stop-address=0x3670 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH`
+- `git diff -- benchmarks/gmp/00_Rdot/README.md`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Documentation update completed.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- Existing untracked benchmark artifacts remain outside this documentation
+  update.

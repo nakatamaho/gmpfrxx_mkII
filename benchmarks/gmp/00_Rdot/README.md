@@ -260,6 +260,97 @@ serialize only the final accumulation through `critical`, so the speedup comes
 from distributing many independent `mpf_mul` / `mpf_add` pairs, not from
 changing GMP's arithmetic cost.
 
+### OpenMP 03 Hotpath Equivalence
+
+The repeat-10 OpenMP 03 result should be read with the release hotpath in
+mind.  `C_native_openmp_01`, `kernel_openmp_03_orig`,
+`kernel_openmp_03_mkII`, and
+`kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` all reduce to the same inner
+loop shape: one `__gmpf_mul`, one `__gmpf_add`, pointer increments, and the
+loop branch.  The wrapper and fixed-precision differences are outside the
+timed arithmetic loop, mostly in per-thread object initialization and default
+precision setup.  Therefore small max-MFLOPS ordering changes among these
+variants are OpenMP run-to-run variance, not a different arithmetic kernel.
+
+`C_native_openmp_01` baseline:
+
+```asm
+34f0: mov    %r15,%rdx          # dy[i]
+34f3: mov    %r14,%rsi          # dx[i]
+34f6: mov    %rbp,%rdi          # templ
+34f9: add    $0x1,%r13
+34fd: call   __gmpf_mul@plt
+3502: mov    %rbp,%rdx          # templ
+3505: add    $0x18,%r14
+3509: add    $0x18,%r15
+350d: lea    0x10(%rsp),%rsi    # temp
+3512: lea    0x10(%rsp),%rdi    # temp
+3517: call   __gmpf_add@plt
+351c: cmp    %r13,%r12
+351f: jne    34f0
+```
+
+`kernel_openmp_03_orig`:
+
+```asm
+3010: mov    %r15,%rdx          # dy[i]
+3013: mov    %r13,%rsi          # dx[i]
+3016: mov    %rbp,%rdi          # templ
+3019: add    $0x1,%r14
+301d: call   __gmpf_mul@plt
+3022: mov    %rbp,%rdx          # templ
+3025: add    $0x18,%r13
+3029: add    $0x18,%r15
+302d: lea    0x10(%rsp),%rsi    # partial
+3032: lea    0x10(%rsp),%rdi    # partial
+3037: call   __gmpf_add@plt
+303c: cmp    %r14,%r12
+303f: jne    3010
+```
+
+`kernel_openmp_03_mkII`:
+
+```asm
+34e0: mov    %rbx,%rdx          # dy[i]
+34e3: mov    %r14,%rsi          # dx[i]
+34e6: mov    %r12,%rdi          # templ
+34e9: add    $0x1,%r15
+34ed: call   __gmpf_mul@plt
+34f2: mov    %r12,%rdx          # templ
+34f5: mov    %rbp,%rsi          # partial
+34f8: mov    %rbp,%rdi          # partial
+34fb: call   __gmpf_add@plt
+3500: add    $0x18,%r14
+3504: add    $0x18,%rbx
+3508: cmp    %r15,%r13
+350b: jne    34e0
+```
+
+`kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH`:
+
+```asm
+3580: mov    %rbx,%rdx          # dy[i]
+3583: mov    %r14,%rsi          # dx[i]
+3586: mov    %r12,%rdi          # templ
+3589: add    $0x1,%r15
+358d: call   __gmpf_mul@plt
+3592: mov    %r12,%rdx          # templ
+3595: mov    %rbp,%rsi          # partial
+3598: mov    %rbp,%rdi          # partial
+359b: call   __gmpf_add@plt
+35a0: add    $0x18,%r14
+35a4: add    $0x18,%rbx
+35a8: cmp    %r15,%r13
+35ab: jne    3580
+```
+
+The allocation counters support the same conclusion.  In the recorded timed
+kernel, `C_native_openmp_01` performs 64 allocations and each OpenMP 03 wrapper
+variant performs 65 allocations, which is consistent with one or two
+per-thread temporaries and no per-element product allocation.  That is why
+OpenMP 03 reaches the C native OpenMP range, while OpenMP 01/02 variants that
+materialize a product object per element remain near 43 MFLOPS.
+
 ## Recorded Hotpath Run
 
 The current repeat-10 run in
