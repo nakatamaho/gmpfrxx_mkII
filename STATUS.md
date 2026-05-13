@@ -1312,6 +1312,61 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase GMP Rdot README hotpath documentation:
+DONE
+
+Implemented features:
+- Documented the timed `00_Rdot` kernel shapes for C native, upstream
+  `gmpxx.h`, `gmpxx_mkII`, fixed-precision fastpath, and OpenMP variants.
+- Added disassembly-based hotpath notes comparing the C native baseline with
+  `kernel_01_mkII`, `kernel_01_mkII_FIXED_PRECISION_FASTPATH`,
+  `kernel_03_mkII`, and `kernel_04_mkII`.
+- Added a repeat-10 `N=10000000`, 512-bit maximum-MFLOPS summary from the
+  committed `rdot_n1e7_20260509` log.
+
+Tests added:
+- None. Documentation-only phase.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/gmp/00_Rdot/README.md`
+- `rg -n "void _Rdot|mpf_class|#pragma omp|mpf_mul|mpf_add|templ" benchmarks/gmp/00_Rdot/*.cpp benchmarks/gmp/00_Rdot/Rdot.hpp`
+- `git status --short`
+- `nm -C build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 | rg " _Rdot"`
+- `nm -C build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII | rg " _Rdot|mpf_compound|scoped_mpf|thread_scratch"`
+- `nm -C build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII | rg " _Rdot|mpf_compound|scoped_mpf|thread_scratch"`
+- `nm -C build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH | rg " _Rdot|mpf_compound|scoped_mpf|thread_scratch"`
+- `objdump -Cd --no-show-raw-insn --start-address=0x34d0 --stop-address=0x3590 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x33e0 --stop-address=0x3550 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3310 --stop-address=0x3450 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3490 --stop-address=0x3620 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH | c++filt`
+- `nm -C build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig | rg " _Rdot"`
+- `nm -C build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig | rg " _Rdot"`
+- `nm -C build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII | rg " _Rdot"`
+- `nm -C build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII | rg " _Rdot"`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3450 --stop-address=0x35d0 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x33d0 --stop-address=0x34f0 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3350 --stop-address=0x34d0 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3310 --stop-address=0x3450 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII | c++filt`
+- `rg -n "^Running|^Elapsed time|^MFLOPS|BENCH_ALLOC_COUNTS|Result OK" benchmarks/gmp/results_raw/rdot_n1e7_20260509/benchmark_rdot_n1e7_20260509_143146.log`
+- `find benchmarks/gmp/results_raw -maxdepth 3 -type f \( -name '*Rdot*.png' -o -name '*rdot*.csv' -o -name '*Rdot*.csv' \) | sort`
+- `sed -n '1,140p' benchmarks/gmp/results_raw/rdot_n1e7_20260509/benchmark_rdot_n1e7_20260509_143146.log`
+- `awk '/^COMMAND Rdot /{label=$3; if ($4 ~ /^build/) label=$3; else label=$3"_"$4} /^MFLOPS:/{if ($2+0 > max[label]) max[label]=$2+0} END{for (l in max) print l, max[l]}' benchmarks/gmp/results_raw/rdot_n1e7_20260509/benchmark_rdot_n1e7_20260509_143146.log | sort`
+- `tail -n 80 STATUS.md`
+- `git diff -- benchmarks/gmp/00_Rdot/README.md STATUS.md`
+- `git diff --check`
+- `git status --short`
+
+Pass/fail result:
+- Documentation update completed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
 Post-phase GMP Rgemm 1024-bit OpenMP 02/04/05/06 sweep notes:
 DONE
 
