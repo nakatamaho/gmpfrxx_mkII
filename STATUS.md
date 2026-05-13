@@ -1312,6 +1312,46 @@ Pass/fail result:
 Known issues:
 - None.
 
+Post-phase GMP Rgemm 1024-bit OpenMP 02/04/05/06 sweep notes:
+DONE
+
+Implemented features:
+- Ran the GMP Rgemm OpenMP 02/04/05/06 sweep at 1024-bit precision with 32
+  OpenMP threads and the same size set as the recorded 512-bit sweep.
+- Added the 1024-bit CSV, raw log, and plot artifacts under
+  `benchmarks/results_raw`.
+- Added a 1024-bit README section with inline plot rendering, representative
+  winners, selected-size winners, and analysis of why the 1024-bit ranking
+  differs from the 512-bit sweep.
+
+Tests added:
+- None. Benchmark artifact and documentation phase.
+
+Tests updated:
+- `benchmarks/gmp/03_Rgemm/README.md`
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_1024.csv`
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_1024.log`
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_1024.png`
+- `STATUS.md`
+
+Exact commands run:
+- `python3 /tmp/run_rgemm_gmp_1024_sweep.py`
+- `python3 - <<'PY' ... summarize 1024-bit CSV ... PY`
+- `ls -lh benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_1024.csv benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_1024.log benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_1024.png`
+- `git status --short`
+- `sed -n '90,190p' benchmarks/gmp/03_Rgemm/README.md`
+- `tail -80 STATUS.md`
+- `perl -0pi -e 's/\r\n/\n/g; s/\r/\n/g' benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_1024.csv`
+- `perl -0pi -e 's/\n+\z/\n/' benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step31_core32_1024.log`
+- `python3 - <<'PY' ... verify normalized 1024-bit CSV rows and failures ... PY`
+
+Pass/fail result:
+- 1024-bit benchmark sweep: PASS, 456/456 rows report `Result OK`.
+- Generated artifacts: PASS, CSV/log/png written.
+
+Known issues:
+- None.
+
 Post-phase GMP Rgemm README inline plot:
 DONE
 
