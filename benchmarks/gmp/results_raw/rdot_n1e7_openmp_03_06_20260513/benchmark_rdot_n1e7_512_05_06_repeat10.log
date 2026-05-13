@@ -1,0 +1,963 @@
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+BENCHMARK_PARAMS N=10000000 precision=512 repeat=10 OMP_NUM_THREADS=32
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.59924 s
+MFLOPS: 33.3756
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.22
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.608314 s
+MFLOPS: 32.8778
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.34
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.609175 s
+MFLOPS: 32.8313
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.33
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.612529 s
+MFLOPS: 32.6515
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.35
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.612611 s
+MFLOPS: 32.6471
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.34
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.614254 s
+MFLOPS: 32.5598
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.38
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.613708 s
+MFLOPS: 32.5888
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.38
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.612072 s
+MFLOPS: 32.6759
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.39
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.61677 s
+MFLOPS: 32.427
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.36
+
+COMMAND Rdot kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.593489 s
+MFLOPS: 33.699
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.20
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.616347 s
+MFLOPS: 32.4492
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.21
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.609571 s
+MFLOPS: 32.81
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.16
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.610935 s
+MFLOPS: 32.7367
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.15
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.607515 s
+MFLOPS: 32.921
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.10
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.609417 s
+MFLOPS: 32.8182
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.15
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.609717 s
+MFLOPS: 32.8021
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.14
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.607483 s
+MFLOPS: 32.9227
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.17
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.607336 s
+MFLOPS: 32.9307
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.13
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.609232 s
+MFLOPS: 32.8282
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.16
+
+COMMAND Rdot kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.6093 s
+MFLOPS: 32.8246
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.15
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.606569 s
+MFLOPS: 32.9724
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.10
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.606932 s
+MFLOPS: 32.9526
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.10
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.608555 s
+MFLOPS: 32.8648
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.12
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.612994 s
+MFLOPS: 32.6267
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.09
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.612402 s
+MFLOPS: 32.6583
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.14
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.619342 s
+MFLOPS: 32.2924
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.16
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.611136 s
+MFLOPS: 32.7259
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.16
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.61348 s
+MFLOPS: 32.6009
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.20
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.608163 s
+MFLOPS: 32.8859
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.12
+
+COMMAND Rdot kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.606511 s
+MFLOPS: 32.9755
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.12
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.606388 s
+MFLOPS: 32.9822
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.34
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.59196 s
+MFLOPS: 33.7861
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.17
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.609406 s
+MFLOPS: 32.8188
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.36
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.614334 s
+MFLOPS: 32.5556
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.37
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.605826 s
+MFLOPS: 33.0128
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.36
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.611834 s
+MFLOPS: 32.6886
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.38
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.614451 s
+MFLOPS: 32.5494
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.37
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.611337 s
+MFLOPS: 32.7152
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.43
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.606212 s
+MFLOPS: 32.9917
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.35
+
+COMMAND Rdot kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.606019 s
+MFLOPS: 33.0023
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.35
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.627047 s
+MFLOPS: 31.8956
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.17
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.607925 s
+MFLOPS: 32.8988
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.02
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.600042 s
+MFLOPS: 33.331
+DIFF: 2.396e-148 OK
+WALL_SECONDS 5.98
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.61749 s
+MFLOPS: 32.3892
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.20
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.608197 s
+MFLOPS: 32.8841
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.14
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.614385 s
+MFLOPS: 32.5529
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.24
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.612959 s
+MFLOPS: 32.6286
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.20
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.614702 s
+MFLOPS: 32.5361
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.20
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.597171 s
+MFLOPS: 33.4912
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.02
+
+COMMAND Rdot kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.614581 s
+MFLOPS: 32.5425
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.18
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.612201 s
+MFLOPS: 32.669
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.17
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.612121 s
+MFLOPS: 32.6733
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.21
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.606314 s
+MFLOPS: 32.9862
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.18
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.611396 s
+MFLOPS: 32.712
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.21
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.602663 s
+MFLOPS: 33.1861
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.12
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.61757 s
+MFLOPS: 32.385
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.20
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.611063 s
+MFLOPS: 32.7298
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.21
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.601834 s
+MFLOPS: 33.2317
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.11
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.616281 s
+MFLOPS: 32.4527
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.19
+
+COMMAND Rdot kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.609367 s
+MFLOPS: 32.8209
+DIFF: 2.396e-148 OK
+WALL_SECONDS 6.17
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0420779 s
+MFLOPS: 475.308
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.82
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0437504 s
+MFLOPS: 457.139
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.86
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0353073 s
+MFLOPS: 566.455
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.84
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0440987 s
+MFLOPS: 453.528
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.87
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0355268 s
+MFLOPS: 562.955
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.79
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0426103 s
+MFLOPS: 469.37
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.83
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.042803 s
+MFLOPS: 467.257
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.84
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0408132 s
+MFLOPS: 490.037
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.82
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0422826 s
+MFLOPS: 473.008
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.80
+
+COMMAND Rdot kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.034786 s
+MFLOPS: 574.943
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.87
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0343096 s
+MFLOPS: 582.927
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.70
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.034194 s
+MFLOPS: 584.897
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.71
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0339857 s
+MFLOPS: 588.482
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.65
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0434912 s
+MFLOPS: 459.863
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.67
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0352181 s
+MFLOPS: 567.889
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.66
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.045938 s
+MFLOPS: 435.369
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.63
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0427789 s
+MFLOPS: 467.52
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.66
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0423267 s
+MFLOPS: 472.515
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.63
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0353157 s
+MFLOPS: 566.32
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.52
+
+COMMAND Rdot kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0454119 s
+MFLOPS: 440.414
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.61
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0343204 s
+MFLOPS: 582.744
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.61
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0405651 s
+MFLOPS: 493.035
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.66
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0348888 s
+MFLOPS: 573.251
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.60
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0386827 s
+MFLOPS: 517.026
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.63
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0350309 s
+MFLOPS: 570.924
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.65
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0424577 s
+MFLOPS: 471.057
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.71
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0419898 s
+MFLOPS: 476.306
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.67
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0416511 s
+MFLOPS: 480.18
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.64
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0372381 s
+MFLOPS: 537.084
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.74
+
+COMMAND Rdot kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0338384 s
+MFLOPS: 591.045
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.66
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0431563 s
+MFLOPS: 463.432
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.82
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0358118 s
+MFLOPS: 558.474
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.85
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0349472 s
+MFLOPS: 572.291
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.67
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0431198 s
+MFLOPS: 463.824
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.77
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0343276 s
+MFLOPS: 582.621
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.77
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.041173 s
+MFLOPS: 485.755
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.79
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0429895 s
+MFLOPS: 465.23
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.82
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.035202 s
+MFLOPS: 568.15
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.78
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.046352 s
+MFLOPS: 431.481
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.78
+
+COMMAND Rdot kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0344292 s
+MFLOPS: 580.902
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.76
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0381629 s
+MFLOPS: 524.069
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.64
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0434054 s
+MFLOPS: 460.772
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.69
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0340408 s
+MFLOPS: 587.53
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.67
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0346126 s
+MFLOPS: 577.824
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.67
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0433279 s
+MFLOPS: 461.597
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.61
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0439893 s
+MFLOPS: 454.656
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.66
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.034404 s
+MFLOPS: 581.328
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.64
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0338415 s
+MFLOPS: 590.99
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.66
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0348854 s
+MFLOPS: 573.306
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.64
+
+COMMAND Rdot kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0414375 s
+MFLOPS: 482.655
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.67
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0414001 s
+MFLOPS: 483.091
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.64
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0417687 s
+MFLOPS: 478.828
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.68
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0360034 s
+MFLOPS: 555.504
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.66
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0435727 s
+MFLOPS: 459.003
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.74
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0442336 s
+MFLOPS: 452.145
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.72
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0422158 s
+MFLOPS: 473.756
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.75
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.034209 s
+MFLOPS: 584.642
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.69
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0451178 s
+MFLOPS: 443.284
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.53
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0425956 s
+MFLOPS: 469.532
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.66
+
+COMMAND Rdot kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.035711 s
+MFLOPS: 560.052
+DIFF: 2.395e-148 OK
+WALL_SECONDS 5.52

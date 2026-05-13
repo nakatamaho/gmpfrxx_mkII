@@ -39,6 +39,10 @@ executables=(
     "Rdot_gmp_kernel_03_mkII"
     "Rdot_gmp_kernel_04_orig"
     "Rdot_gmp_kernel_04_mkII"
+    "Rdot_gmp_kernel_05_orig"
+    "Rdot_gmp_kernel_05_mkII"
+    "Rdot_gmp_kernel_06_orig"
+    "Rdot_gmp_kernel_06_mkII"
     "Rdot_gmp_kernel_openmp_01_orig"
     "Rdot_gmp_kernel_openmp_01_mkII"
     "Rdot_gmp_kernel_openmp_02_orig"
@@ -47,6 +51,10 @@ executables=(
     "Rdot_gmp_kernel_openmp_03_mkII"
     "Rdot_gmp_kernel_openmp_04_orig"
     "Rdot_gmp_kernel_openmp_04_mkII"
+    "Rdot_gmp_kernel_openmp_05_orig"
+    "Rdot_gmp_kernel_openmp_05_mkII"
+    "Rdot_gmp_kernel_openmp_06_orig"
+    "Rdot_gmp_kernel_openmp_06_mkII"
 )
 for exe in "${executables[@]}"; do
     COMMAND_LINE="/usr/bin/time ./$exe 100000000 512"

@@ -14541,3 +14541,249 @@ Pass/fail result:
 Known issues:
 - Existing untracked benchmark artifacts remain outside this documentation
   update.
+
+Post-phase GMP Rdot accumulator-unroll 05/06 benchmark:
+DONE
+
+Implemented features:
+- Added GMP Rdot `kernel_05` as a four-way accumulator unroll with
+  `acc0..acc3` and one reused product temporary.
+- Added GMP Rdot `kernel_06` as a four-way accumulator unroll with
+  `acc0..acc3` and four reused product temporaries.
+- Added matching OpenMP variants `kernel_openmp_05` and `kernel_openmp_06`
+  with the same per-thread source shapes.
+- Registered serial and OpenMP 05/06 benchmark targets for upstream
+  `gmpxx.h`, `gmpxx_mkII`, and `gmpxx_mkII_FIXED_PRECISION_FASTPATH`.
+- Re-ran focused 05/06 GMP Rdot benchmarks at `N=10000000`, 512-bit
+  precision, `repeat=10`, and `OMP_NUM_THREADS=32`.
+- Added raw log, summary CSV, and serial/OpenMP plots under
+  `benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513`.
+- Updated `benchmarks/gmp/00_Rdot/README.md` with the 05/06 kernel shapes,
+  inline plots, result table, and analysis.
+
+Tests added:
+- None. Benchmark source and artifact phase.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06.cpp`
+- `benchmarks/gmp/00_Rdot/go.sh`
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_05_06_repeat10.log`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/summary_rdot_n1e7_512_05_06_repeat10.csv`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_05_06_repeat10_Linux_Ryzen_3970X_32-Core_serial_Rdot.png`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_05_06_repeat10_Linux_Ryzen_3970X_32-Core_serial_summary.png`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_05_06_repeat10_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png`
+- `benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_05_06_repeat10_Linux_Ryzen_3970X_32-Core_openmp_summary.png`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/gmp/00_Rdot/CMakeLists.txt`
+- `sed -n '1,220p' benchmarks/gmp/00_Rdot/go.sh`
+- `ls benchmarks/gmp/00_Rdot`
+- `git status --short`
+- `rg -n "Rdot_gmp_kernel_04|Rdot_gmp_kernel_openmp_04|Rdot_gmp_C_native_openmp" -S .`
+- `sed -n '1,220p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp`
+- `sed -n '1,220p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03.cpp`
+- `sed -n '110,175p' benchmarks/CMakeLists.txt`
+- `sed -n '1,110p' benchmarks/CMakeLists.txt`
+- `sed -n '35,75p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp`
+- `sed -n '35,85p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04.cpp`
+- `sed -n '70,120p' benchmarks/common/run_benchmarks.sh`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rdot_gmp_kernel_05_orig ... Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH`
+- `OMP_NUM_THREADS=4 /bin/bash -lc 'set -e; for exe in Rdot_gmp_kernel_05_orig ... Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH; do ... 1000 128 ...; done'`
+- `mkdir -p benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513`
+- `OMP_NUM_THREADS=32 /bin/bash -lc 'set -u; out="benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_openmp_03_06_repeat10.log"; ...'`
+- `pgrep -af 'Rdot_gmp_|benchmark_rdot_n1e7_512_openmp_03_06'`
+- `kill 1317968 1318399 1318400`
+- `OMP_NUM_THREADS=32 /bin/bash -lc 'set -u; out="benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_05_06_repeat10.log"; ... focused 05/06 repeat10 ...'`
+- `python3 benchmarks/common/plot.py benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_05_06_repeat10.log --output-dir benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513 --backend GMP`
+- `python3 - <<'PY' ... write summary_rdot_n1e7_512_05_06_repeat10.csv ... PY`
+- `perl -0pi -e 's/COMMAND Rdot 05_/COMMAND Rdot kernel_05_/g; ...' benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/benchmark_rdot_n1e7_512_05_06_repeat10.log`
+- `cat benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/summary_rdot_n1e7_512_05_06_repeat10.csv`
+- `find benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513 -maxdepth 1 -type f -printf '%f %s bytes\n' | sort`
+- `cmake --build build -j --target Rdot_gmp_kernel_05_orig ... Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release build of all new 05/06 targets: PASS.
+- Smoke run at `N=1000`, 128-bit precision, `OMP_NUM_THREADS=4`: PASS, all
+  12 new variants reported `OK`.
+- Focused 05/06 benchmark run: PASS, all 12 variants completed 10/10 runs and
+  reported `OK`.
+- Best focused serial max: `kernel_06_orig`, 33.786 MFLOPS.
+- Best focused serial average: `kernel_06_orig`, 32.910 MFLOPS.
+- Best focused OpenMP max: `kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH`,
+  591.045 MFLOPS.
+- Best focused OpenMP average: `kernel_openmp_06_mkII`, 529.473 MFLOPS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- A partial aborted all-baseline 03-06 log remains untracked in the new result
+  directory and is not part of the focused 05/06 analysis.
+- Pre-existing untracked benchmark artifacts remain outside this phase.
+
+Post-phase GMP Rdot C native read/add/mul microbench:
+DONE
+
+Implemented features:
+- Added `Rdot_gmp_C_native_microbench.cpp` with compile-time modes for:
+  `07_readonly`, `08_addonly`, `09_mulonly`, and `10_muladd`.
+- Registered four C native microbench targets:
+  `Rdot_gmp_C_native_07_readonly`, `Rdot_gmp_C_native_08_addonly`,
+  `Rdot_gmp_C_native_09_mulonly`, and `Rdot_gmp_C_native_10_muladd`.
+- Ran the microbench at `N=10000000`, 512-bit precision, `repeat=10`.
+- Added raw log and summary CSV under
+  `benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513`.
+- Updated `benchmarks/gmp/00_Rdot/README.md` with the microbench result table
+  and interpretation.
+
+Tests added:
+- None. Benchmark source and artifact phase.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_microbench.cpp`
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513/benchmark_rdot_c_native_microbench_n1e7_512_repeat10.log`
+- `benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513/summary_rdot_c_native_microbench_n1e7_512_repeat10.csv`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,190p' benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `sed -n '135,165p' benchmarks/CMakeLists.txt`
+- `git status --short`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rdot_gmp_C_native_07_readonly Rdot_gmp_C_native_08_addonly Rdot_gmp_C_native_09_mulonly Rdot_gmp_C_native_10_muladd`
+- `/bin/bash -lc 'set -e; for exe in Rdot_gmp_C_native_07_readonly ... Rdot_gmp_C_native_10_muladd; do ... 1000 128 ...; done'`
+- `mkdir -p benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513`
+- `/bin/bash -lc 'set -u; out="benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513/benchmark_rdot_c_native_microbench_n1e7_512_repeat10.log"; ... repeat10 microbench ...'`
+- `python3 - <<'PY' ... write summary_rdot_c_native_microbench_n1e7_512_repeat10.csv ... PY`
+- `cat benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513/summary_rdot_c_native_microbench_n1e7_512_repeat10.csv`
+- `find benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513 -maxdepth 1 -type f -printf '%f %s bytes\n' | sort`
+- `tail -40 benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513/benchmark_rdot_c_native_microbench_n1e7_512_repeat10.log`
+- `cmake --build build -j --target Rdot_gmp_C_native_07_readonly Rdot_gmp_C_native_08_addonly Rdot_gmp_C_native_09_mulonly Rdot_gmp_C_native_10_muladd`
+
+Pass/fail result:
+- Release build of all C native microbench targets: PASS.
+- Debug build of all C native microbench targets: PASS.
+- Smoke run at `N=1000`, 128-bit precision: PASS, all four variants reported
+  `OK`.
+- Focused microbench run: PASS, all four variants completed 10/10 runs and
+  reported `OK`.
+- Average elapsed times at `N=10000000`, 512-bit precision:
+  `07_readonly` 0.079478 s, `08_addonly` 0.166463 s, `09_mulonly`
+  0.447660 s, and `10_muladd` 0.625428 s.
+- The results support arithmetic-limited behavior: `09_mulonly` accounts for
+  about 72% of the full `10_muladd` time, and `08_addonly + 09_mulonly`
+  nearly matches `10_muladd`.
+
+Known issues:
+- `07_readonly` reads only metadata and `_mp_d[0]`; it is a traversal
+  lower-bound, not a full limb-stream bandwidth test.
+- Pre-existing untracked benchmark artifacts remain outside this phase.
+
+Post-phase GMP Rdot 1024-bit 01-06 benchmark:
+DONE
+
+Implemented features:
+- Ran GMP Rdot 01-06 serial and OpenMP benchmarks at `N=10000000`,
+  1024-bit precision, `repeat=10`, and `OMP_NUM_THREADS=32`.
+- Used `MPFXX_DEFAULT_PREC_BITS=1024` for the benchmark processes so mkII's
+  frozen-env default precision path actually constructs 1024-bit `mpf_class`
+  objects.
+- Added raw log and summary CSV under
+  `benchmarks/gmp/results_raw/rdot_n1e7_1024_01_06_env1024_20260513`.
+
+Tests added:
+- None. Benchmark artifact phase.
+
+Tests updated:
+- `benchmarks/gmp/results_raw/rdot_n1e7_1024_01_06_env1024_20260513/benchmark_rdot_n1e7_1024_01_06_env1024_repeat10.log`
+- `benchmarks/gmp/results_raw/rdot_n1e7_1024_01_06_env1024_20260513/summary_rdot_n1e7_1024_01_06_env1024_repeat10.csv`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build_bench_release -j --target Rdot_gmp_C_native_01 Rdot_gmp_C_native_openmp_01 ... Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH`
+- `./build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 1000 1024`
+- `/bin/bash -lc '... OMP_NUM_THREADS=32 "$exe" 10000000 1024 ...'`
+- `sed -n '1,150p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp`
+- `sed -n '1,140p' benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `sed -n '1,220p' benchmarks/gmp/00_Rdot/Rdot.hpp`
+- `rg -n "set_default_mpf_precision_bits|default_mpf_precision_bits|MPFXX_DEFAULT" include -S`
+- `sed -n '60,230p' include/gmpfrxx_mkII/detail/gmp_default_context.hpp`
+- `kill 1323082 1323092 1323093 1323549`
+- `/bin/bash -lc '... OMP_NUM_THREADS=32 MPFXX_DEFAULT_PREC_BITS=1024 "$exe" 10000000 1024 ...'`
+- `/bin/bash -lc '... awk ... summary_rdot_n1e7_1024_01_06_env1024_repeat10.csv ...'`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release build of all Rdot 01-06 serial/OpenMP targets: PASS.
+- Smoke run of `Rdot_gmp_C_native_01 1000 1024`: PASS.
+- Full 1024-bit benchmark run: PASS, all 38 variants completed 10/10 runs and
+  reported `OK`.
+- Best serial max: `Rdot_gmp_kernel_03_mkII`, 12.254 MFLOPS.
+- Best serial average: `Rdot_gmp_kernel_05_mkII`, 11.946 MFLOPS.
+- Best OpenMP max: `Rdot_gmp_kernel_openmp_06_mkII`, 326.111 MFLOPS.
+- Best OpenMP average: `Rdot_gmp_kernel_openmp_06_mkII`, 292.364 MFLOPS.
+- `Rdot_gmp_C_native_openmp_01` reached 321.162 MFLOPS max and
+  277.527 MFLOPS average.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- An initial run without `MPFXX_DEFAULT_PREC_BITS=1024` was stopped because
+  mkII stayed on its frozen 512-bit default precision despite the benchmark's
+  call to `gmpxx::set_default_mpf_precision_bits(1024)`. That partial log is
+  not part of the reported 1024-bit results.
+- OpenMP results show large run-to-run variance at this problem size.
+
+Post-phase GMP Rdot 1024-bit README analysis:
+DONE
+
+Implemented features:
+- Updated `benchmarks/gmp/00_Rdot/README.md` with the 1024-bit Rdot 01-06
+  benchmark table.
+- Added analysis of required memory bandwidth, 512-bit versus 1024-bit limb
+  work, and OpenMP speedup relative to serial.
+- Documented that 1024-bit mkII benchmark processes must set
+  `MPFXX_DEFAULT_PREC_BITS=1024` in frozen-env mode.
+
+Tests added:
+- None. Documentation and benchmark-analysis phase.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `tail -n 180 benchmarks/gmp/00_Rdot/README.md`
+- `cat benchmarks/gmp/results_raw/rdot_n1e7_1024_01_06_env1024_20260513/summary_rdot_n1e7_1024_01_06_env1024_repeat10.csv`
+- `cat benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513/summary_rdot_n1e7_512_05_06_repeat10.csv`
+- `find benchmarks/gmp/results_raw/rdot_n1e7_1024_01_06_env1024_20260513 -maxdepth 1 -type f -printf '%f %s bytes\n' | sort`
+- `find benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513 -maxdepth 1 -type f -printf '%f %s bytes\n' | sort`
+- `find benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513 -maxdepth 1 -type f -printf '%f %s bytes\n' | sort`
+- `git diff --stat`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- README updated with 1024-bit data and analysis.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- The bandwidth estimates are lower bounds for streaming input data.  Product
+  temporaries and accumulators are treated as local cache traffic, not required
+  DRAM bandwidth.

@@ -98,6 +98,12 @@ run_variants() {
             "Rdot_gmp_kernel_04_orig"
             "Rdot_gmp_kernel_04_mkII"
             "Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_gmp_kernel_05_orig"
+            "Rdot_gmp_kernel_05_mkII"
+            "Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_gmp_kernel_06_orig"
+            "Rdot_gmp_kernel_06_mkII"
+            "Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH"
             "Rdot_gmp_kernel_openmp_01_orig"
             "Rdot_gmp_kernel_openmp_01_mkII"
             "Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
@@ -110,6 +116,12 @@ run_variants() {
             "Rdot_gmp_kernel_openmp_04_orig"
             "Rdot_gmp_kernel_openmp_04_mkII"
             "Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_gmp_kernel_openmp_05_orig"
+            "Rdot_gmp_kernel_openmp_05_mkII"
+            "Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH"
+            "Rdot_gmp_kernel_openmp_06_orig"
+            "Rdot_gmp_kernel_openmp_06_mkII"
+            "Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH"
         )
         ;;
     Raxpy)
