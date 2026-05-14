@@ -14833,3 +14833,46 @@ Known issues:
   reference checks and some variants run an additional serial measurement after
   the timed loop, making the complete 1..2049 dense sweep impractically long in
   the current harness.
+
+Post-phase GMP Rdot lessons learned documentation:
+DONE
+
+Implemented features:
+- Added a `Lessons Learned` section to `benchmarks/gmp/00_Rdot/README.md`.
+- Documented why the current GMP Rdot wrapper kernels are effectively
+  exhausted under the existing `mpf_class`-compatible API.
+- Recorded the practical stopping rule: once the hot loop is one `mpf_mul`
+  plus one `mpf_add`, remaining differences are dominated by GMP arithmetic,
+  streaming/reduction effects, and OpenMP variance rather than wrapper
+  dispatch.
+
+Tests added:
+- None. Documentation-only phase.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/gmp/00_Rdot/README.md`
+- `sed -n '260,620p' benchmarks/gmp/00_Rdot/README.md`
+- `tail -n 80 STATUS.md`
+- `git status --short`
+- `pgrep -af "rg -n|ctest|cmake|Rdot|Rgemm"`
+- `git diff -- benchmarks/gmp/00_Rdot/README.md STATUS.md`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --stat`
+
+Pass/fail result:
+- README updated with a GMP Rdot lessons-learned summary.
+- `kernel_05` and `kernel_06` are documented as retained experimental
+  negative-result benchmarks, while `kernel_03` remains the recommended
+  optimized wrapper shape.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- No new known issues.  The section intentionally recommends moving further
+  work to MPFR Rdot unless the GMP benchmark changes its kernel contract or
+  data layout.

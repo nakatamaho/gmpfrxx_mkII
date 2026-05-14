@@ -570,6 +570,74 @@ per-thread reduction.  The result is not a contradiction with the 512-bit data:
 limb work and more bytes per element, so the aggregate MFLOPS drops by about
 1.8-1.9x in the best OpenMP cases and about 2.75x in serial.
 
+## Lessons Learned
+
+The current GMP Rdot benchmark series is mature for the existing
+`mpf_class`-compatible API.  The wrapper-specific performance problem was the
+loop-local product lifetime.  Once the timed loop uses a reusable product
+object, or the fixed-precision fastpath removes the scoped expression product
+allocation, the hotpath is no longer meaningfully different from the raw
+`mpf_t` baseline.
+
+The decisive source-shape distinction is:
+
+| Shape | Result |
+|-------|--------|
+| `temp += dx[i] * dy[i]` in the default wrapper build | Expression product materialization remains inside the loop.  This is correct code, but it is the wrong shape for a 10M-element dot product. |
+| `mpf_class templ = dx[i] * dy[i]` inside the loop | Explicit loop-local construction has the same lifetime problem.  Fixed precision does not help because the object itself is still created per element. |
+| `templ = dx[i] * dy[i]; temp += templ;` with `templ` outside the loop | This is the best wrapper shape.  The loop reduces to the same `mpf_mul` plus `mpf_add` call sequence as C native. |
+| Four accumulators and one or four product temporaries | Useful to test dependency and aliasing hypotheses, but not a new performance class for this workload. |
+
+The OpenMP 03 hotpath disassembly is the strongest evidence.  The raw C
+native OpenMP loop, upstream `gmpxx.h`, default `gmpxx_mkII`, and
+fixed-precision `gmpxx_mkII` all compile to the same essential loop: one
+`__gmpf_mul`, one `__gmpf_add`, pointer increments, and a branch.  Differences
+among their maximum MFLOPS in the 512-bit repeat-10 run are therefore OpenMP
+run-to-run variance, not a different arithmetic kernel.
+
+The 05/06 experiments confirmed that simple loop unrolling is not a large
+remaining lever for this `mpf_class` Rdot workload.  Four accumulators reduce
+the visible loop-carried add dependency, and four product temporaries remove
+possible reuse hazards, but the measured serial averages stay in the same
+class as kernel 03.  In OpenMP, 05/06 also stay in the same broad class as C
+native and OpenMP 03, with more per-thread objects and substantial run-to-run
+variance.
+
+The 05/06 kernels are intentionally kept in the benchmark suite.  Their role is
+to preserve the negative result and make it reproducible, not to replace
+kernel 03 as the recommended wrapper shape.
+
+| Kernel | Status | Purpose |
+|--------|--------|---------|
+| `kernel_03` | Recommended optimized wrapper shape | Reuses one product object and matches the raw C native `mpf_mul` plus `mpf_add` hotpath. |
+| `kernel_05` | Experimental negative-result benchmark | Tests four accumulators with one reused product object (`acc4 + templ1`). |
+| `kernel_06` | Experimental negative-result benchmark | Tests four accumulators with four reused product objects (`acc4 + templ4`). |
+
+The C native microbench clarifies why.  At 512-bit, the full multiply-add loop
+is close to the sum of `mulonly` and `addonly`, and `mulonly` alone accounts
+for most of the time.  Lightweight metadata traversal is much faster than the
+Rdot loop.  That does not prove memory is irrelevant, because full Rdot reads
+all input limbs and runs across large pointer-indirect vectors, but it does
+show that the remaining cost is dominated by the two GMP arithmetic calls per
+element plus streaming and reduction effects, not by wrapper dispatch.
+
+The practical stopping rule is:
+
+| Question | Current answer |
+|----------|----------------|
+| Can `gmpxx_mkII` remove the obvious wrapper overhead? | Yes.  `kernel_03` and OpenMP 03/05/06 show no per-element allocation class once product lifetime is explicit. |
+| Can the current wrapper API clearly beat raw C native Rdot? | Not reliably.  When the hotpath is the same two GMP calls, small wins are measurement variance. |
+| Is fixed precision still useful? | Yes for expression-heavy `kernel_01`, because it removes scoped product allocation.  It is much less visible once the benchmark already reuses objects. |
+| Did 05/06 expose a hidden accumulator bottleneck? | No decisive bottleneck was found.  They are kept as experimental negative-result benchmarks, but `kernel_03` remains the recommended wrapper shape. |
+| What would be needed for a real next step? | A different kernel contract: fixed-precision `mpn` code, contiguous limb storage, pairwise/tree reduction, or explicit NUMA/CCX placement. |
+
+Those next steps are not just benchmark refactorings.  They would either
+change numerical semantics such as rounding order, or move away from the
+normal `mpf_t` object layout.  For the current goal of measuring a compatible
+GMP `mpf_class` wrapper, GMP Rdot should be considered mature enough to move
+attention to MPFR Rdot, where rounding lookup, FMA, stable rounding, and
+expression materialization still expose cleaner optimization questions.
+
 ## C Native Read/Add/Mul Microbench
 
 To separate memory traversal from GMP arithmetic, the C native microbench uses
