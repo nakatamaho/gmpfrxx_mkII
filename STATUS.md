@@ -14787,3 +14787,49 @@ Known issues:
 - The bandwidth estimates are lower bounds for streaming input data.  Product
   temporaries and accumulators are treated as local cache traffic, not required
   DRAM bandwidth.
+
+Post-phase GMP Rgemm partial step-7 sweep plot:
+DONE
+
+Implemented features:
+- Generated a partial plot for the in-progress GMP Rgemm OpenMP 02/04/05/06
+  step-7 plus powers-of-two sweep at 512-bit precision.
+- Preserved the interrupted partial CSV and log for the run completed so far.
+
+Tests added:
+- None. Benchmark artifact and plotting phase.
+
+Tests updated:
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512.csv`
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512.log`
+- `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512_partial.png`
+- `STATUS.md`
+
+Exact commands run:
+- `pgrep -af "rgemm_gmp_openmp_02_04_05_06_step7_powers|Rgemm_gmp_"`
+- `git status --short`
+- `wc -l benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512.csv benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_1024.csv 2>/dev/null || true`
+- `awk -F, 'NR>1 {rows++; if($8=="OK") ok++; else bad++; if($2+0>maxn) maxn=$2+0; seen[$2]=1; if($7+0>best){best=$7+0; bestline=$0}} END{for (n in seen) sizes++; print "rows=" rows, "ok=" ok+0, "bad=" bad+0, "sizes=" sizes, "maxN=" maxn; print "best=" bestline}' benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512.csv`
+- `python3 - <<'PY' ... PY`
+- `git diff --stat`
+- `ls -lh benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512.csv benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512.log benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512_partial.png`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- No benchmark process was left running.
+- Partial CSV contains 1752 result rows, covering 146 sizes up to `N=974`.
+- All recorded rows report `Result OK`.
+- Current best row is `Rgemm_gmp_C_native_openmp_06` at `N=799`,
+  886.892 MFLOPS.
+- Generated
+  `benchmarks/results_raw/rgemm_gmp_openmp_02_04_05_06_step7_powers_core32_512_partial.png`.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- This is an intentionally partial artifact. The full requested sweep was
+  stopped before 1024-bit runs because the benchmark executables also run
+  reference checks and some variants run an additional serial measurement after
+  the timed loop, making the complete 1..2049 dense sweep impractically long in
+  the current harness.
