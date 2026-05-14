@@ -23,15 +23,14 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
  */
 
-#include <iostream>
 #include <chrono>
+#include <cstdlib>
+#include <iostream>
 #include <gmp.h>
 
-#include "mpfr_operation_counter.hpp"
-
+#include "benchmark_allocator_counter.hpp"
 #include "mpfrxx_mkII.h"
 using namespace mpfrxx;
 
@@ -48,15 +47,68 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
     }
 
     const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
-    mpfr_class temp = mpfr_class::with_precision(precision);
-    mpfr_set_zero(temp.mpfr_data(), 0);
-    mpfr_class templ = mpfr_class::with_precision(precision);
-    mpfr_set_zero(templ.mpfr_data(), 0);
-    for (int64_t i = 0; i < n; i++) {
-        templ = dx[i] * dy[i];
-        temp += templ;
+    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+    const int64_t unrolled_n = n - (n % 4);
+    mpfr_class result = mpfr_class::with_precision(precision);
+    mpfr_set_zero(result.mpfr_data(), 0);
+
+#pragma omp parallel
+    {
+        mpfr_class acc0 = mpfr_class::with_precision(precision);
+        mpfr_class acc1 = mpfr_class::with_precision(precision);
+        mpfr_class acc2 = mpfr_class::with_precision(precision);
+        mpfr_class acc3 = mpfr_class::with_precision(precision);
+        mpfr_set_zero(acc0.mpfr_data(), 0);
+        mpfr_set_zero(acc1.mpfr_data(), 0);
+        mpfr_set_zero(acc2.mpfr_data(), 0);
+        mpfr_set_zero(acc3.mpfr_data(), 0);
+#ifndef MPFRXX_ENABLE_FMA
+        mpfr_class templ0 = mpfr_class::with_precision(precision);
+        mpfr_class templ1 = mpfr_class::with_precision(precision);
+        mpfr_class templ2 = mpfr_class::with_precision(precision);
+        mpfr_class templ3 = mpfr_class::with_precision(precision);
+#endif
+
+#pragma omp for schedule(static) nowait
+        for (int64_t i = 0; i < unrolled_n; i += 4) {
+#ifdef MPFRXX_ENABLE_FMA
+            mpfr_fma(acc0.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), acc0.mpfr_data(), rnd);
+            mpfr_fma(acc1.mpfr_data(), dx[i + 1].mpfr_data(), dy[i + 1].mpfr_data(), acc1.mpfr_data(), rnd);
+            mpfr_fma(acc2.mpfr_data(), dx[i + 2].mpfr_data(), dy[i + 2].mpfr_data(), acc2.mpfr_data(), rnd);
+            mpfr_fma(acc3.mpfr_data(), dx[i + 3].mpfr_data(), dy[i + 3].mpfr_data(), acc3.mpfr_data(), rnd);
+#else
+            mpfr_mul(templ0.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), rnd);
+            mpfr_mul(templ1.mpfr_data(), dx[i + 1].mpfr_data(), dy[i + 1].mpfr_data(), rnd);
+            mpfr_mul(templ2.mpfr_data(), dx[i + 2].mpfr_data(), dy[i + 2].mpfr_data(), rnd);
+            mpfr_mul(templ3.mpfr_data(), dx[i + 3].mpfr_data(), dy[i + 3].mpfr_data(), rnd);
+            mpfr_add(acc0.mpfr_data(), acc0.mpfr_data(), templ0.mpfr_data(), rnd);
+            mpfr_add(acc1.mpfr_data(), acc1.mpfr_data(), templ1.mpfr_data(), rnd);
+            mpfr_add(acc2.mpfr_data(), acc2.mpfr_data(), templ2.mpfr_data(), rnd);
+            mpfr_add(acc3.mpfr_data(), acc3.mpfr_data(), templ3.mpfr_data(), rnd);
+#endif
+        }
+
+        acc0 += acc1;
+        acc2 += acc3;
+        acc0 += acc2;
+
+#pragma omp critical
+        result += acc0;
     }
-    return temp;
+
+#ifndef MPFRXX_ENABLE_FMA
+    mpfr_class templ0 = mpfr_class::with_precision(precision);
+#endif
+    for (int64_t i = unrolled_n; i < n; ++i) {
+#ifdef MPFRXX_ENABLE_FMA
+        mpfr_fma(result.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), result.mpfr_data(), rnd);
+#else
+        mpfr_mul(templ0.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), rnd);
+        mpfr_add(result.mpfr_data(), result.mpfr_data(), templ0.mpfr_data(), rnd);
+#endif
+    }
+
+    return result;
 }
 
 void init_mpfr_vec(mpfr_t *vec, int n, int prec) {
@@ -98,17 +150,19 @@ int main(int argc, char **argv) {
 
     mpfr_class *vec1_mpfr_class = new mpfr_class[N];
     mpfr_class *vec2_mpfr_class = new mpfr_class[N];
-    mpfr_class _ans;
+    mpfr_class _ans = mpfr_class::with_precision(prec);
+    mpfr_set_zero(_ans.mpfr_data(), 0);
 
     for (int i = 0; i < N; i++) {
         vec1_mpfr_class[i] = mpfr_class(vec1[i]);
         vec2_mpfr_class[i] = mpfr_class(vec2[i]);
     }
-    benchmark_mpfr_operation_counter::begin_kernel();
+
+    benchmark_allocator_counter::begin_kernel();
     auto start = std::chrono::high_resolution_clock::now();
     _ans = _Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
     auto end = std::chrono::high_resolution_clock::now();
-    benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
+    benchmark_allocator_counter::print_kernel("timed_kernel");
 
     mpfr_class ans = Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
 
@@ -116,8 +170,7 @@ int main(int argc, char **argv) {
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << (2.0 * double(N) - 1.0) / elapsed_seconds.count() / MFLOPS << std::endl;
 
-    mpfr_class _tmp;
-    _tmp = abs(_ans - ans);
+    mpfr_class _tmp = abs(_ans - ans);
     std::cout << "DIFF: ";
     mpfr_printf("%.4Rg ", _tmp.get_mpfr_t());
     if (_tmp < 1e-5)

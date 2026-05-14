@@ -47,12 +47,11 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
         exit(EXIT_FAILURE);
     }
 
-    int64_t i;
-
-    mpfr_class temp;
-    temp = 0.0;
-    for (i = 0; i < n; i++) {
-        mpfr_class templ = dx[i] * dy[i];
+    const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
+    mpfr_class temp = mpfr_class::with_precision(precision);
+    mpfr_set_zero(temp.mpfr_data(), 0);
+    for (int64_t i = 0; i < n; i++) {
+        mpfr_class templ(dx[i] * dy[i], precision);
         temp += templ;
     }
     return temp;

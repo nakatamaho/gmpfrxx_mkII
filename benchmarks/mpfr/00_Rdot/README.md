@@ -1,0 +1,286 @@
+<!-- SPDX-License-Identifier: BSD-2-Clause -->
+
+# 00_Rdot
+
+This directory benchmarks the MPFR real dot product
+
+```text
+sum_i x_i * y_i
+```
+
+with random `mpfr_t` / `mpfrxx::mpfr_class` data at a fixed precision.  The
+layout intentionally mirrors `benchmarks/gmp/00_Rdot/`: each kernel shape is a
+standalone translation unit, so hotpath disassembly can be read without a
+shared benchmark harness obscuring the loop.
+
+## Build
+
+From the repository root:
+
+```bash
+cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release
+cmake --build build_bench_release -j
+```
+
+The executables are created under:
+
+```text
+build_bench_release/benchmarks/mpfr/00_Rdot/
+```
+
+## Run
+
+Run the MPFR benchmark set through the MPFR runner:
+
+```bash
+benchmarks/common/run_mpfr_benchmarks.sh build_bench_release 512 \
+    10000000 benchmarks/mpfr/results_raw/Linux_Ryzen_3970X_32-Core 10
+```
+
+The first size argument is used for Rdot.  Individual executables take:
+
+```text
+<vector size> <precision>
+```
+
+Example:
+
+```bash
+build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 1000000 512
+```
+
+## Reading Results
+
+Each executable prints `Elapsed time` and `MFLOPS`.  Higher MFLOPS is better
+when comparing runs with the same vector size, precision, compiler flags,
+rounding mode, and machine.
+
+The timed kernel also prints:
+
+```text
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=... realloc=... free=...
+```
+
+For MPFR Rdot this is useful for separating arithmetic call cost from
+per-iteration temporary allocation.  The FMA variants use `mpfr_fma`, so their
+rounding behavior is intentionally different from the non-FMA `mpfr_mul` plus
+`mpfr_add` kernels.
+
+Variant names:
+
+- `C_native`: raw `mpfr_t` implementation.
+- `C_native_01_FMA`: raw `mpfr_t` implementation using `mpfr_fma`.
+- `C_native_openmp`: raw `mpfr_t` implementation with OpenMP.
+- `*_mkII`: this header with the normal MPFR wrapper rounding policy.
+- `*_STABLE_ROUNDING`: wrapper build with
+  `GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE`.
+- `*_FMA`: build with `MPFRXX_ENABLE_FMA`.
+- `*_STABLE_ROUNDING_FMA`: stable wrapper rounding plus `mpfr_fma`.
+
+## Kernel Shapes
+
+The timed body is `_Rdot()` in each benchmark executable.  `Rdot.hpp` is only
+the post-run correctness reference.
+
+| Variant | Timed source shape | Temporary policy | Hotpath meaning |
+|---------|--------------------|------------------|-----------------|
+| `C_native_01` | `mpfr_mul(templ, dx[i], dy[i], rnd); mpfr_add(temp, temp, templ, rnd);` | `temp` and `templ` are initialized once outside the loop. | Baseline: one `mpfr_mul` and one `mpfr_add` per element, with `rnd` cached before the loop. |
+| `C_native_01_FMA` | `mpfr_fma(temp, dx[i], dy[i], temp, rnd);` | `temp` is initialized once outside the loop. | Raw MPFR fused baseline: one MPFR arithmetic call per element and one final rounding per multiply-add. |
+| `C_native_openmp_01` | Same raw `mpfr_t` dot product inside `#pragma omp for`. | Each thread owns `temp` and `templ`; final accumulation uses `critical`. | Measures parallel raw-MPFR throughput and final reduction overhead. |
+| `kernel_01` | `temp += dx[i] * dy[i];` | Expression-friendly source. The multiply result can be materialized as a scoped temporary each iteration. | Tests wrapper expression overhead and rounding lookup overhead from the shortest source form. |
+| `kernel_02` | `mpfr_class templ = dx[i] * dy[i]; temp += templ;` | A new product object is constructed inside every iteration. | Deliberately allocation-heavy wrapper form. |
+| `kernel_03` | `templ = dx[i] * dy[i]; temp += templ;` | One product object is constructed before the loop and reused. | Closest non-FMA wrapper source shape to the raw `mpfr_mul` plus `mpfr_add` baseline. |
+| `kernel_04` | `templ = dx[i]; templ *= dy[i]; temp += templ;` | One product object is reused, but each iteration copies `dx[i]` before multiplying. | Separates reusable object lifetime from expression assignment. |
+| `kernel_05` | Four-way unroll with `acc0..acc3` and one reused product object. | Four accumulators are initialized before the loop; one product temporary is reused. | Tests whether accumulator dependency limits the serial MPFR loop. |
+| `kernel_06` | Four-way unroll with `acc0..acc3` and `templ0..templ3`. | Four accumulators and four product temporaries are initialized before the loop. | Separates accumulator unroll from product-temporary reuse and alias effects. |
+| `kernel_openmp_01` | Per-thread `partial += dx[i] * dy[i];` | One accumulator per thread; final accumulation uses `critical`. | Parallel version of the expression-friendly `kernel_01` shape. |
+| `kernel_openmp_02` | Per-thread loop-local product object, then `partial += templ;` | Product object construction remains inside the loop. | Parallel version of the allocation-heavy `kernel_02` shape. |
+| `kernel_openmp_03` | Per-thread `templ = dx[i] * dy[i]; partial += templ;` | One reusable product object per thread. | Parallel version of the reusable-expression-product `kernel_03` shape. |
+| `kernel_openmp_04` | Per-thread `templ = dx[i]; templ *= dy[i]; partial += templ;` | One reusable product object per thread plus a per-iteration copy. | Parallel version of `kernel_04`. |
+| `kernel_openmp_05` | Per-thread four-way unroll with `acc0..acc3` and one product object. | Per-thread accumulators are reused; tail is handled serially after the parallel region. | Tests whether unroll helps once OpenMP already exposes thread parallelism. |
+| `kernel_openmp_06` | Per-thread four-way unroll with `acc0..acc3` and `templ0..templ3`. | Four product objects per thread are reused; tail is handled serially. | Tests whether independent product temporaries improve the OpenMP 05 shape. |
+
+## MPFR-Specific Analysis
+
+MPFR differs from GMP `mpf` in one important way: every arithmetic call receives
+an explicit rounding mode.  The raw C native kernels load
+`mpfr_get_default_rounding_mode()` once before the timed loop and pass the
+cached `mpfr_rnd_t` to every `mpfr_*` call.
+
+The generic wrapper expression path normally obtains the current evaluation
+context for each operation.  In normal builds that can mean repeated default
+rounding lookups.  `*_STABLE_ROUNDING` removes the function-call lookup by using
+the wrapper's cached thread-local rounding value, but it can still leave a TLS
+load in the loop.  Therefore the closest wrapper hotpath to C native is expected
+to be either:
+
+```text
+kernel_03_mkII_STABLE_ROUNDING
+kernel_05_mkII_STABLE_ROUNDING
+kernel_06_mkII_STABLE_ROUNDING
+```
+
+for non-FMA, and:
+
+```text
+kernel_03_mkII_STABLE_ROUNDING_FMA
+kernel_05_mkII_STABLE_ROUNDING_FMA
+kernel_06_mkII_STABLE_ROUNDING_FMA
+```
+
+for FMA.
+
+The FMA variants should not be treated as merely faster versions of the
+non-FMA variants.  `mpfr_fma(a, b, c, d, rnd)` computes the fused
+multiply-add with a single final rounding, while `mpfr_mul` followed by
+`mpfr_add` rounds twice.  A small nonzero `DIFF` against the non-FMA reference
+is expected.
+
+## Recorded Repeat-10 Sample
+
+![Rdot serial benchmark](../results_raw/rdot_n1e7_512_repeat10_20260514/benchmark_rdot_n1e7_512_repeat10_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
+
+![Rdot OpenMP benchmark](../results_raw/rdot_n1e7_512_repeat10_20260514/benchmark_rdot_n1e7_512_repeat10_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png)
+
+The current committed sample run uses:
+
+```text
+N = 10000000, precision = 512, repeat = 10, OMP_NUM_THREADS = 32
+```
+
+Results are stored in
+[../results_raw/rdot_n1e7_512_repeat10_20260514/](../results_raw/rdot_n1e7_512_repeat10_20260514/):
+
+- [Raw log](../results_raw/rdot_n1e7_512_repeat10_20260514/benchmark_rdot_n1e7_512_repeat10.log)
+- [Summary CSV](../results_raw/rdot_n1e7_512_repeat10_20260514/summary_rdot_n1e7_512_repeat10.csv)
+- [Serial plot](../results_raw/rdot_n1e7_512_repeat10_20260514/benchmark_rdot_n1e7_512_repeat10_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
+- [Serial summary plot](../results_raw/rdot_n1e7_512_repeat10_20260514/benchmark_rdot_n1e7_512_repeat10_Linux_Ryzen_3970X_32-Core_serial_summary.png)
+- [OpenMP plot](../results_raw/rdot_n1e7_512_repeat10_20260514/benchmark_rdot_n1e7_512_repeat10_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png)
+- [OpenMP summary plot](../results_raw/rdot_n1e7_512_repeat10_20260514/benchmark_rdot_n1e7_512_repeat10_Linux_Ryzen_3970X_32-Core_openmp_summary.png)
+
+All 52 Rdot variants reported `DIFF OK` in all 10 runs.
+
+Top serial results:
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Timed allocs |
+|---------|-----------:|-----------:|-----------:|-------------:|
+| `kernel_06_mkII_STABLE_ROUNDING_FMA` | 23.815 | 23.260 | 22.939 | 4 |
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.658 | 23.229 | 23.025 | 1 |
+| `kernel_05_mkII_STABLE_ROUNDING` | 23.596 | 23.246 | 22.943 | 2 |
+| `C_native_01_FMA` | 23.595 | 22.953 | 22.639 | 1 |
+| `kernel_03_mkII_STABLE_ROUNDING` | 23.477 | 23.308 | 23.080 | 2 |
+| `C_native_01` | 23.119 | 22.804 | 22.519 | 2 |
+
+The serial result is mostly a hotpath-shape result.  `kernel_01_mkII` and
+`kernel_02_mkII` allocate a product temporary every element and fall to about
+18 and 16 MFLOPS.  `kernel_03_mkII_STABLE_ROUNDING` reuses the product object
+and removes the repeated rounding function call, so it reaches the C native
+range.  The hand-written raw MPFR `kernel_05` and `kernel_06` variants are also
+C-native-like because they cache `rnd` before the loop.
+
+Top OpenMP results:
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Timed allocs |
+|---------|-----------:|-----------:|-----------:|-------------:|
+| `C_native_openmp_01_FMA` | 593.061 | 538.348 | 439.478 | 32 |
+| `kernel_openmp_06_mkII_FMA` | 576.080 | 497.760 | 391.769 | 129 |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 567.727 | 509.774 | 394.801 | 65 |
+| `kernel_openmp_05_mkII_STABLE_ROUNDING_FMA` | 566.721 | 487.393 | 373.277 | 129 |
+| `kernel_openmp_06_mkII` | 545.387 | 482.642 | 402.270 | 258 |
+| `C_native_openmp_01` | 539.014 | 439.687 | 417.864 | 64 |
+
+OpenMP has high run-to-run variance in this benchmark, so max MFLOPS should
+not be read alone.  By average MFLOPS, the best wrapper result in this run is
+`kernel_openmp_03_mkII_STABLE_ROUNDING`.  The allocation-heavy OpenMP `01` and
+`02` non-FMA shapes stay near 40-42 MFLOPS; OpenMP does not rescue a
+per-element product allocation pattern.  FMA rescues `kernel_openmp_01` because
+the source expression can fuse, but it does not rescue `kernel_openmp_02`
+because the loop-local `mpfr_class templ` is explicitly constructed.
+
+## Lessons Learned
+
+MPFR Rdot has a different primary bottleneck profile from GMP `mpf` Rdot.  In
+GMP, the central wrapper question is usually whether expression materialization
+creates repeated `mpf_init2` / `mpf_clear` traffic.  In MPFR, that question is
+still important, but it is not enough: every arithmetic operation also carries
+an explicit rounding-mode argument.  A wrapper hotpath that repeatedly asks for
+the current rounding context can lose even after product allocation has been
+removed.
+
+`kernel_03` is the most useful wrapper source shape for non-FMA dot products.
+It keeps readable wrapper code:
+
+```cpp
+templ = dx[i] * dy[i];
+partial += templ;
+```
+
+while moving product-object construction outside the timed loop.  With normal
+rounding lookup, serial `kernel_03_mkII` averages only `21.055 MFLOPS`; with
+stable rounding, `kernel_03_mkII_STABLE_ROUNDING` averages `23.308 MFLOPS`,
+which is in the C native serial range.  The lesson is that reusable temporaries
+and cached rounding must be considered together for MPFR wrappers.
+
+`kernel_01` shows the positive and negative sides of expression templates.  In
+the non-FMA build, `temp += dx[i] * dy[i]` still materializes a product
+temporary each iteration and averages `17.701 MFLOPS`.  In the FMA build, the
+same source can be recognized as a fused multiply-add; allocation drops to one
+timed object and `kernel_01_mkII_STABLE_ROUNDING_FMA` averages
+`23.229 MFLOPS`.  This is the case where the expression-template form is the
+right source shape: it preserves the algebraic pattern needed for fusion.
+
+`kernel_02` is the cautionary counterexample.  It explicitly constructs
+`mpfr_class templ` inside the loop, so the allocation has already been forced by
+the source.  FMA cannot rescue it: `kernel_02_mkII_FMA` still performs
+`10000001` timed allocations and averages `17.369 MFLOPS`; the OpenMP FMA
+variant remains near `42 MFLOPS`.  For MPFR kernels, avoid loop-local wrapper
+object construction unless that object is deliberately being measured.
+
+`kernel_04` is not allocation-heavy, but it is still the wrong shape for this
+operation.  The copy-then-multiply form:
+
+```cpp
+templ = dx[i];
+templ *= dy[i];
+partial += templ;
+```
+
+adds extra MPFR state movement before the multiply.  Stable rounding helps the
+rounding lookup part, but serial `kernel_04_mkII_STABLE_ROUNDING` averages only
+`20.023 MFLOPS`, below `kernel_03_mkII_STABLE_ROUNDING`.  Reusing an object is
+necessary, but the update pattern still matters.
+
+The hand-written `kernel_05` and `kernel_06` variants are useful as control
+experiments, not as the preferred wrapper style.  They call raw MPFR functions
+and cache `rnd` before the loop, so `*_STABLE_ROUNDING` does not change their
+hotpath in a meaningful way.  Serial `kernel_05` is already C-native-like.
+`kernel_06` sometimes wins by max MFLOPS, especially with FMA, but its extra
+product temporaries do not produce a robust serial advantage over the simpler
+`kernel_03` / `kernel_05` shapes.
+
+OpenMP results must be read with both max and average.  The timed section is
+short once the kernel scales, and the run-to-run spread is large.  For example,
+`kernel_openmp_06_mkII_FMA` reaches `576.080 MFLOPS` max but averages
+`497.760 MFLOPS`; `kernel_openmp_03_mkII_STABLE_ROUNDING` has a lower max
+(`567.727 MFLOPS`) but a higher wrapper average (`509.774 MFLOPS`).  This is
+why the README records both numbers and does not rank OpenMP variants by max
+alone.
+
+The best practical MPFR Rdot wrapper direction after this run is:
+
+- For scalar serial code, prefer `kernel_03`-style reusable product objects
+  plus stable rounding when FMA is not being requested.
+- For expression-first user code, keep `kernel_01`-style source available
+  because it exposes the multiply-add pattern needed by the FMA fastpath.
+- For OpenMP, avoid allocation-heavy `01`/`02` non-FMA shapes.  Use either a
+  reusable product object per thread (`kernel_openmp_03`) or a fused
+  multiply-add source shape that removes per-element product materialization.
+- Treat `05`/`06` as benchmark controls for unroll and raw MPFR call overhead,
+  not as the first API shape to recommend.
+
+The full executable wall time in this benchmark is not the value being ranked.
+Every run initializes two `10000000`-element vectors and then computes a serial
+reference after the timed kernel.  The plots and tables rank only the timed
+`_Rdot()` loop.  This is intentional, but it should be remembered when
+comparing OpenMP variants: the total process wall time changes much less than
+the timed-loop MFLOPS.

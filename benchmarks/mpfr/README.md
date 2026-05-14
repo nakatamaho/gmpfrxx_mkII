@@ -12,6 +12,12 @@ benchmarks should mirror that layout:
 - `02_Rgemv/`
 - `03_Rgemm/`
 
+Per-family notes:
+
+- [00_Rdot](00_Rdot/README.md) documents the MPFR dot-product kernel shapes,
+  including the split serial/OpenMP `01..06` files, stable-rounding variants,
+  and FMA variants.
+
 Raw MPFR/MPC benchmark results belong under:
 
 ```text

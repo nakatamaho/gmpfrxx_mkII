@@ -47,16 +47,19 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
         exit(EXIT_FAILURE);
     }
 
-    mpfr_class result = 0.0;
+    const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
+    mpfr_class result = mpfr_class::with_precision(precision);
+    mpfr_set_zero(result.mpfr_data(), 0);
 
 // OpenMP parallel region
 #pragma omp parallel
     {
-        mpfr_class tmpl = 0.0;
-        mpfr_class templl;
+        mpfr_class tmpl = mpfr_class::with_precision(precision);
+        mpfr_set_zero(tmpl.mpfr_data(), 0);
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < n; ++i) {
+            mpfr_class templl = mpfr_class::with_precision(precision);
             templl = dx[i];
             templl *= dy[i];
             tmpl += templl;

@@ -42,26 +42,26 @@ using namespace mpfrxx;
 gmp_randstate_t state;
 
 mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_t incy) {
-    int64_t i;
-
     if (incx != 1 || incy != 1) {
         printf("Not supported, exitting\n");
         exit(-1);
     }
 
-    mpfr_class temp, templ;
-    temp = 0.0;
+    const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
+    mpfr_class temp = mpfr_class::with_precision(precision);
+    mpfr_set_zero(temp.mpfr_data(), 0);
 
 // no reduction for multiple precision
 #ifdef _OPENMP
-#pragma omp parallel private(i, templ) shared(temp, dx, dy, n)
+#pragma omp parallel shared(temp, dx, dy, n, precision)
 #endif
     {
-        templ = 0.0;
+        mpfr_class templ = mpfr_class::with_precision(precision);
+        mpfr_set_zero(templ.mpfr_data(), 0);
 #ifdef _OPENMP
 #pragma omp for
 #endif
-        for (i = 0; i < n; i++) {
+        for (int64_t i = 0; i < n; i++) {
             templ += dx[i] * dy[i];
         }
 #ifdef _OPENMP

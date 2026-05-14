@@ -192,10 +192,20 @@ add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_04.cpp
     Rdot_mpfr_kernel_04)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_05.cpp
     Rdot_mpfr_kernel_05)
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_06.cpp
+    Rdot_mpfr_kernel_06)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
     Rdot_mpfr_kernel_openmp_01)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_02.cpp
     Rdot_mpfr_kernel_openmp_02)
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_03.cpp
+    Rdot_mpfr_kernel_openmp_03)
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_04.cpp
+    Rdot_mpfr_kernel_openmp_04)
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_05.cpp
+    Rdot_mpfr_kernel_openmp_05)
+add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_06.cpp
+    Rdot_mpfr_kernel_openmp_06)
 
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp
     Raxpy_mpfr_C_native_01)

@@ -27,9 +27,11 @@
  */
 
 mpfr_class Rdot(int64_t const n, mpfr_class *dx, int64_t const incx, mpfr_class *dy, int64_t const incy) {
-    mpfr_class return_value = 0.0;
-    return_value = 0.0;
-    mpfr_class dtemp = 0.0;
+    const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
+    mpfr_class return_value = mpfr_class::with_precision(precision);
+    mpfr_set_zero(return_value.mpfr_data(), 0);
+    mpfr_class dtemp = mpfr_class::with_precision(precision);
+    mpfr_set_zero(dtemp.mpfr_data(), 0);
     if (n <= 0) {
         return return_value;
     }
