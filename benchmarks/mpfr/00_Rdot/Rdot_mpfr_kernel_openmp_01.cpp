@@ -47,21 +47,20 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
         exit(-1);
     }
 
-    const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
-    mpfr_class temp = mpfr_class::with_precision(precision);
-    mpfr_set_zero(temp.mpfr_data(), 0);
+    int64_t i;
+    mpfr_class temp, templ;
+    temp = 0.0;
 
 // no reduction for multiple precision
 #ifdef _OPENMP
-#pragma omp parallel shared(temp, dx, dy, n, precision)
+#pragma omp parallel private(i, templ) shared(temp, dx, dy, n)
 #endif
     {
-        mpfr_class templ = mpfr_class::with_precision(precision);
-        mpfr_set_zero(templ.mpfr_data(), 0);
+        templ = 0.0;
 #ifdef _OPENMP
 #pragma omp for
 #endif
-        for (int64_t i = 0; i < n; i++) {
+        for (i = 0; i < n; i++) {
             templ += dx[i] * dy[i];
         }
 #ifdef _OPENMP

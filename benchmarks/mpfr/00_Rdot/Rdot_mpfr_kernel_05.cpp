@@ -47,26 +47,35 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
         exit(EXIT_FAILURE);
     }
 
-    const mpfr_prec_t precision = n > 0 ? mpfr_get_prec(dx[0].mpfr_data()) : mpfrxx::default_precision_bits();
-    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+    mpfr_class acc0 = 0.0;
+    mpfr_class acc1 = 0.0;
+    mpfr_class acc2 = 0.0;
+    mpfr_class acc3 = 0.0;
+    mpfr_class templ;
 
-    mpfr_class temp = mpfr_class::with_precision(precision);
-    mpfr_set_zero(temp.mpfr_data(), 0);
+    int64_t i = 0;
+    for (; i + 3 < n; i += 4) {
+        templ = dx[i] * dy[i];
+        acc0 += templ;
 
-#ifndef MPFRXX_ENABLE_FMA
-    mpfr_class templ = mpfr_class::with_precision(precision);
-#endif
+        templ = dx[i + 1] * dy[i + 1];
+        acc1 += templ;
 
-    for (int64_t i = 0; i < n; i++) {
-#ifdef MPFRXX_ENABLE_FMA
-        mpfr_fma(temp.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), temp.mpfr_data(), rnd);
-#else
-        mpfr_mul(templ.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), rnd);
-        mpfr_add(temp.mpfr_data(), temp.mpfr_data(), templ.mpfr_data(), rnd);
-#endif
+        templ = dx[i + 2] * dy[i + 2];
+        acc2 += templ;
+
+        templ = dx[i + 3] * dy[i + 3];
+        acc3 += templ;
+    }
+    for (; i < n; ++i) {
+        templ = dx[i] * dy[i];
+        acc0 += templ;
     }
 
-    return temp;
+    acc0 += acc1;
+    acc2 += acc3;
+    acc0 += acc2;
+    return acc0;
 }
 
 void init_mpfr_vec(mpfr_t *vec, int n, int prec) {

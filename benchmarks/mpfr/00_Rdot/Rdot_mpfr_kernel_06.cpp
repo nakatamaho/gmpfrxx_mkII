@@ -46,50 +46,27 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
         exit(EXIT_FAILURE);
     }
 
-    const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
-    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
-
-    mpfr_class acc0 = mpfr_class::with_precision(precision);
-    mpfr_class acc1 = mpfr_class::with_precision(precision);
-    mpfr_class acc2 = mpfr_class::with_precision(precision);
-    mpfr_class acc3 = mpfr_class::with_precision(precision);
-    mpfr_set_zero(acc0.mpfr_data(), 0);
-    mpfr_set_zero(acc1.mpfr_data(), 0);
-    mpfr_set_zero(acc2.mpfr_data(), 0);
-    mpfr_set_zero(acc3.mpfr_data(), 0);
-
-#ifndef MPFRXX_ENABLE_FMA
-    mpfr_class templ0 = mpfr_class::with_precision(precision);
-    mpfr_class templ1 = mpfr_class::with_precision(precision);
-    mpfr_class templ2 = mpfr_class::with_precision(precision);
-    mpfr_class templ3 = mpfr_class::with_precision(precision);
-#endif
+    mpfr_class acc0 = 0.0;
+    mpfr_class acc1 = 0.0;
+    mpfr_class acc2 = 0.0;
+    mpfr_class acc3 = 0.0;
+    mpfr_class templ0, templ1, templ2, templ3;
 
     int64_t i = 0;
     for (; i + 3 < n; i += 4) {
-#ifdef MPFRXX_ENABLE_FMA
-        mpfr_fma(acc0.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), acc0.mpfr_data(), rnd);
-        mpfr_fma(acc1.mpfr_data(), dx[i + 1].mpfr_data(), dy[i + 1].mpfr_data(), acc1.mpfr_data(), rnd);
-        mpfr_fma(acc2.mpfr_data(), dx[i + 2].mpfr_data(), dy[i + 2].mpfr_data(), acc2.mpfr_data(), rnd);
-        mpfr_fma(acc3.mpfr_data(), dx[i + 3].mpfr_data(), dy[i + 3].mpfr_data(), acc3.mpfr_data(), rnd);
-#else
-        mpfr_mul(templ0.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), rnd);
-        mpfr_mul(templ1.mpfr_data(), dx[i + 1].mpfr_data(), dy[i + 1].mpfr_data(), rnd);
-        mpfr_mul(templ2.mpfr_data(), dx[i + 2].mpfr_data(), dy[i + 2].mpfr_data(), rnd);
-        mpfr_mul(templ3.mpfr_data(), dx[i + 3].mpfr_data(), dy[i + 3].mpfr_data(), rnd);
-        mpfr_add(acc0.mpfr_data(), acc0.mpfr_data(), templ0.mpfr_data(), rnd);
-        mpfr_add(acc1.mpfr_data(), acc1.mpfr_data(), templ1.mpfr_data(), rnd);
-        mpfr_add(acc2.mpfr_data(), acc2.mpfr_data(), templ2.mpfr_data(), rnd);
-        mpfr_add(acc3.mpfr_data(), acc3.mpfr_data(), templ3.mpfr_data(), rnd);
-#endif
+        templ0 = dx[i] * dy[i];
+        templ1 = dx[i + 1] * dy[i + 1];
+        templ2 = dx[i + 2] * dy[i + 2];
+        templ3 = dx[i + 3] * dy[i + 3];
+
+        acc0 += templ0;
+        acc1 += templ1;
+        acc2 += templ2;
+        acc3 += templ3;
     }
     for (; i < n; ++i) {
-#ifdef MPFRXX_ENABLE_FMA
-        mpfr_fma(acc0.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), acc0.mpfr_data(), rnd);
-#else
-        mpfr_mul(templ0.mpfr_data(), dx[i].mpfr_data(), dy[i].mpfr_data(), rnd);
-        mpfr_add(acc0.mpfr_data(), acc0.mpfr_data(), templ0.mpfr_data(), rnd);
-#endif
+        templ0 = dx[i] * dy[i];
+        acc0 += templ0;
     }
 
     acc0 += acc1;
@@ -137,8 +114,7 @@ int main(int argc, char **argv) {
 
     mpfr_class *vec1_mpfr_class = new mpfr_class[N];
     mpfr_class *vec2_mpfr_class = new mpfr_class[N];
-    mpfr_class _ans = mpfr_class::with_precision(prec);
-    mpfr_set_zero(_ans.mpfr_data(), 0);
+    mpfr_class _ans;
 
     for (int i = 0; i < N; i++) {
         vec1_mpfr_class[i] = mpfr_class(vec1[i]);

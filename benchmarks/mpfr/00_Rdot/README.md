@@ -62,9 +62,11 @@ BENCH_ALLOC_COUNTS label=timed_kernel alloc=... realloc=... free=...
 ```
 
 For MPFR Rdot this is useful for separating arithmetic call cost from
-per-iteration temporary allocation.  The FMA variants use `mpfr_fma`, so their
-rounding behavior is intentionally different from the non-FMA `mpfr_mul` plus
-`mpfr_add` kernels.
+per-iteration temporary allocation.  The native FMA variants use standalone
+source files with `mpfr_fma`, so their rounding behavior is intentionally
+different from the non-FMA `mpfr_mul` plus `mpfr_add` native kernels.  Wrapper
+FMA variants keep the same wrapper benchmark source and enable fusion through
+the expression-template build option.
 
 Variant names:
 
@@ -97,8 +99,8 @@ the post-run correctness reference.
 | `kernel_openmp_02` | Per-thread loop-local product object, then `partial += templ;` | Product object construction remains inside the loop. | Parallel version of the allocation-heavy `kernel_02` shape. |
 | `kernel_openmp_03` | Per-thread `templ = dx[i] * dy[i]; partial += templ;` | One reusable product object per thread. | Parallel version of the reusable-expression-product `kernel_03` shape. |
 | `kernel_openmp_04` | Per-thread `templ = dx[i]; templ *= dy[i]; partial += templ;` | One reusable product object per thread plus a per-iteration copy. | Parallel version of `kernel_04`. |
-| `kernel_openmp_05` | Per-thread four-way unroll with `acc0..acc3` and one product object. | Per-thread accumulators are reused; tail is handled serially after the parallel region. | Tests whether unroll helps once OpenMP already exposes thread parallelism. |
-| `kernel_openmp_06` | Per-thread four-way unroll with `acc0..acc3` and `templ0..templ3`. | Four product objects per thread are reused; tail is handled serially. | Tests whether independent product temporaries improve the OpenMP 05 shape. |
+| `kernel_openmp_05` | Per-thread four-way unroll with `acc0..acc3` and one product object. | Per-thread accumulators are reused; the tail loop follows the GMP OpenMP 05 shape. | Tests whether unroll helps once OpenMP already exposes thread parallelism. |
+| `kernel_openmp_06` | Per-thread four-way unroll with `acc0..acc3` and `templ0..templ3`. | Four product objects per thread are reused; the tail loop follows the GMP OpenMP 06 shape. | Tests whether independent product temporaries improve the OpenMP 05 shape. |
 
 ## MPFR-Specific Analysis
 
@@ -136,6 +138,13 @@ multiply-add with a single final rounding, while `mpfr_mul` followed by
 `mpfr_add` rounds twice.  A small nonzero `DIFF` against the non-FMA reference
 is expected.
 
+The C native FMA and non-FMA benchmarks intentionally do not share a source
+file.  `Rdot_mpfr_C_native_01.cpp` contains the explicit `mpfr_mul` plus
+`mpfr_add` loop, while `Rdot_mpfr_C_native_01_FMA.cpp` contains the explicit
+`mpfr_fma` loop.  The OpenMP native pair follows the same split.  This keeps
+hotpath disassembly honest: there is no source-level `#ifdef` hiding the
+operation mix being measured.
+
 ## Recorded Repeat-10 Sample
 
 ![Rdot serial benchmark](../results_raw/rdot_n1e7_512_repeat10_20260514/benchmark_rdot_n1e7_512_repeat10_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
@@ -160,6 +169,12 @@ Results are stored in
 
 All 52 Rdot variants reported `DIFF OK` in all 10 runs.
 
+These numbers are a historical baseline from the pre-alignment MPFR Rdot
+layout.  The wrapper 01-06 sources have since been aligned with the GMP Rdot
+01-06 source shapes, and the C native FMA/non-FMA implementations have been
+split into separate source files.  Re-run the benchmark before using this table
+as a current performance ranking.
+
 Top serial results:
 
 | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Timed allocs |
@@ -175,8 +190,7 @@ The serial result is mostly a hotpath-shape result.  `kernel_01_mkII` and
 `kernel_02_mkII` allocate a product temporary every element and fall to about
 18 and 16 MFLOPS.  `kernel_03_mkII_STABLE_ROUNDING` reuses the product object
 and removes the repeated rounding function call, so it reaches the C native
-range.  The hand-written raw MPFR `kernel_05` and `kernel_06` variants are also
-C-native-like because they cache `rnd` before the loop.
+range in that historical run.
 
 Top OpenMP results:
 
@@ -196,6 +210,84 @@ not be read alone.  By average MFLOPS, the best wrapper result in this run is
 per-element product allocation pattern.  FMA rescues `kernel_openmp_01` because
 the source expression can fuse, but it does not rescue `kernel_openmp_02`
 because the loop-local `mpfr_class templ` is explicitly constructed.
+
+## Comparison with GMP
+
+The MPFR and GMP Rdot benchmarks should not be read as the same optimization
+problem with different backend names.  GMP `mpf` arithmetic has no explicit
+rounding-mode argument in the hot operation calls.  Once the wrapper avoids
+per-element `mpf_init2` / `mpf_clear` traffic, the remaining GMP `mpf` hotpath
+can get very close to the raw C loop: load operands, call `mpf_mul`, call
+`mpf_add`, advance pointers.
+
+MPFR is stricter.  Every operation needs an `mpfr_rnd_t`:
+
+```cpp
+mpfr_mul(templ, dx[i], dy[i], rnd);
+mpfr_add(acc, acc, templ, rnd);
+```
+
+The raw C native MPFR kernels can load `rnd` once before the timed loop and
+keep it in a register.  A generic wrapper expression cannot assume that
+rounding is immutable unless the build or an explicit scope says so.  Without
+that assumption, each wrapper operation has to recover the current evaluation
+context, which means a repeated rounding-mode lookup.  With
+`GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE`, the function call is removed,
+but the generic path can still leave a thread-local cached rounding load in the
+loop.  That TLS load is smaller than `mpfr_get_default_rounding_mode()`, but it
+is still not the same as C native code passing a loop-invariant register.
+
+This is the practical MPFR limit for the generic expression-template path:
+after product allocation is removed, rounding delivery becomes visible.  The
+serial result shows it clearly:
+
+| Shape | Avg MFLOPS | What it shows |
+|-------|-----------:|---------------|
+| `C_native_01` | 22.804 | C baseline with `rnd` cached before the loop. |
+| `kernel_03_mkII` | 21.055 | Product object is reused, but normal wrapper rounding context remains. |
+| `kernel_03_mkII_STABLE_ROUNDING` | 23.308 | Product object is reused and rounding lookup is reduced to the stable path. |
+
+So the GMP lesson, "remove temporary materialization and the wrapper can match
+C native", is incomplete for MPFR.  The MPFR version is: remove temporary
+materialization first, then hoist or stabilize rounding delivery.  If rounding
+is still recovered through the generic context path, the wrapper can remain
+behind even with zero per-element allocation.
+
+The wrapper `kernel_05` / `kernel_06` variants are now source-shape controls
+matching the GMP Rdot unroll experiments.  They do not call raw MPFR functions
+directly and they do not cache `rnd` in benchmark source.  This makes them
+useful for measuring whether four accumulators and one or four reusable product
+objects help the wrapper path, while raw MPFR call overhead remains isolated in
+the C native benchmarks.
+
+OpenMP makes the same distinction larger.  Allocation-heavy MPFR wrapper
+shapes (`kernel_openmp_01_mkII` and `kernel_openmp_02_mkII`) sit near
+`40-42 MFLOPS`, far below raw C OpenMP, because every thread is still creating
+millions of product objects.  Once allocation is removed, the best wrapper
+OpenMP result is `kernel_openmp_03_mkII_STABLE_ROUNDING` with
+`509.774 average MFLOPS`, close to but still below `C_native_openmp_01_FMA`
+at `538.348 average MFLOPS`.  Some of that gap is the same rounding-delivery
+issue; some is ordinary OpenMP variance and wrapper code shape.
+
+FMA changes the comparison again.  GMP `mpf` Rdot does not have the same
+standardized rounded FMA story.  MPFR has `mpfr_fma`, so `kernel_01` can become
+a good source shape when the expression `partial += dx[i] * dy[i]` is fused.
+That is why `kernel_01_mkII_STABLE_ROUNDING_FMA` reaches `23.229 average
+MFLOPS` serially even though non-FMA `kernel_01_mkII` is allocation-heavy.
+`kernel_02` does not get the same benefit because the user-visible source has
+already forced a loop-local `mpfr_class templ`.
+
+In short:
+
+- GMP `mpf`: after allocation traffic is removed, wrapper overhead can mostly
+  collapse to raw GMP call overhead.
+- MPFR: after allocation traffic is removed, rounding-mode delivery remains a
+  first-class hotpath concern.
+- C native MPFR has the best possible rounding path because `rnd` is cached
+  once before the loop.
+- Stable rounding narrows the wrapper gap, but generic wrapper code may still
+  pay TLS/context cost unless the implementation has a specialized path that
+  hoists `rnd` into the kernel loop.
 
 ## Lessons Learned
 
@@ -250,13 +342,14 @@ rounding lookup part, but serial `kernel_04_mkII_STABLE_ROUNDING` averages only
 `20.023 MFLOPS`, below `kernel_03_mkII_STABLE_ROUNDING`.  Reusing an object is
 necessary, but the update pattern still matters.
 
-The hand-written `kernel_05` and `kernel_06` variants are useful as control
-experiments, not as the preferred wrapper style.  They call raw MPFR functions
-and cache `rnd` before the loop, so `*_STABLE_ROUNDING` does not change their
-hotpath in a meaningful way.  Serial `kernel_05` is already C-native-like.
-`kernel_06` sometimes wins by max MFLOPS, especially with FMA, but its extra
-product temporaries do not produce a robust serial advantage over the simpler
-`kernel_03` / `kernel_05` shapes.
+`kernel_05` and `kernel_06` are useful as wrapper control experiments, not as
+the preferred source style.  They now match the GMP Rdot unroll shapes:
+`kernel_05` uses four accumulators and one reusable product object, while
+`kernel_06` uses four accumulators and four reusable product objects.  They
+answer a narrower question than the C native baselines: whether unrolling and
+independent wrapper temporaries help after allocation traffic has already been
+reduced.  Raw MPFR FMA/non-FMA call overhead should be read from the C native
+benchmarks instead.
 
 OpenMP results must be read with both max and average.  The timed section is
 short once the kernel scales, and the run-to-run spread is large.  For example,
@@ -275,8 +368,8 @@ The best practical MPFR Rdot wrapper direction after this run is:
 - For OpenMP, avoid allocation-heavy `01`/`02` non-FMA shapes.  Use either a
   reusable product object per thread (`kernel_openmp_03`) or a fused
   multiply-add source shape that removes per-element product materialization.
-- Treat `05`/`06` as benchmark controls for unroll and raw MPFR call overhead,
-  not as the first API shape to recommend.
+- Treat `05`/`06` as benchmark controls for unroll and wrapper temporary
+  policy, not as the first API shape to recommend.
 
 The full executable wall time in this benchmark is not the value being ranked.
 Every run initializes two `10000000`-element vectors and then computes a serial

@@ -1,3 +1,34 @@
+Post-phase MPFR Rdot GMP comparison documentation:
+DONE
+
+Implemented features:
+- Added a `Comparison with GMP` section to the MPFR Rdot README.
+- Documented that GMP `mpf` does not carry an explicit rounding-mode argument
+  in hot arithmetic calls, while MPFR requires `mpfr_rnd_t` for every
+  arithmetic operation.
+- Clarified that C native MPFR can cache `rnd` before the loop, while generic
+  wrapper expressions may still pay rounding context or TLS-load cost even
+  after per-element product allocation has been removed.
+- Recorded the practical distinction: GMP wrapper optimization mostly reduces
+  to avoiding temporary materialization, while MPFR also needs rounding
+  delivery to be hoisted, stabilized, or specialized.
+
+Tests added:
+- No tests were added; this is documentation-only.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff --check`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+
+Known issues:
+- No code changes were made in this phase.
+
 Post-phase MPFR Rdot repeat-10 benchmark:
 DONE
 
@@ -96,6 +127,12 @@ Exact commands run:
 - `OMP_NUM_THREADS=4 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 1000 512`
 - `git diff --check`
 - `ctest --test-dir build --output-on-failure`
+- `objdump -d -C build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FMA | rg -n "mpfr_fma|mpfr_mul|mpfr_add"`
+- `objdump -d -C build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII | rg -n "mpfr_fma|mpfr_mul|mpfr_add"`
+- `nm -C build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FMA | rg " _Rdot| mpfr_fma| mpfr_mul| mpfr_add"`
+- `nm -C build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII | rg " _Rdot| mpfr_fma| mpfr_mul| mpfr_add"`
+- `objdump -d -C --start-address=0x3990 --stop-address=0x3b20 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FMA`
+- `objdump -d -C --start-address=0x3970 --stop-address=0x3b20 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII`
 
 Pass/fail result:
 - MPFR Rdot target build: PASS, all native, serial `01..06`, and OpenMP
@@ -14991,3 +15028,93 @@ Known issues:
 - No new known issues.  The section intentionally recommends moving further
   work to MPFR Rdot unless the GMP benchmark changes its kernel contract or
   data layout.
+
+Post-phase MPFR Rdot GMP-shape alignment:
+DONE
+
+Implemented features:
+- Aligned MPFR Rdot wrapper kernels `01` through `06` with the corresponding
+  GMP Rdot source shapes.
+- Removed raw `mpfr_mul` / `mpfr_fma` calls from MPFR wrapper kernels `05` and
+  `06`; wrapper FMA behavior now comes from the existing expression-template
+  FMA build option.
+- Split MPFR C native FMA and non-FMA benchmarks into separate source files
+  for both serial and OpenMP targets.
+- Updated the MPFR Rdot README to describe the new source-shape policy and to
+  mark the previous repeat-10 results as a historical baseline.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06.cpp`
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpfr_mul|mpfr_fma|MPFRXX_ENABLE_FMA|with_precision|mpfr_set_zero|_Rdot" benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_*.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp`
+- `sed -n '1,240p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06.cpp`
+- `sed -n '1,260p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04.cpp`
+- `sed -n '1,240p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05.cpp`
+- `sed -n '1,250p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06.cpp`
+- `rg -n "Rdot_mpfr_C_native|FMA|kernel_0[1-6]|add_executable|target_compile_definitions" benchmarks/mpfr/00_Rdot CMakeLists.txt benchmarks -g 'CMakeLists.txt' -g '*.cmake'`
+- `rg --files benchmarks/mpfr/00_Rdot`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA.cpp`
+- `sed -n '1,240p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01.cpp`
+- `sed -n '1,240p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA.cpp`
+- `sed -n '1,180p' benchmarks/CMakeLists.txt`
+- `rg -n "mpfr_mul|mpfr_fma|MPFRXX_ENABLE_FMA|MPFR_C_NATIVE_USE_FMA|#include \"Rdot_mpfr_C_native" benchmarks/mpfr/00_Rdot`
+- `rg -n "with_precision|mpfr_set_zero|mpfr_get_default_rounding_mode" benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_*.cpp`
+- `sed -n '1,130p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp`
+- `sed -n '1,140p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05.cpp`
+- `git status --short`
+- `rg -n "MPFR_C_NATIVE_USE_FMA|#include \"Rdot_mpfr_C_native|mpfr_mul|mpfr_fma|MPFRXX_ENABLE_FMA" benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_*.cpp benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native*.cpp`
+- `ls -d build build_bench_release 2>/dev/null`
+- `cmake --build build_bench_release -j --target Rdot_mpfr_C_native_01 Rdot_mpfr_C_native_01_FMA Rdot_mpfr_C_native_openmp_01 Rdot_mpfr_C_native_openmp_01_FMA ... Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 1000 512`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 1000 512`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_FMA 1000 512`
+- `OMP_NUM_THREADS=4 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 1000 512`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- MPFR Rdot native and wrapper benchmark target build: PASS.
+- Source scan: wrapper kernels no longer contain raw `mpfr_mul`, `mpfr_fma`,
+  `MPFRXX_ENABLE_FMA`, or explicit `with_precision` / `mpfr_set_zero`
+  benchmark-loop setup.
+- Native source split: PASS.  Only C native source files contain raw
+  `mpfr_mul` / `mpfr_fma`; no `MPFR_C_NATIVE_USE_FMA` source include bridge
+  remains.
+- Smoke runs: `Rdot_mpfr_C_native_01`, `Rdot_mpfr_C_native_01_FMA`,
+  `Rdot_mpfr_kernel_01_mkII_FMA`, and
+  `Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA` all reported `DIFF OK`.
+- Disassembly check: `Rdot_mpfr_kernel_01_mkII_FMA` hot `_Rdot` loop calls
+  `mpfr_fma@plt`; `Rdot_mpfr_kernel_01_mkII` hot `_Rdot` loop calls
+  `mpfr_mul@plt` followed by `mpfr_add@plt`.
+- `git diff --check`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 156/156 tests passed.
+
+Known issues:
+- The committed repeat-10 MPFR Rdot result table predates this source-shape
+  alignment and should be regenerated before it is used for current ranking.

@@ -49,45 +49,29 @@ void _Rdot(int64_t n, mpfr_t *dx, int64_t incx, mpfr_t *dy, int64_t incy, mpfr_t
 
     int64_t i;
     mpfr_t temp;
-#ifndef MPFR_C_NATIVE_USE_FMA
     mpfr_t templ;
-#endif
     const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
 
     mpfr_set_d(*ans, 0.0, rnd);
 
 // no reduction for multiple precision
-#ifdef MPFR_C_NATIVE_USE_FMA
-#pragma omp parallel private(i, temp)
-#else
 #pragma omp parallel private(i, temp, templ)
-#endif
     {
         const mpfr_rnd_t thread_rnd = mpfr_get_default_rounding_mode();
         mpfr_init(temp);
-#ifndef MPFR_C_NATIVE_USE_FMA
         mpfr_init(templ);
-#endif
         mpfr_set_d(temp, 0.0, thread_rnd);
-#ifndef MPFR_C_NATIVE_USE_FMA
         mpfr_set_d(templ, 0.0, thread_rnd);
-#endif
 
 #pragma omp for
         for (i = 0; i < n; i++) {
-#ifdef MPFR_C_NATIVE_USE_FMA
-            mpfr_fma(temp, dx[i], dy[i], temp, thread_rnd);
-#else
             mpfr_mul(templ, dx[i], dy[i], thread_rnd);
             mpfr_add(temp, temp, templ, thread_rnd);
-#endif
         }
 #pragma omp critical
         { mpfr_add(*ans, *ans, temp, rnd); }
         mpfr_clear(temp);
-#ifndef MPFR_C_NATIVE_USE_FMA
         mpfr_clear(templ);
-#endif
     }
 }
 

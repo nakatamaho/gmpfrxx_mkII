@@ -46,16 +46,12 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
         exit(EXIT_FAILURE);
     }
 
-    const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
-    mpfr_class result = mpfr_class::with_precision(precision);
-    mpfr_set_zero(result.mpfr_data(), 0);
+    mpfr_class result = 0.0;
 
 #pragma omp parallel
     {
-        mpfr_class partial = mpfr_class::with_precision(precision);
-        mpfr_class templ = mpfr_class::with_precision(precision);
-        mpfr_set_zero(partial.mpfr_data(), 0);
-        mpfr_set_zero(templ.mpfr_data(), 0);
+        mpfr_class partial = 0.0;
+        mpfr_class templ;
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < n; ++i) {
@@ -109,8 +105,7 @@ int main(int argc, char **argv) {
 
     mpfr_class *vec1_mpfr_class = new mpfr_class[N];
     mpfr_class *vec2_mpfr_class = new mpfr_class[N];
-    mpfr_class _ans = mpfr_class::with_precision(prec);
-    mpfr_set_zero(_ans.mpfr_data(), 0);
+    mpfr_class _ans;
 
     for (int i = 0; i < N; i++) {
         vec1_mpfr_class[i] = mpfr_class(vec1[i]);
