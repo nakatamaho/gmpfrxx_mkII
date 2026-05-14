@@ -113,8 +113,8 @@ The generic wrapper expression path normally obtains the current evaluation
 context for each operation.  In normal builds that can mean repeated default
 rounding lookups.  `*_STABLE_ROUNDING` removes the function-call lookup by using
 the wrapper's cached thread-local rounding value, but it can still leave a TLS
-load in the loop.  Therefore the closest wrapper hotpath to C native is expected
-to be either:
+load in the loop.  Therefore the closest wrapper hotpath to the non-FMA C
+native loop is expected to be one of the reusable-product shapes:
 
 ```text
 kernel_03_mkII_STABLE_ROUNDING
@@ -122,15 +122,18 @@ kernel_05_mkII_STABLE_ROUNDING
 kernel_06_mkII_STABLE_ROUNDING
 ```
 
-for non-FMA, and:
+For FMA, the closest wrapper hotpath is the source shape that preserves the
+multiply-add expression until evaluation:
 
 ```text
-kernel_03_mkII_STABLE_ROUNDING_FMA
-kernel_05_mkII_STABLE_ROUNDING_FMA
-kernel_06_mkII_STABLE_ROUNDING_FMA
+kernel_01_mkII_STABLE_ROUNDING_FMA
 ```
 
-for FMA.
+After the MPFR Rdot sources were aligned with the GMP Rdot 01-06 source shapes,
+this distinction became visible in disassembly: only source that preserves the
+algebraic pattern `acc += dx[i] * dy[i]` can lower to one `mpfr_fma` call.
+Kernels that first materialize an explicit product object remain `mpfr_mul`
+plus `mpfr_add`, even in an `*_FMA` build.
 
 The FMA variants should not be treated as merely faster versions of the
 non-FMA variants.  `mpfr_fma(a, b, c, d, rnd)` computes the fused
@@ -144,6 +147,122 @@ file.  `Rdot_mpfr_C_native_01.cpp` contains the explicit `mpfr_mul` plus
 `mpfr_fma` loop.  The OpenMP native pair follows the same split.  This keeps
 hotpath disassembly honest: there is no source-level `#ifdef` hiding the
 operation mix being measured.
+
+## Hotpath Disassembly Notes
+
+The aligned MPFR Rdot repeat-10 run used:
+
+```text
+N = 10000000, precision = 512, repeat = 10, OMP_NUM_THREADS = 32
+```
+
+with results stored under
+`../results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/`.  All 52
+variants reported `DIFF OK`.  The key disassembly result is that the fastest
+wrapper paths are close to C native only after two separate costs are removed:
+loop-local product allocation and repeated rounding-mode lookup.
+
+| Variant | Hot loop | Rounding delivery | Meaning |
+|---------|----------|-------------------|---------|
+| `C_native_01` | `mpfr_mul` + `mpfr_add` | `rnd` cached in a register | Raw non-FMA baseline. |
+| `C_native_01_FMA` | `mpfr_fma` | `rnd` cached in a register | Raw FMA baseline and the cleanest hotpath. |
+| `kernel_01_mkII` | `mpfr_get_default_rounding_mode` + `mpfr_init2` + `mpfr_mul` + `mpfr_add` + `mpfr_clear` | Function call per element | The product expression is materialized as a temporary every iteration. |
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | `mpfr_fma` | TLS load per element | Closest mkII path to C native FMA; the remaining visible delta is rounding delivery. |
+| `kernel_03_mkII_STABLE_ROUNDING` | `mpfr_mul` + `mpfr_add` | TLS load per MPFR call | Reuses one product object, so there is no loop allocation, but it is still non-FMA. |
+| `kernel_06_mkII_STABLE_ROUNDING_FMA` | 4x `mpfr_mul` + 4x `mpfr_add` | TLS load per MPFR call | Four-way unrolled product temporaries; despite the `FMA` suffix, this source shape does not fuse. |
+
+The native FMA baseline loads rounding once before the loop:
+
+```asm
+# C_native_01_FMA
+# Baseline: one mpfr_fma call per element.
+# Rounding mode is loaded once before the loop and passed in a register.
+
+3b99: call   mpfr_get_default_rounding_mode@plt
+...
+3bd6: mov    %r12d,%r8d       # cached rounding mode
+3beb: call   mpfr_fma@plt
+3bf3: jne    3bd0
+```
+
+The closest wrapper FMA path has the same arithmetic call shape, but still
+loads the cached wrapper rounding value from TLS in the loop:
+
+```asm
+# kernel_01_mkII_STABLE_ROUNDING_FMA
+# Same operation shape as C_native_01_FMA.
+# Difference: rounding mode is loaded from TLS inside the loop.
+
+3a4c: mov    %fs:0xfffffffffffffffc,%r8d  # TLS rounding load
+3a55: call   mpfr_fma@plt
+3a69: jne    3a40
+```
+
+That difference is small but measurable.  In the aligned serial run,
+`C_native_01_FMA` averaged `23.32262 MFLOPS`, while
+`kernel_01_mkII_STABLE_ROUNDING_FMA` averaged `23.21117 MFLOPS`.
+
+The unfused wrapper `kernel_01_mkII` is a different problem.  It pays for
+rounding lookup, initialization, multiplication, addition, and clearing on
+every element:
+
+```asm
+# kernel_01_mkII
+# Bad path: expression temporary is materialized each iteration.
+
+3a28: call   mpfr_get_default_rounding_mode@plt
+3a37: call   mpfr_init2@plt
+3a48: call   mpfr_mul@plt
+3a59: call   mpfr_add@plt
+3a6d: call   mpfr_clear@plt
+3a77: jne    3a20
+```
+
+This explains the allocation count and performance: `kernel_01_mkII` performs
+`10000001` timed allocations and averaged `17.59429 MFLOPS` in the aligned
+serial run.
+
+The reusable-product `kernel_03_mkII_STABLE_ROUNDING` removes the
+`mpfr_init2` / `mpfr_clear` traffic from the loop, but it remains a two-call
+non-FMA hotpath:
+
+```asm
+# kernel_03_mkII_STABLE_ROUNDING
+# Reuses one product temporary.
+# No init/clear in the loop, but still two MPFR calls per element.
+
+3a40: mov    %fs:0xfffffffffffffffc,%ecx
+3a51: call   mpfr_mul@plt
+3a56: mov    %fs:0xfffffffffffffffc,%ecx
+3a67: call   mpfr_add@plt
+```
+
+The most important naming caveat is `kernel_06_mkII_STABLE_ROUNDING_FMA`.
+The executable is built with the FMA option, but the source materializes
+product temporaries before accumulation.  The hot loop therefore remains
+four `mpfr_mul` calls followed by four `mpfr_add` calls:
+
+```asm
+# kernel_06_mkII_STABLE_ROUNDING_FMA
+# Not actually FMA in the hot loop.
+# The explicit temporaries force mul/add, then the loop is 4-way unrolled.
+
+3cf6: call   mpfr_mul@plt
+3d10: call   mpfr_mul@plt
+3d2a: call   mpfr_mul@plt
+3d44: call   mpfr_mul@plt
+3d5f: call   mpfr_add@plt
+3d79: call   mpfr_add@plt
+3d9b: call   mpfr_add@plt
+3db5: call   mpfr_add@plt
+3dcb: jne    3ce0
+```
+
+Its strong serial score, `23.62357 average MFLOPS` and `24.0904 max MFLOPS`,
+should therefore not be interpreted as `mpfr_fma` winning.  It is an unrolled
+`mpfr_mul` plus `mpfr_add` wrapper shape with stable rounding and reusable
+temporaries.  The actual C native FMA comparison is
+`kernel_01_mkII_STABLE_ROUNDING_FMA` versus `C_native_01_FMA`.
 
 ## Recorded Repeat-10 Sample
 

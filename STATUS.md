@@ -15118,3 +15118,53 @@ Pass/fail result:
 Known issues:
 - The committed repeat-10 MPFR Rdot result table predates this source-shape
   alignment and should be regenerated before it is used for current ranking.
+
+## Phase: MPFR Rdot Hotpath Disassembly Notes
+
+Implemented features:
+- Added MPFR Rdot hotpath disassembly notes to
+  `benchmarks/mpfr/00_Rdot/README.md`.
+- Documented the C native FMA baseline, the closest mkII stable-rounding FMA
+  path, the allocation-heavy unfused `kernel_01_mkII` path, and the
+  reusable-product `kernel_03_mkII_STABLE_ROUNDING` path.
+- Documented that `kernel_06_mkII_STABLE_ROUNDING_FMA` is built with the FMA
+  option but remains a four-way unrolled `mpfr_mul` plus `mpfr_add` hot loop
+  because the source materializes product temporaries before accumulation.
+
+Missing features:
+- None for this documentation update.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,320p' benchmarks/mpfr/00_Rdot/README.md`
+- `find benchmarks/mpfr/results_raw -maxdepth 2 -type f | sort | tail -40`
+- `sed -n '320,760p' benchmarks/mpfr/00_Rdot/README.md`
+- `sed -n '1,80p' benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/summary_rdot_n1e7_512_aligned_repeat10_omp32.csv`
+- `du -h benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/*`
+- `sed -n '100,280p' benchmarks/mpfr/00_Rdot/README.md`
+- `git diff -- benchmarks/mpfr/00_Rdot/README.md`
+- `sed -n '114,146p' benchmarks/mpfr/00_Rdot/README.md`
+- `tail -80 STATUS.md`
+- `git diff --stat`
+- `git diff --check`
+- `git add benchmarks/mpfr/00_Rdot/README.md STATUS.md benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514`
+- `git diff --cached --stat`
+- `git diff --cached --check`
+- `perl -0pi -e 's/\r\n/\n/g; s/\n+\z/\n/' benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/benchmark_rdot_n1e7_512_aligned_repeat10_omp32.log benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/raw_rdot_n1e7_512_aligned_repeat10_omp32.csv benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/summary_rdot_n1e7_512_aligned_repeat10_omp32.csv`
+- `git add benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/benchmark_rdot_n1e7_512_aligned_repeat10_omp32.log benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/raw_rdot_n1e7_512_aligned_repeat10_omp32.csv benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514/summary_rdot_n1e7_512_aligned_repeat10_omp32.csv`
+- `git diff --cached --check`
+- `git diff --cached --stat`
+
+Pass/fail result:
+- README hotpath note review: PASS.
+- `git diff --check`: PASS.
+- `git diff --cached --check`: PASS.
+
+Known issues:
+- None for this documentation update.
