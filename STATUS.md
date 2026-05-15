@@ -1464,6 +1464,95 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: MPFR Raxpy N=10000000 1024-bit Repeat-10 Benchmark
+
+Implemented features:
+- Ran the MPFR Raxpy benchmark matrix at `N=10000000`, 1024-bit precision,
+  and repeat count 10.
+- Covered C native, C native FMA, C native OpenMP, C native OpenMP FMA,
+  wrapper serial kernels 01-04, and wrapper OpenMP kernels 01-03.
+- Used explicit OpenMP affinity for benchmark runs:
+  `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread`.
+- Parsed the benchmark log into raw and summary CSV files.
+
+Missing features:
+- No README analysis or plot was added for the 1024-bit run yet.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/benchmark_raxpy_n10000000_p1024_repeat10.log`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/raw_raxpy_n10000000_p1024_repeat10.csv`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/summary_raxpy_n10000000_p1024_repeat10.csv`
+- `STATUS.md`
+
+Exact commands run:
+- `pgrep -af 'Raxpy_mpfr|benchmark_raxpy_n10000000_p1024|01_Raxpy' || true`
+- `find benchmarks/mpfr/01_Raxpy/results_raw -maxdepth 1 -type d -name 'raxpy_n1e7_1024_repeat10_*' -printf '%f\n' | sort`
+- `git status --short`
+- `/bin/bash -lc 'set -euo pipefail; outdir="benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_$(date +%Y%m%d_%H%M%S)"; ...; OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread /usr/bin/time -f "WALL_SECONDS %e" "${exe_dir}/${exe}" 10000000 1024; ...'`
+- `python3 - <<'PY' ...`
+- `sed -n '1,80p' benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/summary_raxpy_n10000000_p1024_repeat10.csv`
+- `git status --short`
+- `tail -n 80 STATUS.md`
+- `ctest --test-dir build_bench_release --output-on-failure`
+- `ls -lh benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821`
+
+Pass/fail result:
+- Benchmark run: PASS.  320/320 timed runs reported `Result OK`.
+- Raw CSV and summary CSV generation: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- A previous interrupted partial output directory remains at
+  `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_200214/`.
+- OpenMP measurements contain normal run-to-run variation; use max and average
+  separately when comparing variants.
+
+## Phase: MPFR Raxpy 1024-bit README Analysis
+
+Implemented features:
+- Added the 1024-bit repeat-10 MPFR Raxpy benchmark result summary to
+  `benchmarks/mpfr/01_Raxpy/README.md`.
+- Added an inline summary plot for the `N=10000000`, 1024-bit precision run.
+- Added 1024-bit serial and OpenMP result tables.
+- Added a 1024-bit logical memory-bandwidth estimate and compared it with the
+  512-bit traffic estimate.
+- Kept `Lessons Learned` as the final README section and updated it to include
+  the 1024-bit observations.
+
+Missing features:
+- No hardware-counter validation was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/benchmark_raxpy_n10000000_p1024_repeat10_summary.png`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,420p' benchmarks/mpfr/01_Raxpy/README.md`
+- `sed -n '1,80p' benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/summary_raxpy_n10000000_p1024_repeat10.csv`
+- `tail -n 90 STATUS.md`
+- `python3 - <<'PY' ...`
+- `sed -n '150,430p' benchmarks/mpfr/01_Raxpy/README.md`
+- `ls -lh benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821`
+- `git diff --check`
+- `tail -n 80 benchmarks/mpfr/01_Raxpy/README.md`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Plot generation: PASS.
+- README section check: PASS.  `Lessons Learned` is the final section.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- None.
+
 ## Phase: GMP Raxpy README Benchmark Analysis
 
 Implemented features:

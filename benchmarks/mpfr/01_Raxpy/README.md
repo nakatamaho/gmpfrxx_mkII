@@ -201,6 +201,91 @@ write-allocate behavior, hardware prefetching, and allocator placement, so this
 section should be read as a bandwidth sanity check rather than a substitute for
 hardware counters.
 
+## Recorded Result: N=10000000, 1024-bit, Repeat 10
+
+This run used the same benchmark matrix and the same explicit OpenMP affinity:
+
+```bash
+OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread
+```
+
+All 320 timed runs reported `Result OK`.
+
+Raw data:
+
+- `results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/benchmark_raxpy_n10000000_p1024_repeat10.log`
+- `results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/raw_raxpy_n10000000_p1024_repeat10.csv`
+- `results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/summary_raxpy_n10000000_p1024_repeat10.csv`
+
+![MPFR Raxpy 1024-bit repeat-10 summary](results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/benchmark_raxpy_n10000000_p1024_repeat10_summary.png)
+
+### Serial Results
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Observation |
+|---------|------------|------------|------------|-------------|
+| `C_native_01` | 9.156 | 9.072 | 9.003 | Raw split multiply/add baseline. |
+| `C_native_01_FMA` | 9.426 | 9.341 | 9.262 | Raw FMA is now slightly faster than raw split multiply/add. |
+| `kernel_01_mkII` | 8.289 | 8.164 | 8.059 | Expression-first default path remains below C native. |
+| `kernel_01_mkII_FMA` | 9.225 | 9.104 | 9.058 | FMA expression path recovers most of the default-path loss. |
+| `kernel_01_mkII_STABLE_ROUNDING` | 8.255 | 8.185 | 8.122 | Stable rounding alone is not enough for expression-first split evaluation. |
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 9.444 | 9.370 | 9.264 | Best serial wrapper path; effectively tied with C native FMA. |
+| `kernel_02_mkII` | 8.754 | 8.590 | 8.499 | Reusable product via copy-then-multiply. |
+| `kernel_02_mkII_FMA` | 8.719 | 8.605 | 8.529 | FMA option does not fuse this source shape. |
+| `kernel_02_mkII_STABLE_ROUNDING` | 9.069 | 9.015 | 8.955 | Stable split multiply/add path is close to C native non-FMA. |
+| `kernel_02_mkII_STABLE_ROUNDING_FMA` | 9.129 | 8.998 | 8.886 | Same practical shape as stable `kernel_02`. |
+| `kernel_03_mkII` | 8.892 | 8.830 | 8.764 | Reusable product assigned from expression. |
+| `kernel_03_mkII_FMA` | 9.104 | 8.853 | 8.764 | FMA option does not fuse because the product is materialized first. |
+| `kernel_03_mkII_STABLE_ROUNDING` | 9.233 | 9.048 | 8.945 | Best reusable-product split path. |
+| `kernel_03_mkII_STABLE_ROUNDING_FMA` | 9.230 | 9.040 | 8.929 | Same split multiply/add shape as stable `kernel_03`. |
+| `kernel_04_mkII` | 8.299 | 8.084 | 7.982 | Loop-local product object remains allocation-heavy. |
+| `kernel_04_mkII_FMA` | 8.133 | 8.067 | 8.004 | FMA option cannot repair loop-local materialization. |
+| `kernel_04_mkII_STABLE_ROUNDING` | 8.401 | 8.215 | 8.098 | Stable rounding helps slightly, but construction cost remains. |
+| `kernel_04_mkII_STABLE_ROUNDING_FMA` | 8.267 | 8.201 | 8.139 | Same practical limitation as stable `kernel_04`. |
+
+### OpenMP Results
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Observation |
+|---------|------------|------------|------------|-------------|
+| `C_native_openmp_01` | 245.619 | 243.484 | 239.324 | Raw OpenMP split multiply/add baseline. |
+| `C_native_openmp_01_FMA` | 256.263 | 252.266 | 248.446 | Raw OpenMP FMA baseline. |
+| `kernel_openmp_01_mkII` | 223.138 | 219.037 | 204.423 | Expression-first default path is clearly below C native. |
+| `kernel_openmp_01_mkII_FMA` | 251.700 | 248.375 | 241.886 | FMA expression path reaches the C native FMA class. |
+| `kernel_openmp_01_mkII_STABLE_ROUNDING` | 225.577 | 221.431 | 214.566 | Stable rounding alone does not fix split expression evaluation. |
+| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 256.680 | 252.836 | 242.548 | Best OpenMP wrapper path; tied with C native FMA on average. |
+| `kernel_openmp_02_mkII` | 242.520 | 237.017 | 232.761 | Per-thread reusable product via copy-then-multiply. |
+| `kernel_openmp_02_mkII_FMA` | 239.447 | 234.487 | 222.829 | FMA option does not fuse this source shape. |
+| `kernel_openmp_02_mkII_STABLE_ROUNDING` | 247.447 | 241.301 | 225.573 | Stable split path is near the C native non-FMA class. |
+| `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 247.672 | 244.149 | 240.050 | Same split path, with a strong average in this run. |
+| `kernel_openmp_03_mkII` | 241.995 | 236.819 | 218.001 | Per-thread reusable product assigned from expression. |
+| `kernel_openmp_03_mkII_FMA` | 242.833 | 238.924 | 236.199 | FMA option does not fuse this source shape. |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 247.994 | 243.221 | 238.571 | Best OpenMP reusable-product split path. |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 247.137 | 240.464 | 229.191 | Same split multiply/add shape as stable `kernel_openmp_03`. |
+
+### Estimated Memory Bandwidth Used
+
+At 1024-bit precision, the MPFR significand payload is 128 bytes per value.
+Using the same logical traffic models as the 512-bit run:
+
+```text
+payload GB/s          = avg_mflops * 0.192
+header-inclusive GB/s = avg_mflops * 0.240
+```
+
+| Variant | Avg MFLOPS | Payload GB/s | Header-inclusive GB/s | Max header-inclusive GB/s |
+|---------|------------|--------------|------------------------|---------------------------|
+| `C_native_01` | 9.072 | 1.74 | 2.18 | 2.20 |
+| `C_native_01_FMA` | 9.341 | 1.79 | 2.24 | 2.26 |
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 9.370 | 1.80 | 2.25 | 2.27 |
+| `kernel_03_mkII_STABLE_ROUNDING` | 9.048 | 1.74 | 2.17 | 2.22 |
+| `C_native_openmp_01_FMA` | 252.266 | 48.44 | 60.54 | 61.50 |
+| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 252.836 | 48.54 | 60.68 | 61.60 |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 243.221 | 46.70 | 58.37 | 59.52 |
+
+The 1024-bit OpenMP FMA path therefore moves more payload bytes per reported
+MFLOP than the 512-bit case.  Even though MFLOPS drops from about 413 to about
+253, the payload-only estimate rises from about 40 GB/s to about 49 GB/s, while
+the header-inclusive estimate remains around 61 GB/s.
+
 ## Hotpath Disassembly
 
 The snippets below are from the Release benchmark binaries under
@@ -328,6 +413,11 @@ in the same class as `C_native_openmp_01_FMA`.
   `kernel_01_mkII_STABLE_ROUNDING_FMA` reaches the C native FMA serial class
   with 22.726 average MFLOPS, while `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA`
   reaches the C native FMA OpenMP class with 412.873 average MFLOPS.
+- The 1024-bit run preserves the same ranking.  `kernel_01_mkII_STABLE_ROUNDING_FMA`
+  is the best serial wrapper path at 9.370 average MFLOPS, and
+  `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` is the best OpenMP wrapper path
+  at 252.836 average MFLOPS.  Both are effectively tied with the corresponding
+  C native FMA baselines.
 - The FMA build option is source-shape dependent.  It matters for
   `y[i] += alpha * x[i]`, but it does not fuse `kernel_02`, `kernel_03`, or
   `kernel_04` after the source has already materialized a product object.
@@ -339,10 +429,14 @@ in the same class as `C_native_openmp_01_FMA`.
   `mpfr_class` construction keeps it below reusable-product kernels even when
   stable rounding is enabled.
 - Raw C native FMA is not automatically faster than raw C native non-FMA at
-  512-bit precision in this benchmark.  The wrapper FMA path helps mainly
-  because it avoids expression temporary materialization and split MPFR calls,
-  not because `mpfr_fma` is universally cheaper than `mpfr_mul` plus
-  `mpfr_add`.
+  every precision.  At 512-bit they are nearly tied in serial, while at
+  1024-bit C native FMA is slightly faster.  The wrapper FMA path is still most
+  valuable because it avoids expression temporary materialization and split
+  MPFR calls.
+- Doubling precision from 512 to 1024 bits cuts MFLOPS substantially, but the
+  OpenMP payload-bandwidth estimate increases.  This is consistent with wider
+  limb payloads increasing memory traffic while MPFR arithmetic also becomes
+  more expensive.
 - OpenMP measurements should be read with both max and average.  The best
   OpenMP wrapper path is structurally the same as C native FMA except for the
   TLS rounding load, and the remaining spread is dominated by normal OpenMP
