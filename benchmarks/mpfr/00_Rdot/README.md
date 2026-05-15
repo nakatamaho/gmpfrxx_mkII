@@ -95,12 +95,14 @@ the post-run correctness reference.
 | `kernel_04` | `templ = dx[i]; templ *= dy[i]; temp += templ;` | One product object is reused, but each iteration copies `dx[i]` before multiplying. | Separates reusable object lifetime from expression assignment. |
 | `kernel_05` | Four-way unroll with `acc0..acc3` and one reused product object. | Four accumulators are initialized before the loop; one product temporary is reused. | Tests whether accumulator dependency limits the serial MPFR loop. |
 | `kernel_06` | Four-way unroll with `acc0..acc3` and `templ0..templ3`. | Four accumulators and four product temporaries are initialized before the loop. | Separates accumulator unroll from product-temporary reuse and alias effects. |
+| `kernel_07` | Four-way unroll with `acc0..acc3 += dx[i] * dy[i]`. | Four accumulators are initialized before the loop and the multiply-add expression is preserved until compound assignment. | FMA-preserving unrolled counterpart to `kernel_01`; FMA builds are expected to emit four `mpfr_fma` calls per unrolled body. |
 | `kernel_openmp_01` | Per-thread `partial += dx[i] * dy[i];` | One accumulator per thread; final accumulation uses `critical`. | Parallel version of the expression-friendly `kernel_01` shape. |
 | `kernel_openmp_02` | Per-thread loop-local product object, then `partial += templ;` | Product object construction remains inside the loop. | Parallel version of the allocation-heavy `kernel_02` shape. |
 | `kernel_openmp_03` | Per-thread `templ = dx[i] * dy[i]; partial += templ;` | One reusable product object per thread. | Parallel version of the reusable-expression-product `kernel_03` shape. |
 | `kernel_openmp_04` | Per-thread `templ = dx[i]; templ *= dy[i]; partial += templ;` | One reusable product object per thread plus a per-iteration copy. | Parallel version of `kernel_04`. |
 | `kernel_openmp_05` | Per-thread four-way unroll with `acc0..acc3` and one product object. | Per-thread accumulators are reused; the tail loop follows the GMP OpenMP 05 shape. | Tests whether unroll helps once OpenMP already exposes thread parallelism. |
 | `kernel_openmp_06` | Per-thread four-way unroll with `acc0..acc3` and `templ0..templ3`. | Four product objects per thread are reused; the tail loop follows the GMP OpenMP 06 shape. | Tests whether independent product temporaries improve the OpenMP 05 shape. |
+| `kernel_openmp_07` | Per-thread four-way unroll with `acc0..acc3 += dx[i] * dy[i]`. | Four accumulators per thread; no explicit product temporary. | Parallel FMA-preserving unrolled counterpart to `kernel_openmp_01`. |
 
 ## MPFR-Specific Analysis
 
@@ -170,6 +172,7 @@ loop-local product allocation and repeated rounding-mode lookup.
 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | `mpfr_fma` | TLS load per element | Closest mkII path to C native FMA; the remaining visible delta is rounding delivery. |
 | `kernel_03_mkII_STABLE_ROUNDING` | `mpfr_mul` + `mpfr_add` | TLS load per MPFR call | Reuses one product object, so there is no loop allocation, but it is still non-FMA. |
 | `kernel_06_mkII_STABLE_ROUNDING_FMA` | 4x `mpfr_mul` + 4x `mpfr_add` | TLS load per MPFR call | Four-way unrolled product temporaries; despite the `FMA` suffix, this source shape does not fuse. |
+| `kernel_07_mkII_STABLE_ROUNDING_FMA` | 4x `mpfr_fma` | TLS load per element | Four-way unrolled version of the FMA-preserving `kernel_01` source shape. |
 
 The native FMA baseline loads rounding once before the loop:
 
@@ -262,7 +265,102 @@ Its strong serial score, `23.62357 average MFLOPS` and `24.0904 max MFLOPS`,
 should therefore not be interpreted as `mpfr_fma` winning.  It is an unrolled
 `mpfr_mul` plus `mpfr_add` wrapper shape with stable rounding and reusable
 temporaries.  The actual C native FMA comparison is
-`kernel_01_mkII_STABLE_ROUNDING_FMA` versus `C_native_01_FMA`.
+`kernel_01_mkII_STABLE_ROUNDING_FMA` versus `C_native_01_FMA`.  `kernel_07`
+was added to isolate that question for an unrolled source shape: it keeps four
+accumulators like `kernel_06`, but keeps each right-hand side as
+`dx[i] * dy[i]` so the FMA fastpath can still see the multiply-add expression.
+
+## Recorded 01-07 Repeat-10 Sweep
+
+![Rdot 01-07 serial benchmark](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
+
+![Rdot 01-07 OpenMP benchmark](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png)
+
+The 01-07 sweep uses:
+
+```text
+N = 100000000, precision = 512, repeat = 10, OMP_NUM_THREADS = 32
+```
+
+Results are stored in
+[../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/):
+
+- [Raw log](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32.log)
+- [Raw CSV](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/raw_rdot_n1e8_512_01_07_repeat10_omp32.csv)
+- [Summary CSV](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/summary_rdot_n1e8_512_01_07_repeat10_omp32.csv)
+- [Serial plot](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_serial_Rdot.png)
+- [Serial summary plot](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_serial_summary.png)
+- [OpenMP plot](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png)
+- [OpenMP summary plot](../results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_openmp_summary.png)
+
+All 60 Rdot variants reported `DIFF OK` in all 10 runs.
+
+Top serial results by average MFLOPS:
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Timed allocs | Hotpath note |
+|---------|-----------:|-----------:|-----------:|-------------:|--------------|
+| `kernel_06_mkII_STABLE_ROUNDING_FMA` | 23.737 | 23.616 | 23.497 | 8 | Four-way unrolled `mpfr_mul` + `mpfr_add`; not fused. |
+| `C_native_01` | 23.396 | 23.330 | 23.228 | 2 | Raw non-FMA C baseline. |
+| `C_native_01_FMA` | 23.488 | 23.233 | 22.934 | 1 | Raw `mpfr_fma` C baseline. |
+| `kernel_07_mkII_STABLE_ROUNDING_FMA` | 23.607 | 23.223 | 22.754 | 4 | Four-way unrolled FMA-preserving wrapper shape. |
+| `kernel_03_mkII_STABLE_ROUNDING_FMA` | 23.423 | 23.191 | 22.754 | 2 | Reusable product object; still `mpfr_mul` + `mpfr_add`. |
+| `kernel_06_mkII_STABLE_ROUNDING` | 23.209 | 23.099 | 22.870 | 8 | Same unrolled product-temporary shape without the FMA build flag. |
+
+The serial result answers why `kernel_07` was needed.  In non-FMA builds,
+`kernel_07_mkII` and `kernel_07_mkII_STABLE_ROUNDING` are allocation-heavy
+because each `acc += dx[i] * dy[i]` still materializes a product expression;
+they allocate `100000004` objects in the timed loop and stay near `17 MFLOPS`.
+In FMA builds, allocation drops to four timed objects, proving that the
+four-lane source shape exposes the FMA fastpath.
+
+However, `kernel_07_mkII_STABLE_ROUNDING_FMA` does not beat the best serial
+`kernel_06` result in this run.  The true FMA-preserving unrolled path averages
+`23.223 MFLOPS`, while `kernel_06_mkII_STABLE_ROUNDING_FMA` averages
+`23.616 MFLOPS` despite being an unrolled `mpfr_mul` plus `mpfr_add` path.
+This means the apparent serial win of `06` is not an FMA win; it is the
+product-temporary/unroll code shape plus stable rounding.  The closest honest
+serial C native FMA comparison remains:
+
+```text
+C_native_01_FMA:                       23.233 average MFLOPS
+kernel_01_mkII_STABLE_ROUNDING_FMA:    22.957 average MFLOPS
+kernel_07_mkII_STABLE_ROUNDING_FMA:    23.223 average MFLOPS
+```
+
+Top OpenMP results by average MFLOPS:
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Timed allocs | Hotpath note |
+|---------|-----------:|-----------:|-----------:|-------------:|--------------|
+| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 647.335 | 634.274 | 617.525 | 65 | Best average wrapper path; reusable product object, stable rounding. |
+| `kernel_openmp_06_mkII_STABLE_ROUNDING` | 653.753 | 619.989 | 471.651 | 257 | Four product temporaries per thread, stable rounding. |
+| `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA` | 663.259 | 610.270 | 493.334 | 257 | Best max wrapper result; still not actually fused. |
+| `kernel_openmp_07_mkII_FMA` | 626.785 | 608.243 | 565.695 | 129 | Four-way unrolled true FMA path, more stable than many OpenMP variants. |
+| `C_native_openmp_01_FMA` | 664.361 | 601.103 | 483.941 | 32 | Raw OpenMP FMA baseline. |
+| `C_native_openmp_01` | 656.452 | 594.146 | 478.464 | 64 | Raw OpenMP non-FMA baseline. |
+| `kernel_openmp_07_mkII_STABLE_ROUNDING_FMA` | 643.946 | 586.244 | 478.985 | 129 | True FMA path, but lower average due to slow outlier runs. |
+
+OpenMP at `N = 100000000` still has visible run-to-run variance, but the larger
+problem is no longer too short a timed loop.  Allocation-heavy OpenMP variants
+remain near `41-43 MFLOPS`, while allocation-free wrapper paths reach the raw C
+OpenMP range.
+
+The main `kernel_07` OpenMP result is mixed:
+
+- `kernel_openmp_07_mkII_FMA` is a true FMA-preserving four-lane path and
+  averages `608.243 MFLOPS`, slightly above both raw C native averages in this
+  run.
+- `kernel_openmp_07_mkII_STABLE_ROUNDING_FMA` has a higher stable-rounding
+  fast run than `07_FMA`, but lower average because several slow OpenMP runs
+  remain.
+- `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA` reaches the best max
+  (`663.259 MFLOPS`) but should not be interpreted as `mpfr_fma` performance;
+  it is the same unrolled product-temporary shape as `06_STABLE_ROUNDING`.
+
+The practical OpenMP lesson from this sweep is that `kernel_03` and `kernel_06`
+stable-rounding shapes remain the strongest wrapper baselines for non-FMA MPFR
+Rdot.  `kernel_07` is the right control for testing unrolled FMA fusion, and it
+does work, but it does not dominate the stable reusable-product paths in this
+run.
 
 ## Recorded Repeat-10 Sample
 

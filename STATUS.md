@@ -15168,3 +15168,102 @@ Pass/fail result:
 
 Known issues:
 - None for this documentation update.
+
+## Phase: MPFR Rdot Kernel 07
+
+Implemented features:
+- Added `Rdot_mpfr_kernel_07.cpp` as a four-way unrolled,
+  FMA-preserving wrapper Rdot shape using `acc0..acc3 += dx[i] * dy[i]`.
+- Added `Rdot_mpfr_kernel_openmp_07.cpp` with the same source shape per
+  OpenMP thread.
+- Added serial and OpenMP kernel 07 variants to the benchmark CMake targets
+  and the MPFR benchmark runner.
+- Documented kernel 07 in the MPFR Rdot README as the unrolled counterpart to
+  `kernel_01` that should expose four `mpfr_fma` calls in FMA builds.
+- Ran the full MPFR Rdot 01-07 sweep at `N=100000000`, precision 512,
+  repeat 10, `OMP_NUM_THREADS=32`.
+- Added raw log, plots, raw CSV, and summary CSV for the 01-07 sweep under
+  `benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/`.
+- Updated the MPFR Rdot README with the 01-07 sweep results and analysis.
+
+Missing features:
+- None.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07.cpp`
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32.log`
+- `benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/raw_rdot_n1e8_512_01_07_repeat10_omp32.csv`
+- `benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/summary_rdot_n1e8_512_01_07_repeat10_omp32.csv`
+- `benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_serial_Rdot.png`
+- `benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_serial_summary.png`
+- `benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_openmp_Rdot.png`
+- `benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32_Linux_Ryzen_3970X_32-Core_openmp_summary.png`
+- `STATUS.md`
+
+Exact commands run:
+- `free -h`
+- `git status --short`
+- `rg -n "Rdot_mpfr_kernel(_openmp)?_0[1-6]|Rdot_mpfr_C_native|mpfr.*Rdot" benchmarks CMakeLists.txt -g 'CMakeLists.txt' -g '*.cmake' -g '*.sh'`
+- `ls benchmarks/mpfr/00_Rdot`
+- `sed -n '1,260p' benchmarks/common/run_mpfr_benchmarks.sh`
+- `nl -ba benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06.cpp | sed -n '1,180p'`
+- `sed -n '1,120p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01.cpp`
+- `sed -n '1,120p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01.cpp`
+- `sed -n '1,120p' benchmarks/CMakeLists.txt`
+- `sed -n '120,230p' benchmarks/CMakeLists.txt`
+- `cmake --build build_bench_release -j --target Rdot_mpfr_kernel_07_mkII Rdot_mpfr_kernel_07_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_07_mkII_FMA Rdot_mpfr_kernel_07_mkII_STABLE_ROUNDING_FMA Rdot_mpfr_kernel_openmp_07_mkII Rdot_mpfr_kernel_openmp_07_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_openmp_07_mkII_FMA Rdot_mpfr_kernel_openmp_07_mkII_STABLE_ROUNDING_FMA`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rdot_mpfr_kernel_07_mkII Rdot_mpfr_kernel_07_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_07_mkII_FMA Rdot_mpfr_kernel_07_mkII_STABLE_ROUNDING_FMA Rdot_mpfr_kernel_openmp_07_mkII Rdot_mpfr_kernel_openmp_07_mkII_STABLE_ROUNDING Rdot_mpfr_kernel_openmp_07_mkII_FMA Rdot_mpfr_kernel_openmp_07_mkII_STABLE_ROUNDING_FMA`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07_mkII_STABLE_ROUNDING_FMA 1000 512`
+- `OMP_NUM_THREADS=4 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07_mkII_STABLE_ROUNDING_FMA 1000 512`
+- `objdump -d --demangle build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07_mkII_STABLE_ROUNDING_FMA | rg -n "mpfr_fma|mpfr_mul|mpfr_add" -C 2`
+- `OMP_NUM_THREADS=32 /bin/bash -lc '<Rdot-only N=100000000 repeat=10 sweep for 60 MPFR Rdot variants>'`
+- `python3 <parse benchmark_rdot_n1e8_512_01_07_repeat10_omp32.log into raw and summary CSV>`
+- `find benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514 -maxdepth 1 -type f -printf '%f\n' | sort`
+- `du -h benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/*`
+- `tail -20 benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/benchmark_rdot_n1e8_512_01_07_repeat10_omp32.log`
+- `sed -n '1,80p' benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/summary_rdot_n1e8_512_01_07_repeat10_omp32.csv`
+- `wc -l benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/raw_rdot_n1e8_512_01_07_repeat10_omp32.csv benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514/summary_rdot_n1e8_512_01_07_repeat10_omp32.csv`
+- `git diff --check`
+- `cmake --build build_bench_release -j`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Initial target build before reconfigure: FAIL, build tree did not yet know
+  the new kernel 07 targets.
+- Reconfigure: PASS.
+- Kernel 07 target build after reconfigure: PASS.
+- Serial smoke run:
+  `Rdot_mpfr_kernel_07_mkII_STABLE_ROUNDING_FMA 1000 512`: PASS, `DIFF OK`.
+- OpenMP smoke run:
+  `Rdot_mpfr_kernel_openmp_07_mkII_STABLE_ROUNDING_FMA 1000 512`: PASS,
+  `DIFF OK`.
+- Disassembly check: PASS.  `Rdot_mpfr_kernel_07_mkII_STABLE_ROUNDING_FMA`
+  contains the expected unrolled `mpfr_fma@plt` calls in the hot path.
+- Full Rdot 01-07 sweep: PASS.  600 records, 60 variants, all runs reported
+  `DIFF OK`.
+- Generated CSV line counts: PASS.  Raw CSV has 600 records plus header;
+  summary CSV has 60 variants plus header.
+- `git diff --check`: PASS before the final build/CTest pass.
+- Full release build: PASS.
+- CTest: PASS.  156/156 tests passed.
+- Best serial average in the sweep:
+  `kernel_06_mkII_STABLE_ROUNDING_FMA`, 23.616 MFLOPS, but this is still an
+  unrolled `mpfr_mul` plus `mpfr_add` source shape rather than true FMA.
+- Best serial true FMA wrapper average:
+  `kernel_07_mkII_STABLE_ROUNDING_FMA`, 23.223 MFLOPS.
+- Best OpenMP wrapper average:
+  `kernel_openmp_03_mkII_STABLE_ROUNDING`, 634.274 MFLOPS.
+- Best OpenMP true FMA wrapper average:
+  `kernel_openmp_07_mkII_FMA`, 608.243 MFLOPS.
+
+Known issues:
+- OpenMP timed-loop MFLOPS still has visible run-to-run variance even at
+  `N=100000000`.
