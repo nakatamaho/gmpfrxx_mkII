@@ -37,13 +37,15 @@ void _Raxpy(int64_t n, const mpfr_class &alpha, mpfr_class *x, int64_t incx, mpf
         exit(EXIT_FAILURE);
     }
 
-    mpfr_class temp;
+#pragma omp parallel
+    {
+        mpfr_class temp;
 
-#pragma omp parallel for private(temp) schedule(static)
-    for (int64_t i = 0; i < n; ++i) {
-        temp = alpha;
-        temp *= x[i];
-        y[i] += temp;
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < n; ++i) {
+            temp = alpha * x[i];
+            y[i] += temp;
+        }
     }
 }
 

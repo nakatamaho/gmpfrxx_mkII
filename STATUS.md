@@ -15571,3 +15571,95 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+## Phase: MPFR Raxpy Kernel Shape Parity
+
+Implemented features:
+- Added MPFR Raxpy `kernel_03`, `kernel_04`, and `kernel_openmp_03` so the
+  MPFR benchmark has the same source-shape ladder as GMP Raxpy for the
+  currently useful stages.
+- Normalized MPFR OpenMP Raxpy scheduling to `schedule(static)` to match the
+  GMP Raxpy benchmark intent.
+- Registered the new MPFR Raxpy kernels in CMake and in the common MPFR
+  benchmark runner, including stable-rounding and FMA build variants.
+- Added `benchmarks/mpfr/01_Raxpy/README.md` documenting the MPFR kernel
+  shapes and how they map to GMP Raxpy.
+
+Missing features:
+- No MPFR Raxpy `kernel_05`/`kernel_06` unroll variants yet.  They can be added
+  later if measurements show value.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02.cpp`
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Raxpy_mpfr_kernel_03_mkII Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_03_mkII_FMA Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_04_mkII Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_04_mkII_FMA Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_openmp_03_mkII Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_openmp_03_mkII_FMA Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_openmp_01_mkII Raxpy_mpfr_kernel_openmp_02_mkII`
+- `/bin/bash -lc 'set -euo pipefail; for exe in Raxpy_mpfr_kernel_03_mkII Raxpy_mpfr_kernel_04_mkII Raxpy_mpfr_kernel_openmp_03_mkII Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_03_mkII_FMA Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA; do echo "=== $exe ==="; OMP_NUM_THREADS=4 build_bench_release/benchmarks/mpfr/01_Raxpy/$exe 1000 256 | tail -8; done'`
+- `bash -n benchmarks/common/run_mpfr_benchmarks.sh`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Release reconfigure: PASS.
+- New MPFR Raxpy target build: PASS.
+- New-kernel smoke run: PASS.  All sampled executables reported `Result OK`.
+- Runner shell syntax: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The FMA suffix only proves the build option is enabled.  Disassembly is still
+  required to confirm whether a specific source shape lowers to `mpfr_fma`.
+
+## Phase: MPFR Raxpy N=10000000 Repeat-10 Benchmark
+
+Implemented features:
+- Ran the MPFR Raxpy benchmark matrix at `N=10000000`, 512-bit precision, and
+  repeat count 10.
+- Covered C native, C native FMA, C native OpenMP, C native OpenMP FMA, wrapper
+  serial kernels 01-04, and wrapper OpenMP kernels 01-03.
+- Parsed the benchmark log into raw and summary CSV files.
+
+Missing features:
+- No plots were generated for this focused Raxpy-only run.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_20260515_153432/benchmark_raxpy_n10000000_p512_repeat10.log`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_20260515_153432/raw_raxpy_n10000000_p512_repeat10.csv`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_20260515_153432/summary_raxpy_n10000000_p512_repeat10.csv`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build_bench_release -j --target Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_01_FMA Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_01_FMA Raxpy_mpfr_kernel_01_mkII Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_01_mkII_FMA Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_02_mkII Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_02_mkII_FMA Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_03_mkII Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_03_mkII_FMA Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_04_mkII Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_04_mkII_FMA Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_openmp_01_mkII Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_openmp_01_mkII_FMA Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_openmp_02_mkII Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_openmp_02_mkII_FMA Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA Raxpy_mpfr_kernel_openmp_03_mkII Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING Raxpy_mpfr_kernel_openmp_03_mkII_FMA Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA`
+- `/bin/bash -lc 'set -euo pipefail; outdir="benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_$(date +%Y%m%d_%H%M%S)"; mkdir -p "$outdir"; log="$outdir/benchmark_raxpy_n10000000_p512_repeat10.log"; exe_dir="build_bench_release/benchmarks/mpfr/01_Raxpy"; ...; for exe in "${executables[@]}"; do for run in $(seq 1 10); do /usr/bin/time -f "WALL_SECONDS %e" "${exe_dir}/${exe}" 10000000 512; done; done'`
+- `python3 -c 'import csv, re, statistics, pathlib; ...'`
+- `python3 -c 'import csv, pathlib; ...'`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Target build: PASS.
+- Benchmark run: PASS.  320/320 timed runs reported `Result OK`.
+- Raw CSV and summary CSV generation: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- OpenMP measurements contain normal run-to-run variation; use max and average
+  separately when comparing variants.

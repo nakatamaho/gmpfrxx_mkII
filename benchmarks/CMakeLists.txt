@@ -223,10 +223,16 @@ add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_01.cpp
     Raxpy_mpfr_kernel_01)
 add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_02.cpp
     Raxpy_mpfr_kernel_02)
+add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_03.cpp
+    Raxpy_mpfr_kernel_03)
+add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_04.cpp
+    Raxpy_mpfr_kernel_04)
 add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_01.cpp
     Raxpy_mpfr_kernel_openmp_01)
 add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_02.cpp
     Raxpy_mpfr_kernel_openmp_02)
+add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_03.cpp
+    Raxpy_mpfr_kernel_openmp_03)
 
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_01.cpp
     Rgemv_mpfr_C_native_01)
