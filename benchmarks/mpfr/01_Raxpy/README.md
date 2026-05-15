@@ -161,6 +161,46 @@ Raw data:
 | `kernel_openmp_03_mkII_FMA` | 407.800 | 402.763 | 395.431 | FMA option does not fuse this source shape. |
 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 410.981 | 401.636 | 388.922 | Same split multiply/add shape as stable `kernel_openmp_03`. |
 
+### Estimated Memory Bandwidth Used
+
+The benchmark reports MFLOPS as `2 * N / elapsed`, so
+`iterations/s = MFLOPS * 1e6 / 2`.  At 512-bit precision, the MPFR significand
+payload is 64 bytes per value.  The table below uses two logical traffic
+models:
+
+- Payload minimum: read `x[i]` payload, read `y[i]` payload, write `y[i]`
+  payload, or 192 bytes per iteration.  This ignores the hot scalar `alpha`,
+  the reusable product object, and metadata.
+- Header-inclusive estimate: payload minimum plus one 32-byte `mpfr_t` header
+  read for `x[i]` and one read/write 32-byte header for `y[i]`, or 288 bytes
+  per iteration on this LP64 build.  This is still a logical estimate, not a
+  hardware-counter measurement.
+
+For this run:
+
+```text
+payload GB/s          = avg_mflops * 0.096
+header-inclusive GB/s = avg_mflops * 0.144
+```
+
+| Variant | Avg MFLOPS | Payload GB/s | Header-inclusive GB/s | Max header-inclusive GB/s |
+|---------|------------|--------------|------------------------|---------------------------|
+| `C_native_01` | 22.864 | 2.19 | 3.29 | 3.31 |
+| `C_native_01_FMA` | 22.727 | 2.18 | 3.27 | 3.30 |
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 22.726 | 2.18 | 3.27 | 3.32 |
+| `kernel_03_mkII_STABLE_ROUNDING` | 22.901 | 2.20 | 3.30 | 3.36 |
+| `C_native_openmp_01_FMA` | 413.445 | 39.69 | 59.54 | 60.16 |
+| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 412.873 | 39.64 | 59.45 | 60.39 |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 401.694 | 38.56 | 57.84 | 59.14 |
+
+The OpenMP FMA wrapper therefore uses roughly the same bandwidth class as the
+C native FMA baseline: about 40 GB/s for 512-bit payload traffic, or about
+60 GB/s if the `mpfr_t` headers for the streamed `x` and `y` arrays are counted.
+The true DRAM traffic can be lower or higher depending on cache reuse,
+write-allocate behavior, hardware prefetching, and allocator placement, so this
+section should be read as a bandwidth sanity check rather than a substitute for
+hardware counters.
+
 ## Hotpath Disassembly
 
 The snippets below are from the Release benchmark binaries under

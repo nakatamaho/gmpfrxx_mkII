@@ -15709,3 +15709,44 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+## Phase: MPFR Raxpy Memory Bandwidth Documentation
+
+Implemented features:
+- Added estimated memory bandwidth used to
+  `benchmarks/mpfr/01_Raxpy/README.md`.
+- Documented both a 512-bit payload-only traffic model and a header-inclusive
+  logical traffic model for the repeat-10 MPFR Raxpy benchmark.
+- Recorded the key conversion from MFLOPS to bandwidth:
+  `payload GB/s = avg_mflops * 0.096` and
+  `header-inclusive GB/s = avg_mflops * 0.144`.
+
+Missing features:
+- No hardware-counter validation was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,340p' benchmarks/mpfr/01_Raxpy/README.md`
+- `sed -n '1,80p' benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_20260515_153432/summary_raxpy_n10000000_p512_repeat10.csv`
+- `tail -n 80 STATUS.md`
+- `rg -n "MFLOPS|mflops|Elapsed|2\\.0|N\\*2|2 \\*" benchmarks/mpfr/01_Raxpy benchmarks/common -g '*.cpp' -g '*.hpp' -g '*.sh'`
+- `printf '%s\n' ... | g++ -x c++ -std=c++17 -Iinclude - -lmpfr -lgmp -o /tmp/gmpfrxx_mkII_mpfr_size && /tmp/gmpfrxx_mkII_mpfr_size`
+- `python3 - <<'PY' ...`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- MFLOPS definition check: PASS.  Raxpy uses `2.0 * N / elapsed`.
+- MPFR layout check: PASS.  `sizeof(mpfr_t)=32`,
+  `sizeof(__mpfr_struct)=32`, `sizeof(mp_limb_t)=8`.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- None.
