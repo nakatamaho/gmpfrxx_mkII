@@ -1504,6 +1504,60 @@ Known issues:
 - The linked focused repeat-10 Raxpy logs are local generated results and are
   not staged by this documentation-only phase.
 
+## Phase: GMP Raxpy Hotpath Disassembly Notes
+
+Implemented features:
+- Added a hotpath disassembly comparison section to
+  `benchmarks/gmp/01_Raxpy/README.md`.
+- Compared serial C native, `kernel_01_mkII`,
+  `kernel_01_mkII_FIXED_PRECISION_FASTPATH`, `kernel_02_mkII`,
+  `kernel_03_mkII`, and `kernel_04_mkII`.
+- Compared OpenMP C native, upstream `gmpxx.h` OpenMP 03, and mkII OpenMP 03
+  worker-loop bodies.
+- Documented that serial `kernel_03_mkII` matches the raw C native multiply-add
+  call class, while `kernel_01`/`kernel_04` still materialize product objects
+  inside the loop and `kernel_02` pays an explicit `mpf_set`.
+
+Missing features:
+- No standalone disassembly extraction script was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/01_Raxpy/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 | rg 'Raxpy|_Raxpy|main'`
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII | rg 'Raxpy|_Raxpy|main'`
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII | rg 'Raxpy|_Raxpy|omp|main'`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 | c++filt`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII | c++filt`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII | c++filt`
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII | rg ' _Raxpy|_Raxpy'`
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH | rg ' _Raxpy|_Raxpy'`
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII | rg ' _Raxpy|_Raxpy'`
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII | rg ' _Raxpy|_Raxpy'`
+- `objdump -Cd --no-show-raw-insn --start-address=0x50e0 --stop-address=0x5320 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x5d70 --stop-address=0x6020 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x50e0 --stop-address=0x5280 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x51a0 --stop-address=0x53d0 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII | c++filt`
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 | rg ' _Raxpy|_Raxpy|omp'`
+- `nm -C build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig | rg ' _Raxpy|_Raxpy|omp'`
+- `objdump -Cd --no-show-raw-insn --start-address=0x37c0 --stop-address=0x38d0 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x2ed0 --stop-address=0x2ff0 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig | c++filt`
+
+Pass/fail result:
+- Disassembly extraction: PASS.
+- README section scan: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- Assembly addresses are build-specific and should not be used as stable
+  identifiers.
+
 ## Phase: GMP Raxpy Kernel Shape Refactor
 
 Implemented features:

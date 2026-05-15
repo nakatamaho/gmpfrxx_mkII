@@ -266,6 +266,185 @@ Rdot, there is no per-thread accumulator and no final `critical`, so once
 product lifetime is under control the wrapper variants are mainly measuring
 the same GMP arithmetic and memory traffic.
 
+## Hotpath Disassembly Comparison
+
+The snippets below are from the local release binaries under
+`build_bench_release/benchmarks/gmp/01_Raxpy/` and were extracted with:
+
+```bash
+objdump -Cd --no-show-raw-insn <binary> | c++filt
+```
+
+Addresses are build-specific.  The relevant comparison is the call sequence
+inside the timed `_Raxpy()` loop.
+
+`Raxpy_gmp_C_native_01` is the serial baseline.  The loop has one product
+temporary initialized outside the loop and one `__gmpf_mul` plus one
+`__gmpf_add` per element:
+
+```asm
+3d10: mov    %rbp,%rdx          # x[i]
+3d13: mov    %r14,%rsi          # alpha
+3d16: mov    %rsp,%rdi          # temp
+3d19: call   __gmpf_mul@plt
+3d22: mov    %rbx,%rsi          # y[i]
+3d25: mov    %rbx,%rdi          # y[i]
+3d28: mov    %rsp,%rdx          # temp
+3d2b: call   __gmpf_add@plt
+3d30: add    $0x18,%rbp
+3d34: add    $0x18,%rbx
+3d3b: jne    3d10
+```
+
+Default `kernel_01_mkII` is source-clean but materializes the expression
+product in the loop.  Its hotpath pays `mpf_get_prec`, `mpf_init2`, `mpf_mul`,
+`mpf_add`, and `mpf_clear` per element:
+
+```asm
+5130: mov    %rbx,%rdi          # y[i]
+5133: call   __gmpf_get_prec@plt
+5138: mov    %rbp,%rdi          # scoped product
+513e: call   __gmpf_init2@plt
+5143: mov    %r12,%rdx          # x[i]
+5146: mov    %r14,%rsi          # alpha
+5149: mov    %rbp,%rdi          # scoped product
+514c: call   __gmpf_mul@plt
+5151: mov    %rbp,%rdx          # scoped product
+5154: mov    %rbx,%rsi          # y[i]
+5157: mov    %rbx,%rdi          # y[i]
+515a: call   __gmpf_add@plt
+516e: call   __gmpf_clear@plt
+5176: jne    5130
+```
+
+`kernel_01_mkII_FIXED_PRECISION_FASTPATH` removes the usual per-element
+`mpf_init2`/`mpf_clear` path when thread-local scratch is available, but it is
+still heavier than C native or `kernel_03`: each iteration checks scratch state
+and may fall back to local initialization if no scratch slot is usable.
+
+```asm
+5dd1: cmpb   $0x0,%fs:0xffffffffffffff59
+5de0: cmpb   $0x0,%fs:0xffffffffffffff89
+5def: cmpb   $0x0,%fs:0xffffffffffffffb9
+5dfe: cmpb   $0x0,%fs:0xffffffffffffffe9
+5e2d: lea    0x20(%rsp),%rdi    # fallback product path
+5e32: mov    (%rsp),%rsi        # alpha
+5e36: mov    %rbp,%rdx          # x[i]
+5e39: call   __gmpf_mul@plt
+5e43: lea    0x20(%rsp),%rdx
+5e48: mov    %rbx,%rsi          # y[i]
+5e4b: mov    %rbx,%rdi          # y[i]
+5e54: call   __gmpf_add@plt
+5e70: je     5edb
+```
+
+`kernel_02_mkII` reuses a product object, but the loop explicitly copies
+`alpha` before multiplying:
+
+```asm
+5160: mov    %r14,%rsi          # alpha
+5163: mov    %rsp,%rdi          # temp
+5166: call   __gmpf_set@plt
+516b: mov    %r12,%rdx          # x[i]
+516e: mov    %rsp,%rsi          # temp
+5171: mov    %rsp,%rdi          # temp
+5174: call   __gmpf_mul@plt
+5179: mov    %rsp,%rdx          # temp
+517c: mov    %rbp,%rsi          # y[i]
+517f: mov    %rbp,%rdi          # y[i]
+5182: call   __gmpf_add@plt
+5196: jne    5160
+```
+
+`kernel_03_mkII` is the closest wrapper loop to C native.  The reusable product
+object is initialized before the loop, and the loop itself is one multiply plus
+one add:
+
+```asm
+51b0: mov    %rbp,%rdx          # x[i]
+51b3: mov    %r14,%rsi          # alpha
+51b6: mov    %rsp,%rdi          # temp
+51b9: call   __gmpf_mul@plt
+51be: mov    %rsp,%rdx          # temp
+51c1: mov    %rbx,%rsi          # y[i]
+51c4: mov    %rbx,%rdi          # y[i]
+51c7: call   __gmpf_add@plt
+51d0: add    $0x18,%rbp
+51d4: add    $0x18,%rbx
+51db: jne    51b0
+```
+
+`kernel_04_mkII` deliberately constructs the product object inside the loop.
+The hotpath therefore has precision discovery, `mpf_init2`, multiply, add, and
+clear per element:
+
+```asm
+51f0: mov    %rbp,%rdi          # x[i]
+51f3: call   __gmpf_get_prec@plt
+51f8: mov    %r14,%rdi          # alpha
+51fe: call   __gmpf_get_prec@plt
+5203: lea    0x10(%rsp),%rdi    # loop-local product
+5212: call   __gmpf_init2@plt
+5217: mov    %rbp,%rdx          # x[i]
+521a: mov    %r14,%rsi          # alpha
+5222: call   __gmpf_mul@plt
+5227: lea    0x10(%rsp),%rdx
+522c: mov    %rbx,%rsi          # y[i]
+522f: mov    %rbx,%rdi          # y[i]
+5232: call   __gmpf_add@plt
+5248: call   __gmpf_clear@plt
+5252: jne    51f0
+```
+
+OpenMP 03 confirms why the N=10000000 OpenMP results are tightly clustered.
+The C native, upstream `gmpxx.h`, and mkII worker loops all have the same
+essential arithmetic body: one `__gmpf_mul`, one `__gmpf_add`, pointer
+increments, and a branch.  The OpenMP worker setup and final barrier are
+outside that inner arithmetic loop.
+
+`Raxpy_gmp_C_native_openmp_01`:
+
+```asm
+3850: mov    %rbx,%rdx          # x[i]
+3853: mov    %r13,%rsi          # alpha
+3856: mov    %rbp,%rdi          # temp
+385d: call   __gmpf_mul@plt
+3862: mov    %r15,%rsi          # y[i]
+3865: mov    %r15,%rdi          # y[i]
+3868: mov    %rbp,%rdx          # temp
+386b: call   __gmpf_add@plt
+3878: cmp    %r14,%r12
+387b: jne    3850
+```
+
+`Raxpy_gmp_kernel_openmp_03_orig`:
+
+```asm
+2f60: mov    0x8(%r15),%rsi     # alpha
+2f64: mov    %r12,%rdx          # x[i]
+2f67: lea    0x10(%rsp),%rdi    # temp
+2f74: call   __gmpf_mul@plt
+2f79: mov    %rbp,%rsi          # y[i]
+2f7c: mov    %rbp,%rdi          # y[i]
+2f7f: lea    0x10(%rsp),%rdx    # temp
+2f84: call   __gmpf_add@plt
+2f90: jne    2f60
+```
+
+`Raxpy_gmp_kernel_openmp_03_mkII`:
+
+```asm
+4d30: mov    0x8(%r15),%rsi     # alpha
+4d34: mov    %r13,%rdx          # x[i]
+4d37: lea    0x10(%rsp),%rdi    # temp
+4d44: call   __gmpf_mul@plt
+4d49: mov    %rbp,%rsi          # y[i]
+4d4c: mov    %rbp,%rdi          # y[i]
+4d4f: lea    0x10(%rsp),%rdx    # temp
+4d54: call   __gmpf_add@plt
+4d60: jne    4d30
+```
+
 ## Bandwidth Estimate
 
 For 512-bit `mpf_t`, a lower-bound payload model counts only the mantissa data
