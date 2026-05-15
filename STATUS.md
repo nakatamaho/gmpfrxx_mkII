@@ -15663,3 +15663,49 @@ Pass/fail result:
 Known issues:
 - OpenMP measurements contain normal run-to-run variation; use max and average
   separately when comparing variants.
+
+## Phase: MPFR Raxpy Result Documentation
+
+Implemented features:
+- Added the repeat-10 MPFR Raxpy result summary to
+  `benchmarks/mpfr/01_Raxpy/README.md`.
+- Added an inline summary plot for the `N=10000000`, 512-bit precision run.
+- Added hotpath disassembly notes comparing C native, C native FMA, wrapper
+  stable FMA, wrapper reusable-product, and OpenMP outlined loops.
+- Added MPFR Raxpy lessons learned, including the source-shape-dependent FMA
+  behavior and the remaining TLS rounding-load difference from C native.
+
+Missing features:
+- None.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_20260515_153432/benchmark_raxpy_n10000000_p512_repeat10_summary.png`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/mpfr/01_Raxpy/README.md`
+- `sed -n '1,80p' benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_20260515_153432/summary_raxpy_n10000000_p512_repeat10.csv`
+- `tail -n 120 STATUS.md`
+- `git status --short`
+- `python3 - <<'PY' ...`
+- `objdump -Cd --start-address=0x3cb0 --stop-address=0x3d50 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01`
+- `objdump -Cd --start-address=0x3ca8 --stop-address=0x3d08 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA`
+- `objdump -Cd --start-address=0x3c70 --stop-address=0x3cb8 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA`
+- `objdump -Cd --start-address=0x3f60 --stop-address=0x4020 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING`
+- `objdump -Cd --start-address=0x3800 --stop-address=0x3898 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA`
+- `ls -lh benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_20260515_153432`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Plot generation: PASS.
+- Hotpath disassembly extraction: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- None.
