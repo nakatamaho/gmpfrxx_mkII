@@ -26,8 +26,9 @@
  *
  */
 
-#include <iostream>
 #include <chrono>
+#include <cstdlib>
+#include <iostream>
 
 #if defined USE_ORIGINAL_GMPXX
 #include <gmpxx.h>
@@ -42,8 +43,6 @@ using namespace gmpxx;
 
 gmp_randstate_t state;
 
-#include <omp.h>
-
 void _Raxpy(int64_t n, const mpf_class &alpha, mpf_class *x, int64_t incx, mpf_class *y, int64_t incy) {
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;
@@ -51,12 +50,9 @@ void _Raxpy(int64_t n, const mpf_class &alpha, mpf_class *x, int64_t incx, mpf_c
     }
 
     mpf_class temp;
-
-#pragma omp parallel for private(temp) schedule(static)
     for (int64_t i = 0; i < n; ++i) {
-        temp = alpha;
-        temp *= x[i];
-        y[i] += temp; // y[i] = y[i] + alpha * x[i]
+        temp = alpha * x[i];
+        y[i] += temp;
     }
 }
 
@@ -118,6 +114,7 @@ int main(int argc, char **argv) {
 
     delete[] x;
     delete[] y;
+    delete[] yy;
 
     return EXIT_SUCCESS;
 }

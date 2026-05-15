@@ -50,7 +50,7 @@ void _Raxpy(int64_t n, const mpf_class &alpha, mpf_class *x, int64_t incx, mpf_c
         exit(EXIT_FAILURE);
     }
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
     for (int64_t i = 0; i < n; ++i) {
         y[i] += alpha * x[i]; // y[i] = y[i] + alpha * x[i]
     }

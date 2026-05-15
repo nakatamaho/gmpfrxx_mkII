@@ -97,3 +97,35 @@ random initialization, and verification for the 100000000-element vectors.
 The serial `kernel_02` family is faster than `kernel_01` in this run, and the
 `mkII`/`mkII_FIXED_PRECISION_FASTPATH` results stay close to the upstream `gmpxx.h`
 variants.
+
+That sample predates the `kernel_03`, `kernel_04`, and `kernel_openmp_03`
+source-shape split.  New runs should use the common runner so the additional
+variants are included.
+
+## Kernel Shapes
+
+The timed body is `_Raxpy()` in each benchmark executable.  The `Raxpy()`
+helper in `Raxpy.hpp` is the post-run correctness reference and should not be
+mixed with the timed-kernel source-shape comparison.
+
+Raxpy is not a reduction.  Unlike Rdot, it has no final accumulator dependency
+to break; each iteration updates one independent `y[i]`.  The useful wrapper
+stages therefore focus on expression fusion and product-temporary lifetime.
+
+| Variant | Timed source shape | Temporary policy | Hotpath meaning |
+|---------|--------------------|------------------|-----------------|
+| `C_native_01` | `mpf_mul(temp, alpha, x[i]); mpf_add(y[i], y[i], temp);` | Raw `mpf_t` product object initialized once. | Baseline: one multiply and one add per element, no wrapper temporary. |
+| `C_native_openmp_01` | Same raw `mpf_t` AXPY inside `#pragma omp for`. | Each iteration writes an independent `y[i]`. | Measures parallel raw-GMP throughput without reduction overhead. |
+| `kernel_01` | `y[i] += alpha * x[i];` | Expression-first source shape. | Tests whether wrapper expression templates or fixed-precision fast paths can avoid materializing a product object. |
+| `kernel_02` | `temp = alpha; temp *= x[i]; y[i] += temp;` | One reusable product object, assigned from `alpha` and multiplied in place. | Avoids per-iteration construction but pays an `mpf_set`-like copy of `alpha` each iteration. |
+| `kernel_03` | `temp = alpha * x[i]; y[i] += temp;` | One reusable product object assigned from the product expression. | Separates reusable product storage from the explicit in-place multiply shape used by `kernel_02`. |
+| `kernel_04` | `mpf_class temp = alpha * x[i]; y[i] += temp;` | Loop-local product object. | Deliberately allocation-heavy comparison point for product-object lifetime. |
+| `kernel_openmp_01` | Parallel `y[i] += alpha * x[i];` | Expression-first source shape per element. | Parallel version of `kernel_01`; no reduction or critical section is needed. |
+| `kernel_openmp_02` | Parallel `temp = alpha; temp *= x[i]; y[i] += temp;` | One private reusable product object per thread. | Parallel version of `kernel_02`; uses `schedule(static)` for contiguous chunks. |
+| `kernel_openmp_03` | Parallel `temp = alpha * x[i]; y[i] += temp;` | One private reusable product object per thread. | Parallel version of `kernel_03`; useful for comparing expression assignment against in-place multiply under OpenMP. |
+
+Four-way unrolled variants are intentionally not part of the first Raxpy split.
+Rdot uses unrolls to test accumulator dependency and reduction behavior, but
+Raxpy already updates independent destinations.  If the reusable-temporary
+stages leave clear loop-overhead or scheduling headroom, later `kernel_05` and
+`kernel_06` variants can add 4-way unrolled one-temp and four-temp forms.

@@ -1464,6 +1464,78 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Raxpy Kernel Shape Refactor
+
+Implemented features:
+- Added `Raxpy_gmp_kernel_03.cpp` as a reusable product object assigned from
+  the product expression: `temp = alpha * x[i]; y[i] += temp`.
+- Added `Raxpy_gmp_kernel_04.cpp` as a loop-local product object comparison:
+  `mpf_class temp = alpha * x[i]; y[i] += temp`.
+- Added `Raxpy_gmp_kernel_openmp_03.cpp` as the OpenMP reusable expression
+  product shape with one private product object per thread.
+- Registered the new serial and OpenMP kernels in CMake, the common benchmark
+  runner, and the legacy `go.sh` executable list.
+- Normalized existing Raxpy OpenMP 01/02 kernels to `schedule(static)`.
+- Documented the Raxpy-specific kernel stages and why 4-way unroll is deferred
+  relative to Rdot.
+
+Missing features:
+- No 4-way unrolled Raxpy 05/06 kernels yet; those remain a follow-up if
+  01-04/OpenMP 01-03 leave clear loop-overhead or scheduling headroom.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03.cpp`
+- `benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04.cpp`
+- `benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03.cpp`
+- `benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01.cpp`
+- `benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02.cpp`
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/gmp/01_Raxpy/go.sh`
+- `benchmarks/gmp/01_Raxpy/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/gmp/00_Rdot/README.md`
+- `find benchmarks/gmp/01_Raxpy -maxdepth 1 -type f -printf '%f\n' | sort`
+- `rg -n "Raxpy_gmp|add_gmp|Raxpy|kernel_0[1-9]|openmp" benchmarks/CMakeLists.txt benchmarks/common/run_benchmarks.sh benchmarks/gmp/01_Raxpy -g '*.cpp' -g '*.hpp' -g '*.h' -g '*.md' -g '*.sh'`
+- `sed -n '1,170p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01.cpp`
+- `sed -n '1,180p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02.cpp`
+- `sed -n '1,190p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01.cpp`
+- `sed -n '1,200p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02.cpp`
+- `sed -n '1,170p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp`
+- `sed -n '1,190p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06.cpp`
+- `sed -n '1,210p' benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06.cpp`
+- `sed -n '1,160p' benchmarks/gmp/01_Raxpy/Raxpy.hpp`
+- `sed -n '250,280p' benchmarks/CMakeLists.txt`
+- `sed -n '136,158p' benchmarks/common/run_benchmarks.sh`
+- `sed -n '1,180p' benchmarks/gmp/01_Raxpy/README.md`
+- `sed -n '1,90p' benchmarks/gmp/01_Raxpy/go.sh`
+- `tail -80 STATUS.md`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Raxpy_gmp_kernel_03_orig Raxpy_gmp_kernel_03_mkII Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_04_orig Raxpy_gmp_kernel_04_mkII Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_openmp_03_orig Raxpy_gmp_kernel_openmp_03_mkII Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_openmp_01_mkII Raxpy_gmp_kernel_openmp_02_mkII`
+- `/bin/bash -lc 'set -euo pipefail; for exe in Raxpy_gmp_kernel_03_mkII Raxpy_gmp_kernel_04_mkII Raxpy_gmp_kernel_openmp_03_mkII Raxpy_gmp_kernel_03_orig Raxpy_gmp_kernel_04_orig Raxpy_gmp_kernel_openmp_03_orig; do echo "=== ${exe} ==="; OMP_NUM_THREADS=4 build_bench_release/benchmarks/gmp/01_Raxpy/${exe} 1000 256 | tail -5; done'`
+- `benchmarks/common/run_benchmarks.sh build_bench_release 128 8 8 2 2 2 2 2 /tmp/gmpfrxx_mkII_gmp_raxpy_runner_smoke 1`
+- `cmake --build build_bench_release -j`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- CMake configure: PASS.
+- New and affected Raxpy target build: PASS.
+- Direct small Raxpy smoke: PASS.  The new 03/04/OpenMP 03 `orig` and `mkII`
+  executables all printed `Result OK`.
+- Common GMP benchmark runner smoke: PASS.  The runner resolved the new Raxpy
+  03/04/OpenMP 03 executable families and the small run completed.
+- Full release build: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The Raxpy executables still do not print the Rdot-style timed-kernel GMP
+  allocator profile; this phase only aligns source-shape coverage.
+
 Post-phase GMP Rdot OpenMP kernel shape alignment:
 DONE
 
