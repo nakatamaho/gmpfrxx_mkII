@@ -15363,3 +15363,45 @@ Pass/fail result:
 Known issues:
 - The helper reports decimal `GB/s`; compare carefully against GiB/s numbers
   from other tools.
+
+## Phase: Top README Header Roles Refresh
+
+Implemented features:
+- Updated the top-level README header-role table to match the current split:
+  `gmpxx_mkII.h` is GMP-only, `mpfrxx_mkII.h` is GMP + MPFR, `mpcxx_mkII.h`
+  adds MPC, and `gmpfrxx_mkII.h` is the combined aggregator.
+- Updated public type and example sections so `mpfrxx::mpc_class` is documented
+  as coming from `mpcxx_mkII.h` or `gmpfrxx_mkII.h`, not from
+  `mpfrxx_mkII.h`.
+- Updated CMake target documentation to include `mpcxx_mkII` and to mark
+  `mpfrxx_mkII` as GMP + MPFR only.
+- Updated benchmark wording to mention both GMP and MPFR benchmark families.
+
+Missing features:
+- None.
+
+Tests added:
+- None.
+
+Tests updated:
+- `README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' README.md`
+- `rg -n "Header Roles|mpfrxx_mkII|gmpfrxx_mkII|mpc|MPC|Dependencies|Public API" README.md CMakeLists.txt include -g 'README.md' -g 'CMakeLists.txt' -g '*.h' -g '*.hpp'`
+- `sed -n '260,380p' README.md`
+- `rg -n "mpfrxx_mkII.*MPC|mpfrxx_mkII\\s+-> GMP \\+ MPFR \\+ MPC|mpfrxx::mpc_class.*mpfrxx_mkII|MPFR/MPC|mpcxx_mkII|Header Roles" README.md`
+- `sed -n '1,340p' README.md`
+- `tail -60 STATUS.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- README consistency search: PASS. Remaining `mpfrxx::mpc_class` references
+  point to `mpcxx_mkII.h` or `gmpfrxx_mkII.h`, not `mpfrxx_mkII.h`.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- None.

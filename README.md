@@ -12,7 +12,7 @@ Public API namespaces:
 
 ```cpp
 namespace gmpxx;   // GMP-only API
-namespace mpfrxx;  // MPFR/MPC API
+namespace mpfrxx;  // MPFR API, plus MPC API when the MPC header is included
 ```
 
 Internal implementation namespace:
@@ -28,7 +28,8 @@ namespace gmpfrxx_mkII::detail;
 | Header | Public API | Dependencies |
 |---|---|---|
 | `gmpxx_mkII.h` | `gmpxx::mpz_class`, `gmpxx::mpq_class`, `gmpxx::mpf_class`, `gmpxx::mpfc_class` | GMP only |
-| `mpfrxx_mkII.h` | `mpfrxx::mpz_class`, `mpfrxx::mpq_class`, `mpfrxx::mpfr_class`, `mpfrxx::mpc_class` | GMP + MPFR + MPC |
+| `mpfrxx_mkII.h` | `mpfrxx::mpz_class`, `mpfrxx::mpq_class`, `mpfrxx::mpfr_class` | GMP + MPFR |
+| `mpcxx_mkII.h` | `mpfrxx::mpc_class`; include after `mpfrxx_mkII.h` | GMP + MPFR + MPC |
 | `gmpfrxx_mkII.h` | Combined aggregator | GMP + MPFR + MPC |
 
 `mpfrxx::mpz_class` and `mpfrxx::mpq_class` are aliases to the GMP-only
@@ -37,6 +38,11 @@ namespace gmpfrxx_mkII::detail;
 `gmpxx_mkII.h` is intentionally GMP-only. It must not include `<mpfr.h>` or
 `<mpc.h>`, must not reference `mpfr_*` or `mpc_*` symbols, and must not require
 MPFR or MPC at link time.
+
+`mpfrxx_mkII.h` intentionally stops at MPFR. It must not include `<mpc.h>`,
+must not expose `mpfrxx::mpc_class`, and must not link MPC. Include
+`mpcxx_mkII.h` after `mpfrxx_mkII.h`, or include `gmpfrxx_mkII.h`, when MPC
+complex support is needed.
 
 ## Public Types
 
@@ -47,7 +53,7 @@ MPFR or MPC at link time.
 | `gmpxx::mpf_class` | GMP `mpf_t` | `gmpxx_mkII.h`, `gmpfrxx_mkII.h` |
 | `gmpxx::mpfc_class` | two `gmpxx::mpf_class` components | `gmpxx_mkII.h`, `gmpfrxx_mkII.h` |
 | `mpfrxx::mpfr_class` | MPFR `mpfr_t` | `mpfrxx_mkII.h`, `gmpfrxx_mkII.h` |
-| `mpfrxx::mpc_class` | GNU MPC `mpc_t` | `mpfrxx_mkII.h`, `gmpfrxx_mkII.h` |
+| `mpfrxx::mpc_class` | GNU MPC `mpc_t` | `mpcxx_mkII.h`, `gmpfrxx_mkII.h` |
 
 `gmpxx::mpfc_class` is GMP-only and separate from `mpfrxx::mpc_class`.
 `mpfrxx::mpc_class` is MPC-backed. Mixed arithmetic between these families is
@@ -263,7 +269,7 @@ int main()
 }
 ```
 
-MPFR/MPC:
+MPFR:
 
 ```cpp
 #include <mpfrxx_mkII.h>
@@ -273,10 +279,27 @@ MPFR/MPC:
 int main()
 {
     auto r = mpfrxx::mpfr_class::with_precision(128, 1.25);
+    mpfrxx::mpfr_class value = r + mpfrxx::mpz_class(2);
+
+    std::cout << value.to_double() << '\n';
+}
+```
+
+MPC:
+
+```cpp
+#include <mpfrxx_mkII.h>
+#include <mpcxx_mkII.h>
+
+#include <iostream>
+
+int main()
+{
+    auto r = mpfrxx::mpfr_class::with_precision(128, 1.25);
     auto c = mpfrxx::mpc_class::with_precision(128, 128);
     c = r + mpfrxx::mpz_class(2);
 
-    std::cout << r.to_double() << '\n';
+    std::cout << c << '\n';
 }
 ```
 
@@ -292,17 +315,19 @@ CMake interface targets:
 
 ```text
 gmpxx_mkII       -> GMP only
-mpfrxx_mkII      -> GMP + MPFR + MPC
+mpfrxx_mkII      -> GMP + MPFR
+mpcxx_mkII       -> GMP + MPFR + MPC
 gmpfrxx_mkII     -> GMP + MPFR + MPC
 ```
 
-The build also compiles examples and the GMP benchmark families.
+The build also compiles examples and the GMP/MPFR benchmark families.
 
 ## Benchmarks
 
 Benchmarks are standalone executables under `benchmarks/`, split by numeric
-backend.  The current benchmark families live under `benchmarks/gmp/`; shared
-runner and plotting helpers live under `benchmarks/common/`.
+backend.  GMP families live under `benchmarks/gmp/`, MPFR families live under
+`benchmarks/mpfr/`, and shared runner and plotting helpers live under
+`benchmarks/common/`.
 
 ```sh
 cmake --build build -j
