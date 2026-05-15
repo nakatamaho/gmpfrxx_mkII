@@ -1464,6 +1464,46 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Raxpy README Benchmark Analysis
+
+Implemented features:
+- Reworked `benchmarks/gmp/01_Raxpy/README.md` to follow the structure and
+  analysis style of `benchmarks/gmp/00_Rdot/README.md`.
+- Added focused repeat-10 Raxpy result summaries for N=1000000 and N=10000000
+  at 512-bit precision.
+- Documented current Raxpy kernel shapes, hotpath expectations, payload
+  bandwidth estimates, and lessons learned.
+- Clarified why Raxpy currently stops at 01-04 plus OpenMP 01-03 rather than
+  adding 4-way unrolled 05/06 variants immediately.
+
+Missing features:
+- Raxpy still does not print timed-kernel GMP allocator profiles like Rdot.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/01_Raxpy/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/gmp/00_Rdot/README.md`
+- `sed -n '260,620p' benchmarks/gmp/00_Rdot/README.md`
+- `sed -n '1,260p' benchmarks/gmp/01_Raxpy/README.md`
+- `ls -1 benchmarks/gmp/01_Raxpy/results_raw 2>/dev/null | sort | tail -20`
+- `rg -n "benchmark_raxpy_n1000000|benchmark_raxpy_n10000000|Lessons Learned|Bandwidth Estimate|Hotpath Expectations|kernel_03" benchmarks/gmp/01_Raxpy/README.md`
+- `test -f benchmarks/gmp/01_Raxpy/results_raw/benchmark_raxpy_n1000000_p512_repeat10_20260515_142301.log && test -f benchmarks/gmp/01_Raxpy/results_raw/benchmark_raxpy_n1000000_p512_repeat10_20260515_142301.csv && test -f benchmarks/gmp/01_Raxpy/results_raw/benchmark_raxpy_n10000000_p512_repeat10_20260515_142725.log && test -f benchmarks/gmp/01_Raxpy/results_raw/benchmark_raxpy_n10000000_p512_repeat10_20260515_142725.csv && echo links-ok`
+
+Pass/fail result:
+- README section scan: PASS.
+- README-linked local benchmark files: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The linked focused repeat-10 Raxpy logs are local generated results and are
+  not staged by this documentation-only phase.
+
 ## Phase: GMP Raxpy Kernel Shape Refactor
 
 Implemented features:
