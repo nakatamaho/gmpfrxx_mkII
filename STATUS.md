@@ -15267,3 +15267,99 @@ Pass/fail result:
 Known issues:
 - OpenMP timed-loop MFLOPS still has visible run-to-run variance even at
   `N=100000000`.
+
+## Phase: Benchmark OpenMP Affinity Defaults
+
+Implemented features:
+- Added OpenMP affinity defaults to the common GMP and MPFR benchmark runners:
+  `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, and `OMP_PROC_BIND=spread`.
+- The runners preserve caller-provided OpenMP affinity variables, so close/spread
+  and thread-count comparisons can still be run from the command line.
+- Added `BENCH_COMMAND_PREFIX` support to run benchmarks under wrappers such as
+  `numactl --interleave=all`.
+- Logged OpenMP affinity and command-prefix settings in benchmark logs.
+- Documented the affinity defaults and override examples in
+  `benchmarks/README.md`.
+
+Missing features:
+- Per-benchmark first-touch initialization is not changed in this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `benchmarks/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg --files | rg '(^|/)go\.sh$|run_.*benchmarks\.sh$|Rdot.*\.sh$'`
+- `rg -n "OMP_NUM_THREADS|OMP_PLACES|OMP_PROC_BIND|numactl|go\.sh|run_mpfr_benchmarks" benchmarks scripts . -g '*.sh' -g 'README.md'`
+- `sed -n '1,260p' benchmarks/common/run_mpfr_benchmarks.sh`
+- `sed -n '1,220p' benchmarks/common/run_benchmarks.sh`
+- `sed -n '1,160p' benchmarks/gmp/00_Rdot/go.sh`
+- `sed -n '220,420p' benchmarks/common/run_benchmarks.sh`
+- `sed -n '1,130p' benchmarks/README.md`
+- `tail -80 STATUS.md`
+- `bash -n benchmarks/common/run_benchmarks.sh benchmarks/common/run_mpfr_benchmarks.sh`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close benchmarks/common/run_mpfr_benchmarks.sh build_bench_release 128 8 /tmp/gmpfrxx_mkII_mpfr_affinity_smoke 1 8 2 2 2 2 2`
+
+Pass/fail result:
+- Shell syntax check: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+- Tiny MPFR runner smoke: PASS.  The log records
+  `OPENMP_AFFINITY OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close`,
+  confirming caller-provided affinity overrides are preserved.
+
+Known issues:
+- OpenMP affinity reduces run-to-run migration noise, but it does not by itself
+  fix NUMA first-touch placement if benchmark data initialization remains
+  serial.
+
+## Phase: STREAM-like OpenMP Bandwidth Helper
+
+Implemented features:
+- Added `benchmarks/common/stream_like_omp.cpp`, a small OpenMP Copy, Scale,
+  Add, and Triad bandwidth helper for host memory bandwidth checks.
+- Added `benchmarks/common/run_stream_like.sh`, which builds the helper with
+  `-O3 -march=native -fopenmp`, records CPU topology, and runs spread/close
+  affinity comparisons.
+- Documented the STREAM-like helper in `benchmarks/README.md`.
+
+Missing features:
+- This is a STREAM-like diagnostic helper, not an official STREAM submission.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/common/stream_like_omp.cpp`
+- `benchmarks/common/run_stream_like.sh`
+- `benchmarks/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' /tmp/gmpfrxx_stream_omp.cpp`
+- `chmod +x benchmarks/common/run_stream_like.sh`
+- `tail -80 STATUS.md`
+- `bash -n benchmarks/common/run_stream_like.sh benchmarks/common/run_benchmarks.sh benchmarks/common/run_mpfr_benchmarks.sh`
+- `g++ -O3 -march=native -fopenmp benchmarks/common/stream_like_omp.cpp -o /tmp/gmpfrxx_stream_like_omp_check`
+- `git diff --check`
+- `RUN_STREAM_SMT=0 benchmarks/common/run_stream_like.sh 1024 1 1 /tmp/gmpfrxx_stream_like_smoke /tmp/gmpfrxx_stream_like_omp_smoke`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Shell syntax check: PASS.
+- Standalone helper compile: PASS.
+- `git diff --check`: PASS.
+- Tiny runner smoke: PASS.  The helper ran spread and close affinity cases and
+  wrote `/tmp/gmpfrxx_stream_like_smoke/stream_like_20260515_133616.log`.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The helper reports decimal `GB/s`; compare carefully against GiB/s numbers
+  from other tools.

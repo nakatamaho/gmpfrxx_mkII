@@ -84,6 +84,32 @@ benchmarks/common/run_mpfr_benchmarks.sh build_bench_release 512 \
     100000000 benchmarks/mpfr/results_raw/Linux_Ryzen_3970X_32-Core 10
 ```
 
+The common runners set OpenMP affinity defaults for repeatable OpenMP
+measurements unless the caller already provides them:
+
+```bash
+OMP_NUM_THREADS=32
+OMP_PLACES=cores
+OMP_PROC_BIND=spread
+```
+
+Override them directly when comparing affinity policies:
+
+```bash
+OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=close \
+    benchmarks/common/run_mpfr_benchmarks.sh build_bench_release 512 \
+    100000000 benchmarks/mpfr/results_raw/Linux_Ryzen_3970X_32-Core_close 10
+```
+
+For NUMA interleave experiments, pass a command prefix.  The runner records the
+prefix in the log and applies it to every timed executable:
+
+```bash
+BENCH_COMMAND_PREFIX="numactl --interleave=all" \
+    benchmarks/common/run_mpfr_benchmarks.sh build_bench_release 512 \
+    100000000 benchmarks/mpfr/results_raw/Linux_Ryzen_3970X_32-Core_interleave 10
+```
+
 The MPFR runner uses the Rdot size for Raxpy by default.  A sixth argument can
 override the Raxpy vector size.  Seventh and eighth arguments override Rgemv
 `m` and `n`.  Ninth through eleventh arguments override Rgemm `m`, `k`, and
@@ -101,6 +127,19 @@ The plotter writes serial and OpenMP PNG graphs separately:
 The raw log is the authoritative result.  The plotted `MFLOPS` values measure
 the timed kernel body, not allocation, random initialization, or verification.
 Use `WALL_SECONDS` in the log when total executable time matters.
+
+Measure host memory bandwidth with the STREAM-like OpenMP helper:
+
+```bash
+benchmarks/common/run_stream_like.sh 100000000 20 3 \
+    benchmarks/results_raw/stream_like/Linux_Ryzen_3970X_32-Core
+```
+
+The helper builds `benchmarks/common/stream_like_omp.cpp` with
+`-O3 -march=native -fopenmp`, then runs Copy, Scale, Add, and Triad with
+`OMP_PROC_BIND=spread` and `OMP_PROC_BIND=close`.  By default it also records a
+single SMT comparison with 64 OpenMP threads.  Set `RUN_STREAM_SMT=0` to skip
+that extra run.
 
 Rdot benchmark executables install a GMP allocator counter before the first GMP
 allocation and print a timed-kernel profile line:

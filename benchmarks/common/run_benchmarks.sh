@@ -43,6 +43,11 @@ rgemm_n="${9:-500}"
 output_dir="${10:-${benchmark_root}/gmp/results_raw}"
 repeat_count="${11:-10}"
 
+export OMP_NUM_THREADS="${OMP_NUM_THREADS:-32}"
+export OMP_PLACES="${OMP_PLACES:-cores}"
+export OMP_PROC_BIND="${OMP_PROC_BIND:-spread}"
+benchmark_command_prefix="${BENCH_COMMAND_PREFIX:-${BENCH_NUMACTL:-}}"
+
 mkdir -p "${output_dir}"
 log_file="${output_dir}/benchmark_$(date +%Y%m%d_%H%M%S).log"
 
@@ -67,9 +72,16 @@ run_one() {
     fi
 
     for ((run = 1; run <= repeat_count; ++run)); do
-        echo "COMMAND ${label} ${exe} $*"
+        local command=("${exe}" "$@")
+        if [[ -n "${benchmark_command_prefix}" ]]; then
+            local prefix=()
+            read -r -a prefix <<<"${benchmark_command_prefix}"
+            command=("${prefix[@]}" "${command[@]}")
+        fi
+
+        echo "COMMAND ${label} ${command[*]}"
         echo "RUN ${run}/${repeat_count}"
-        /usr/bin/time -f "WALL_SECONDS %e" "${exe}" "$@"
+        /usr/bin/time -f "WALL_SECONDS %e" "${command[@]}"
         echo
     done
 }
@@ -225,6 +237,10 @@ run_variants() {
         uname -m
     fi
     echo "BENCHMARK_PARAMS precision=${precision} rdot_n=${rdot_n} raxpy_n=${raxpy_n} rgemv_m=${rgemv_m} rgemv_n=${rgemv_n} rgemm_m=${rgemm_m} rgemm_k=${rgemm_k} rgemm_n=${rgemm_n} repeat=${repeat_count}"
+    echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
+    if [[ -n "${benchmark_command_prefix}" ]]; then
+        echo "BENCH_COMMAND_PREFIX ${benchmark_command_prefix}"
+    fi
     echo
 
     run_variants Rdot gmp/00_Rdot "${rdot_n}" "${precision}"
