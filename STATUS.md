@@ -1464,6 +1464,93 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Rdot Bandwidth Estimates
+
+Implemented features:
+- Added `benchmarks/gmp/00_Rdot/README.md` memory-bandwidth estimates for
+  representative top Rdot paths.
+- Documented the 512-bit `mpf_t` layout used for the estimate:
+  24-byte `__mpf_struct`, 8-byte limbs, 8 used limbs, and 9 allocated limbs.
+- Added active-limb, header-inclusive, and allocated-footprint GB/s formulas.
+- Recorded representative serial and OpenMP GB/s estimates for top native,
+  upstream `gmpxx.h`, and mkII paths.
+
+Missing features:
+- No hardware-counter memory-bandwidth measurement was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `pgrep -af 'Rdot_mpfr|benchmark_rdot_mpfr|build_bench_release/benchmarks/mpfr/00_Rdot'`
+- `sed -n '80,260p' benchmarks/gmp/00_Rdot/README.md`
+- `sed -n '1,80p' benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/summary_rdot_gmp_n10000000_p512_repeat10.csv`
+- `printf '%s\n' ... | g++ -x c++ -std=c++17 - -lgmp -o /tmp/gmp_rdot_layout && /tmp/gmp_rdot_layout`
+- `printf '%s\n' ... | g++ -x c++ -std=c++17 - -lgmp -o /tmp/gmp_rdot_used_limbs && /tmp/gmp_rdot_used_limbs`
+- `python3 - <<'PY' ...`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- GMP 512-bit layout check: PASS.  `sizeof(__mpf_struct)=24`,
+  `sizeof(mp_limb_t)=8`, `mpf_get_prec=512`, `used_limbs=8`,
+  `allocated_limbs=9`.
+- Bandwidth conversion: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  157/157 tests passed.
+
+Known issues:
+- GB/s values are modeled from MFLOPS and object layout, not measured with
+  performance counters.
+
+## Phase: GMP Rdot Sortable Views and Vertical Repeat Plots
+
+Implemented features:
+- Changed `benchmarks/gmp/00_Rdot/plot_repeat_summary.py` back to vertical
+  average-MFLOPS bars with min/max whiskers and numeric labels.
+- Regenerated the committed GMP Rdot serial and OpenMP repeat-10 plots.
+- Added README collapsible sorted views for serial and OpenMP results sorted by
+  `Max MFLOPS` and `Avg MFLOPS`.
+- Documented that GitHub Markdown cannot run JavaScript table sorting inside a
+  README, so the sorted views are precomputed from the committed summary CSV.
+
+Missing features:
+- No JavaScript-powered interactive sorting is available in GitHub README
+  rendering.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/gmp/00_Rdot/plot_repeat_summary.py`
+- `benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_serial.png`
+- `benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_openmp.png`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/gmp/00_Rdot/plot_repeat_summary.py`
+- `sed -n '80,190p' benchmarks/gmp/00_Rdot/README.md`
+- `head -n 40 benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/summary_rdot_gmp_n10000000_p512_repeat10.csv`
+- `python3 - <<'PY' ...`
+- `python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/summary_rdot_gmp_n10000000_p512_repeat10.csv --output-prefix benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10 --title-prefix 'GMP Rdot N=10000000 precision=512 repeat=10'`
+- `python3 -m py_compile benchmarks/gmp/00_Rdot/plot_repeat_summary.py`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Plot regeneration: PASS.
+- Python syntax check: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  157/157 tests passed.
+
+Known issues:
+- None.
+
 ## Phase: GMP Rdot Repeat Plot Readability
 
 Implemented features:

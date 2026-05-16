@@ -98,9 +98,9 @@ Files:
 
 All 48 variants report `OK` in all 10 runs.
 
-The plots below show average MFLOPS as horizontal bars.  The black range line
-on each bar is the observed min-to-max interval across the 10 repeats; the
-large label is the average and the small labels mark min and max.
+The plots below show average MFLOPS as vertical bars.  The black range line on
+each bar is the observed min-to-max interval across the 10 repeats; the large
+label is the average and the small labels mark min and max.
 
 ![GMP Rdot serial repeat-10](results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_serial.png)
 
@@ -115,7 +115,48 @@ python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py \
     --title-prefix "GMP Rdot N=10000000 precision=512 repeat=10"
 ```
 
+## Memory Bandwidth Estimates
+
+These are model estimates derived from MFLOPS, not hardware-counter
+measurements.  The 512-bit GMP `mpf_t` inputs in this run have:
+
+```text
+sizeof(__mpf_struct) = 24 bytes
+sizeof(mp_limb_t)    = 8 bytes
+mpf_get_prec(x)      = 512 bits
+used limbs           = 8
+allocated limbs      = 9
+```
+
+Rdot performs two floating operations per element.  Therefore:
+
+```text
+active-limb GB/s        = MFLOPS * (2 * 8 limbs * 8 bytes) / 2000 = MFLOPS * 0.064
+header-inclusive GB/s   = MFLOPS * (2 * (24 + 8 * 8) bytes) / 2000 = MFLOPS * 0.088
+allocated-footprint GB/s = MFLOPS * (2 * (24 + 9 * 8) bytes) / 2000 = MFLOPS * 0.096
+```
+
+The active-limb model counts the mantissa limbs that the random 512-bit inputs
+actually use.  The header-inclusive model adds the contiguous `mpf_t` headers.
+The allocated-footprint model is an upper-bound footprint estimate that also
+counts GMP's extra allocated limb.  It is useful for cache-capacity reasoning,
+but the extra limb is not necessarily read in the hot loop.
+
+Representative top paths from this run:
+
+| Variant | Avg MFLOPS | Max MFLOPS | Active-limb GB/s | Header-inclusive GB/s | Allocated-footprint GB/s |
+|---------|------------|------------|------------------|-----------------------|--------------------------|
+| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 32.923 | 33.551 | 2.11 | 2.90 | 3.16 |
+| `C_native_03` | 32.733 | 33.135 | 2.09 | 2.88 | 3.14 |
+| `kernel_openmp_05_orig` | 577.892 | 589.195 | 36.99 | 50.85 | 55.48 |
+| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 571.961 | 587.298 | 36.61 | 50.33 | 54.91 |
+| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 571.483 | 589.381 | 36.57 | 50.29 | 54.86 |
+| `C_native_openmp_06` | 571.300 | 579.186 | 36.56 | 50.27 | 54.84 |
+
 ## Serial Results
+
+GitHub Markdown tables cannot run JavaScript sorting in a README.  The
+collapsible views below provide the useful sorted orders directly.
 
 | Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
 |---------|------------|------------|----------------|
@@ -143,6 +184,70 @@ python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py \
 | `kernel_06_orig` | 33.115 | 32.806 | Four product objects do not improve the serial average. |
 | `kernel_06_mkII` | 33.239 | 32.870 | Same class as 03. |
 | `kernel_06_mkII_FIXED_PRECISION_FASTPATH` | 33.160 | 32.891 | Same class as 06. |
+
+<details>
+<summary>Serial results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|------------|------------|------------|
+| 1 | `kernel_03_mkII` | 33.777 | 32.828 | 31.581 |
+| 2 | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 33.551 | 32.923 | 32.684 |
+| 3 | `kernel_06_mkII` | 33.239 | 32.870 | 32.622 |
+| 4 | `kernel_03_orig` | 33.170 | 32.686 | 32.368 |
+| 5 | `kernel_06_mkII_FIXED_PRECISION_FASTPATH` | 33.160 | 32.891 | 32.543 |
+| 6 | `C_native_03` | 33.135 | 32.733 | 32.340 |
+| 7 | `kernel_06_orig` | 33.115 | 32.806 | 32.408 |
+| 8 | `kernel_05_orig` | 33.053 | 32.726 | 32.047 |
+| 9 | `kernel_05_mkII` | 33.015 | 32.511 | 31.994 |
+| 10 | `C_native_06` | 32.999 | 32.554 | 31.584 |
+| 11 | `kernel_05_mkII_FIXED_PRECISION_FASTPATH` | 32.905 | 32.584 | 32.141 |
+| 12 | `C_native_05` | 32.863 | 32.625 | 31.969 |
+| 13 | `C_native_04` | 31.909 | 31.229 | 30.748 |
+| 14 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 31.906 | 31.624 | 31.104 |
+| 15 | `kernel_04_orig` | 31.862 | 31.188 | 30.204 |
+| 16 | `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 31.605 | 31.216 | 30.632 |
+| 17 | `kernel_04_mkII` | 31.542 | 31.147 | 30.509 |
+| 18 | `C_native_02` | 29.825 | 28.859 | 28.230 |
+| 19 | `C_native_01` | 29.145 | 28.790 | 28.145 |
+| 20 | `kernel_01_orig` | 28.313 | 27.641 | 25.143 |
+| 21 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 28.085 | 27.113 | 26.333 |
+| 22 | `kernel_01_mkII` | 28.026 | 27.441 | 26.487 |
+| 23 | `kernel_02_mkII` | 27.974 | 27.359 | 26.946 |
+| 24 | `kernel_02_orig` | 27.613 | 27.254 | 26.745 |
+
+</details>
+
+<details>
+<summary>Serial results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|------------|------------|------------|
+| 1 | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 33.551 | 32.923 | 32.684 |
+| 2 | `kernel_06_mkII_FIXED_PRECISION_FASTPATH` | 33.160 | 32.891 | 32.543 |
+| 3 | `kernel_06_mkII` | 33.239 | 32.870 | 32.622 |
+| 4 | `kernel_03_mkII` | 33.777 | 32.828 | 31.581 |
+| 5 | `kernel_06_orig` | 33.115 | 32.806 | 32.408 |
+| 6 | `C_native_03` | 33.135 | 32.733 | 32.340 |
+| 7 | `kernel_05_orig` | 33.053 | 32.726 | 32.047 |
+| 8 | `kernel_03_orig` | 33.170 | 32.686 | 32.368 |
+| 9 | `C_native_05` | 32.863 | 32.625 | 31.969 |
+| 10 | `kernel_05_mkII_FIXED_PRECISION_FASTPATH` | 32.905 | 32.584 | 32.141 |
+| 11 | `C_native_06` | 32.999 | 32.554 | 31.584 |
+| 12 | `kernel_05_mkII` | 33.015 | 32.511 | 31.994 |
+| 13 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 31.906 | 31.624 | 31.104 |
+| 14 | `C_native_04` | 31.909 | 31.229 | 30.748 |
+| 15 | `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 31.605 | 31.216 | 30.632 |
+| 16 | `kernel_04_orig` | 31.862 | 31.188 | 30.204 |
+| 17 | `kernel_04_mkII` | 31.542 | 31.147 | 30.509 |
+| 18 | `C_native_02` | 29.825 | 28.859 | 28.230 |
+| 19 | `C_native_01` | 29.145 | 28.790 | 28.145 |
+| 20 | `kernel_01_orig` | 28.313 | 27.641 | 25.143 |
+| 21 | `kernel_01_mkII` | 28.026 | 27.441 | 26.487 |
+| 22 | `kernel_02_mkII` | 27.974 | 27.359 | 26.946 |
+| 23 | `kernel_02_orig` | 27.613 | 27.254 | 26.745 |
+| 24 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 28.085 | 27.113 | 26.333 |
+
+</details>
 
 ## OpenMP Results
 
@@ -172,6 +277,70 @@ python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py \
 | `kernel_openmp_06_orig` | 586.969 | 564.999 | Four product objects do not clearly improve OpenMP. |
 | `kernel_openmp_06_mkII` | 586.669 | 566.652 | Same class as OpenMP 05. |
 | `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 584.079 | 567.075 | Same class as 06. |
+
+<details>
+<summary>OpenMP results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|------------|------------|------------|
+| 1 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 589.381 | 571.483 | 560.180 |
+| 2 | `kernel_openmp_05_orig` | 589.195 | 577.892 | 527.915 |
+| 3 | `kernel_openmp_04_orig` | 588.542 | 574.476 | 557.149 |
+| 4 | `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 587.298 | 571.961 | 547.573 |
+| 5 | `kernel_openmp_06_orig` | 586.969 | 564.999 | 534.191 |
+| 6 | `kernel_openmp_06_mkII` | 586.669 | 566.652 | 504.369 |
+| 7 | `kernel_openmp_03_orig` | 585.558 | 569.747 | 521.967 |
+| 8 | `kernel_openmp_04_mkII` | 584.226 | 556.360 | 498.805 |
+| 9 | `kernel_openmp_03_mkII` | 584.146 | 561.448 | 479.539 |
+| 10 | `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 584.079 | 567.075 | 513.609 |
+| 11 | `C_native_openmp_03` | 583.660 | 554.712 | 508.874 |
+| 12 | `kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH` | 582.841 | 568.962 | 529.801 |
+| 13 | `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH` | 581.238 | 559.160 | 519.842 |
+| 14 | `kernel_openmp_05_mkII` | 581.118 | 570.886 | 531.049 |
+| 15 | `C_native_openmp_04` | 579.986 | 559.656 | 491.010 |
+| 16 | `C_native_openmp_05` | 579.489 | 570.242 | 558.995 |
+| 17 | `C_native_openmp_06` | 579.186 | 571.300 | 559.800 |
+| 18 | `C_native_openmp_02` | 577.011 | 557.045 | 512.741 |
+| 19 | `C_native_openmp_01` | 562.844 | 545.466 | 506.590 |
+| 20 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 43.609 | 43.427 | 42.943 |
+| 21 | `kernel_openmp_02_orig` | 43.595 | 43.414 | 43.274 |
+| 22 | `kernel_openmp_01_orig` | 43.592 | 43.444 | 43.180 |
+| 23 | `kernel_openmp_01_mkII` | 43.463 | 43.317 | 43.090 |
+| 24 | `kernel_openmp_02_mkII` | 43.199 | 42.997 | 42.097 |
+
+</details>
+
+<details>
+<summary>OpenMP results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|------------|------------|------------|
+| 1 | `kernel_openmp_05_orig` | 589.195 | 577.892 | 527.915 |
+| 2 | `kernel_openmp_04_orig` | 588.542 | 574.476 | 557.149 |
+| 3 | `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 587.298 | 571.961 | 547.573 |
+| 4 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 589.381 | 571.483 | 560.180 |
+| 5 | `C_native_openmp_06` | 579.186 | 571.300 | 559.800 |
+| 6 | `kernel_openmp_05_mkII` | 581.118 | 570.886 | 531.049 |
+| 7 | `C_native_openmp_05` | 579.489 | 570.242 | 558.995 |
+| 8 | `kernel_openmp_03_orig` | 585.558 | 569.747 | 521.967 |
+| 9 | `kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH` | 582.841 | 568.962 | 529.801 |
+| 10 | `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 584.079 | 567.075 | 513.609 |
+| 11 | `kernel_openmp_06_mkII` | 586.669 | 566.652 | 504.369 |
+| 12 | `kernel_openmp_06_orig` | 586.969 | 564.999 | 534.191 |
+| 13 | `kernel_openmp_03_mkII` | 584.146 | 561.448 | 479.539 |
+| 14 | `C_native_openmp_04` | 579.986 | 559.656 | 491.010 |
+| 15 | `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH` | 581.238 | 559.160 | 519.842 |
+| 16 | `C_native_openmp_02` | 577.011 | 557.045 | 512.741 |
+| 17 | `kernel_openmp_04_mkII` | 584.226 | 556.360 | 498.805 |
+| 18 | `C_native_openmp_03` | 583.660 | 554.712 | 508.874 |
+| 19 | `C_native_openmp_01` | 562.844 | 545.466 | 506.590 |
+| 20 | `kernel_openmp_01_orig` | 43.592 | 43.444 | 43.180 |
+| 21 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 43.609 | 43.427 | 42.943 |
+| 22 | `kernel_openmp_02_orig` | 43.595 | 43.414 | 43.274 |
+| 23 | `kernel_openmp_01_mkII` | 43.463 | 43.317 | 43.090 |
+| 24 | `kernel_openmp_02_mkII` | 43.199 | 42.997 | 42.097 |
+
+</details>
 
 ## Hotpath Disassembly
 

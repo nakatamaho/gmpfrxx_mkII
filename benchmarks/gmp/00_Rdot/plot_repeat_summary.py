@@ -68,40 +68,39 @@ def plot_rows(rows, title, output):
     minimums = [row["min"] for row in rows]
     maximums = [row["max"] for row in rows]
     colors = [variant_color(row["name"]) for row in rows]
-    y_positions = list(range(len(rows)))
+    x_positions = list(range(len(rows)))
+    max_value = max(maximums)
+    label_pad = max_value * 0.012
 
-    height = max(7.5, 0.39 * len(rows) + 2.0)
-    fig, ax = plt.subplots(figsize=(14, height))
-    bars = ax.barh(y_positions, averages, color=colors, height=0.7, alpha=0.9)
+    width = max(17, 0.58 * len(rows) + 4.0)
+    fig, ax = plt.subplots(figsize=(width, 8.5))
+    ax.bar(x_positions, averages, color=colors, width=0.72, alpha=0.9)
 
-    label_pad = max_value = max(maximums)
-    label_pad *= 0.01
-
-    for y, avg, low, high in zip(y_positions, averages, minimums, maximums):
-        ax.hlines(y, low, high, color="black", linewidth=1.6, zorder=3)
-        ax.vlines([low, high], y - 0.18, y + 0.18, color="black", linewidth=1.2, zorder=3)
+    for x, avg, low, high in zip(x_positions, averages, minimums, maximums):
+        ax.vlines(x, low, high, color="black", linewidth=1.6, zorder=3)
+        ax.hlines([low, high], x - 0.18, x + 0.18, color="black", linewidth=1.2, zorder=3)
         ax.text(
-            max(avg - label_pad, 0.0),
-            y,
+            x,
+            avg + label_pad,
             f"{avg:.1f}",
-            va="center",
-            ha="right",
+            va="bottom",
+            ha="center",
             fontsize=9,
             fontweight="bold",
-            color="white",
+            color="#111111",
+            rotation=90,
         )
-        ax.text(low, y - 0.28, f"{low:.1f}", va="top", ha="center", fontsize=7, color="#333333")
-        ax.text(high, y - 0.28, f"{high:.1f}", va="top", ha="center", fontsize=7, color="#333333")
+        ax.text(x - 0.22, low, f"{low:.1f}", va="center", ha="right", fontsize=7, color="#333333", rotation=90)
+        ax.text(x + 0.22, high, f"{high:.1f}", va="center", ha="left", fontsize=7, color="#333333", rotation=90)
 
-    ax.set_yticks(y_positions)
-    ax.set_yticklabels(labels, fontsize=9)
-    ax.invert_yaxis()
-    ax.set_xlabel("MFLOPS", fontsize=12, fontweight="bold")
+    ax.set_xticks(x_positions)
+    ax.set_xticklabels(labels, rotation=63, ha="right", fontsize=8)
+    ax.set_ylabel("MFLOPS", fontsize=12, fontweight="bold")
     ax.set_title(title, fontsize=14, fontweight="bold")
-    ax.grid(axis="x", linestyle=":", alpha=0.45)
+    ax.grid(axis="y", linestyle=":", alpha=0.45)
     ax.set_axisbelow(True)
 
-    ax.set_xlim(0, max_value * 1.16)
+    ax.set_ylim(0, max_value * 1.22)
 
     legend_items = [
         ("native C", "#8c8c8c"),
