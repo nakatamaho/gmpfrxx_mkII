@@ -49,20 +49,21 @@ void _Rgemv(int64_t m, int64_t n, const mpf_class &alpha, const mpf_class *A, in
         exit(EXIT_FAILURE);
     }
 
-    // Scale y by beta: y = beta * y
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        y[i] *= beta;
-    }
+#pragma omp parallel
+    {
+        mpf_class temp, templ;
 
-    // Compute alpha * A * x and add to y: y += alpha * A * x
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        mpf_class temp = 0;
-        for (int64_t j = 0; j < n; ++j) {
-            temp += A[i + j * lda] * x[j];
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            y[i] *= beta;
+            for (int64_t j = 0; j < n; ++j) {
+                temp = alpha;
+                temp *= x[j];
+                templ = temp;
+                templ *= A[i + j * lda];
+                y[i] += templ;
+            }
         }
-        y[i] += alpha * temp;
     }
 }
 

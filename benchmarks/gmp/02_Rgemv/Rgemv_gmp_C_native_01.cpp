@@ -51,25 +51,27 @@ void _Rgemv(int64_t m, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda
         exit(EXIT_FAILURE);
     }
 
-    mpf_t temp;
-    mpf_init(temp);
+    const mp_bitcnt_t work_prec = mpf_get_prec(alpha);
+    mpf_t temp_b, prod;
+    mpf_init2(temp_b, work_prec);
+    mpf_init2(prod, work_prec);
 
     // Scale y by beta
     for (int64_t i = 0; i < m; ++i) {
-        mpf_mul(temp, beta, y[i]); // temp = beta * y[i]
-        mpf_set(y[i], temp);       // y[i] = temp
+        mpf_mul(y[i], beta, y[i]); // y[i] = beta * y[i]
     }
 
     // Compute alpha * A * x and add to y
     for (int64_t j = 0; j < n; ++j) {
+        mpf_mul(temp_b, alpha, x[j]); // temp_b = alpha * x[j]
         for (int64_t i = 0; i < m; ++i) {
-            mpf_mul(temp, alpha, A[i + j * lda]); // temp = alpha * A[i + j*lda]
-            mpf_mul(temp, temp, x[j]);            // temp = temp * x[j]
-            mpf_add(y[i], y[i], temp);            // y[i] += temp
+            mpf_mul(prod, temp_b, A[i + j * lda]); // prod = temp_b * A[i + j*lda]
+            mpf_add(y[i], y[i], prod);             // y[i] += prod
         }
     }
 
-    mpf_clear(temp);
+    mpf_clear(temp_b);
+    mpf_clear(prod);
 }
 
 // Initialize a matrix with random values
@@ -193,6 +195,8 @@ int main(int argc, char **argv) {
         mpf_clear(y[i]);
     }
     mpf_clear(alpha);
+    mpf_clear(beta);
+    gmp_randclear(state);
     delete[] A;
     delete[] x;
     delete[] y;

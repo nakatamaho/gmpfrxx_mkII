@@ -215,6 +215,8 @@ add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp
     Raxpy_mpfr_C_native_01)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01_FMA.cpp
     Raxpy_mpfr_C_native_01_FMA)
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_packed_custom_layout_FMA.cpp
+    Raxpy_mpfr_C_native_packed_custom_layout_FMA)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_01.cpp
     Raxpy_mpfr_C_native_openmp_01)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_01_FMA.cpp
@@ -289,10 +291,14 @@ add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_openmp_01.cpp
     Rgemv_gmp_C_native_openmp_01)
 add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_01.cpp Rgemv_gmp_kernel_01)
 add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_02.cpp Rgemv_gmp_kernel_02)
+add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_03.cpp Rgemv_gmp_kernel_03)
+add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_04.cpp Rgemv_gmp_kernel_04)
 add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_01.cpp
     Rgemv_gmp_kernel_openmp_01)
 add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_02.cpp
     Rgemv_gmp_kernel_openmp_02)
+add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_03.cpp
+    Rgemv_gmp_kernel_openmp_03)
 
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_01.cpp
     Rgemm_gmp_C_native_01)

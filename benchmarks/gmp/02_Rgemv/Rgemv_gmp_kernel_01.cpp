@@ -48,11 +48,13 @@ void _Rgemv(int64_t m, int64_t n, const mpf_class &alpha, const mpf_class *A, in
     }
 
     for (int64_t i = 0; i < m; ++i) {
-        mpf_class temp = 0;
-        for (int64_t j = 0; j < n; ++j) {
-            temp += A[i + j * lda] * x[j];
+        y[i] *= beta;
+    }
+
+    for (int64_t j = 0; j < n; ++j) {
+        for (int64_t i = 0; i < m; ++i) {
+            y[i] += (alpha * x[j]) * A[i + j * lda];
         }
-        y[i] = alpha * temp + beta * y[i];
     }
 }
 

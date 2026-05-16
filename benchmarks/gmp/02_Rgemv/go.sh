@@ -40,9 +40,18 @@ executables=(
     "Rgemv_gmp_kernel_02_orig"
     "Rgemv_gmp_kernel_02_mkII"
     "Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
+    "Rgemv_gmp_kernel_03_orig"
+    "Rgemv_gmp_kernel_03_mkII"
+    "Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH"
+    "Rgemv_gmp_kernel_04_orig"
+    "Rgemv_gmp_kernel_04_mkII"
+    "Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH"
     "Rgemv_gmp_kernel_openmp_02_orig"
     "Rgemv_gmp_kernel_openmp_02_mkII"
     "Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
+    "Rgemv_gmp_kernel_openmp_03_orig"
+    "Rgemv_gmp_kernel_openmp_03_mkII"
+    "Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH"
 )
 for exe in "${executables[@]}"; do
     COMMAND_LINE="/usr/bin/time ./$exe 4000 4000 512"

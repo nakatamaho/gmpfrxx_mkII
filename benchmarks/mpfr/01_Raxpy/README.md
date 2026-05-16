@@ -64,6 +64,7 @@ helper in `Raxpy.hpp` is the post-run correctness reference.
 |---------|--------------------|------------------|--------------|
 | `C_native_01` | `mpfr_mul(temp, alpha, x[i], rnd); mpfr_add(y[i], y[i], temp, rnd);` | Raw `mpfr_t` product object initialized once. | Same role as GMP raw C native. |
 | `C_native_01_FMA` | `mpfr_fma(y[i], alpha, x[i], y[i], rnd);` | No product temporary. | MPFR-specific baseline; GMP `mpf_t` has no matching FMA API. |
+| `C_native_packed_custom_layout_FMA` | `mpfr_fma(packed_y[i], alpha, packed_x[i], packed_y[i], rnd);` | MPFR custom layout with each header and significand stored in one flat allocation. | No GMP parallel; this is an MPFR layout experiment. |
 | `kernel_01` | `y[i] += alpha * x[i];` | Expression-first source shape. | Matches GMP `kernel_01`. |
 | `kernel_02` | `temp = alpha; temp *= x[i]; y[i] += temp;` | One reusable product object, assigned from `alpha` then multiplied in place. | Matches GMP `kernel_02`. |
 | `kernel_03` | `temp = alpha * x[i]; y[i] += temp;` | One reusable product object assigned from the product expression. | Matches GMP `kernel_03`. |
@@ -87,6 +88,33 @@ The FMA suffix is most relevant to expression-first shapes such as `kernel_01`.
 Reusable-product kernels split multiply and add in source, so the suffix is
 kept for build-matrix symmetry but should be checked by disassembly before it
 is interpreted as an actual `mpfr_fma` hot path.
+
+## Packed Custom Layout Experiment
+
+`Raxpy_mpfr_C_native_packed_custom_layout_FMA` is a test program for the data
+layout hypothesis that the normal `mpfr_t*` vector pays extra cache latency
+because each header is contiguous but each `_mpfr_d` significand pointer may
+refer to a separate heap allocation.  The packed executable uses
+`mpfr_custom_init_set` so each element stores the MPFR header and significand
+limbs in one flat allocation:
+
+```text
+[ __mpfr_struct | limb0..limbN-1 ][ __mpfr_struct | limb0..limbN-1 ] ...
+```
+
+The timed kernel is intentionally the same one-call FMA shape as
+`C_native_01_FMA`; the variable under test is the x/y vector layout.  The
+program prints the packed significand byte count and element stride before the
+timed kernel.
+
+Important constraints:
+
+- The packed elements must not be passed to `mpfr_clear`; their significands
+  are owned by the flat allocation.
+- `mpfr_set_prec` must not be used on packed elements because it may replace
+  `_mpfr_d` and destroy the packed layout.
+- This is currently a benchmark/test-program path.  It is not a drop-in
+  replacement for APIs that expect independently allocated `mpfr_t` arrays.
 
 ## Comparison With GMP Raxpy
 

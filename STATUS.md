@@ -1464,6 +1464,199 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Rgemv README Hotpath Documentation
+
+Implemented features:
+- Reworked `benchmarks/gmp/02_Rgemv/README.md` to follow the same broad
+  structure as `benchmarks/gmp/01_Raxpy/README.md`.
+- Added the refactored `M=4000`, `N=4000`, 512-bit benchmark table from
+  `results_raw/rgemv_gmp_m4000_n4000_p512_summary_20260516_122201.csv`.
+- Documented the current serial and OpenMP Rgemv kernel shapes.
+- Added hotpath disassembly notes for:
+  `C_native_01`, `kernel_01_mkII`, `kernel_03_mkII`, and
+  `kernel_openmp_03_mkII`.
+- Added Rgemv lessons learned, especially the difference between serial
+  column-major AXPY traversal and row-partitioned OpenMP traversal.
+
+Missing features:
+- No new benchmark run was performed in this phase.
+- No new plot was generated in this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,260p' benchmarks/gmp/01_Raxpy/README.md`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/README.md`
+- `cat benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_summary_20260516_122201.csv`
+- `ls -lh build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII`
+- `nm -C build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 | rg "_Rgemv|omp"`
+- `nm -C build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII | rg "_Rgemv|omp"`
+- `nm -C build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII | rg "_Rgemv|omp|\\._omp"`
+- `nm -C build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII | rg "_Rgemv|omp"`
+- `objdump -Cd --start-address=0x55c0 --stop-address=0x5750 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01`
+- `objdump -Cd --start-address=0x56a0 --stop-address=0x5960 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII`
+- `objdump -Cd --start-address=0x56c0 --stop-address=0x59b0 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII`
+- `objdump -Cd --start-address=0x3f10 --stop-address=0x42b0 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII`
+- `rg -n "Recorded Refactored Sample|Hotpath Disassembly|kernel_01_mkII|Lessons Learned" benchmarks/gmp/02_Rgemv/README.md`
+- `sed -n '1,260p' benchmarks/gmp/02_Rgemv/README.md`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+- `tail -n 45 STATUS.md`
+
+Pass/fail result:
+- Hotpath symbol lookup: PASS.
+- Hotpath disassembly extraction: PASS.
+- README update: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The recorded Rgemv result table is a single run, not repeat-10 data.
+
+## Phase: MPFR Raxpy Packed Custom Layout Test Program
+
+Implemented features:
+- Added `Raxpy_mpfr_C_native_packed_custom_layout_FMA.cpp`.
+- Implemented an experimental packed MPFR vector using `mpfr_custom_init_set`.
+- Stored each `__mpfr_struct` header and its significand limbs in one flat
+  aligned allocation to test the pointer-chase hypothesis in MPFR Raxpy.
+- Kept the timed hot loop as one `mpfr_fma` call per element so the main
+  variable under test is x/y data layout.
+- Printed packed significand bytes and element stride at runtime.
+- Registered the target as
+  `Raxpy_mpfr_C_native_packed_custom_layout_FMA`.
+- Added the packed target to the common MPFR benchmark runner.
+- Documented ownership constraints in `benchmarks/mpfr/01_Raxpy/README.md`:
+  do not call `mpfr_clear` on packed elements and do not call `mpfr_set_prec`.
+
+Missing features:
+- No large repeat benchmark was run for the packed layout.
+- No OpenMP packed-layout variant was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "Raxpy_mpfr|mpfr/01_Raxpy" benchmarks/CMakeLists.txt benchmarks/mpfr/01_Raxpy/go.sh benchmarks/mpfr/01_Raxpy/README.md`
+- `ls benchmarks/mpfr/01_Raxpy`
+- `sed -n '1,220p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01.cpp`
+- `sed -n '1,260p' benchmarks/mpfr/01_Raxpy/Raxpy_common.hpp`
+- `rg -n "mpfr_custom_init|mpfr_custom_get|mpfr_custom_move" /usr/include /usr/local/include 2>/dev/null`
+- `sed -n '820,860p' /usr/include/mpfr.h && sed -n '1030,1065p' /usr/include/mpfr.h`
+- `sed -n '1065,1088p' /usr/include/mpfr.h`
+- `sed -n '1,220p' benchmarks/common/run_mpfr_benchmarks.sh`
+- `sed -n '200,238p' benchmarks/CMakeLists.txt`
+- `sed -n '260,360p' benchmarks/mpfr/01_Raxpy/README.md`
+- `rg -n "Variant names|C_native|Unlike the current" benchmarks/mpfr/01_Raxpy/README.md`
+- `sed -n '1,95p' benchmarks/mpfr/01_Raxpy/README.md`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Raxpy_mpfr_C_native_packed_custom_layout_FMA Raxpy_mpfr_C_native_01_FMA`
+- `build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 1000 512`
+- `build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 1000 256`
+- `build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 1000 512`
+- `build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 1000 256`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+- `cmake --build build_bench_release -j --target Raxpy_mpfr_C_native_packed_custom_layout_FMA`
+- `tail -n 90 STATUS.md`
+- `tail -n 25 STATUS.md`
+
+Pass/fail result:
+- Release benchmark reconfigure: PASS.
+- Packed layout target build: PASS.
+- Native FMA baseline build: PASS.
+- Packed 512-bit smoke: PASS.  `stride=96`, `Result OK`.
+- Packed 256-bit smoke: PASS.  `stride=64`, `Result OK`.
+- Native FMA baseline smoke: PASS for the same `N=1000` sizes.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- Small smoke runs are not performance evidence; use large N and repeat runs
+  before judging whether packed layout helps.
+
+## Phase: GMP Rgemv Kernel Pattern Refactor
+
+Implemented features:
+- Refactored `benchmarks/gmp/02_Rgemv` to follow the GMP Raxpy benchmark
+  source-shape split more closely.
+- Updated `Rgemv_gmp_C_native_01.cpp` to reuse `mpf_t` work temporaries and
+  compute the column-oriented AXPY update as `temp_b = alpha * x[j]`.
+- Updated `Rgemv_gmp_C_native_openmp_01.cpp` to remove timed-loop
+  `mpf_init`/`mpf_clear` calls and use row-partitioned OpenMP with per-thread
+  `mpf_t` temporaries.
+- Changed `kernel_01` to a direct-expression column-major AXPY form.
+- Kept `kernel_02` as the reusable `temp`/`templ` copy-then-multiply form.
+- Added `kernel_03` for reusable `temp`/`templ` expression assignment.
+- Added `kernel_04` for loop-local product objects.
+- Reworked OpenMP kernels as row-partitioned variants:
+  direct expression, copy-then-multiply reusable temporaries, and expression
+  assignment reusable temporaries.
+- Registered the new targets in `benchmarks/CMakeLists.txt`.
+- Added the new executables to `benchmarks/gmp/02_Rgemv/go.sh`.
+- Documented the current Rgemv kernel source shapes in
+  `benchmarks/gmp/02_Rgemv/README.md`.
+
+Missing features:
+- No repeat benchmark sweep was run in this phase.
+- No plots were generated in this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `benchmarks/gmp/02_Rgemv/go.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,240p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01.cpp`
+- `sed -n '1,260p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02.cpp`
+- `sed -n '1,260p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01.cpp`
+- `sed -n '1,260p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp`
+- `sed -n '1,280p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01.cpp`
+- `sed -n '1,300p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01.cpp`
+- `sed -n '1,220p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01.cpp`
+- `sed -n '1,220p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02.cpp`
+- `sed -n '1,220p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03.cpp`
+- `sed -n '1,220p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04.cpp`
+- `sed -n '1,220p' benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03.cpp`
+- `rg -n "02_Rgemv|Rgemv_gmp" benchmarks/CMakeLists.txt benchmarks/gmp/02_Rgemv/go.sh benchmarks/gmp/02_Rgemv/README.md`
+- `sed -n '1,140p' benchmarks/gmp/02_Rgemv/go.sh`
+- `sed -n '250,310p' benchmarks/CMakeLists.txt`
+- `sed -n '1,180p' benchmarks/gmp/02_Rgemv/README.md`
+- `sed -n '1,140p' benchmarks/gmp/01_Raxpy/README.md`
+- `git diff -- benchmarks/gmp/02_Rgemv benchmarks/CMakeLists.txt | sed -n '1,260p'`
+- `git status --short`
+- `ls -d build build_bench_release 2>/dev/null`
+- `rg -n "Rgemv_gmp_kernel_03|Rgemv_gmp_kernel_openmp_03" benchmarks/CMakeLists.txt benchmarks/gmp/02_Rgemv/go.sh`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemv_gmp_C_native_01 Rgemv_gmp_C_native_openmp_01 Rgemv_gmp_kernel_01_orig Rgemv_gmp_kernel_01_mkII Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_02_orig Rgemv_gmp_kernel_02_mkII Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_03_orig Rgemv_gmp_kernel_03_mkII Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_04_orig Rgemv_gmp_kernel_04_mkII Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_01_orig Rgemv_gmp_kernel_openmp_01_mkII Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_02_orig Rgemv_gmp_kernel_openmp_02_mkII Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_03_orig Rgemv_gmp_kernel_openmp_03_mkII Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH`
+- `OMP_NUM_THREADS=4 OMP_PLACES=cores OMP_PROC_BIND=close /bin/bash -lc 'for exe in build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_0{1,2,3,4}_{orig,mkII,mkII_FIXED_PRECISION_FASTPATH} build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_0{1,2,3}_{orig,mkII,mkII_FIXED_PRECISION_FASTPATH}; do echo "== $exe"; "$exe" 17 19 128 | tail -n 2; done'`
+- `ctest --test-dir build --output-on-failure`
+- `tail -n 80 STATUS.md`
+
+Pass/fail result:
+- Release benchmark reconfigure: PASS.
+- All selected Rgemv benchmark targets: PASS.
+- Rgemv smoke run: PASS.  All native, orig, mkII, fastpath, and OpenMP
+  variants reported `Result OK` for `M=17`, `N=19`, `precision=128`.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- Large-size performance has not been measured after this refactor.
+
 ## Phase: MPFR Raxpy N=10000000 1024-bit Repeat-10 Benchmark
 
 Implemented features:

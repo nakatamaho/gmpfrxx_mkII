@@ -162,6 +162,7 @@ run_variants() {
         executables=(
             "Raxpy_mpfr_C_native_01"
             "Raxpy_mpfr_C_native_01_FMA"
+            "Raxpy_mpfr_C_native_packed_custom_layout_FMA"
             "Raxpy_mpfr_C_native_openmp_01"
             "Raxpy_mpfr_C_native_openmp_01_FMA"
             "Raxpy_mpfr_kernel_01_mkII"

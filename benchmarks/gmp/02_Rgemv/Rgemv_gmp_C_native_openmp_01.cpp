@@ -51,29 +51,26 @@ void _Rgemv(int64_t m, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda
         exit(EXIT_FAILURE);
     }
 
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        mpf_mul(y[i], y[i], beta);
-    }
+    const mp_bitcnt_t work_prec = mpf_get_prec(alpha);
 
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        mpf_t temp;
-        mpf_init(temp);
-        mpf_set_ui(temp, 0);
-        for (int64_t j = 0; j < n; ++j) {
-            mpf_t prod;
-            mpf_init(prod);
-            mpf_mul(prod, A[i + j * lda], x[j]);
-            mpf_add(temp, temp, prod);
-            mpf_clear(prod);
+#pragma omp parallel
+    {
+        mpf_t temp_b, prod;
+        mpf_init2(temp_b, work_prec);
+        mpf_init2(prod, work_prec);
+
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            mpf_mul(y[i], beta, y[i]);
+            for (int64_t j = 0; j < n; ++j) {
+                mpf_mul(temp_b, alpha, x[j]);
+                mpf_mul(prod, temp_b, A[i + j * lda]);
+                mpf_add(y[i], y[i], prod);
+            }
         }
-        mpf_t scaled_temp;
-        mpf_init(scaled_temp);
-        mpf_mul(scaled_temp, alpha, temp);
-        mpf_add(y[i], y[i], scaled_temp);
-        mpf_clear(temp);
-        mpf_clear(scaled_temp);
+
+        mpf_clear(temp_b);
+        mpf_clear(prod);
     }
 }
 
@@ -198,6 +195,8 @@ int main(int argc, char **argv) {
         mpf_clear(y[i]);
     }
     mpf_clear(alpha);
+    mpf_clear(beta);
+    gmp_randclear(state);
     delete[] A;
     delete[] x;
     delete[] y;
