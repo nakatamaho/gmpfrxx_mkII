@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <ios>
 #include <istream>
@@ -1947,6 +1948,125 @@ private:
     mpfr_t value_;
 };
 
+class mpfr_thread_scratch_pool {
+public:
+    static constexpr std::size_t slot_count = 4;
+    static constexpr mpfr_prec_t max_retained_precision = mpfr_prec_t{1} << 20;
+
+    struct slot {
+        mpfr_t value;
+        bool initialized = false;
+        bool in_use = false;
+        mpfr_prec_t allocated_precision = 0;
+        mpfr_prec_t active_precision = 0;
+    };
+
+    ~mpfr_thread_scratch_pool()
+    {
+        for (auto& item : slots_) {
+            if (item.initialized) {
+                restore_allocated_precision(item);
+                mpfr_clear(item.value);
+            }
+        }
+    }
+
+    slot* acquire(mpfr_prec_t precision)
+    {
+        if (precision > max_retained_precision) {
+            return nullptr;
+        }
+
+        for (auto& item : slots_) {
+            if (!item.in_use) {
+                prepare(item, precision);
+                item.in_use = true;
+                return &item;
+            }
+        }
+        return nullptr;
+    }
+
+    static void release(slot& item) noexcept
+    {
+        // Fixed-precision fast paths reuse the slot at the requested active
+        // precision. Restoring the allocation precision on every release would
+        // put mpfr_set_prec_raw back into the hot loop.
+        item.in_use = false;
+    }
+
+private:
+    static void restore_allocated_precision(slot& item) noexcept
+    {
+        if (item.initialized && item.active_precision != item.allocated_precision) {
+            mpfr_set_prec_raw(item.value, item.allocated_precision);
+            item.active_precision = item.allocated_precision;
+        }
+    }
+
+    static void prepare(slot& item, mpfr_prec_t precision)
+    {
+        if (!item.initialized) {
+            mpfr_init2(item.value, precision);
+            item.initialized = true;
+            item.allocated_precision = mpfr_get_prec(item.value);
+            item.active_precision = item.allocated_precision;
+        } else if (item.allocated_precision < precision) {
+            restore_allocated_precision(item);
+            mpfr_set_prec(item.value, precision);
+            item.allocated_precision = mpfr_get_prec(item.value);
+            item.active_precision = item.allocated_precision;
+        }
+
+        if (item.active_precision != precision) {
+            mpfr_set_prec_raw(item.value, precision);
+            item.active_precision = precision;
+        }
+    }
+
+    slot slots_[slot_count]{};
+};
+
+inline mpfr_thread_scratch_pool& mpfr_current_thread_scratch_pool()
+{
+    thread_local mpfr_thread_scratch_pool pool;
+    return pool;
+}
+
+class mpfr_thread_scratch {
+public:
+    explicit mpfr_thread_scratch(mpfr_prec_t precision)
+        : slot_(mpfr_current_thread_scratch_pool().acquire(precision))
+    {
+        if (slot_ == nullptr) {
+            mpfr_init2(fallback_, precision);
+            using_fallback_ = true;
+        }
+    }
+
+    mpfr_thread_scratch(const mpfr_thread_scratch&) = delete;
+    mpfr_thread_scratch& operator=(const mpfr_thread_scratch&) = delete;
+
+    ~mpfr_thread_scratch()
+    {
+        if (using_fallback_) {
+            mpfr_clear(fallback_);
+        } else {
+            mpfr_thread_scratch_pool::release(*slot_);
+        }
+    }
+
+    mpfr_ptr get() noexcept
+    {
+        return using_fallback_ ? fallback_ : slot_->value;
+    }
+
+private:
+    mpfr_thread_scratch_pool::slot* slot_ = nullptr;
+    bool using_fallback_ = false;
+    mpfr_t fallback_;
+};
+
 template <typename T>
 struct is_mpfr_object_leaf : std::false_type {};
 
@@ -2026,27 +2146,39 @@ void mpfr_compound_submul_fma_apply(
 }
 
 template <typename Lhs, typename Rhs>
-void mpfr_compound_mul_apply(
+GMPFRXX_MKII_ALWAYS_INLINE void mpfr_compound_mul_apply(
     mpfr_t dest,
     const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
     mpfr_prec_t precision,
     mpfr_rnd_t rnd)
 {
-    scoped_mpfr_temporary product(precision);
-    mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
-    mpfr_add(dest, dest, product.get(), rnd);
+    if constexpr (build_options::assume_fixed_precision_fastpath) {
+        mpfr_thread_scratch product(precision);
+        mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+        mpfr_add(dest, dest, product.get(), rnd);
+    } else {
+        scoped_mpfr_temporary product(precision);
+        mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+        mpfr_add(dest, dest, product.get(), rnd);
+    }
 }
 
 template <typename Lhs, typename Rhs>
-void mpfr_compound_submul_apply(
+GMPFRXX_MKII_ALWAYS_INLINE void mpfr_compound_submul_apply(
     mpfr_t dest,
     const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
     mpfr_prec_t precision,
     mpfr_rnd_t rnd)
 {
-    scoped_mpfr_temporary product(precision);
-    mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
-    mpfr_sub(dest, dest, product.get(), rnd);
+    if constexpr (build_options::assume_fixed_precision_fastpath) {
+        mpfr_thread_scratch product(precision);
+        mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+        mpfr_sub(dest, dest, product.get(), rnd);
+    } else {
+        scoped_mpfr_temporary product(precision);
+        mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+        mpfr_sub(dest, dest, product.get(), rnd);
+    }
 }
 
 template <typename Lhs, typename Rhs>

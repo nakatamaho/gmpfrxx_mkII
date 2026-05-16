@@ -113,6 +113,10 @@ function(add_mpfr_mkii_variant subdir source base suffix)
         target_compile_definitions(${target} PRIVATE
             GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE)
     endif()
+    if(suffix MATCHES "FIXED_PRECISION_FASTPATH")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH)
+    endif()
     if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH_FMA" OR
        suffix STREQUAL "mkII_FMA" OR
        suffix STREQUAL "mkII_STABLE_ROUNDING_FMA")

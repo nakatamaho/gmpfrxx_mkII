@@ -1464,6 +1464,55 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: MPFR Fixed-Precision Fastpath Coverage
+
+Implemented features:
+- Fixed MPFR benchmark variant generation so suffixes containing
+  `FIXED_PRECISION_FASTPATH` now define
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
+- Kept FMA and stable-rounding benchmark options independent:
+  `mkII_FIXED_PRECISION_FASTPATH_FMA` now receives both the fixed-precision
+  fastpath definition and `MPFRXX_ENABLE_FMA`.
+- Added an MPFR thread-local scratch pool mirroring the `mpf_class` fixed
+  precision fastpath.
+- Used the scratch pool for non-FMA `mpfr_class` compound multiply-add and
+  multiply-subtract paths so fixed-precision `lhs += x * y` and `lhs -= x * y`
+  avoid steady-state `mpfr_init2`/`mpfr_clear` traffic.
+
+Missing features:
+- None.
+
+Tests added:
+- `test_mpfr_fixed_precision_tls_scratch`
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `grep -n "mpfr_set_prec_raw" /usr/include/mpfr.h`
+- `sed -n '1600,1882p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '1918,2058p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '1,180p' tests/test_mpf_fixed_precision_tls_scratch.cpp`
+- `sed -n '1,160p' tests/test_mpfr_alloc_count.cpp`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target test_mpfr_fixed_precision_tls_scratch test_mpfr_fixed_precision_fma_alloc_count test_mpfr_compound_assign`
+- `ctest --test-dir build -R "test_mpfr_fixed_precision_tls_scratch|test_mpfr_fixed_precision_fma_alloc_count|test_mpfr_compound_assign" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `mpfr_set_prec_raw` availability check: PASS.
+- Focused build: PASS.
+- Focused CTest: PASS.  3/3 tests passed.
+- Full build: PASS.
+- Full CTest: PASS.  157/157 tests passed.
+
+Known issues:
+- None.
+
 ## Phase: GMP Rgemv Repeat-10 Full Rerun
 
 Implemented features:
