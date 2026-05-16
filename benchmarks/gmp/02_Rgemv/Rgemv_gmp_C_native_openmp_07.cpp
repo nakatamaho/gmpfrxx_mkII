@@ -19,10 +19,9 @@
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -30,6 +29,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <gmp.h>
+#include <omp.h>
 
 #if defined USE_ORIGINAL_GMPXX
 #include <gmpxx.h>
@@ -50,22 +50,56 @@ void _Rgemv(int64_t m, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda
         exit(EXIT_FAILURE);
     }
 
+    const int num_threads = omp_get_max_threads();
     const mp_bitcnt_t work_prec = mpf_get_prec(alpha);
-
-    for (int64_t i = 0; i < m; ++i) {
-        mpf_mul(y[i], beta, y[i]);
-    }
-
-    for (int64_t j = 0; j < n; ++j) {
+    mpf_t *partials = new mpf_t[static_cast<int64_t>(num_threads) * m];
+    for (int t = 0; t < num_threads; ++t) {
         for (int64_t i = 0; i < m; ++i) {
-            mpf_t product;
-            mpf_init2(product, work_prec);
-            mpf_mul(product, alpha, x[j]);
-            mpf_mul(product, product, A[i + j * lda]);
-            mpf_add(y[i], y[i], product);
-            mpf_clear(product);
+            mpf_init2(partials[static_cast<int64_t>(t) * m + i], work_prec);
+            mpf_set_ui(partials[static_cast<int64_t>(t) * m + i], 0);
         }
     }
+
+#pragma omp parallel
+    {
+        const int tid = omp_get_thread_num();
+        mpf_t *local_y = partials + static_cast<int64_t>(tid) * m;
+
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            mpf_mul(y[i], beta, y[i]);
+        }
+
+        mpf_t temp, prod;
+        mpf_init2(temp, work_prec);
+        mpf_init2(prod, work_prec);
+
+#pragma omp for schedule(static)
+        for (int64_t j = 0; j < n; ++j) {
+            mpf_mul(temp, alpha, x[j]);
+            for (int64_t i = 0; i < m; ++i) {
+                mpf_mul(prod, temp, A[i + j * lda]);
+                mpf_add(local_y[i], local_y[i], prod);
+            }
+        }
+
+        mpf_clear(prod);
+        mpf_clear(temp);
+
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            for (int t = 0; t < num_threads; ++t) {
+                mpf_add(y[i], y[i], partials[static_cast<int64_t>(t) * m + i]);
+            }
+        }
+    }
+
+    for (int t = 0; t < num_threads; ++t) {
+        for (int64_t i = 0; i < m; ++i) {
+            mpf_clear(partials[static_cast<int64_t>(t) * m + i]);
+        }
+    }
+    delete[] partials;
 }
 
 void init_mpf_mat(mpf_t *mat, int64_t m, int64_t n, int64_t lda, int prec) {

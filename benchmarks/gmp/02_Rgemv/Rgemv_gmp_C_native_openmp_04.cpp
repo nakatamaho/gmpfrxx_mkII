@@ -19,10 +19,9 @@
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -30,6 +29,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <gmp.h>
+#include <omp.h>
 
 #if defined USE_ORIGINAL_GMPXX
 #include <gmpxx.h>
@@ -52,18 +52,18 @@ void _Rgemv(int64_t m, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda
 
     const mp_bitcnt_t work_prec = mpf_get_prec(alpha);
 
+#pragma omp parallel for schedule(static)
     for (int64_t i = 0; i < m; ++i) {
         mpf_mul(y[i], beta, y[i]);
-    }
-
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            mpf_t product;
-            mpf_init2(product, work_prec);
-            mpf_mul(product, alpha, x[j]);
-            mpf_mul(product, product, A[i + j * lda]);
-            mpf_add(y[i], y[i], product);
-            mpf_clear(product);
+        for (int64_t j = 0; j < n; ++j) {
+            mpf_t temp, templ;
+            mpf_init2(temp, work_prec);
+            mpf_init2(templ, work_prec);
+            mpf_mul(temp, alpha, x[j]);
+            mpf_mul(templ, temp, A[i + j * lda]);
+            mpf_add(y[i], y[i], templ);
+            mpf_clear(templ);
+            mpf_clear(temp);
         }
     }
 }

@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <gmp.h>
+#include <omp.h>
 
 #if defined USE_ORIGINAL_GMPXX
 #include <gmpxx.h>
@@ -52,19 +53,26 @@ void _Rgemv(int64_t m, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda
 
     const mp_bitcnt_t work_prec = mpf_get_prec(alpha);
 
-    for (int64_t i = 0; i < m; ++i) {
-        mpf_mul(y[i], beta, y[i]);
-    }
+#pragma omp parallel
+    {
+        mpf_t temp, templ;
+        mpf_init2(temp, work_prec);
+        mpf_init2(templ, work_prec);
 
-    for (int64_t j = 0; j < n; ++j) {
+#pragma omp for schedule(static)
         for (int64_t i = 0; i < m; ++i) {
-            mpf_t product;
-            mpf_init2(product, work_prec);
-            mpf_mul(product, alpha, x[j]);
-            mpf_mul(product, product, A[i + j * lda]);
-            mpf_add(y[i], y[i], product);
-            mpf_clear(product);
+            mpf_mul(y[i], beta, y[i]);
+            for (int64_t j = 0; j < n; ++j) {
+                mpf_set(temp, alpha);
+                mpf_mul(temp, temp, x[j]);
+                mpf_set(templ, temp);
+                mpf_mul(templ, templ, A[i + j * lda]);
+                mpf_add(y[i], y[i], templ);
+            }
         }
+
+        mpf_clear(temp);
+        mpf_clear(templ);
     }
 }
 

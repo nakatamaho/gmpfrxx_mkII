@@ -287,8 +287,26 @@ add_kernel_variants(gmp/01_Raxpy Raxpy_gmp_kernel_openmp_03.cpp
 
 add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_01.cpp
     Rgemv_gmp_C_native_01)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_02.cpp
+    Rgemv_gmp_C_native_02)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_03.cpp
+    Rgemv_gmp_C_native_03)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_04.cpp
+    Rgemv_gmp_C_native_04)
 add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_openmp_01.cpp
     Rgemv_gmp_C_native_openmp_01)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_openmp_02.cpp
+    Rgemv_gmp_C_native_openmp_02)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_openmp_03.cpp
+    Rgemv_gmp_C_native_openmp_03)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_openmp_04.cpp
+    Rgemv_gmp_C_native_openmp_04)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_openmp_05.cpp
+    Rgemv_gmp_C_native_openmp_05)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_openmp_06.cpp
+    Rgemv_gmp_C_native_openmp_06)
+add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_openmp_07.cpp
+    Rgemv_gmp_C_native_openmp_07)
 add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_01.cpp Rgemv_gmp_kernel_01)
 add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_02.cpp Rgemv_gmp_kernel_02)
 add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_03.cpp Rgemv_gmp_kernel_03)
@@ -299,6 +317,14 @@ add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_02.cpp
     Rgemv_gmp_kernel_openmp_02)
 add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_03.cpp
     Rgemv_gmp_kernel_openmp_03)
+add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_04.cpp
+    Rgemv_gmp_kernel_openmp_04)
+add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_05.cpp
+    Rgemv_gmp_kernel_openmp_05)
+add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_06.cpp
+    Rgemv_gmp_kernel_openmp_06)
+add_kernel_variants(gmp/02_Rgemv Rgemv_gmp_kernel_openmp_07.cpp
+    Rgemv_gmp_kernel_openmp_07)
 
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_01.cpp
     Rgemm_gmp_C_native_01)

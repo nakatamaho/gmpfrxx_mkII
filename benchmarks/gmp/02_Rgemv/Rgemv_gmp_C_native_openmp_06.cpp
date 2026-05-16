@@ -19,10 +19,9 @@
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -30,6 +29,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <gmp.h>
+#include <omp.h>
 
 #if defined USE_ORIGINAL_GMPXX
 #include <gmpxx.h>
@@ -50,21 +50,34 @@ void _Rgemv(int64_t m, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda
         exit(EXIT_FAILURE);
     }
 
+    constexpr int64_t block_size = 256;
     const mp_bitcnt_t work_prec = mpf_get_prec(alpha);
 
-    for (int64_t i = 0; i < m; ++i) {
-        mpf_mul(y[i], beta, y[i]);
-    }
+#pragma omp parallel
+    {
+        mpf_t temp, prod;
+        mpf_init2(temp, work_prec);
+        mpf_init2(prod, work_prec);
 
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            mpf_t product;
-            mpf_init2(product, work_prec);
-            mpf_mul(product, alpha, x[j]);
-            mpf_mul(product, product, A[i + j * lda]);
-            mpf_add(y[i], y[i], product);
-            mpf_clear(product);
+#pragma omp for schedule(static)
+        for (int64_t ib = 0; ib < m; ib += block_size) {
+            const int64_t iend = (ib + block_size < m) ? (ib + block_size) : m;
+
+            for (int64_t i = ib; i < iend; ++i) {
+                mpf_mul(y[i], beta, y[i]);
+            }
+
+            for (int64_t j = 0; j < n; ++j) {
+                mpf_mul(temp, alpha, x[j]);
+                for (int64_t i = ib; i < iend; ++i) {
+                    mpf_mul(prod, temp, A[i + j * lda]);
+                    mpf_add(y[i], y[i], prod);
+                }
+            }
         }
+
+        mpf_clear(prod);
+        mpf_clear(temp);
     }
 }
 

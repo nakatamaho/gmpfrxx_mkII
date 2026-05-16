@@ -26,9 +26,9 @@
  *
  */
 
+#include <iostream>
 #include <chrono>
 #include <cstdlib>
-#include <iostream>
 #include <gmp.h>
 
 #if defined USE_ORIGINAL_GMPXX
@@ -44,39 +44,48 @@ using namespace gmpxx;
 
 gmp_randstate_t state;
 
+// C native counterpart of kernel_03: reusable temporaries assigned from products.
 void _Rgemv(int64_t m, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda, const mpf_t *x, int64_t incx, const mpf_t beta, mpf_t *y, int64_t incy) {
+
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;
         exit(EXIT_FAILURE);
     }
 
     const mp_bitcnt_t work_prec = mpf_get_prec(alpha);
+    mpf_t temp_b, prod;
+    mpf_init2(temp_b, work_prec);
+    mpf_init2(prod, work_prec);
 
+    // Scale y by beta
     for (int64_t i = 0; i < m; ++i) {
-        mpf_mul(y[i], beta, y[i]);
+        mpf_mul(y[i], beta, y[i]); // y[i] = beta * y[i]
     }
 
+    // Compute alpha * A * x and add to y
     for (int64_t j = 0; j < n; ++j) {
+        mpf_mul(temp_b, alpha, x[j]); // temp_b = alpha * x[j]
         for (int64_t i = 0; i < m; ++i) {
-            mpf_t product;
-            mpf_init2(product, work_prec);
-            mpf_mul(product, alpha, x[j]);
-            mpf_mul(product, product, A[i + j * lda]);
-            mpf_add(y[i], y[i], product);
-            mpf_clear(product);
+            mpf_mul(prod, temp_b, A[i + j * lda]); // prod = temp_b * A[i + j*lda]
+            mpf_add(y[i], y[i], prod);             // y[i] += prod
         }
     }
+
+    mpf_clear(temp_b);
+    mpf_clear(prod);
 }
 
+// Initialize a matrix with random values
 void init_mpf_mat(mpf_t *mat, int64_t m, int64_t n, int64_t lda, int prec) {
     for (int64_t j = 0; j < n; ++j) {
         for (int64_t i = 0; i < m; ++i) {
             mpf_init2(mat[i + j * lda], prec);
-            mpf_urandomb(mat[i + j * lda], state, prec);
+            mpf_urandomb(mat[i + j * lda], state, prec); // 0 <= mat[i + j*lda] < 1
         }
     }
 }
 
+// Clear a matrix
 void clear_mpf_mat(mpf_t *mat, int64_t m, int64_t n, int64_t lda) {
     for (int64_t j = 0; j < n; ++j) {
         for (int64_t i = 0; i < m; ++i) {
@@ -102,17 +111,21 @@ int main(int argc, char **argv) {
     gmpxx::set_default_mpf_precision_bits(prec);
 #endif
 
-    int64_t lda = m;
+    int64_t lda = m; // Leading dimension
+
+    // Allocate matrices and vectors
     mpf_t *A = new mpf_t[m * n];
     mpf_t *x = new mpf_t[n];
     mpf_t *y = new mpf_t[m];
 
+    // Initialize alpha and beta
     mpf_t alpha, beta;
     mpf_init2(alpha, prec);
     mpf_urandomb(alpha, state, prec);
     mpf_init2(beta, prec);
     mpf_urandomb(beta, state, prec);
 
+    // Initialize A, x, y with random values
     init_mpf_mat(A, m, n, lda, prec);
     for (int64_t i = 0; i < n; ++i) {
         mpf_init2(x[i], prec);
@@ -123,6 +136,7 @@ int main(int argc, char **argv) {
         mpf_urandomb(y[i], state, prec);
     }
 
+    // Initialize mpf_class versions for reference
     mpf_class *A_mpf_class = new mpf_class[m * n];
     mpf_class *x_mpf_class = new mpf_class[n];
     mpf_class *y_mpf_class = new mpf_class[m];
@@ -141,18 +155,22 @@ int main(int argc, char **argv) {
         y_mpf_class[i] = mpf_class(y[i]);
     }
 
+    // Perform _Rgemv
     auto start = std::chrono::high_resolution_clock::now();
     _Rgemv(m, n, alpha, A, lda, x, 1, beta, y, 1);
     auto end = std::chrono::high_resolution_clock::now();
 
+    // Perform reference Rgemv
     Rgemv("n", m, n, alpha_class, A_mpf_class, lda, x_mpf_class, 1, beta_class, y_mpf_class, 1);
 
+    // Calculate elapsed time for _Rgemv
     std::chrono::duration<double> elapsed_seconds = end - start;
     double mflops = (2.0 * double(m) * double(n)) / (elapsed_seconds.count() * MFLOPS);
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
 
+    // Compute L1 norm of the difference
     mpf_class l1_norm = 0;
     for (int64_t i = 0; i < m; ++i) {
         mpf_class diff = abs(mpf_class(y[i]) - y_mpf_class[i]);
@@ -169,6 +187,7 @@ int main(int argc, char **argv) {
         std::cout << "Result NG" << std::endl;
     }
 
+    // Clear memory
     clear_mpf_mat(A, m, n, lda);
     for (int64_t i = 0; i < n; ++i) {
         mpf_clear(x[i]);

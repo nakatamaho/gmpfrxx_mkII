@@ -1464,6 +1464,386 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Rgemv C Native OpenMP Numbering Alignment
+
+Implemented features:
+- Added raw GMP C native OpenMP `Rgemv` kernels 01, 02, and 03 so their
+  source shapes match the existing C++ wrapper OpenMP kernels.
+- Renamed the previous raw OpenMP baseline to
+  `Rgemv_gmp_C_native_openmp_03`.
+- Added `Rgemv_gmp_C_native_openmp_02` with per-thread reusable temporaries
+  and copy-then-multiply steps.
+- Added `Rgemv_gmp_C_native_openmp_01` with loop-local product materialization
+  as the OpenMP counterpart of `kernel_openmp_01`.
+- Registered the new OpenMP native targets in `benchmarks/CMakeLists.txt` and
+  `benchmarks/gmp/02_Rgemv/go.sh`.
+- Updated `benchmarks/gmp/02_Rgemv/README.md` with serial and OpenMP C native
+  numbering tables aligned with the wrapper kernels.
+
+Missing features:
+- No new full-size benchmark sweep was run for the newly aligned OpenMP native
+  numbering.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03.cpp`
+- `benchmarks/gmp/02_Rgemv/go.sh`
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `rg -n "Rgemv_gmp_C_native_openmp|Rgemv_gmp_C_native_0|Rgemv_gmp_kernel_openmp" benchmarks/CMakeLists.txt benchmarks/gmp/02_Rgemv/go.sh benchmarks/gmp/02_Rgemv/README.md`
+- `rg --files benchmarks/gmp/02_Rgemv | sort`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01.cpp`
+- `sed -n '1,240p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02.cpp`
+- `sed -n '1,240p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03.cpp`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01.cpp && sed -n '1,240p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp && sed -n '1,240p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03.cpp`
+- `sed -n '280,310p' benchmarks/CMakeLists.txt`
+- `sed -n '24,62p' benchmarks/gmp/02_Rgemv/go.sh`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/README.md`
+- `sed -n '220,420p' benchmarks/gmp/02_Rgemv/README.md`
+- `sed -n '1,80p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03.cpp`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemv_gmp_C_native_openmp_01 Rgemv_gmp_C_native_openmp_02 Rgemv_gmp_C_native_openmp_03 Rgemv_gmp_kernel_openmp_01_mkII Rgemv_gmp_kernel_openmp_02_mkII Rgemv_gmp_kernel_openmp_03_mkII`
+- `OMP_NUM_THREADS=4 OMP_PLACES=cores OMP_PROC_BIND=close /bin/bash -lc 'for exe in Rgemv_gmp_C_native_openmp_01 Rgemv_gmp_C_native_openmp_02 Rgemv_gmp_C_native_openmp_03 Rgemv_gmp_kernel_openmp_01_mkII Rgemv_gmp_kernel_openmp_02_mkII Rgemv_gmp_kernel_openmp_03_mkII; do echo "== $exe"; build_bench_release/benchmarks/gmp/02_Rgemv/$exe 17 19 128 | tail -n 3; done'`
+- `git diff -- benchmarks/CMakeLists.txt benchmarks/gmp/02_Rgemv/go.sh benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03.cpp benchmarks/gmp/02_Rgemv/README.md`
+- `git diff -- benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01.cpp benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02.cpp benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03.cpp`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release reconfigure: PASS.
+- OpenMP Rgemv native/wrapper target build: PASS.
+- OpenMP smoke run: PASS.  All six sampled executables reported `Result OK`.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The recorded full-size Rgemv sample predates the new C native OpenMP 01/02
+  executables, so the README marks them as `Not in this run`.
+
+## Phase: GMP Rgemv 4000x4000 Benchmark
+
+Implemented features:
+- Ran the current GMP `02_Rgemv` benchmark matrix with the aligned C native
+  serial/OpenMP 01, 02, and 03 kernels included.
+- Used the current `benchmarks/gmp/02_Rgemv/go.sh` benchmark order.
+- Generated raw log, summary CSV, and serial/OpenMP plots for the run.
+
+Missing features:
+- No repeat-count sweep was run; this is a single `go.sh` pass.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209/benchmark_rgemv_gmp_m4000_n4000_p512.log`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209/summary_rgemv_gmp_m4000_n4000_p512.csv`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.pdf`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.pdf`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,180p' benchmarks/gmp/02_Rgemv/go.sh`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/plot.py`
+- `rg -n "Rgemv_gmp_C_native|Rgemv_gmp_kernel" benchmarks/CMakeLists.txt benchmarks/gmp/02_Rgemv/go.sh`
+- `cmake --build build_bench_release -j`
+- `/bin/bash -lc 'set -euo pipefail; ts=$(date +%Y%m%d_%H%M%S); outdir=/home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_${ts}; mkdir -p "$outdir"; cd /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/gmp/02_Rgemv; OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread /home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/go.sh 2>&1 | tee "$outdir/benchmark_rgemv_gmp_m4000_n4000_p512.log"; printf "%s\n" "$outdir"'`
+- `/bin/bash -lc 'set -euo pipefail; outdir=/home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209; cd "$outdir"; python3 /home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/plot.py benchmark_rgemv_gmp_m4000_n4000_p512.log'`
+- `python3 -c 'import csv,re,pathlib; ...'`
+- `ls -lh /home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209`
+- `git status --short`
+
+Pass/fail result:
+- Full benchmark target build: PASS.
+- Benchmark run: PASS.  All 27 executables reported `Result OK`.
+- Plot generation: PASS.
+- Summary CSV generation: PASS.
+
+Known issues:
+- OpenMP results are single-run measurements and show normal run-to-run
+  variation.
+
+## Phase: GMP Rgemv Kernel 04 Native/OpenMP Alignment
+
+Implemented features:
+- Added `Rgemv_gmp_C_native_04` as the raw GMP counterpart of wrapper
+  `kernel_04`.
+- Added `Rgemv_gmp_C_native_openmp_04` as the raw GMP OpenMP counterpart of
+  wrapper `kernel_openmp_04`.
+- Added `Rgemv_gmp_kernel_openmp_04.cpp` so upstream `gmpxx.h`, `gmpxx_mkII`,
+  and fixed-precision-fastpath OpenMP 04 variants are generated.
+- Registered the new 04 targets in `benchmarks/CMakeLists.txt` and
+  `benchmarks/gmp/02_Rgemv/go.sh`.
+- Updated `benchmarks/gmp/02_Rgemv/README.md` so serial/OpenMP C native and
+  wrapper numbering now covers 01, 02, 03, and 04.
+
+Missing features:
+- No full-size benchmark rerun was performed after adding the new 04 targets.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04.cpp`
+- `benchmarks/gmp/02_Rgemv/go.sh`
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04.cpp`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03.cpp`
+- `rg -n "Rgemv_gmp_C_native_04|Rgemv_gmp_C_native_openmp_04|Rgemv_gmp_kernel_openmp_04|Rgemv_gmp_kernel_04" benchmarks/CMakeLists.txt benchmarks/gmp/02_Rgemv`
+- `git status --short`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemv_gmp_C_native_04 Rgemv_gmp_C_native_openmp_04 Rgemv_gmp_kernel_openmp_04_orig Rgemv_gmp_kernel_openmp_04_mkII Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH`
+- `OMP_NUM_THREADS=4 OMP_PLACES=cores OMP_PROC_BIND=close /bin/bash -lc 'for exe in Rgemv_gmp_C_native_04 Rgemv_gmp_C_native_openmp_04 Rgemv_gmp_kernel_openmp_04_orig Rgemv_gmp_kernel_openmp_04_mkII Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH; do echo "== $exe"; build_bench_release/benchmarks/gmp/02_Rgemv/$exe 17 19 128 | tail -n 3; done'`
+- `git diff --check`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release reconfigure: PASS.
+- New 04 target build: PASS.
+- New 04 smoke run: PASS.  All five sampled executables reported `Result OK`.
+- `git diff --check`: PASS.
+- Debug reconfigure: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- OpenMP 04 is intentionally a loop-local object stress case, not an optimized
+  kernel.
+
+## Phase: GMP Rgemv OpenMP Optimization Candidates 05-07
+
+Implemented features:
+- Added `Rgemv_gmp_kernel_openmp_05.cpp` and matching raw GMP
+  `Rgemv_gmp_C_native_openmp_05.cpp`.
+- Added `Rgemv_gmp_kernel_openmp_06.cpp` and matching raw GMP
+  `Rgemv_gmp_C_native_openmp_06.cpp`.
+- Added `Rgemv_gmp_kernel_openmp_07.cpp` and matching raw GMP
+  `Rgemv_gmp_C_native_openmp_07.cpp`.
+- Kernel 05 precomputes `scaled_x[j] = alpha * x[j]` once, then performs
+  row-partitioned updates.
+- Kernel 06 uses 256-row blocks so each OpenMP block owns a `y` slice while
+  keeping contiguous `A` access inside the block.
+- Kernel 07 partitions columns and accumulates into thread-local `y` partial
+  vectors before a final reduction.
+- Registered the new native and wrapper targets in `benchmarks/CMakeLists.txt`
+  and `benchmarks/gmp/02_Rgemv/go.sh`.
+- Updated `benchmarks/gmp/02_Rgemv/README.md` with the new kernel meanings.
+
+Missing features:
+- No full-size benchmark rerun was performed after adding kernels 05, 06, and
+  07.
+- Kernel 06 uses a fixed 256-row block size; no block-size sweep is included
+  yet.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06.cpp`
+- `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07.cpp`
+- `benchmarks/gmp/02_Rgemv/go.sh`
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '280,325p' benchmarks/CMakeLists.txt`
+- `sed -n '30,70p' benchmarks/gmp/02_Rgemv/go.sh`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03.cpp && sed -n '1,180p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03.cpp`
+- `git status --short`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemv_gmp_C_native_openmp_05 Rgemv_gmp_C_native_openmp_06 Rgemv_gmp_C_native_openmp_07 Rgemv_gmp_kernel_openmp_05_orig Rgemv_gmp_kernel_openmp_05_mkII Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_06_orig Rgemv_gmp_kernel_openmp_06_mkII Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_07_orig Rgemv_gmp_kernel_openmp_07_mkII Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH`
+- `OMP_NUM_THREADS=4 OMP_PLACES=cores OMP_PROC_BIND=close /bin/bash -lc 'for exe in Rgemv_gmp_C_native_openmp_05 Rgemv_gmp_C_native_openmp_06 Rgemv_gmp_C_native_openmp_07 Rgemv_gmp_kernel_openmp_05_orig Rgemv_gmp_kernel_openmp_05_mkII Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_06_orig Rgemv_gmp_kernel_openmp_06_mkII Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_07_orig Rgemv_gmp_kernel_openmp_07_mkII Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH; do echo "== $exe"; build_bench_release/benchmarks/gmp/02_Rgemv/$exe 17 19 128 | tail -n 3; done'`
+- `git diff --check`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release reconfigure: PASS.
+- New 05/06/07 target build: PASS.
+- New 05/06/07 smoke run: PASS.  All twelve sampled executables reported
+  `Result OK`.
+- `git diff --check`: PASS.
+- Debug reconfigure: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- Kernel 07 changes the accumulation order, so tiny nonzero L1 differences are
+  expected for some variants while remaining within the correctness threshold.
+
+## Phase: GMP Rgemv 4000x4000 Benchmark With OpenMP 05-07
+
+Implemented features:
+- Ran the current GMP `02_Rgemv` benchmark matrix after adding OpenMP kernels
+  05, 06, and 07.
+- Covered 44 executables: C native serial 01-04, C native OpenMP 01-07,
+  wrapper serial 01-04, and wrapper OpenMP 01-07 for upstream `gmpxx.h`,
+  `gmpxx_mkII`, and fixed-precision-fastpath builds.
+- Generated raw log, summary CSV, and serial/OpenMP plots for the run.
+
+Missing features:
+- No repeat-count sweep was run; this is a single `go.sh` pass.
+- Kernel 06 still uses a fixed 256-row block size.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/benchmark_rgemv_gmp_m4000_n4000_p512.log`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/summary_rgemv_gmp_m4000_n4000_p512.csv`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.pdf`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.pdf`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build_bench_release -j`
+- `/bin/bash -lc 'set -euo pipefail; ts=$(date +%Y%m%d_%H%M%S); outdir=/home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_${ts}; mkdir -p "$outdir"; cd /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/gmp/02_Rgemv; OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread /home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/go.sh 2>&1 | tee "$outdir/benchmark_rgemv_gmp_m4000_n4000_p512.log"; printf "%s\n" "$outdir"'`
+- `/bin/bash -lc 'set -euo pipefail; outdir=/home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406; cd "$outdir"; python3 /home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/plot.py benchmark_rgemv_gmp_m4000_n4000_p512.log'`
+- `python3 -c 'import csv,re,pathlib; ...'`
+- `ls -lh /home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406`
+- `git status --short`
+
+Pass/fail result:
+- Full benchmark target build: PASS.
+- Benchmark run: PASS.  All 44 executables reported `Result OK`.
+- Plot generation: PASS.
+- Summary CSV generation: PASS.
+- Best raw C native OpenMP result: `Rgemv_gmp_C_native_openmp_07`,
+  544.743 MFLOPS.
+- Best wrapper OpenMP result: `Rgemv_gmp_kernel_openmp_07_mkII`,
+  552.458 MFLOPS.
+- Best row-blocked OpenMP result: `Rgemv_gmp_kernel_openmp_06_orig`,
+  410.404 MFLOPS.
+- Best precomputed-scaled-x OpenMP result:
+  `Rgemv_gmp_kernel_openmp_05_mkII`, 293.997 MFLOPS.
+
+Known issues:
+- OpenMP results are single-run measurements and should be confirmed with a
+  repeat-count sweep before drawing tight ordering conclusions.
+- Kernel 07 changes the accumulation order, so tiny nonzero L1 differences are
+  expected while remaining within the correctness threshold.
+
+## Phase: GMP Rgemv Memory Bandwidth Documentation
+
+Implemented features:
+- Added a memory bandwidth estimate section to
+  `benchmarks/gmp/02_Rgemv/README.md`.
+- Documented the local GMP `mpf_t` layout used for the estimate:
+  `sizeof(__mpf_struct) = 24`, `sizeof(mp_limb_t) = 8`,
+  `_mp_prec = 9` limbs for `mpf_init2(..., 512)`, and 8 active limbs for the
+  random benchmark values.
+- Added active-limb conversion formulas:
+  `A-only GB/s = MFLOPS * 0.044`,
+  `A+y GB/s = MFLOPS * 0.132`, and
+  `A+x+y GB/s = MFLOPS * 0.176`.
+- Added a bandwidth table for `kernel_openmp_03_mkII`,
+  `kernel_openmp_05_mkII`, `kernel_openmp_06_mkII`,
+  `kernel_openmp_07_mkII`, and `C_native_openmp_07`.
+
+Missing features:
+- No hardware-counter validation was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,380p' benchmarks/gmp/02_Rgemv/README.md`
+- `sed -n '1,80p' benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/summary_rgemv_gmp_m4000_n4000_p512.csv`
+- `git status --short`
+- `printf '%s\n' ... | g++ -x c++ -std=c++17 - -lgmp -o /tmp/gmpfrxx_mkII_mpf_size && /tmp/gmpfrxx_mkII_mpf_size`
+
+Pass/fail result:
+- GMP layout probe: PASS.
+
+Known issues:
+- The bandwidth table is a logical active-limb estimate, not a measured memory
+  controller bandwidth.
+
+## Phase: GMP Rgemv C Native Numbering Alignment
+
+Implemented features:
+- Renamed the existing optimized GMP Rgemv C native implementation from
+  `Rgemv_gmp_C_native_01.cpp` to `Rgemv_gmp_C_native_03.cpp` because its
+  source shape matches C++ `kernel_03`.
+- Added a new `Rgemv_gmp_C_native_01.cpp` that mirrors C++ `kernel_01` by
+  materializing a loop-local product in the inner loop.
+- Added `Rgemv_gmp_C_native_02.cpp` that mirrors C++ `kernel_02` with reusable
+  temporaries and copy-then-multiply steps.
+- Registered `Rgemv_gmp_C_native_01`, `Rgemv_gmp_C_native_02`, and
+  `Rgemv_gmp_C_native_03` in the benchmark CMake file and `go.sh`.
+- Added an explicit C/C++ numbering correspondence table to
+  `benchmarks/gmp/02_Rgemv/README.md`.
+
+Missing features:
+- No large benchmark rerun was performed after the C native renumbering.
+- OpenMP C native variants are still a separate baseline and were not
+  renumbered in this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `benchmarks/gmp/02_Rgemv/go.sh`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short benchmarks/gmp/02_Rgemv benchmarks/CMakeLists.txt`
+- `rg -n "void _Rgemv|mpf_mul|mpf_add|mpf_set|temp =|templ =|y\\[i\\] \\+=" benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01.cpp benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01.cpp benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02.cpp benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03.cpp`
+- `rg -n "Rgemv_gmp_C_native_0|Rgemv_gmp_kernel_0" benchmarks/CMakeLists.txt benchmarks/gmp/02_Rgemv/go.sh`
+- `git status --short`
+- `sed -n '280,305p' benchmarks/CMakeLists.txt`
+- `sed -n '28,60p' benchmarks/gmp/02_Rgemv/go.sh`
+- `sed -n '1,230p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01.cpp`
+- `git mv benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01.cpp benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03.cpp`
+- `rg -n "C_native_01|C_native_02|C_native_03|Raw C native" benchmarks/gmp/02_Rgemv/README.md`
+- `rg -n "Rgemv_gmp_C_native_0" benchmarks/CMakeLists.txt benchmarks/gmp/02_Rgemv/go.sh`
+- `git status --short benchmarks/gmp/02_Rgemv benchmarks/CMakeLists.txt`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rgemv_gmp_C_native_01 Rgemv_gmp_C_native_02 Rgemv_gmp_C_native_03 Rgemv_gmp_kernel_01_mkII Rgemv_gmp_kernel_02_mkII Rgemv_gmp_kernel_03_mkII`
+- `/bin/bash -lc 'set -euo pipefail; for exe in Rgemv_gmp_C_native_01 Rgemv_gmp_C_native_02 Rgemv_gmp_C_native_03 Rgemv_gmp_kernel_01_mkII Rgemv_gmp_kernel_02_mkII Rgemv_gmp_kernel_03_mkII; do echo "== $exe"; build_bench_release/benchmarks/gmp/02_Rgemv/$exe 17 19 128 | tail -n 2; done'`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+- `tail -n 50 STATUS.md`
+
+Pass/fail result:
+- Release benchmark reconfigure: PASS.
+- C native 01/02/03 and C++ mkII 01/02/03 build: PASS.
+- Rgemv smoke run: PASS.  All six checked variants reported `Result OK` for
+  `M=17`, `N=19`, `precision=128`.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The recorded 4000x4000 Rgemv result table predates the C native
+  renumbering; it documents that the old `C_native_01` result maps to the new
+  `C_native_03`.
+
 ## Phase: GMP Rgemv README Hotpath Documentation
 
 Implemented features:
