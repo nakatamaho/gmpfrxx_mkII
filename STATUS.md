@@ -1464,6 +1464,50 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Rdot Repeat Plot Readability
+
+Implemented features:
+- Added `benchmarks/gmp/00_Rdot/plot_repeat_summary.py`.
+- Regenerated the committed GMP Rdot repeat-10 serial and OpenMP plots as
+  average-MFLOPS horizontal bars with min/max range lines and numeric labels.
+- Documented the plot interpretation and regeneration command in
+  `benchmarks/gmp/00_Rdot/README.md`.
+
+Missing features:
+- None.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_serial.png`
+- `benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_openmp.png`
+- `STATUS.md`
+
+Exact commands run:
+- `pgrep -af 'Rdot_mpfr|benchmark_rdot_mpfr|build_bench_release/benchmarks/mpfr/00_Rdot'`
+- `kill 1570274 1573325 1573326`
+- `sed -n '1,260p' benchmarks/gmp/00_Rdot/plot.py`
+- `sed -n '1,180p' benchmarks/gmp/00_Rdot/README.md`
+- `ls -l benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207`
+- `head -n 12 benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/summary_rdot_gmp_n10000000_p512_repeat10.csv`
+- `tail -n 12 benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/summary_rdot_gmp_n10000000_p512_repeat10.csv`
+- `python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/summary_rdot_gmp_n10000000_p512_repeat10.csv --output-prefix benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10 --title-prefix 'GMP Rdot N=10000000 precision=512 repeat=10'`
+- `file benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_serial.png benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_openmp.png`
+- `python3 -m py_compile benchmarks/gmp/00_Rdot/plot_repeat_summary.py`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Plot regeneration: PASS.
+- Python syntax check: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  157/157 tests passed.
+
+Known issues:
+- None.
+
 ## Phase: GMP Rdot C-Native Kernel Realignment and Fresh Repeat-10 Results
 
 Implemented features:

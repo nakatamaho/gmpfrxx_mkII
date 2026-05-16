@@ -98,9 +98,22 @@ Files:
 
 All 48 variants report `OK` in all 10 runs.
 
+The plots below show average MFLOPS as horizontal bars.  The black range line
+on each bar is the observed min-to-max interval across the 10 repeats; the
+large label is the average and the small labels mark min and max.
+
 ![GMP Rdot serial repeat-10](results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_serial.png)
 
 ![GMP Rdot OpenMP repeat-10](results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10_openmp.png)
+
+The images can be regenerated from the committed summary CSV with:
+
+```bash
+python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py \
+    benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/summary_rdot_gmp_n10000000_p512_repeat10.csv \
+    --output-prefix benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/rdot_gmp_n10000000_p512_repeat10 \
+    --title-prefix "GMP Rdot N=10000000 precision=512 repeat=10"
+```
 
 ## Serial Results
 
