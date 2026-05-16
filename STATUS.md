@@ -1464,6 +1464,61 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Rgemv Full Rerun After Result Cleanup
+
+Implemented features:
+- Removed the superseded GMP Rgemv result sets requested for deletion:
+  `20260516_122201` and `20260516_132406`.
+- Rebuilt the release benchmark tree and reran the complete
+  `benchmarks/gmp/02_Rgemv/go.sh` set at `M=4000`, `N=4000`, 512-bit
+  precision, and 32 OpenMP threads.
+- Generated a new raw log, CSV summary, and serial/OpenMP plots under
+  `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/`.
+- Updated `benchmarks/gmp/02_Rgemv/README.md` to reference the new full rerun
+  instead of the deleted result sets, including the MFLOPS table and logical
+  memory-bandwidth estimates.
+
+Missing features:
+- No repeat-count sweep or hardware-counter measurement was added in this
+  phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/benchmark_rgemv_gmp_m4000_n4000_p512.log`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/summary_rgemv_gmp_m4000_n4000_p512.csv`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.pdf`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.pdf`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `git ls-files benchmarks/gmp/02_Rgemv/results_raw | rg '20260516_(122201|13240)'`
+- `rg -n '20260516_(122201|13240|132406)|rgemv_gmp_m4000_n4000_p512' benchmarks/gmp/02_Rgemv/README.md STATUS.md`
+- `git rm benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_122201.log benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_summary_20260516_122201.csv benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/benchmark_rgemv_gmp_m4000_n4000_p512.log benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.pdf benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.pdf benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_132406/summary_rgemv_gmp_m4000_n4000_p512.csv`
+- `cmake --build build_bench_release -j`
+- `/bin/bash -lc 'set -euo pipefail; ts=$(date +%Y%m%d_%H%M%S); outdir=/home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_${ts}; mkdir -p "$outdir"; cd /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/gmp/02_Rgemv; OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread /home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/go.sh 2>&1 | tee "$outdir/benchmark_rgemv_gmp_m4000_n4000_p512.log"; printf "OUTDIR=%s\n" "$outdir"'`
+- `/bin/bash -lc 'set -euo pipefail; outdir=/home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342; cd "$outdir"; python3 /home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/plot.py benchmark_rgemv_gmp_m4000_n4000_p512.log'`
+- `/bin/bash -lc 'set -euo pipefail; outdir=/home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342; python3 - "$outdir" <<"PY" ... PY'`
+- `ls -lh benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342`
+- `sed -n '1,80p' benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/summary_rgemv_gmp_m4000_n4000_p512.csv`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Release build: PASS.
+- Full Rgemv benchmark rerun: PASS.  All 44 variants reported `Result OK`.
+- CSV summary generation: PASS.  44 rows parsed.
+- Plot generation: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The run is still a single measurement per variant; OpenMP variants should be
+  compared with repeat-count data before drawing fine-grained conclusions.
+
 ## Phase: GMP Rgemv C Native OpenMP Numbering Alignment
 
 Implemented features:
