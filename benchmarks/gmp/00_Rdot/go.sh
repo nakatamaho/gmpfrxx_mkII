@@ -30,7 +30,17 @@ cat /proc/cpuinfo | grep 'model name' | head -1
 echo
 executables=(
     "Rdot_gmp_C_native_01"
+    "Rdot_gmp_C_native_02"
+    "Rdot_gmp_C_native_03"
+    "Rdot_gmp_C_native_04"
+    "Rdot_gmp_C_native_05"
+    "Rdot_gmp_C_native_06"
     "Rdot_gmp_C_native_openmp_01"
+    "Rdot_gmp_C_native_openmp_02"
+    "Rdot_gmp_C_native_openmp_03"
+    "Rdot_gmp_C_native_openmp_04"
+    "Rdot_gmp_C_native_openmp_05"
+    "Rdot_gmp_C_native_openmp_06"
     "Rdot_gmp_kernel_01_orig"
     "Rdot_gmp_kernel_01_mkII"
     "Rdot_gmp_kernel_02_orig"

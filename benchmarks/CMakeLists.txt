@@ -153,8 +153,28 @@ endfunction()
 
 add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_01.cpp
     Rdot_gmp_C_native_01)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_02.cpp
+    Rdot_gmp_C_native_02)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_03.cpp
+    Rdot_gmp_C_native_03)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_04.cpp
+    Rdot_gmp_C_native_04)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_05.cpp
+    Rdot_gmp_C_native_05)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_06.cpp
+    Rdot_gmp_C_native_06)
 add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_01.cpp
     Rdot_gmp_C_native_openmp_01)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_02.cpp
+    Rdot_gmp_C_native_openmp_02)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_03.cpp
+    Rdot_gmp_C_native_openmp_03)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_04.cpp
+    Rdot_gmp_C_native_openmp_04)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_05.cpp
+    Rdot_gmp_C_native_openmp_05)
+add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_06.cpp
+    Rdot_gmp_C_native_openmp_06)
 add_rdot_native_microbench(Rdot_gmp_C_native_07_readonly 7)
 add_rdot_native_microbench(Rdot_gmp_C_native_08_addonly 8)
 add_rdot_native_microbench(Rdot_gmp_C_native_09_mulonly 9)

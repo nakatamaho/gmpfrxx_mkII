@@ -49,24 +49,29 @@ void _Rdot(int64_t n, mpf_t *dx, int64_t incx, mpf_t *dy, int64_t incy, mpf_t *a
         exit(EXIT_FAILURE);
     }
 
-    mp_bitcnt_t precision = mpf_get_prec(*ans);
-    mpf_t temp;
+    const mp_bitcnt_t precision = mpf_get_prec(*ans);
+    mpf_t temp, templ;
 
     mpf_set_d(*ans, 0.0);
-    mpf_init2(temp, precision);
-    mpf_set_d(temp, 0.0);
 
-    for (int64_t i = 0; i < n; i++) {
-        mpf_t templ;
+// no reduction for multiple precision
+#pragma omp parallel private(temp, templ)
+    {
+        mpf_init2(temp, precision);
         mpf_init2(templ, precision);
-        mpf_mul(templ, dx[i], dy[i]);
-        mpf_add(temp, temp, templ);
+        mpf_set_d(temp, 0.0);
+        mpf_set_d(templ, 0.0);
+
+#pragma omp for
+        for (int64_t i = 0; i < n; i++) {
+            mpf_mul(templ, dx[i], dy[i]);
+            mpf_add(temp, temp, templ);
+        }
+#pragma omp critical
+        { mpf_add(*ans, *ans, temp); }
+        mpf_clear(temp);
         mpf_clear(templ);
     }
-
-    mpf_swap(*ans, temp);
-
-    mpf_clear(temp);
 }
 
 void init_mpf_vec(mpf_t *vec, int n, int prec) {
@@ -115,6 +120,7 @@ int main(int argc, char **argv) {
         vec1_mpf_class[i] = mpf_class(vec1[i]);
         vec2_mpf_class[i] = mpf_class(vec2[i]);
     }
+
     auto start = std::chrono::high_resolution_clock::now();
     _Rdot(N, vec1, 1, vec2, 1, &_ans);
     auto end = std::chrono::high_resolution_clock::now();

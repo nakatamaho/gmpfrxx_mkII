@@ -49,24 +49,24 @@ void _Rdot(int64_t n, mpf_t *dx, int64_t incx, mpf_t *dy, int64_t incy, mpf_t *a
         exit(EXIT_FAILURE);
     }
 
+    mpf_t temp, templ;
     mp_bitcnt_t precision = mpf_get_prec(*ans);
-    mpf_t temp;
 
     mpf_set_d(*ans, 0.0);
     mpf_init2(temp, precision);
+    mpf_init2(templ, precision);
     mpf_set_d(temp, 0.0);
+    mpf_set_d(templ, 0.0);
 
     for (int64_t i = 0; i < n; i++) {
-        mpf_t templ;
-        mpf_init2(templ, precision);
         mpf_mul(templ, dx[i], dy[i]);
         mpf_add(temp, temp, templ);
-        mpf_clear(templ);
     }
 
     mpf_swap(*ans, temp);
 
     mpf_clear(temp);
+    mpf_clear(templ);
 }
 
 void init_mpf_vec(mpf_t *vec, int n, int prec) {

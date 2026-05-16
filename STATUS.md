@@ -1464,6 +1464,142 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Rdot C-Native Kernel Realignment and Fresh Repeat-10 Results
+
+Implemented features:
+- Realigned GMP Rdot raw C kernels `01` through `06` with the existing C++
+  wrapper kernel source shapes.
+- Added raw C OpenMP counterparts `C_native_openmp_01` through
+  `C_native_openmp_06`.
+- Removed allocation-counter instrumentation from the raw C Rdot kernels so
+  the raw C comparison is based on timed source shape and hotpath disassembly.
+- Reran the GMP Rdot benchmark at `N=10000000`, `precision=512`,
+  `repeat=10`, `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, and
+  `OMP_PROC_BIND=spread`.
+- Added raw CSV, summary CSV, and serial/OpenMP plots under
+  `benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/`.
+- Rewrote `benchmarks/gmp/00_Rdot/README.md` to use only the fresh data and
+  removed old benchmark-result references.
+- Added kernel 05 serial/OpenMP hotpath disassembly to document that 05 is a
+  four-way unroll of the same GMP multiply/add pair rather than a separate
+  arithmetic kernel class.
+- Removed obsolete tracked GMP Rdot result directories under
+  `benchmarks/gmp/results_raw/`.
+
+Missing features:
+- None.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207/`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rdot_gmp_C_native_01 Rdot_gmp_C_native_02 Rdot_gmp_C_native_03 Rdot_gmp_C_native_04 Rdot_gmp_C_native_05 Rdot_gmp_C_native_06 Rdot_gmp_C_native_openmp_01 Rdot_gmp_C_native_openmp_02 Rdot_gmp_C_native_openmp_03 Rdot_gmp_C_native_openmp_04 Rdot_gmp_C_native_openmp_05 Rdot_gmp_C_native_openmp_06`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close ...` smoke run
+  for the 12 raw C kernels.
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target Rdot_gmp_C_native_01 Rdot_gmp_C_native_02 Rdot_gmp_C_native_03 Rdot_gmp_C_native_04 Rdot_gmp_C_native_05 Rdot_gmp_C_native_06 Rdot_gmp_C_native_openmp_01 Rdot_gmp_C_native_openmp_02 Rdot_gmp_C_native_openmp_03 Rdot_gmp_C_native_openmp_04 Rdot_gmp_C_native_openmp_05 Rdot_gmp_C_native_openmp_06`
+- `ctest --test-dir build --output-on-failure`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread ...` full
+  repeat-10 GMP Rdot run for all 48 variants.
+- `python3 - <<'PY' ...` to generate raw CSV, summary CSV, and plots.
+- `objdump -Cd --no-show-raw-insn --start-address=... --stop-address=...`
+  for `C_native_01`, `C_native_03`, `kernel_03_mkII`,
+  `C_native_openmp_03`, and `kernel_openmp_03_mkII`.
+- `objdump -Cd --no-show-raw-insn --start-address=... --stop-address=...`
+  for `C_native_05`, `kernel_05_mkII`, `C_native_openmp_05`, and
+  `kernel_openmp_05_mkII`.
+- `git rm -r benchmarks/gmp/results_raw/rdot_c_native_microbench_20260513 benchmarks/gmp/results_raw/rdot_n1e7_1024_01_06_env1024_20260513 benchmarks/gmp/results_raw/rdot_n1e7_20260509 benchmarks/gmp/results_raw/rdot_n1e7_openmp_01_04_20260513 benchmarks/gmp/results_raw/rdot_n1e7_openmp_03_06_20260513`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release raw C target build: PASS.
+- Raw C smoke run: PASS.
+- Debug raw C target build: PASS.
+- CTest before the full benchmark: PASS.  157/157 tests passed.
+- Full repeat-10 benchmark: PASS.  480/480 runs reported `OK`.
+- CSV and plot generation: PASS.
+- `git diff --check`: PASS.
+- Final CTest: PASS.  157/157 tests passed.
+
+Known issues:
+- None.
+
+## Phase: GMP Rdot C-Native Kernel Alignment
+
+Implemented features:
+- Added independent raw `mpf_t` Rdot programs for `C_native_02` through
+  `C_native_06` and `C_native_openmp_02` through `C_native_openmp_06`.
+- Aligned C-native numbering with the C++ wrapper kernels:
+  `C_native_NN` now mirrors `kernel_NN`, and `C_native_openmp_NN` mirrors
+  `kernel_openmp_NN`.
+- Kept C-native timed kernels free of allocation-counter instrumentation so
+  hotpath disassembly reflects the raw GMP loop.
+- Updated the Rdot common runner, local `go.sh`, CMake target registration,
+  and README kernel-shape notes.
+
+Missing features:
+- No new benchmark sweep was run.
+- Hotpath disassembly snippets in the README were not regenerated in this
+  phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_benchmarks.sh`
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/gmp/00_Rdot/go.sh`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05.cpp`
+- `benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `find benchmarks/gmp -maxdepth 2 -type f | sort | sed -n '1,220p'`
+- `sed -n '1,260p' benchmarks/gmp/00_Rdot/README.md`
+- `sed -n '1,260p' benchmarks/gmp/02_Rgemv/README.md`
+- `sed -n '1,220p' benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp`
+- `sed -n '1,240p' benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01.cpp`
+- `sed -n '150,225p' benchmarks/CMakeLists.txt`
+- `sed -n '1,220p' benchmarks/gmp/00_Rdot/go.sh`
+- `sed -n '1,220p' benchmarks/gmp/00_Rdot/plot.py`
+- `rg -n "Rdot_gmp_C_native|Rdot_gmp_kernel_0|C_native_openmp_0" benchmarks/common benchmarks/gmp/00_Rdot benchmarks/CMakeLists.txt`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Rdot_gmp_C_native_01 Rdot_gmp_C_native_02 Rdot_gmp_C_native_03 Rdot_gmp_C_native_04 Rdot_gmp_C_native_05 Rdot_gmp_C_native_06 Rdot_gmp_C_native_openmp_01 Rdot_gmp_C_native_openmp_02 Rdot_gmp_C_native_openmp_03 Rdot_gmp_C_native_openmp_04 Rdot_gmp_C_native_openmp_05 Rdot_gmp_C_native_openmp_06`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close bash -lc 'set -euo pipefail; dir=build_bench_release/benchmarks/gmp/00_Rdot; for exe in ...; do ...; done'`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j --target Rdot_gmp_C_native_01 Rdot_gmp_C_native_02 Rdot_gmp_C_native_03 Rdot_gmp_C_native_04 Rdot_gmp_C_native_05 Rdot_gmp_C_native_06 Rdot_gmp_C_native_openmp_01 Rdot_gmp_C_native_openmp_02 Rdot_gmp_C_native_openmp_03 Rdot_gmp_C_native_openmp_04 Rdot_gmp_C_native_openmp_05 Rdot_gmp_C_native_openmp_06`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release target build: PASS.
+- C-native smoke run: PASS.  12/12 variants reported `OK`.
+- Allocation-counter output check for C-native smoke run: PASS.  No
+  `BENCH_ALLOC_COUNTS` output was emitted.
+- Debug target build: PASS.
+- CTest: PASS.  157/157 tests passed.
+
+Known issues:
+- Current README disassembly addresses are from earlier binaries and should be
+  regenerated after the next benchmark/disassembly pass.
+
 ## Phase: MPFR Fixed-Precision Fastpath Coverage
 
 Implemented features:

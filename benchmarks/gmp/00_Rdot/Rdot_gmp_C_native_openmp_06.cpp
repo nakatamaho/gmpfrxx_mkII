@@ -49,24 +49,66 @@ void _Rdot(int64_t n, mpf_t *dx, int64_t incx, mpf_t *dy, int64_t incy, mpf_t *a
         exit(EXIT_FAILURE);
     }
 
-    mp_bitcnt_t precision = mpf_get_prec(*ans);
-    mpf_t temp;
+    const mp_bitcnt_t precision = mpf_get_prec(*ans);
+    const int64_t unrolled_n = n - (n % 4);
 
     mpf_set_d(*ans, 0.0);
-    mpf_init2(temp, precision);
-    mpf_set_d(temp, 0.0);
 
-    for (int64_t i = 0; i < n; i++) {
-        mpf_t templ;
-        mpf_init2(templ, precision);
-        mpf_mul(templ, dx[i], dy[i]);
-        mpf_add(temp, temp, templ);
-        mpf_clear(templ);
+// no reduction for multiple precision
+#pragma omp parallel
+    {
+        mpf_t acc0, acc1, acc2, acc3, templ0, templ1, templ2, templ3;
+        mpf_init2(acc0, precision);
+        mpf_init2(acc1, precision);
+        mpf_init2(acc2, precision);
+        mpf_init2(acc3, precision);
+        mpf_init2(templ0, precision);
+        mpf_init2(templ1, precision);
+        mpf_init2(templ2, precision);
+        mpf_init2(templ3, precision);
+        mpf_set_d(acc0, 0.0);
+        mpf_set_d(acc1, 0.0);
+        mpf_set_d(acc2, 0.0);
+        mpf_set_d(acc3, 0.0);
+        mpf_set_d(templ0, 0.0);
+        mpf_set_d(templ1, 0.0);
+        mpf_set_d(templ2, 0.0);
+        mpf_set_d(templ3, 0.0);
+
+#pragma omp for
+        for (int64_t i = 0; i < unrolled_n; i += 4) {
+            mpf_mul(templ0, dx[i], dy[i]);
+            mpf_mul(templ1, dx[i + 1], dy[i + 1]);
+            mpf_mul(templ2, dx[i + 2], dy[i + 2]);
+            mpf_mul(templ3, dx[i + 3], dy[i + 3]);
+
+            mpf_add(acc0, acc0, templ0);
+            mpf_add(acc1, acc1, templ1);
+            mpf_add(acc2, acc2, templ2);
+            mpf_add(acc3, acc3, templ3);
+        }
+
+#pragma omp for
+        for (int64_t i = unrolled_n; i < n; ++i) {
+            mpf_mul(templ0, dx[i], dy[i]);
+            mpf_add(acc0, acc0, templ0);
+        }
+
+        mpf_add(acc0, acc0, acc1);
+        mpf_add(acc2, acc2, acc3);
+        mpf_add(acc0, acc0, acc2);
+
+#pragma omp critical
+        { mpf_add(*ans, *ans, acc0); }
+        mpf_clear(templ3);
+        mpf_clear(templ2);
+        mpf_clear(templ1);
+        mpf_clear(templ0);
+        mpf_clear(acc3);
+        mpf_clear(acc2);
+        mpf_clear(acc1);
+        mpf_clear(acc0);
     }
-
-    mpf_swap(*ans, temp);
-
-    mpf_clear(temp);
 }
 
 void init_mpf_vec(mpf_t *vec, int n, int prec) {
@@ -115,6 +157,7 @@ int main(int argc, char **argv) {
         vec1_mpf_class[i] = mpf_class(vec1[i]);
         vec2_mpf_class[i] = mpf_class(vec2[i]);
     }
+
     auto start = std::chrono::high_resolution_clock::now();
     _Rdot(N, vec1, 1, vec2, 1, &_ans);
     auto end = std::chrono::high_resolution_clock::now();
