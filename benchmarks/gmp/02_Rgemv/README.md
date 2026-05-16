@@ -133,69 +133,70 @@ precision = 512
 OMP_NUM_THREADS = 32
 OMP_PLACES = cores
 OMP_PROC_BIND = spread
-repeat = 1
+repeat = 10
 ```
 
-- **20260516_135342**
-  - [Raw log](results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/benchmark_rgemv_gmp_m4000_n4000_p512.log)
-  - [CSV summary](results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/summary_rgemv_gmp_m4000_n4000_p512.csv)
-  - [Serial plot](results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png)
-  - [OpenMP plot](results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png)
+- **20260516_184101**
+  - [Raw log](results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/benchmark_rgemv_gmp_m4000_n4000_p512_repeat10.log)
+  - [Raw CSV](results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/raw_rgemv_gmp_m4000_n4000_p512_repeat10.csv)
+  - [CSV summary](results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/summary_rgemv_gmp_m4000_n4000_p512_repeat10.csv)
+  - [Serial plot](results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/singlecore_mflops_repeat10_summary.png)
+  - [OpenMP plot](results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/openmp_mflops_repeat10_summary.png)
 
-All 44 variants report `Result OK`.
+All 440 timed runs report `Result OK` across 44 variants.
 
-![Rgemv serial benchmark 20260516](results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/singlecore_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png)
+![Rgemv serial repeat=10 benchmark 20260516](results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/singlecore_mflops_repeat10_summary.png)
 
-![Rgemv OpenMP benchmark 20260516](results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/openmp_operations_Linux_Ryzen_3970X_32-Core_4000_4000_512.png)
+![Rgemv OpenMP repeat=10 benchmark 20260516](results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/openmp_mflops_repeat10_summary.png)
 
 ### MFLOPS
 
-| Variant | MFLOPS |
-|---|---:|
-| `C_native_01` | 15.763 |
-| `C_native_02` | 30.217 |
-| `C_native_03` | 31.796 |
-| `C_native_04` | 27.557 |
-| `kernel_01_orig` | 17.055 |
-| `kernel_01_mkII` | 16.164 |
-| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 16.715 |
-| `kernel_02_orig` | 30.412 |
-| `kernel_02_mkII` | 29.881 |
-| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 29.930 |
-| `kernel_03_orig` | 31.449 |
-| `kernel_03_mkII` | 31.699 |
-| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 31.523 |
-| `kernel_04_orig` | 26.360 |
-| `kernel_04_mkII` | 23.808 |
-| `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 26.536 |
-| `C_native_openmp_01` | 236.437 |
-| `C_native_openmp_02` | 233.591 |
-| `C_native_openmp_03` | 242.287 |
-| `C_native_openmp_04` | 227.481 |
-| `C_native_openmp_05` | 289.323 |
-| `C_native_openmp_06` | 401.599 |
-| `C_native_openmp_07` | 478.256 |
-| `kernel_openmp_01_orig` | 232.090 |
-| `kernel_openmp_01_mkII` | 219.209 |
-| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 230.853 |
-| `kernel_openmp_02_orig` | 230.637 |
-| `kernel_openmp_02_mkII` | 237.991 |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 229.291 |
-| `kernel_openmp_03_orig` | 241.375 |
-| `kernel_openmp_03_mkII` | 216.211 |
-| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 236.828 |
-| `kernel_openmp_04_orig` | 228.304 |
-| `kernel_openmp_04_mkII` | 229.615 |
-| `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH` | 225.301 |
-| `kernel_openmp_05_orig` | 290.811 |
-| `kernel_openmp_05_mkII` | 292.914 |
-| `kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH` | 290.491 |
-| `kernel_openmp_06_orig` | 396.049 |
-| `kernel_openmp_06_mkII` | 398.313 |
-| `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 404.639 |
-| `kernel_openmp_07_orig` | 548.248 |
-| `kernel_openmp_07_mkII` | 537.083 |
-| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 543.266 |
+| Variant | Avg MFLOPS | Min | Max | Stdev |
+|---|---:|---:|---:|---:|
+| `C_native_01` | 15.491 | 15.311 | 15.730 | 0.129 |
+| `C_native_02` | 29.726 | 29.476 | 30.150 | 0.206 |
+| `C_native_03` | 31.449 | 31.193 | 31.650 | 0.163 |
+| `C_native_04` | 27.551 | 27.278 | 27.972 | 0.221 |
+| `C_native_openmp_01` | 230.868 | 215.268 | 236.777 | 8.071 |
+| `C_native_openmp_02` | 227.831 | 200.387 | 238.228 | 12.619 |
+| `C_native_openmp_03` | 238.688 | 226.096 | 243.992 | 5.824 |
+| `C_native_openmp_04` | 227.109 | 223.251 | 230.711 | 2.676 |
+| `C_native_openmp_05` | 286.554 | 268.506 | 294.372 | 8.551 |
+| `C_native_openmp_06` | 397.996 | 392.646 | 406.983 | 4.388 |
+| `C_native_openmp_07` | 528.177 | 480.708 | 558.040 | 27.133 |
+| `kernel_01_orig` | 16.938 | 16.438 | 17.536 | 0.307 |
+| `kernel_01_mkII` | 16.084 | 15.941 | 16.169 | 0.081 |
+| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 16.724 | 16.452 | 17.111 | 0.187 |
+| `kernel_openmp_01_orig` | 228.100 | 207.713 | 236.116 | 10.744 |
+| `kernel_openmp_01_mkII` | 225.501 | 217.327 | 228.969 | 3.982 |
+| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 227.107 | 224.489 | 229.961 | 1.887 |
+| `kernel_02_orig` | 29.814 | 29.507 | 30.535 | 0.314 |
+| `kernel_02_mkII` | 29.709 | 29.279 | 30.462 | 0.346 |
+| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 29.921 | 29.595 | 30.665 | 0.308 |
+| `kernel_03_orig` | 31.487 | 31.243 | 31.735 | 0.197 |
+| `kernel_03_mkII` | 31.403 | 31.197 | 31.767 | 0.169 |
+| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 31.621 | 31.160 | 32.362 | 0.345 |
+| `kernel_04_orig` | 26.610 | 26.195 | 26.889 | 0.202 |
+| `kernel_04_mkII` | 24.044 | 23.709 | 24.418 | 0.196 |
+| `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 26.361 | 25.827 | 26.695 | 0.290 |
+| `kernel_openmp_02_orig` | 231.093 | 210.708 | 237.418 | 10.642 |
+| `kernel_openmp_02_mkII` | 231.486 | 211.020 | 237.155 | 9.110 |
+| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 237.055 | 233.563 | 240.015 | 2.065 |
+| `kernel_openmp_03_orig` | 236.242 | 217.413 | 244.082 | 9.987 |
+| `kernel_openmp_03_mkII` | 238.327 | 218.131 | 244.387 | 9.571 |
+| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 242.990 | 241.108 | 244.656 | 1.267 |
+| `kernel_openmp_04_orig` | 220.591 | 196.724 | 230.413 | 13.252 |
+| `kernel_openmp_04_mkII` | 223.669 | 179.473 | 230.845 | 15.615 |
+| `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH` | 221.751 | 197.720 | 227.273 | 8.622 |
+| `kernel_openmp_05_orig` | 286.904 | 274.131 | 293.125 | 5.783 |
+| `kernel_openmp_05_mkII` | 290.307 | 286.253 | 291.918 | 1.900 |
+| `kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH` | 286.489 | 268.560 | 292.881 | 8.873 |
+| `kernel_openmp_06_orig` | 394.507 | 325.856 | 414.035 | 30.822 |
+| `kernel_openmp_06_mkII` | 396.516 | 358.458 | 410.777 | 15.468 |
+| `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 391.578 | 331.717 | 409.950 | 22.973 |
+| `kernel_openmp_07_orig` | 549.526 | 531.830 | 563.892 | 10.159 |
+| `kernel_openmp_07_mkII` | 534.525 | 470.334 | 560.611 | 29.042 |
+| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 527.554 | 468.309 | 564.629 | 31.552 |
 
 Headline reading:
 
@@ -203,15 +204,16 @@ Headline reading:
   class as raw C native).  `kernel_01` is roughly half because of inner-loop
   product materialization (see disassembly below).  `kernel_04` is slower
   by design because loop-local product objects are the stress case.
-- **OpenMP, row-partitioned 0104.**  Most variants are in the 225-242 MFLOPS
-  class, with the single `kernel_openmp_03_mkII` run lower at 216 MFLOPS.
-  Row partitioning fixes the earlier OpenMP 02 correctness problem.
-- **OpenMP 0507.**  Source-shape changes deliver substantial single-run
+- **OpenMP, row-partitioned 0104.**  Most variants average in the 220-243
+  MFLOPS class.  `kernel_openmp_03_mkII` averages 238.327 MFLOPS and reaches
+  244.387 MFLOPS, so the earlier 216 MFLOPS single run was normal OpenMP
+  variation rather than a stable codegen difference.
+- **OpenMP 0507.**  Source-shape changes deliver substantial repeat-10
   gains over the row-partitioned 03 baseline: precomputed `alpha*x`
-  (~290 MFLOPS), 256-row blocking (~400 MFLOPS), and column partitioning with
-  thread-local reduction (~540-550 MFLOPS for wrappers).  These are single-run
-  numbers, so repeat-count runs and hardware counters are needed before
-  treating the 07 advantage as final.
+  (~290 MFLOPS average), 256-row blocking (~392-397 MFLOPS average), and
+  column partitioning with thread-local reduction (~528-550 MFLOPS average).
+  Kernel 07 remains the fastest average path, but its wrapper variants also
+  have the largest run-to-run spread.
 
 ### Superseded sample
 
@@ -251,21 +253,21 @@ logical model for row-partitioned loops because `x` is small enough to be
 heavily reused from cache.  These are active-limb estimates; using the
 96-byte allocated footprint scales the numbers by `96/88 = 1.091`.
 
-| Variant | MFLOPS | A-only GB/s | A+y GB/s | A+x+y GB/s |
-|---|---:|---:|---:|---:|
-| `kernel_openmp_03_mkII` | 216.211 | 9.513 | 28.540 | 38.053 |
-| `kernel_openmp_05_mkII` | 292.914 | 12.888 | 38.665 | 51.553 |
-| `kernel_openmp_06_mkII` | 398.313 | 17.526 | 52.577 | 70.103 |
-| `kernel_openmp_07_mkII` | 537.083 | 23.632 | 70.895 | 94.527 |
-| `C_native_openmp_07` | 478.256 | 21.043 | 63.130 | 84.173 |
+| Variant | Avg MFLOPS | Max MFLOPS | A-only avg GB/s | A+y avg GB/s | A+x+y avg GB/s |
+|---|---:|---:|---:|---:|---:|
+| `kernel_openmp_03_mkII` | 238.327 | 244.387 | 10.486 | 31.459 | 41.946 |
+| `kernel_openmp_05_mkII` | 290.307 | 291.918 | 12.774 | 38.321 | 51.094 |
+| `kernel_openmp_06_mkII` | 396.516 | 410.777 | 17.447 | 52.340 | 69.787 |
+| `kernel_openmp_07_mkII` | 534.525 | 560.611 | 23.519 | 70.557 | 94.076 |
+| `C_native_openmp_07` | 528.177 | 558.040 | 23.240 | 69.719 | 92.959 |
 
 The progression is consistent with the source-shape changes.  Kernel 05
 removes repeated `alpha*x[j]` work but still uses row-partitioned strided
 matrix access.  Kernel 06 restores contiguous `A` access inside each row
 block.  Kernel 07 keeps the serial-like column-major `A` stream and pays for
 thread-local `y` partial vectors plus final reduction.  Its logical
-bandwidth estimate is high enough that repeat-count runs and hardware
-counters are needed before treating the single-run ordering as final.
+bandwidth estimate is high enough that hardware counters are still needed
+before calling the path strictly memory-bandwidth limited.
 
 ## Hotpath Disassembly
 
@@ -277,8 +279,8 @@ The snippets below are from Release binaries under
 
 Raw C native `C_native_03` initializes `temp` and `templ` once, scales `y`
 once, then uses a column-major AXPY loop.  The inner loop is one `mpf_mul`
-plus one `mpf_add`.  (This executable was named `C_native_01` when the
-recorded single-run table was taken.)
+plus one `mpf_add`.  (This executable was named `C_native_01` when an older
+single-run table was taken.)
 
 ```asm
 56c0: mov    0x8(%rsp),%rdx       # x[j]
@@ -324,8 +326,8 @@ and enters expression evaluation before the final multiply/add.
 583f: jne    57d0
 ```
 
-This explains the measured gap: `kernel_01_mkII` is 16.164 MFLOPS while
-`kernel_03_mkII` is 31.699 MFLOPS in the 20260516_135342 run.
+This explains the measured gap: `kernel_01_mkII` averages 16.084 MFLOPS while
+`kernel_03_mkII` averages 31.403 MFLOPS in the 20260516_184101 repeat-10 run.
 
 ### `kernel_03_mkII`
 
@@ -386,9 +388,9 @@ over columns.  The inner column loop has two multiplies and one add:
 Compared with serial `kernel_03`, this row-partitioned OpenMP path
 recomputes `alpha * x[j]` for each row instead of once per column.  That is
 the price paid to avoid races on `y[i]`.  Despite the extra outer-loop work,
-the 0104 row-partitioned OpenMP kernels are mostly in the 225-242 MFLOPS class
-on 32 threads in the 20260516_135342 run.  Kernel 05 was added specifically to
-remove this recomputation.
+the 0104 row-partitioned OpenMP kernels are mostly in the 220-243 MFLOPS
+average class on 32 threads in the 20260516_184101 repeat-10 run.  Kernel 05
+was added specifically to remove this recomputation.
 
 ## Lessons Learned
 
@@ -398,9 +400,9 @@ remove this recomputation.
   for expression-template materialization and loop-local lifetime
   respectively.
 - OpenMP: row partitioning avoids races on `y[i]` and puts kernels 0104
-  mostly into the same 225-242 MFLOPS class.  Beyond that, source-shape changes
-  scale up substantially in single runs ― precomputed `alpha*x` (kernel 05),
-  256-row blocking (kernel 06), column partitioning with thread-local
-  reduction (kernel 07).  Single-run ordering only; needs repeat-count
-  confirmation.
-- All variants in the 20260516_135342 full rerun report `Result OK`.
+  mostly into the same 220-243 MFLOPS average class.  Beyond that,
+  source-shape changes scale up substantially in repeat-10 averages:
+  precomputed `alpha*x` (kernel 05), 256-row blocking (kernel 06), and column
+  partitioning with thread-local reduction (kernel 07).
+- All 440 timed runs in the 20260516_184101 full repeat-10 rerun report
+  `Result OK`.

@@ -1464,6 +1464,62 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: GMP Rgemv Repeat-10 Full Rerun
+
+Implemented features:
+- Removed the committed
+  `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342/`
+  result set as requested.
+- Rebuilt all GMP Rgemv benchmark targets and reran the complete 44-variant
+  `benchmarks/gmp/02_Rgemv` suite with `repeat=10`, `M=4000`, `N=4000`,
+  512-bit precision, and 32 OpenMP threads.
+- Added the new repeat-10 result set under
+  `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/`.
+- Generated raw CSV, summary CSV, and serial/OpenMP repeat-10 plots.
+- Updated `benchmarks/gmp/02_Rgemv/README.md` to use repeat-10 averages,
+  min/max ranges, memory-bandwidth estimates, and the new inline plots.
+
+Missing features:
+- No hardware-counter measurement was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/benchmark_rgemv_gmp_m4000_n4000_p512_repeat10.log`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/raw_rgemv_gmp_m4000_n4000_p512_repeat10.csv`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/summary_rgemv_gmp_m4000_n4000_p512_repeat10.csv`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/singlecore_mflops_repeat10_summary.png`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/singlecore_mflops_repeat10_summary.pdf`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/openmp_mflops_repeat10_summary.png`
+- `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/openmp_mflops_repeat10_summary.pdf`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/go.sh`
+- `git ls-files benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342`
+- `git rm -r benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_135342`
+- `cmake --build build_bench_release -j --target Rgemv_gmp_C_native_01 Rgemv_gmp_C_native_02 Rgemv_gmp_C_native_03 Rgemv_gmp_C_native_04 Rgemv_gmp_C_native_openmp_01 Rgemv_gmp_C_native_openmp_02 Rgemv_gmp_C_native_openmp_03 Rgemv_gmp_C_native_openmp_04 Rgemv_gmp_C_native_openmp_05 Rgemv_gmp_C_native_openmp_06 Rgemv_gmp_C_native_openmp_07 Rgemv_gmp_kernel_01_orig Rgemv_gmp_kernel_01_mkII Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_02_orig Rgemv_gmp_kernel_02_mkII Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_03_orig Rgemv_gmp_kernel_03_mkII Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_04_orig Rgemv_gmp_kernel_04_mkII Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_01_orig Rgemv_gmp_kernel_openmp_01_mkII Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_02_orig Rgemv_gmp_kernel_openmp_02_mkII Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_03_orig Rgemv_gmp_kernel_openmp_03_mkII Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_04_orig Rgemv_gmp_kernel_openmp_04_mkII Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_05_orig Rgemv_gmp_kernel_openmp_05_mkII Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_06_orig Rgemv_gmp_kernel_openmp_06_mkII Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH Rgemv_gmp_kernel_openmp_07_orig Rgemv_gmp_kernel_openmp_07_mkII Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH`
+- `/bin/bash -lc 'set -euo pipefail; ts=$(date +%Y%m%d_%H%M%S); outdir=/home/docker/gmpfrxx_mkII/benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_${ts}; mkdir -p "$outdir"; cd /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/gmp/02_Rgemv; ... repeat 10 times ...'`
+- `python3 - "$outdir" <<'PY' ... PY`
+- `perl -0pi -e 's/\r\n/\n/g' benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/raw_rgemv_gmp_m4000_n4000_p512_repeat10.csv benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/summary_rgemv_gmp_m4000_n4000_p512_repeat10.csv`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Target build: PASS.
+- Full repeat-10 Rgemv benchmark rerun: PASS.  440/440 timed runs reported
+  `Result OK`.
+- CSV and plot generation: PASS.  440 raw rows and 44 summary rows generated.
+- `git diff --check`: PASS.
+- CTest: PASS.  156/156 tests passed.
+
+Known issues:
+- The OpenMP 06/07 variants still show visible run-to-run variation; use
+  average and max separately when discussing peak versus typical performance.
+
 ## Phase: GMP Rgemv Full Rerun After Result Cleanup
 
 Implemented features:
