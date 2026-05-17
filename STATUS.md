@@ -1509,6 +1509,45 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: MPFR Rdot OpenMP 03 Stable Hotpath Documentation
+
+Implemented features:
+- Rewrote the `benchmarks/mpfr/00_Rdot/README.md` Hotpath Disassembly section
+  as a comparison table plus focused snippets.
+- Added the `kernel_openmp_03_mkII_STABLE_ROUNDING` OpenMP hotpath disassembly.
+- Documented that this path is a non-FMA reusable-product loop with
+  `mpfr_mul` plus `mpfr_add`, and that rounding is still loaded from TLS before
+  both MPFR calls.
+- Clarified that this kernel has the highest max among non-FMA wrapper OpenMP
+  paths in the recorded run, while the best average remains the raw C FMA path.
+
+Missing features:
+- None.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `objdump -Cd build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING | rg -n "<_Rdot|mpfr_mul@plt|mpfr_add@plt|fs:|GOMP|omp|\\.omp|Rdot"`
+- `objdump -d -C --start-address=0x3970 --stop-address=0x39d8 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING`
+- `sed -n '360,470p' benchmarks/mpfr/00_Rdot/README.md`
+- `sed -n '1,90p' benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/summary_rdot_mpfr_n10000000_p512_repeat10.csv`
+- `sed -n '372,485p' benchmarks/mpfr/00_Rdot/README.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Hotpath disassembly extraction: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- None.
+
 ## Phase: MPFR Rdot Context-Bound 07/08 Benchmark
 
 Implemented features:
@@ -17136,3 +17175,40 @@ Known issues:
 - The payload bandwidth estimate in the README is a lower bound and does not
   include MPFR headers, pointer chasing, allocator locality, or reduction
   overhead.
+
+## Phase: MPFR Rdot README Folded Result Tables
+
+Implemented features:
+- Updated `benchmarks/mpfr/00_Rdot/README.md` so each execution mode has:
+  a main interpretation table, a folded table sorted by Max MFLOPS, and a
+  folded table sorted by Avg MFLOPS.
+- Added separate Serial and OpenMP max-sorted tables generated from the
+  checked-in repeat-10 summary CSV.
+- Kept the existing average-sorted rankings, but moved them into folded
+  sections for consistency with the requested README structure.
+
+Missing features:
+- None.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,360p' benchmarks/mpfr/00_Rdot/README.md`
+- `sed -n '1,90p' benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/summary_rdot_mpfr_n10000000_p512_repeat10.csv`
+- `python3 - <<'PY' ... generate sorted Markdown tables from summary CSV ...`
+- `rg -n "<summary>Serial results sorted by Max MFLOPS|<summary>Serial results sorted by Avg MFLOPS|<summary>OpenMP results sorted by Max MFLOPS|<summary>OpenMP results sorted by Avg MFLOPS" benchmarks/mpfr/00_Rdot/README.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Folded table presence check: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- None.

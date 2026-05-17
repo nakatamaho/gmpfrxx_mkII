@@ -149,6 +149,62 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
 
 ## Serial Results
 
+Main interpretation table:
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
+|---------|-----------:|-----------:|-----------:|----------------|
+| `kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.655 | 23.412 | 23.005 | Best serial average; unrolled reused-temporary source shape. |
+| `kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.910 | 23.313 | 23.077 | Best serial maximum; also in the same average band as the best stable paths. |
+| `kernel_08_mkII` | 23.905 | 23.332 | 23.080 | Explicit-context reusable-product path; cached rounding without FMA. |
+| `kernel_07_mkII_FMA` | 23.803 | 23.299 | 23.060 | Explicit-context expression path; cached rounding and one `mpfr_fma` per element. |
+| `C_native_01_FMA` | 23.324 | 23.205 | 23.095 | Raw C FMA baseline with rounding loaded before the loop. |
+| `kernel_01_mkII` | 17.475 | 16.832 | 16.531 | Generic wrapper expression path; product materialization and generic rounding delivery are both visible. |
+
+<details>
+<summary>Serial results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.910 | 23.313 | 23.077 |
+| 2 | `kernel_08_mkII` | 23.905 | 23.332 | 23.080 |
+| 3 | `kernel_07_mkII_FMA` | 23.803 | 23.299 | 23.060 |
+| 4 | `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.736 | 23.380 | 23.134 |
+| 5 | `kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.655 | 23.412 | 23.005 |
+| 6 | `C_native_03` | 23.558 | 23.122 | 22.764 |
+| 7 | `kernel_03_mkII_STABLE_ROUNDING` | 23.555 | 23.110 | 22.711 |
+| 8 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.476 | 23.219 | 23.028 |
+| 9 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.431 | 23.128 | 22.739 |
+| 10 | `kernel_05_mkII_STABLE_ROUNDING_FMA` | 23.399 | 23.205 | 22.972 |
+| 11 | `kernel_03_mkII_STABLE_ROUNDING_FMA` | 23.360 | 23.171 | 22.979 |
+| 12 | `kernel_05_mkII_STABLE_ROUNDING` | 23.341 | 23.149 | 22.860 |
+| 13 | `C_native_01_FMA` | 23.324 | 23.205 | 23.095 |
+| 14 | `C_native_05` | 22.921 | 22.651 | 22.420 |
+| 15 | `kernel_06_mkII_STABLE_ROUNDING` | 22.715 | 22.494 | 22.230 |
+| 16 | `kernel_06_mkII_STABLE_ROUNDING_FMA` | 22.688 | 22.329 | 22.070 |
+| 17 | `C_native_06` | 22.106 | 21.679 | 21.273 |
+| 18 | `kernel_05_mkII` | 21.434 | 21.186 | 20.837 |
+| 19 | `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 20.536 | 20.056 | 19.818 |
+| 20 | `kernel_06_mkII` | 20.297 | 20.111 | 19.997 |
+| 21 | `C_native_04` | 20.215 | 20.090 | 19.814 |
+| 22 | `kernel_04_mkII_STABLE_ROUNDING_FMA` | 20.109 | 19.960 | 19.739 |
+| 23 | `kernel_04_mkII_STABLE_ROUNDING` | 20.099 | 19.945 | 19.701 |
+| 24 | `kernel_03_mkII` | 20.044 | 19.739 | 19.425 |
+| 25 | `kernel_07_mkII` | 19.482 | 19.028 | 18.659 |
+| 26 | `kernel_01_mkII_STABLE_ROUNDING` | 19.366 | 19.037 | 18.637 |
+| 27 | `C_native_01` | 19.332 | 19.136 | 18.882 |
+| 28 | `C_native_02` | 19.309 | 19.038 | 18.660 |
+| 29 | `kernel_02_mkII_STABLE_ROUNDING` | 18.908 | 18.653 | 18.395 |
+| 30 | `kernel_02_mkII_STABLE_ROUNDING_FMA` | 18.805 | 18.699 | 18.474 |
+| 31 | `kernel_04_mkII` | 17.906 | 17.638 | 17.421 |
+| 32 | `kernel_02_mkII` | 17.760 | 17.306 | 16.602 |
+| 33 | `kernel_01_mkII` | 17.475 | 16.832 | 16.531 |
+| 34 | `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 17.071 | 16.874 | 16.459 |
+
+</details>
+
+<details>
+<summary>Serial results sorted by Avg MFLOPS</summary>
+
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
 | 1 | `kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.655 | 23.412 | 23.005 |
@@ -186,7 +242,65 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
 | 33 | `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 17.071 | 16.874 | 16.459 |
 | 34 | `kernel_01_mkII` | 17.475 | 16.832 | 16.531 |
 
+</details>
+
 ## OpenMP Results
+
+Main interpretation table:
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
+|---------|-----------:|-----------:|-----------:|----------------|
+| `C_native_openmp_01_FMA` | 599.371 | 565.068 | 491.029 | Best OpenMP average and maximum overall; raw FMA with cached rounding. |
+| `C_native_openmp_03` | 567.461 | 548.785 | 510.559 | Raw reusable-product non-FMA baseline. |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 568.638 | 548.163 | 516.927 | Best wrapper OpenMP average; essentially tied with raw reusable-product C. |
+| `kernel_openmp_05_mkII_STABLE_ROUNDING` | 559.280 | 546.197 | 523.651 | Best non-FMA wrapper average; four accumulators with one reused product object. |
+| `kernel_openmp_07_mkII_FMA` | 564.612 | 535.071 | 504.976 | Explicit-context FMA wrapper path; cached rounding and one `mpfr_fma` per element. |
+| `kernel_openmp_01_mkII` | 461.086 | 436.675 | 353.538 | Generic wrapper expression path remains far below stable/FMA/context paths. |
+
+<details>
+<summary>OpenMP results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `C_native_openmp_01_FMA` | 599.371 | 565.068 | 491.029 |
+| 2 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 577.677 | 528.507 | 374.785 |
+| 3 | `kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 572.399 | 537.769 | 407.027 |
+| 4 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | 571.617 | 538.091 | 488.745 |
+| 5 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 568.638 | 548.163 | 516.927 |
+| 6 | `C_native_openmp_03` | 567.461 | 548.785 | 510.559 |
+| 7 | `kernel_openmp_07_mkII_FMA` | 564.612 | 535.071 | 504.976 |
+| 8 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 564.284 | 542.083 | 509.687 |
+| 9 | `kernel_openmp_05_mkII_STABLE_ROUNDING` | 559.280 | 546.197 | 523.651 |
+| 10 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 555.579 | 537.461 | 479.025 |
+| 11 | `kernel_openmp_05_mkII_STABLE_ROUNDING_FMA` | 554.247 | 533.233 | 515.723 |
+| 12 | `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 548.766 | 527.031 | 489.298 |
+| 13 | `C_native_openmp_06` | 548.620 | 516.422 | 493.478 |
+| 14 | `kernel_openmp_08_mkII` | 546.618 | 532.549 | 484.783 |
+| 15 | `C_native_openmp_05` | 543.066 | 527.735 | 505.663 |
+| 16 | `kernel_openmp_06_mkII_STABLE_ROUNDING` | 539.661 | 526.163 | 512.191 |
+| 17 | `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA` | 538.030 | 512.247 | 389.938 |
+| 18 | `kernel_openmp_03_mkII` | 520.383 | 507.215 | 487.346 |
+| 19 | `kernel_openmp_04_mkII_STABLE_ROUNDING` | 512.408 | 491.774 | 475.495 |
+| 20 | `C_native_openmp_04` | 505.948 | 479.875 | 410.641 |
+| 21 | `kernel_openmp_06_mkII` | 505.554 | 484.693 | 438.794 |
+| 22 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 504.952 | 494.796 | 486.827 |
+| 23 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 501.401 | 476.643 | 417.224 |
+| 24 | `kernel_openmp_05_mkII` | 500.336 | 485.274 | 422.739 |
+| 25 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 487.543 | 468.988 | 444.340 |
+| 26 | `kernel_openmp_04_mkII` | 486.301 | 467.858 | 457.260 |
+| 27 | `kernel_openmp_07_mkII` | 485.979 | 458.131 | 383.817 |
+| 28 | `C_native_openmp_02` | 485.736 | 467.198 | 410.805 |
+| 29 | `C_native_openmp_01` | 482.773 | 442.207 | 376.491 |
+| 30 | `kernel_openmp_02_mkII_STABLE_ROUNDING` | 480.049 | 465.877 | 451.819 |
+| 31 | `kernel_openmp_01_mkII_STABLE_ROUNDING` | 478.444 | 466.996 | 432.482 |
+| 32 | `kernel_openmp_01_mkII` | 461.086 | 436.675 | 353.538 |
+| 33 | `kernel_openmp_02_mkII` | 447.325 | 427.659 | 373.885 |
+| 34 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 436.041 | 424.231 | 411.352 |
+
+</details>
+
+<details>
+<summary>OpenMP results sorted by Avg MFLOPS</summary>
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
@@ -225,6 +339,8 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
 | 33 | `kernel_openmp_02_mkII` | 447.325 | 427.659 | 373.885 |
 | 34 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 436.041 | 424.231 | 411.352 |
 
+</details>
+
 ## Memory Bandwidth Estimates
 
 The benchmark reports one dot-product operation as two FLOPs per element.  At
@@ -255,6 +371,17 @@ bandwidth estimate alone is not enough to explain the ranking.
 
 ## Hotpath Disassembly
 
+The disassembly separates three effects that are easy to confuse in source
+form: FMA fusion, product-temporary reuse, and rounding-mode delivery.
+
+| Variant | Timed call shape | Rounding delivery | Result in this run |
+|---------|------------------|-------------------|--------------------|
+| `C_native_01_FMA` | one `mpfr_fma` per element | cached register | Serial raw FMA baseline, `23.205` Avg MFLOPS. |
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | one `mpfr_fma` per element | TLS load in loop | Serial wrapper FMA path, `23.128` Avg MFLOPS. |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING` | `mpfr_mul` + `mpfr_add` per element | TLS load before each call | Important OpenMP non-FMA wrapper path, `571.617` Max and `538.091` Avg MFLOPS. |
+| `kernel_07_mkII_FMA` | one `mpfr_fma` per element | cached context register | Explicit-context FMA path, `23.299` Avg MFLOPS. |
+| `kernel_08_mkII` | `mpfr_mul` + `mpfr_add` per element | cached context register | Explicit-context non-FMA control, `23.332` Avg MFLOPS. |
+
 The raw C FMA baseline loads the default rounding mode once before the loop and
 passes the cached register to `mpfr_fma`:
 
@@ -284,6 +411,38 @@ stable-rounding route still loads the rounding value from TLS in the loop:
 38bc: mov    %fs:0xfffffffffffffffc,%r8d
 38c5: call   mpfr_fma@plt
 38d9: jne    38b0
+```
+
+The OpenMP `kernel_openmp_03_mkII_STABLE_ROUNDING` hot loop is not an FMA loop.
+It is the reusable-product non-FMA source shape: one `mpfr_mul` into the
+thread-local product object, then one `mpfr_add` into the thread-local
+accumulator.  In this build the stable-rounding path still appears as a TLS
+load before both MPFR calls.  Its `571.617` Max MFLOPS is the highest max among
+the non-FMA wrapper OpenMP paths in this run, although the best average remains
+the raw C FMA path.
+
+```asm
+# Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING::_Rdot._omp_fn.0
+3970: mov    %rbx,%rdx        # y[i]
+3973: mov    %r14,%rsi        # x[i]
+3976: mov    %r12,%rdi        # product destination
+3979: add    $0x1,%r15
+397d: mov    %fs:0xfffffffffffffffc,%ecx  # TLS rounding load
+3985: add    $0x20,%r14       # x++
+3989: add    $0x20,%rbx       # y++
+398d: call   mpfr_mul@plt
+3992: mov    %r12,%rdx        # product
+3995: mov    %rbp,%rsi        # accumulator addend
+3998: mov    %rbp,%rdi        # accumulator destination
+399b: mov    %fs:0xfffffffffffffffc,%ecx  # TLS rounding load
+39a3: call   mpfr_add@plt
+39a8: cmp    %r15,%r13
+39ab: jne    3970
+39ad: call   GOMP_barrier@plt
+39b2: call   GOMP_critical_start@plt
+39bc: mov    %fs:0xfffffffffffffffc,%ecx  # final reduction rounding
+39ce: call   mpfr_add@plt
+39d3: call   GOMP_critical_end@plt
 ```
 
 The explicit-context FMA kernel captures the rounding mode before the loop and
