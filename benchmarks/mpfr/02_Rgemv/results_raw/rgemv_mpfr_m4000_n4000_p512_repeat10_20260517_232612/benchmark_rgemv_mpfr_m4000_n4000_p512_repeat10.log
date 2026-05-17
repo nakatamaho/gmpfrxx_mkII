@@ -9,1682 +9,1862 @@ OMP_PROC_BIND=spread
 Model name:                           AMD Ryzen Threadripper 3970X 32-Core Processor
 
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=1 ===
-Elapsed time: 2.19566 s
-MFLOPS: 14.5742
+Elapsed time: 2.20422 s
+MFLOPS: 14.5176
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=2 ===
-Elapsed time: 2.23301 s
-MFLOPS: 14.3304
+Elapsed time: 2.204 s
+MFLOPS: 14.519
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=3 ===
-Elapsed time: 2.19289 s
-MFLOPS: 14.5926
+Elapsed time: 2.22565 s
+MFLOPS: 14.3778
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=4 ===
-Elapsed time: 2.22997 s
-MFLOPS: 14.3499
+Elapsed time: 2.17112 s
+MFLOPS: 14.739
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=5 ===
-Elapsed time: 2.23325 s
-MFLOPS: 14.3289
+Elapsed time: 2.20602 s
+MFLOPS: 14.5058
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=6 ===
-Elapsed time: 2.20024 s
-MFLOPS: 14.5439
+Elapsed time: 2.23678 s
+MFLOPS: 14.3063
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=7 ===
-Elapsed time: 2.23294 s
-MFLOPS: 14.3309
+Elapsed time: 2.20829 s
+MFLOPS: 14.4909
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=8 ===
-Elapsed time: 2.23711 s
-MFLOPS: 14.3042
+Elapsed time: 2.22619 s
+MFLOPS: 14.3743
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=9 ===
-Elapsed time: 2.21851 s
-MFLOPS: 14.4241
+Elapsed time: 2.21115 s
+MFLOPS: 14.4721
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01 run=10 ===
-Elapsed time: 2.22655 s
-MFLOPS: 14.372
+Elapsed time: 2.22341 s
+MFLOPS: 14.3923
 L1 Norm of difference: 2.543e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01 run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=1 ===
-Elapsed time: 2.25873 s
-MFLOPS: 14.1673
+Elapsed time: 2.27605 s
+MFLOPS: 14.0594
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=2 ===
-Elapsed time: 2.28624 s
-MFLOPS: 13.9968
+Elapsed time: 2.26357 s
+MFLOPS: 14.137
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=3 ===
-Elapsed time: 2.27197 s
-MFLOPS: 14.0847
+Elapsed time: 2.19704 s
+MFLOPS: 14.5651
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=4 ===
-Elapsed time: 2.28222 s
-MFLOPS: 14.0215
+Elapsed time: 2.34745 s
+MFLOPS: 13.6318
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=5 ===
-Elapsed time: 2.24664 s
-MFLOPS: 14.2435
+Elapsed time: 2.25185 s
+MFLOPS: 14.2105
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=6 ===
-Elapsed time: 2.32367 s
-MFLOPS: 13.7713
+Elapsed time: 2.26376 s
+MFLOPS: 14.1358
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=7 ===
-Elapsed time: 2.27908 s
-MFLOPS: 14.0408
+Elapsed time: 2.25451 s
+MFLOPS: 14.1938
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=8 ===
-Elapsed time: 2.25341 s
-MFLOPS: 14.2007
+Elapsed time: 2.27858 s
+MFLOPS: 14.0438
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=9 ===
-Elapsed time: 2.24465 s
-MFLOPS: 14.2561
+Elapsed time: 2.27244 s
+MFLOPS: 14.0818
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=10 ===
-Elapsed time: 2.25888 s
-MFLOPS: 14.1663
+Elapsed time: 2.27679 s
+MFLOPS: 14.0549
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_01_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=1 ===
-Elapsed time: 1.57033 s
-MFLOPS: 20.3779
+Elapsed time: 1.55961 s
+MFLOPS: 20.518
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=2 ===
-Elapsed time: 1.57654 s
-MFLOPS: 20.2976
+Elapsed time: 1.52689 s
+MFLOPS: 20.9577
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=3 ===
-Elapsed time: 1.5598 s
-MFLOPS: 20.5154
+Elapsed time: 1.56715 s
+MFLOPS: 20.4193
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=4 ===
-Elapsed time: 1.55697 s
-MFLOPS: 20.5527
+Elapsed time: 1.58338 s
+MFLOPS: 20.2099
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=5 ===
-Elapsed time: 1.56415 s
-MFLOPS: 20.4584
+Elapsed time: 1.56391 s
+MFLOPS: 20.4616
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=6 ===
-Elapsed time: 1.55472 s
-MFLOPS: 20.5825
+Elapsed time: 1.51914 s
+MFLOPS: 21.0645
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=7 ===
-Elapsed time: 1.56166 s
-MFLOPS: 20.491
+Elapsed time: 1.56934 s
+MFLOPS: 20.3907
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=8 ===
-Elapsed time: 1.54866 s
-MFLOPS: 20.6631
+Elapsed time: 1.57514 s
+MFLOPS: 20.3157
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=9 ===
-Elapsed time: 1.56884 s
-MFLOPS: 20.3973
+Elapsed time: 1.57246 s
+MFLOPS: 20.3503
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02 run=10 ===
-Elapsed time: 1.52038 s
-MFLOPS: 21.0473
+Elapsed time: 1.57744 s
+MFLOPS: 20.286
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_02 run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=1 ===
-Elapsed time: 1.35501 s
-MFLOPS: 23.616
+Elapsed time: 1.32025 s
+MFLOPS: 24.2378
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_02_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=2 ===
-Elapsed time: 1.37375 s
-MFLOPS: 23.294
+Elapsed time: 1.37233 s
+MFLOPS: 23.318
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_02_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=3 ===
-Elapsed time: 1.36005 s
-MFLOPS: 23.5286
+Elapsed time: 1.35764 s
+MFLOPS: 23.5703
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_02_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=4 ===
-Elapsed time: 1.36876 s
-MFLOPS: 23.3787
+Elapsed time: 1.36276 s
+MFLOPS: 23.4818
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_02_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=5 ===
-Elapsed time: 1.35676 s
-MFLOPS: 23.5855
-L1 Norm of difference: 3.412e-149
-Result OK
-=== END variant=Rgemv_mpfr_C_native_02_FMA run=5 ===
-=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=6 ===
-Elapsed time: 1.34968 s
-MFLOPS: 23.7094
-L1 Norm of difference: 3.412e-149
-Result OK
-=== END variant=Rgemv_mpfr_C_native_02_FMA run=6 ===
-=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=7 ===
-Elapsed time: 1.35817 s
-MFLOPS: 23.5611
-L1 Norm of difference: 3.412e-149
-Result OK
-=== END variant=Rgemv_mpfr_C_native_02_FMA run=7 ===
-=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=8 ===
 Elapsed time: 1.36527 s
 MFLOPS: 23.4387
 L1 Norm of difference: 3.412e-149
 Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=6 ===
+Elapsed time: 1.35658 s
+MFLOPS: 23.5887
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=7 ===
+Elapsed time: 1.35268 s
+MFLOPS: 23.6568
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=8 ===
+Elapsed time: 1.37173 s
+MFLOPS: 23.3281
+L1 Norm of difference: 3.412e-149
+Result OK
 === END variant=Rgemv_mpfr_C_native_02_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=9 ===
-Elapsed time: 1.34888 s
-MFLOPS: 23.7234
+Elapsed time: 1.35501 s
+MFLOPS: 23.616
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_02_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=10 ===
-Elapsed time: 1.36636 s
-MFLOPS: 23.4198
+Elapsed time: 1.36689 s
+MFLOPS: 23.4109
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_02_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=1 ===
-Elapsed time: 2.90714 s
-MFLOPS: 11.0074
+Elapsed time: 2.98469 s
+MFLOPS: 10.7214
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=2 ===
-Elapsed time: 3.12661 s
-MFLOPS: 10.2347
+Elapsed time: 3.05157 s
+MFLOPS: 10.4864
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=3 ===
-Elapsed time: 3.0689 s
-MFLOPS: 10.4272
+Elapsed time: 3.12551 s
+MFLOPS: 10.2383
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=4 ===
-Elapsed time: 3.09555 s
-MFLOPS: 10.3374
+Elapsed time: 3.11098 s
+MFLOPS: 10.2861
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=5 ===
-Elapsed time: 3.0232 s
-MFLOPS: 10.5848
+Elapsed time: 3.07099 s
+MFLOPS: 10.4201
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=6 ===
-Elapsed time: 3.07677 s
-MFLOPS: 10.4005
+Elapsed time: 3.04417 s
+MFLOPS: 10.5119
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=7 ===
-Elapsed time: 3.12095 s
-MFLOPS: 10.2533
+Elapsed time: 2.9054 s
+MFLOPS: 11.014
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=8 ===
-Elapsed time: 2.96782 s
-MFLOPS: 10.7823
+Elapsed time: 2.99582 s
+MFLOPS: 10.6816
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=9 ===
-Elapsed time: 2.9945 s
-MFLOPS: 10.6863
+Elapsed time: 3.03756 s
+MFLOPS: 10.5348
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_03 run=10 ===
-Elapsed time: 3.0167 s
-MFLOPS: 10.6076
+Elapsed time: 2.86993 s
+MFLOPS: 11.1501
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_03 run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=1 ===
-Elapsed time: 3.54551 s
-MFLOPS: 9.0255
+Elapsed time: 3.59746 s
+MFLOPS: 8.89516
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=2 ===
-Elapsed time: 3.47429 s
-MFLOPS: 9.21051
+Elapsed time: 3.40475 s
+MFLOPS: 9.39864
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=3 ===
-Elapsed time: 3.67391 s
-MFLOPS: 8.71006
+Elapsed time: 3.35798 s
+MFLOPS: 9.52953
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=4 ===
-Elapsed time: 3.63081 s
-MFLOPS: 8.81345
+Elapsed time: 3.4792 s
+MFLOPS: 9.19753
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=5 ===
-Elapsed time: 3.39604 s
-MFLOPS: 9.42275
+Elapsed time: 3.52803 s
+MFLOPS: 9.07022
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=6 ===
-Elapsed time: 3.60674 s
-MFLOPS: 8.87227
+Elapsed time: 3.39823 s
+MFLOPS: 9.41667
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=7 ===
-Elapsed time: 3.58374 s
-MFLOPS: 8.92922
+Elapsed time: 3.49985 s
+MFLOPS: 9.14324
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=8 ===
-Elapsed time: 3.51398 s
-MFLOPS: 9.10648
+Elapsed time: 3.46593 s
+MFLOPS: 9.23274
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=9 ===
-Elapsed time: 3.47107 s
-MFLOPS: 9.21906
+Elapsed time: 3.47702 s
+MFLOPS: 9.20328
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=10 ===
-Elapsed time: 3.53781 s
-MFLOPS: 9.04515
+Elapsed time: 3.46799 s
+MFLOPS: 9.22725
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=1 ===
-Elapsed time: 3.19918 s
-MFLOPS: 10.0026
+Elapsed time: 3.41311 s
+MFLOPS: 9.37562
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=2 ===
-Elapsed time: 3.18524 s
-MFLOPS: 10.0463
+Elapsed time: 3.24046 s
+MFLOPS: 9.87514
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=3 ===
-Elapsed time: 3.16589 s
-MFLOPS: 10.1078
+Elapsed time: 2.9915 s
+MFLOPS: 10.697
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=4 ===
-Elapsed time: 3.35037 s
-MFLOPS: 9.55118
+Elapsed time: 3.38714 s
+MFLOPS: 9.44749
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=5 ===
-Elapsed time: 3.12335 s
-MFLOPS: 10.2454
+Elapsed time: 3.41868 s
+MFLOPS: 9.36034
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=6 ===
-Elapsed time: 3.29314 s
-MFLOPS: 9.71716
+Elapsed time: 3.25772 s
+MFLOPS: 9.82281
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=7 ===
-Elapsed time: 3.30825 s
-MFLOPS: 9.67279
+Elapsed time: 3.23185 s
+MFLOPS: 9.90144
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=8 ===
-Elapsed time: 3.18681 s
-MFLOPS: 10.0414
+Elapsed time: 3.40723 s
+MFLOPS: 9.3918
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=9 ===
-Elapsed time: 3.24433 s
-MFLOPS: 9.86337
+Elapsed time: 3.24739 s
+MFLOPS: 9.85407
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=10 ===
-Elapsed time: 3.37489 s
-MFLOPS: 9.48179
+Elapsed time: 3.25322 s
+MFLOPS: 9.83639
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
-Elapsed time: 3.12224 s
-MFLOPS: 10.2491
+Elapsed time: 3.14992 s
+MFLOPS: 10.159
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
-Elapsed time: 3.12598 s
-MFLOPS: 10.2368
+Elapsed time: 3.14763 s
+MFLOPS: 10.1664
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
-Elapsed time: 3.16345 s
-MFLOPS: 10.1155
+Elapsed time: 3.14606 s
+MFLOPS: 10.1714
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
-Elapsed time: 3.08291 s
-MFLOPS: 10.3798
+Elapsed time: 3.06451 s
+MFLOPS: 10.4421
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
-Elapsed time: 3.13733 s
-MFLOPS: 10.1998
+Elapsed time: 3.01902 s
+MFLOPS: 10.5995
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
-Elapsed time: 3.14772 s
-MFLOPS: 10.1661
+Elapsed time: 3.11482 s
+MFLOPS: 10.2735
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
-Elapsed time: 3.12415 s
-MFLOPS: 10.2428
+Elapsed time: 3.07254 s
+MFLOPS: 10.4148
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
-Elapsed time: 3.1976 s
-MFLOPS: 10.0075
+Elapsed time: 3.18451 s
+MFLOPS: 10.0487
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
-Elapsed time: 3.17902 s
-MFLOPS: 10.066
+Elapsed time: 3.18506 s
+MFLOPS: 10.0469
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
-Elapsed time: 3.18116 s
-MFLOPS: 10.0592
+Elapsed time: 3.11702 s
+MFLOPS: 10.2662
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=1 ===
-Elapsed time: 1.75264 s
-MFLOPS: 18.2582
+Elapsed time: 1.77145 s
+MFLOPS: 18.0643
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=2 ===
-Elapsed time: 1.77131 s
-MFLOPS: 18.0657
+Elapsed time: 1.74953 s
+MFLOPS: 18.2906
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=3 ===
-Elapsed time: 1.76668 s
-MFLOPS: 18.1131
+Elapsed time: 1.75735 s
+MFLOPS: 18.2092
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=4 ===
-Elapsed time: 1.76651 s
-MFLOPS: 18.1148
+Elapsed time: 1.75089 s
+MFLOPS: 18.2765
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=5 ===
-Elapsed time: 1.74365 s
-MFLOPS: 18.3523
+Elapsed time: 1.79506 s
+MFLOPS: 17.8267
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=6 ===
-Elapsed time: 1.7666 s
-MFLOPS: 18.1138
+Elapsed time: 1.79276 s
+MFLOPS: 17.8495
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=7 ===
-Elapsed time: 1.79152 s
-MFLOPS: 17.8619
+Elapsed time: 1.74782 s
+MFLOPS: 18.3085
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=8 ===
-Elapsed time: 1.74868 s
-MFLOPS: 18.2995
+Elapsed time: 1.7556 s
+MFLOPS: 18.2274
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=9 ===
-Elapsed time: 1.78274 s
-MFLOPS: 17.9498
+Elapsed time: 1.75372 s
+MFLOPS: 18.247
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=10 ===
-Elapsed time: 1.76669 s
-MFLOPS: 18.113
+Elapsed time: 1.7491 s
+MFLOPS: 18.2951
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=1 ===
-Elapsed time: 1.78585 s
-MFLOPS: 17.9186
+Elapsed time: 1.77883 s
+MFLOPS: 17.9893
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=2 ===
-Elapsed time: 1.77114 s
-MFLOPS: 18.0674
+Elapsed time: 1.76567 s
+MFLOPS: 18.1234
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=3 ===
-Elapsed time: 1.76436 s
-MFLOPS: 18.1369
+Elapsed time: 1.78859 s
+MFLOPS: 17.8912
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=4 ===
-Elapsed time: 1.75987 s
-MFLOPS: 18.1831
+Elapsed time: 1.76116 s
+MFLOPS: 18.1699
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=5 ===
-Elapsed time: 1.79767 s
-MFLOPS: 17.8008
+Elapsed time: 1.72472 s
+MFLOPS: 18.5537
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=6 ===
-Elapsed time: 1.76485 s
-MFLOPS: 18.1319
+Elapsed time: 1.76578 s
+MFLOPS: 18.1223
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=7 ===
-Elapsed time: 1.79136 s
-MFLOPS: 17.8635
+Elapsed time: 1.78728 s
+MFLOPS: 17.9043
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=8 ===
-Elapsed time: 1.7347 s
-MFLOPS: 18.447
+Elapsed time: 1.76732 s
+MFLOPS: 18.1065
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=9 ===
-Elapsed time: 1.78625 s
-MFLOPS: 17.9146
+Elapsed time: 1.77467 s
+MFLOPS: 18.0315
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=10 ===
-Elapsed time: 1.79185 s
-MFLOPS: 17.8587
+Elapsed time: 1.77375 s
+MFLOPS: 18.0409
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
-Elapsed time: 1.74816 s
-MFLOPS: 18.3049
+Elapsed time: 1.76955 s
+MFLOPS: 18.0836
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
-Elapsed time: 1.75115 s
-MFLOPS: 18.2737
+Elapsed time: 1.77223 s
+MFLOPS: 18.0564
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
-Elapsed time: 1.75043 s
-MFLOPS: 18.2813
+Elapsed time: 1.74657 s
+MFLOPS: 18.3216
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
-Elapsed time: 1.7511 s
-MFLOPS: 18.2743
+Elapsed time: 1.75873 s
+MFLOPS: 18.195
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
-Elapsed time: 1.75118 s
-MFLOPS: 18.2734
+Elapsed time: 1.72439 s
+MFLOPS: 18.5573
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
-Elapsed time: 1.75005 s
-MFLOPS: 18.2852
+Elapsed time: 1.75824 s
+MFLOPS: 18.2
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
-Elapsed time: 1.75335 s
-MFLOPS: 18.2508
+Elapsed time: 1.7211 s
+MFLOPS: 18.5928
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
-Elapsed time: 1.76416 s
-MFLOPS: 18.1389
+Elapsed time: 1.75126 s
+MFLOPS: 18.2726
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
-Elapsed time: 1.76212 s
-MFLOPS: 18.16
+Elapsed time: 1.77367 s
+MFLOPS: 18.0417
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
-Elapsed time: 1.75671 s
-MFLOPS: 18.2159
+Elapsed time: 1.75771 s
+MFLOPS: 18.2055
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=1 ===
-Elapsed time: 3.56912 s
-MFLOPS: 8.96579
+Elapsed time: 3.43217 s
+MFLOPS: 9.32354
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=2 ===
-Elapsed time: 3.297 s
-MFLOPS: 9.70578
+Elapsed time: 3.52682 s
+MFLOPS: 9.07334
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=3 ===
-Elapsed time: 3.46558 s
-MFLOPS: 9.23367
+Elapsed time: 3.42999 s
+MFLOPS: 9.32946
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=4 ===
-Elapsed time: 3.35495 s
-MFLOPS: 9.53815
+Elapsed time: 3.37248 s
+MFLOPS: 9.48858
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=5 ===
-Elapsed time: 3.24333 s
-MFLOPS: 9.86642
+Elapsed time: 3.39198 s
+MFLOPS: 9.43401
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=6 ===
-Elapsed time: 3.53781 s
-MFLOPS: 9.04515
+Elapsed time: 3.19281 s
+MFLOPS: 10.0225
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=7 ===
-Elapsed time: 3.54496 s
-MFLOPS: 9.02691
+Elapsed time: 3.35473 s
+MFLOPS: 9.53877
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=8 ===
-Elapsed time: 3.54163 s
-MFLOPS: 9.03539
+Elapsed time: 3.43257 s
+MFLOPS: 9.32245
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=9 ===
-Elapsed time: 3.41257 s
-MFLOPS: 9.37711
+Elapsed time: 3.40822 s
+MFLOPS: 9.38907
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=10 ===
-Elapsed time: 3.45785 s
-MFLOPS: 9.25429
+Elapsed time: 3.48414 s
+MFLOPS: 9.18447
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=1 ===
-Elapsed time: 3.19992 s
-MFLOPS: 10.0002
+Elapsed time: 3.03024 s
+MFLOPS: 10.5602
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=2 ===
-Elapsed time: 3.08499 s
-MFLOPS: 10.3728
+Elapsed time: 3.17849 s
+MFLOPS: 10.0677
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=3 ===
-Elapsed time: 3.08045 s
-MFLOPS: 10.3881
+Elapsed time: 3.1336 s
+MFLOPS: 10.2119
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=4 ===
-Elapsed time: 3.13957 s
-MFLOPS: 10.1925
+Elapsed time: 3.04353 s
+MFLOPS: 10.5141
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=5 ===
-Elapsed time: 3.15364 s
-MFLOPS: 10.147
+Elapsed time: 3.11056 s
+MFLOPS: 10.2875
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=6 ===
-Elapsed time: 3.1133 s
-MFLOPS: 10.2785
+Elapsed time: 3.23394 s
+MFLOPS: 9.89504
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=7 ===
-Elapsed time: 3.14818 s
-MFLOPS: 10.1646
+Elapsed time: 3.12657 s
+MFLOPS: 10.2349
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=8 ===
-Elapsed time: 3.1223 s
-MFLOPS: 10.2489
+Elapsed time: 3.14053 s
+MFLOPS: 10.1894
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=9 ===
-Elapsed time: 3.15236 s
-MFLOPS: 10.1511
+Elapsed time: 3.1598 s
+MFLOPS: 10.1272
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=10 ===
-Elapsed time: 3.13828 s
-MFLOPS: 10.1967
+Elapsed time: 3.15658 s
+MFLOPS: 10.1375
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=1 ===
-Elapsed time: 1.56112 s
-MFLOPS: 20.4981
+Elapsed time: 1.57548 s
+MFLOPS: 20.3113
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=2 ===
-Elapsed time: 1.57248 s
-MFLOPS: 20.35
+Elapsed time: 1.56966 s
+MFLOPS: 20.3866
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=3 ===
-Elapsed time: 1.55846 s
-MFLOPS: 20.5332
+Elapsed time: 1.57588 s
+MFLOPS: 20.3061
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=4 ===
-Elapsed time: 1.55882 s
-MFLOPS: 20.5283
+Elapsed time: 1.55828 s
+MFLOPS: 20.5355
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=5 ===
-Elapsed time: 1.56583 s
-MFLOPS: 20.4364
+Elapsed time: 1.55247 s
+MFLOPS: 20.6123
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=6 ===
-Elapsed time: 1.5563 s
-MFLOPS: 20.5616
+Elapsed time: 1.53576 s
+MFLOPS: 20.8366
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=7 ===
-Elapsed time: 1.56698 s
-MFLOPS: 20.4214
+Elapsed time: 1.55728 s
+MFLOPS: 20.5486
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=8 ===
-Elapsed time: 1.5209 s
-MFLOPS: 21.0402
+Elapsed time: 1.55277 s
+MFLOPS: 20.6083
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=9 ===
-Elapsed time: 1.58378 s
-MFLOPS: 20.2048
+Elapsed time: 1.55289 s
+MFLOPS: 20.6067
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=10 ===
-Elapsed time: 1.56788 s
-MFLOPS: 20.4097
+Elapsed time: 1.56433 s
+MFLOPS: 20.456
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_04_mkII run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=1 ===
-Elapsed time: 0.118765 s
-MFLOPS: 269.439
+Elapsed time: 0.116741 s
+MFLOPS: 274.11
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=2 ===
-Elapsed time: 0.122827 s
-MFLOPS: 260.528
+Elapsed time: 0.12063 s
+MFLOPS: 265.273
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=3 ===
-Elapsed time: 0.116761 s
-MFLOPS: 274.065
+Elapsed time: 0.119715 s
+MFLOPS: 267.302
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=4 ===
-Elapsed time: 0.12497 s
-MFLOPS: 256.062
+Elapsed time: 0.117323 s
+MFLOPS: 272.75
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=5 ===
-Elapsed time: 0.116582 s
-MFLOPS: 274.484
+Elapsed time: 0.119707 s
+MFLOPS: 267.32
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=6 ===
-Elapsed time: 0.118453 s
-MFLOPS: 270.15
+Elapsed time: 0.119989 s
+MFLOPS: 266.691
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=7 ===
-Elapsed time: 0.123834 s
-MFLOPS: 258.411
+Elapsed time: 0.126568 s
+MFLOPS: 252.829
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=8 ===
-Elapsed time: 0.118619 s
-MFLOPS: 269.772
+Elapsed time: 0.119182 s
+MFLOPS: 268.497
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=9 ===
-Elapsed time: 0.117533 s
-MFLOPS: 272.264
+Elapsed time: 0.115831 s
+MFLOPS: 276.264
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=10 ===
-Elapsed time: 0.123077 s
-MFLOPS: 260.001
+Elapsed time: 0.119645 s
+MFLOPS: 267.459
 L1 Norm of difference: 1.16e-09
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01 run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=1 ===
-Elapsed time: 0.157046 s
-MFLOPS: 203.762
+Elapsed time: 0.153383 s
+MFLOPS: 208.628
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=2 ===
-Elapsed time: 0.15153 s
-MFLOPS: 211.179
+Elapsed time: 0.161082 s
+MFLOPS: 198.656
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=3 ===
-Elapsed time: 0.150926 s
-MFLOPS: 212.024
+Elapsed time: 0.15359 s
+MFLOPS: 208.347
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=4 ===
-Elapsed time: 0.152622 s
-MFLOPS: 209.669
+Elapsed time: 0.149933 s
+MFLOPS: 213.429
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=5 ===
-Elapsed time: 0.165366 s
-MFLOPS: 193.51
+Elapsed time: 0.149196 s
+MFLOPS: 214.483
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=6 ===
-Elapsed time: 0.152673 s
-MFLOPS: 209.599
+Elapsed time: 0.150073 s
+MFLOPS: 213.229
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=7 ===
-Elapsed time: 0.156097 s
-MFLOPS: 205.001
+Elapsed time: 0.15951 s
+MFLOPS: 200.614
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=8 ===
-Elapsed time: 0.149735 s
-MFLOPS: 213.711
+Elapsed time: 0.151278 s
+MFLOPS: 211.531
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=9 ===
-Elapsed time: 0.152728 s
-MFLOPS: 209.523
+Elapsed time: 0.155035 s
+MFLOPS: 206.404
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=10 ===
-Elapsed time: 0.155127 s
-MFLOPS: 206.283
+Elapsed time: 0.148897 s
+MFLOPS: 214.913
 L1 Norm of difference: 3.706e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=1 ===
-Elapsed time: 0.163706 s
-MFLOPS: 195.472
+Elapsed time: 0.161416 s
+MFLOPS: 198.245
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=2 ===
-Elapsed time: 0.158792 s
-MFLOPS: 201.521
+Elapsed time: 0.166605 s
+MFLOPS: 192.071
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=3 ===
-Elapsed time: 0.158722 s
-MFLOPS: 201.611
+Elapsed time: 0.164037 s
+MFLOPS: 195.078
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=4 ===
-Elapsed time: 0.161151 s
-MFLOPS: 198.572
+Elapsed time: 0.162328 s
+MFLOPS: 197.132
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=5 ===
-Elapsed time: 0.161506 s
-MFLOPS: 198.136
+Elapsed time: 0.15733 s
+MFLOPS: 203.394
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=6 ===
-Elapsed time: 0.157496 s
-MFLOPS: 203.18
+Elapsed time: 0.159597 s
+MFLOPS: 200.505
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=7 ===
-Elapsed time: 0.160297 s
-MFLOPS: 199.629
+Elapsed time: 0.161424 s
+MFLOPS: 198.236
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=8 ===
-Elapsed time: 0.160553 s
-MFLOPS: 199.311
+Elapsed time: 0.160691 s
+MFLOPS: 199.14
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=9 ===
-Elapsed time: 0.161022 s
-MFLOPS: 198.731
+Elapsed time: 0.163275 s
+MFLOPS: 195.989
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=10 ===
-Elapsed time: 0.162476 s
-MFLOPS: 196.952
+Elapsed time: 0.158472 s
+MFLOPS: 201.929
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02 run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=1 ===
-Elapsed time: 0.156148 s
-MFLOPS: 204.934
+Elapsed time: 0.15229 s
+MFLOPS: 210.126
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=2 ===
-Elapsed time: 0.152709 s
-MFLOPS: 209.549
+Elapsed time: 0.156036 s
+MFLOPS: 205.081
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=3 ===
-Elapsed time: 0.153715 s
-MFLOPS: 208.178
+Elapsed time: 0.152732 s
+MFLOPS: 209.518
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=4 ===
-Elapsed time: 0.151296 s
-MFLOPS: 211.506
+Elapsed time: 0.151235 s
+MFLOPS: 211.591
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=5 ===
-Elapsed time: 0.151972 s
-MFLOPS: 210.565
+Elapsed time: 0.150625 s
+MFLOPS: 212.448
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=6 ===
-Elapsed time: 0.155502 s
-MFLOPS: 205.785
+Elapsed time: 0.156528 s
+MFLOPS: 204.436
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=7 ===
-Elapsed time: 0.154737 s
-MFLOPS: 206.802
+Elapsed time: 0.168055 s
+MFLOPS: 190.414
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=8 ===
-Elapsed time: 0.151037 s
-MFLOPS: 211.869
+Elapsed time: 0.163002 s
+MFLOPS: 196.316
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=9 ===
-Elapsed time: 0.154057 s
-MFLOPS: 207.715
+Elapsed time: 0.154418 s
+MFLOPS: 207.229
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=10 ===
-Elapsed time: 0.156198 s
-MFLOPS: 204.868
+Elapsed time: 0.151497 s
+MFLOPS: 211.225
 L1 Norm of difference: 3.412e-149
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=1 ===
-Elapsed time: 0.124593 s
-MFLOPS: 256.836
+Elapsed time: 0.121724 s
+MFLOPS: 262.89
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=1 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=2 ===
-Elapsed time: 0.122502 s
-MFLOPS: 261.22
+Elapsed time: 0.132342 s
+MFLOPS: 241.797
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=2 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=3 ===
-Elapsed time: 0.123654 s
-MFLOPS: 258.786
+Elapsed time: 0.121284 s
+MFLOPS: 263.843
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=3 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=4 ===
-Elapsed time: 0.12285 s
-MFLOPS: 260.48
+Elapsed time: 0.1223 s
+MFLOPS: 261.652
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=4 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=5 ===
-Elapsed time: 0.122582 s
-MFLOPS: 261.05
+Elapsed time: 0.123694 s
+MFLOPS: 258.704
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=5 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=6 ===
-Elapsed time: 0.12368 s
-MFLOPS: 258.731
+Elapsed time: 0.12086 s
+MFLOPS: 264.769
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=6 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=7 ===
-Elapsed time: 0.123277 s
-MFLOPS: 259.579
+Elapsed time: 0.129256 s
+MFLOPS: 247.571
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=7 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=8 ===
-Elapsed time: 0.124892 s
-MFLOPS: 256.222
+Elapsed time: 0.123246 s
+MFLOPS: 259.643
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=8 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=9 ===
-Elapsed time: 0.140114 s
-MFLOPS: 228.386
+Elapsed time: 0.123206 s
+MFLOPS: 259.727
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=9 ===
 === BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=10 ===
-Elapsed time: 0.129041 s
-MFLOPS: 247.984
+Elapsed time: 0.123455 s
+MFLOPS: 259.204
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_C_native_openmp_03 run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=1 ===
-Elapsed time: 0.129547 s
-MFLOPS: 247.014
+Elapsed time: 0.130063 s
+MFLOPS: 246.035
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=2 ===
-Elapsed time: 0.133029 s
-MFLOPS: 240.549
+Elapsed time: 0.13825 s
+MFLOPS: 231.465
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=3 ===
-Elapsed time: 0.131621 s
-MFLOPS: 243.122
+Elapsed time: 0.128099 s
+MFLOPS: 249.807
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=4 ===
-Elapsed time: 0.134881 s
-MFLOPS: 237.246
+Elapsed time: 0.131475 s
+MFLOPS: 243.392
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=5 ===
-Elapsed time: 0.129192 s
-MFLOPS: 247.694
+Elapsed time: 0.127089 s
+MFLOPS: 251.793
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=6 ===
-Elapsed time: 0.13476 s
-MFLOPS: 237.459
+Elapsed time: 0.128091 s
+MFLOPS: 249.822
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=7 ===
-Elapsed time: 0.125544 s
-MFLOPS: 254.89
+Elapsed time: 0.144487 s
+MFLOPS: 221.473
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=8 ===
-Elapsed time: 0.14731 s
-MFLOPS: 217.228
+Elapsed time: 0.124799 s
+MFLOPS: 256.413
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=9 ===
-Elapsed time: 0.142738 s
-MFLOPS: 224.186
+Elapsed time: 0.126414 s
+MFLOPS: 253.137
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=10 ===
-Elapsed time: 0.129314 s
-MFLOPS: 247.459
+Elapsed time: 0.12722 s
+MFLOPS: 251.532
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=1 ===
-Elapsed time: 0.125667 s
-MFLOPS: 254.642
+Elapsed time: 0.127714 s
+MFLOPS: 250.56
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=2 ===
-Elapsed time: 0.124232 s
-MFLOPS: 257.583
+Elapsed time: 0.123975 s
+MFLOPS: 258.116
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=3 ===
-Elapsed time: 0.122457 s
-MFLOPS: 261.316
+Elapsed time: 0.126208 s
+MFLOPS: 253.55
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=4 ===
-Elapsed time: 0.123398 s
-MFLOPS: 259.324
+Elapsed time: 0.12462 s
+MFLOPS: 256.781
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=5 ===
-Elapsed time: 0.120093 s
-MFLOPS: 266.46
+Elapsed time: 0.126783 s
+MFLOPS: 252.399
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=6 ===
-Elapsed time: 0.123756 s
-MFLOPS: 258.574
+Elapsed time: 0.127007 s
+MFLOPS: 251.955
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=7 ===
-Elapsed time: 0.124953 s
-MFLOPS: 256.096
+Elapsed time: 0.127586 s
+MFLOPS: 250.811
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=8 ===
-Elapsed time: 0.121609 s
-MFLOPS: 263.139
+Elapsed time: 0.126674 s
+MFLOPS: 252.617
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=9 ===
-Elapsed time: 0.121328 s
-MFLOPS: 263.747
+Elapsed time: 0.122895 s
+MFLOPS: 260.385
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=10 ===
-Elapsed time: 0.12953 s
-MFLOPS: 247.048
+Elapsed time: 0.122494 s
+MFLOPS: 261.236
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
-Elapsed time: 0.116105 s
-MFLOPS: 275.613
+Elapsed time: 0.118229 s
+MFLOPS: 270.662
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
-Elapsed time: 0.114308 s
-MFLOPS: 279.946
+Elapsed time: 0.11655 s
+MFLOPS: 274.561
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
-Elapsed time: 0.11575 s
-MFLOPS: 276.458
+Elapsed time: 0.116362 s
+MFLOPS: 275.004
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
-Elapsed time: 0.116481 s
-MFLOPS: 274.722
+Elapsed time: 0.121425 s
+MFLOPS: 263.536
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
-Elapsed time: 0.117429 s
-MFLOPS: 272.504
+Elapsed time: 0.11613 s
+MFLOPS: 275.552
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
-Elapsed time: 0.11283 s
-MFLOPS: 283.612
+Elapsed time: 0.115821 s
+MFLOPS: 276.288
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
-Elapsed time: 0.119078 s
-MFLOPS: 268.731
+Elapsed time: 0.115238 s
+MFLOPS: 277.686
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
-Elapsed time: 0.117915 s
-MFLOPS: 271.382
+Elapsed time: 0.117389 s
+MFLOPS: 272.599
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
-Elapsed time: 0.117048 s
-MFLOPS: 273.391
+Elapsed time: 0.115049 s
+MFLOPS: 278.142
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
-Elapsed time: 0.120927 s
-MFLOPS: 264.623
+Elapsed time: 0.120681 s
+MFLOPS: 265.161
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=1 ===
-Elapsed time: 0.129585 s
-MFLOPS: 246.943
+Elapsed time: 0.133186 s
+MFLOPS: 240.266
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=2 ===
-Elapsed time: 0.126241 s
-MFLOPS: 253.484
+Elapsed time: 0.125441 s
+MFLOPS: 255.099
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=3 ===
-Elapsed time: 0.130094 s
-MFLOPS: 245.976
+Elapsed time: 0.133605 s
+MFLOPS: 239.511
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=4 ===
-Elapsed time: 0.138157 s
-MFLOPS: 231.62
+Elapsed time: 0.127244 s
+MFLOPS: 251.485
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=5 ===
-Elapsed time: 0.12664 s
-MFLOPS: 252.684
+Elapsed time: 0.125928 s
+MFLOPS: 254.113
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=6 ===
-Elapsed time: 0.13086 s
-MFLOPS: 244.535
+Elapsed time: 0.132092 s
+MFLOPS: 242.255
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=7 ===
-Elapsed time: 0.127235 s
-MFLOPS: 251.504
+Elapsed time: 0.129487 s
+MFLOPS: 247.128
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=8 ===
-Elapsed time: 0.128825 s
-MFLOPS: 248.398
+Elapsed time: 0.132989 s
+MFLOPS: 240.621
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=9 ===
-Elapsed time: 0.144935 s
-MFLOPS: 220.789
+Elapsed time: 0.128638 s
+MFLOPS: 248.76
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=10 ===
-Elapsed time: 0.128127 s
-MFLOPS: 249.752
+Elapsed time: 0.127804 s
+MFLOPS: 250.384
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=1 ===
-Elapsed time: 0.124056 s
-MFLOPS: 257.948
+Elapsed time: 0.121823 s
+MFLOPS: 262.676
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=2 ===
-Elapsed time: 0.123983 s
-MFLOPS: 258.1
+Elapsed time: 0.12884 s
+MFLOPS: 248.371
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=3 ===
-Elapsed time: 0.120653 s
-MFLOPS: 265.224
+Elapsed time: 0.131651 s
+MFLOPS: 243.067
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=4 ===
-Elapsed time: 0.127905 s
-MFLOPS: 250.185
+Elapsed time: 0.124905 s
+MFLOPS: 256.195
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=5 ===
-Elapsed time: 0.124759 s
-MFLOPS: 256.495
+Elapsed time: 0.121702 s
+MFLOPS: 262.938
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=6 ===
-Elapsed time: 0.12112 s
-MFLOPS: 264.201
+Elapsed time: 0.123273 s
+MFLOPS: 259.585
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=7 ===
-Elapsed time: 0.124801 s
-MFLOPS: 256.409
+Elapsed time: 0.122502 s
+MFLOPS: 261.221
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=8 ===
-Elapsed time: 0.121563 s
-MFLOPS: 263.239
+Elapsed time: 0.126169 s
+MFLOPS: 253.627
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=9 ===
-Elapsed time: 0.129468 s
-MFLOPS: 247.165
+Elapsed time: 0.120507 s
+MFLOPS: 265.546
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=10 ===
-Elapsed time: 0.123243 s
-MFLOPS: 259.649
+Elapsed time: 0.125081 s
+MFLOPS: 255.833
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
-Elapsed time: 0.11894 s
-MFLOPS: 269.044
+Elapsed time: 0.115772 s
+MFLOPS: 276.406
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
-Elapsed time: 0.113738 s
-MFLOPS: 281.348
+Elapsed time: 0.117998 s
+MFLOPS: 271.191
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
-Elapsed time: 0.116413 s
-MFLOPS: 274.884
+Elapsed time: 0.120103 s
+MFLOPS: 266.437
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
-Elapsed time: 0.115956 s
-MFLOPS: 275.967
+Elapsed time: 0.114936 s
+MFLOPS: 278.415
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
-Elapsed time: 0.117271 s
-MFLOPS: 272.871
+Elapsed time: 0.116386 s
+MFLOPS: 274.948
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
-Elapsed time: 0.113822 s
-MFLOPS: 281.141
+Elapsed time: 0.113626 s
+MFLOPS: 281.627
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
-Elapsed time: 0.114223 s
-MFLOPS: 280.154
+Elapsed time: 0.1216 s
+MFLOPS: 263.159
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
-Elapsed time: 0.115402 s
-MFLOPS: 277.291
+Elapsed time: 0.114938 s
+MFLOPS: 278.411
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
-Elapsed time: 0.120616 s
-MFLOPS: 265.305
+Elapsed time: 0.114355 s
+MFLOPS: 279.829
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
-Elapsed time: 0.116507 s
-MFLOPS: 274.663
+Elapsed time: 0.116876 s
+MFLOPS: 273.794
 L1 Norm of difference: 1.135e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=1 ===
-Elapsed time: 0.12806 s
-MFLOPS: 249.883
+Elapsed time: 0.126845 s
+MFLOPS: 252.277
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=2 ===
-Elapsed time: 0.124977 s
-MFLOPS: 256.047
+Elapsed time: 0.134178 s
+MFLOPS: 238.489
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=3 ===
-Elapsed time: 0.12925 s
-MFLOPS: 247.582
+Elapsed time: 0.130942 s
+MFLOPS: 244.382
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=4 ===
-Elapsed time: 0.126914 s
-MFLOPS: 252.139
+Elapsed time: 0.131882 s
+MFLOPS: 242.642
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=5 ===
-Elapsed time: 0.128726 s
-MFLOPS: 248.589
+Elapsed time: 0.129414 s
+MFLOPS: 247.268
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=6 ===
-Elapsed time: 0.128464 s
-MFLOPS: 249.098
+Elapsed time: 0.128671 s
+MFLOPS: 248.696
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=7 ===
-Elapsed time: 0.127702 s
-MFLOPS: 250.583
+Elapsed time: 0.130743 s
+MFLOPS: 244.756
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=8 ===
-Elapsed time: 0.127523 s
-MFLOPS: 250.935
+Elapsed time: 0.134347 s
+MFLOPS: 238.188
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=9 ===
-Elapsed time: 0.129617 s
-MFLOPS: 246.881
+Elapsed time: 0.13213 s
+MFLOPS: 242.186
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=10 ===
-Elapsed time: 0.132823 s
-MFLOPS: 240.922
+Elapsed time: 0.128472 s
+MFLOPS: 249.081
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=1 ===
-Elapsed time: 0.120402 s
-MFLOPS: 265.776
+Elapsed time: 0.122112 s
+MFLOPS: 262.054
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=2 ===
-Elapsed time: 0.117642 s
-MFLOPS: 272.012
+Elapsed time: 0.114519 s
+MFLOPS: 279.43
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=3 ===
-Elapsed time: 0.110446 s
-MFLOPS: 289.735
+Elapsed time: 0.11293 s
+MFLOPS: 283.361
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=4 ===
-Elapsed time: 0.124649 s
-MFLOPS: 256.72
+Elapsed time: 0.114339 s
+MFLOPS: 279.869
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=5 ===
-Elapsed time: 0.113315 s
-MFLOPS: 282.398
+Elapsed time: 0.114021 s
+MFLOPS: 280.651
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=6 ===
-Elapsed time: 0.121625 s
-MFLOPS: 263.104
+Elapsed time: 0.118344 s
+MFLOPS: 270.397
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=7 ===
-Elapsed time: 0.114492 s
-MFLOPS: 279.495
+Elapsed time: 0.117128 s
+MFLOPS: 273.205
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=8 ===
-Elapsed time: 0.115292 s
-MFLOPS: 277.556
+Elapsed time: 0.115347 s
+MFLOPS: 277.424
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=9 ===
-Elapsed time: 0.125317 s
-MFLOPS: 255.352
+Elapsed time: 0.114105 s
+MFLOPS: 280.444
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=10 ===
-Elapsed time: 0.115334 s
-MFLOPS: 277.455
+Elapsed time: 0.115068 s
+MFLOPS: 278.097
 L1 Norm of difference: 1.136e-147
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=10 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=1 ===
-Elapsed time: 0.157761 s
-MFLOPS: 202.839
+Elapsed time: 0.172622 s
+MFLOPS: 185.376
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=1 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=2 ===
-Elapsed time: 0.163156 s
-MFLOPS: 196.131
+Elapsed time: 0.17888 s
+MFLOPS: 178.891
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=2 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=3 ===
-Elapsed time: 0.165669 s
-MFLOPS: 193.156
+Elapsed time: 0.16366 s
+MFLOPS: 195.527
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=3 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=4 ===
-Elapsed time: 0.157625 s
-MFLOPS: 203.013
+Elapsed time: 0.167088 s
+MFLOPS: 191.516
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=4 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=5 ===
-Elapsed time: 0.159144 s
-MFLOPS: 201.075
+Elapsed time: 0.17409 s
+MFLOPS: 183.813
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=5 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=6 ===
-Elapsed time: 0.17721 s
-MFLOPS: 180.576
+Elapsed time: 0.168034 s
+MFLOPS: 190.437
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=6 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=7 ===
-Elapsed time: 0.163215 s
-MFLOPS: 196.061
+Elapsed time: 0.163205 s
+MFLOPS: 196.073
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=7 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=8 ===
-Elapsed time: 0.17214 s
-MFLOPS: 185.895
+Elapsed time: 0.167179 s
+MFLOPS: 191.411
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=8 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=9 ===
-Elapsed time: 0.162188 s
-MFLOPS: 197.302
+Elapsed time: 0.172091 s
+MFLOPS: 185.948
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=9 ===
 === BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=10 ===
-Elapsed time: 0.162238 s
-MFLOPS: 197.241
+Elapsed time: 0.166394 s
+MFLOPS: 192.315
 L1 Norm of difference: 0
 Result OK
 === END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=1 ===
+Elapsed time: 0.124937 s
+MFLOPS: 256.13
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=2 ===
+Elapsed time: 0.122088 s
+MFLOPS: 262.107
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=3 ===
+Elapsed time: 0.126549 s
+MFLOPS: 252.866
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=4 ===
+Elapsed time: 0.127877 s
+MFLOPS: 250.24
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=5 ===
+Elapsed time: 0.146112 s
+MFLOPS: 219.01
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=6 ===
+Elapsed time: 0.12281 s
+MFLOPS: 260.564
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=7 ===
+Elapsed time: 0.120648 s
+MFLOPS: 265.235
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=8 ===
+Elapsed time: 0.126529 s
+MFLOPS: 252.906
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=9 ===
+Elapsed time: 0.122038 s
+MFLOPS: 262.214
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_05_mkII run=10 ===
+Elapsed time: 0.128147 s
+MFLOPS: 249.714
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_05_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=1 ===
+Elapsed time: 0.105358 s
+MFLOPS: 303.727
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=2 ===
+Elapsed time: 0.1048 s
+MFLOPS: 305.343
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=3 ===
+Elapsed time: 0.107007 s
+MFLOPS: 299.046
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=4 ===
+Elapsed time: 0.108759 s
+MFLOPS: 294.228
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=5 ===
+Elapsed time: 0.107438 s
+MFLOPS: 297.847
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=6 ===
+Elapsed time: 0.10639 s
+MFLOPS: 300.781
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=7 ===
+Elapsed time: 0.107013 s
+MFLOPS: 299.028
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=8 ===
+Elapsed time: 0.104984 s
+MFLOPS: 304.809
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=9 ===
+Elapsed time: 0.106849 s
+MFLOPS: 299.487
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_06_mkII run=10 ===
+Elapsed time: 0.104811 s
+MFLOPS: 305.313
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_06_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=1 ===
+Elapsed time: 0.0742424 s
+MFLOPS: 431.021
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=2 ===
+Elapsed time: 0.0740846 s
+MFLOPS: 431.938
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=3 ===
+Elapsed time: 0.0755837 s
+MFLOPS: 423.372
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=4 ===
+Elapsed time: 0.07482 s
+MFLOPS: 427.693
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=5 ===
+Elapsed time: 0.0766651 s
+MFLOPS: 417.4
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=6 ===
+Elapsed time: 0.0721817 s
+MFLOPS: 443.326
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=7 ===
+Elapsed time: 0.0868014 s
+MFLOPS: 368.658
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=8 ===
+Elapsed time: 0.0751746 s
+MFLOPS: 425.676
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=9 ===
+Elapsed time: 0.0725692 s
+MFLOPS: 440.959
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_07_mkII run=10 ===
+Elapsed time: 0.0720706 s
+MFLOPS: 444.009
+L1 Norm of difference: 8.251e-148
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_07_mkII run=10 ===

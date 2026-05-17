@@ -1,3 +1,115 @@
+Post-phase MPFR Rgemv README full rewrite:
+DONE
+
+Implemented features:
+- Rewrote `benchmarks/mpfr/02_Rgemv/README.md` from scratch instead of
+  incrementally appending to the previous report.
+- Removed stale wording about the older 28-variant result set and made the
+  current 31-variant repeat-10 result set the only recorded result.
+- Rebuilt the report structure around purpose, build commands, benchmark
+  parameters, variant shapes, C native equivalent kernels, recorded run data,
+  bandwidth estimates, serial/OpenMP result tables, disassembly notes, and
+  lessons learned.
+- Documented OpenMP `05`, `06`, and `07` as first-class recorded variants.
+
+Tests added:
+- No unit tests were added; this phase rewrites benchmark documentation.
+
+Tests updated:
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `wc -l benchmarks/mpfr/02_Rgemv/README.md`
+- `sed -n '1,260p' benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_232612/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`
+- `sed -n '430,560p' AGENTS.md`
+- `apply_patch` attempted full delete/add replacement of
+  `benchmarks/mpfr/02_Rgemv/README.md`, but file deletion failed.
+- `ls -l benchmarks/mpfr/02_Rgemv/README.md && git status --short benchmarks/mpfr/02_Rgemv/README.md`
+- `python3` whole-file README replacement script after `apply_patch` delete
+  failed.
+- `rg -n '20260517_222713|All 28|280 successful|not included|later wrapper|maximum-MFLOPS|best OpenMP average is' benchmarks/mpfr/02_Rgemv/README.md`
+- `sed -n '1,80p' benchmarks/mpfr/02_Rgemv/README.md`
+- `sed -n '300,430p' benchmarks/mpfr/02_Rgemv/README.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- README full rewrite: PASS.
+- Stale wording scan: PASS, no matches.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- Raw C native equivalents for wrapper OpenMP `05`, `06`, and `07` still have
+  not been added.
+
+Post-phase MPFR Rgemv OpenMP 05/06/07 kernels:
+DONE
+
+Implemented features:
+- Added `Rgemv_mpfr_kernel_openmp_05.cpp`, which precomputes
+  `scaled_x[j] = alpha * x[j]` and then performs a row-owned update with a
+  per-thread reusable product object.
+- Added `Rgemv_mpfr_kernel_openmp_06.cpp`, which uses 256-row blocks, a
+  column loop, and a contiguous row loop inside each block.
+- Added `Rgemv_mpfr_kernel_openmp_07.cpp`, which partitions columns across
+  threads, accumulates into thread-local partial `y` vectors, and reduces the
+  partials into `y`.
+- Registered `Rgemv_mpfr_kernel_openmp_05_mkII`,
+  `Rgemv_mpfr_kernel_openmp_06_mkII`, and
+  `Rgemv_mpfr_kernel_openmp_07_mkII` in `benchmarks/CMakeLists.txt`.
+- Updated the MPFR Rgemv README variant table to document OpenMP variants
+  `05`, `06`, and `07`.
+
+Tests added:
+- No unit tests were added; this phase adds benchmark executables.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05.cpp`
+- `sed -n '1,240p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06.cpp`
+- `sed -n '1,280p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04.cpp`
+- `sed -n '1,140p' benchmarks/CMakeLists.txt`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03.cpp`
+- `sed -n '80,125p' benchmarks/mpfr/02_Rgemv/README.md`
+- `rg -n "set_prec|precision\\(\\)|mpfr_class\\(0\\.0, precision\\)|default_precision_bits" include/gmpfrxx_mkII/detail/mpfr_impl.hpp benchmarks/mpfr -g '*.hpp' -g '*.cpp'`
+- `sed -n '180,280p' benchmarks/mpfr/02_Rgemv/Rgemv_common.hpp`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rgemv_mpfr_kernel_openmp_05_mkII Rgemv_mpfr_kernel_openmp_06_mkII Rgemv_mpfr_kernel_openmp_07_mkII -j`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_mkII 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_mkII 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_mkII 13 17 128`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Build of `Rgemv_mpfr_kernel_openmp_05_mkII`: PASS.
+- Build of `Rgemv_mpfr_kernel_openmp_06_mkII`: PASS.
+- Build of `Rgemv_mpfr_kernel_openmp_07_mkII`: PASS.
+- OpenMP 05 smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- OpenMP 06 smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- OpenMP 07 smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- The checked-in MPFR Rgemv repeat-10 result set predates these new wrapper
+  OpenMP targets, so the README documents them as available variants but does
+  not include them in the recorded result tables.
+- Raw C native equivalent kernels for OpenMP `05`, `06`, and `07` have not
+  been added yet.
+
 Post-phase MPFR Rgemv 28-variant repeat benchmark refresh:
 DONE
 
