@@ -352,22 +352,40 @@ payload bytes per element = 2 * 64 = 128 bytes
 payload GB/s = MFLOPS * 128 / 2 / 1000 = MFLOPS * 0.064
 ```
 
-This ignores `mpfr_t` headers, limb pointer chasing, allocator locality, and
-per-thread partial reductions, so it is a lower bound on memory traffic.
+That is a lower bound.  MPFR array traversal also reads each `mpfr_t` header to
+get the `_mpfr_d` pointer before reaching the limb payload.  Counting only that
+pointer adds 8 bytes per input object, or 16 bytes per dot-product element:
 
-| Variant | Avg MFLOPS | Payload GB/s |
-|---------|-----------:|-------------:|
-| `C_native_openmp_01_FMA` | 565.068 | 36.164 |
-| `C_native_openmp_03` | 548.785 | 35.122 |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 548.163 | 35.082 |
-| `kernel_openmp_05_mkII_STABLE_ROUNDING` | 546.197 | 34.957 |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 542.083 | 34.693 |
-| `kernel_openmp_07_mkII_FMA` | 535.071 | 34.244 |
+```text
+payload + data-pointer bytes per element = 128 + 2 * 8 = 144 bytes
+payload + data-pointer GB/s = MFLOPS * 144 / 2 / 1000 = MFLOPS * 0.072
+```
 
-The top MPFR OpenMP Rdot kernels use roughly 34-36 GB/s of payload bandwidth by
-this lower-bound model.  The achieved MFLOPS are still dominated by MPFR call
-cost, rounding delivery, limb arithmetic, and reduction structure; the payload
-bandwidth estimate alone is not enough to explain the ranking.
+For reference, counting the full 32-byte `mpfr_t` headers for both inputs gives
+192 bytes per element:
+
+```text
+payload + full-header bytes per element = 128 + 2 * 32 = 192 bytes
+payload + full-header GB/s = MFLOPS * 192 / 2 / 1000 = MFLOPS * 0.096
+```
+
+These estimates still ignore allocator locality, cache-line overfetch,
+write-allocate effects for temporaries, and per-thread partial reductions.
+
+| Variant | Avg MFLOPS | Limb payload GB/s | Limb + `_mpfr_d` pointer GB/s | Limb + full `mpfr_t` header GB/s |
+|---------|-----------:|------------------:|------------------------------:|---------------------------------:|
+| `C_native_openmp_01_FMA` | 565.068 | 36.164 | 40.685 | 54.247 |
+| `C_native_openmp_03` | 548.785 | 35.122 | 39.513 | 52.683 |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 548.163 | 35.082 | 39.468 | 52.624 |
+| `kernel_openmp_05_mkII_STABLE_ROUNDING` | 546.197 | 34.957 | 39.326 | 52.435 |
+| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 542.083 | 34.693 | 39.030 | 52.040 |
+| `kernel_openmp_07_mkII_FMA` | 535.071 | 34.245 | 38.525 | 51.367 |
+
+The top MPFR OpenMP Rdot kernels use roughly 34-36 GB/s by the limb-only model,
+39-41 GB/s when `_mpfr_d` pointer reads are included, and 51-54 GB/s if the
+full `mpfr_t` input headers are counted.  The achieved MFLOPS are still
+dominated by MPFR call cost, rounding delivery, limb arithmetic, and reduction
+structure; bandwidth estimates alone are not enough to explain the ranking.
 
 ## Hotpath Disassembly
 
@@ -377,10 +395,11 @@ form: FMA fusion, product-temporary reuse, and rounding-mode delivery.
 | Variant | Timed call shape | Rounding delivery | Result in this run |
 |---------|------------------|-------------------|--------------------|
 | `C_native_01_FMA` | one `mpfr_fma` per element | cached register | Serial raw FMA baseline, `23.205` Avg MFLOPS. |
+| `C_native_03` | `mpfr_mul` + `mpfr_add` per element | cached register | Raw reusable-product non-FMA baseline, `23.122` Avg MFLOPS. |
 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | one `mpfr_fma` per element | TLS load in loop | Serial wrapper FMA path, `23.128` Avg MFLOPS. |
 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | `mpfr_mul` + `mpfr_add` per element | TLS load before each call | Important OpenMP non-FMA wrapper path, `571.617` Max and `538.091` Avg MFLOPS. |
 | `kernel_07_mkII_FMA` | one `mpfr_fma` per element | cached context register | Explicit-context FMA path, `23.299` Avg MFLOPS. |
-| `kernel_08_mkII` | `mpfr_mul` + `mpfr_add` per element | cached context register | Explicit-context non-FMA control, `23.332` Avg MFLOPS. |
+| `kernel_08_mkII` | `mpfr_mul` + `mpfr_add` per element | cached context register | Explicit-context counterpart to `C_native_03`, `23.332` Avg MFLOPS. |
 
 The raw C FMA baseline loads the default rounding mode once before the loop and
 passes the cached register to `mpfr_fma`:
@@ -397,6 +416,29 @@ passes the cached register to `mpfr_fma`:
 3a5c: mov    %rbp,%rdi        # accumulator destination
 3a6b: call   mpfr_fma@plt
 3a73: jne    3a50
+```
+
+The raw C reusable-product non-FMA baseline is `C_native_03`.  It hoists
+`mpfr_get_default_rounding_mode()` out of the loop and then runs one
+`mpfr_mul` into `templ` plus one `mpfr_add` into the accumulator per element.
+This is the raw C kernel that corresponds to `kernel_08_mkII`.
+
+```asm
+# Rdot_mpfr_C_native_03::_Rdot
+398b: call   mpfr_get_default_rounding_mode@plt
+399e: mov    %eax,%r12d       # cached rounding
+...
+39f0: mov    %rbp,%rdx        # y[i]
+39f3: mov    %rbx,%rsi        # x[i]
+39f6: mov    %r12d,%ecx       # cached rounding
+39f9: mov    %r13,%rdi        # product destination
+39fc: call   mpfr_mul@plt
+3a01: mov    %r12d,%ecx       # cached rounding
+3a04: mov    %r13,%rdx        # product
+3a07: mov    %r14,%rsi        # accumulator addend
+3a0a: mov    %r14,%rdi        # accumulator destination
+3a19: call   mpfr_add@plt
+3a22: jne    39f0
 ```
 
 The stable wrapper FMA path has the same arithmetic call shape, but the generic
@@ -462,8 +504,11 @@ keeps it in a register, matching the raw C rounding-delivery shape:
 3973: jne    3950
 ```
 
-The explicit-context reusable-product kernel is the non-FMA control: one
-`mpfr_mul`, one `mpfr_add`, and cached rounding in a register for both calls:
+The explicit-context reusable-product kernel is the wrapper counterpart to
+`C_native_03`: one `mpfr_mul`, one `mpfr_add`, and cached rounding in a register
+for both calls.  It does not call `mpfr_fma`; the point of `08` is to test
+whether the wrapper can match the raw C non-FMA reusable-product hotpath while
+using `mpfrxx::evaluation_context`.
 
 ```asm
 # Rdot_mpfr_kernel_08_mkII::_Rdot

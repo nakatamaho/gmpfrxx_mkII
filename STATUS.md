@@ -1509,6 +1509,80 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: MPFR Rdot Pointer-Inclusive Bandwidth Documentation
+
+Implemented features:
+- Updated `benchmarks/mpfr/00_Rdot/README.md` memory-bandwidth estimates to
+  include a model that counts `_mpfr_d` pointer reads in addition to limb
+  payload bytes.
+- Added a full `mpfr_t` header-inclusive reference model so the lower-bound,
+  pointer-inclusive, and full-header estimates are explicitly separated.
+- Updated the representative OpenMP bandwidth table with all three bandwidth
+  estimates.
+
+Missing features:
+- No hardware-counter validation was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '330,390p' benchmarks/mpfr/00_Rdot/README.md`
+- `python3 - <<'PY' ... compute MPFR Rdot bandwidth estimates ...`
+- `sed -n '345,395p' benchmarks/mpfr/00_Rdot/README.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Bandwidth table update: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- The bandwidth estimates are logical traffic models; they do not include
+  cache-line overfetch, allocator locality, write-allocate effects for
+  temporaries, or hardware-counter validation.
+
+## Phase: MPFR Rdot C Native 03 and Kernel 08 Hotpath Mapping
+
+Implemented features:
+- Updated `benchmarks/mpfr/00_Rdot/README.md` Hotpath Disassembly section to
+  show that `Rdot_mpfr_kernel_08_mkII::_Rdot` corresponds to `C_native_03`.
+- Added the `C_native_03` hotpath snippet showing one `mpfr_mul` plus one
+  `mpfr_add` with cached rounding in a register.
+- Clarified that `kernel_08_mkII` is the explicit-context wrapper counterpart
+  to the raw C reusable-product non-FMA kernel, not an FMA path.
+
+Missing features:
+- None.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `objdump -Cd build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 | rg -n "<_Rdot|mpfr_get_default_rounding_mode|mpfr_mul@plt|mpfr_add@plt|jne|mov.*%e.*c|mov.*%e.*x"`
+- `objdump -Cd build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08_mkII | rg -n "<_Rdot|mpfr_get_default_rounding_mode|mpfr_mul@plt|mpfr_add@plt|jne|mov.*%e.*c|mov.*%e.*x"`
+- `sed -n '1,120p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03.cpp benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08.cpp`
+- `sed -n '372,480p' benchmarks/mpfr/00_Rdot/README.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Hotpath mapping check: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- None.
+
 ## Phase: MPFR Rdot OpenMP 03 Stable Hotpath Documentation
 
 Implemented features:
