@@ -30,8 +30,6 @@
 #include <chrono>
 #include <gmp.h>
 
-#include "mpfr_operation_counter.hpp"
-
 #include "mpfrxx_mkII.h"
 using namespace mpfrxx;
 
@@ -47,31 +45,29 @@ void _Rdot(int64_t n, mpfr_t *dx, int64_t incx, mpfr_t *dy, int64_t incy, mpfr_t
         exit(EXIT_FAILURE);
     }
 
-    int64_t i;
-    mpfr_t temp;
-    mpfr_t templ;
+    const mpfr_prec_t precision = mpfr_get_prec(*ans);
     const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
 
     mpfr_set_d(*ans, 0.0, rnd);
 
 // no reduction for multiple precision
-#pragma omp parallel private(i, temp, templ)
+#pragma omp parallel
     {
-        const mpfr_rnd_t thread_rnd = mpfr_get_default_rounding_mode();
-        mpfr_init(temp);
-        mpfr_init(templ);
-        mpfr_set_d(temp, 0.0, thread_rnd);
-        mpfr_set_d(templ, 0.0, thread_rnd);
+        mpfr_t temp;
+        mpfr_init2(temp, precision);
+        mpfr_set_d(temp, 0.0, rnd);
 
 #pragma omp for
-        for (i = 0; i < n; i++) {
-            mpfr_mul(templ, dx[i], dy[i], thread_rnd);
-            mpfr_add(temp, temp, templ, thread_rnd);
+        for (int64_t i = 0; i < n; i++) {
+            mpfr_t templ;
+            mpfr_init2(templ, precision);
+            mpfr_mul(templ, dx[i], dy[i], rnd);
+            mpfr_add(temp, temp, templ, rnd);
+            mpfr_clear(templ);
         }
 #pragma omp critical
         { mpfr_add(*ans, *ans, temp, rnd); }
         mpfr_clear(temp);
-        mpfr_clear(templ);
     }
 }
 
@@ -89,7 +85,6 @@ void clear_mpfr_vec(mpfr_t *vec, int n) {
 }
 
 int main(int argc, char **argv) {
-    benchmark_allocator_counter::install();
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
@@ -121,11 +116,9 @@ int main(int argc, char **argv) {
         vec2_mpfr_class[i] = mpfr_class(vec2[i]);
     }
 
-    benchmark_mpfr_operation_counter::begin_kernel();
     auto start = std::chrono::high_resolution_clock::now();
     _Rdot(N, vec1, 1, vec2, 1, &_ans);
     auto end = std::chrono::high_resolution_clock::now();
-    benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
     ans = Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
 

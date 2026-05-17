@@ -39,51 +39,35 @@ using namespace mpfrxx;
 
 gmp_randstate_t state;
 
-mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_t incy) {
+void _Rdot(int64_t n, mpfr_t *dx, int64_t incx, mpfr_t *dy, int64_t incy, mpfr_t *ans) {
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    const int64_t unrolled_n = n - (n % 4);
-    mpfr_class result = 0.0;
+    const mpfr_prec_t precision = mpfr_get_prec(*ans);
+    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+    mpfr_set_d(*ans, 0.0, rnd);
 
 #pragma omp parallel
     {
-        mpfr_class acc0 = 0.0;
-        mpfr_class acc1 = 0.0;
-        mpfr_class acc2 = 0.0;
-        mpfr_class acc3 = 0.0;
-        mpfr_class templ0, templ1, templ2, templ3;
+        mpfr_t temp, templ;
+        mpfr_init2(temp, precision);
+        mpfr_init2(templ, precision);
+        mpfr_set_d(temp, 0.0, rnd);
+        mpfr_set_d(templ, 0.0, rnd);
 
-#pragma omp for schedule(static)
-        for (int64_t i = 0; i < unrolled_n; i += 4) {
-            templ0 = dx[i] * dy[i];
-            templ1 = dx[i + 1] * dy[i + 1];
-            templ2 = dx[i + 2] * dy[i + 2];
-            templ3 = dx[i + 3] * dy[i + 3];
-
-            acc0 += templ0;
-            acc1 += templ1;
-            acc2 += templ2;
-            acc3 += templ3;
+#pragma omp for
+        for (int64_t i = 0; i < n; i++) {
+            mpfr_mul(templ, dx[i], dy[i], rnd);
+            mpfr_add(temp, temp, templ, rnd);
         }
-
-#pragma omp for schedule(static)
-        for (int64_t i = unrolled_n; i < n; ++i) {
-            templ0 = dx[i] * dy[i];
-            acc0 += templ0;
-        }
-
-        acc0 += acc1;
-        acc2 += acc3;
-        acc0 += acc2;
 
 #pragma omp critical
-        result += acc0;
+        { mpfr_add(*ans, *ans, temp, rnd); }
+        mpfr_clear(templ);
+        mpfr_clear(temp);
     }
-
-    return result;
 }
 
 void init_mpfr_vec(mpfr_t *vec, int n, int prec) {
@@ -115,16 +99,16 @@ int main(int argc, char **argv) {
 
     mpfr_t *vec1 = new mpfr_t[N];
     mpfr_t *vec2 = new mpfr_t[N];
-    mpfr_t tmp, dot_product;
+    mpfr_t _ans, dot_product;
 
     mpfr_init2(dot_product, prec);
-    mpfr_init2(tmp, prec);
+    mpfr_init2(_ans, prec);
     init_mpfr_vec(vec1, N, prec);
     init_mpfr_vec(vec2, N, prec);
 
     mpfr_class *vec1_mpfr_class = new mpfr_class[N];
     mpfr_class *vec2_mpfr_class = new mpfr_class[N];
-    mpfr_class _ans;
+    mpfr_class ans;
 
     for (int i = 0; i < N; i++) {
         vec1_mpfr_class[i] = mpfr_class(vec1[i]);
@@ -132,16 +116,16 @@ int main(int argc, char **argv) {
     }
 
     auto start = std::chrono::high_resolution_clock::now();
-    _ans = _Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
+    _Rdot(N, vec1, 1, vec2, 1, &_ans);
     auto end = std::chrono::high_resolution_clock::now();
 
-    mpfr_class ans = Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
+    ans = Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << (2.0 * double(N) - 1.0) / elapsed_seconds.count() / MFLOPS << std::endl;
 
-    mpfr_class _tmp = abs(_ans - ans);
+    mpfr_class _tmp = abs(mpfr_class(_ans) - ans);
     std::cout << "DIFF: ";
     mpfr_printf("%.4Rg ", _tmp.get_mpfr_t());
     if (_tmp < 1e-5)
@@ -153,8 +137,8 @@ int main(int argc, char **argv) {
     clear_mpfr_vec(vec2, N);
     delete[] vec1_mpfr_class;
     delete[] vec2_mpfr_class;
-    mpfr_clear(tmp);
     mpfr_clear(dot_product);
+    mpfr_clear(_ans);
     delete[] vec1;
     delete[] vec2;
 

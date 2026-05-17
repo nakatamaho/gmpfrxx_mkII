@@ -440,3 +440,666 @@ known issues
 ```
 
 Do not claim completion without tests.
+
+## Benchmark README/reporting conventions
+
+These conventions apply to benchmark reports under:
+
+```text
+benchmarks/
+````
+
+A benchmark README must be a reproducible technical report, not just a list of
+numbers.  It should describe the benchmark purpose, source-level variant shapes,
+build procedure, recorded run conditions, raw-data location, static GitHub
+tables, generated plots, representative disassembly, and lessons learned.
+
+When the same benchmark exists for multiple backends, implementations, or
+optimization modes, keep the directory layout, executable naming, README
+sections, result tables, raw-data layout, and disassembly analysis as parallel
+as possible.  The goal is to make corresponding variants directly comparable.
+
+### Backend and implementation parallelism
+
+For related benchmark families, use the same benchmark structure across
+backends whenever possible.
+
+Examples of related backends include:
+
+```text
+GMP
+MPFR
+MPC
+binary64
+binary80
+binary128
+DD
+QD
+other multiprecision or extended-precision backends
+```
+
+If the same benchmark is implemented for both GMP and MPFR, the two benchmark
+directories should use parallel:
+
+* source layout
+* kernel numbering
+* executable naming
+* README section order
+* result-table columns
+* raw-data directory structure
+* plot-generation workflow
+* disassembly-analysis format
+* lessons-learned format
+
+When comparing GMP wrapper variants, use this optimization order unless the
+specific benchmark documents a reason to differ:
+
+1. baseline, with no special options
+2. `FIXED_PRECISION_FASTPATH`
+
+When comparing MPFR wrapper variants, use this optimization order unless the
+specific benchmark documents a reason to differ:
+
+1. baseline, with no special options
+2. `STABLE_ROUNDING`
+3. `FMA`
+4. `FIXED_PRECISION_FASTPATH`
+
+Do not reorder optimization variants in the main README tables unless the table
+is explicitly a sorted result view.
+
+### Numbered benchmark variants
+
+Use numbered benchmark variants such as `01`, `02`, `03`, ... when a benchmark
+compares multiple source-level kernel shapes.
+
+The same numeric suffix must mean the same source-level shape across:
+
+* raw C kernels
+* upstream C++ wrapper kernels
+* mkII C++ wrapper kernels
+* serial variants
+* OpenMP variants
+* other parallel variants, when applicable
+* related backends, when applicable
+
+Every benchmark README that uses numbered variants must include a variant table.
+
+Use a table shape like:
+
+```markdown
+| Variant | Timed source shape | Temporary/resource policy | Purpose |
+|---------|--------------------|---------------------------|---------|
+| `01` | ... | ... | ... |
+| `02` | ... | ... | ... |
+| `03` | ... | ... | ... |
+```
+
+The table must define what each variant means.  Do not assume that the reader
+can infer the meaning from filenames.
+
+The `Timed source shape` column should describe the actual code pattern being
+timed.
+
+The `Temporary/resource policy` column should describe whether temporaries,
+scratch buffers, precision objects, accumulators, work arrays, or other
+resources are created inside or outside the timed loop.
+
+The `Purpose` column should explain why this variant exists, for example:
+
+```text
+stress per-iteration construction
+test reusable temporary object
+test expression-template materialization
+test fixed-precision scratch fastpath
+test loop unrolling
+test accumulator dependency
+test OpenMP per-thread temporary reuse
+test stable rounding path
+test FMA path
+```
+
+When adding a new source shape, append a new number such as `07`.  Do not reuse
+an existing number for a different kernel shape.
+
+If a variant is meaningful for one backend but not another, document the
+difference explicitly.  Do not silently change the numbering scheme.
+
+### Kernel source separation
+
+Do not mix the timed kernel body directly into the benchmark driver when it can
+be separated cleanly.
+
+Put representative kernel implementations in separate kernel source or header
+files.  The benchmark driver should be responsible for:
+
+* parsing benchmark arguments
+* allocating and initializing input data
+* configuring precision or backend state
+* running repeats
+* checking correctness
+* timing
+* printing raw results
+
+The kernel file should contain the actual timed hot loop or the closest
+backend-specific equivalent.
+
+This separation is required so that the source kernel can be compared directly
+against emitted assembly, compiler IR, GPU code, or other generated code.
+
+### Executable naming
+
+Keep executable names systematic and parallel.
+
+Use a naming scheme of the form:
+
+```text
+<BenchmarkName>_<backend>_<implementation>_<variant>
+<BenchmarkName>_<backend>_<implementation>_<parallel-mode>_<variant>
+<BenchmarkName>_<backend>_<implementation>_<variant>_<optimization>
+<BenchmarkName>_<backend>_<implementation>_<parallel-mode>_<variant>_<optimization>
+```
+
+Recommended components:
+
+```text
+<BenchmarkName>    Rdot, Rgemm, Raxpy, matrix_mul, norm, axpy, etc.
+<backend>          gmp, mpfr, mpc, binary64, binary128, dd, qd, etc.
+<implementation>   C_native, kernel, orig, mkII, reference, etc.
+<parallel-mode>    openmp, serial, gpu, cuda, hip, threads, etc.
+<variant>          01, 02, 03, ...
+<optimization>     FIXED_PRECISION_FASTPATH, STABLE_ROUNDING, FMA, etc.
+```
+
+For raw C kernels, use names like:
+
+```text
+<BenchmarkName>_<backend>_C_native_NN
+<BenchmarkName>_<backend>_C_native_openmp_NN
+```
+
+For wrapper kernels, use names like:
+
+```text
+<BenchmarkName>_<backend>_kernel_NN_orig
+<BenchmarkName>_<backend>_kernel_NN_mkII
+<BenchmarkName>_<backend>_kernel_NN_mkII_<OPTIMIZATION>
+
+<BenchmarkName>_<backend>_kernel_openmp_NN_orig
+<BenchmarkName>_<backend>_kernel_openmp_NN_mkII
+<BenchmarkName>_<backend>_kernel_openmp_NN_mkII_<OPTIMIZATION>
+```
+
+For MPFR-style optimization variants, use names like:
+
+```text
+<BenchmarkName>_mpfr_kernel_NN_mkII_STABLE_ROUNDING
+<BenchmarkName>_mpfr_kernel_NN_mkII_FMA
+<BenchmarkName>_mpfr_kernel_NN_mkII_FIXED_PRECISION_FASTPATH
+```
+
+If a variant is not meaningful for a backend, document that explicitly rather
+than silently changing the naming scheme.
+
+### Raw result storage
+
+Store raw benchmark data under `results_raw/`.
+
+Use run-specific subdirectories:
+
+```text
+benchmarks/<backend>/<benchmark>/results_raw/<run-id>/
+```
+
+The run ID should include enough information to identify the run without
+opening the files.  Use a format like:
+
+```text
+<benchmark>_<backend>_<main-parameters>_repeat<repeat-count>_<YYYYMMDD_HHMMSS>
+```
+
+Examples:
+
+```text
+rdot_gmp_n10000000_p512_repeat10_YYYYMMDD_HHMMSS
+rgemm_mpfr_m512_n512_k512_p512_repeat10_YYYYMMDD_HHMMSS
+raxpy_gmp_n10000000_p512_repeat10_YYYYMMDD_HHMMSS
+```
+
+Each committed benchmark run should include:
+
+* raw benchmark log
+* raw CSV
+* summary CSV
+* regenerated plot images, when applicable
+* generated Markdown table fragments, if they are part of the workflow
+* disassembly snippets or commands, when applicable
+
+Before collecting a new committed run, remove the old raw-data directory for
+that benchmark unless the old run is intentionally being preserved for an
+explicit comparison.
+
+Do not mix stale and fresh raw results in the same README update.
+
+### README structure
+
+Each benchmark README should follow this structure unless the benchmark has a
+documented reason to differ:
+
+```text
+SPDX header
+# <BenchmarkName>
+
+Purpose
+Build
+Benchmark Parameters
+Variant Shapes
+Recorded Run
+Resource or Bandwidth Estimates
+Serial Results
+Parallel Results
+Hotpath Disassembly or Generated Code Analysis
+Lessons Learned
+```
+
+Use the benchmark-specific title:
+
+```markdown
+# 00_Rdot
+# 01_Raxpy
+# 02_Rgemm
+# matrix_mul
+# norm
+```
+
+The `Purpose` section must state:
+
+* what operation is being benchmarked
+* what backend or implementation family is being compared
+* what performance question the benchmark is intended to answer
+
+When useful, include the mathematical operation, for example:
+
+```text
+sum_i x_i * y_i
+y_i <- alpha * x_i + y_i
+C <- alpha * A * B + beta * C
+```
+
+The `Build` section must show:
+
+* build commands from the repository root
+* build type
+* relevant CMake/configure options
+* executable output directory
+* expected command-line arguments
+* at least one example invocation
+
+The `Benchmark Parameters` section must define the meaning of command-line
+parameters such as:
+
+* vector size
+* matrix dimensions
+* precision
+* repeat count
+* block size
+* number of threads
+* backend-specific precision or rounding mode
+* input distribution
+* correctness tolerance
+
+The `Variant Shapes` section must define the numbered variants.
+
+The `Recorded Run` section must state the exact committed run parameters,
+including at least:
+
+* problem size
+* precision or backend mode
+* repeat count
+* compiler and compiler version, when known
+* build type and optimization flags
+* CPU model, when known
+* GPU model, when applicable
+* operating system, when useful
+* OpenMP thread count, when applicable
+* `OMP_PLACES`, when applicable
+* `OMP_PROC_BIND`, when applicable
+* other relevant environment variables
+* raw result directory
+* raw log path
+* raw CSV path
+* summary CSV path
+* whether all variants passed correctness checks
+
+### Static GitHub Markdown tables
+
+GitHub README files cannot run JavaScript sorting.  Do not rely on JavaScript,
+HTML widgets, or dynamic sorting in benchmark READMEs.
+
+Generate static Markdown tables from CSV data.
+
+For each execution mode, include:
+
+1. a main interpretation table
+2. a folded table sorted by the primary maximum-performance metric
+3. a folded table sorted by the primary average-performance metric
+
+For serial benchmarks, use:
+
+```text
+Serial results sorted by Max <metric>
+Serial results sorted by Avg <metric>
+```
+
+For OpenMP benchmarks, use:
+
+```text
+OpenMP results sorted by Max <metric>
+OpenMP results sorted by Avg <metric>
+```
+
+For other parallel modes, use the relevant name:
+
+```text
+CUDA results sorted by Max <metric>
+CUDA results sorted by Avg <metric>
+
+GPU results sorted by Max <metric>
+GPU results sorted by Avg <metric>
+
+Threaded results sorted by Max <metric>
+Threaded results sorted by Avg <metric>
+```
+
+Use `<details>` blocks for sorted views:
+
+```markdown
+<details>
+<summary>Serial results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|------------|------------|------------|
+| 1 | `...` | ... | ... | ... |
+
+</details>
+```
+
+If the benchmark uses a metric other than MFLOPS, replace the metric name
+consistently:
+
+```text
+ns/op
+GB/s
+GFLOPS
+items/s
+calls/s
+speedup
+relative time
+```
+
+Do not mix metric names without defining them.
+
+### Result interpretation
+
+Do not report numbers alone.
+
+The main result tables must include an `Interpretation` column.  This column
+should explain the observed performance class in terms of source shape,
+temporary lifetime, precision policy, allocation behavior, compiler behavior,
+parallel scaling, memory traffic, or run-to-run variance.
+
+Use a table shape like:
+
+```markdown
+| Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
+|---------|------------|------------|----------------|
+| `kernel_03_mkII` | ... | ... | Reused product object; same hot loop class as the raw reusable-object baseline. |
+```
+
+For non-MFLOPS benchmarks, use the appropriate metric:
+
+```markdown
+| Variant | Min time | Avg time | Interpretation |
+|---------|----------|----------|----------------|
+| `kernel_03_mkII` | ... | ... | ... |
+```
+
+The interpretation must be technical and specific.  Avoid vague phrases such
+as "faster", "slower", "optimized", or "better" unless the reason is also
+stated.
+
+Good interpretation examples:
+
+```text
+Expression product materializes inside the loop.
+Loop-local construction remains expensive.
+Reusable temporary object matches the raw reusable-object class.
+Scratch fastpath removes repeated temporary allocation.
+Stable rounding changes the call path but not the dominant loop structure.
+FMA reduces one rounding step but does not remove the backend call overhead.
+Four accumulators do not create a new performance class.
+The lower average is likely OpenMP run-to-run variance.
+The hot loop is memory-traffic limited under this problem size.
+The wrapper work is outside the timed loop.
+```
+
+### Resource and bandwidth estimates
+
+When useful, include a `Resource or Bandwidth Estimates` section.
+
+Clearly state whether the values are:
+
+* direct hardware-counter measurements
+* model estimates derived from benchmark metrics
+* static object-size estimates
+* cache-footprint estimates
+* theoretical upper/lower bounds
+
+Do not present model estimates as measured hardware data.
+
+For fixed-precision multiprecision data, document assumptions such as:
+
+* object/header size
+* limb size
+* effective precision
+* used limbs
+* allocated limbs
+* input/output bytes per element
+* temporary-object footprint
+* work-array size
+* formula converting the benchmark metric to bandwidth or footprint
+
+Useful estimate classes include:
+
+```text
+active-data GB/s
+header-inclusive GB/s
+allocated-footprint GB/s
+temporary-footprint estimate
+work-array footprint estimate
+```
+
+The section must explain what each model includes and what it excludes.
+
+### Plot regeneration
+
+If plots are committed, include the exact command used to regenerate them from
+the committed summary CSV.
+
+The command must use repository-relative paths where possible.
+
+Use a command shape like:
+
+```bash
+python3 benchmarks/<backend>/<benchmark>/plot_repeat_summary.py \
+    benchmarks/<backend>/<benchmark>/results_raw/<run-id>/summary_<run>.csv \
+	    --output-prefix benchmarks/<backend>/<benchmark>/results_raw/<run-id>/<plot-prefix> \
+		    --title-prefix "<Backend> <Benchmark> <parameters>"
+```
+
+If the plotting script is shared across benchmarks, document the shared script
+path.
+
+The README should not contain plots that cannot be regenerated from committed
+data.
+
+### Hotpath disassembly or generated code analysis
+
+Each benchmark README must include a `Hotpath Disassembly` or
+`Generated Code Analysis` section when the benchmark is intended to compare
+implementation strategies.
+
+The goal is to compare the emitted hot loop against the source-level C/C++
+kernel implementation.
+
+Use:
+
+```bash
+objdump -Cd --no-show-raw-insn <binary>
+```
+
+or the closest platform-equivalent disassembler.
+
+For macOS, an appropriate alternative may be:
+
+```bash
+otool -tvV <binary>
+```
+
+For compiler IR or generated code investigations, use the relevant tool and
+document the exact command.
+
+Addresses are build-specific.  Do not treat absolute addresses as meaningful.
+The relevant information is the call sequence, loop structure, object lifetime,
+temporary lifetime, arithmetic calls, loads/stores, branches, vectorization,
+and reduction structure.
+
+For each representative kernel, include:
+
+* the source kernel file being analyzed
+* the executable or binary used for disassembly
+* the build options used to generate the binary, if relevant
+* the disassembly or generated-code command
+* the relevant hot-loop excerpt
+* a short explanation comparing the emitted instructions with the C/C++ source
+* the observed performance implication
+
+At minimum, compare:
+
+* a raw or reference slow path
+* a raw or reference reusable-resource baseline
+* the main wrapper or mkII kernel
+* a representative parallel kernel, when applicable
+* the best-performing kernel from the run
+* any surprising or suspicious kernel from the run
+
+The disassembly discussion should explicitly check for:
+
+* temporary object lifetime
+* scratch/work-buffer lifetime
+* repeated initialization or cleanup inside the loop
+* repeated allocation-like behavior
+* number of backend arithmetic calls per element or operation
+* whether the loop body matches the intended source-level shape
+* loop unrolling
+* branch structure
+* vectorization or lack of vectorization
+* FMA generation, when relevant
+* precision or rounding mode calls inside the loop
+* accumulator dependency
+* memory load/store pattern
+* OpenMP or threaded per-worker loop shape
+* whether final reduction is outside the hot loop
+
+For GMP/MPFR/MPC-style code, explicitly check for calls such as:
+
+```text
+mpf_init2
+mpf_clear
+mpf_mul
+mpf_add
+mpfr_init2
+mpfr_clear
+mpfr_mul
+mpfr_add
+mpc_init2
+mpc_clear
+```
+
+Good disassembly conclusions are specific:
+
+```text
+The hot loop has one backend multiply and one backend add per element.
+The wrapper work is outside the timed loop.
+The loop still calls init and clear per element.
+The OpenMP outlined loop has the same arithmetic sequence as the serial reusable-object baseline.
+The final reduction is outside the per-thread hot loop.
+The FMA variant changes the arithmetic call sequence but does not remove temporary construction.
+The fixed-precision fastpath removes repeated temporary initialization from the hot loop.
+```
+
+### Lessons Learned
+
+End each benchmark README with a `Lessons Learned` section.
+
+This section must summarize the actual performance boundary found in the run.
+Do not merely restate the fastest variant.
+
+The section should answer:
+
+* What source-level shape controls performance?
+* Which optimization changes the hot loop?
+* Which optimization only changes syntax but not the emitted hot loop?
+* Which variants are in the same performance class?
+* Which result is probably run-to-run variance?
+* Which result needs further verification?
+* What should guide the next implementation step?
+
+Good examples of lessons:
+
+```text
+The main performance boundary is temporary lifetime, not wrapper syntax.
+The reusable-temporary kernel is the practical serial baseline.
+The fixed-precision fastpath matters for expression-form kernels.
+The fixed-precision fastpath does not help explicitly constructed loop-local objects.
+Four-way unrolling does not create a new serial performance class.
+OpenMP results should be interpreted by performance class, not by a single fastest run.
+The generated hot loop, not the source expression alone, determines the performance class.
+```
+
+### No standard allocation counters
+
+Do not add or keep allocation-counter instrumentation as part of the standard
+benchmark reports.
+
+Allocation counters are not part of the normal benchmark-reporting workflow.
+Allocation-related behavior should usually be inferred from:
+
+* source-level kernel shape
+* whether temporary objects are constructed inside the timed loop
+* hotpath disassembly
+* backend init/clear calls inside the loop
+* observed performance class
+
+If allocation behavior must be investigated, do it as a separate focused
+diagnostic task.  Do not mix diagnostic allocation-counter code into the normal
+benchmark kernels or standard README report unless the benchmark is explicitly
+about allocation behavior.
+
+### Updating benchmark reports
+
+When updating a benchmark README:
+
+1. Remove stale raw data unless it is intentionally preserved for comparison.
+2. Run the benchmark with the documented parameters.
+3. Store raw logs, raw CSV, summary CSV, and plots under a new `results_raw/<run-id>/`.
+4. Regenerate static Markdown tables from the committed CSV data.
+5. Update the recorded-run section.
+6. Update serial and parallel result tables.
+7. Update plots and plot-regeneration commands.
+8. Refresh representative disassembly snippets when the kernel source or build flags changed.
+9. Update `Lessons Learned` based on the new data.
+10. Check that all paths in the README are repository-relative and valid.
+
+Do not update only the headline numbers.  A benchmark README must remain
+self-contained and reproducible.

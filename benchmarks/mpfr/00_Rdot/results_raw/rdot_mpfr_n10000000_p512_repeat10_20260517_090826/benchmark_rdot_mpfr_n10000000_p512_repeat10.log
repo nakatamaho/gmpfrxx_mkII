@@ -1,0 +1,4343 @@
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+BENCHMARK_PARAMS kernel=Rdot N=10000000 precision=512 repeat=10
+OPENMP_AFFINITY OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 1/10
+Elapsed time: 1.04007 s
+MFLOPS: 19.2295
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.56
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 2/10
+Elapsed time: 1.05676 s
+MFLOPS: 18.9259
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.63
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 3/10
+Elapsed time: 1.05333 s
+MFLOPS: 18.9874
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.62
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 4/10
+Elapsed time: 1.0592 s
+MFLOPS: 18.8822
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.61
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 5/10
+Elapsed time: 1.05057 s
+MFLOPS: 19.0373
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.61
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 6/10
+Elapsed time: 1.05041 s
+MFLOPS: 19.0402
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.66
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 7/10
+Elapsed time: 1.03033 s
+MFLOPS: 19.4113
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.48
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 8/10
+Elapsed time: 1.05719 s
+MFLOPS: 18.918
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.73
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 9/10
+Elapsed time: 1.03521 s
+MFLOPS: 19.3197
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.56
+
+COMMAND Rdot Rdot_mpfr_C_native_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 10000000 512
+RUN 10/10
+Elapsed time: 1.04407 s
+MFLOPS: 19.1558
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.54
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 1/10
+Elapsed time: 1.03181 s
+MFLOPS: 19.3834
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.53
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 2/10
+Elapsed time: 1.04998 s
+MFLOPS: 19.048
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.56
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 3/10
+Elapsed time: 1.07341 s
+MFLOPS: 18.6321
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.71
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 4/10
+Elapsed time: 1.06723 s
+MFLOPS: 18.7402
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.67
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 5/10
+Elapsed time: 1.06816 s
+MFLOPS: 18.7239
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.73
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 6/10
+Elapsed time: 1.02263 s
+MFLOPS: 19.5574
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.52
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 7/10
+Elapsed time: 1.04955 s
+MFLOPS: 19.0559
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.59
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 8/10
+Elapsed time: 1.05606 s
+MFLOPS: 18.9383
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.68
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 9/10
+Elapsed time: 1.06599 s
+MFLOPS: 18.7619
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.73
+
+COMMAND Rdot Rdot_mpfr_C_native_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_02 10000000 512
+RUN 10/10
+Elapsed time: 1.06211 s
+MFLOPS: 18.8305
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.62
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 1/10
+Elapsed time: 0.887275 s
+MFLOPS: 22.5409
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.47
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 2/10
+Elapsed time: 0.866907 s
+MFLOPS: 23.0705
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.41
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 3/10
+Elapsed time: 0.855967 s
+MFLOPS: 23.3654
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.26
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 4/10
+Elapsed time: 0.871166 s
+MFLOPS: 22.9577
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.42
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 5/10
+Elapsed time: 0.880864 s
+MFLOPS: 22.705
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.48
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 6/10
+Elapsed time: 0.864998 s
+MFLOPS: 23.1214
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.22
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 7/10
+Elapsed time: 0.879702 s
+MFLOPS: 22.735
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.48
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 8/10
+Elapsed time: 0.892061 s
+MFLOPS: 22.42
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.44
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 9/10
+Elapsed time: 0.875287 s
+MFLOPS: 22.8496
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.42
+
+COMMAND Rdot Rdot_mpfr_C_native_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_03 10000000 512
+RUN 10/10
+Elapsed time: 0.879678 s
+MFLOPS: 22.7356
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.47
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 1/10
+Elapsed time: 1.01224 s
+MFLOPS: 19.7581
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.57
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 2/10
+Elapsed time: 1.01648 s
+MFLOPS: 19.6758
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.59
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 3/10
+Elapsed time: 1.01227 s
+MFLOPS: 19.7576
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.58
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 4/10
+Elapsed time: 1.00802 s
+MFLOPS: 19.8408
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.57
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 5/10
+Elapsed time: 0.994929 s
+MFLOPS: 20.1019
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.49
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 6/10
+Elapsed time: 1.03062 s
+MFLOPS: 19.4059
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.62
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 7/10
+Elapsed time: 1.0072 s
+MFLOPS: 19.8571
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.52
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 8/10
+Elapsed time: 1.01378 s
+MFLOPS: 19.7281
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.53
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 9/10
+Elapsed time: 1.0208 s
+MFLOPS: 19.5924
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.56
+
+COMMAND Rdot Rdot_mpfr_C_native_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_04 10000000 512
+RUN 10/10
+Elapsed time: 1.01619 s
+MFLOPS: 19.6813
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.53
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 1/10
+Elapsed time: 0.892157 s
+MFLOPS: 22.4176
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.56
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 2/10
+Elapsed time: 0.896414 s
+MFLOPS: 22.3111
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.42
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 3/10
+Elapsed time: 0.875003 s
+MFLOPS: 22.8571
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.32
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 4/10
+Elapsed time: 0.874696 s
+MFLOPS: 22.8651
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.37
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 5/10
+Elapsed time: 0.884572 s
+MFLOPS: 22.6098
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 6/10
+Elapsed time: 0.880077 s
+MFLOPS: 22.7253
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 7/10
+Elapsed time: 0.879841 s
+MFLOPS: 22.7314
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.35
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 8/10
+Elapsed time: 0.883829 s
+MFLOPS: 22.6288
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.46
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 9/10
+Elapsed time: 0.887495 s
+MFLOPS: 22.5353
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.31
+
+COMMAND Rdot Rdot_mpfr_C_native_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05 10000000 512
+RUN 10/10
+Elapsed time: 0.894212 s
+MFLOPS: 22.3661
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.42
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 1/10
+Elapsed time: 0.948468 s
+MFLOPS: 21.0866
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 2/10
+Elapsed time: 0.942407 s
+MFLOPS: 21.2222
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.62
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 3/10
+Elapsed time: 0.952731 s
+MFLOPS: 20.9923
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.52
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 4/10
+Elapsed time: 0.958115 s
+MFLOPS: 20.8743
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.54
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 5/10
+Elapsed time: 0.955266 s
+MFLOPS: 20.9366
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.50
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 6/10
+Elapsed time: 0.944574 s
+MFLOPS: 21.1736
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.38
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 7/10
+Elapsed time: 0.924847 s
+MFLOPS: 21.6252
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.33
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 8/10
+Elapsed time: 0.933957 s
+MFLOPS: 21.4143
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.35
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 9/10
+Elapsed time: 0.939028 s
+MFLOPS: 21.2986
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_C_native_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06 10000000 512
+RUN 10/10
+Elapsed time: 0.927556 s
+MFLOPS: 21.562
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.37
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.867716 s
+MFLOPS: 23.049
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.38
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.853984 s
+MFLOPS: 23.4196
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.21
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.86998 s
+MFLOPS: 22.989
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.26
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.866884 s
+MFLOPS: 23.0711
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.34
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.864489 s
+MFLOPS: 23.1351
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.21
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.864626 s
+MFLOPS: 23.1314
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.30
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.867064 s
+MFLOPS: 23.0664
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.24
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.854754 s
+MFLOPS: 23.3985
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.15
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.865778 s
+MFLOPS: 23.1006
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.28
+
+COMMAND Rdot Rdot_mpfr_C_native_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.8621 s
+MFLOPS: 23.1992
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.28
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 1/10
+Elapsed time: 0.0428364 s
+MFLOPS: 466.892
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 2/10
+Elapsed time: 0.0428227 s
+MFLOPS: 467.042
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 3/10
+Elapsed time: 0.0441299 s
+MFLOPS: 453.208
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 4/10
+Elapsed time: 0.0420985 s
+MFLOPS: 475.076
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.60
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 5/10
+Elapsed time: 0.0425695 s
+MFLOPS: 469.82
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 6/10
+Elapsed time: 0.0434366 s
+MFLOPS: 460.441
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 7/10
+Elapsed time: 0.0422141 s
+MFLOPS: 473.775
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 8/10
+Elapsed time: 0.042343 s
+MFLOPS: 472.333
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 9/10
+Elapsed time: 0.0422709 s
+MFLOPS: 473.139
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.49
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01 10000000 512
+RUN 10/10
+Elapsed time: 0.0413033 s
+MFLOPS: 484.222
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 1/10
+Elapsed time: 0.0562069 s
+MFLOPS: 355.828
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 2/10
+Elapsed time: 0.0428739 s
+MFLOPS: 466.484
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 3/10
+Elapsed time: 0.0406447 s
+MFLOPS: 492.069
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 4/10
+Elapsed time: 0.0451838 s
+MFLOPS: 442.636
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.44
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 5/10
+Elapsed time: 0.0410112 s
+MFLOPS: 487.671
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 6/10
+Elapsed time: 0.0402447 s
+MFLOPS: 496.96
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.49
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 7/10
+Elapsed time: 0.0425451 s
+MFLOPS: 470.089
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 8/10
+Elapsed time: 0.0429233 s
+MFLOPS: 465.947
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.57
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 9/10
+Elapsed time: 0.0419849 s
+MFLOPS: 476.362
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_02 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02 10000000 512
+RUN 10/10
+Elapsed time: 0.0421873 s
+MFLOPS: 474.076
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 1/10
+Elapsed time: 0.0374367 s
+MFLOPS: 534.235
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.56
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 2/10
+Elapsed time: 0.0363166 s
+MFLOPS: 550.712
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 3/10
+Elapsed time: 0.0364832 s
+MFLOPS: 548.198
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.49
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 4/10
+Elapsed time: 0.0391796 s
+MFLOPS: 510.47
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.60
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 5/10
+Elapsed time: 0.0372521 s
+MFLOPS: 536.882
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.52
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 6/10
+Elapsed time: 0.0353298 s
+MFLOPS: 566.095
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.44
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 7/10
+Elapsed time: 0.0372014 s
+MFLOPS: 537.614
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 8/10
+Elapsed time: 0.0521061 s
+MFLOPS: 383.832
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 9/10
+Elapsed time: 0.0365798 s
+MFLOPS: 546.75
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_03 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03 10000000 512
+RUN 10/10
+Elapsed time: 0.0355693 s
+MFLOPS: 562.282
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.55
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 1/10
+Elapsed time: 0.0414489 s
+MFLOPS: 482.522
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 2/10
+Elapsed time: 0.0409875 s
+MFLOPS: 487.953
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 3/10
+Elapsed time: 0.0400262 s
+MFLOPS: 499.673
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 4/10
+Elapsed time: 0.0418394 s
+MFLOPS: 478.018
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 5/10
+Elapsed time: 0.0394187 s
+MFLOPS: 507.373
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 6/10
+Elapsed time: 0.0414787 s
+MFLOPS: 482.176
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.49
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 7/10
+Elapsed time: 0.0487361 s
+MFLOPS: 410.373
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 8/10
+Elapsed time: 0.0397742 s
+MFLOPS: 502.838
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.55
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 9/10
+Elapsed time: 0.0408559 s
+MFLOPS: 489.525
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.52
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_04 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04 10000000 512
+RUN 10/10
+Elapsed time: 0.0406247 s
+MFLOPS: 492.311
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 1/10
+Elapsed time: 0.0378522 s
+MFLOPS: 528.37
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 2/10
+Elapsed time: 0.0385935 s
+MFLOPS: 518.222
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 3/10
+Elapsed time: 0.0378122 s
+MFLOPS: 528.93
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.54
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 4/10
+Elapsed time: 0.0377746 s
+MFLOPS: 529.456
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 5/10
+Elapsed time: 0.0365702 s
+MFLOPS: 546.894
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 6/10
+Elapsed time: 0.0374426 s
+MFLOPS: 534.15
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 7/10
+Elapsed time: 0.0367802 s
+MFLOPS: 543.771
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.39
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 8/10
+Elapsed time: 0.0379438 s
+MFLOPS: 527.095
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.54
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 9/10
+Elapsed time: 0.0378353 s
+MFLOPS: 528.607
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.43
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_05 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05 10000000 512
+RUN 10/10
+Elapsed time: 0.0381025 s
+MFLOPS: 524.899
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.54
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 1/10
+Elapsed time: 0.0378723 s
+MFLOPS: 528.091
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 2/10
+Elapsed time: 0.0371221 s
+MFLOPS: 538.763
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 3/10
+Elapsed time: 0.0385706 s
+MFLOPS: 518.529
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.52
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 4/10
+Elapsed time: 0.038736 s
+MFLOPS: 516.316
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 5/10
+Elapsed time: 0.037015 s
+MFLOPS: 540.322
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 6/10
+Elapsed time: 0.0376745 s
+MFLOPS: 530.863
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.52
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 7/10
+Elapsed time: 0.0385332 s
+MFLOPS: 519.033
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 8/10
+Elapsed time: 0.0381274 s
+MFLOPS: 524.557
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 9/10
+Elapsed time: 0.0376311 s
+MFLOPS: 531.475
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.49
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_06 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06 10000000 512
+RUN 10/10
+Elapsed time: 0.037574 s
+MFLOPS: 532.282
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.034562 s
+MFLOPS: 578.67
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0351163 s
+MFLOPS: 569.537
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.034221 s
+MFLOPS: 584.437
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.52
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0352721 s
+MFLOPS: 567.02
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0430886 s
+MFLOPS: 464.16
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.57
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0347473 s
+MFLOPS: 575.584
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0352068 s
+MFLOPS: 568.073
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0345864 s
+MFLOPS: 578.262
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.54
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0345859 s
+MFLOPS: 578.27
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.71
+
+COMMAND Rdot Rdot_mpfr_C_native_openmp_01_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0352542 s
+MFLOPS: 567.309
+DIFF: 6.083e-09 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 1/10
+Elapsed time: 1.19279 s
+MFLOPS: 16.7674
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.55
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 2/10
+Elapsed time: 1.20312 s
+MFLOPS: 16.6235
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.66
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 3/10
+Elapsed time: 1.15873 s
+MFLOPS: 17.2602
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.41
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 4/10
+Elapsed time: 1.18961 s
+MFLOPS: 16.8122
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.53
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 5/10
+Elapsed time: 1.16822 s
+MFLOPS: 17.1201
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 6/10
+Elapsed time: 1.21365 s
+MFLOPS: 16.4792
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.78
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 7/10
+Elapsed time: 1.18045 s
+MFLOPS: 16.9427
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.59
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 8/10
+Elapsed time: 1.15641 s
+MFLOPS: 17.2949
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 9/10
+Elapsed time: 1.20601 s
+MFLOPS: 16.5836
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.70
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII 10000000 512
+RUN 10/10
+Elapsed time: 1.19197 s
+MFLOPS: 16.779
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.57
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 1.04736 s
+MFLOPS: 19.0956
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.29
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 1.05287 s
+MFLOPS: 18.9957
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.28
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 1.04044 s
+MFLOPS: 19.2226
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.25
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 1.05679 s
+MFLOPS: 18.9253
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.35
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 1.06448 s
+MFLOPS: 18.7885
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.32
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 1.04868 s
+MFLOPS: 19.0716
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.35
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 1.04004 s
+MFLOPS: 19.2301
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.25
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 1.05692 s
+MFLOPS: 18.923
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.38
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 1.05585 s
+MFLOPS: 18.9421
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.31
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 1.03783 s
+MFLOPS: 19.2709
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.09
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.859004 s
+MFLOPS: 23.2828
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.03
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.875742 s
+MFLOPS: 22.8378
+DIFF: 6.694e-146 OK
+WALL_SECONDS 7.98
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.858429 s
+MFLOPS: 23.2984
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.06
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.837707 s
+MFLOPS: 23.8747
+DIFF: 6.694e-146 OK
+WALL_SECONDS 7.88
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.858096 s
+MFLOPS: 23.3074
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.02
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.871965 s
+MFLOPS: 22.9367
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.19
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.84394 s
+MFLOPS: 23.6984
+DIFF: 6.694e-146 OK
+WALL_SECONDS 7.95
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.860148 s
+MFLOPS: 23.2518
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.12
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.878187 s
+MFLOPS: 22.7742
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.14
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.858738 s
+MFLOPS: 23.29
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.04
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.861201 s
+MFLOPS: 23.2234
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.15
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.863009 s
+MFLOPS: 23.1747
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.12
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.859554 s
+MFLOPS: 23.2679
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.15
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.872604 s
+MFLOPS: 22.9199
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.24
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.872742 s
+MFLOPS: 22.9163
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.24
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.863542 s
+MFLOPS: 23.1604
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.17
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.859476 s
+MFLOPS: 23.27
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.18
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.857876 s
+MFLOPS: 23.3134
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.14
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.872093 s
+MFLOPS: 22.9333
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.17
+
+COMMAND Rdot Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.880949 s
+MFLOPS: 22.7028
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.21
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 1/10
+Elapsed time: 1.14305 s
+MFLOPS: 17.497
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.62
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 2/10
+Elapsed time: 1.13945 s
+MFLOPS: 17.5523
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.54
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 3/10
+Elapsed time: 1.15024 s
+MFLOPS: 17.3877
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.66
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 4/10
+Elapsed time: 1.15668 s
+MFLOPS: 17.2909
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.65
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 5/10
+Elapsed time: 1.151 s
+MFLOPS: 17.3762
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.59
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 6/10
+Elapsed time: 1.17319 s
+MFLOPS: 17.0476
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.70
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 7/10
+Elapsed time: 1.13538 s
+MFLOPS: 17.6152
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.49
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 8/10
+Elapsed time: 1.13295 s
+MFLOPS: 17.6531
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.61
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 9/10
+Elapsed time: 1.16154 s
+MFLOPS: 17.2185
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.59
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII 10000000 512
+RUN 10/10
+Elapsed time: 1.13227 s
+MFLOPS: 17.6637
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.59
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 1.08324 s
+MFLOPS: 18.4631
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.47
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 1.06497 s
+MFLOPS: 18.7798
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.38
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 1.08523 s
+MFLOPS: 18.4292
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 1.07803 s
+MFLOPS: 18.5523
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.38
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 1.07273 s
+MFLOPS: 18.6439
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.41
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 1.06237 s
+MFLOPS: 18.8259
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.30
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 1.0879 s
+MFLOPS: 18.384
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.53
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 1.0691 s
+MFLOPS: 18.7073
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.36
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 1.08119 s
+MFLOPS: 18.4981
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.44
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 1.08651 s
+MFLOPS: 18.4076
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 1.06122 s
+MFLOPS: 18.8462
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.26
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 1.08159 s
+MFLOPS: 18.4913
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.34
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 1.07541 s
+MFLOPS: 18.5975
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.30
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 1.07439 s
+MFLOPS: 18.6152
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.32
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 1.0814 s
+MFLOPS: 18.4945
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.28
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 1.07996 s
+MFLOPS: 18.5193
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.28
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 1.07268 s
+MFLOPS: 18.6449
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.34
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 1.06793 s
+MFLOPS: 18.7278
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.32
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 1.05886 s
+MFLOPS: 18.8882
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.29
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 1.07371 s
+MFLOPS: 18.627
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.38
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 1.1905 s
+MFLOPS: 16.7996
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.46
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 1.20135 s
+MFLOPS: 16.648
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.53
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 1.18849 s
+MFLOPS: 16.8281
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.50
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 1.19723 s
+MFLOPS: 16.7052
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 1.19178 s
+MFLOPS: 16.7816
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.41
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 1.1791 s
+MFLOPS: 16.962
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.44
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 1.21 s
+MFLOPS: 16.5289
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.51
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 1.19021 s
+MFLOPS: 16.8038
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 1.20751 s
+MFLOPS: 16.5631
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.48
+
+COMMAND Rdot Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 1.18705 s
+MFLOPS: 16.8485
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.47
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 1/10
+Elapsed time: 1.00189 s
+MFLOPS: 19.9622
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 2/10
+Elapsed time: 1.00709 s
+MFLOPS: 19.8591
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.34
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 3/10
+Elapsed time: 1.009 s
+MFLOPS: 19.8216
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.48
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 4/10
+Elapsed time: 1.00907 s
+MFLOPS: 19.8202
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 5/10
+Elapsed time: 1.017 s
+MFLOPS: 19.6656
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.49
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 6/10
+Elapsed time: 1.02301 s
+MFLOPS: 19.5502
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.49
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 7/10
+Elapsed time: 1.00961 s
+MFLOPS: 19.8097
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.35
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 8/10
+Elapsed time: 1.00247 s
+MFLOPS: 19.9506
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.42
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 9/10
+Elapsed time: 1.00706 s
+MFLOPS: 19.8598
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.47
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII 10000000 512
+RUN 10/10
+Elapsed time: 1.00748 s
+MFLOPS: 19.8516
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.881783 s
+MFLOPS: 22.6813
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.05
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.870009 s
+MFLOPS: 22.9883
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.10
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.866085 s
+MFLOPS: 23.0924
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.16
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.864622 s
+MFLOPS: 23.1315
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.10
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.891455 s
+MFLOPS: 22.4352
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.15
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.869976 s
+MFLOPS: 22.9891
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.11
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.870898 s
+MFLOPS: 22.9648
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.11
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.865191 s
+MFLOPS: 23.1163
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.16
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.871273 s
+MFLOPS: 22.9549
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.12
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.863969 s
+MFLOPS: 23.149
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.15
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.859455 s
+MFLOPS: 23.2706
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.09
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.857194 s
+MFLOPS: 23.332
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.12
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.853605 s
+MFLOPS: 23.43
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.11
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.866049 s
+MFLOPS: 23.0934
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.10
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.860569 s
+MFLOPS: 23.2404
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.07
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.852772 s
+MFLOPS: 23.4529
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.12
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.858568 s
+MFLOPS: 23.2946
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.04
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.849116 s
+MFLOPS: 23.5539
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.03
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.860162 s
+MFLOPS: 23.2514
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.05
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.8548 s
+MFLOPS: 23.3973
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.05
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.860403 s
+MFLOPS: 23.2449
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.14
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.865005 s
+MFLOPS: 23.1213
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.25
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.842709 s
+MFLOPS: 23.733
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.09
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.865911 s
+MFLOPS: 23.0971
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.19
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.858871 s
+MFLOPS: 23.2864
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.26
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.856846 s
+MFLOPS: 23.3414
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.21
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.845512 s
+MFLOPS: 23.6543
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.11
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.85391 s
+MFLOPS: 23.4217
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.21
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.869905 s
+MFLOPS: 22.991
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.25
+
+COMMAND Rdot Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.864169 s
+MFLOPS: 23.1436
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.25
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 1/10
+Elapsed time: 1.12756 s
+MFLOPS: 17.7375
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.56
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 2/10
+Elapsed time: 1.13794 s
+MFLOPS: 17.5756
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.65
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 3/10
+Elapsed time: 1.13552 s
+MFLOPS: 17.613
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.57
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 4/10
+Elapsed time: 1.12707 s
+MFLOPS: 17.7452
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.55
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 5/10
+Elapsed time: 1.12157 s
+MFLOPS: 17.8321
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.53
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 6/10
+Elapsed time: 1.12071 s
+MFLOPS: 17.8458
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.49
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 7/10
+Elapsed time: 1.13513 s
+MFLOPS: 17.6192
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.57
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 8/10
+Elapsed time: 1.14203 s
+MFLOPS: 17.5126
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.54
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 9/10
+Elapsed time: 1.13548 s
+MFLOPS: 17.6137
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.56
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII 10000000 512
+RUN 10/10
+Elapsed time: 1.14278 s
+MFLOPS: 17.5011
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.65
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.994118 s
+MFLOPS: 20.1183
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.19
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 1.00301 s
+MFLOPS: 19.94
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.32
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 1.01246 s
+MFLOPS: 19.7539
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.26
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 1.01229 s
+MFLOPS: 19.7572
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.27
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.995396 s
+MFLOPS: 20.0925
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.16
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 1.0071 s
+MFLOPS: 19.8591
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.30
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.999583 s
+MFLOPS: 20.0083
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.23
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.995725 s
+MFLOPS: 20.0859
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.17
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 1.00437 s
+MFLOPS: 19.913
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.30
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 1.00896 s
+MFLOPS: 19.8224
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.27
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.993285 s
+MFLOPS: 20.1352
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.13
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.996131 s
+MFLOPS: 20.0777
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.18
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 1.01147 s
+MFLOPS: 19.7731
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.25
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 1.00892 s
+MFLOPS: 19.8232
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.26
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.998981 s
+MFLOPS: 20.0204
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.18
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.977945 s
+MFLOPS: 20.4511
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.10
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.993584 s
+MFLOPS: 20.1292
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.20
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 1.00261 s
+MFLOPS: 19.9479
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.29
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 1.00466 s
+MFLOPS: 19.9073
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.31
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 1.00129 s
+MFLOPS: 19.9742
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.21
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 1.01455 s
+MFLOPS: 19.7131
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.38
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.999283 s
+MFLOPS: 20.0144
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.24
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 1.01837 s
+MFLOPS: 19.6393
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.39
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 1.00161 s
+MFLOPS: 19.9678
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.29
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.995833 s
+MFLOPS: 20.0837
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.27
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.998292 s
+MFLOPS: 20.0342
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.27
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 1.01175 s
+MFLOPS: 19.7677
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.39
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 1.00589 s
+MFLOPS: 19.883
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.29
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 1.00104 s
+MFLOPS: 19.9792
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.31
+
+COMMAND Rdot Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 1.00758 s
+MFLOPS: 19.8495
+DIFF: 6.694e-146 OK
+WALL_SECONDS 8.39
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.948168 s
+MFLOPS: 21.0933
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.51
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.952357 s
+MFLOPS: 21.0005
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.943726 s
+MFLOPS: 21.1926
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.49
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.96479 s
+MFLOPS: 20.7299
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.54
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.947732 s
+MFLOPS: 21.103
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.47
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.940593 s
+MFLOPS: 21.2632
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.42
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.95203 s
+MFLOPS: 21.0077
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.47
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.934535 s
+MFLOPS: 21.401
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.957697 s
+MFLOPS: 20.8834
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.48
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.948771 s
+MFLOPS: 21.0799
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.840134 s
+MFLOPS: 23.8057
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.01
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.86079 s
+MFLOPS: 23.2345
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.19
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.864159 s
+MFLOPS: 23.1439
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.14
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.863294 s
+MFLOPS: 23.1671
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.16
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.866475 s
+MFLOPS: 23.082
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.10
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.858841 s
+MFLOPS: 23.2872
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.08
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.858463 s
+MFLOPS: 23.2974
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.11
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.866607 s
+MFLOPS: 23.0785
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.30
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.856535 s
+MFLOPS: 23.3499
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.23
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.86383 s
+MFLOPS: 23.1527
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.30
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.856069 s
+MFLOPS: 23.3626
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.09
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.869692 s
+MFLOPS: 22.9966
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.17
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.860888 s
+MFLOPS: 23.2318
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.11
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.867726 s
+MFLOPS: 23.0487
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.22
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.850998 s
+MFLOPS: 23.5018
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.08
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.867968 s
+MFLOPS: 23.0423
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.15
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.859812 s
+MFLOPS: 23.2609
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.13
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.864617 s
+MFLOPS: 23.1316
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.21
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.867052 s
+MFLOPS: 23.0667
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.19
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.865772 s
+MFLOPS: 23.1008
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.11
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.863501 s
+MFLOPS: 23.1615
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.18
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.859424 s
+MFLOPS: 23.2714
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.08
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.857986 s
+MFLOPS: 23.3104
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.07
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.859184 s
+MFLOPS: 23.2779
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.14
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.873553 s
+MFLOPS: 22.895
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.22
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.852972 s
+MFLOPS: 23.4474
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.08
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.866625 s
+MFLOPS: 23.078
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.02
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.860733 s
+MFLOPS: 23.236
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.10
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.865634 s
+MFLOPS: 23.1044
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.12
+
+COMMAND Rdot Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.860496 s
+MFLOPS: 23.2424
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.09
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.994998 s
+MFLOPS: 20.1005
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.46
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.985645 s
+MFLOPS: 20.2913
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.985829 s
+MFLOPS: 20.2875
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.991366 s
+MFLOPS: 20.1742
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.45
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.989298 s
+MFLOPS: 20.2164
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.47
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.996554 s
+MFLOPS: 20.0692
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.993022 s
+MFLOPS: 20.1405
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.48
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.994858 s
+MFLOPS: 20.1034
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.46
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.992525 s
+MFLOPS: 20.1506
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.43
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.992528 s
+MFLOPS: 20.1506
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.46
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.882851 s
+MFLOPS: 22.6539
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.19
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.889238 s
+MFLOPS: 22.4912
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.11
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.884626 s
+MFLOPS: 22.6084
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.09
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.887364 s
+MFLOPS: 22.5387
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.14
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.862452 s
+MFLOPS: 23.1897
+DIFF: 9.572e-146 OK
+WALL_SECONDS 7.84
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.881355 s
+MFLOPS: 22.6923
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.01
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.892766 s
+MFLOPS: 22.4023
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.08
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.892779 s
+MFLOPS: 22.4019
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.04
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.891432 s
+MFLOPS: 22.4358
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.22
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.887734 s
+MFLOPS: 22.5293
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.14
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.903374 s
+MFLOPS: 22.1392
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.03
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.908975 s
+MFLOPS: 22.0028
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.25
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.896763 s
+MFLOPS: 22.3024
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.08
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.905462 s
+MFLOPS: 22.0882
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.16
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.91131 s
+MFLOPS: 21.9464
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.16
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.903947 s
+MFLOPS: 22.1252
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.16
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.90677 s
+MFLOPS: 22.0563
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.16
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.895582 s
+MFLOPS: 22.3318
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.18
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.917056 s
+MFLOPS: 21.8089
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.17
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.901881 s
+MFLOPS: 22.1759
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.17
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.848405 s
+MFLOPS: 23.5736
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.17
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.848219 s
+MFLOPS: 23.5788
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.05
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.850983 s
+MFLOPS: 23.5022
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.13
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.846772 s
+MFLOPS: 23.6191
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.04
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.852464 s
+MFLOPS: 23.4614
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.07
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.853648 s
+MFLOPS: 23.4289
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.10
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.828494 s
+MFLOPS: 24.1402
+DIFF: 9.572e-146 OK
+WALL_SECONDS 7.88
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.847621 s
+MFLOPS: 23.5955
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.13
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.856455 s
+MFLOPS: 23.3521
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.13
+
+COMMAND Rdot Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.844048 s
+MFLOPS: 23.6953
+DIFF: 9.572e-146 OK
+WALL_SECONDS 8.07
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0459902 s
+MFLOPS: 434.876
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.57
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0440435 s
+MFLOPS: 454.097
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.043631 s
+MFLOPS: 458.39
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0433563 s
+MFLOPS: 461.294
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.52
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0456166 s
+MFLOPS: 438.437
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.55
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0455217 s
+MFLOPS: 439.351
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.54
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0442289 s
+MFLOPS: 452.193
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.55
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0450858 s
+MFLOPS: 443.598
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.56
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0433656 s
+MFLOPS: 461.195
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0440916 s
+MFLOPS: 453.601
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.56
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0426645 s
+MFLOPS: 468.774
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0429061 s
+MFLOPS: 466.134
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0499038 s
+MFLOPS: 400.771
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0432114 s
+MFLOPS: 462.84
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0425922 s
+MFLOPS: 469.57
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0436478 s
+MFLOPS: 458.214
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.38
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0409738 s
+MFLOPS: 488.117
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0421648 s
+MFLOPS: 474.329
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.54
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0435151 s
+MFLOPS: 459.611
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.0428392 s
+MFLOPS: 466.862
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.035589 s
+MFLOPS: 561.972
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0367579 s
+MFLOPS: 544.101
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0364434 s
+MFLOPS: 548.796
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0368154 s
+MFLOPS: 543.25
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0370926 s
+MFLOPS: 539.191
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.35
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0362986 s
+MFLOPS: 550.986
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.03585 s
+MFLOPS: 557.881
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0362444 s
+MFLOPS: 551.81
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0352409 s
+MFLOPS: 567.522
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0376639 s
+MFLOPS: 531.013
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.39
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0434187 s
+MFLOPS: 460.631
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.036526 s
+MFLOPS: 547.556
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.0376596 s
+MFLOPS: 531.074
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.0355818 s
+MFLOPS: 562.084
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.03747 s
+MFLOPS: 533.761
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.036333 s
+MFLOPS: 550.464
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0370446 s
+MFLOPS: 539.89
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.38
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0355494 s
+MFLOPS: 562.597
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0362843 s
+MFLOPS: 551.203
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.35
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0370281 s
+MFLOPS: 540.13
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0451577 s
+MFLOPS: 442.892
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0465272 s
+MFLOPS: 429.856
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.52
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.048021 s
+MFLOPS: 416.484
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.59
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0472079 s
+MFLOPS: 423.658
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.58
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0455723 s
+MFLOPS: 438.863
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0461479 s
+MFLOPS: 433.389
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0449127 s
+MFLOPS: 445.309
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0454478 s
+MFLOPS: 440.066
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.56
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0469812 s
+MFLOPS: 425.702
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.57
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0473493 s
+MFLOPS: 422.392
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.52
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0431794 s
+MFLOPS: 463.183
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0436843 s
+MFLOPS: 457.83
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.35
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0431869 s
+MFLOPS: 463.104
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0424205 s
+MFLOPS: 471.471
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0432195 s
+MFLOPS: 462.754
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0443346 s
+MFLOPS: 451.115
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0427731 s
+MFLOPS: 467.583
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0527595 s
+MFLOPS: 379.078
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0443807 s
+MFLOPS: 450.647
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.0438607 s
+MFLOPS: 455.989
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.043724 s
+MFLOPS: 457.415
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.36
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0435544 s
+MFLOPS: 459.196
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0434988 s
+MFLOPS: 459.782
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.042622 s
+MFLOPS: 469.241
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0446236 s
+MFLOPS: 448.193
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0495104 s
+MFLOPS: 403.956
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0437496 s
+MFLOPS: 457.147
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0425086 s
+MFLOPS: 470.493
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0415562 s
+MFLOPS: 481.276
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0429525 s
+MFLOPS: 465.63
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0495281 s
+MFLOPS: 403.811
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0506077 s
+MFLOPS: 395.197
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.40
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.0575296 s
+MFLOPS: 347.647
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.0491685 s
+MFLOPS: 406.765
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0478774 s
+MFLOPS: 417.734
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0469936 s
+MFLOPS: 425.59
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.37
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0470335 s
+MFLOPS: 425.229
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.04895 s
+MFLOPS: 408.58
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0489055 s
+MFLOPS: 408.952
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0483578 s
+MFLOPS: 413.583
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0430537 s
+MFLOPS: 464.536
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.59
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0398259 s
+MFLOPS: 502.185
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.61
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.0404541 s
+MFLOPS: 494.387
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.67
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0429058 s
+MFLOPS: 466.137
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.67
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0400035 s
+MFLOPS: 499.957
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.60
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0399929 s
+MFLOPS: 500.089
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.57
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0400145 s
+MFLOPS: 499.818
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.55
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0398213 s
+MFLOPS: 502.244
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.67
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0413226 s
+MFLOPS: 483.997
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.56
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0403383 s
+MFLOPS: 495.807
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.67
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0370411 s
+MFLOPS: 539.94
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0371363 s
+MFLOPS: 538.557
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.42
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0403626 s
+MFLOPS: 495.508
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.45
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0395864 s
+MFLOPS: 505.225
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.44
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0464258 s
+MFLOPS: 430.795
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.39
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0391891 s
+MFLOPS: 510.346
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0385701 s
+MFLOPS: 518.537
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0418136 s
+MFLOPS: 478.313
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.43
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0368565 s
+MFLOPS: 542.645
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.0389884 s
+MFLOPS: 512.973
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.41
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0397889 s
+MFLOPS: 502.653
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0375007 s
+MFLOPS: 533.324
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.36
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0377961 s
+MFLOPS: 529.155
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0379756 s
+MFLOPS: 526.653
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.40
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0382016 s
+MFLOPS: 523.538
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.38
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0383271 s
+MFLOPS: 521.824
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.36
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0392295 s
+MFLOPS: 509.821
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0384517 s
+MFLOPS: 520.133
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.36
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0383069 s
+MFLOPS: 522.099
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.37
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0397677 s
+MFLOPS: 502.92
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0405727 s
+MFLOPS: 492.942
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.38
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0383624 s
+MFLOPS: 521.343
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.37
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.038946 s
+MFLOPS: 513.532
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.36
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.0410392 s
+MFLOPS: 487.339
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.36
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0376936 s
+MFLOPS: 530.594
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.36
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0357536 s
+MFLOPS: 559.385
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.42
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0396378 s
+MFLOPS: 504.568
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.38
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0382733 s
+MFLOPS: 522.557
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.43
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0360697 s
+MFLOPS: 554.483
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.43
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0397517 s
+MFLOPS: 503.123
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.42
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0440328 s
+MFLOPS: 454.207
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0448702 s
+MFLOPS: 445.73
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.56
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.049659 s
+MFLOPS: 402.747
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.53
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0480314 s
+MFLOPS: 416.395
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.60
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0457351 s
+MFLOPS: 437.3
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.59
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0455758 s
+MFLOPS: 438.829
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.61
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.058633 s
+MFLOPS: 341.105
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.69
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0481466 s
+MFLOPS: 415.398
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.59
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0450952 s
+MFLOPS: 443.506
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.56
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0451832 s
+MFLOPS: 442.642
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.60
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0416561 s
+MFLOPS: 480.121
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.44
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0415676 s
+MFLOPS: 481.144
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.49
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0408873 s
+MFLOPS: 489.15
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.05005 s
+MFLOPS: 399.601
+DIFF: 7.664e-146 OK
+WALL_SECONDS 7.36
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0410873 s
+MFLOPS: 486.768
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0402314 s
+MFLOPS: 497.124
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0458107 s
+MFLOPS: 436.579
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0478741 s
+MFLOPS: 417.762
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0414406 s
+MFLOPS: 482.618
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.0400136 s
+MFLOPS: 499.83
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0412871 s
+MFLOPS: 484.413
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0403579 s
+MFLOPS: 495.566
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0399193 s
+MFLOPS: 501.011
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0407339 s
+MFLOPS: 490.992
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.21
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0403647 s
+MFLOPS: 495.482
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0408811 s
+MFLOPS: 489.223
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.040338 s
+MFLOPS: 495.811
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0390217 s
+MFLOPS: 512.535
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0403091 s
+MFLOPS: 496.166
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0404165 s
+MFLOPS: 494.847
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.21
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0411228 s
+MFLOPS: 486.348
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0414658 s
+MFLOPS: 482.325
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.040787 s
+MFLOPS: 490.352
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.35
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.0403003 s
+MFLOPS: 496.274
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0399138 s
+MFLOPS: 501.079
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0409761 s
+MFLOPS: 488.089
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.21
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0418372 s
+MFLOPS: 478.044
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0411181 s
+MFLOPS: 486.404
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0414471 s
+MFLOPS: 482.543
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.35
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0397874 s
+MFLOPS: 502.672
+DIFF: 7.633e-146 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0509558 s
+MFLOPS: 392.497
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0409761 s
+MFLOPS: 488.089
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.42
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.0420108 s
+MFLOPS: 476.068
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.45
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0450298 s
+MFLOPS: 444.15
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.50
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0392221 s
+MFLOPS: 509.917
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.39
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0409896 s
+MFLOPS: 487.929
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0410441 s
+MFLOPS: 487.281
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0436368 s
+MFLOPS: 458.328
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0441612 s
+MFLOPS: 452.886
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.43
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0401837 s
+MFLOPS: 497.714
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.48
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0369404 s
+MFLOPS: 541.412
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0358749 s
+MFLOPS: 557.492
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0355848 s
+MFLOPS: 562.038
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0364384 s
+MFLOPS: 548.871
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0355046 s
+MFLOPS: 563.307
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0362355 s
+MFLOPS: 551.945
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0343364 s
+MFLOPS: 582.471
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0351926 s
+MFLOPS: 568.302
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0375934 s
+MFLOPS: 532.009
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.0415524 s
+MFLOPS: 481.32
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0367183 s
+MFLOPS: 544.687
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0445723 s
+MFLOPS: 448.709
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0366773 s
+MFLOPS: 545.296
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.038506 s
+MFLOPS: 519.4
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.036836 s
+MFLOPS: 542.947
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.21
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0379507 s
+MFLOPS: 527
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.21
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0425035 s
+MFLOPS: 470.549
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0379257 s
+MFLOPS: 527.347
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0371339 s
+MFLOPS: 538.591
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0380971 s
+MFLOPS: 524.974
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.035631 s
+MFLOPS: 561.309
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.18
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0558385 s
+MFLOPS: 358.176
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.0361645 s
+MFLOPS: 553.029
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.0363464 s
+MFLOPS: 550.26
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0369134 s
+MFLOPS: 541.809
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0352758 s
+MFLOPS: 566.96
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0367456 s
+MFLOPS: 544.283
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0347256 s
+MFLOPS: 575.943
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.18
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0383644 s
+MFLOPS: 521.316
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0355041 s
+MFLOPS: 563.315
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0402204 s
+MFLOPS: 497.26
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.39
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0395276 s
+MFLOPS: 505.975
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.0412874 s
+MFLOPS: 484.409
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0405189 s
+MFLOPS: 493.597
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0410394 s
+MFLOPS: 487.336
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.42
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.040656 s
+MFLOPS: 491.933
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0411491 s
+MFLOPS: 486.037
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.49
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0400215 s
+MFLOPS: 499.731
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.46
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0407436 s
+MFLOPS: 490.875
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.42
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0403452 s
+MFLOPS: 495.722
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.47
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0387398 s
+MFLOPS: 516.265
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0393319 s
+MFLOPS: 508.493
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0384399 s
+MFLOPS: 520.293
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.37
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0388509 s
+MFLOPS: 514.788
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0375773 s
+MFLOPS: 532.236
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0381586 s
+MFLOPS: 524.128
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0390058 s
+MFLOPS: 512.744
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0399115 s
+MFLOPS: 501.109
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.038454 s
+MFLOPS: 520.102
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.0381608 s
+MFLOPS: 524.097
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0369571 s
+MFLOPS: 541.169
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.040748 s
+MFLOPS: 490.821
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0380244 s
+MFLOPS: 525.978
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0400199 s
+MFLOPS: 499.752
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0381235 s
+MFLOPS: 524.61
+DIFF: 7.602e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0378415 s
+MFLOPS: 528.52
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.037886 s
+MFLOPS: 527.899
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0382823 s
+MFLOPS: 522.435
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0372828 s
+MFLOPS: 536.44
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0373719 s
+MFLOPS: 535.161
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0351449 s
+MFLOPS: 569.073
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.21
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0366358 s
+MFLOPS: 545.914
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.0362352 s
+MFLOPS: 551.949
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.037064 s
+MFLOPS: 539.606
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0401519 s
+MFLOPS: 498.109
+DIFF: 7.508e-146 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0380982 s
+MFLOPS: 524.96
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0372436 s
+MFLOPS: 537.005
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0377048 s
+MFLOPS: 530.436
+DIFF: 7.57e-146 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0369996 s
+MFLOPS: 540.546
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0378715 s
+MFLOPS: 528.102
+DIFF: 7.539e-146 OK
+WALL_SECONDS 7.25

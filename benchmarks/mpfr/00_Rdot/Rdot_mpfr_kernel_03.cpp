@@ -30,8 +30,6 @@
 #include <chrono>
 #include <gmp.h>
 
-#include "mpfr_operation_counter.hpp"
-
 #include "mpfrxx_mkII.h"
 using namespace mpfrxx;
 
@@ -72,7 +70,6 @@ void clear_mpfr_vec(mpfr_t *vec, int n) {
 }
 
 int main(int argc, char **argv) {
-    benchmark_allocator_counter::install();
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
@@ -103,11 +100,9 @@ int main(int argc, char **argv) {
         vec1_mpfr_class[i] = mpfr_class(vec1[i]);
         vec2_mpfr_class[i] = mpfr_class(vec2[i]);
     }
-    benchmark_mpfr_operation_counter::begin_kernel();
     auto start = std::chrono::high_resolution_clock::now();
     _ans = _Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
     auto end = std::chrono::high_resolution_clock::now();
-    benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
     mpfr_class ans = Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
 

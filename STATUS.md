@@ -1,3 +1,48 @@
+Post-phase MPFR Rdot README cleanup:
+DONE
+
+Implemented features:
+- Re-read `AGENTS.md` before updating the benchmark documentation.
+- Rewrote `benchmarks/mpfr/00_Rdot/README.md` so it only documents the
+  current MPFR Rdot `01..06` benchmark layout and the repeat-10
+  `20260517_090826` result set.
+- Removed stale README references to the old 20260514 runs, the removed
+  `kernel_07` experiments, and allocation-counter based analysis.
+- Deleted stale MPFR Rdot result directories, preserving only the current
+  `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_090826`
+  recorded run.
+- Kept the analysis focused on hotpath disassembly, current repeat-10
+  MFLOPS, memory-bandwidth estimates, and the MPFR-vs-GMP rounding-delivery
+  difference.
+
+Tests added:
+- No test source files were added; this is documentation and benchmark-result
+  cleanup.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,220p' AGENTS.md`
+- `find benchmarks/mpfr/00_Rdot -maxdepth 3 -type d -o -type f | sort`
+- `find benchmarks/mpfr/results_raw benchmarks/mpfr/00_Rdot/results_raw -maxdepth 1 -type d | sort`
+- `rm -rf benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260516_230953 benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_081907 benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_20260514 benchmarks/mpfr/results_raw/rdot_n1e7_512_aligned_repeat10_omp32_20260514 benchmarks/mpfr/results_raw/rdot_n1e7_512_repeat10_20260514 benchmarks/mpfr/results_raw/rdot_n1e8_512_01_07_repeat10_omp32_20260514`
+- `rg -n "20260514|20260516_230953|20260517_081907|kernel_07|01-07|Timed allocs|BENCH_ALLOC|allocation count|rdot_n1e" benchmarks/mpfr/00_Rdot/README.md benchmarks/mpfr/00_Rdot/results_raw benchmarks/mpfr/results_raw --glob '!*.png'`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Stale-reference scan: PASS, no matches remained in the MPFR Rdot README or
+  retained MPFR Rdot result directories.
+- `git diff --check`: PASS after removing trailing whitespace from a blank
+  line in `AGENTS.md`.
+- `ctest --test-dir build --output-on-failure`: PASS, 157/157 tests passed.
+
+Known issues:
+- The README rewrite is documentation-only and does not change benchmark
+  executables.
+
 Post-phase MPFR Rdot GMP comparison documentation:
 DONE
 
