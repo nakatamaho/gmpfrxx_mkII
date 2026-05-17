@@ -29,22 +29,23 @@
 
 gmp_randstate_t state;
 
-void _Raxpy(int64_t n, const mpfr_t alpha, mpfr_t *x, int64_t incx, mpfr_t *y, int64_t incy) {
+void _Raxpy(int64_t n, const mpfr_class &alpha, mpfr_class *x, int64_t incx, mpfr_class *y, int64_t incy) {
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    mpfr_t temp;
-    mpfr_init(temp);
-    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+    const mpfr_prec_t precision = n > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
+    const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
+    const mpfrxx::evaluation_context context{precision, rounding};
+    mpfr_class temp(0.0, precision);
+    auto temp_context = mpfrxx::with_context(temp, context);
 
     for (int64_t i = 0; i < n; ++i) {
-        mpfr_mul(temp, alpha, x[i], rnd);
-        mpfr_add(y[i], y[i], temp, rnd);
+        temp_context = alpha * x[i];
+        auto y_context = mpfrxx::with_context(y[i], context);
+        y_context += temp;
     }
-
-    mpfr_clear(temp);
 }
 
 int main(int argc, char **argv) {
@@ -61,22 +62,24 @@ int main(int argc, char **argv) {
     mpfr_set_default_prec(prec);
     mpfrxx::set_default_precision_bits(prec);
 
-    mpfr_t *x = new mpfr_t[N];
-    mpfr_t *y = new mpfr_t[N];
-    mpfr_t alpha;
-    mpfr_init2(alpha, prec);
-    mpfr_urandomb(alpha, state);
+    mpfr_t alpha_raw;
+    mpfr_init2(alpha_raw, prec);
+    mpfr_urandomb(alpha_raw, state);
 
-    init_mpfr_vec(x, N, prec);
-    init_mpfr_vec(y, N, prec);
+    mpfr_t *x_raw = new mpfr_t[N];
+    mpfr_t *y_raw = new mpfr_t[N];
+    init_mpfr_vec(x_raw, N, prec);
+    init_mpfr_vec(y_raw, N, prec);
 
-    mpfr_class *x_mpfr_class = new mpfr_class[N];
-    mpfr_class *y_mpfr_class = new mpfr_class[N];
-    mpfr_class alpha_class = mpfr_class(alpha);
+    mpfr_class *x = new mpfr_class[N];
+    mpfr_class *y = new mpfr_class[N];
+    mpfr_class *yy = new mpfr_class[N];
+    mpfr_class alpha = mpfr_class(alpha_raw);
 
     for (int64_t i = 0; i < N; ++i) {
-        x_mpfr_class[i] = mpfr_class(x[i]);
-        y_mpfr_class[i] = mpfr_class(y[i]);
+        x[i] = mpfr_class(x_raw[i]);
+        y[i] = mpfr_class(y_raw[i]);
+        yy[i] = y[i];
     }
 
     benchmark_mpfr_operation_counter::begin_kernel();
@@ -85,22 +88,23 @@ int main(int argc, char **argv) {
     auto end = std::chrono::high_resolution_clock::now();
     benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
-    Raxpy(N, alpha_class, x_mpfr_class, 1, y_mpfr_class, 1);
+    Raxpy(N, alpha, x, 1, yy, 1);
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     const double mflops = (2.0 * double(N)) / (elapsed_seconds.count() * MFLOPS);
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, y_mpfr_class, N));
+    print_l1_result(l1_norm_difference(y, yy, N));
 
-    clear_mpfr_vec(x, N);
-    clear_mpfr_vec(y, N);
-    mpfr_clear(alpha);
+    clear_mpfr_vec(x_raw, N);
+    clear_mpfr_vec(y_raw, N);
+    mpfr_clear(alpha_raw);
+    delete[] x_raw;
+    delete[] y_raw;
     delete[] x;
     delete[] y;
-    delete[] x_mpfr_class;
-    delete[] y_mpfr_class;
+    delete[] yy;
 
     return EXIT_SUCCESS;
 }

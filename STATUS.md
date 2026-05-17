@@ -1,3 +1,63 @@
+Post-phase MPFR Raxpy repeat-10 regeneration:
+DONE
+
+Implemented features:
+- Re-read the project instructions and used the MPFR Rdot README structure as
+  the documentation template for MPFR Raxpy.
+- Regenerated the MPFR Raxpy repeat-10 benchmark data with the new target
+  matrix after aligning the C native, wrapper, OpenMP, FMA, stable-rounding,
+  fixed-precision fastpath, and explicit-context targets.
+- Removed the tracked stale MPFR Raxpy `20260515` result directories from the
+  current result set.
+- Rewrote `benchmarks/mpfr/01_Raxpy/README.md` from the current
+  `20260517_144507` data only, including inline plots, headline results,
+  serial/OpenMP interpretation tables, folded tables sorted by max and average
+  MFLOPS, memory-bandwidth estimates, hotpath disassembly, GMP comparison, and
+  lessons learned.
+
+Tests added:
+- No CTest test source files were added; this phase updates benchmarks,
+  generated benchmark data, and documentation.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260517_144507/`
+- `STATUS.md`
+
+Exact commands run:
+- `git rm -r benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_512_repeat10_20260515_153432 benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_201821`
+- Custom Raxpy-only repeat loop over all 43 MPFR Raxpy variants with
+  `N=10000000`, `precision=512`, `repeat=10`, `OMP_NUM_THREADS=32`,
+  `OMP_PLACES=cores`, and `OMP_PROC_BIND=spread`, writing
+  `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260517_144507/benchmark_raxpy_mpfr_n10000000_p512_repeat10.log`.
+- `python3` parser and plot generator writing
+  `raw_raxpy_mpfr_n10000000_p512_repeat10.csv`,
+  `summary_raxpy_mpfr_n10000000_p512_repeat10.csv`,
+  `raxpy_mpfr_n10000000_p512_repeat10_serial.png`, and
+  `raxpy_mpfr_n10000000_p512_repeat10_openmp.png`.
+- `objdump -d -C` and `nm -C` on representative C native, wrapper FMA,
+  context, and OpenMP MPFR Raxpy targets to capture hotpath disassembly.
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Repeat-10 benchmark: PASS, all 430 timed runs reported `OK`.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+- Best serial wrapper average: `kernel_01_mkII_STABLE_ROUNDING_FMA`,
+  `22.860 MFLOPS`.
+- Best OpenMP wrapper average and maximum overall:
+  `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA`, `416.851 average`,
+  `423.582 max MFLOPS`.
+
+Known issues:
+- One unrelated untracked old MPFR Raxpy result directory remains in the
+  worktree and was not modified:
+  `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_n1e7_1024_repeat10_20260515_200214/`.
+- The documented bandwidth numbers are logical estimates, not hardware-counter
+  measurements.
+
 Post-phase MPFR Rdot README cleanup:
 DONE
 
@@ -1508,6 +1568,102 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+## Phase: MPFR Raxpy Kernel Matrix Alignment
+
+Implemented features:
+- Split MPFR Raxpy C native FMA and non-FMA sources into independent
+  translation units.  The C native files no longer share implementation by
+  defining `MPFR_C_NATIVE_USE_FMA` and including another `.cpp`.
+- Added `Raxpy_mpfr_kernel_openmp_04.cpp` so the OpenMP kernel matrix has a
+  direct counterpart for serial `kernel_04`, with a loop-local product object
+  inside the parallel loop.
+- Added explicit-context MPFR Raxpy wrappers:
+  - `Raxpy_mpfr_kernel_05.cpp`: direct `y[i] += alpha * x[i]` through
+    `mpfrxx::with_context`.
+  - `Raxpy_mpfr_kernel_06.cpp`: reusable product object through
+    `mpfrxx::with_context`.
+  - `Raxpy_mpfr_kernel_openmp_05.cpp`: OpenMP direct explicit-context form.
+  - `Raxpy_mpfr_kernel_openmp_06.cpp`: OpenMP reusable-product
+    explicit-context form.
+- Aligned `add_mpfr_raxpy_kernel_variants()` with the MPFR Rdot cumulative
+  fastpath ladder:
+  `mkII`, `mkII_STABLE_ROUNDING`, `mkII_STABLE_ROUNDING_FMA`, and
+  `mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`.
+- Updated the MPFR benchmark runner's Raxpy executable list to include
+  fixed-precision fastpath variants and the new context kernels.
+
+Missing features:
+- MPFR Raxpy repeat-10 benchmark data and README tables have not yet been
+  regenerated for the new target matrix.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05.cpp`
+- `benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `rg -n "Raxpy_mpfr|add_mpfr_raxpy|MPFR_C_NATIVE_USE_FMA|kernel_07|with_context|evaluation_context|run_mpfr_benchmarks|01_Raxpy" benchmarks/mpfr/01_Raxpy benchmarks/mpfr/00_Rdot benchmarks/CMakeLists.txt benchmarks/common/run_mpfr_benchmarks.sh STATUS.md`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07.cpp`
+- `sed -n '1,240p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08.cpp`
+- `sed -n '120,155p' benchmarks/CMakeLists.txt`
+- `sed -n '1,220p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA.cpp`
+- `sed -n '1,240p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01.cpp`
+- `sed -n '1,120p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01.cpp`
+- `sed -n '1,210p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02.cpp`
+- `sed -n '1,210p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03.cpp`
+- `sed -n '1,230p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01.cpp`
+- `sed -n '1,230p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03.cpp`
+- `sed -n '230,295p' benchmarks/CMakeLists.txt`
+- `sed -n '125,215p' benchmarks/common/run_mpfr_benchmarks.sh`
+- `sed -n '1,220p' benchmarks/mpfr/01_Raxpy/Raxpy_common.hpp`
+- `sed -n '1,130p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07.cpp`
+- `sed -n '1,140p' benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08.cpp`
+- `tail -n 120 STATUS.md`
+- `sed -n '1,220p' benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04.cpp`
+- `git diff -- benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01.cpp benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA.cpp benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01.cpp benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA.cpp`
+- `ls benchmarks/mpfr/01_Raxpy`
+- `rg -n "MPFR_C_NATIVE_USE_FMA|Raxpy_mpfr_kernel_0[5-6]|Raxpy_mpfr_kernel_openmp_0[4-6]|STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH" benchmarks/mpfr/01_Raxpy benchmarks/CMakeLists.txt benchmarks/common/run_mpfr_benchmarks.sh`
+- `git diff --stat`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_01_FMA Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_01_FMA Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH Raxpy_mpfr_kernel_05_mkII Raxpy_mpfr_kernel_05_mkII_FMA Raxpy_mpfr_kernel_06_mkII Raxpy_mpfr_kernel_openmp_05_mkII Raxpy_mpfr_kernel_openmp_05_mkII_FMA Raxpy_mpfr_kernel_openmp_06_mkII`
+- `/bin/bash -lc 'set -euo pipefail; exe_dir=build_bench_release/benchmarks/mpfr/01_Raxpy; for exe in Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_01_FMA Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_01_FMA Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH Raxpy_mpfr_kernel_05_mkII Raxpy_mpfr_kernel_05_mkII_FMA Raxpy_mpfr_kernel_06_mkII Raxpy_mpfr_kernel_openmp_05_mkII Raxpy_mpfr_kernel_openmp_05_mkII_FMA Raxpy_mpfr_kernel_openmp_06_mkII; do echo "== $exe =="; OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close "$exe_dir/$exe" 128 512 | tail -n 4; done'`
+- `sed -n '1,120p' benchmarks/common/run_mpfr_benchmarks.sh`
+- `sed -n '250,285p' benchmarks/common/run_mpfr_benchmarks.sh`
+- `sed -n '1,260p' benchmarks/mpfr/00_Rdot/plot_repeat_summary.py`
+- `sed -n '260,360p' benchmarks/mpfr/00_Rdot/plot_repeat_summary.py`
+- `cmake --build build_bench_release -j`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Release configure: PASS.
+- Targeted MPFR Raxpy build: PASS.
+- Smoke run for new/changed MPFR Raxpy native and wrapper kernels: PASS.
+  All tested executables reported `Result OK`.
+- Full release build: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- The MPFR Raxpy README and checked-in repeat-10 data still describe the
+  earlier target matrix.  They need a fresh benchmark sweep before performance
+  conclusions are updated.
 
 ## Phase: MPFR Rdot Pointer-Inclusive Bandwidth Documentation
 

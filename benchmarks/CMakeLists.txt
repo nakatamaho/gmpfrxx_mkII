@@ -139,8 +139,8 @@ endfunction()
 function(add_mpfr_raxpy_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FMA)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA)
+    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH)
 endfunction()
 
 function(add_mpfr_native_benchmark subdir source target)
@@ -279,12 +279,26 @@ add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_03.cpp
     Raxpy_mpfr_kernel_03)
 add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_04.cpp
     Raxpy_mpfr_kernel_04)
+add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_05.cpp
+    Raxpy_mpfr_kernel_05 mkII)
+add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_05.cpp
+    Raxpy_mpfr_kernel_05 mkII_FMA)
+add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_06.cpp
+    Raxpy_mpfr_kernel_06 mkII)
 add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_01.cpp
     Raxpy_mpfr_kernel_openmp_01)
 add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_02.cpp
     Raxpy_mpfr_kernel_openmp_02)
 add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_03.cpp
     Raxpy_mpfr_kernel_openmp_03)
+add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_04.cpp
+    Raxpy_mpfr_kernel_openmp_04)
+add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_05.cpp
+    Raxpy_mpfr_kernel_openmp_05 mkII)
+add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_05.cpp
+    Raxpy_mpfr_kernel_openmp_05 mkII_FMA)
+add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_06.cpp
+    Raxpy_mpfr_kernel_openmp_06 mkII)
 
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_01.cpp
     Rgemv_mpfr_C_native_01)

@@ -8,9 +8,11 @@ This directory benchmarks the MPFR real AXPY operation
 y_i = y_i + alpha * x_i
 ```
 
-with random `mpfr_t` and `mpfrxx::mpfr_class` data at a fixed precision.  The
-kernel numbering follows the GMP `01_Raxpy` benchmark where the same source
-shape exists.
+with fixed-precision `mpfr_t` and `mpfrxx::mpfr_class` data.  The benchmark is
+kept parallel to `benchmarks/gmp/01_Raxpy/` and follows the documentation style
+used by `benchmarks/mpfr/00_Rdot/`: every kernel shape is a standalone
+translation unit, the timed function is `_Raxpy()`, and the measured ranking is
+explained with hotpath disassembly rather than allocation counters.
 
 ## Build
 
@@ -21,21 +23,13 @@ cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release
 cmake --build build_bench_release -j
 ```
 
-The executables are created under:
+Executables are created under:
 
 ```text
 build_bench_release/benchmarks/mpfr/01_Raxpy/
 ```
 
-## Run
-
-Run the MPFR benchmark set through the common MPFR runner:
-
-```bash
-benchmarks/common/run_mpfr_benchmarks.sh build_bench_release 512
-```
-
-Individual executables take:
+Each executable takes:
 
 ```text
 <vector size> <precision>
@@ -44,68 +38,72 @@ Individual executables take:
 Example:
 
 ```bash
-build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
-```
-
-For OpenMP repeat runs, keep affinity explicit:
-
-```bash
-OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
-build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII \
-    10000000 512
+build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
 ```
 
 ## Kernel Shapes
 
-The timed body is `_Raxpy()` in each benchmark executable.  The `Raxpy()`
-helper in `Raxpy.hpp` is the post-run correctness reference.
+Kernel numbers `01..04` intentionally match GMP Raxpy.  MPFR-specific
+explicit-context kernels are added as `05` and `06`.
 
-| Variant | Timed source shape | Temporary policy | GMP parallel |
-|---------|--------------------|------------------|--------------|
-| `C_native_01` | `mpfr_mul(temp, alpha, x[i], rnd); mpfr_add(y[i], y[i], temp, rnd);` | Raw `mpfr_t` product object initialized once. | Same role as GMP raw C native. |
-| `C_native_01_FMA` | `mpfr_fma(y[i], alpha, x[i], y[i], rnd);` | No product temporary. | MPFR-specific baseline; GMP `mpf_t` has no matching FMA API. |
-| `C_native_packed_custom_layout_FMA` | `mpfr_fma(packed_y[i], alpha, packed_x[i], packed_y[i], rnd);` | MPFR custom layout with each header and significand stored in one flat allocation. | No GMP parallel; this is an MPFR layout experiment. |
-| `kernel_01` | `y[i] += alpha * x[i];` | Expression-first source shape. | Matches GMP `kernel_01`. |
-| `kernel_02` | `temp = alpha; temp *= x[i]; y[i] += temp;` | One reusable product object, assigned from `alpha` then multiplied in place. | Matches GMP `kernel_02`. |
-| `kernel_03` | `temp = alpha * x[i]; y[i] += temp;` | One reusable product object assigned from the product expression. | Matches GMP `kernel_03`. |
-| `kernel_04` | `mpfr_class temp = alpha * x[i]; y[i] += temp;` | Loop-local product object. | Matches GMP `kernel_04`; intentionally allocation-heavy. |
-| `kernel_openmp_01` | `y[i] += alpha * x[i];` inside `#pragma omp parallel for schedule(static)`. | One independent `y[i]` update per iteration. | Matches GMP OpenMP `kernel_01`. |
-| `kernel_openmp_02` | `temp = alpha; temp *= x[i]; y[i] += temp;` inside `#pragma omp parallel for private(temp) schedule(static)`. | One private reusable product object per thread. | Matches GMP OpenMP `kernel_02`. |
-| `kernel_openmp_03` | `temp = alpha * x[i]; y[i] += temp;` inside `#pragma omp parallel` plus `omp for schedule(static)`. | One reusable product object per thread, assigned from the expression. | Matches GMP OpenMP `kernel_03`. |
+| Kernel | Timed source shape | Purpose |
+|--------|--------------------|---------|
+| `01` | `y[i] += alpha * x[i]` | Expression form.  FMA builds can lower this source to one `mpfr_fma` call per element. |
+| `02` | `temp = alpha; temp *= x[i]; y[i] += temp;` | One product object initialized outside the loop and reused via copy-then-multiply. |
+| `03` | `temp = alpha * x[i]; y[i] += temp;` | One product object initialized outside the loop and assigned from the product expression. |
+| `04` | `mpfr_class temp = alpha * x[i]; y[i] += temp;` | Loop-local product object; intentionally expensive control. |
+| `05` | `with_context(y[i], ctx) += alpha * x[i]` | Context-bound `01`; rounding is captured before the loop.  FMA builds can lower this to `mpfr_fma`. |
+| `06` | `with_context(temp, ctx) = alpha * x[i]; with_context(y[i], ctx) += temp;` | Context-bound `03`; one product object is reused and loop operations use cached context rounding. |
 
-## Variant Suffixes
+Raw C baselines use independent source files:
 
-Each wrapper kernel is built as:
+```text
+Raxpy_mpfr_C_native_01
+Raxpy_mpfr_C_native_01_FMA
+Raxpy_mpfr_C_native_openmp_01
+Raxpy_mpfr_C_native_openmp_01_FMA
+```
 
-| Suffix | Build option |
-|--------|--------------|
-| `_mkII` | Default wrapper behavior. |
-| `_mkII_STABLE_ROUNDING` | Assumes MPFR rounding mode is loop-invariant. |
-| `_mkII_FMA` | Enables the wrapper FMA expression path where the source expression exposes a fused multiply-add. |
-| `_mkII_STABLE_ROUNDING_FMA` | Combines stable rounding and FMA expression support. |
+The packed custom-layout experiment is also a separate source file:
 
-The FMA suffix is most relevant to expression-first shapes such as `kernel_01`.
-Reusable-product kernels split multiply and add in source, so the suffix is
-kept for build-matrix symmetry but should be checked by disassembly before it
-is interpreted as an actual `mpfr_fma` hot path.
+```text
+Raxpy_mpfr_C_native_packed_custom_layout_FMA
+```
+
+Wrapper suffixes are cumulative:
+
+| Suffix | Build option | Meaning |
+|--------|--------------|---------|
+| `mkII` | none | Generic wrapper expression path. |
+| `STABLE_ROUNDING` | `GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` | Uses the wrapper stable-rounding path instead of the generic default-rounding lookup path. |
+| `STABLE_ROUNDING_FMA` | stable rounding + `MPFRXX_ENABLE_FMA` | Allows expression shapes such as `y[i] += alpha * x[i]` to lower to `mpfr_fma`. |
+| `STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | stable rounding + FMA + `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` | Enables fixed-precision wrapper specialization where applicable. |
+
+Context-bound kernels are explicit targets:
+
+```text
+Raxpy_mpfr_kernel_05_mkII
+Raxpy_mpfr_kernel_05_mkII_FMA
+Raxpy_mpfr_kernel_06_mkII
+Raxpy_mpfr_kernel_openmp_05_mkII
+Raxpy_mpfr_kernel_openmp_05_mkII_FMA
+Raxpy_mpfr_kernel_openmp_06_mkII
+```
 
 ## Packed Custom Layout Experiment
 
-`Raxpy_mpfr_C_native_packed_custom_layout_FMA` is a test program for the data
-layout hypothesis that the normal `mpfr_t*` vector pays extra cache latency
-because each header is contiguous but each `_mpfr_d` significand pointer may
-refer to a separate heap allocation.  The packed executable uses
-`mpfr_custom_init_set` so each element stores the MPFR header and significand
-limbs in one flat allocation:
+`Raxpy_mpfr_C_native_packed_custom_layout_FMA` tests the data-layout hypothesis
+that the normal `mpfr_t*` vector pays cache latency because each header is
+contiguous but each `_mpfr_d` significand pointer may refer to a separate heap
+allocation.  The packed executable uses `mpfr_custom_init_set` so each element
+stores the MPFR header and significand limbs in one flat allocation:
 
 ```text
 [ __mpfr_struct | limb0..limbN-1 ][ __mpfr_struct | limb0..limbN-1 ] ...
 ```
 
 The timed kernel is intentionally the same one-call FMA shape as
-`C_native_01_FMA`; the variable under test is the x/y vector layout.  The
-program prints the packed significand byte count and element stride before the
-timed kernel.
+`C_native_01_FMA`; the variable under test is the x/y vector layout.
 
 Important constraints:
 
@@ -116,80 +114,203 @@ Important constraints:
 - This is currently a benchmark/test-program path.  It is not a drop-in
   replacement for APIs that expect independently allocated `mpfr_t` arrays.
 
-## Comparison With GMP Raxpy
+## Recorded Run
 
-The source-shape ladder is intentionally parallel to GMP:
+The current checked-in MPFR Raxpy data was regenerated from scratch after the
+target matrix was aligned with MPFR Rdot and GMP Raxpy.
 
 ```text
-01: expression-first AXPY
-02: reusable product object via copy-then-multiply
-03: reusable product object via expression assignment
-04: loop-local product object
-OpenMP 01-03: matching parallel forms
+N = 10000000
+precision = 512
+repeat = 10
+OMP_NUM_THREADS = 32
+OMP_PLACES = cores
+OMP_PROC_BIND = spread
+CPU = AMD Ryzen Threadripper 3970X 32-Core Processor
 ```
 
-The MPFR kernels additionally expose rounding-mode behavior.  `STABLE_ROUNDING`
-variants are expected to remove repeated default-rounding lookups when the
-wrapper can treat rounding as loop-invariant.  FMA-capable source shapes may
-collapse multiply and add into one `mpfr_fma` call; this has no direct GMP
-`mpf_t` equivalent.
+Results are stored in:
 
-## Recorded Result: N=10000000, 512-bit, Repeat 10
+```text
+results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260517_144507/
+```
 
-This run used the timed-loop MFLOPS printed by each benchmark executable.
-All 320 timed runs reported `Result OK`.
+Files:
 
-Raw data:
+- [Raw log](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260517_144507/benchmark_raxpy_mpfr_n10000000_p512_repeat10.log)
+- [Raw CSV](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260517_144507/raw_raxpy_mpfr_n10000000_p512_repeat10.csv)
+- [Summary CSV](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260517_144507/summary_raxpy_mpfr_n10000000_p512_repeat10.csv)
 
-- `results_raw/raxpy_n1e7_512_repeat10_20260515_153432/benchmark_raxpy_n10000000_p512_repeat10.log`
-- `results_raw/raxpy_n1e7_512_repeat10_20260515_153432/raw_raxpy_n10000000_p512_repeat10.csv`
-- `results_raw/raxpy_n1e7_512_repeat10_20260515_153432/summary_raxpy_n10000000_p512_repeat10.csv`
+The sweep covers 43 variants and 430 timed runs.  Every timed run reported
+`OK`.
 
-![MPFR Raxpy repeat-10 summary](results_raw/raxpy_n1e7_512_repeat10_20260515_153432/benchmark_raxpy_n10000000_p512_repeat10_summary.png)
+The plots show average MFLOPS as vertical bars.  The black range line on each
+bar is the observed min-to-max interval across the 10 repeats; labels show the
+average and the range endpoints.
 
-### Serial Results
+![MPFR Raxpy serial repeat-10](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260517_144507/raxpy_mpfr_n10000000_p512_repeat10_serial.png)
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Observation |
-|---------|------------|------------|------------|-------------|
-| `C_native_01` | 22.979 | 22.864 | 22.709 | Raw `mpfr_mul` + `mpfr_add`, one reusable `mpfr_t` product, cached rounding. |
-| `C_native_01_FMA` | 22.929 | 22.727 | 22.500 | Raw `mpfr_fma`, cached rounding.  It is not faster than non-FMA in this serial run. |
-| `kernel_01_mkII` | 17.950 | 17.521 | 17.331 | Expression-first source, default wrapper path. |
-| `kernel_01_mkII_STABLE_ROUNDING` | 18.571 | 18.357 | 18.131 | Stable rounding removes the function-call lookup from the hot loop, but still uses split expression materialization. |
-| `kernel_01_mkII_FMA` | 22.107 | 21.732 | 21.150 | Expression lowers to `mpfr_fma`; close to C native FMA. |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.089 | 22.726 | 22.341 | Best expression-first wrapper path; one `mpfr_fma` per element. |
-| `kernel_02_mkII` | 18.849 | 18.613 | 18.326 | Reusable product via copy-then-multiply. |
-| `kernel_02_mkII_STABLE_ROUNDING` | 20.517 | 20.030 | 19.792 | Stable rounding helps split multiply/add. |
-| `kernel_02_mkII_FMA` | 18.867 | 18.631 | 18.396 | FMA option does not change this source shape. |
-| `kernel_02_mkII_STABLE_ROUNDING_FMA` | 20.586 | 20.031 | 19.839 | Same practical shape as stable `kernel_02`. |
-| `kernel_03_mkII` | 21.326 | 21.050 | 20.699 | Reusable product assigned from expression. |
-| `kernel_03_mkII_STABLE_ROUNDING` | 23.321 | 22.901 | 22.536 | Best serial max in this run; matches the reusable-temp C native structure. |
-| `kernel_03_mkII_FMA` | 21.603 | 20.807 | 20.322 | FMA option does not fuse because the source stores the product first. |
-| `kernel_03_mkII_STABLE_ROUNDING_FMA` | 22.986 | 22.786 | 22.639 | Same split multiply/add shape as stable `kernel_03`, within run noise. |
-| `kernel_04_mkII` | 17.321 | 16.887 | 16.530 | Loop-local product object is allocation-heavy. |
-| `kernel_04_mkII_STABLE_ROUNDING` | 18.678 | 18.259 | 18.022 | Stable rounding helps, but construction cost remains. |
-| `kernel_04_mkII_FMA` | 16.992 | 16.641 | 16.267 | FMA option cannot repair loop-local product materialization. |
-| `kernel_04_mkII_STABLE_ROUNDING_FMA` | 18.499 | 18.304 | 18.078 | Same practical limitation as stable `kernel_04`. |
+![MPFR Raxpy OpenMP repeat-10](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260517_144507/raxpy_mpfr_n10000000_p512_repeat10_openmp.png)
 
-### OpenMP Results
+## Headline Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Observation |
-|---------|------------|------------|------------|-------------|
-| `C_native_openmp_01` | 403.673 | 395.833 | 384.630 | Raw OpenMP split multiply/add baseline. |
-| `C_native_openmp_01_FMA` | 417.779 | 413.445 | 405.200 | Raw OpenMP FMA baseline. |
-| `kernel_openmp_01_mkII` | 396.423 | 385.167 | 376.927 | Expression-first OpenMP wrapper default path. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING` | 401.165 | 384.712 | 355.131 | Stable rounding alone is not enough to beat run-to-run variation. |
-| `kernel_openmp_01_mkII_FMA` | 411.716 | 403.194 | 381.627 | FMA expression path reaches the C native FMA class. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 419.366 | 412.873 | 390.700 | Best OpenMP wrapper path; effectively tied with C native FMA average. |
-| `kernel_openmp_02_mkII` | 399.834 | 382.219 | 344.728 | Per-thread reusable product via copy-then-multiply. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING` | 400.465 | 392.942 | 384.945 | Stable split path is competitive with C native non-FMA. |
-| `kernel_openmp_02_mkII_FMA` | 400.200 | 386.190 | 361.953 | FMA option does not fuse this source shape. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 398.180 | 383.448 | 318.760 | Same practical shape as stable `kernel_openmp_02`, with a noisy low run. |
-| `kernel_openmp_03_mkII` | 407.940 | 401.398 | 390.496 | Per-thread reusable product assigned from expression. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 410.708 | 401.694 | 383.108 | Split multiply/add path near C native non-FMA. |
-| `kernel_openmp_03_mkII_FMA` | 407.800 | 402.763 | 395.431 | FMA option does not fuse this source shape. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 410.981 | 401.636 | 388.922 | Same split multiply/add shape as stable `kernel_openmp_03`. |
+| Class | Best average variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Notes |
+|-------|----------------------|-----------:|-----------:|-----------:|-------|
+| Serial wrapper | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.538 | 22.860 | 22.320 | Direct expression lowered to one `mpfr_fma` per element. |
+| Serial raw C | `C_native_01` | 23.099 | 22.838 | 22.558 | Raw split multiply/add with one reusable product and cached rounding. |
+| Serial context wrapper | `kernel_06_mkII` | 22.971 | 22.806 | 22.643 | Explicit-context reusable-product path; cached rounding without FMA. |
+| OpenMP wrapper | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 423.582 | 416.851 | 402.606 | Best OpenMP average and maximum overall. |
+| OpenMP raw C | `C_native_openmp_01_FMA` | 420.049 | 411.108 | 394.320 | Raw OpenMP FMA baseline with cached rounding. |
+| OpenMP context wrapper | `kernel_openmp_05_mkII_FMA` | 422.359 | 408.779 | 377.259 | Explicit-context direct FMA path. |
 
-### Estimated Memory Bandwidth Used
+## Serial Results
+
+Main interpretation table:
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
+|---------|-----------:|-----------:|-----------:|----------------|
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.538 | 22.860 | 22.320 | Best serial wrapper average; direct expression lowered to one `mpfr_fma`. |
+| `C_native_01` | 23.099 | 22.838 | 22.558 | Raw split multiply/add baseline with one reusable product and rounding loaded before the loop. |
+| `C_native_packed_custom_layout_FMA` | 23.235 | 22.811 | 22.313 | Packed layout did not materially beat the ordinary raw C paths at 512-bit precision. |
+| `kernel_06_mkII` | 22.971 | 22.806 | 22.643 | Explicit-context reusable-product path; close to raw split multiply/add. |
+| `C_native_01_FMA` | 23.058 | 22.719 | 22.454 | Raw FMA baseline; one `mpfr_fma` per element with rounding cached outside the loop. |
+| `kernel_05_mkII_FMA` | 23.015 | 22.715 | 22.398 | Explicit-context direct FMA; removes TLS rounding lookup but keeps the context precision check. |
+| `kernel_03_mkII_STABLE_ROUNDING` | 22.887 | 22.713 | 22.542 | Reused product object with stable rounding; split multiply/add path. |
+| `kernel_04_mkII` | 17.098 | 16.692 | 16.461 | Loop-local product object; useful as a control, not an optimization target. |
+
+<details>
+<summary>Serial results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.538 | 22.860 | 22.320 |
+| 2 | `C_native_packed_custom_layout_FMA` | 23.235 | 22.811 | 22.313 |
+| 3 | `kernel_03_mkII_STABLE_ROUNDING_FMA` | 23.110 | 22.409 | 22.185 |
+| 4 | `C_native_01` | 23.099 | 22.838 | 22.558 |
+| 5 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.091 | 22.718 | 22.375 |
+| 6 | `C_native_01_FMA` | 23.058 | 22.719 | 22.454 |
+| 7 | `kernel_05_mkII_FMA` | 23.015 | 22.715 | 22.398 |
+| 8 | `kernel_06_mkII` | 22.971 | 22.806 | 22.643 |
+| 9 | `kernel_03_mkII_STABLE_ROUNDING` | 22.887 | 22.713 | 22.542 |
+| 10 | `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 22.554 | 22.358 | 22.183 |
+| 11 | `kernel_03_mkII` | 21.735 | 21.119 | 20.677 |
+| 12 | `kernel_02_mkII_STABLE_ROUNDING_FMA` | 20.554 | 20.026 | 19.703 |
+| 13 | `kernel_02_mkII_STABLE_ROUNDING` | 20.108 | 19.974 | 19.849 |
+| 14 | `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 20.006 | 19.821 | 19.485 |
+| 15 | `kernel_02_mkII` | 18.826 | 18.633 | 18.218 |
+| 16 | `kernel_04_mkII_STABLE_ROUNDING_FMA` | 18.728 | 18.328 | 18.159 |
+| 17 | `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 18.715 | 18.455 | 18.344 |
+| 18 | `kernel_01_mkII_STABLE_ROUNDING` | 18.390 | 18.199 | 18.009 |
+| 19 | `kernel_04_mkII_STABLE_ROUNDING` | 18.253 | 17.867 | 17.583 |
+| 20 | `kernel_01_mkII` | 17.759 | 17.555 | 17.311 |
+| 21 | `kernel_05_mkII` | 17.481 | 17.301 | 16.926 |
+| 22 | `kernel_04_mkII` | 17.098 | 16.692 | 16.461 |
+
+</details>
+
+<details>
+<summary>Serial results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.538 | 22.860 | 22.320 |
+| 2 | `C_native_01` | 23.099 | 22.838 | 22.558 |
+| 3 | `C_native_packed_custom_layout_FMA` | 23.235 | 22.811 | 22.313 |
+| 4 | `kernel_06_mkII` | 22.971 | 22.806 | 22.643 |
+| 5 | `C_native_01_FMA` | 23.058 | 22.719 | 22.454 |
+| 6 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.091 | 22.718 | 22.375 |
+| 7 | `kernel_05_mkII_FMA` | 23.015 | 22.715 | 22.398 |
+| 8 | `kernel_03_mkII_STABLE_ROUNDING` | 22.887 | 22.713 | 22.542 |
+| 9 | `kernel_03_mkII_STABLE_ROUNDING_FMA` | 23.110 | 22.409 | 22.185 |
+| 10 | `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 22.554 | 22.358 | 22.183 |
+| 11 | `kernel_03_mkII` | 21.735 | 21.119 | 20.677 |
+| 12 | `kernel_02_mkII_STABLE_ROUNDING_FMA` | 20.554 | 20.026 | 19.703 |
+| 13 | `kernel_02_mkII_STABLE_ROUNDING` | 20.108 | 19.974 | 19.849 |
+| 14 | `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 20.006 | 19.821 | 19.485 |
+| 15 | `kernel_02_mkII` | 18.826 | 18.633 | 18.218 |
+| 16 | `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 18.715 | 18.455 | 18.344 |
+| 17 | `kernel_04_mkII_STABLE_ROUNDING_FMA` | 18.728 | 18.328 | 18.159 |
+| 18 | `kernel_01_mkII_STABLE_ROUNDING` | 18.390 | 18.199 | 18.009 |
+| 19 | `kernel_04_mkII_STABLE_ROUNDING` | 18.253 | 17.867 | 17.583 |
+| 20 | `kernel_01_mkII` | 17.759 | 17.555 | 17.311 |
+| 21 | `kernel_05_mkII` | 17.481 | 17.301 | 16.926 |
+| 22 | `kernel_04_mkII` | 17.098 | 16.692 | 16.461 |
+
+</details>
+
+## OpenMP Results
+
+Main interpretation table:
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
+|---------|-----------:|-----------:|-----------:|----------------|
+| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 423.582 | 416.851 | 402.606 | Best OpenMP average and maximum overall; direct wrapper FMA path. |
+| `C_native_openmp_01_FMA` | 420.049 | 411.108 | 394.320 | Raw OpenMP FMA baseline with rounding loaded before the loop. |
+| `kernel_openmp_05_mkII_FMA` | 422.359 | 408.779 | 377.259 | Explicit-context direct FMA; same performance class as raw C FMA. |
+| `kernel_openmp_06_mkII` | 412.835 | 401.716 | 391.350 | Explicit-context split multiply/add with one private product object per thread. |
+| `C_native_openmp_01` | 405.165 | 398.659 | 385.169 | Raw OpenMP split multiply/add baseline. |
+| `kernel_openmp_04_mkII` | 397.640 | 383.172 | 366.082 | Loop-local product control; clearly below the reusable/direct paths. |
+| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 404.895 | 379.768 | 356.731 | Reused product source shape; FMA suffix does not make the hot loop fused. |
+
+<details>
+<summary>OpenMP results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 423.582 | 416.851 | 402.606 |
+| 2 | `kernel_openmp_05_mkII_FMA` | 422.359 | 408.779 | 377.259 |
+| 3 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 421.330 | 413.101 | 399.757 |
+| 4 | `C_native_openmp_01_FMA` | 420.049 | 411.108 | 394.320 |
+| 5 | `kernel_openmp_06_mkII` | 412.835 | 401.716 | 391.350 |
+| 6 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 410.476 | 389.603 | 366.119 |
+| 7 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 409.824 | 391.791 | 370.162 |
+| 8 | `kernel_openmp_02_mkII` | 409.494 | 392.839 | 371.521 |
+| 9 | `kernel_openmp_05_mkII` | 408.562 | 396.354 | 380.401 |
+| 10 | `kernel_openmp_02_mkII_STABLE_ROUNDING` | 408.288 | 397.131 | 366.808 |
+| 11 | `kernel_openmp_01_mkII_STABLE_ROUNDING` | 406.055 | 389.332 | 361.568 |
+| 12 | `C_native_openmp_01` | 405.165 | 398.659 | 385.169 |
+| 13 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 404.895 | 379.768 | 356.731 |
+| 14 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 404.885 | 373.818 | 335.235 |
+| 15 | `kernel_openmp_04_mkII_STABLE_ROUNDING` | 402.828 | 393.875 | 375.747 |
+| 16 | `kernel_openmp_01_mkII` | 401.404 | 385.654 | 361.130 |
+| 17 | `kernel_openmp_04_mkII` | 397.640 | 383.172 | 366.082 |
+| 18 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 395.389 | 384.456 | 358.496 |
+| 19 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | 394.774 | 378.099 | 365.597 |
+| 20 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 391.938 | 373.511 | 352.451 |
+| 21 | `kernel_openmp_03_mkII` | 390.514 | 375.388 | 363.837 |
+
+</details>
+
+<details>
+<summary>OpenMP results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 423.582 | 416.851 | 402.606 |
+| 2 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 421.330 | 413.101 | 399.757 |
+| 3 | `C_native_openmp_01_FMA` | 420.049 | 411.108 | 394.320 |
+| 4 | `kernel_openmp_05_mkII_FMA` | 422.359 | 408.779 | 377.259 |
+| 5 | `kernel_openmp_06_mkII` | 412.835 | 401.716 | 391.350 |
+| 6 | `C_native_openmp_01` | 405.165 | 398.659 | 385.169 |
+| 7 | `kernel_openmp_02_mkII_STABLE_ROUNDING` | 408.288 | 397.131 | 366.808 |
+| 8 | `kernel_openmp_05_mkII` | 408.562 | 396.354 | 380.401 |
+| 9 | `kernel_openmp_04_mkII_STABLE_ROUNDING` | 402.828 | 393.875 | 375.747 |
+| 10 | `kernel_openmp_02_mkII` | 409.494 | 392.839 | 371.521 |
+| 11 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 409.824 | 391.791 | 370.162 |
+| 12 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 410.476 | 389.603 | 366.119 |
+| 13 | `kernel_openmp_01_mkII_STABLE_ROUNDING` | 406.055 | 389.332 | 361.568 |
+| 14 | `kernel_openmp_01_mkII` | 401.404 | 385.654 | 361.130 |
+| 15 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 395.389 | 384.456 | 358.496 |
+| 16 | `kernel_openmp_04_mkII` | 397.640 | 383.172 | 366.082 |
+| 17 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 404.895 | 379.768 | 356.731 |
+| 18 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | 394.774 | 378.099 | 365.597 |
+| 19 | `kernel_openmp_03_mkII` | 390.514 | 375.388 | 363.837 |
+| 20 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 404.885 | 373.818 | 335.235 |
+| 21 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 391.938 | 373.511 | 352.451 |
+
+</details>
+
+## Memory Bandwidth Estimates
 
 The benchmark reports MFLOPS as `2 * N / elapsed`, so
 `iterations/s = MFLOPS * 1e6 / 2`.  At 512-bit precision, the MPFR significand
@@ -198,274 +319,249 @@ models:
 
 - Payload minimum: read `x[i]` payload, read `y[i]` payload, write `y[i]`
   payload, or 192 bytes per iteration.  This ignores the hot scalar `alpha`,
-  the reusable product object, and metadata.
+  temporary objects, and metadata.
 - Header-inclusive estimate: payload minimum plus one 32-byte `mpfr_t` header
   read for `x[i]` and one read/write 32-byte header for `y[i]`, or 288 bytes
-  per iteration on this LP64 build.  This is still a logical estimate, not a
-  hardware-counter measurement.
+  per iteration on this LP64 build.
 
 For this run:
 
 ```text
-payload GB/s          = avg_mflops * 0.096
-header-inclusive GB/s = avg_mflops * 0.144
+payload GB/s           = avg_mflops * 0.096
+header-inclusive GB/s  = avg_mflops * 0.144
 ```
 
 | Variant | Avg MFLOPS | Payload GB/s | Header-inclusive GB/s | Max header-inclusive GB/s |
-|---------|------------|--------------|------------------------|---------------------------|
-| `C_native_01` | 22.864 | 2.19 | 3.29 | 3.31 |
-| `C_native_01_FMA` | 22.727 | 2.18 | 3.27 | 3.30 |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 22.726 | 2.18 | 3.27 | 3.32 |
-| `kernel_03_mkII_STABLE_ROUNDING` | 22.901 | 2.20 | 3.30 | 3.36 |
-| `C_native_openmp_01_FMA` | 413.445 | 39.69 | 59.54 | 60.16 |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 412.873 | 39.64 | 59.45 | 60.39 |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 401.694 | 38.56 | 57.84 | 59.14 |
+|---------|-----------:|-------------:|-----------------------:|--------------------------:|
+| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 416.851 | 40.02 | 60.03 | 61.00 |
+| `C_native_openmp_01_FMA` | 411.108 | 39.47 | 59.20 | 60.49 |
+| `kernel_openmp_05_mkII_FMA` | 408.779 | 39.24 | 58.86 | 60.82 |
+| `kernel_openmp_06_mkII` | 401.716 | 38.56 | 57.85 | 59.45 |
+| `C_native_01` | 22.838 | 2.19 | 3.29 | 3.33 |
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 22.860 | 2.19 | 3.29 | 3.39 |
+| `kernel_06_mkII` | 22.806 | 2.19 | 3.28 | 3.31 |
 
-The OpenMP FMA wrapper therefore uses roughly the same bandwidth class as the
-C native FMA baseline: about 40 GB/s for 512-bit payload traffic, or about
-60 GB/s if the `mpfr_t` headers for the streamed `x` and `y` arrays are counted.
-The true DRAM traffic can be lower or higher depending on cache reuse,
-write-allocate behavior, hardware prefetching, and allocator placement, so this
-section should be read as a bandwidth sanity check rather than a substitute for
-hardware counters.
-
-## Recorded Result: N=10000000, 1024-bit, Repeat 10
-
-This run used the same benchmark matrix and the same explicit OpenMP affinity:
-
-```bash
-OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread
-```
-
-All 320 timed runs reported `Result OK`.
-
-Raw data:
-
-- `results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/benchmark_raxpy_n10000000_p1024_repeat10.log`
-- `results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/raw_raxpy_n10000000_p1024_repeat10.csv`
-- `results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/summary_raxpy_n10000000_p1024_repeat10.csv`
-
-![MPFR Raxpy 1024-bit repeat-10 summary](results_raw/raxpy_n1e7_1024_repeat10_20260515_201821/benchmark_raxpy_n10000000_p1024_repeat10_summary.png)
-
-### Serial Results
-
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Observation |
-|---------|------------|------------|------------|-------------|
-| `C_native_01` | 9.156 | 9.072 | 9.003 | Raw split multiply/add baseline. |
-| `C_native_01_FMA` | 9.426 | 9.341 | 9.262 | Raw FMA is now slightly faster than raw split multiply/add. |
-| `kernel_01_mkII` | 8.289 | 8.164 | 8.059 | Expression-first default path remains below C native. |
-| `kernel_01_mkII_FMA` | 9.225 | 9.104 | 9.058 | FMA expression path recovers most of the default-path loss. |
-| `kernel_01_mkII_STABLE_ROUNDING` | 8.255 | 8.185 | 8.122 | Stable rounding alone is not enough for expression-first split evaluation. |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 9.444 | 9.370 | 9.264 | Best serial wrapper path; effectively tied with C native FMA. |
-| `kernel_02_mkII` | 8.754 | 8.590 | 8.499 | Reusable product via copy-then-multiply. |
-| `kernel_02_mkII_FMA` | 8.719 | 8.605 | 8.529 | FMA option does not fuse this source shape. |
-| `kernel_02_mkII_STABLE_ROUNDING` | 9.069 | 9.015 | 8.955 | Stable split multiply/add path is close to C native non-FMA. |
-| `kernel_02_mkII_STABLE_ROUNDING_FMA` | 9.129 | 8.998 | 8.886 | Same practical shape as stable `kernel_02`. |
-| `kernel_03_mkII` | 8.892 | 8.830 | 8.764 | Reusable product assigned from expression. |
-| `kernel_03_mkII_FMA` | 9.104 | 8.853 | 8.764 | FMA option does not fuse because the product is materialized first. |
-| `kernel_03_mkII_STABLE_ROUNDING` | 9.233 | 9.048 | 8.945 | Best reusable-product split path. |
-| `kernel_03_mkII_STABLE_ROUNDING_FMA` | 9.230 | 9.040 | 8.929 | Same split multiply/add shape as stable `kernel_03`. |
-| `kernel_04_mkII` | 8.299 | 8.084 | 7.982 | Loop-local product object remains allocation-heavy. |
-| `kernel_04_mkII_FMA` | 8.133 | 8.067 | 8.004 | FMA option cannot repair loop-local materialization. |
-| `kernel_04_mkII_STABLE_ROUNDING` | 8.401 | 8.215 | 8.098 | Stable rounding helps slightly, but construction cost remains. |
-| `kernel_04_mkII_STABLE_ROUNDING_FMA` | 8.267 | 8.201 | 8.139 | Same practical limitation as stable `kernel_04`. |
-
-### OpenMP Results
-
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Observation |
-|---------|------------|------------|------------|-------------|
-| `C_native_openmp_01` | 245.619 | 243.484 | 239.324 | Raw OpenMP split multiply/add baseline. |
-| `C_native_openmp_01_FMA` | 256.263 | 252.266 | 248.446 | Raw OpenMP FMA baseline. |
-| `kernel_openmp_01_mkII` | 223.138 | 219.037 | 204.423 | Expression-first default path is clearly below C native. |
-| `kernel_openmp_01_mkII_FMA` | 251.700 | 248.375 | 241.886 | FMA expression path reaches the C native FMA class. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING` | 225.577 | 221.431 | 214.566 | Stable rounding alone does not fix split expression evaluation. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 256.680 | 252.836 | 242.548 | Best OpenMP wrapper path; tied with C native FMA on average. |
-| `kernel_openmp_02_mkII` | 242.520 | 237.017 | 232.761 | Per-thread reusable product via copy-then-multiply. |
-| `kernel_openmp_02_mkII_FMA` | 239.447 | 234.487 | 222.829 | FMA option does not fuse this source shape. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING` | 247.447 | 241.301 | 225.573 | Stable split path is near the C native non-FMA class. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 247.672 | 244.149 | 240.050 | Same split path, with a strong average in this run. |
-| `kernel_openmp_03_mkII` | 241.995 | 236.819 | 218.001 | Per-thread reusable product assigned from expression. |
-| `kernel_openmp_03_mkII_FMA` | 242.833 | 238.924 | 236.199 | FMA option does not fuse this source shape. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 247.994 | 243.221 | 238.571 | Best OpenMP reusable-product split path. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 247.137 | 240.464 | 229.191 | Same split multiply/add shape as stable `kernel_openmp_03`. |
-
-### Estimated Memory Bandwidth Used
-
-At 1024-bit precision, the MPFR significand payload is 128 bytes per value.
-Using the same logical traffic models as the 512-bit run:
-
-```text
-payload GB/s          = avg_mflops * 0.192
-header-inclusive GB/s = avg_mflops * 0.240
-```
-
-| Variant | Avg MFLOPS | Payload GB/s | Header-inclusive GB/s | Max header-inclusive GB/s |
-|---------|------------|--------------|------------------------|---------------------------|
-| `C_native_01` | 9.072 | 1.74 | 2.18 | 2.20 |
-| `C_native_01_FMA` | 9.341 | 1.79 | 2.24 | 2.26 |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 9.370 | 1.80 | 2.25 | 2.27 |
-| `kernel_03_mkII_STABLE_ROUNDING` | 9.048 | 1.74 | 2.17 | 2.22 |
-| `C_native_openmp_01_FMA` | 252.266 | 48.44 | 60.54 | 61.50 |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 252.836 | 48.54 | 60.68 | 61.60 |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 243.221 | 46.70 | 58.37 | 59.52 |
-
-The 1024-bit OpenMP FMA path therefore moves more payload bytes per reported
-MFLOP than the 512-bit case.  Even though MFLOPS drops from about 413 to about
-253, the payload-only estimate rises from about 40 GB/s to about 49 GB/s, while
-the header-inclusive estimate remains around 61 GB/s.
+These are logical estimates, not hardware-counter measurements.  The true DRAM
+traffic can be lower or higher depending on cache reuse, write-allocate
+behavior, hardware prefetching, and allocator placement.
 
 ## Hotpath Disassembly
 
-The snippets below are from the Release benchmark binaries under
-`build_bench_release/benchmarks/mpfr/01_Raxpy/`.  They focus on the timed
-`_Raxpy()` loop or, for OpenMP, the outlined loop body.
+Only the steady-state timed loop is shown.  Addresses are from the recorded
+`build_bench_release` binaries.
 
-### `C_native_01`
+### `Raxpy_mpfr_C_native_01`
 
-Baseline non-FMA C native keeps one `mpfr_t` product object and caches the
-rounding mode before the loop.  The hot loop has one `mpfr_mul` and one
-`mpfr_add` per element.
+Raw split multiply/add baseline.  Rounding is loaded once before the loop and
+kept in `%r13d`; the stack `mpfr_t` product is reused.
 
 ```asm
-3cd9: call   mpfr_init@plt
-3cde: call   mpfr_get_default_rounding_mode@plt
-3ce3: mov    %eax,%r13d
-
-3d00: mov    %rbp,%rdx        # x[i]
-3d03: mov    %r13d,%ecx       # cached rounding mode
-3d06: mov    %r15,%rsi        # alpha
-3d0d: lea    0x10(%rsp),%rdi  # product temporary
+3d00: mov    %rbp,%rdx
+3d03: mov    %r13d,%ecx
+3d06: mov    %r15,%rsi
+3d09: add    $0x1,%r14
+3d0d: lea    0x10(%rsp),%rdi
+3d12: add    $0x20,%rbp
 3d16: call   mpfr_mul@plt
-3d1b: mov    %rbx,%rsi        # y[i]
-3d1e: mov    %rbx,%rdi        # y[i]
-3d21: mov    %r13d,%ecx       # cached rounding mode
-3d24: lea    0x10(%rsp),%rdx  # product temporary
+3d1b: mov    %rbx,%rsi
+3d1e: mov    %rbx,%rdi
+3d21: mov    %r13d,%ecx
+3d24: lea    0x10(%rsp),%rdx
 3d29: add    $0x20,%rbx
 3d2d: call   mpfr_add@plt
+3d32: cmp    %r14,0x8(%rsp)
 3d37: jne    3d00
-3d3e: call   mpfr_clear@plt
 ```
 
-### `C_native_01_FMA`
+### `Raxpy_mpfr_C_native_01_FMA`
 
-The FMA C native baseline also caches rounding once before the loop.  Its hot
-loop is one `mpfr_fma` call per element.
+Raw FMA baseline.  This is the ideal MPFR hot loop for this source shape: one
+`mpfr_fma` call and cached rounding in `%r14d`.
 
 ```asm
 3cba: call   mpfr_get_default_rounding_mode@plt
 3cbf: mov    %eax,%r14d
 
-3cd0: mov    %rbx,%rcx        # y[i] addend
-3cd3: mov    %rbp,%rdx        # x[i]
-3cd6: mov    %rbx,%rdi        # y[i] destination
-3cd9: mov    %r14d,%r8d       # cached rounding mode
-3cdc: mov    %r13,%rsi        # alpha
+3cd0: mov    %rbx,%rcx
+3cd3: mov    %rbp,%rdx
+3cd6: mov    %rbx,%rdi
+3cd9: mov    %r14d,%r8d
+3cdc: mov    %r13,%rsi
+3cdf: add    $0x1,%r15
 3ce3: add    $0x20,%rbx
 3ce7: add    $0x20,%rbp
 3ceb: call   mpfr_fma@plt
+3cf0: cmp    %r15,%r12
 3cf3: jne    3cd0
 ```
 
-### `kernel_01_mkII_STABLE_ROUNDING_FMA`
+### `Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`
 
-This is the closest wrapper path to `C_native_01_FMA`: it emits one
-`mpfr_fma` per element.  The remaining structural difference is the rounding
-argument.  C native uses a register cached before the loop; this wrapper build
-loads the stable rounding value from TLS inside the loop.
+Wrapper direct FMA path.  It has the same one-call structure as raw C FMA, but
+the rounding mode is loaded from TLS inside the loop.
 
 ```asm
-3c80: mov    %rbx,%rcx        # y[i] addend
-3c83: mov    %rbp,%rdx        # x[i]
-3c86: mov    %rbx,%rdi        # y[i] destination
-3c89: mov    %r13,%rsi        # alpha
-3c90: add    $0x20,%rbx
-3c94: add    $0x20,%rbp
-3c98: mov    %fs:0xfffffffffffffffc,%r8d  # TLS rounding load
-3ca1: call   mpfr_fma@plt
-3ca9: jne    3c80
+3c20: mov    %rbx,%rcx
+3c23: mov    %rbp,%rdx
+3c26: mov    %rbx,%rdi
+3c29: mov    %r13,%rsi
+3c2c: add    $0x1,%r14
+3c30: add    $0x20,%rbx
+3c34: add    $0x20,%rbp
+3c38: mov    %fs:0xfffffffffffffffc,%r8d
+3c41: call   mpfr_fma@plt
+3c46: cmp    %r14,%r12
+3c49: jne    3c20
 ```
 
-### `kernel_03_mkII_STABLE_ROUNDING`
+### `Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`
 
-This path is the wrapper equivalent of the reusable-product non-FMA shape.  It
-initializes one product object outside the loop, then performs `mpfr_mul` and
-`mpfr_add` for each element.  Compared with `C_native_01`, the loop still reads
-rounding from TLS for each MPFR operation.
+The FMA suffix does not imply a fused hot loop here.  The source stores the
+product in `temp` first, so the hot loop remains `mpfr_mul` plus `mpfr_add`.
 
 ```asm
-3f72: call   mpfr_get_default_prec@plt
-3fa3: call   mpfr_init2@plt
-
-3fd0: mov    %fs:0xfffffffffffffffc,%ecx  # TLS rounding load
-3fd8: mov    %rbp,%rdx                    # x[i]
-3fdb: mov    %r14,%rsi                    # alpha
-3fde: mov    %r12,%rdi                    # product temporary
-3fe1: call   mpfr_mul@plt
-3fe6: mov    %fs:0xfffffffffffffffc,%ecx  # TLS rounding load
-3fee: mov    %r12,%rdx                    # product temporary
-3ff1: mov    %rbx,%rsi                    # y[i]
-3ff4: mov    %rbx,%rdi                    # y[i]
-3ff7: call   mpfr_add@plt
-4004: add    $0x20,%rbx
-400b: jne    3fd0
-4010: call   mpfr_clear@plt
+3d20: mov    %fs:0xfffffffffffffffc,%ecx
+3d28: mov    %rbp,%rdx
+3d2b: mov    %r14,%rsi
+3d2e: mov    %r12,%rdi
+3d31: call   mpfr_mul@plt
+3d36: mov    %fs:0xfffffffffffffffc,%ecx
+3d3e: mov    %r12,%rdx
+3d41: mov    %rbx,%rsi
+3d44: mov    %rbx,%rdi
+3d47: call   mpfr_add@plt
+3d4c: add    $0x1,%r15
+3d50: add    $0x20,%rbp
+3d54: add    $0x20,%rbx
+3d58: cmp    %r15,%r13
+3d5b: jne    3d20
 ```
 
-### `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA`
+### `Raxpy_mpfr_kernel_05_mkII_FMA`
 
-The OpenMP outlined function has the expected chunk setup plus the same
-one-`mpfr_fma` loop body.  This explains why the wrapper OpenMP FMA path lands
-in the same class as `C_native_openmp_01_FMA`.
+Explicit context direct FMA path.  The rounding mode comes from the context
+storage rather than TLS, and the wrapper checks the destination precision.
 
 ```asm
-380f: call   omp_get_num_threads@plt
-3816: call   omp_get_thread_num@plt
-3847: cmp    %r13,%rbx
-384a: jge    388c
-
-3860: mov    0x8(%r14),%rsi   # alpha
-3864: mov    %rbp,%rcx        # y[i] addend
-3867: mov    %r12,%rdx        # x[i]
-386a: mov    %rbp,%rdi        # y[i] destination
-3871: add    $0x20,%rbp
-3875: add    $0x20,%r12
-3879: mov    %fs:0xfffffffffffffffc,%r8d  # TLS rounding load
-3882: call   mpfr_fma@plt
-388a: jne    3860
+3dd0: cmp    %r13,(%rbx)
+3dd3: jne    cold
+3dd9: mov    (%rsp),%r8d
+3ddd: mov    %rbx,%rcx
+3de0: mov    %r15,%rdx
+3de3: mov    %rbx,%rdi
+3de6: mov    %r14,%rsi
+3de9: add    $0x1,%rbp
+3ded: add    $0x20,%rbx
+3df1: add    $0x20,%r15
+3df5: call   mpfr_fma@plt
+3dfa: cmp    %rbp,%r12
+3dfd: jne    3dd0
 ```
+
+### `Raxpy_mpfr_kernel_06_mkII`
+
+Explicit context reusable-product path.  The loop is split `mpfr_mul` plus
+`mpfr_add`, with cached rounding in `%r13d` and a precision check on `y[i]`.
+
+```asm
+4140: mov    0x8(%rsp),%rsi
+4145: mov    %r13d,%ecx
+4148: mov    %rbp,%rdx
+414b: mov    %r12,%rdi
+414e: call   mpfr_mul@plt
+4153: cmp    (%r15),%r14
+4156: jne    cold
+415c: mov    %r13d,%ecx
+415f: mov    %r12,%rdx
+4162: mov    %r15,%rsi
+4165: mov    %r15,%rdi
+4168: call   mpfr_add@plt
+416d: add    $0x1,%rbx
+4171: add    $0x20,%rbp
+4175: add    $0x20,%r15
+4179: cmp    %rbx,(%rsp)
+417d: jne    4140
+```
+
+### OpenMP FMA Comparison
+
+Raw C OpenMP FMA has the same one-call shape as serial raw C FMA:
+
+```asm
+36e0: mov    %rbp,%rcx
+36e3: mov    %r12,%rdx
+36e6: mov    %rbp,%rdi
+36e9: mov    %r14d,%r8d
+36ec: mov    %r13,%rsi
+36ef: add    $0x1,%rbx
+36f3: add    $0x20,%rbp
+36f7: add    $0x20,%r12
+36fb: call   mpfr_fma@plt
+3700: cmp    %rbx,%r15
+3703: jne    36e0
+```
+
+The context OpenMP FMA path is structurally the same MPFR operation, but the
+context object is loaded and the destination precision is checked:
+
+```asm
+3920: mov    0x20(%r13),%rax
+3924: mov    0x0(%rbp),%rdi
+3928: mov    0x8(%rax),%r8d
+392c: cmp    %rdi,(%rax)
+392f: jne    cold
+3935: mov    0x8(%r13),%rsi
+3939: mov    %rbp,%rcx
+393c: mov    %r12,%rdx
+393f: mov    %rbp,%rdi
+3942: add    $0x1,%rbx
+3946: add    $0x20,%rbp
+394a: add    $0x20,%r12
+394e: call   mpfr_fma@plt
+3953: cmp    %rbx,%r14
+3956: jne    3920
+```
+
+## Comparison With GMP Raxpy
+
+The source-shape ladder is now aligned with GMP:
+
+```text
+01: expression-first AXPY
+02: reusable product object via copy-then-multiply
+03: reusable product object via expression assignment
+04: loop-local product object
+OpenMP 01-04: matching parallel forms
+```
+
+MPFR adds two dimensions that GMP `mpf_t` does not have:
+
+- every arithmetic call needs an `mpfr_rnd_t`;
+- expression-first `alpha * x + y` can be represented as one `mpfr_fma`.
+
+That changes the optimization target.  GMP Raxpy mostly tests temporary
+materialization and object reuse.  MPFR Raxpy also tests whether rounding is
+looked up in the loop, loaded from TLS, cached in an explicit context, or
+cached manually in raw C.
 
 ## Lessons Learned
 
-- The useful MPFR Raxpy wrapper shapes are `kernel_01` when it can lower to
-  `mpfr_fma`, and `kernel_03` when the product is intentionally reusable.
-  `kernel_01_mkII_STABLE_ROUNDING_FMA` reaches the C native FMA serial class
-  with 22.726 average MFLOPS, while `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA`
-  reaches the C native FMA OpenMP class with 412.873 average MFLOPS.
-- The 1024-bit run preserves the same ranking.  `kernel_01_mkII_STABLE_ROUNDING_FMA`
-  is the best serial wrapper path at 9.370 average MFLOPS, and
-  `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` is the best OpenMP wrapper path
-  at 252.836 average MFLOPS.  Both are effectively tied with the corresponding
-  C native FMA baselines.
-- The FMA build option is source-shape dependent.  It matters for
-  `y[i] += alpha * x[i]`, but it does not fuse `kernel_02`, `kernel_03`, or
-  `kernel_04` after the source has already materialized a product object.
-- Stable rounding is a real serial optimization for split multiply/add paths.
-  It removes the per-iteration `mpfr_get_default_rounding_mode` call from the
-  wrapper path, but the current generated hot loops still load the cached
-  rounding value from TLS for each MPFR call.
-- `kernel_04` remains the wrong shape for performance.  Loop-local
-  `mpfr_class` construction keeps it below reusable-product kernels even when
-  stable rounding is enabled.
-- Raw C native FMA is not automatically faster than raw C native non-FMA at
-  every precision.  At 512-bit they are nearly tied in serial, while at
-  1024-bit C native FMA is slightly faster.  The wrapper FMA path is still most
-  valuable because it avoids expression temporary materialization and split
-  MPFR calls.
-- Doubling precision from 512 to 1024 bits cuts MFLOPS substantially, but the
-  OpenMP payload-bandwidth estimate increases.  This is consistent with wider
-  limb payloads increasing memory traffic while MPFR arithmetic also becomes
-  more expensive.
-- OpenMP measurements should be read with both max and average.  The best
-  OpenMP wrapper path is structurally the same as C native FMA except for the
-  TLS rounding load, and the remaining spread is dominated by normal OpenMP
-  scheduling and system variation.
+- For Raxpy, direct FMA is the best source shape.  There is no reduction
+  variable, so the `01` direct expression can become one `mpfr_fma` per element
+  and wins both serial and OpenMP in this run.
+- `kernel_03` is still useful as a reused-product split-path comparison, but
+  it does not fuse after the product has been materialized.  The FMA suffix on
+  `03` should be interpreted by disassembly, not by the target name alone.
+- `kernel_04` is a control for loop-local product construction.  It is not a
+  serious optimization target.
+- `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` did not materially improve the
+  best Raxpy path here.  At 512-bit precision, the MPFR call body and memory
+  traffic dominate more than the remaining wrapper-side precision checks.
+- Explicit context (`05`/`06`) is the clean design path for hoisting rounding
+  out of the loop.  In this run it reaches the raw C class, but the extra
+  context load and destination precision check mean it is not automatically
+  faster than the stable-rounding FMA path.
+- The packed custom layout did not improve 512-bit Raxpy in this run.  The
+  result suggests that, for this kernel and precision, MPFR arithmetic cost and
+  ordinary streaming behavior dominate over the simple header-to-limb pointer
+  chase hypothesis.
