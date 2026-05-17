@@ -91,7 +91,7 @@ counterparts.
 |---------|--------------------|---------------------------|---------|
 | `01` | Row-dot wrapper: `temp += A[i + j*lda] * x[j]`, then `y[i] = alpha * temp + beta * y[i]`.  Raw C `01` uses column order with direct multiply/add. | Wrapper constructs a row accumulator per row; raw C reuses one `mpfr_t temp`. | Baseline expression/source-shape stress case. |
 | `02` | Column AXPY: scale `y`, compute `temp = alpha * x[j]`, then update `y[i] += temp * A[i + j*lda]`. | Reusable `temp` and `templ` objects are initialized outside the loop nest. | Main non-context reusable-temporary path. |
-| `03` | Explicit-context row-dot wrapper: same row-dot math as `01`, but with `mpfrxx::evaluation_context`. | One reusable `temp` is initialized once, then accessed through `with_context`. | Test loop-invariant rounding/precision context and optional FMA lowering. |
+| `03` | Raw C and explicit-context wrapper row-dot: `temp += A[i + j*lda] * x[j]`, then `y[i] = alpha * temp + beta * y[i]`. | Raw C uses one reusable `mpfr_t temp`; wrapper uses one reusable `mpfr_class temp` accessed through `with_context`. | Compare the wrapper FMA path against a raw C `mpfr_fma` accumulation and final `mpfr_fmma`. |
 | `04` | Explicit-context column AXPY wrapper: scale `y`, compute `temp = alpha * x[j]`, then `templ = temp * A[...]`, `y += templ`. | Reusable `temp` and `templ` are initialized once and accessed through `with_context`. | Best serial wrapper source shape in this run. |
 | `openmp_01` | Row-owned direct row-dot expression. | Each row owns its accumulator; two parallel regions scale `y` and then update rows. | Race-free OpenMP baseline. |
 | `openmp_02` | Currently the same row-owned row-dot source shape as `openmp_01`. | Same resource policy as `openmp_01`. | Placeholder for a numbered counterpart; current source should be treated as duplicate of `openmp_01`. |
@@ -109,10 +109,12 @@ only on matching numeric suffixes.
 | `C_native_01_FMA` | Closest to FMA-enabled `kernel_01_*` and `kernel_openmp_01_*` | Raw C replaces the second multiply/add with `mpfr_fma`. |
 | `C_native_02` | `kernel_02_*`, serial part of `kernel_04_mkII` | Column AXPY with `temp = alpha * x[j]` hoisted outside the inner row loop. |
 | `C_native_02_FMA` | Desired raw C FMA counterpart of the column-AXPY wrapper shape | Best serial raw C result; inner row loop is one `mpfr_fma` after hoisting `temp`. |
+| `C_native_03` | `kernel_03_mkII_FMA` | Row-dot raw C path with `mpfr_fma` for `temp += A*x` and `mpfr_fmma` for `y = alpha*temp + beta*y`. |
 | `C_native_openmp_01` | `kernel_openmp_01_*`, `kernel_openmp_02_*` | Row-owned dot-product source shape; wrapper `openmp_02` is currently a duplicate of `openmp_01`. |
 | `C_native_openmp_01_FMA` | FMA-enabled row-owned direct source class | Raw C row-dot path with explicit `mpfr_fma` in the row loop. |
 | `C_native_openmp_02` | Closest to `kernel_openmp_04_mkII` | Row-owned copy-then-multiply; avoids races but recomputes `alpha * x[j]` per row. |
 | `C_native_openmp_02_FMA` | FMA raw C counterpart of `kernel_openmp_04_mkII` | Row-owned copy-then-FMA shape; still cannot reuse `alpha * x[j]` across rows. |
+| `C_native_openmp_03` | `kernel_openmp_03_mkII_FMA` | Row-owned raw C path with one per-thread `temp`, `mpfr_fma` accumulation, and final `mpfr_fmma`. |
 
 ## Recorded Run
 
@@ -132,21 +134,21 @@ CPU = AMD Ryzen Threadripper 3970X 32-Core Processor
 Results are stored in:
 
 ```text
-results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035/
+results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713/
 ```
 
 Files:
 
-- [Raw log](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035/benchmark_rgemv_mpfr_m4000_n4000_p512_repeat10.log)
-- [Raw CSV](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035/raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv)
-- [Summary CSV](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv)
+- [Raw log](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713/benchmark_rgemv_mpfr_m4000_n4000_p512_repeat10.log)
+- [Raw CSV](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713/raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv)
+- [Summary CSV](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv)
 
-All 26 variants reported `Result OK` in all 10 runs, for 260 successful timed
-runs.
+All 28 variants in this recorded run reported `Result OK` in all 10 runs, for
+280 successful timed runs.
 
-![MPFR Rgemv serial repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035/rgemv_mpfr_m4000_n4000_p512_repeat10_serial.png)
+![MPFR Rgemv serial repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713/rgemv_mpfr_m4000_n4000_p512_repeat10_serial.png)
 
-![MPFR Rgemv OpenMP repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035/rgemv_mpfr_m4000_n4000_p512_repeat10_openmp.png)
+![MPFR Rgemv OpenMP repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713/rgemv_mpfr_m4000_n4000_p512_repeat10_openmp.png)
 
 ## Resource or Bandwidth Estimates
 
@@ -177,11 +179,13 @@ simple byte formulas.
 
 | Variant | Avg MFLOPS | Max MFLOPS | A+x avg GB/s | A+x+y avg GB/s |
 |---------|-----------:|-----------:|-------------:|---------------:|
-| `kernel_openmp_03_mkII_FMA` | 277.394 | 288.122 | 26.63 | 53.26 |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 271.202 | 282.252 | 26.04 | 52.07 |
-| `C_native_openmp_01` | 266.330 | 273.677 | 25.57 | 51.14 |
-| `C_native_02_FMA` | 23.594 | 23.776 | 2.26 | 4.53 |
-| `kernel_04_mkII` | 20.447 | 21.011 | 1.96 | 3.93 |
+| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 275.267 | 281.348 | 26.43 | 52.85 |
+| `kernel_openmp_03_mkII_FMA` | 271.960 | 289.735 | 26.11 | 52.22 |
+| `C_native_openmp_01` | 266.518 | 274.484 | 25.59 | 51.17 |
+| `C_native_openmp_03` | 254.927 | 261.220 | 24.47 | 48.95 |
+| `C_native_02_FMA` | 23.526 | 23.723 | 2.26 | 4.52 |
+| `kernel_04_mkII` | 20.498 | 21.040 | 1.97 | 3.94 |
+| `C_native_03` | 10.532 | 11.007 | 1.01 | 2.02 |
 
 ## Serial Results
 
@@ -189,32 +193,33 @@ Main interpretation table:
 
 | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 |---------|-----------:|-----------:|-----------:|----------------|
-| `C_native_02_FMA` | 23.776 | 23.594 | 23.445 | Best serial result; column-AXPY hoists `alpha * x[j]`, then uses one `mpfr_fma` per matrix element. |
-| `kernel_04_mkII` | 21.011 | 20.447 | 20.100 | Best serial wrapper; explicit context plus reusable `temp`/`templ` avoids repeated default-rounding lookup in the wrapper path. |
-| `C_native_02` | 20.665 | 20.373 | 20.082 | Raw non-FMA column-AXPY baseline. |
-| `kernel_02_mkII` | 18.365 | 18.213 | 17.980 | Same reusable-temporary class as `04`, without explicit context. |
-| `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.319 | 18.200 | 18.000 | Fixed precision plus FMA does not beat the explicit-context source shape here. |
-| `C_native_01` | 14.477 | 14.407 | 14.292 | Direct raw C multiply/multiply/add source shape. |
-| `kernel_03_mkII_FMA` | 10.770 | 10.225 | 10.062 | Explicit-context row-dot FMA path; row-dot traversal remains weak in serial column-major storage. |
+| `C_native_02_FMA` | 23.723 | 23.526 | 23.294 | Best serial result; column-AXPY hoists `alpha * x[j]`, then uses one `mpfr_fma` per matrix element. |
+| `C_native_02` | 21.047 | 20.538 | 20.298 | Raw non-FMA column-AXPY baseline. |
+| `kernel_04_mkII` | 21.040 | 20.498 | 20.205 | Best serial wrapper; explicit context plus reusable `temp`/`templ` avoids repeated default-rounding lookup in the wrapper path. |
+| `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.305 | 18.246 | 18.139 | Fixed precision plus FMA is the best non-context wrapper `02` path in this run. |
+| `C_native_01` | 14.593 | 14.415 | 14.304 | Direct raw C multiply/multiply/add source shape. |
+| `C_native_03` | 11.007 | 10.532 | 10.235 | Raw C row-dot with `mpfr_fma` accumulation and final `mpfr_fmma`; still loses to column-AXPY traversal. |
+| `kernel_03_mkII_FMA` | 10.388 | 10.214 | 10.000 | Explicit-context row-dot FMA path; close to `C_native_03`, but row-dot traversal remains weak in serial column-major storage. |
 
 <details>
 <summary>Serial results sorted by Max MFLOPS</summary>
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
-| 1 | `C_native_02_FMA` | 23.776 | 23.594 | 23.445 |
-| 2 | `kernel_04_mkII` | 21.011 | 20.447 | 20.100 |
-| 3 | `C_native_02` | 20.665 | 20.373 | 20.082 |
-| 4 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.445 | 18.091 | 17.897 |
-| 5 | `kernel_02_mkII` | 18.365 | 18.213 | 17.980 |
-| 6 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.319 | 18.200 | 18.000 |
-| 7 | `C_native_01_FMA` | 14.534 | 14.163 | 13.990 |
-| 8 | `C_native_01` | 14.477 | 14.407 | 14.292 |
-| 9 | `kernel_03_mkII_FMA` | 10.770 | 10.225 | 10.062 |
-| 10 | `kernel_03_mkII` | 10.548 | 9.561 | 9.118 |
-| 11 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.387 | 10.110 | 9.846 |
-| 12 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 10.371 | 9.857 | 9.676 |
-| 13 | `kernel_01_mkII` | 9.772 | 9.175 | 8.804 |
+| 1 | `C_native_02_FMA` | 23.723 | 23.526 | 23.294 |
+| 2 | `C_native_02` | 21.047 | 20.538 | 20.298 |
+| 3 | `kernel_04_mkII` | 21.040 | 20.498 | 20.205 |
+| 4 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.447 | 18.032 | 17.801 |
+| 5 | `kernel_02_mkII` | 18.352 | 18.124 | 17.862 |
+| 6 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.305 | 18.246 | 18.139 |
+| 7 | `C_native_01` | 14.593 | 14.415 | 14.304 |
+| 8 | `C_native_01_FMA` | 14.256 | 14.095 | 13.771 |
+| 9 | `C_native_03` | 11.007 | 10.532 | 10.235 |
+| 10 | `kernel_03_mkII_FMA` | 10.388 | 10.214 | 10.000 |
+| 11 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.380 | 10.172 | 10.008 |
+| 12 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 10.245 | 9.873 | 9.482 |
+| 13 | `kernel_03_mkII` | 9.866 | 9.305 | 8.966 |
+| 14 | `kernel_01_mkII` | 9.423 | 9.035 | 8.710 |
 
 </details>
 
@@ -223,19 +228,20 @@ Main interpretation table:
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
-| 1 | `C_native_02_FMA` | 23.776 | 23.594 | 23.445 |
-| 2 | `kernel_04_mkII` | 21.011 | 20.447 | 20.100 |
-| 3 | `C_native_02` | 20.665 | 20.373 | 20.082 |
-| 4 | `kernel_02_mkII` | 18.365 | 18.213 | 17.980 |
-| 5 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.319 | 18.200 | 18.000 |
-| 6 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.445 | 18.091 | 17.897 |
-| 7 | `C_native_01` | 14.477 | 14.407 | 14.292 |
-| 8 | `C_native_01_FMA` | 14.535 | 14.163 | 13.990 |
-| 9 | `kernel_03_mkII_FMA` | 10.770 | 10.225 | 10.062 |
-| 10 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.387 | 10.110 | 9.846 |
-| 11 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 10.371 | 9.857 | 9.676 |
-| 12 | `kernel_03_mkII` | 10.548 | 9.561 | 9.118 |
-| 13 | `kernel_01_mkII` | 9.772 | 9.175 | 8.804 |
+| 1 | `C_native_02_FMA` | 23.723 | 23.526 | 23.294 |
+| 2 | `C_native_02` | 21.047 | 20.538 | 20.298 |
+| 3 | `kernel_04_mkII` | 21.040 | 20.498 | 20.205 |
+| 4 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.305 | 18.246 | 18.139 |
+| 5 | `kernel_02_mkII` | 18.352 | 18.124 | 17.862 |
+| 6 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.447 | 18.032 | 17.801 |
+| 7 | `C_native_01` | 14.593 | 14.415 | 14.304 |
+| 8 | `C_native_01_FMA` | 14.256 | 14.095 | 13.771 |
+| 9 | `C_native_03` | 11.007 | 10.532 | 10.235 |
+| 10 | `kernel_03_mkII_FMA` | 10.388 | 10.214 | 10.000 |
+| 11 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.380 | 10.172 | 10.008 |
+| 12 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 10.245 | 9.873 | 9.482 |
+| 13 | `kernel_03_mkII` | 9.866 | 9.305 | 8.966 |
+| 14 | `kernel_01_mkII` | 9.423 | 9.035 | 8.710 |
 
 </details>
 
@@ -245,32 +251,33 @@ Main interpretation table:
 
 | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 |---------|-----------:|-----------:|-----------:|----------------|
-| `kernel_openmp_03_mkII_FMA` | 288.122 | 277.394 | 263.821 | Best OpenMP average and maximum; explicit-context row-dot path with FMA lowering. |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 282.252 | 271.202 | 249.458 | Strong wrapper result; current source duplicates the row-dot class but adds fixed precision and FMA. |
-| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 286.098 | 267.941 | 214.980 | High max, wider run-to-run spread than `openmp_03`. |
-| `C_native_openmp_01` | 273.677 | 266.330 | 253.191 | Best raw C OpenMP average in this run. |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 263.642 | 258.752 | 252.235 | Stable non-FMA wrapper path. |
-| `C_native_openmp_02_FMA` | 212.279 | 209.661 | 203.856 | Row-owned copy-then-FMA; recomputes `alpha * x[j]` per row. |
-| `kernel_openmp_04_mkII` | 203.160 | 197.496 | 185.302 | Explicit-context copy-then-multiply row-owned path; less reuse than serial `04`. |
+| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.348 | 275.267 | 265.305 | Best OpenMP average in this run; current source duplicates the row-dot class but adds fixed precision and FMA. |
+| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 283.612 | 274.098 | 264.623 | Same row-dot source class as `openmp_02`; close to the best average. |
+| `kernel_openmp_03_mkII_FMA` | 289.735 | 271.960 | 255.352 | Best OpenMP maximum; explicit-context row-dot path with FMA lowering. |
+| `C_native_openmp_01` | 274.484 | 266.518 | 256.062 | Best raw C OpenMP average in this run. |
+| `C_native_openmp_03` | 261.220 | 254.927 | 228.386 | Raw C row-dot with `mpfr_fma` accumulation and final `mpfr_fmma`; useful comparison point for wrapper `openmp_03`. |
+| `kernel_openmp_03_mkII` | 256.047 | 249.266 | 240.922 | Explicit-context row-dot without FMA. |
+| `kernel_openmp_04_mkII` | 203.013 | 195.329 | 180.576 | Explicit-context copy-then-multiply row-owned path; less reuse than serial `04`. |
 
 <details>
 <summary>OpenMP results sorted by Max MFLOPS</summary>
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
-| 1 | `kernel_openmp_03_mkII_FMA` | 288.122 | 277.394 | 263.821 |
-| 2 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 286.098 | 267.941 | 214.980 |
-| 3 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 282.252 | 271.202 | 249.458 |
-| 4 | `C_native_openmp_01` | 273.677 | 266.330 | 253.191 |
-| 5 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 263.642 | 258.752 | 252.235 |
-| 6 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 263.115 | 254.873 | 240.207 |
-| 7 | `kernel_openmp_02_mkII` | 256.886 | 245.145 | 226.125 |
-| 8 | `kernel_openmp_03_mkII` | 256.477 | 240.901 | 218.614 |
-| 9 | `kernel_openmp_01_mkII` | 250.944 | 244.478 | 233.484 |
-| 10 | `C_native_openmp_01_FMA` | 214.610 | 209.732 | 198.595 |
-| 11 | `C_native_openmp_02_FMA` | 212.279 | 209.661 | 203.856 |
-| 12 | `kernel_openmp_04_mkII` | 203.160 | 197.496 | 185.302 |
-| 13 | `C_native_openmp_02` | 201.407 | 196.952 | 188.286 |
+| 1 | `kernel_openmp_03_mkII_FMA` | 289.735 | 271.960 | 255.352 |
+| 2 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 283.612 | 274.098 | 264.623 |
+| 3 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.348 | 275.267 | 265.305 |
+| 4 | `C_native_openmp_01` | 274.484 | 266.518 | 256.062 |
+| 5 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 266.460 | 258.793 | 247.048 |
+| 6 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 265.224 | 257.861 | 247.165 |
+| 7 | `C_native_openmp_03` | 261.220 | 254.927 | 228.386 |
+| 8 | `kernel_openmp_03_mkII` | 256.047 | 249.266 | 240.922 |
+| 9 | `kernel_openmp_01_mkII` | 254.890 | 239.685 | 217.228 |
+| 10 | `kernel_openmp_02_mkII` | 253.484 | 244.569 | 220.789 |
+| 11 | `C_native_openmp_01_FMA` | 213.711 | 207.426 | 193.510 |
+| 12 | `C_native_openmp_02_FMA` | 211.869 | 208.177 | 204.868 |
+| 13 | `C_native_openmp_02` | 203.180 | 199.311 | 195.472 |
+| 14 | `kernel_openmp_04_mkII` | 203.013 | 195.329 | 180.576 |
 
 </details>
 
@@ -279,19 +286,20 @@ Main interpretation table:
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
-| 1 | `kernel_openmp_03_mkII_FMA` | 288.122 | 277.394 | 263.821 |
-| 2 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 282.252 | 271.202 | 249.458 |
-| 3 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 286.098 | 267.941 | 214.980 |
-| 4 | `C_native_openmp_01` | 273.677 | 266.330 | 253.191 |
-| 5 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 263.642 | 258.752 | 252.235 |
-| 6 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 263.115 | 254.873 | 240.207 |
-| 7 | `kernel_openmp_02_mkII` | 256.886 | 245.145 | 226.125 |
-| 8 | `kernel_openmp_01_mkII` | 250.944 | 244.478 | 233.484 |
-| 9 | `kernel_openmp_03_mkII` | 256.477 | 240.901 | 218.614 |
-| 10 | `C_native_openmp_01_FMA` | 214.610 | 209.732 | 198.595 |
-| 11 | `C_native_openmp_02_FMA` | 212.279 | 209.661 | 203.856 |
-| 12 | `kernel_openmp_04_mkII` | 203.160 | 197.496 | 185.302 |
-| 13 | `C_native_openmp_02` | 201.407 | 196.952 | 188.286 |
+| 1 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.348 | 275.267 | 265.305 |
+| 2 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 283.612 | 274.098 | 264.623 |
+| 3 | `kernel_openmp_03_mkII_FMA` | 289.735 | 271.960 | 255.352 |
+| 4 | `C_native_openmp_01` | 274.484 | 266.518 | 256.062 |
+| 5 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 266.460 | 258.793 | 247.048 |
+| 6 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 265.224 | 257.861 | 247.165 |
+| 7 | `C_native_openmp_03` | 261.220 | 254.927 | 228.386 |
+| 8 | `kernel_openmp_03_mkII` | 256.047 | 249.266 | 240.922 |
+| 9 | `kernel_openmp_02_mkII` | 253.484 | 244.569 | 220.789 |
+| 10 | `kernel_openmp_01_mkII` | 254.890 | 239.685 | 217.228 |
+| 11 | `C_native_openmp_02_FMA` | 211.869 | 208.177 | 204.868 |
+| 12 | `C_native_openmp_01_FMA` | 213.711 | 207.426 | 193.510 |
+| 13 | `C_native_openmp_02` | 203.180 | 199.311 | 195.472 |
+| 14 | `kernel_openmp_04_mkII` | 203.013 | 195.329 | 180.576 |
 
 </details>
 
@@ -320,12 +328,31 @@ call   mpfr_fma@plt        # y[i] = temp * A[i+j*lda] + y[i]
 call   mpfr_clear@plt
 ```
 
+### `C_native_03` and `C_native_openmp_03`
+
+Raw C `03` is the direct comparison target for the wrapper `03` FMA path.  The
+serial version performs one `mpfr_set_d` per row, one `mpfr_fma` per matrix
+element in the row dot product, and one final `mpfr_fmma` per row.  The OpenMP
+version keeps the same hot loop with one private `temp` per thread.
+
+```asm
+call   mpfr_init2@plt
+call   mpfr_get_default_rounding_mode@plt
+call   mpfr_set_d@plt      # temp = 0
+...
+call   mpfr_fma@plt        # temp += A[i+j*lda] * x[j]
+...
+call   mpfr_fmma@plt       # y = alpha * temp + beta * y
+call   mpfr_clear@plt
+```
+
 ### `kernel_openmp_03_mkII_FMA`
 
-This is the best OpenMP wrapper in the recorded run.  The OpenMP worker
-initializes one per-thread `temp`, captures rounding through the explicit
-context, and the row-dot accumulation lowers to `mpfr_fma`.  The final
-assignment can lower to `mpfr_fmma` in the FMA build.
+This is the explicit-context OpenMP wrapper and the maximum-MFLOPS wrapper in
+the recorded run.  The OpenMP worker initializes one per-thread `temp`,
+captures rounding through the explicit context, and the row-dot accumulation
+lowers to `mpfr_fma`.  The final assignment can lower to `mpfr_fmma` in the
+FMA build.
 
 ```asm
 call   mpfr_init2@plt
@@ -376,10 +403,12 @@ explicit-context row-dot `kernel_03_mkII_FMA` still loses in serial because it
 walks column-major `A` with a large stride for each row.
 
 OpenMP changes the tradeoff.  Row-owned loops avoid concurrent writes to
-`y[i]`, so the best OpenMP wrapper is `kernel_openmp_03_mkII_FMA`: each thread
-owns rows, reuses a per-thread accumulator, and uses FMA lowering in the row
-accumulation.  The run still has normal OpenMP variability; use average
-MFLOPS for ranking and max MFLOPS for peak-path inspection.
+`y[i]`.  In this run the best OpenMP average is
+`kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA`, while the best OpenMP
+maximum is `kernel_openmp_03_mkII_FMA`.  The gap is small enough that it should
+be treated as a source-shape plus OpenMP-variability result, not as a stable
+proof that one path always dominates.  Use average MFLOPS for ranking and max
+MFLOPS for peak-path inspection.
 
 `openmp_04` is not a direct parallelization of serial `04`.  A direct
 column-AXPY OpenMP loop would race on `y[i]`; the current race-free row-owned

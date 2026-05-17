@@ -1,3 +1,122 @@
+Post-phase MPFR Rgemv 28-variant repeat benchmark refresh:
+DONE
+
+Implemented features:
+- Deleted the old tracked MPFR Rgemv repeat-10 result directory
+  `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035`.
+- Rebuilt and reran the complete current MPFR Rgemv benchmark matrix,
+  including the new raw C `03` and `openmp_03` FMMA targets.
+- Wrote the fresh repeat-10 result set under
+  `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713`.
+- Generated raw CSV, summary CSV, and serial/OpenMP plots with average bars
+  and min/max ranges.
+- Updated `benchmarks/mpfr/02_Rgemv/README.md` with the new 28-variant result
+  set, bandwidth estimates, sorted tables, and revised interpretation.
+
+Tests added:
+- No unit tests were added; this phase refreshes benchmark results.
+
+Tests updated:
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `find benchmarks/mpfr/02_Rgemv -maxdepth 3 -type f -o -type d | sort`
+- `rg -n "rgemv_mpfr|Rgemv_mpfr|repeat10|summary_rgemv|openmp_mflops|serial" benchmarks/mpfr benchmarks/common benchmarks/CMakeLists.txt -g '*.sh' -g '*.py' -g '*.md' -g 'CMakeLists.txt'`
+- `git ls-files benchmarks/mpfr/02_Rgemv/results_raw`
+- `git rm -r benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035`
+- `cmake --build build_bench_release --target Rgemv_mpfr_C_native_01 Rgemv_mpfr_C_native_01_FMA Rgemv_mpfr_C_native_02 Rgemv_mpfr_C_native_02_FMA Rgemv_mpfr_C_native_03 Rgemv_mpfr_C_native_openmp_01 Rgemv_mpfr_C_native_openmp_01_FMA Rgemv_mpfr_C_native_openmp_02 Rgemv_mpfr_C_native_openmp_02_FMA Rgemv_mpfr_C_native_openmp_03 Rgemv_mpfr_kernel_01_mkII Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_02_mkII Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_03_mkII Rgemv_mpfr_kernel_03_mkII_FMA Rgemv_mpfr_kernel_04_mkII Rgemv_mpfr_kernel_openmp_01_mkII Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_openmp_02_mkII Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_openmp_03_mkII Rgemv_mpfr_kernel_openmp_03_mkII_FMA Rgemv_mpfr_kernel_openmp_04_mkII -j`
+- `bash -lc` repeat-10 MPFR Rgemv benchmark runner for 28 variants at
+  `m=4000`, `n=4000`, `precision=512`, with
+  `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, and `OMP_PROC_BIND=spread`.
+- `python3` log parser and plot generator for
+  `raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`,
+  `summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`,
+  `rgemv_mpfr_m4000_n4000_p512_repeat10_serial.png`, and
+  `rgemv_mpfr_m4000_n4000_p512_repeat10_openmp.png`.
+- `python3` summary helper for README tables and bandwidth estimates.
+- `sed -n '120,430p' benchmarks/mpfr/02_Rgemv/README.md`
+- `rg -n '20260517_212035|All 26|260 successful|277\.394|23\.594|best OpenMP wrapper' benchmarks/mpfr/02_Rgemv/README.md`
+- `git diff --check`
+- `ls benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713`
+- `sed -n '1,40p' benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_222713/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Build of the full MPFR Rgemv target matrix: PASS.
+- Fresh repeat-10 benchmark run: PASS, 280/280 runs reported `Result OK`.
+- Best serial average: `Rgemv_mpfr_C_native_02_FMA`, 23.526 MFLOPS.
+- Best wrapper serial average: `Rgemv_mpfr_kernel_04_mkII`, 20.498 MFLOPS.
+- Best OpenMP average: `Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA`,
+  275.267 MFLOPS.
+- Best raw C OpenMP average: `Rgemv_mpfr_C_native_openmp_01`,
+  266.518 MFLOPS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- `kernel_openmp_02_*` still has the same row-dot source shape as
+  `kernel_openmp_01_*`; the README documents this explicitly.
+- The benchmark harness still runs a reference Rgemv after each timed kernel,
+  so wall-clock time is much larger than the timed `Elapsed time` for fast
+  OpenMP variants.
+
+Post-phase MPFR Rgemv C native 03 FMMA kernels:
+DONE
+
+Implemented features:
+- Added `Rgemv_mpfr_C_native_03.cpp` as the serial raw C row-dot counterpart
+  to `Rgemv_mpfr_kernel_03_mkII_FMA`.
+- Added `Rgemv_mpfr_C_native_openmp_03.cpp` as the OpenMP raw C row-dot
+  counterpart to `Rgemv_mpfr_kernel_openmp_03_mkII_FMA`.
+- Both new kernels accumulate `temp += A[i + j*lda] * x[j]` with `mpfr_fma`
+  and finish each row with `mpfr_fmma(y[i], alpha, temp, beta, y[i], rnd)`.
+- Registered the new serial and OpenMP targets in `benchmarks/CMakeLists.txt`.
+- Updated the MPFR Rgemv README to document the new C native equivalent
+  kernels and FMMA hotpath.
+
+Tests added:
+- No unit tests were added; this phase adds benchmark executables.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '280,360p' benchmarks/CMakeLists.txt`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_common.hpp`
+- `sed -n '1,200p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01_FMA.cpp`
+- `sed -n '1,200p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01_FMA.cpp`
+- `sed -n '80,180p' benchmarks/mpfr/02_Rgemv/README.md`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rgemv_mpfr_C_native_03 Rgemv_mpfr_C_native_openmp_03 -j`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_03 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_03 13 17 128`
+- `objdump -d build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_03 | grep -E 'mpfr_(fma|fmma|set_d|get_default_rounding_mode|init2|clear)@plt' | head -n 40`
+- `objdump -d build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_03 | grep -E 'mpfr_(fma|fmma|set_d|get_default_rounding_mode|init2|clear)@plt|GOMP_barrier@plt' | head -n 60`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Build of `Rgemv_mpfr_C_native_03`: PASS.
+- Build of `Rgemv_mpfr_C_native_openmp_03`: PASS.
+- Serial smoke run at `m=13`, `n=17`, `precision=128`: PASS,
+  `Result OK`.
+- OpenMP smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- Disassembly check: PASS, both new targets contain `mpfr_fma` and
+  `mpfr_fmma` calls in the relevant executable.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- The committed repeat-10 MPFR Rgemv result set predates these new C native
+  `03` targets, so the README records them as available targets but does not
+  include them in the existing 26-variant summary tables.
+
 Post-phase MPFR Rgemv README report:
 DONE
 

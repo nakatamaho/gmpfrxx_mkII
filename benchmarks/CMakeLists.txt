@@ -308,6 +308,8 @@ add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_02.cpp
     Rgemv_mpfr_C_native_02)
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_02_FMA.cpp
     Rgemv_mpfr_C_native_02_FMA)
+add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_03.cpp
+    Rgemv_mpfr_C_native_03)
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_01.cpp
     Rgemv_mpfr_C_native_openmp_01)
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_01_FMA.cpp
@@ -316,6 +318,8 @@ add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_02.cpp
     Rgemv_mpfr_C_native_openmp_02)
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_02_FMA.cpp
     Rgemv_mpfr_C_native_openmp_02_FMA)
+add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_03.cpp
+    Rgemv_mpfr_C_native_openmp_03)
 add_mpfr_kernel_variants(mpfr/02_Rgemv Rgemv_mpfr_kernel_01.cpp
     Rgemv_mpfr_kernel_01)
 add_mpfr_kernel_variants(mpfr/02_Rgemv Rgemv_mpfr_kernel_02.cpp

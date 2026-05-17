@@ -1,0 +1,1690 @@
+MPFR Rgemv repeat benchmark
+M=4000
+N=4000
+precision=512
+repeat=10
+OMP_NUM_THREADS=32
+OMP_PLACES=cores
+OMP_PROC_BIND=spread
+Model name:                           AMD Ryzen Threadripper 3970X 32-Core Processor
+
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=1 ===
+Elapsed time: 2.19566 s
+MFLOPS: 14.5742
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=2 ===
+Elapsed time: 2.23301 s
+MFLOPS: 14.3304
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=3 ===
+Elapsed time: 2.19289 s
+MFLOPS: 14.5926
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=4 ===
+Elapsed time: 2.22997 s
+MFLOPS: 14.3499
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=5 ===
+Elapsed time: 2.23325 s
+MFLOPS: 14.3289
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=6 ===
+Elapsed time: 2.20024 s
+MFLOPS: 14.5439
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=7 ===
+Elapsed time: 2.23294 s
+MFLOPS: 14.3309
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=8 ===
+Elapsed time: 2.23711 s
+MFLOPS: 14.3042
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=9 ===
+Elapsed time: 2.21851 s
+MFLOPS: 14.4241
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01 run=10 ===
+Elapsed time: 2.22655 s
+MFLOPS: 14.372
+L1 Norm of difference: 2.543e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01 run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=1 ===
+Elapsed time: 2.25873 s
+MFLOPS: 14.1673
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=2 ===
+Elapsed time: 2.28624 s
+MFLOPS: 13.9968
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=3 ===
+Elapsed time: 2.27197 s
+MFLOPS: 14.0847
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=4 ===
+Elapsed time: 2.28222 s
+MFLOPS: 14.0215
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=5 ===
+Elapsed time: 2.24664 s
+MFLOPS: 14.2435
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=6 ===
+Elapsed time: 2.32367 s
+MFLOPS: 13.7713
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=7 ===
+Elapsed time: 2.27908 s
+MFLOPS: 14.0408
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=8 ===
+Elapsed time: 2.25341 s
+MFLOPS: 14.2007
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=9 ===
+Elapsed time: 2.24465 s
+MFLOPS: 14.2561
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_01_FMA run=10 ===
+Elapsed time: 2.25888 s
+MFLOPS: 14.1663
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_01_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=1 ===
+Elapsed time: 1.57033 s
+MFLOPS: 20.3779
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=2 ===
+Elapsed time: 1.57654 s
+MFLOPS: 20.2976
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=3 ===
+Elapsed time: 1.5598 s
+MFLOPS: 20.5154
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=4 ===
+Elapsed time: 1.55697 s
+MFLOPS: 20.5527
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=5 ===
+Elapsed time: 1.56415 s
+MFLOPS: 20.4584
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=6 ===
+Elapsed time: 1.55472 s
+MFLOPS: 20.5825
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=7 ===
+Elapsed time: 1.56166 s
+MFLOPS: 20.491
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=8 ===
+Elapsed time: 1.54866 s
+MFLOPS: 20.6631
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=9 ===
+Elapsed time: 1.56884 s
+MFLOPS: 20.3973
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02 run=10 ===
+Elapsed time: 1.52038 s
+MFLOPS: 21.0473
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02 run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=1 ===
+Elapsed time: 1.35501 s
+MFLOPS: 23.616
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=2 ===
+Elapsed time: 1.37375 s
+MFLOPS: 23.294
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=3 ===
+Elapsed time: 1.36005 s
+MFLOPS: 23.5286
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=4 ===
+Elapsed time: 1.36876 s
+MFLOPS: 23.3787
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=5 ===
+Elapsed time: 1.35676 s
+MFLOPS: 23.5855
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=6 ===
+Elapsed time: 1.34968 s
+MFLOPS: 23.7094
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=7 ===
+Elapsed time: 1.35817 s
+MFLOPS: 23.5611
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=8 ===
+Elapsed time: 1.36527 s
+MFLOPS: 23.4387
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=9 ===
+Elapsed time: 1.34888 s
+MFLOPS: 23.7234
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_02_FMA run=10 ===
+Elapsed time: 1.36636 s
+MFLOPS: 23.4198
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_02_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=1 ===
+Elapsed time: 2.90714 s
+MFLOPS: 11.0074
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=2 ===
+Elapsed time: 3.12661 s
+MFLOPS: 10.2347
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=3 ===
+Elapsed time: 3.0689 s
+MFLOPS: 10.4272
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=4 ===
+Elapsed time: 3.09555 s
+MFLOPS: 10.3374
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=5 ===
+Elapsed time: 3.0232 s
+MFLOPS: 10.5848
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=6 ===
+Elapsed time: 3.07677 s
+MFLOPS: 10.4005
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=7 ===
+Elapsed time: 3.12095 s
+MFLOPS: 10.2533
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=8 ===
+Elapsed time: 2.96782 s
+MFLOPS: 10.7823
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=9 ===
+Elapsed time: 2.9945 s
+MFLOPS: 10.6863
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_03 run=10 ===
+Elapsed time: 3.0167 s
+MFLOPS: 10.6076
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_03 run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=1 ===
+Elapsed time: 3.54551 s
+MFLOPS: 9.0255
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=2 ===
+Elapsed time: 3.47429 s
+MFLOPS: 9.21051
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=3 ===
+Elapsed time: 3.67391 s
+MFLOPS: 8.71006
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=4 ===
+Elapsed time: 3.63081 s
+MFLOPS: 8.81345
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=5 ===
+Elapsed time: 3.39604 s
+MFLOPS: 9.42275
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=6 ===
+Elapsed time: 3.60674 s
+MFLOPS: 8.87227
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=7 ===
+Elapsed time: 3.58374 s
+MFLOPS: 8.92922
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=8 ===
+Elapsed time: 3.51398 s
+MFLOPS: 9.10648
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=9 ===
+Elapsed time: 3.47107 s
+MFLOPS: 9.21906
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII run=10 ===
+Elapsed time: 3.53781 s
+MFLOPS: 9.04515
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=1 ===
+Elapsed time: 3.19918 s
+MFLOPS: 10.0026
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=2 ===
+Elapsed time: 3.18524 s
+MFLOPS: 10.0463
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=3 ===
+Elapsed time: 3.16589 s
+MFLOPS: 10.1078
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=4 ===
+Elapsed time: 3.35037 s
+MFLOPS: 9.55118
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=5 ===
+Elapsed time: 3.12335 s
+MFLOPS: 10.2454
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=6 ===
+Elapsed time: 3.29314 s
+MFLOPS: 9.71716
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=7 ===
+Elapsed time: 3.30825 s
+MFLOPS: 9.67279
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=8 ===
+Elapsed time: 3.18681 s
+MFLOPS: 10.0414
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=9 ===
+Elapsed time: 3.24433 s
+MFLOPS: 9.86337
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=10 ===
+Elapsed time: 3.37489 s
+MFLOPS: 9.48179
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
+Elapsed time: 3.12224 s
+MFLOPS: 10.2491
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
+Elapsed time: 3.12598 s
+MFLOPS: 10.2368
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
+Elapsed time: 3.16345 s
+MFLOPS: 10.1155
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
+Elapsed time: 3.08291 s
+MFLOPS: 10.3798
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
+Elapsed time: 3.13733 s
+MFLOPS: 10.1998
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
+Elapsed time: 3.14772 s
+MFLOPS: 10.1661
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
+Elapsed time: 3.12415 s
+MFLOPS: 10.2428
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
+Elapsed time: 3.1976 s
+MFLOPS: 10.0075
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
+Elapsed time: 3.17902 s
+MFLOPS: 10.066
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
+Elapsed time: 3.18116 s
+MFLOPS: 10.0592
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=1 ===
+Elapsed time: 1.75264 s
+MFLOPS: 18.2582
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=2 ===
+Elapsed time: 1.77131 s
+MFLOPS: 18.0657
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=3 ===
+Elapsed time: 1.76668 s
+MFLOPS: 18.1131
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=4 ===
+Elapsed time: 1.76651 s
+MFLOPS: 18.1148
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=5 ===
+Elapsed time: 1.74365 s
+MFLOPS: 18.3523
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=6 ===
+Elapsed time: 1.7666 s
+MFLOPS: 18.1138
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=7 ===
+Elapsed time: 1.79152 s
+MFLOPS: 17.8619
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=8 ===
+Elapsed time: 1.74868 s
+MFLOPS: 18.2995
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=9 ===
+Elapsed time: 1.78274 s
+MFLOPS: 17.9498
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII run=10 ===
+Elapsed time: 1.76669 s
+MFLOPS: 18.113
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=1 ===
+Elapsed time: 1.78585 s
+MFLOPS: 17.9186
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=2 ===
+Elapsed time: 1.77114 s
+MFLOPS: 18.0674
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=3 ===
+Elapsed time: 1.76436 s
+MFLOPS: 18.1369
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=4 ===
+Elapsed time: 1.75987 s
+MFLOPS: 18.1831
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=5 ===
+Elapsed time: 1.79767 s
+MFLOPS: 17.8008
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=6 ===
+Elapsed time: 1.76485 s
+MFLOPS: 18.1319
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=7 ===
+Elapsed time: 1.79136 s
+MFLOPS: 17.8635
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=8 ===
+Elapsed time: 1.7347 s
+MFLOPS: 18.447
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=9 ===
+Elapsed time: 1.78625 s
+MFLOPS: 17.9146
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=10 ===
+Elapsed time: 1.79185 s
+MFLOPS: 17.8587
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
+Elapsed time: 1.74816 s
+MFLOPS: 18.3049
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
+Elapsed time: 1.75115 s
+MFLOPS: 18.2737
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
+Elapsed time: 1.75043 s
+MFLOPS: 18.2813
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
+Elapsed time: 1.7511 s
+MFLOPS: 18.2743
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
+Elapsed time: 1.75118 s
+MFLOPS: 18.2734
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
+Elapsed time: 1.75005 s
+MFLOPS: 18.2852
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
+Elapsed time: 1.75335 s
+MFLOPS: 18.2508
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
+Elapsed time: 1.76416 s
+MFLOPS: 18.1389
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
+Elapsed time: 1.76212 s
+MFLOPS: 18.16
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
+Elapsed time: 1.75671 s
+MFLOPS: 18.2159
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=1 ===
+Elapsed time: 3.56912 s
+MFLOPS: 8.96579
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=2 ===
+Elapsed time: 3.297 s
+MFLOPS: 9.70578
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=3 ===
+Elapsed time: 3.46558 s
+MFLOPS: 9.23367
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=4 ===
+Elapsed time: 3.35495 s
+MFLOPS: 9.53815
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=5 ===
+Elapsed time: 3.24333 s
+MFLOPS: 9.86642
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=6 ===
+Elapsed time: 3.53781 s
+MFLOPS: 9.04515
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=7 ===
+Elapsed time: 3.54496 s
+MFLOPS: 9.02691
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=8 ===
+Elapsed time: 3.54163 s
+MFLOPS: 9.03539
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=9 ===
+Elapsed time: 3.41257 s
+MFLOPS: 9.37711
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII run=10 ===
+Elapsed time: 3.45785 s
+MFLOPS: 9.25429
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=1 ===
+Elapsed time: 3.19992 s
+MFLOPS: 10.0002
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=2 ===
+Elapsed time: 3.08499 s
+MFLOPS: 10.3728
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=3 ===
+Elapsed time: 3.08045 s
+MFLOPS: 10.3881
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=4 ===
+Elapsed time: 3.13957 s
+MFLOPS: 10.1925
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=5 ===
+Elapsed time: 3.15364 s
+MFLOPS: 10.147
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=6 ===
+Elapsed time: 3.1133 s
+MFLOPS: 10.2785
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=7 ===
+Elapsed time: 3.14818 s
+MFLOPS: 10.1646
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=8 ===
+Elapsed time: 3.1223 s
+MFLOPS: 10.2489
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=9 ===
+Elapsed time: 3.15236 s
+MFLOPS: 10.1511
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_03_mkII_FMA run=10 ===
+Elapsed time: 3.13828 s
+MFLOPS: 10.1967
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_03_mkII_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=1 ===
+Elapsed time: 1.56112 s
+MFLOPS: 20.4981
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=2 ===
+Elapsed time: 1.57248 s
+MFLOPS: 20.35
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=3 ===
+Elapsed time: 1.55846 s
+MFLOPS: 20.5332
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=4 ===
+Elapsed time: 1.55882 s
+MFLOPS: 20.5283
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=5 ===
+Elapsed time: 1.56583 s
+MFLOPS: 20.4364
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=6 ===
+Elapsed time: 1.5563 s
+MFLOPS: 20.5616
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=7 ===
+Elapsed time: 1.56698 s
+MFLOPS: 20.4214
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=8 ===
+Elapsed time: 1.5209 s
+MFLOPS: 21.0402
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=9 ===
+Elapsed time: 1.58378 s
+MFLOPS: 20.2048
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_04_mkII run=10 ===
+Elapsed time: 1.56788 s
+MFLOPS: 20.4097
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_04_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=1 ===
+Elapsed time: 0.118765 s
+MFLOPS: 269.439
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=2 ===
+Elapsed time: 0.122827 s
+MFLOPS: 260.528
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=3 ===
+Elapsed time: 0.116761 s
+MFLOPS: 274.065
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=4 ===
+Elapsed time: 0.12497 s
+MFLOPS: 256.062
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=5 ===
+Elapsed time: 0.116582 s
+MFLOPS: 274.484
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=6 ===
+Elapsed time: 0.118453 s
+MFLOPS: 270.15
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=7 ===
+Elapsed time: 0.123834 s
+MFLOPS: 258.411
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=8 ===
+Elapsed time: 0.118619 s
+MFLOPS: 269.772
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=9 ===
+Elapsed time: 0.117533 s
+MFLOPS: 272.264
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01 run=10 ===
+Elapsed time: 0.123077 s
+MFLOPS: 260.001
+L1 Norm of difference: 1.16e-09
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01 run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=1 ===
+Elapsed time: 0.157046 s
+MFLOPS: 203.762
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=2 ===
+Elapsed time: 0.15153 s
+MFLOPS: 211.179
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=3 ===
+Elapsed time: 0.150926 s
+MFLOPS: 212.024
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=4 ===
+Elapsed time: 0.152622 s
+MFLOPS: 209.669
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=5 ===
+Elapsed time: 0.165366 s
+MFLOPS: 193.51
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=6 ===
+Elapsed time: 0.152673 s
+MFLOPS: 209.599
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=7 ===
+Elapsed time: 0.156097 s
+MFLOPS: 205.001
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=8 ===
+Elapsed time: 0.149735 s
+MFLOPS: 213.711
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=9 ===
+Elapsed time: 0.152728 s
+MFLOPS: 209.523
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_01_FMA run=10 ===
+Elapsed time: 0.155127 s
+MFLOPS: 206.283
+L1 Norm of difference: 3.706e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_01_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=1 ===
+Elapsed time: 0.163706 s
+MFLOPS: 195.472
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=2 ===
+Elapsed time: 0.158792 s
+MFLOPS: 201.521
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=3 ===
+Elapsed time: 0.158722 s
+MFLOPS: 201.611
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=4 ===
+Elapsed time: 0.161151 s
+MFLOPS: 198.572
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=5 ===
+Elapsed time: 0.161506 s
+MFLOPS: 198.136
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=6 ===
+Elapsed time: 0.157496 s
+MFLOPS: 203.18
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=7 ===
+Elapsed time: 0.160297 s
+MFLOPS: 199.629
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=8 ===
+Elapsed time: 0.160553 s
+MFLOPS: 199.311
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=9 ===
+Elapsed time: 0.161022 s
+MFLOPS: 198.731
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02 run=10 ===
+Elapsed time: 0.162476 s
+MFLOPS: 196.952
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02 run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=1 ===
+Elapsed time: 0.156148 s
+MFLOPS: 204.934
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=2 ===
+Elapsed time: 0.152709 s
+MFLOPS: 209.549
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=3 ===
+Elapsed time: 0.153715 s
+MFLOPS: 208.178
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=4 ===
+Elapsed time: 0.151296 s
+MFLOPS: 211.506
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=5 ===
+Elapsed time: 0.151972 s
+MFLOPS: 210.565
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=6 ===
+Elapsed time: 0.155502 s
+MFLOPS: 205.785
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=7 ===
+Elapsed time: 0.154737 s
+MFLOPS: 206.802
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=8 ===
+Elapsed time: 0.151037 s
+MFLOPS: 211.869
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=9 ===
+Elapsed time: 0.154057 s
+MFLOPS: 207.715
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_02_FMA run=10 ===
+Elapsed time: 0.156198 s
+MFLOPS: 204.868
+L1 Norm of difference: 3.412e-149
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_02_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=1 ===
+Elapsed time: 0.124593 s
+MFLOPS: 256.836
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=1 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=2 ===
+Elapsed time: 0.122502 s
+MFLOPS: 261.22
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=2 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=3 ===
+Elapsed time: 0.123654 s
+MFLOPS: 258.786
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=3 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=4 ===
+Elapsed time: 0.12285 s
+MFLOPS: 260.48
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=4 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=5 ===
+Elapsed time: 0.122582 s
+MFLOPS: 261.05
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=5 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=6 ===
+Elapsed time: 0.12368 s
+MFLOPS: 258.731
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=6 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=7 ===
+Elapsed time: 0.123277 s
+MFLOPS: 259.579
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=7 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=8 ===
+Elapsed time: 0.124892 s
+MFLOPS: 256.222
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=8 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=9 ===
+Elapsed time: 0.140114 s
+MFLOPS: 228.386
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=9 ===
+=== BEGIN variant=Rgemv_mpfr_C_native_openmp_03 run=10 ===
+Elapsed time: 0.129041 s
+MFLOPS: 247.984
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_C_native_openmp_03 run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=1 ===
+Elapsed time: 0.129547 s
+MFLOPS: 247.014
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=2 ===
+Elapsed time: 0.133029 s
+MFLOPS: 240.549
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=3 ===
+Elapsed time: 0.131621 s
+MFLOPS: 243.122
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=4 ===
+Elapsed time: 0.134881 s
+MFLOPS: 237.246
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=5 ===
+Elapsed time: 0.129192 s
+MFLOPS: 247.694
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=6 ===
+Elapsed time: 0.13476 s
+MFLOPS: 237.459
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=7 ===
+Elapsed time: 0.125544 s
+MFLOPS: 254.89
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=8 ===
+Elapsed time: 0.14731 s
+MFLOPS: 217.228
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=9 ===
+Elapsed time: 0.142738 s
+MFLOPS: 224.186
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII run=10 ===
+Elapsed time: 0.129314 s
+MFLOPS: 247.459
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=1 ===
+Elapsed time: 0.125667 s
+MFLOPS: 254.642
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=2 ===
+Elapsed time: 0.124232 s
+MFLOPS: 257.583
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=3 ===
+Elapsed time: 0.122457 s
+MFLOPS: 261.316
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=4 ===
+Elapsed time: 0.123398 s
+MFLOPS: 259.324
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=5 ===
+Elapsed time: 0.120093 s
+MFLOPS: 266.46
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=6 ===
+Elapsed time: 0.123756 s
+MFLOPS: 258.574
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=7 ===
+Elapsed time: 0.124953 s
+MFLOPS: 256.096
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=8 ===
+Elapsed time: 0.121609 s
+MFLOPS: 263.139
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=9 ===
+Elapsed time: 0.121328 s
+MFLOPS: 263.747
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=10 ===
+Elapsed time: 0.12953 s
+MFLOPS: 247.048
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
+Elapsed time: 0.116105 s
+MFLOPS: 275.613
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
+Elapsed time: 0.114308 s
+MFLOPS: 279.946
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
+Elapsed time: 0.11575 s
+MFLOPS: 276.458
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
+Elapsed time: 0.116481 s
+MFLOPS: 274.722
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
+Elapsed time: 0.117429 s
+MFLOPS: 272.504
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
+Elapsed time: 0.11283 s
+MFLOPS: 283.612
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
+Elapsed time: 0.119078 s
+MFLOPS: 268.731
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
+Elapsed time: 0.117915 s
+MFLOPS: 271.382
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
+Elapsed time: 0.117048 s
+MFLOPS: 273.391
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
+Elapsed time: 0.120927 s
+MFLOPS: 264.623
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=1 ===
+Elapsed time: 0.129585 s
+MFLOPS: 246.943
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=2 ===
+Elapsed time: 0.126241 s
+MFLOPS: 253.484
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=3 ===
+Elapsed time: 0.130094 s
+MFLOPS: 245.976
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=4 ===
+Elapsed time: 0.138157 s
+MFLOPS: 231.62
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=5 ===
+Elapsed time: 0.12664 s
+MFLOPS: 252.684
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=6 ===
+Elapsed time: 0.13086 s
+MFLOPS: 244.535
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=7 ===
+Elapsed time: 0.127235 s
+MFLOPS: 251.504
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=8 ===
+Elapsed time: 0.128825 s
+MFLOPS: 248.398
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=9 ===
+Elapsed time: 0.144935 s
+MFLOPS: 220.789
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII run=10 ===
+Elapsed time: 0.128127 s
+MFLOPS: 249.752
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=1 ===
+Elapsed time: 0.124056 s
+MFLOPS: 257.948
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=2 ===
+Elapsed time: 0.123983 s
+MFLOPS: 258.1
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=3 ===
+Elapsed time: 0.120653 s
+MFLOPS: 265.224
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=4 ===
+Elapsed time: 0.127905 s
+MFLOPS: 250.185
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=5 ===
+Elapsed time: 0.124759 s
+MFLOPS: 256.495
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=6 ===
+Elapsed time: 0.12112 s
+MFLOPS: 264.201
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=7 ===
+Elapsed time: 0.124801 s
+MFLOPS: 256.409
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=8 ===
+Elapsed time: 0.121563 s
+MFLOPS: 263.239
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=9 ===
+Elapsed time: 0.129468 s
+MFLOPS: 247.165
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=10 ===
+Elapsed time: 0.123243 s
+MFLOPS: 259.649
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
+Elapsed time: 0.11894 s
+MFLOPS: 269.044
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
+Elapsed time: 0.113738 s
+MFLOPS: 281.348
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
+Elapsed time: 0.116413 s
+MFLOPS: 274.884
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
+Elapsed time: 0.115956 s
+MFLOPS: 275.967
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
+Elapsed time: 0.117271 s
+MFLOPS: 272.871
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
+Elapsed time: 0.113822 s
+MFLOPS: 281.141
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
+Elapsed time: 0.114223 s
+MFLOPS: 280.154
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
+Elapsed time: 0.115402 s
+MFLOPS: 277.291
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
+Elapsed time: 0.120616 s
+MFLOPS: 265.305
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
+Elapsed time: 0.116507 s
+MFLOPS: 274.663
+L1 Norm of difference: 1.135e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=1 ===
+Elapsed time: 0.12806 s
+MFLOPS: 249.883
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=2 ===
+Elapsed time: 0.124977 s
+MFLOPS: 256.047
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=3 ===
+Elapsed time: 0.12925 s
+MFLOPS: 247.582
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=4 ===
+Elapsed time: 0.126914 s
+MFLOPS: 252.139
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=5 ===
+Elapsed time: 0.128726 s
+MFLOPS: 248.589
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=6 ===
+Elapsed time: 0.128464 s
+MFLOPS: 249.098
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=7 ===
+Elapsed time: 0.127702 s
+MFLOPS: 250.583
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=8 ===
+Elapsed time: 0.127523 s
+MFLOPS: 250.935
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=9 ===
+Elapsed time: 0.129617 s
+MFLOPS: 246.881
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII run=10 ===
+Elapsed time: 0.132823 s
+MFLOPS: 240.922
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=1 ===
+Elapsed time: 0.120402 s
+MFLOPS: 265.776
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=2 ===
+Elapsed time: 0.117642 s
+MFLOPS: 272.012
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=3 ===
+Elapsed time: 0.110446 s
+MFLOPS: 289.735
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=4 ===
+Elapsed time: 0.124649 s
+MFLOPS: 256.72
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=5 ===
+Elapsed time: 0.113315 s
+MFLOPS: 282.398
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=6 ===
+Elapsed time: 0.121625 s
+MFLOPS: 263.104
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=7 ===
+Elapsed time: 0.114492 s
+MFLOPS: 279.495
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=8 ===
+Elapsed time: 0.115292 s
+MFLOPS: 277.556
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=9 ===
+Elapsed time: 0.125317 s
+MFLOPS: 255.352
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=10 ===
+Elapsed time: 0.115334 s
+MFLOPS: 277.455
+L1 Norm of difference: 1.136e-147
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_03_mkII_FMA run=10 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=1 ===
+Elapsed time: 0.157761 s
+MFLOPS: 202.839
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=1 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=2 ===
+Elapsed time: 0.163156 s
+MFLOPS: 196.131
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=2 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=3 ===
+Elapsed time: 0.165669 s
+MFLOPS: 193.156
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=3 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=4 ===
+Elapsed time: 0.157625 s
+MFLOPS: 203.013
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=4 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=5 ===
+Elapsed time: 0.159144 s
+MFLOPS: 201.075
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=5 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=6 ===
+Elapsed time: 0.17721 s
+MFLOPS: 180.576
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=6 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=7 ===
+Elapsed time: 0.163215 s
+MFLOPS: 196.061
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=7 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=8 ===
+Elapsed time: 0.17214 s
+MFLOPS: 185.895
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=8 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=9 ===
+Elapsed time: 0.162188 s
+MFLOPS: 197.302
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=9 ===
+=== BEGIN variant=Rgemv_mpfr_kernel_openmp_04_mkII run=10 ===
+Elapsed time: 0.162238 s
+MFLOPS: 197.241
+L1 Norm of difference: 0
+Result OK
+=== END variant=Rgemv_mpfr_kernel_openmp_04_mkII run=10 ===
