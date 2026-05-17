@@ -110,6 +110,11 @@ private:
 
 namespace mpfrxx {
 
+struct evaluation_context {
+    mpfr_prec_t precision;
+    mpfr_rnd_t rounding_mode;
+};
+
 class mpfr_class {
 public:
     mpfr_class() : mpfr_class(precision_tag{}, default_precision()) {}
@@ -623,6 +628,8 @@ inline void swap(mpfr_class& lhs, mpfr_class& rhs) noexcept
 {
     lhs.swap(rhs);
 }
+
+class mpfr_context_ref;
 
 } // namespace mpfrxx
 
@@ -2421,13 +2428,15 @@ auto operator>>(Lhs&& lhs, Bits bits)
 }
 
 template <typename Op, typename Rhs>
-void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
+void mpfr_compound_assign_with_context(
+    mpfrxx::mpfr_class& lhs,
+    Rhs&& rhs,
+    eval_context context)
 {
     auto operand = make_mpfr_operand(std::forward<Rhs>(rhs));
     using operand_type = std::decay_t<decltype(operand)>;
 
-    const mpfr_prec_t precision = mpfr_get_prec(lhs.mpfr_data());
-    const auto context = current_eval_context(precision);
+    const mpfr_prec_t precision = context.precision_bits;
 
     if constexpr (is_mpfr_object_leaf_v<operand_type>) {
         mpfr_apply_binary<Op>(
@@ -2472,6 +2481,14 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
     }
 }
 
+template <typename Op, typename Rhs>
+void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
+{
+    const mpfr_prec_t precision = mpfr_get_prec(lhs.mpfr_data());
+    const auto context = current_eval_context(precision);
+    mpfr_compound_assign_with_context<Op>(lhs, std::forward<Rhs>(rhs), context);
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -2514,6 +2531,107 @@ mpfr_class& mpfr_class::operator=(const Expr& expr)
     }
     gmpfrxx_mkII::detail::mpfr_evaluate(value_, expr, precision, context.rounding_mode);
     return *this;
+}
+
+class mpfr_context_ref {
+public:
+    mpfr_context_ref(mpfr_class& value, evaluation_context context)
+        : value_(&value),
+          context_(context)
+    {
+        if (context_.precision != value_->precision()) {
+            throw std::invalid_argument("mpfr evaluation context precision must match target precision");
+        }
+    }
+
+    mpfr_context_ref(const mpfr_context_ref&) = default;
+    mpfr_context_ref& operator=(const mpfr_context_ref&) = default;
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+    mpfr_context_ref& operator=(Rhs&& rhs)
+    {
+        auto operand = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Rhs>(rhs));
+        const auto context = detail_context();
+        if (gmpfrxx_mkII::detail::mpfr_try_assign_direct_leaf_binary(
+                value_->mpfr_data(),
+                operand,
+                context.rounding_mode)) {
+            return *this;
+        }
+        gmpfrxx_mkII::detail::mpfr_evaluate(
+            value_->mpfr_data(),
+            operand,
+            context.precision_bits,
+            context.rounding_mode);
+        return *this;
+    }
+
+    mpfr_class& value() const noexcept
+    {
+        return *value_;
+    }
+
+    const evaluation_context& context() const noexcept
+    {
+        return context_;
+    }
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+    mpfr_context_ref& operator+=(Rhs&& rhs)
+    {
+        gmpfrxx_mkII::detail::mpfr_compound_assign_with_context<gmpfrxx_mkII::detail::add_op>(
+            *value_,
+            std::forward<Rhs>(rhs),
+            detail_context());
+        return *this;
+    }
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+    mpfr_context_ref& operator-=(Rhs&& rhs)
+    {
+        gmpfrxx_mkII::detail::mpfr_compound_assign_with_context<gmpfrxx_mkII::detail::sub_op>(
+            *value_,
+            std::forward<Rhs>(rhs),
+            detail_context());
+        return *this;
+    }
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+    mpfr_context_ref& operator*=(Rhs&& rhs)
+    {
+        gmpfrxx_mkII::detail::mpfr_compound_assign_with_context<gmpfrxx_mkII::detail::mul_op>(
+            *value_,
+            std::forward<Rhs>(rhs),
+            detail_context());
+        return *this;
+    }
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
+    mpfr_context_ref& operator/=(Rhs&& rhs)
+    {
+        gmpfrxx_mkII::detail::mpfr_compound_assign_with_context<gmpfrxx_mkII::detail::div_op>(
+            *value_,
+            std::forward<Rhs>(rhs),
+            detail_context());
+        return *this;
+    }
+
+private:
+    gmpfrxx_mkII::detail::eval_context detail_context() const noexcept
+    {
+        return gmpfrxx_mkII::detail::eval_context{
+            context_.precision,
+            context_.rounding_mode,
+        };
+    }
+
+    mpfr_class* value_;
+    evaluation_context context_;
+};
+
+inline mpfr_context_ref with_context(mpfr_class& value, evaluation_context context)
+{
+    return mpfr_context_ref(value, context);
 }
 
 using ::gmpfrxx_mkII::detail::operator+;

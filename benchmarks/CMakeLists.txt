@@ -236,6 +236,12 @@ add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_05.cpp
     Rdot_mpfr_kernel_05)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_06.cpp
     Rdot_mpfr_kernel_06)
+add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
+    Rdot_mpfr_kernel_07 mkII)
+add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
+    Rdot_mpfr_kernel_07 mkII_FMA)
+add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_08.cpp
+    Rdot_mpfr_kernel_08 mkII)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
     Rdot_mpfr_kernel_openmp_01)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_02.cpp
@@ -248,6 +254,12 @@ add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_05.cpp
     Rdot_mpfr_kernel_openmp_05)
 add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_06.cpp
     Rdot_mpfr_kernel_openmp_06)
+add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
+    Rdot_mpfr_kernel_openmp_07 mkII)
+add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
+    Rdot_mpfr_kernel_openmp_07 mkII_FMA)
+add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_08.cpp
+    Rdot_mpfr_kernel_openmp_08 mkII)
 
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp
     Raxpy_mpfr_C_native_01)

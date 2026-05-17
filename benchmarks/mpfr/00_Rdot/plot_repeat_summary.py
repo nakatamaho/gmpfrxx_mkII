@@ -54,6 +54,8 @@ def variant_color(name):
         return "#9467bd"
     if "STABLE_ROUNDING" in name:
         return "#73bf69"
+    if name.endswith("_FMA"):
+        return "#9467bd"
     return "#4c78a8"
 
 
@@ -142,7 +144,7 @@ def summarize(rows):
 def write_raw_csv(path, rows):
     fieldnames = ["variant", "run", "runs", "elapsed_s", "mflops", "diff", "status"]
     with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -160,7 +162,7 @@ def write_summary_csv(path, rows):
         "min_elapsed_s",
     ]
     with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 

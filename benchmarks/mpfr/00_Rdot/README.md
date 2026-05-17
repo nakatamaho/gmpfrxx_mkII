@@ -53,6 +53,8 @@ The timed body is `_Rdot()`.  Kernel numbers are aligned with GMP Rdot for
 | `04` | `templ = dx[i]; templ *= dy[i]; acc += templ;` | One product object is reused, but every iteration copies `dx[i]` before multiplication. |
 | `05` | Four accumulators with one reused product object. | Tests accumulator dependency with a single product temporary. |
 | `06` | Four accumulators with four reused product objects. | Separates accumulator unrolling from product temporary reuse. |
+| `07` | `with_context(acc, ctx) += dx[i] * dy[i]` expression form. | Context-bound `01`; rounding is captured before the loop and FMA builds can lower this to `mpfr_fma`. |
+| `08` | `with_context(templ, ctx) = dx[i] * dy[i]; with_context(acc, ctx) += templ;` | Context-bound `03`; one product object is reused and the loop uses explicit context rounding. |
 
 Raw C kernels use:
 
@@ -81,6 +83,17 @@ Rdot_mpfr_kernel_openmp_NN_mkII_STABLE_ROUNDING_FMA
 Rdot_mpfr_kernel_openmp_NN_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH
 ```
 
+Context-bound kernels are explicit one-off targets:
+
+```text
+Rdot_mpfr_kernel_07_mkII
+Rdot_mpfr_kernel_07_mkII_FMA
+Rdot_mpfr_kernel_08_mkII
+Rdot_mpfr_kernel_openmp_07_mkII
+Rdot_mpfr_kernel_openmp_07_mkII_FMA
+Rdot_mpfr_kernel_openmp_08_mkII
+```
+
 The wrapper suffixes are cumulative:
 
 | Suffix | Build option | Meaning |
@@ -92,7 +105,7 @@ The wrapper suffixes are cumulative:
 
 ## Recorded Run
 
-This README reports the current repeat-10 run:
+The full-suite repeat-10 run used for the `01..06` comparisons was:
 
 ```text
 N = 10000000
@@ -116,7 +129,7 @@ Files:
 - [Raw CSV](results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_090826/raw_rdot_mpfr_n10000000_p512_repeat10.csv)
 - [Summary CSV](results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_090826/summary_rdot_mpfr_n10000000_p512_repeat10.csv)
 
-All 62 variants report `OK` in all 10 runs.
+The 62 variants included in that full sweep report `OK` in all 10 runs.
 
 The plots below show average MFLOPS as vertical bars.  The black range line on
 each bar is the observed min-to-max interval across the 10 repeats; the large
@@ -207,6 +220,74 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
 
 </details>
 
+## Context-Bound 07/08 Focused Run
+
+`07` and `08` test an explicit MPFR evaluation context:
+
+```cpp
+auto ctx = mpfrxx::evaluation_context{precision, MPFR_RNDN};
+auto acc_ctx = mpfrxx::with_context(acc, ctx);
+```
+
+The goal is to use `ctx.rounding_mode` in the hot loop instead of asking the
+wrapper default-rounding machinery on every compound operation.  This is an
+API-level control, not a global build flag.
+
+This focused repeat-10 run measured all `07` and `08` targets:
+
+```text
+N = 10000000
+precision = 512
+repeat = 10
+OMP_NUM_THREADS = 32
+OMP_PLACES = cores
+OMP_PROC_BIND = spread
+CPU = AMD Ryzen Threadripper 3970X 32-Core Processor
+```
+
+Results are stored in:
+
+```text
+results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/
+```
+
+Files:
+
+- [Raw log](results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/benchmark_rdot_mpfr_context_07_08_n10000000_p512_repeat10.log)
+- [Raw CSV](results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/raw_rdot_mpfr_context_07_08_n10000000_p512_repeat10.csv)
+- [Summary CSV](results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/summary_rdot_mpfr_context_07_08_n10000000_p512_repeat10.csv)
+
+All 6 variants report `OK` in all 10 runs.
+
+![MPFR Rdot 07/08 serial repeat-10](results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/rdot_mpfr_context_07_08_n10000000_p512_repeat10_serial.png)
+
+![MPFR Rdot 07/08 OpenMP repeat-10](results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/rdot_mpfr_context_07_08_n10000000_p512_repeat10_openmp.png)
+
+The images can be regenerated with:
+
+```bash
+python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
+    benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/benchmark_rdot_mpfr_context_07_08_n10000000_p512_repeat10.log \
+    --output-dir benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204 \
+    --output-prefix rdot_mpfr_context_07_08_n10000000_p512_repeat10 \
+    --title-prefix "MPFR Rdot 07/08 context N=10000000 precision=512 repeat=10"
+```
+
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
+|---------|-----------:|-----------:|-----------:|----------------|
+| `kernel_07_mkII_FMA` | 23.966 | 23.358 | 22.925 | Context-bound `01` with FMA lowering; serial performance matches the previous stable-rounding FMA class. |
+| `kernel_08_mkII` | 23.567 | 23.357 | 23.069 | Context-bound `03`; no FMA, but reusable product plus loop-invariant context rounding reaches the same serial range. |
+| `kernel_07_mkII` | 19.311 | 19.048 | 18.827 | Context-bound expression without FMA; still pays separate multiply/add materialization. |
+| `kernel_openmp_07_mkII_FMA` | 563.324 | 539.399 | 455.970 | OpenMP context-bound FMA path; close to the previous best wrapper OpenMP FMA range. |
+| `kernel_openmp_08_mkII` | 551.961 | 500.900 | 337.463 | OpenMP reusable-product path; good max but wider scheduler variance in this run. |
+| `kernel_openmp_07_mkII` | 492.652 | 458.613 | 357.897 | OpenMP context-bound non-FMA expression path remains below FMA and reusable-product variants. |
+
+The focused run shows that explicit context is useful, but it is not a
+standalone replacement for preserving the FMA expression.  `07_FMA` is the
+cleanest wrapper path for "one `mpfr_fma` per element with loop-invariant
+rounding."  `08` is the cleanest non-FMA context path for "one reusable product
+plus one add per element."
+
 ## Memory Bandwidth Estimates
 
 These are model estimates derived from MFLOPS, not hardware-counter
@@ -233,9 +314,12 @@ Representative paths:
 | Variant | Avg MFLOPS | Active-limb GB/s | Header-inclusive GB/s |
 |---------|-----------:|-----------------:|----------------------:|
 | `kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.595 | 1.51 | 2.27 |
+| `kernel_07_mkII_FMA` | 23.358 | 1.49 | 2.24 |
+| `kernel_08_mkII` | 23.357 | 1.49 | 2.24 |
 | `C_native_01_FMA` | 23.156 | 1.48 | 2.22 |
 | `C_native_openmp_01_FMA` | 563.132 | 36.04 | 54.06 |
 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 549.652 | 35.18 | 52.77 |
+| `kernel_openmp_07_mkII_FMA` | 539.399 | 34.52 | 51.78 |
 | `kernel_openmp_05_mkII_STABLE_ROUNDING` | 548.917 | 35.13 | 52.70 |
 
 The OpenMP top paths are already in a memory-traffic range where pointer
@@ -314,6 +398,65 @@ operation:
 38eb: jne    38b0
 ```
 
+The context-bound `07_FMA` path captures the rounding mode before the loop and
+passes the cached register to `mpfr_fma`.  This is the closest wrapper hot loop
+to `C_native_01_FMA` without relying on a global stable-rounding build flag:
+
+```asm
+# Rdot_mpfr_kernel_07_mkII_FMA
+390c: call   mpfr_get_default_rounding_mode@plt
+3911: mov    %r14,%rsi
+3914: mov    %r12,%rdi
+3917: mov    %eax,%r15d       # context rounding
+...
+3950: mov    %r15d,%r8d       # cached rounding
+3953: mov    %r12,%rcx        # accumulator addend
+3956: mov    %rbp,%rdx        # y input
+3959: mov    %rbx,%rsi        # x input
+395c: mov    %r12,%rdi        # accumulator destination
+395f: call   mpfr_fma@plt
+3973: jne    3950
+```
+
+The context-bound `08` path is the non-FMA counterpart.  It reuses one product
+object and passes the cached context rounding to both MPFR calls:
+
+```asm
+# Rdot_mpfr_kernel_08_mkII
+394f: call   mpfr_get_default_rounding_mode@plt
+3954: mov    %rbp,%rsi
+3957: mov    %r13,%rdi
+395a: mov    %eax,%r15d       # context rounding
+...
+39c0: mov    %r15d,%ecx       # cached rounding
+39c3: mov    %r12,%rdx
+39c6: mov    %rbx,%rsi
+39c9: mov    %r14,%rdi
+39cc: call   mpfr_mul@plt
+39d1: mov    %r15d,%ecx       # cached rounding
+39d4: mov    %r14,%rdx
+39d7: mov    %r13,%rsi
+39da: mov    %r13,%rdi
+39dd: call   mpfr_add@plt
+39f2: jne    39c0
+```
+
+OpenMP `07_FMA` has the same per-element arithmetic shape inside the worker
+function.  The critical section only performs the per-thread reduction:
+
+```asm
+# Rdot_mpfr_kernel_openmp_07_mkII_FMA
+3ad0: mov    0x4(%rsp),%r8d   # cached context rounding
+3ad5: mov    %rbx,%rdx
+3ad8: mov    %rbp,%rsi
+3adb: lea    0x10(%rsp),%rcx
+3ae0: lea    0x10(%rsp),%rdi
+3af1: call   mpfr_fma@plt
+3af9: jne    3ad0
+...
+3b24: call   mpfr_add@plt     # thread-local partial into shared result
+```
+
 The `06` fixed-precision path is useful as a source-shape control.  It is
 unrolled and uses reused product objects, but this source no longer preserves
 the original multiply-add expression, so the hot loop remains `mpfr_mul` plus
@@ -361,6 +504,8 @@ This run shows the practical split:
 | `kernel_03_mkII_STABLE_ROUNDING` | 22.950 | Product object is reused and rounding delivery is reduced to the stable path. |
 | `C_native_01_FMA` | 23.156 | Raw FMA loop with cached rounding. |
 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.255 | Wrapper FMA loop; remaining difference is within run noise here. |
+| `kernel_07_mkII_FMA` | 23.358 | Explicit context wrapper FMA loop with cached rounding in a register. |
+| `kernel_08_mkII` | 23.357 | Explicit context reusable-product loop with cached rounding in a register. |
 
 The GMP lesson is mostly "avoid product temporary materialization."  The MPFR
 lesson is stricter: avoid product temporary materialization and make rounding
@@ -389,6 +534,15 @@ source shape adds extra MPFR state movement and stays behind the cleaner
 policy.  They are useful for explaining source-shape effects, but the suffix
 `FMA` on these builds does not imply that the hot loop actually calls
 `mpfr_fma`; the disassembly decides that.
+
+`kernel_07` is the explicit-context version of `kernel_01`.  It is useful when
+the caller can say that the accumulator precision and rounding mode are fixed
+for the loop.  With FMA enabled, the hot path becomes one `mpfr_fma` per
+element and the rounding value stays in a register.
+
+`kernel_08` is the explicit-context version of `kernel_03`.  It is the clean
+non-FMA control for the same API idea: one reused product object, one multiply,
+one add, and no per-iteration default-rounding lookup in the hot loop.
 
 OpenMP results should be read by average and range, not max alone.  The best
 wrapper OpenMP average in this run is `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA`

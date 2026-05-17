@@ -62,6 +62,7 @@ add_phase0_test(test_mpfr_compound_assign mpfrxx_mkII)
 target_compile_definitions(test_mpfr_compound_assign PRIVATE
     MPFRXX_ENABLE_FMA
 )
+add_phase0_test(test_mpfr_evaluation_context mpfrxx_mkII)
 add_phase0_test(test_mpfr_rounding_scope mpfrxx_mkII)
 add_executable(test_mpfr_rounding_scope_stable test_mpfr_rounding_scope.cpp)
 target_link_libraries(test_mpfr_rounding_scope_stable PRIVATE mpfrxx_mkII)

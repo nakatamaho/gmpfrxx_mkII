@@ -1509,6 +1509,202 @@ Pass/fail result:
 Known issues:
 - None.
 
+## Phase: MPFR Rdot Context-Bound 07/08 Benchmark
+
+Implemented features:
+- Added `Rdot_mpfr_kernel_07_mkII`, `Rdot_mpfr_kernel_07_mkII_FMA`,
+  `Rdot_mpfr_kernel_08_mkII`, `Rdot_mpfr_kernel_openmp_07_mkII`,
+  `Rdot_mpfr_kernel_openmp_07_mkII_FMA`, and
+  `Rdot_mpfr_kernel_openmp_08_mkII` to the common MPFR benchmark runner.
+- Ran a focused repeat-10 benchmark for all serial and OpenMP `07`/`08`
+  context-bound MPFR Rdot kernels at `N=10000000` and 512-bit precision.
+- Generated raw CSV, summary CSV, and serial/OpenMP bar plots with min/max
+  range lines for the focused benchmark.
+- Updated `benchmarks/mpfr/00_Rdot/README.md` with the `07`/`08` kernel
+  shapes, benchmark results, inline plots, memory-bandwidth estimates, hotpath
+  disassembly, and lessons learned.
+- Updated the MPFR Rdot plot helper so mkII `_FMA` variants use the FMA color
+  even when they are explicit-context targets rather than stable-rounding
+  suffix targets.
+
+Missing features:
+- No 1024-bit `07`/`08` context-bound MPFR Rdot benchmark has been collected
+  yet.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `benchmarks/mpfr/00_Rdot/plot_repeat_summary.py`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/benchmark_rdot_mpfr_context_07_08_n10000000_p512_repeat10.log`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/raw_rdot_mpfr_context_07_08_n10000000_p512_repeat10.csv`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/summary_rdot_mpfr_context_07_08_n10000000_p512_repeat10.csv`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/rdot_mpfr_context_07_08_n10000000_p512_repeat10_serial.png`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/rdot_mpfr_context_07_08_n10000000_p512_repeat10_openmp.png`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rdot_mpfr_kernel_07_mkII Rdot_mpfr_kernel_07_mkII_FMA Rdot_mpfr_kernel_08_mkII Rdot_mpfr_kernel_openmp_07_mkII Rdot_mpfr_kernel_openmp_07_mkII_FMA Rdot_mpfr_kernel_openmp_08_mkII -j`
+- `/bin/bash -lc 'set -euo pipefail; stamp=$(date +%Y%m%d_%H%M%S); out="benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_${stamp}"; ...; for exe in "${executables[@]}"; do for run in $(seq 1 10); do OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread /usr/bin/time -f "WALL_SECONDS %e" "$path" 10000000 512; done; done'`
+- `python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/benchmark_rdot_mpfr_context_07_08_n10000000_p512_repeat10.log --output-dir benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204 --output-prefix rdot_mpfr_context_07_08_n10000000_p512_repeat10 --title-prefix "MPFR Rdot 07/08 context N=10000000 precision=512 repeat=10"`
+- `sed -n '1,20p' benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_context_07_08_n10000000_p512_repeat10_20260517_115204/summary_rdot_mpfr_context_07_08_n10000000_p512_repeat10.csv`
+- `objdump -d -C --start-address=0x38a0 --stop-address=0x39a0 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07_mkII_FMA`
+- `objdump -d -C --start-address=0x38e0 --stop-address=0x3a20 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08_mkII`
+- `objdump -d -C --start-address=0x3a10 --stop-address=0x3b40 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07_mkII_FMA`
+- `objdump -d -C --start-address=0x3b70 --stop-address=0x3cd0 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08_mkII`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release reconfigure: PASS.
+- New benchmark target build: PASS.
+- Focused benchmark: PASS.  60/60 timed runs reported `OK`.
+- Plot and CSV generation: PASS.
+- Hotpath disassembly extraction: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- OpenMP `07`/`08` measurements still have normal run-to-run variance; compare
+  average and min/max range, not max alone.
+
+## Phase: MPFR Explicit Evaluation Context
+
+Implemented features:
+- Added `mpfrxx::evaluation_context` as an explicit precision and rounding
+  carrier for MPFR evaluation.
+- Added `mpfrxx::with_context(mpfr_class&, evaluation_context)`, returning a
+  context-bound `mpfr_context_ref` proxy.
+- Added context-aware `operator+=`, `operator-=`, `operator*=`, and
+  `operator/=` on the proxy, so kernels can hoist rounding selection outside
+  hot loops without changing the default `mpfr_class` operators.
+- Added context-aware `operator=` on the proxy so reusable temporary kernels can
+  materialize `templ = dx[i] * dy[i]` under the explicit rounding context.
+- Added `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07.cpp` as an
+  OpenMP Rdot kernel derived from `kernel_openmp_01`, using
+  `mpfrxx::with_context` for the thread-local accumulator and final reduction.
+- Added `Rdot_mpfr_kernel_openmp_07_mkII` and
+  `Rdot_mpfr_kernel_openmp_07_mkII_FMA` benchmark targets.
+- Added `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08.cpp` as an
+  OpenMP Rdot kernel derived from `kernel_openmp_03`, using
+  `mpfrxx::with_context` for both reusable product materialization and
+  accumulation.
+- Added the `Rdot_mpfr_kernel_openmp_08_mkII` benchmark target.
+- Added `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07.cpp` as the serial
+  counterpart to `kernel_openmp_07`.
+- Added `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08.cpp` as the serial
+  counterpart to `kernel_openmp_08`.
+- Added `Rdot_mpfr_kernel_07_mkII`, `Rdot_mpfr_kernel_07_mkII_FMA`, and
+  `Rdot_mpfr_kernel_08_mkII` benchmark targets.
+- Refactored MPFR compound assignment through
+  `mpfr_compound_assign_with_context`, while preserving the existing default
+  rounding behavior for normal `mpfr_class& operator+=` and related operators.
+- `with_context` rejects a precision mismatch between the context and target
+  object to preserve the existing destination-precision policy.
+
+Missing features:
+- No repeat benchmark data has been collected for `kernel_openmp_07` or
+  `kernel_openmp_08`, or their serial counterparts yet.
+- No README benchmark table has been updated for `kernel_07`,
+  `kernel_08`, `kernel_openmp_07`, or `kernel_openmp_08` yet.
+
+Tests added:
+- `tests/test_mpfr_evaluation_context.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08.cpp`
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `tests/CMakeLists.txt`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "struct eval_context|class eval_context|current_eval_context|mpfr_compound_assign|operator\\+=|class mpfr_class|namespace mpfrxx|rounding" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/eval_context.hpp include/gmpfrxx_mkII/detail/environment.hpp include/gmpfrxx_mkII/detail/config.hpp tests benchmarks/mpfr/00_Rdot -g '!**/results_raw/**'`
+- `git status --short`
+- `rg --files tests | rg 'mpfr|fixed|round|context'`
+- `nl -ba include/gmpfrxx_mkII/detail/eval_context.hpp | sed -n '1,120p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpfr_impl.hpp | sed -n '110,650p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpfr_impl.hpp | sed -n '2110,2525p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpfr_impl.hpp | sed -n '2720,2795p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpfr_impl.hpp | sed -n '1,120p'`
+- `nl -ba tests/CMakeLists.txt | sed -n '1,130p'`
+- `nl -ba tests/test_mpfr_compound_assign.cpp | sed -n '1,130p'`
+- `tail -n 80 STATUS.md`
+- `cmake --build build -j`
+- `git diff -- include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_evaluation_context.cpp tests/CMakeLists.txt`
+- `ctest --test-dir build -R test_mpfr_evaluation_context --output-on-failure`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+- `ls benchmarks/mpfr/00_Rdot`
+- `nl -ba benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01.cpp | sed -n '1,220p'`
+- `rg -n "Rdot_mpfr_kernel_openmp|add_mpfr|00_Rdot|kernel_openmp_0" benchmarks/CMakeLists.txt benchmarks/mpfr/00_Rdot -g '!**/results_raw/**'`
+- `cmake -S . -B build`
+- `cmake --build build --target Rdot_mpfr_kernel_openmp_07_mkII_FMA -j`
+- `cmake --build build --target Rdot_mpfr_kernel_openmp_07_mkII -j`
+- `env OMP_NUM_THREADS=2 build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07_mkII_FMA 128 512`
+- `env OMP_NUM_THREADS=2 build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07_mkII 128 512`
+- `nm -C build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07_mkII_FMA | rg "_Rdot|mpfr_fma|mpfr_get_default_rounding_mode"`
+- `objdump -Cd build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07_mkII_FMA | rg -n "mpfr_fma@plt|mpfr_get_default_rounding_mode@plt|%fs:"`
+- `objdump -Cd --start-address=0x6380 --stop-address=0x63e0 build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07_mkII_FMA`
+- `nl -ba benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03.cpp | sed -n '1,220p'`
+- `nl -ba benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03.cpp | sed -n '1,140p'`
+- `rg -n "void mpfr_evaluate|mpfr_try_assign_direct_leaf_binary|object_leaf|scalar_leaf" include/gmpfrxx_mkII/detail/mpfr_impl.hpp | head -n 80`
+- `nl -ba include/gmpfrxx_mkII/detail/mpfr_impl.hpp | sed -n '1800,2115p'`
+- `cmake --build build --target Rdot_mpfr_kernel_openmp_08_mkII -j`
+- `cmake --build build --target test_mpfr_evaluation_context -j`
+- `env OMP_NUM_THREADS=2 build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08_mkII 128 512`
+- `printf '%s\n' ... | g++ -x c++ - -lmpfr -lgmp -o /tmp/find_mpfr_round && /tmp/find_mpfr_round`
+- `printf '%s\n' ... | g++ -x c++ -std=c++17 -Iinclude - -lmpfr -lgmp -o /tmp/test_wrapper_round && /tmp/test_wrapper_round`
+- `build/tests/test_mpfr_evaluation_context`
+- `cmake --build build -j`
+- `nm -C build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08_mkII | rg "_Rdot|mpfr_mul|mpfr_add|mpfr_fma|mpfr_get_default_rounding_mode"`
+- `objdump -Cd build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08_mkII | rg -n "mpfr_mul@plt|mpfr_add@plt|mpfr_fma@plt|mpfr_get_default_rounding_mode@plt|%fs:"`
+- `cmake --build build --target Rdot_mpfr_kernel_07_mkII Rdot_mpfr_kernel_07_mkII_FMA Rdot_mpfr_kernel_08_mkII -j`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07_mkII 128 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07_mkII_FMA 128 512`
+- `build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08_mkII 128 512`
+- `nm -C build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07_mkII_FMA | rg "mpfr_fma|mpfr_mul|mpfr_add|mpfr_get_default_rounding_mode"`
+- `nm -C build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08_mkII | rg "mpfr_fma|mpfr_mul|mpfr_add|mpfr_get_default_rounding_mode"`
+- `objdump -Cd build/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07_mkII_FMA | rg -n "mpfr_fma@plt|mpfr_mul@plt|mpfr_add@plt|mpfr_get_default_rounding_mode@plt"`
+
+Pass/fail result:
+- Build: PASS.
+- `Rdot_mpfr_kernel_openmp_07_mkII`: PASS.
+- `Rdot_mpfr_kernel_openmp_07_mkII_FMA`: PASS.
+- `Rdot_mpfr_kernel_openmp_07_mkII_FMA 128 512`: PASS.  `DIFF ... OK`.
+- `Rdot_mpfr_kernel_openmp_07_mkII 128 512`: PASS.  `DIFF ... OK`.
+- `Rdot_mpfr_kernel_openmp_08_mkII`: PASS.
+- `Rdot_mpfr_kernel_openmp_08_mkII 128 512`: PASS.  `DIFF ... OK`.
+- `Rdot_mpfr_kernel_07_mkII`: PASS.
+- `Rdot_mpfr_kernel_07_mkII_FMA`: PASS.
+- `Rdot_mpfr_kernel_08_mkII`: PASS.
+- `Rdot_mpfr_kernel_07_mkII 128 512`: PASS.  `DIFF ... OK`.
+- `Rdot_mpfr_kernel_07_mkII_FMA 128 512`: PASS.  `DIFF ... OK`.
+- `Rdot_mpfr_kernel_08_mkII 128 512`: PASS.  `DIFF ... OK`.
+- FMA disassembly check: PASS.  `Rdot_mpfr_kernel_openmp_07_mkII_FMA`
+  calls `mpfr_fma@plt`.
+- Serial FMA disassembly check: PASS.  `Rdot_mpfr_kernel_07_mkII_FMA`
+  calls `mpfr_fma@plt`.
+- `kernel_openmp_08` disassembly check: PASS.  It calls `mpfr_mul@plt` and
+  `mpfr_add@plt`, matching the reusable product source shape from
+  `kernel_openmp_03`.
+- `kernel_08` symbol check: PASS.  It references `mpfr_mul` and `mpfr_add`,
+  matching the reusable product source shape from `kernel_03`.
+- `test_mpfr_evaluation_context`: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- The default `mpfr_class` operators still use the default rounding path.
+  Rounding lookup is avoided only when callers explicitly use
+  `mpfrxx::with_context`.
+
 ## Phase: GMP Rdot Bandwidth Estimates
 
 Implemented features:
