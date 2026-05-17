@@ -1,3 +1,54 @@
+Post-phase MPFR Rgemv README report:
+DONE
+
+Implemented features:
+- Added `benchmarks/mpfr/02_Rgemv/README.md` as a reproducible benchmark
+  report for the current MPFR Rgemv repeat-10 result set.
+- Documented build commands, benchmark parameters, variant shapes, C native
+  equivalent kernels, recorded run files, resource/bandwidth estimates,
+  serial/OpenMP result tables, representative hotpath disassembly, and lessons
+  learned.
+- Included folded serial/OpenMP tables sorted by maximum and average MFLOPS.
+
+Tests added:
+- No unit tests were added; this phase documents benchmark results.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '430,560p' AGENTS.md`
+- `sed -n '1,260p' benchmarks/gmp/02_Rgemv/README.md`
+- `ls benchmarks/mpfr/02_Rgemv`
+- `sed -n '1,80p' benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`
+- `sed -n '1,180p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01.cpp`
+- `sed -n '1,180p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04.cpp`
+- `sed -n '1,180p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02.cpp`
+- `sed -n '1,200p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04.cpp`
+- `sed -n '1,180p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01.cpp`
+- `sed -n '1,180p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02.cpp`
+- `sed -n '1,200p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03.cpp`
+- `ls benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035`
+- `python3` table generator for sorted Markdown result tables and selected
+  bandwidth estimates from the committed summary CSV.
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Documentation update: PASS.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- `kernel_openmp_02_*` currently has the same row-dot source shape as
+  `kernel_openmp_01_*`; the README documents this explicitly.
+- No new benchmark execution was performed in this phase.
+
 Post-phase MPFR Rgemv repeat benchmark refresh:
 DONE
 
