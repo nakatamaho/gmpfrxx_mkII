@@ -1,3 +1,52 @@
+Post-phase GMP Rgemv README refresh:
+DONE
+
+Implemented features:
+- Re-read `AGENTS.md` benchmark README/reporting conventions before updating
+  the GMP Rgemv report.
+- Rewrote `benchmarks/gmp/02_Rgemv/README.md` around the current repeat-10
+  `20260516_184101` result set only.
+- Added benchmark parameters, variant-shape tables, `C Native Equivalent
+  Kernels`, recorded-run details, logical bandwidth estimates, serial/OpenMP
+  interpretation tables, folded tables sorted by max and average MFLOPS,
+  hotpath disassembly notes, and lessons learned.
+- Removed the stale tracked single-run result directory
+  `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209`
+  because the refreshed README no longer references it.
+
+Tests added:
+- No test source files were added; this is documentation and benchmark-result
+  cleanup.
+
+Tests updated:
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '444,1120p' AGENTS.md`
+- `find benchmarks/gmp/02_Rgemv -maxdepth 3 -type f -o -type d | sort`
+- `sed -n '1,360p' benchmarks/gmp/02_Rgemv/README.md`
+- `git rm -r benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209`
+- `python3` summary-table generator over
+  `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101/summary_rgemv_gmp_m4000_n4000_p512_repeat10.csv`
+- `sed -n` over representative Rgemv C native and wrapper kernel sources to
+  verify timed source shapes.
+- `rg -n "20260516_130209|20260430|Linux_Ryzen_3970X_32-Core|Superseded|\\.\\./results_raw" benchmarks/gmp/02_Rgemv/README.md benchmarks/gmp/02_Rgemv/results_raw --glob '!*.png' --glob '!*.pdf'`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Stale-reference scan: PASS, no stale references remain in the refreshed
+  README or retained non-image result files.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- The README notes that the committed repeat plots were generated during the
+  recorded benchmark workflow; a standalone Rgemv repeat-summary plotting
+  script is not currently checked in.
+
 Post-phase benchmark README equivalence rule:
 DONE
 
