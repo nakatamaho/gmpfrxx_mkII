@@ -17080,3 +17080,59 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+## Phase: MPFR Rdot Full Repeat-10 Regeneration
+
+Implemented features:
+- Removed old checked-in MPFR Rdot benchmark result directories.
+- Rebuilt the release benchmark tree.
+- Re-ran the full MPFR Rdot benchmark suite with 68 variants and 10 repeats.
+- Generated raw CSV, summary CSV, and serial/OpenMP bar plots with min/max
+  range markers.
+- Rewrote `benchmarks/mpfr/00_Rdot/README.md` from scratch so it only
+  describes the regenerated result set.
+- Added fresh analysis covering kernel shape, FMA lowering, explicit-context
+  rounding, payload bandwidth estimates, hotpath disassembly, comparison with
+  GMP Rdot, and lessons learned.
+
+Missing features:
+- No hardware-counter run was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/benchmark_rdot_mpfr_n10000000_p512_repeat10.log`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/raw_rdot_mpfr_n10000000_p512_repeat10.csv`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/summary_rdot_mpfr_n10000000_p512_repeat10.csv`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/rdot_mpfr_n10000000_p512_repeat10_serial.png`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/rdot_mpfr_n10000000_p512_repeat10_openmp.png`
+- `STATUS.md`
+
+Exact commands run:
+- `git rm -r benchmarks/mpfr/00_Rdot/results_raw`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j`
+- `/bin/bash -lc 'set -euo pipefail ... run all Rdot_mpfr executables from benchmarks/common/run_mpfr_benchmarks.sh with N=10000000 precision=512 repeat=10 ...'`
+- `python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/benchmark_rdot_mpfr_n10000000_p512_repeat10.log --output-dir benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244 --output-prefix rdot_mpfr_n10000000_p512_repeat10 --title-prefix "MPFR Rdot N=10000000 precision=512 repeat=10"`
+- `find benchmarks/mpfr/00_Rdot/results_raw -mindepth 1 -maxdepth 1 -type d -print`
+- `ls -lh benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244`
+- `rg -c "DIFF: .* OK" benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244/benchmark_rdot_mpfr_n10000000_p512_repeat10.log`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+- `git status --short`
+
+Pass/fail result:
+- Release configure: PASS.
+- Release build: PASS.
+- Full MPFR Rdot repeat-10 benchmark: PASS.  680/680 timed runs reported
+  `OK`.
+- Plot generation: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- The payload bandwidth estimate in the README is a lower bound and does not
+  include MPFR headers, pointer chasing, allocator locality, or reduction
+  overhead.
