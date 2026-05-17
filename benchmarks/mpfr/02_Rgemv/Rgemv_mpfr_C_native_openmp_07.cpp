@@ -37,24 +37,60 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t l
         std::exit(EXIT_FAILURE);
     }
 
+    const int num_threads = omp_get_max_threads();
+    const mpfr_prec_t work_prec = m > 0 ? mpfr_get_prec(y[0]) : mpfr_get_prec(alpha);
+    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+    const int64_t partial_count = static_cast<int64_t>(num_threads) * m;
+    mpfr_t *partials = new mpfr_t[partial_count];
+
+    for (int64_t i = 0; i < partial_count; ++i) {
+        mpfr_init2(partials[i], work_prec);
+        mpfr_set_ui(partials[i], 0, rnd);
+    }
+
 #pragma omp parallel
     {
-        const mpfr_prec_t work_prec = mpfr_get_prec(alpha);
-        const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
-        mpfr_t temp;
-        mpfr_init2(temp, work_prec);
+        const int tid = omp_get_thread_num();
+        mpfr_t *local_y = partials + static_cast<int64_t>(tid) * m;
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < m; ++i) {
-            mpfr_set_d(temp, 0.0, rnd);
-            for (int64_t j = 0; j < n; ++j) {
-                mpfr_fma(temp, A[i + j * lda], x[j], temp, rnd);
+            mpfr_mul(y[i], y[i], beta, rnd);
+        }
+
+        for (int64_t i = 0; i < m; ++i) {
+            mpfr_set_ui(local_y[i], 0, rnd);
+        }
+
+        mpfr_t temp;
+        mpfr_t templ;
+        mpfr_init2(temp, work_prec);
+        mpfr_init2(templ, work_prec);
+
+#pragma omp for schedule(static)
+        for (int64_t j = 0; j < n; ++j) {
+            mpfr_mul(temp, alpha, x[j], rnd);
+            for (int64_t i = 0; i < m; ++i) {
+                mpfr_mul(templ, temp, A[i + j * lda], rnd);
+                mpfr_add(local_y[i], local_y[i], templ, rnd);
             }
-            mpfr_fmma(y[i], alpha, temp, beta, y[i], rnd);
+        }
+
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            for (int t = 0; t < num_threads; ++t) {
+                mpfr_add(y[i], y[i], partials[static_cast<int64_t>(t) * m + i], rnd);
+            }
         }
 
         mpfr_clear(temp);
+        mpfr_clear(templ);
     }
+
+    for (int64_t i = 0; i < partial_count; ++i) {
+        mpfr_clear(partials[i]);
+    }
+    delete[] partials;
 }
 
 int main(int argc, char **argv) {

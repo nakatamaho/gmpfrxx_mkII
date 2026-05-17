@@ -25,8 +25,6 @@
  * SUCH DAMAGE.
  */
 
-#include <omp.h>
-
 #include "Rgemv_common.hpp"
 
 gmp_randstate_t state;
@@ -37,24 +35,29 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t l
         std::exit(EXIT_FAILURE);
     }
 
-#pragma omp parallel
-    {
-        const mpfr_prec_t work_prec = mpfr_get_prec(alpha);
-        const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
-        mpfr_t temp;
-        mpfr_init2(temp, work_prec);
+    const mpfr_prec_t work_prec = mpfr_get_prec(alpha);
+    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+    mpfr_t temp;
+    mpfr_t templ;
+    mpfr_init2(temp, work_prec);
+    mpfr_init2(templ, work_prec);
 
-#pragma omp for schedule(static)
-        for (int64_t i = 0; i < m; ++i) {
-            mpfr_set_d(temp, 0.0, rnd);
-            for (int64_t j = 0; j < n; ++j) {
-                mpfr_fma(temp, A[i + j * lda], x[j], temp, rnd);
-            }
-            mpfr_fmma(y[i], alpha, temp, beta, y[i], rnd);
-        }
-
-        mpfr_clear(temp);
+    for (int64_t i = 0; i < m; ++i) {
+        mpfr_mul(y[i], beta, y[i], rnd);
     }
+
+    for (int64_t j = 0; j < n; ++j) {
+        mpfr_set(temp, alpha, rnd);
+        mpfr_mul(temp, temp, x[j], rnd);
+        for (int64_t i = 0; i < m; ++i) {
+            mpfr_set(templ, temp, rnd);
+            mpfr_mul(templ, templ, A[i + j * lda], rnd);
+            mpfr_add(y[i], y[i], templ, rnd);
+        }
+    }
+
+    mpfr_clear(temp);
+    mpfr_clear(templ);
 }
 
 int main(int argc, char **argv) {

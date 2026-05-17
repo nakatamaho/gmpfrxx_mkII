@@ -37,23 +37,36 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t l
         std::exit(EXIT_FAILURE);
     }
 
+    constexpr int64_t block_size = 256;
+    const mpfr_prec_t work_prec = m > 0 ? mpfr_get_prec(y[0]) : mpfr_get_prec(alpha);
+    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+
 #pragma omp parallel
     {
-        const mpfr_prec_t work_prec = mpfr_get_prec(alpha);
-        const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
         mpfr_t temp;
+        mpfr_t templ;
         mpfr_init2(temp, work_prec);
+        mpfr_init2(templ, work_prec);
 
 #pragma omp for schedule(static)
-        for (int64_t i = 0; i < m; ++i) {
-            mpfr_set_d(temp, 0.0, rnd);
-            for (int64_t j = 0; j < n; ++j) {
-                mpfr_fma(temp, A[i + j * lda], x[j], temp, rnd);
+        for (int64_t ib = 0; ib < m; ib += block_size) {
+            const int64_t iend = (ib + block_size < m) ? (ib + block_size) : m;
+
+            for (int64_t i = ib; i < iend; ++i) {
+                mpfr_mul(y[i], y[i], beta, rnd);
             }
-            mpfr_fmma(y[i], alpha, temp, beta, y[i], rnd);
+
+            for (int64_t j = 0; j < n; ++j) {
+                mpfr_mul(temp, alpha, x[j], rnd);
+                for (int64_t i = ib; i < iend; ++i) {
+                    mpfr_mul(templ, temp, A[i + j * lda], rnd);
+                    mpfr_add(y[i], y[i], templ, rnd);
+                }
+            }
         }
 
         mpfr_clear(temp);
+        mpfr_clear(templ);
     }
 }
 

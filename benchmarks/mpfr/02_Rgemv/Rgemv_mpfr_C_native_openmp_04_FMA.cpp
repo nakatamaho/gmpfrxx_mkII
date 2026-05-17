@@ -37,20 +37,22 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t l
         std::exit(EXIT_FAILURE);
     }
 
+    const mpfr_prec_t work_prec = mpfr_get_prec(alpha);
+
 #pragma omp parallel
     {
-        const mpfr_prec_t work_prec = mpfr_get_prec(alpha);
         const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
         mpfr_t temp;
         mpfr_init2(temp, work_prec);
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < m; ++i) {
-            mpfr_set_d(temp, 0.0, rnd);
+            mpfr_mul(y[i], beta, y[i], rnd);
             for (int64_t j = 0; j < n; ++j) {
-                mpfr_fma(temp, A[i + j * lda], x[j], temp, rnd);
+                mpfr_set(temp, alpha, rnd);
+                mpfr_mul(temp, temp, x[j], rnd);
+                mpfr_fma(y[i], temp, A[i + j * lda], y[i], rnd);
             }
-            mpfr_fmma(y[i], alpha, temp, beta, y[i], rnd);
         }
 
         mpfr_clear(temp);

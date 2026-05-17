@@ -41,14 +41,11 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t l
     mpfr_init2(temp, work_prec);
 
     for (int64_t i = 0; i < m; ++i) {
-        mpfr_mul(y[i], beta, y[i], rnd);
-    }
-
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            mpfr_mul(temp, alpha, A[i + j * lda], rnd);
-            mpfr_fma(y[i], temp, x[j], y[i], rnd);
+        mpfr_set_d(temp, 0.0, rnd);
+        for (int64_t j = 0; j < n; ++j) {
+            mpfr_fma(temp, A[i + j * lda], x[j], temp, rnd);
         }
+        mpfr_fmma(y[i], alpha, temp, beta, y[i], rnd);
     }
 
     mpfr_clear(temp);

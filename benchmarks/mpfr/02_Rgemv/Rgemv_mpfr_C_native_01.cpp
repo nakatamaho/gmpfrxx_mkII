@@ -35,24 +35,26 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t l
         std::exit(EXIT_FAILURE);
     }
 
-    mpfr_t temp;
-    mpfr_init(temp);
+    const mpfr_prec_t work_prec = mpfr_get_prec(alpha);
     const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+    mpfr_t temp;
+    mpfr_t prod;
+    mpfr_init2(temp, work_prec);
+    mpfr_init2(prod, work_prec);
 
     for (int64_t i = 0; i < m; ++i) {
-        mpfr_mul(temp, beta, y[i], rnd);
-        mpfr_set(y[i], temp, rnd);
-    }
-
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            mpfr_mul(temp, alpha, A[i + j * lda], rnd);
-            mpfr_mul(temp, temp, x[j], rnd);
-            mpfr_add(y[i], y[i], temp, rnd);
+        mpfr_set_ui(temp, 0, rnd);
+        for (int64_t j = 0; j < n; ++j) {
+            mpfr_mul(prod, A[i + j * lda], x[j], rnd);
+            mpfr_add(temp, temp, prod, rnd);
         }
+        mpfr_mul(prod, beta, y[i], rnd);
+        mpfr_mul(temp, alpha, temp, rnd);
+        mpfr_add(y[i], temp, prod, rnd);
     }
 
     mpfr_clear(temp);
+    mpfr_clear(prod);
 }
 
 int main(int argc, char **argv) {

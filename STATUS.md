@@ -1,3 +1,160 @@
+Post-phase MPFR Rgemv strict native numbering:
+DONE
+
+Implemented features:
+- Tightened MPFR Rgemv raw C native numbering so numeric suffixes map to the
+  same timed source shape as the wrapper kernels.
+- Reworked `Rgemv_mpfr_C_native_01.cpp` and
+  `Rgemv_mpfr_C_native_01_FMA.cpp` to use row-dot source shapes matching
+  wrapper variant `01`.
+- Added `Rgemv_mpfr_C_native_04.cpp` as the serial raw C counterpart for
+  wrapper variant `04`.
+- Reworked `Rgemv_mpfr_C_native_openmp_02.cpp` and
+  `Rgemv_mpfr_C_native_openmp_02_FMA.cpp` to match wrapper OpenMP variant
+  `02`, which is currently the row-owned row-dot placeholder.
+- Added `Rgemv_mpfr_C_native_openmp_04.cpp` and
+  `Rgemv_mpfr_C_native_openmp_04_FMA.cpp` as raw C counterparts for wrapper
+  OpenMP variant `04`.
+- Registered the new MPFR Rgemv raw C native `04` targets in
+  `benchmarks/CMakeLists.txt`.
+- Updated `benchmarks/mpfr/02_Rgemv/README.md` to remove ambiguous
+  `closest` mappings and document exact C native equivalent kernels.
+
+Tests added:
+- No unit tests were added; this phase updates benchmark kernels.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,120p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02.cpp`
+- `sed -n '1,120p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02_FMA.cpp`
+- `sed -n '1,120p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04.cpp`
+- `sed -n '1,120p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02.cpp`
+- `sed -n '1,140p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04.cpp && sed -n '1,140p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04.cpp`
+- `sed -n '1,120p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04.cpp && sed -n '1,140p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04.cpp`
+- `sed -n '32,70p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01.cpp`
+- `sed -n '32,70p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01_FMA.cpp`
+- `git diff --stat`
+- `sed -n '86,128p' benchmarks/mpfr/02_Rgemv/README.md`
+- `sed -n '142,158p' benchmarks/mpfr/02_Rgemv/README.md`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rgemv_mpfr_C_native_01 Rgemv_mpfr_C_native_01_FMA Rgemv_mpfr_C_native_04 Rgemv_mpfr_C_native_openmp_02 Rgemv_mpfr_C_native_openmp_02_FMA Rgemv_mpfr_C_native_openmp_04 Rgemv_mpfr_C_native_openmp_04_FMA Rgemv_mpfr_C_native_openmp_05 Rgemv_mpfr_C_native_openmp_06 Rgemv_mpfr_C_native_openmp_07 -j`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01_FMA 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_04 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02_FMA 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_04 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_04_FMA 13 17 128`
+- `rg -n "Closest|closest|none yet|not been added|C_native_openmp_02.*kernel_openmp_04|C_native_02.*kernel_04" benchmarks/mpfr/02_Rgemv/README.md`
+- `rg -n "Rgemv_mpfr_C_native_0[1-4]|Rgemv_mpfr_C_native_openmp_0[1-7]" benchmarks/CMakeLists.txt`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Build of changed/new raw C native targets: PASS.
+- Serial C native 01 smoke run at `m=13`, `n=17`, `precision=128`: PASS,
+  `Result OK`.
+- Serial C native 01_FMA smoke run at `m=13`, `n=17`, `precision=128`:
+  PASS, `Result OK`.
+- Serial C native 04 smoke run at `m=13`, `n=17`, `precision=128`: PASS,
+  `Result OK`.
+- OpenMP C native 02 smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- OpenMP C native 02_FMA smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- OpenMP C native 04 smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- OpenMP C native 04_FMA smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- README ambiguous mapping scan: PASS, no matches.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- The checked-in MPFR Rgemv repeat-10 result set predates this numbering
+  cleanup.  It should be refreshed before using the README tables as current
+  performance data.
+
+Post-phase MPFR Rgemv C native OpenMP 05/06/07 counterparts:
+DONE
+
+Implemented features:
+- Added `Rgemv_mpfr_C_native_openmp_05.cpp` as the raw `mpfr_t`
+  counterpart of `Rgemv_mpfr_kernel_openmp_05.cpp`, using precomputed
+  `scaled_x[j] = alpha * x[j]` and one reusable `templ` per thread.
+- Added `Rgemv_mpfr_C_native_openmp_06.cpp` as the raw `mpfr_t`
+  counterpart of `Rgemv_mpfr_kernel_openmp_06.cpp`, using 256-row blocks,
+  a column loop, and contiguous row updates inside each block.
+- Added `Rgemv_mpfr_C_native_openmp_07.cpp` as the raw `mpfr_t`
+  counterpart of `Rgemv_mpfr_kernel_openmp_07.cpp`, using column
+  partitioning, `num_threads * m` partial accumulators, and a final
+  reduction into `y`.
+- Registered `Rgemv_mpfr_C_native_openmp_05`,
+  `Rgemv_mpfr_C_native_openmp_06`, and
+  `Rgemv_mpfr_C_native_openmp_07` in `benchmarks/CMakeLists.txt`.
+- Updated `benchmarks/mpfr/02_Rgemv/README.md` so the C native equivalent
+  table no longer says that OpenMP 05/06/07 raw C counterparts are missing.
+
+Tests added:
+- No unit tests were added; this phase adds benchmark executables.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg --files benchmarks/mpfr/02_Rgemv | sort`
+- `sed -n '1,260p' benchmarks/CMakeLists.txt`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_common.hpp`
+- `sed -n '220,520p' benchmarks/mpfr/02_Rgemv/Rgemv_common.hpp`
+- `sed -n '300,460p' benchmarks/CMakeLists.txt`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01.cpp && sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02.cpp && sed -n '1,240p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_03.cpp`
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05.cpp`
+- `sed -n '1,240p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06.cpp`
+- `sed -n '1,280p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07.cpp`
+- `cmake --build build_bench_release --target Rgemv_mpfr_C_native_openmp_05 Rgemv_mpfr_C_native_openmp_06 Rgemv_mpfr_C_native_openmp_07 -j`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rgemv_mpfr_C_native_openmp_05 Rgemv_mpfr_C_native_openmp_06 Rgemv_mpfr_C_native_openmp_07 -j`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_05 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_06 13 17 128`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07 13 17 128`
+- `rg -n "none yet|openmp_05|openmp_06|openmp_07|C_native_openmp_03" benchmarks/mpfr/02_Rgemv/README.md`
+- `sed -n '80,150p' benchmarks/mpfr/02_Rgemv/README.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+- `git diff --check`
+- `git status --short --untracked-files=all`
+- `git diff --stat`
+
+Pass/fail result:
+- Initial build attempt before reconfiguring CMake: FAIL, build tree did not
+  yet know the new targets.
+- CMake configure refresh: PASS.
+- Build of `Rgemv_mpfr_C_native_openmp_05`: PASS.
+- Build of `Rgemv_mpfr_C_native_openmp_06`: PASS.
+- Build of `Rgemv_mpfr_C_native_openmp_07`: PASS.
+- OpenMP 05 smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- OpenMP 06 smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- OpenMP 07 smoke run at `m=13`, `n=17`, `precision=128`,
+  `OMP_NUM_THREADS=2`: PASS, `Result OK`.
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- The current checked-in MPFR Rgemv repeat-10 result set predates these new
+  raw C native OpenMP 05/06/07 targets, so they are documented as
+  source-equivalence targets for the next benchmark refresh but are not in the
+  current result tables.
+
 Post-phase MPFR Rgemv README full rewrite:
 DONE
 
@@ -2119,6 +2276,60 @@ Pass/fail result:
 
 Known issues:
 - None.
+
+## Phase: MPFR Rgemv Repeat-10 Benchmark Refresh
+
+Implemented features:
+- Removed the old checked-in MPFR Rgemv repeat-10 result directory.
+- Rebuilt the MPFR Rgemv release benchmark targets after tightening the raw C
+  native numbering and adding the missing native counterparts.
+- Re-ran the full MPFR Rgemv repeat-10 benchmark matrix with 37 variants.
+- Generated raw log, raw CSV, summary CSV, and serial/OpenMP plots under a new
+  run-specific `results_raw/` directory.
+- Refreshed `benchmarks/mpfr/02_Rgemv/README.md` so it only references the new
+  result set and includes updated interpretation tables, sorted folded tables,
+  bandwidth estimates, plot links, and lessons learned.
+
+Missing features:
+- No hardware-counter validation was added.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/benchmark_rgemv_mpfr_m4000_n4000_p512_repeat10.log`
+- `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`
+- `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`
+- `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/rgemv_mpfr_m4000_n4000_p512_repeat10_serial.png`
+- `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/rgemv_mpfr_m4000_n4000_p512_repeat10_openmp.png`
+- `STATUS.md`
+
+Exact commands run:
+- `git rm -r benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_232612`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rgemv_mpfr_C_native_01 Rgemv_mpfr_C_native_01_FMA Rgemv_mpfr_C_native_02 Rgemv_mpfr_C_native_02_FMA Rgemv_mpfr_C_native_03 Rgemv_mpfr_C_native_04 Rgemv_mpfr_C_native_openmp_01 Rgemv_mpfr_C_native_openmp_01_FMA Rgemv_mpfr_C_native_openmp_02 Rgemv_mpfr_C_native_openmp_02_FMA Rgemv_mpfr_C_native_openmp_03 Rgemv_mpfr_C_native_openmp_04 Rgemv_mpfr_C_native_openmp_04_FMA Rgemv_mpfr_C_native_openmp_05 Rgemv_mpfr_C_native_openmp_06 Rgemv_mpfr_C_native_openmp_07 Rgemv_mpfr_kernel_01_mkII Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_02_mkII Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_03_mkII Rgemv_mpfr_kernel_03_mkII_FMA Rgemv_mpfr_kernel_04_mkII Rgemv_mpfr_kernel_openmp_01_mkII Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_openmp_02_mkII Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_openmp_03_mkII Rgemv_mpfr_kernel_openmp_03_mkII_FMA Rgemv_mpfr_kernel_openmp_04_mkII Rgemv_mpfr_kernel_openmp_05_mkII Rgemv_mpfr_kernel_openmp_06_mkII Rgemv_mpfr_kernel_openmp_07_mkII -j`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 512 10`
+- `wc -l benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`
+- `find benchmarks/mpfr/02_Rgemv/results_raw -maxdepth 2 -type f | sort`
+- `python3 - <<'PY' ... generate README tables from summary CSV ...`
+- `rg -n "20260517_232612|All 31|310 successful|next refresh|444\\.009|425\\.405|24\\.238|rgemv_mpfr_m4000_n4000_p512_repeat10_20260517" benchmarks/mpfr/02_Rgemv/README.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Release configure: PASS.
+- Release target build: PASS.
+- Full MPFR Rgemv repeat-10 benchmark: PASS.  370/370 timed runs reported
+  `Result OK`.
+- Plot generation: PASS.
+- Stale README reference scan: PASS.
+- `git diff --check`: PASS.
+- CTest: PASS.  158/158 tests passed.
+
+Known issues:
+- Bandwidth numbers in the README are model estimates, not hardware-counter
+  measurements.
 
 ## Phase: MPFR Raxpy Kernel Matrix Alignment
 
