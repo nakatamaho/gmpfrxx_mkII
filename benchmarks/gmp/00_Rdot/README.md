@@ -70,6 +70,29 @@ Rdot_gmp_kernel_openmp_NN_mkII
 Rdot_gmp_kernel_openmp_NN_mkII_FIXED_PRECISION_FASTPATH
 ```
 
+## C Native Equivalent Kernels
+
+The C native executables are the reference hot-loop shapes for the C++ wrapper
+kernels.  The mapping is based on the timed `_Rdot()` body, not on the
+post-run correctness reference.
+
+| C native kernel | Equivalent C++ wrapper kernel(s) | Equivalence notes |
+|-----------------|----------------------------------|-------------------|
+| `C_native_01` | Closest to `kernel_02_*` | Raw C initializes and clears a product `mpf_t` inside the loop.  This is the C-level equivalent of loop-local product materialization, not of a persistent ET node. |
+| `C_native_02` | Closest to `kernel_02_*` | Currently identical to `C_native_01`; keep this in mind when reading old tables that list both. |
+| `C_native_03` | `kernel_03_*` | One product object is initialized before the loop and reused with direct product assignment.  This is the primary serial C native equivalent for the optimized C++ wrapper path. |
+| `C_native_04` | `kernel_04_*` | One product object is reused, but each iteration copies `dx[i]` before multiplying by `dy[i]`. |
+| `C_native_05` | `kernel_05_*` | Four accumulators with one reused product object. |
+| `C_native_06` | `kernel_06_*` | Four accumulators with four reused product objects. |
+| `C_native_openmp_NN` | `kernel_openmp_NN_*` for the same `NN` | OpenMP variants follow the same source-shape numbering as the serial kernels. |
+
+`kernel_01_*` has no exact raw C source-level equivalent because it is the
+expression-template spelling `acc += dx[i] * dy[i]`.  In a non-fastpath build
+its generated hot loop is closest to loop-local product materialization
+(`C_native_01` / `C_native_02`).  In a fixed-precision fastpath build it can
+move into the reusable-scratch performance class, so disassembly should be used
+before treating `kernel_01_*` as equivalent to any single raw C kernel.
+
 ## Recorded Run
 
 This README reports the current committed repeat-10 run:

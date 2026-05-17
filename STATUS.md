@@ -1,3 +1,78 @@
+Post-phase benchmark README equivalence rule:
+DONE
+
+Implemented features:
+- Updated `AGENTS.md` benchmark README conventions to require a
+  `C Native Equivalent Kernels` section.
+- Specified that the mapping must be based on timed hot-loop source shape and
+  generated code, not only on matching numeric suffixes.
+- Required benchmark READMEs to explicitly document when a C++ expression
+  template kernel has no exact raw C native equivalent.
+
+Tests added:
+- No test source files were added; this is documentation-only.
+
+Tests updated:
+- `AGENTS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "README|benchmark|Bench|documentation|Status Discipline|Implementation Rules" AGENTS.md`
+- `sed -n '1,260p' AGENTS.md`
+- `sed -n '444,760p' AGENTS.md`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- None for this documentation update.
+
+Post-phase Rdot C native equivalence documentation:
+DONE
+
+Implemented features:
+- Added `C Native Equivalent Kernels` sections to both GMP and MPFR Rdot
+  READMEs.
+- Documented which raw C kernels are source-shape equivalents for each C++
+  wrapper kernel family.
+- Clarified that GMP/MPFR `C_native_01` and `C_native_02` are both closest to
+  loop-local product materialization, while optimized reusable-product paths
+  should be compared with `C_native_03`.
+- Clarified that MPFR FMA and explicit-context kernels have separate C native
+  comparison points because rounding delivery and `mpfr_fma` change the hot
+  loop shape.
+- Reverted the partial GMP Rgemv README/result deletion left by the
+  interrupted previous task before making the Rdot documentation changes.
+
+Tests added:
+- No test source files were added; this is documentation-only.
+
+Tests updated:
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git restore --staged --worktree benchmarks/gmp/02_Rgemv/README.md benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_20260516_130209`
+- `sed -n '1,220p' benchmarks/gmp/00_Rdot/README.md`
+- `sed -n '1,220p' benchmarks/mpfr/00_Rdot/README.md`
+- `rg -n` over the GMP and MPFR Rdot C native source files to verify timed
+  hot-loop shapes.
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- None for this documentation update.
+
 Post-phase MPFR Raxpy repeat-10 regeneration:
 DONE
 

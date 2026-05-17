@@ -694,6 +694,7 @@ Purpose
 Build
 Benchmark Parameters
 Variant Shapes
+C Native Equivalent Kernels
 Recorded Run
 Resource or Bandwidth Estimates
 Serial Results
@@ -749,6 +750,13 @@ parameters such as:
 * correctness tolerance
 
 The `Variant Shapes` section must define the numbered variants.
+
+The `C Native Equivalent Kernels` section must explain which C++ wrapper
+kernels are equivalent to each raw C native kernel.  Base the mapping on the
+timed hot-loop source shape and generated code, not just on matching numeric
+suffixes.  If there is no exact C native equivalent for a C++ expression
+template spelling, say so explicitly and name the closest C native comparison
+point.
 
 The `Recorded Run` section must state the exact committed run parameters,
 including at least:

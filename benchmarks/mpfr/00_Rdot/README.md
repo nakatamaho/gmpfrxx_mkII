@@ -90,6 +90,30 @@ Rdot_mpfr_kernel_openmp_07_mkII_FMA
 Rdot_mpfr_kernel_openmp_08_mkII
 ```
 
+## C Native Equivalent Kernels
+
+The C native executables are the reference hot-loop shapes for the C++ wrapper
+kernels.  The mapping is based on the timed `_Rdot()` body, not on the
+post-run correctness reference.
+
+| C native kernel | Equivalent C++ wrapper kernel(s) | Equivalence notes |
+|-----------------|----------------------------------|-------------------|
+| `C_native_01` | Closest to `kernel_02_*` | Raw C initializes and clears a product `mpfr_t` inside the loop.  This is the C-level equivalent of loop-local product materialization. |
+| `C_native_02` | Closest to `kernel_02_*` | Same timed arithmetic shape as `C_native_01`; the differences are only incidental source cleanup. |
+| `C_native_01_FMA` | `kernel_01_*_FMA`, `kernel_07_mkII_FMA` | One `mpfr_fma` per element.  Raw C caches the rounding mode in a local variable; generic wrapper FMA variants may still load wrapper rounding state in the loop, while `kernel_07_mkII_FMA` uses an explicit context. |
+| `C_native_03` | `kernel_03_*`, `kernel_08_mkII` | One product object is initialized before the loop and reused with direct product assignment.  `kernel_08_mkII` is the explicit-context version of the same split multiply/add source shape. |
+| `C_native_04` | `kernel_04_*` | One product object is reused, but each iteration copies `dx[i]` before multiplying by `dy[i]`. |
+| `C_native_05` | `kernel_05_*` | Four accumulators with one reused product object. |
+| `C_native_06` | `kernel_06_*` | Four accumulators with four reused product objects. |
+| `C_native_openmp_NN` | `kernel_openmp_NN_*` for the same `NN` | OpenMP split multiply/add variants follow the same source-shape numbering as the serial kernels. |
+| `C_native_openmp_01_FMA` | `kernel_openmp_01_*_FMA`, `kernel_openmp_07_mkII_FMA` | OpenMP one-call FMA equivalent.  As in serial, raw C caches `rnd`, while wrapper variants differ in how rounding is delivered. |
+
+`kernel_01_*` without FMA has no exact raw C source-level equivalent because it
+is the expression-template spelling `acc += dx[i] * dy[i]`.  Its generated hot
+loop should be classified by disassembly: generic builds are closest to
+loop-local product materialization, while FMA builds should be compared with
+`C_native_01_FMA`.
+
 ## Recorded Run
 
 The current checked-in MPFR Rdot data was regenerated from scratch after
