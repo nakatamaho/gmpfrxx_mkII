@@ -1,3 +1,148 @@
+Post-phase MPFR Rgemv repeat benchmark refresh:
+DONE
+
+Implemented features:
+- Removed stale tracked legacy MPFR benchmark result directories under
+  `benchmarks/mpfr/results_raw`, leaving the `.gitkeep` anchor.
+- Reran the MPFR Rgemv benchmark matrix with the current raw C native,
+  FMA, wrapper, fixed-precision, explicit-context, and OpenMP targets.
+- Wrote the fresh repeat-10 Rgemv result set under
+  `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260517_212035`.
+- Generated raw CSV, summary CSV, and serial/OpenMP bar plots with min/max
+  error bars from the fresh log.
+
+Tests added:
+- No unit tests were added; this phase refreshes benchmark results.
+
+Tests updated:
+- `STATUS.md`
+
+Exact commands run:
+- `find benchmarks/mpfr/02_Rgemv -maxdepth 3 -type f -o -type d | sort`
+- `rg -n "Rgemv_mpfr|02_Rgemv|repeat|summary|mflops|results_raw" benchmarks/mpfr benchmarks/common benchmarks/CMakeLists.txt -g '*.sh' -g '*.py' -g 'README.md' -g 'CMakeLists.txt'`
+- `git ls-files benchmarks/mpfr/results_raw benchmarks/mpfr/02_Rgemv/results_raw`
+- `git rm -r benchmarks/mpfr/results_raw/clean_release_20260509_smoke benchmarks/mpfr/results_raw/raxpy_port_smoke_20260509 benchmarks/mpfr/results_raw/rdot_n1e7_20260509 benchmarks/mpfr/results_raw/rgemm_port_smoke_20260510 benchmarks/mpfr/results_raw/rgemv_port_smoke_20260510 benchmarks/mpfr/results_raw/scaled_full_20260510`
+- `cmake --build build_bench_release --target Rgemv_mpfr_C_native_01 Rgemv_mpfr_C_native_01_FMA Rgemv_mpfr_C_native_02 Rgemv_mpfr_C_native_02_FMA Rgemv_mpfr_C_native_openmp_01 Rgemv_mpfr_C_native_openmp_01_FMA Rgemv_mpfr_C_native_openmp_02 Rgemv_mpfr_C_native_openmp_02_FMA Rgemv_mpfr_kernel_01_mkII Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_02_mkII Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_03_mkII Rgemv_mpfr_kernel_03_mkII_FMA Rgemv_mpfr_kernel_04_mkII Rgemv_mpfr_kernel_openmp_01_mkII Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_openmp_02_mkII Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA Rgemv_mpfr_kernel_openmp_03_mkII Rgemv_mpfr_kernel_openmp_03_mkII_FMA Rgemv_mpfr_kernel_openmp_04_mkII -j`
+- `bash -lc` repeat-10 MPFR Rgemv benchmark runner for 26 variants at
+  `m=4000`, `n=4000`, `precision=512`.
+- `python3` log parser to generate
+  `raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv` and
+  `summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`.
+- `python3` plot generator to create
+  `rgemv_mpfr_m4000_n4000_p512_repeat10_serial.png` and
+  `rgemv_mpfr_m4000_n4000_p512_repeat10_openmp.png`.
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Build of the full MPFR Rgemv target matrix: PASS.
+- Fresh repeat-10 benchmark run: PASS, 260/260 runs reported `Result OK`.
+- Best serial average: `Rgemv_mpfr_C_native_02_FMA`, 23.594 MFLOPS.
+- Best wrapper serial average: `Rgemv_mpfr_kernel_04_mkII`, 20.447 MFLOPS.
+- Best OpenMP average: `Rgemv_mpfr_kernel_openmp_03_mkII_FMA`,
+  277.394 MFLOPS.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- The benchmark harness still runs a reference Rgemv after each timed kernel,
+  so `WALL_SECONDS` is much larger than the timed `Elapsed time` for fast
+  OpenMP variants.
+- This phase refreshed data only; README analysis is not yet updated for the
+  new result set.
+
+Post-phase MPFR Rgemv explicit-context kernels:
+DONE
+
+Implemented features:
+- Added `Rgemv_mpfr_kernel_03.cpp` as the explicit-context counterpart to the
+  existing row-dot expression kernel.
+- Added `Rgemv_mpfr_kernel_04.cpp` as the explicit-context counterpart to the
+  reusable `temp`/`templ` kernel.
+- Added OpenMP counterparts `Rgemv_mpfr_kernel_openmp_03.cpp` and
+  `Rgemv_mpfr_kernel_openmp_04.cpp`.
+- Registered `03` and `openmp_03` as `mkII` and `mkII_FMA` targets, and
+  registered `04` and `openmp_04` as `mkII` targets.
+
+Tests added:
+- No unit tests were added; this phase adds benchmark executables.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short --untracked-files=all`
+- `find benchmarks/mpfr/02_Rgemv -maxdepth 1 -type f | sort`
+- `sed -n '303,330p' benchmarks/CMakeLists.txt`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rgemv_mpfr_kernel_03_mkII Rgemv_mpfr_kernel_03_mkII_FMA Rgemv_mpfr_kernel_04_mkII Rgemv_mpfr_kernel_openmp_03_mkII Rgemv_mpfr_kernel_openmp_03_mkII_FMA Rgemv_mpfr_kernel_openmp_04_mkII -j`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_mkII 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_mkII_FMA 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_mkII 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_mkII 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_mkII_FMA 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_mkII 13 17 128`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- New explicit-context target build: PASS.
+- Small MPFR Rgemv smoke runs: PASS, all six new wrapper executables reported
+  `Result OK`.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- `kernel_openmp_04` keeps the row-owned OpenMP update pattern to avoid races
+  on `y[i]`, so it recomputes the column-scale temporary inside each row
+  worker.  This is intentionally comparable to `C_native_openmp_02`, not to
+  the serial column-hoisted `kernel_04` source shape.
+
+Post-phase MPFR Rgemv C native kernel matrix:
+DONE
+
+Implemented features:
+- Added the missing MPFR Rgemv raw C native reusable-temporary kernel
+  `Rgemv_mpfr_C_native_02`.
+- Added FMA raw C native variants for the existing `01` shape and the new
+  `02` shape.
+- Added OpenMP raw C native variants for `02`, `01_FMA`, and `02_FMA`.
+- Registered the new MPFR Rgemv native benchmark targets in
+  `benchmarks/CMakeLists.txt`.
+
+Tests added:
+- No unit tests were added; this phase adds benchmark executables.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,220p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01.cpp`
+- `sed -n '1,260p' benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01.cpp`
+- `sed -n '1,220p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02.cpp`
+- `sed -n '1,260p' benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02.cpp`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rgemv_mpfr_C_native_01_FMA Rgemv_mpfr_C_native_02 Rgemv_mpfr_C_native_02_FMA Rgemv_mpfr_C_native_openmp_01_FMA Rgemv_mpfr_C_native_openmp_02 Rgemv_mpfr_C_native_openmp_02_FMA -j`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01_FMA 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01_FMA 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02 13 17 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02_FMA 13 17 128`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- New target build: PASS.
+- Small MPFR Rgemv smoke runs: PASS, all six new executables reported
+  `Result OK`.
+- `ctest --test-dir build_bench_release --output-on-failure`: PASS, 158/158
+  tests passed.
+
+Known issues:
+- The OpenMP raw C `02` shape computes the column-scale temporary inside each
+  row-owned worker loop, matching the existing GMP OpenMP `02` ownership
+  pattern but not the serial `02` column-hoisted reuse pattern.
+
 Post-phase GMP Rgemv README refresh:
 DONE
 
