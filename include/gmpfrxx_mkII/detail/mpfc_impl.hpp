@@ -37,6 +37,7 @@
 #include <cmath>
 #include <istream>
 #include <ostream>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -969,6 +970,10 @@ void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, co
         mpf_clear(imag_part);
         mpf_clear(real_part);
     } else if constexpr (std::is_same_v<Op, div_op>) {
+        if (mpf_sgn(rhs.real().mpf_data()) == 0 &&
+            mpf_sgn(rhs.imag().mpf_data()) == 0) {
+            throw std::domain_error("mpfc division by zero");
+        }
         if (&dest != &lhs && &dest != &rhs) {
             mpfc_divide_smith(mpfc_real_ref(dest).mpf_data(),
                               mpfc_imag_ref(dest).mpf_data(),

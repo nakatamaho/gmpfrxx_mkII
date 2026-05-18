@@ -1570,6 +1570,9 @@ void mpf_apply_binary(mpf_t dest, const mpf_t lhs, const mpf_t rhs)
     } else if constexpr (std::is_same_v<Op, mul_op>) {
         mpf_mul(dest, lhs, rhs);
     } else if constexpr (std::is_same_v<Op, div_op>) {
+        if (mpf_sgn(rhs) == 0) {
+            throw std::domain_error("mpf division by zero");
+        }
         mpf_div(dest, lhs, rhs);
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPF expression operation");

@@ -118,6 +118,42 @@ void check_division_by_zero_throws()
     });
 }
 
+void test_mpz_modulo_by_zero_throws()
+{
+    const gmpxx::mpz_class numerator(42);
+    const gmpxx::mpz_class zero(0);
+
+    require_domain_error([&] {
+        const gmpxx::mpz_class remainder = numerator % zero;
+        (void)remainder;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpz_class remainder = numerator;
+        remainder %= zero;
+    });
+
+    require_domain_error([&] {
+        const gmpxx::mpz_class remainder = numerator % 0;
+        (void)remainder;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpz_class remainder = numerator;
+        remainder %= 0;
+    });
+
+    require_domain_error([&] {
+        const gmpxx::mpz_class remainder = numerator % 0.0;
+        (void)remainder;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpz_class remainder = numerator;
+        remainder %= 0.0;
+    });
+}
+
 void check_scalar(const gmpxx::mpz_class& a)
 {
     mpz_t ref;
@@ -341,6 +377,7 @@ int main()
     check_scalar(huge);
     check_scalar(neg_huge);
     check_division_by_zero_throws();
+    test_mpz_modulo_by_zero_throws();
     check_bitwise_and_shifts();
     check_increment_decrement();
     check_integer_helpers();

@@ -135,8 +135,11 @@ run_variants() {
             "Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA"
             "Rdot_mpfr_kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH"
             "Rdot_mpfr_kernel_07_mkII"
+            "Rdot_mpfr_kernel_07_mkII_FIXED_PRECISION_FASTPATH"
             "Rdot_mpfr_kernel_07_mkII_FMA"
+            "Rdot_mpfr_kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rdot_mpfr_kernel_08_mkII"
+            "Rdot_mpfr_kernel_08_mkII_FIXED_PRECISION_FASTPATH"
             "Rdot_mpfr_kernel_openmp_01_mkII"
             "Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING"
             "Rdot_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA"
@@ -162,8 +165,11 @@ run_variants() {
             "Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA"
             "Rdot_mpfr_kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH"
             "Rdot_mpfr_kernel_openmp_07_mkII"
+            "Rdot_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH"
             "Rdot_mpfr_kernel_openmp_07_mkII_FMA"
+            "Rdot_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA"
             "Rdot_mpfr_kernel_openmp_08_mkII"
+            "Rdot_mpfr_kernel_openmp_08_mkII_FIXED_PRECISION_FASTPATH"
         )
         ;;
     Raxpy)

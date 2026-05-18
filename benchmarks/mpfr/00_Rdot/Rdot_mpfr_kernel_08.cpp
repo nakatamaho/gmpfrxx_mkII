@@ -47,11 +47,10 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
 
     const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    const mpfrxx::evaluation_context context{precision, rounding};
     mpfr_class temp(0.0, precision);
     mpfr_class templ(0.0, precision);
-    auto temp_context = mpfrxx::with_context(temp, context);
-    auto templ_context = mpfrxx::with_context(templ, context);
+    auto temp_context = mpfrxx::with_context(temp, precision, rounding);
+    auto templ_context = mpfrxx::with_context(templ, precision, rounding);
 
     for (int64_t i = 0; i < n; i++) {
         templ_context = dx[i] * dy[i];

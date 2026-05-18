@@ -47,16 +47,15 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
 
     const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    const mpfrxx::evaluation_context context{precision, rounding};
     mpfr_class temp(0.0, precision);
 
 // no reduction for multiple precision
 #ifdef _OPENMP
-#pragma omp parallel shared(temp, dx, dy, n, context)
+#pragma omp parallel shared(temp, dx, dy, n, precision, rounding)
 #endif
     {
         mpfr_class templ(0.0, precision);
-        auto templ_context = mpfrxx::with_context(templ, context);
+        auto templ_context = mpfrxx::with_context(templ, precision, rounding);
 #ifdef _OPENMP
 #pragma omp for
 #endif
@@ -67,7 +66,7 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
 #pragma omp critical
 #endif
         {
-            auto temp_context = mpfrxx::with_context(temp, context);
+            auto temp_context = mpfrxx::with_context(temp, precision, rounding);
             temp_context += templ;
         }
     }

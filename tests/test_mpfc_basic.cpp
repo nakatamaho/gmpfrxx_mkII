@@ -4,6 +4,7 @@
 #include <cmath>
 #include <complex>
 #include <random>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 
@@ -59,6 +60,16 @@ void check_close(complex_ref expected, gmpxx::mpfc_class const& got) {
     double scale = 1.0 + std::abs(expected);
     assert(std::abs(actual.real() - expected.real()) <= 1e-10 * scale);
     assert(std::abs(actual.imag() - expected.imag()) <= 1e-10 * scale);
+}
+
+template <typename Function>
+void require_domain_error(Function&& function) {
+    try {
+        function();
+    } catch (const std::domain_error&) {
+        return;
+    }
+    std::abort();
 }
 
 void check_binary_arithmetic(complex_ref a_ref, complex_ref b_ref,
@@ -380,6 +391,34 @@ void test_comparison_and_free_helpers() {
     check_close(complex_ref(3.0, 4.0), from_polar);
 }
 
+void test_mpfc_division_by_zero_throws() {
+    using gmpxx::mpf_class;
+    using gmpxx::mpfc_class;
+
+    const mpfc_class numerator(mpf_class(3, 256), mpf_class(4, 256));
+    const mpfc_class zero(mpf_class(0, 256), mpf_class(0, 256));
+
+    require_domain_error([&] {
+        const mpfc_class quotient = numerator / zero;
+        (void)quotient;
+    });
+
+    require_domain_error([&] {
+        mpfc_class quotient = numerator;
+        quotient /= zero;
+    });
+
+    require_domain_error([&] {
+        mpfc_class quotient = numerator;
+        quotient = numerator / zero;
+    });
+
+    require_domain_error([&] {
+        mpfc_class quotient = numerator;
+        quotient /= zero + mpfc_class(mpf_class(0, 256), mpf_class(0, 256));
+    });
+}
+
 void test_arithmetic_smoke_against_std_complex() {
     using gmpxx::mpfc_class;
 
@@ -420,6 +459,7 @@ int main() {
     test_assignment_preserves_destination_precision();
     test_conjugate_norm_and_abs();
     test_comparison_and_free_helpers();
+    test_mpfc_division_by_zero_throws();
     test_arithmetic_smoke_against_std_complex();
     return 0;
 }

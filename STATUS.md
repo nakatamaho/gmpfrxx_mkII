@@ -18419,3 +18419,216 @@ Known issues:
   `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is a caller contract.  Code
   compiled with this macro must only call `with_context(value, context)` when
   `value.precision() == context.precision`.
+
+## Phase: Division-by-zero Guards for MPZ Modulo and MPFC Division
+
+Implemented features:
+- Added explicit zero-divisor checks to `gmpxx::mpz_class` `%` and `%=`.
+- Added explicit `0 + 0i` divisor checks to `gmpxx::mpfc_class` division
+  before the Smith division path can call GMP `mpf_div` or `mpf_ui_div`.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- `test_mpz_modulo_by_zero_throws`
+- `test_mpfc_division_by_zero_throws`
+
+Tests updated:
+- `tests/test_mpz_arithmetic.cpp`
+- `tests/test_mpfc_basic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpz_arithmetic test_mpfc_basic -j`
+- `ctest --test-dir build -R 'test_mpz_arithmetic|test_mpfc_basic' --output-on-failure`
+
+Pass/fail result:
+- Targeted test build: PASS.
+- Targeted CTest: PASS.  2/2 tests passed.
+
+Known issues:
+- Full CTest was not rerun in this phase.
+
+## Phase: MPFR Rdot C Native Equivalence Mapping Refresh
+
+Implemented features:
+- Reworked `benchmarks/mpfr/00_Rdot/README.md` so the variant table and
+  `C Native Equivalent Kernels` section follow the stricter MPFR Rgemv
+  reporting style.
+- Documented that wrapper `01` has no exact non-FMA raw C source equivalent:
+  raw C must choose either split `mpfr_mul` plus `mpfr_add` or fused
+  `mpfr_fma`.
+- Reclassified `C_native_01_FMA` as the raw C reference for FMA-lowered
+  wrapper `01` and explicit-context `07`.
+- Reclassified `C_native_02` as the loop-local product-object reference and
+  `C_native_03` as the reusable-product reference for wrapper `03` and
+  explicit-context `08`.
+- Updated MPFR Rdot explicit-context kernels to call
+  `with_context(value, precision, rounding)` directly so fixed-precision
+  targets can compile out the context precision checks.
+- Added serial and OpenMP fixed-precision target variants for MPFR Rdot
+  kernels `07` and `08`.
+
+Missing features:
+- Full repeat-10 MPFR Rdot benchmark data was not regenerated in this phase.
+  The README explicitly marks the newly added fixed-precision context targets
+  as targets for the next benchmark refresh.
+
+Tests added:
+- No unit tests were added; this phase updates benchmark kernels and
+  documentation.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07.cpp`
+- `benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff -- benchmarks/mpfr/00_Rdot/README.md benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07.cpp benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08.cpp benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_07.cpp benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08.cpp benchmarks/CMakeLists.txt | sed -n '1,260p'`
+- `sed -n '110,230p' benchmarks/mpfr/00_Rdot/README.md && sed -n '1,220p' STATUS.md`
+- `tail -n 120 STATUS.md`
+- `git diff --check && cmake --build build_bench_release --target Rdot_mpfr_kernel_07_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA Rdot_mpfr_kernel_08_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA Rdot_mpfr_kernel_openmp_08_mkII_FIXED_PRECISION_FASTPATH -j`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close /bin/bash -lc 'set -e; for exe in Rdot_mpfr_kernel_07_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA Rdot_mpfr_kernel_08_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA Rdot_mpfr_kernel_openmp_08_mkII_FIXED_PRECISION_FASTPATH; do echo "== $exe"; build_bench_release/benchmarks/mpfr/00_Rdot/$exe 1000 128 | tail -n 3; done'`
+
+Pass/fail result:
+- Documentation mapping refresh: PASS.
+- `git diff --check`: PASS.
+- Targeted fixed-precision context benchmark build: PASS.
+- Targeted smoke run: PASS.  All six fixed-precision context targets reported
+  `OK`.
+
+Known issues:
+- A fresh full MPFR Rdot repeat-10 run is needed before the newly added
+  fixed-precision explicit-context variants can be included in the result
+  tables and plots.
+
+## Phase: MPFR Rdot Full Repeat-10 Refresh
+
+Implemented features:
+- Added the MPFR Rdot explicit-context fixed-precision targets to
+  `benchmarks/common/run_mpfr_benchmarks.sh`.
+- Removed the previous MPFR Rdot raw result directory and regenerated the
+  benchmark data for the refreshed 74-variant target matrix.
+- Updated `benchmarks/mpfr/00_Rdot/README.md` with the new run ID, raw-data
+  paths, plots, headline results, serial/OpenMP interpretation tables, sorted
+  Max/Avg MFLOPS tables, bandwidth estimates, disassembly notes, and lessons
+  learned.
+- Refreshed the disassembly notes for `kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA`
+  and `kernel_08_mkII_FIXED_PRECISION_FASTPATH`.
+
+Missing features:
+- No 1024-bit MPFR Rdot run was collected in this phase.
+
+Tests added:
+- No unit tests were added; this phase refreshes benchmark data and reports.
+
+Tests updated:
+- `benchmarks/common/run_mpfr_benchmarks.sh`
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260518_185352/`
+- `STATUS.md`
+
+Exact commands run:
+- `rm -rf benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260517_121244`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target <all MPFR Rdot refreshed targets> -j`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread /bin/bash -lc '<single full MPFR Rdot repeat-10 runner>'`
+- `python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260518_185352/benchmark_rdot_mpfr_n10000000_p512_repeat10.log --output-dir benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260518_185352 --output-prefix rdot_mpfr_n10000000_p512_repeat10 --title-prefix "MPFR Rdot N=10000000 precision=512 repeat=10"`
+- `python3` summary checks for command/run/OK counts.
+- `objdump -Cd --no-show-raw-insn --start-address=0x36f0 --stop-address=0x38c0 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3720 --stop-address=0x3960 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08_mkII_FIXED_PRECISION_FASTPATH | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3850 --stop-address=0x3a60 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING | c++filt`
+- `git diff --check`
+- `ctest --test-dir build -R 'test_mpf_basic|test_mpz_arithmetic|test_mpfc_basic' --output-on-failure`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFR Rdot benchmark build: PASS.
+- Full MPFR Rdot repeat-10 run: PASS.  74 variants and 740 timed runs
+  reported `OK`; no `NG` runs were observed.
+- Summary CSV and serial/OpenMP plots: PASS.
+- Representative disassembly check: PASS.  `07` fixed FMA uses one
+  `mpfr_fma` with cached context rounding, and `08` fixed uses
+  `mpfr_mul` plus `mpfr_add` with cached context rounding.
+- `git diff --check`: PASS.
+- Targeted zero-division regression CTest: PASS.  3/3 tests passed.
+- Release CTest: PASS.  159/159 tests passed.
+
+Known issues:
+- OpenMP results still have visible run-to-run variance.  The README reports
+  average and min/max ranges rather than relying on single-run maxima.
+
+## Phase: MPFR Rdot 08 Fixed-precision Target Check
+
+Implemented features:
+- Added fixed-precision benchmark targets for serial and OpenMP MPFR Rdot
+  kernel 08.
+- Compared normal and fixed-precision disassembly for the OpenMP 08 worker and
+  serial 08 function.
+
+Missing features:
+- README benchmark tables were not regenerated in this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `benchmarks/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rdot_mpfr_kernel_08_mkII Rdot_mpfr_kernel_08_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_openmp_08_mkII Rdot_mpfr_kernel_openmp_08_mkII_FIXED_PRECISION_FASTPATH -j`
+- `nm -C build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08_mkII | rg " _Rdot|\\.omp_fn|mpfr_context_ref|with_context"`
+- `nm -C build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08_mkII_FIXED_PRECISION_FASTPATH | rg " _Rdot|\\.omp_fn|mpfr_context_ref|with_context"`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3b70 --stop-address=0x3d30 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08_mkII | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3970 --stop-address=0x3b00 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_08_mkII_FIXED_PRECISION_FASTPATH | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x38e0 --stop-address=0x3ad0 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08_mkII | c++filt`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3720 --stop-address=0x38e0 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_08_mkII_FIXED_PRECISION_FASTPATH | c++filt`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close /bin/bash -lc 'set -e; for exe in Rdot_mpfr_kernel_08_mkII Rdot_mpfr_kernel_08_mkII_FIXED_PRECISION_FASTPATH Rdot_mpfr_kernel_openmp_08_mkII Rdot_mpfr_kernel_openmp_08_mkII_FIXED_PRECISION_FASTPATH; do echo "== $exe"; build_bench_release/benchmarks/mpfr/00_Rdot/$exe 1000 128 | tail -n 3; done'`
+
+Pass/fail result:
+- Release benchmark configure: PASS.
+- Targeted benchmark build: PASS.
+- Smoke run: PASS.  All four kernel 08 variants reported `OK`.
+- Disassembly check: PASS.  The fixed-precision builds remove the
+  `with_context` precision compare/throw branches from setup and critical
+  reduction paths; the inner `mpfr_mul` + `mpfr_add` hot loop remains the same.
+
+Known issues:
+- No full repeat benchmark was run, so performance impact is not measured.
+
+## Phase: MPF Division-by-zero Guard
+
+Implemented features:
+- Added an explicit zero-divisor check to `gmpxx::mpf_class` division through
+  `mpf_apply_binary<div_op>`, before GMP `mpf_div` can observe a zero divisor.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- `test_mpf_division_by_zero_throws`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `tests/test_mpf_basic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpf_basic -j`
+- `ctest --test-dir build -R test_mpf_basic --output-on-failure`
+- `ctest --test-dir build -R 'test_mpf_basic|test_mpz_arithmetic|test_mpfc_basic' --output-on-failure`
+
+Pass/fail result:
+- Targeted MPF test build: PASS.
+- Targeted MPF CTest: PASS.  1/1 tests passed.
+- Combined zero-division regression CTest: PASS.  3/3 tests passed.
+
+Known issues:
+- Full CTest was not rerun in this phase.

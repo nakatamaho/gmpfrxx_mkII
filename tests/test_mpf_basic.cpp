@@ -35,6 +35,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <limits>
+#include <stdexcept>
 #include <type_traits>
 #include <vector>
 
@@ -45,6 +46,17 @@ void require_close(double actual, double expected)
     if (std::abs(actual - expected) > 1e-12) {
         std::abort();
     }
+}
+
+template <typename Function>
+void require_domain_error(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::domain_error&) {
+        return;
+    }
+    std::abort();
 }
 
 mp_bitcnt_t scalar_integer_prec(mp_bitcnt_t dst_prec)
@@ -223,6 +235,52 @@ void check_increment_decrement()
     }
 }
 
+void test_mpf_division_by_zero_throws()
+{
+    const gmpxx::mpf_class numerator("42", 256);
+    const gmpxx::mpf_class zero("0", 256);
+
+    require_domain_error([&] {
+        const gmpxx::mpf_class quotient = numerator / zero;
+        (void)quotient;
+    });
+
+    require_domain_error([&] {
+        const gmpxx::mpf_class quotient = numerator / 0;
+        (void)quotient;
+    });
+
+    require_domain_error([&] {
+        const gmpxx::mpf_class quotient = numerator / 0.0;
+        (void)quotient;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpf_class quotient = numerator;
+        quotient /= zero;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpf_class quotient = numerator;
+        quotient /= 0;
+    });
+
+    require_domain_error([&] {
+        gmpxx::mpf_class quotient = numerator;
+        quotient /= 0.0;
+    });
+
+    require_domain_error([&] {
+        const gmpxx::mpf_class quotient = numerator / (zero + zero);
+        (void)quotient;
+    });
+
+    require_domain_error([&] {
+        const gmpxx::mpf_class quotient = 1 / zero;
+        (void)quotient;
+    });
+}
+
 } // namespace
 
 int main()
@@ -244,6 +302,7 @@ int main()
     require_close(result.to_double(), 10.5);
 
     check_increment_decrement();
+    test_mpf_division_by_zero_throws();
 
     const std::vector<mp_bitcnt_t> precisions{8, 64, 256, 1024};
     for (const mp_bitcnt_t precision : precisions) {

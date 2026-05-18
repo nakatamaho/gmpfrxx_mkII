@@ -2994,6 +2994,9 @@ inline mpz_class& operator/=(mpz_class& lhs, double rhs)
 
 inline mpz_class operator%(const mpz_class& lhs, const mpz_class& rhs)
 {
+    if (mpz_sgn(rhs.mpz_data()) == 0) {
+        throw std::domain_error("mpz modulo by zero");
+    }
     mpz_class result;
     mpz_tdiv_r(result.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
     return result;
@@ -3031,6 +3034,9 @@ inline mpz_class operator%(Lhs lhs, const mpz_class& rhs)
 
 inline mpz_class& operator%=(mpz_class& lhs, const mpz_class& rhs)
 {
+    if (mpz_sgn(rhs.mpz_data()) == 0) {
+        throw std::domain_error("mpz modulo by zero");
+    }
     mpz_tdiv_r(lhs.mpz_data(), lhs.mpz_data(), rhs.mpz_data());
     return lhs;
 }
