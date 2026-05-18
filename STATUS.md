@@ -18563,6 +18563,56 @@ Known issues:
 - OpenMP results still have visible run-to-run variance.  The README reports
   average and min/max ranges rather than relying on single-run maxima.
 
+## Phase: MPFR First-use Environment Initialization
+
+Implemented features:
+- Fixed MPFR evaluation-context initialization so
+  `current_rounding_mode()` always calls
+  `initialize_mpfr_defaults_for_current_thread()` before reading MPFR or
+  stable wrapper rounding state.
+- Covered first-use paths where explicit precision avoids
+  `default_precision_bits()` but still needs environment-derived rounding,
+  exponent range, and stable rounding storage.
+- Added first-use regression coverage for `with_precision(precision, value)`,
+  explicit precision construction, and direct `current_eval_context()`.
+- Added stable-rounding build coverage for the same first-use paths.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- `test_mpfr_environment_first_use_with_precision`
+- `test_mpfr_environment_first_use_explicit_precision_constructor`
+- `test_mpfr_environment_first_use_current_eval_context`
+- `test_mpfr_environment_first_use_stable_with_precision`
+- `test_mpfr_environment_first_use_stable_explicit_precision_constructor`
+- `test_mpfr_environment_first_use_stable_current_eval_context`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/eval_context.hpp`
+- `tests/CMakeLists.txt`
+- `tests/test_mpfr_environment_first_use.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build --target test_mpfr_environment_first_use test_mpfr_environment_first_use_stable -j`
+- `ctest --test-dir build -R 'test_mpfr_environment_first_use|test_mpfr_environment|test_mpfr_rounding_scope_stable' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted first-use MPFR environment tests: PASS.  9/9 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  165/165 tests passed.
+
+Known issues:
+- Directly mutating MPFR's process/thread default rounding with raw
+  `mpfr_set_default_rounding_mode()` before wrapper first use still does not
+  update the wrapper stable-rounding TLS cache.  Stable-rounding builds should
+  use `mpfrxx::set_default_rounding_mode()` or environment initialization for
+  wrapper-visible rounding changes.
+
 ## Phase: MPFR Rdot 08 Fixed-precision Target Check
 
 Implemented features:

@@ -83,6 +83,37 @@ add_phase0_test(test_mpfr_exception_support mpcxx_mkII)
 add_phase0_test(test_mpfr_defaults mpfrxx_mkII)
 add_phase0_test(test_mpfr_initialization_sentinel mpfrxx_mkII)
 add_phase0_test(test_mpfr_environment mpfrxx_mkII)
+add_executable(test_mpfr_environment_first_use test_mpfr_environment_first_use.cpp)
+target_link_libraries(test_mpfr_environment_first_use PRIVATE mpfrxx_mkII)
+add_test(
+    NAME test_mpfr_environment_first_use_with_precision
+    COMMAND test_mpfr_environment_first_use with_precision
+)
+add_test(
+    NAME test_mpfr_environment_first_use_explicit_precision_constructor
+    COMMAND test_mpfr_environment_first_use explicit_precision_constructor
+)
+add_test(
+    NAME test_mpfr_environment_first_use_current_eval_context
+    COMMAND test_mpfr_environment_first_use current_eval_context
+)
+add_executable(test_mpfr_environment_first_use_stable test_mpfr_environment_first_use.cpp)
+target_link_libraries(test_mpfr_environment_first_use_stable PRIVATE mpfrxx_mkII)
+target_compile_definitions(test_mpfr_environment_first_use_stable PRIVATE
+    GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE
+)
+add_test(
+    NAME test_mpfr_environment_first_use_stable_with_precision
+    COMMAND test_mpfr_environment_first_use_stable with_precision
+)
+add_test(
+    NAME test_mpfr_environment_first_use_stable_explicit_precision_constructor
+    COMMAND test_mpfr_environment_first_use_stable explicit_precision_constructor
+)
+add_test(
+    NAME test_mpfr_environment_first_use_stable_current_eval_context
+    COMMAND test_mpfr_environment_first_use_stable current_eval_context
+)
 add_phase0_test(test_mpfr_environment_invalid mpfrxx_mkII)
 add_phase0_test(test_mpfr_string_io mpfrxx_mkII)
 add_phase0_test(test_mpfr_math mpfrxx_mkII)

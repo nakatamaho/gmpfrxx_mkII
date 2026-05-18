@@ -41,8 +41,9 @@ struct eval_context {
     mpfr_rnd_t rounding_mode;
 };
 
-inline mpfr_rnd_t current_rounding_mode() noexcept
+inline mpfr_rnd_t current_rounding_mode()
 {
+    initialize_mpfr_defaults_for_current_thread();
     if constexpr (build_options::assume_stable_mpfr_rounding_mode) {
         return stable_mpfr_rounding_mode();
     } else {
