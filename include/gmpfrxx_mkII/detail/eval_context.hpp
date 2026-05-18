@@ -43,12 +43,7 @@ struct eval_context {
 
 inline mpfr_rnd_t current_rounding_mode()
 {
-    initialize_mpfr_defaults_for_current_thread();
-    if constexpr (build_options::assume_stable_mpfr_rounding_mode) {
-        return stable_mpfr_rounding_mode();
-    } else {
-        return mpfr_get_default_rounding_mode();
-    }
+    return current_mpfr_rounding_mode();
 }
 
 inline eval_context current_eval_context(mpfr_prec_t precision_bits)

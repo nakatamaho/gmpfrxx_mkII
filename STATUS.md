@@ -18613,6 +18613,92 @@ Known issues:
   use `mpfrxx::set_default_rounding_mode()` or environment initialization for
   wrapper-visible rounding changes.
 
+## Phase: MPFR First-use Initialization Fast Path
+
+Implemented features:
+- Added a wrapper-owned DSO-local `thread_local` initialization flag for
+  MPFR default-state initialization.
+- Kept `current_rounding_mode()` as a correctness-preserving first-use entry
+  while making repeated calls return before probing MPFR's default precision,
+  rounding mode, emin, and emax TLS state.
+- Preserved the previous policy that environment defaults are applied only
+  when libmpfr still has its library-initial default state on first wrapper use.
+- Kept the stable rounding cache and the initialization flag at the same
+  DSO-local TLS granularity.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.  Existing first-use environment tests cover the correctness regression.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfr_environment_first_use test_mpfr_environment_first_use_stable -j`
+- `ctest --test-dir build -R 'test_mpfr_environment_first_use|test_mpfr_environment|test_mpfr_rounding_scope_stable|test_mpfr_evaluation_context' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted first-use, environment, rounding scope, and evaluation-context
+  tests: PASS.  11/11 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  165/165 tests passed.
+
+Known issues:
+- Repeated `current_rounding_mode()` calls still perform one wrapper TLS flag
+  check before reading the rounding mode.  They no longer perform the four
+  MPFR default-state TLS lookups after first wrapper use in the current thread.
+
+## Phase: MPC Cached Rounding Context
+
+Implemented features:
+- Added a shared `current_mpfr_rounding_mode()` helper so MPFR and MPC
+  evaluation contexts use the same first-use initialization and stable-rounding
+  fast path.
+- Changed `default_mpc_rounding_mode()` to build its `mpc_rnd_t` from
+  `current_mpfr_rounding_mode()` instead of `default_rounding_mode()`, avoiding
+  the full `default_options()` path for MPC rounding lookup.
+- Added `current_mpc_eval_context()` and converted MPC constructors,
+  assignments, `set_real_value`, string parsing, expression materialization,
+  compound assignment, and representative MPC math helpers to capture
+  `mpc_rnd_t` once per operation.
+- Ensured the same cached `mpc_rnd_t` is passed to both the MPC operation and
+  `mpc_check_component_ranges()` within a single operation.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.  Existing MPC environment, precision, and math tests cover behavior.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `include/gmpfrxx_mkII/detail/eval_context.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpc_basic test_mpc_defaults test_mpc_environment test_mpc_precision_policy test_mpc_math test_mpfr_environment_first_use test_mpfr_environment_first_use_stable -j`
+- `ctest --test-dir build -R 'test_mpc_basic|test_mpc_defaults|test_mpc_environment|test_mpc_precision_policy|test_mpc_math|test_mpfr_environment_first_use|test_mpfr_environment|test_mpfr_rounding_scope_stable' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPC/MPFR environment and MPC math tests: PASS.  15/15 selected
+  tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  165/165 tests passed.
+
+Known issues:
+- MPC defaults are still intentionally tied to MPFR's shared default rounding
+  and precision policy.  Asymmetric MPC default rounding is rejected by the
+  existing environment policy.
+
 ## Phase: MPFR Rdot 08 Fixed-precision Target Check
 
 Implemented features:

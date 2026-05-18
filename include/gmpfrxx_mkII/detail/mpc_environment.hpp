@@ -174,7 +174,7 @@ inline mpfr_rnd_t default_mpc_imag_rounding_mode()
 
 inline mpc_rnd_t default_mpc_rounding_mode()
 {
-    const auto rounding = default_rounding_mode();
+    const auto rounding = ::gmpfrxx_mkII::detail::current_mpfr_rounding_mode();
     return MPC_RND(rounding, rounding);
 }
 

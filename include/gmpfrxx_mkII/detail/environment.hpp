@@ -243,6 +243,12 @@ inline void apply_mpfr_environment_defaults()
     refresh_stable_mpfr_rounding_mode();
 }
 
+inline bool& mpfr_defaults_initialized_storage() noexcept
+{
+    static thread_local bool initialized = false;
+    return initialized;
+}
+
 inline bool mpfr_default_state_is_library_initial() noexcept
 {
     return mpfr_get_default_prec() == mpfr_library_default_precision() &&
@@ -253,15 +259,27 @@ inline bool mpfr_default_state_is_library_initial() noexcept
 
 inline void initialize_mpfr_defaults_for_current_thread()
 {
-    // This wrapper requires a thread-safe MPFR build. In that configuration
-    // MPFR default precision, rounding mode, and exponent range are owned by
-    // libmpfr as thread-local state. Do not use a wrapper-owned thread_local
-    // "initialized" flag here: inline function-local TLS can be DSO-local on
-    // some platforms. The libmpfr state itself is the source of truth, so apply
-    // wrapper environment defaults only while that state still has MPFR's
-    // library-initial values.
+    auto& initialized = mpfr_defaults_initialized_storage();
+    if (initialized) {
+        return;
+    }
+    initialized = true;
+
+    // The flag is intentionally DSO-local TLS, matching the wrapper's stable
+    // rounding cache. It keeps hot evaluation-context reads from repeatedly
+    // probing MPFR's TLS defaults while preserving first-use initialization.
     if (mpfr_default_state_is_library_initial()) {
         apply_mpfr_environment_defaults();
+    }
+}
+
+inline mpfr_rnd_t current_mpfr_rounding_mode()
+{
+    initialize_mpfr_defaults_for_current_thread();
+    if constexpr (build_options::assume_stable_mpfr_rounding_mode) {
+        return stable_mpfr_rounding_mode();
+    } else {
+        return mpfr_get_default_rounding_mode();
     }
 }
 
