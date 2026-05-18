@@ -18337,3 +18337,85 @@ Pass/fail result:
 Known issues:
 - The bandwidth numbers in the README are model estimates derived from
   MFLOPS.  They are not hardware-counter measurements.
+
+## Phase: MPFR Rgemv Fixed-Context Report Refresh
+
+Implemented features:
+- Made `mpfrxx::with_context` skip the destination precision check when
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is enabled.
+- Kept the checked precision-mismatch behavior for normal builds.
+- Added a fixed-precision build of `test_mpfr_evaluation_context` so the
+  context path is covered with the fastpath macro enabled.
+- Added fixed-precision OpenMP MPFR Rgemv variants for kernel 05, 06, and 07,
+  including FMA combinations.
+- Reworked `Rgemv_mpfr_kernel_openmp_07_FMA.cpp` so the explicit-context path
+  keeps wrapper syntax while passing a loop-local `mpfr_rnd_t` to
+  `with_context(value, precision, rnd)`.
+- Regenerated the MPFR Rgemv README from the new 512-bit repeat-10 benchmark
+  run and included static result tables, plots, bandwidth estimates, C native
+  equivalence notes, and hotpath disassembly.
+
+Missing features:
+- The requested 1024-bit `m=4000 n=4000 repeat=10` MPFR Rgemv sweep was
+  started, but it was interrupted before summary CSV and plots were produced.
+  No incomplete 1024-bit data is committed.
+
+Tests added:
+- `test_mpfr_evaluation_context_fixed_precision`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/CMakeLists.txt`
+- `tests/test_mpfr_evaluation_context.cpp`
+- `benchmarks/CMakeLists.txt`
+- `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_FMA.cpp`
+- `benchmarks/mpfr/02_Rgemv/run_repeat.sh`
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_121840/`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build --target test_mpfr_evaluation_context test_mpfr_evaluation_context_fixed_precision -j`
+- `cmake --build build_bench_release --target Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_02_mkII -j`
+- `ctest --test-dir build -R 'test_mpfr_evaluation_context' --output-on-failure`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_mkII`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH`
+- `cmake --build build -j`
+- `cmake --build build_bench_release --target Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH -j`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+- `cmake --build build_bench_release -j`
+- `rm -rf benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 512 10`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 1024 10`
+- `rg -c "Result OK" benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_121840/benchmark_rgemv_mpfr_m4000_n4000_p512_repeat10.log`
+- `wc -l benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_121840/raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_121840/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07_FMA`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA`
+
+Pass/fail result:
+- Debug configure: PASS.
+- Release benchmark configure: PASS.
+- Focused test build: PASS.
+- Focused CTest: PASS.  2/2 tests passed.
+- Representative fixed-precision benchmark target build: PASS.
+- Full debug build: PASS.
+- `git diff --check`: PASS.
+- Full CTest: PASS.  159/159 tests passed.
+- Release benchmark build: PASS.
+- MPFR Rgemv 512-bit repeat-10 benchmark: PASS.  490/490 runs reported
+  `Result OK`.
+- MPFR Rgemv 512-bit summary CSV: PASS.  49 variants were summarized.
+- MPFR Rgemv 1024-bit repeat-10 benchmark: INTERRUPTED before summary output;
+  no incomplete run directory is committed.
+- Hotpath disassembly check: PASS.  The raw C OpenMP 07 FMA and mkII
+  OpenMP 07 fixed-precision FMA loops both pass rounding from a register into
+  `mpfr_fma`.
+
+Known issues:
+- Removing the context precision check under
+  `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is a caller contract.  Code
+  compiled with this macro must only call `with_context(value, context)` when
+  `value.precision() == context.precision`.

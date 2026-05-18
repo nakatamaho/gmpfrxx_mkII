@@ -2537,13 +2537,33 @@ class mpfr_context_ref {
 public:
     mpfr_context_ref(mpfr_class& value, evaluation_context context)
         : value_(&value),
-          context_(context)
+          context_(context),
+          precision_(context.precision),
+          rounding_mode_(context.rounding_mode)
     {
-        if (context_.precision != value_->precision()) {
-            throw std::invalid_argument("mpfr evaluation context precision must match target precision");
+        check_precision();
+    }
+
+    mpfr_context_ref(mpfr_class& value, mpfr_prec_t precision, mpfr_rnd_t rounding_mode)
+        : value_(&value),
+          context_{precision, rounding_mode},
+          precision_(precision),
+          rounding_mode_(rounding_mode)
+    {
+        check_precision();
+    }
+
+private:
+    void check_precision() const
+    {
+        if constexpr (!gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+            if (precision_ != value_->precision()) {
+                throw std::invalid_argument("mpfr evaluation context precision must match target precision");
+            }
         }
     }
 
+public:
     mpfr_context_ref(const mpfr_context_ref&) = default;
     mpfr_context_ref& operator=(const mpfr_context_ref&) = default;
 
@@ -2620,18 +2640,25 @@ private:
     gmpfrxx_mkII::detail::eval_context detail_context() const noexcept
     {
         return gmpfrxx_mkII::detail::eval_context{
-            context_.precision,
-            context_.rounding_mode,
+            precision_,
+            rounding_mode_,
         };
     }
 
     mpfr_class* value_;
     evaluation_context context_;
+    mpfr_prec_t precision_;
+    mpfr_rnd_t rounding_mode_;
 };
 
 inline mpfr_context_ref with_context(mpfr_class& value, evaluation_context context)
 {
     return mpfr_context_ref(value, context);
+}
+
+inline mpfr_context_ref with_context(mpfr_class& value, mpfr_prec_t precision, mpfr_rnd_t rounding_mode)
+{
+    return mpfr_context_ref(value, precision, rounding_mode);
 }
 
 using ::gmpfrxx_mkII::detail::operator+;
