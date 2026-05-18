@@ -328,10 +328,16 @@ add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_04_FMA.cpp
     Rgemv_mpfr_C_native_openmp_04_FMA)
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_05.cpp
     Rgemv_mpfr_C_native_openmp_05)
+add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_05_FMA.cpp
+    Rgemv_mpfr_C_native_openmp_05_FMA)
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_06.cpp
     Rgemv_mpfr_C_native_openmp_06)
+add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_06_FMA.cpp
+    Rgemv_mpfr_C_native_openmp_06_FMA)
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_07.cpp
     Rgemv_mpfr_C_native_openmp_07)
+add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_07_FMA.cpp
+    Rgemv_mpfr_C_native_openmp_07_FMA)
 add_mpfr_kernel_variants(mpfr/02_Rgemv Rgemv_mpfr_kernel_01.cpp
     Rgemv_mpfr_kernel_01)
 add_mpfr_kernel_variants(mpfr/02_Rgemv Rgemv_mpfr_kernel_02.cpp
@@ -354,10 +360,16 @@ add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_04.cpp
     Rgemv_mpfr_kernel_openmp_04 mkII)
 add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_05.cpp
     Rgemv_mpfr_kernel_openmp_05 mkII)
+add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_05_FMA.cpp
+    Rgemv_mpfr_kernel_openmp_05 mkII_FMA)
 add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_06.cpp
     Rgemv_mpfr_kernel_openmp_06 mkII)
+add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_06_FMA.cpp
+    Rgemv_mpfr_kernel_openmp_06 mkII_FMA)
 add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_07.cpp
     Rgemv_mpfr_kernel_openmp_07 mkII)
+add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_07_FMA.cpp
+    Rgemv_mpfr_kernel_openmp_07 mkII_FMA)
 
 add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_01.cpp
     Rgemm_mpfr_C_native_01)

@@ -2,16 +2,15 @@
 
 # 02_Rgemv
 
-This directory benchmarks MPFR dense real matrix-vector multiplication:
+## Purpose
+
+This benchmark measures MPFR-backed real matrix-vector multiplication:
 
 ```text
-y = alpha * A * x + beta * y
+y <- alpha * A * x + beta * y
 ```
 
-The timed kernels compare raw `mpfr_t` C code with `mpfrxx_mkII`
-expression-template wrappers.  The main questions are source shape, row-owned
-OpenMP versus column-major streaming, explicit evaluation context, reusable
-temporaries, FMA/FMMA lowering, and the fixed-precision fast path.
+The benchmark compares raw MPFR C kernels with `mpfrxx::mpfr_class` wrapper kernels.  It focuses on source-level kernel shape, temporary lifetime, explicit evaluation context, FMA/FMMA call paths, OpenMP work partitioning, and whether wrapper code reaches the same generated hot-loop class as the raw C implementation.
 
 ## Build
 
@@ -22,223 +21,171 @@ cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release
 cmake --build build_bench_release -j
 ```
 
-Executables are written under:
+The executables are generated under:
 
 ```text
 build_bench_release/benchmarks/mpfr/02_Rgemv/
 ```
 
-Each executable takes:
-
-```text
-<rows m> <cols n> <precision>
-```
-
-Example:
-
-```bash
-build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_mkII 4000 4000 512
-```
-
-For OpenMP runs, use explicit affinity:
+Single executable example:
 
 ```bash
 OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
-build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_mkII \
-    4000 4000 512
+  build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_mkII 4000 4000 512
 ```
+
+Repeat-run script:
+
+```bash
+OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
+  benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 512 10
+```
+
+The script runs every target listed in `benchmarks/mpfr/02_Rgemv/run_repeat.sh`, writes raw logs/CSV files, and regenerates plots through `benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py`.
 
 ## Benchmark Parameters
 
-| Parameter | Meaning |
-|-----------|---------|
-| `m` | Number of rows in `A` and length of `y`. |
-| `n` | Number of columns in `A` and length of `x`. |
-| `precision` | MPFR precision in bits. |
-
-Each executable reports `Elapsed time`, `MFLOPS`, `L1 Norm of difference`, and
-`Result OK` / `Result NG`.  MFLOPS uses the timed loop only:
-
-```text
-2 * m * n / elapsed_seconds / 1e6
-```
-
-The correctness reference is `Rgemv()` in `Rgemv.hpp`; the timed kernel is
-`_Rgemv()` in each benchmark source.
-
-Wrapper suffixes:
-
-| Suffix | Meaning |
-|--------|---------|
-| `mkII` | Default `mpfrxx_mkII` wrapper path. |
-| `mkII_FIXED_PRECISION_FASTPATH` | Build with `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`. |
-| `mkII_FIXED_PRECISION_FASTPATH_FMA` | Fixed precision plus `MPFRXX_ENABLE_FMA`. |
-| `mkII_FMA` | `MPFRXX_ENABLE_FMA` without the fixed-precision build option. |
-
-MPFR-specific note: every arithmetic operation takes a rounding mode.  The
-explicit-context wrapper kernels capture precision and rounding outside the hot
-loop and route assignments through `mpfrxx::with_context`.
+| Parameter | Value in committed run | Meaning |
+|-----------|------------------------|---------|
+| `m` | 4000 | Number of rows of `A` and length of `y`. |
+| `n` | 4000 | Number of columns of `A` and length of `x`. |
+| `precision` | 512 bits | MPFR precision used for inputs, outputs, and scratch objects. |
+| `repeat` | 10 | Each executable was timed 10 times. |
+| `MFLOPS` | `2.0 * m * n / elapsed / 1e6` | One multiply and one add are counted per matrix element. |
+| OpenMP threads | 32 | `OMP_NUM_THREADS=32`. |
+| Affinity | cores/spread | `OMP_PLACES=cores`, `OMP_PROC_BIND=spread`. |
+| Correctness | L1 norm check | Every recorded run reported `Result OK`. |
 
 ## Variant Shapes
 
-The serial kernels include row-dot and column-AXPY shapes.  The OpenMP kernels
-use race-free variants: row-owned loops, row blocks, or column partitioning
-with thread-local partial vectors.
-
 | Variant | Timed source shape | Temporary/resource policy | Purpose |
 |---------|--------------------|---------------------------|---------|
-| `01` | Row-dot: `temp += A[i + j*lda] * x[j]`, then `y[i] = alpha * temp + beta * y[i]`. | Wrapper constructs one row accumulator per row; raw C reuses `mpfr_t` scratch objects. | Baseline expression/source-shape stress case. |
-| `02` | Column AXPY: scale `y`, compute `temp = alpha * x[j]`, then update `y[i] += temp * A[i + j*lda]`. | Reusable `temp` and `templ` objects outside the loop nest. | Main non-context reusable-temporary path. |
-| `03` | Raw C and explicit-context wrapper row-dot: `temp += A[i + j*lda] * x[j]`, then `y[i] = alpha * temp + beta * y[i]`. | Raw C uses one reusable `mpfr_t temp`; wrapper uses one reusable `mpfr_class temp` through `with_context`. | Compare wrapper FMA path with raw C `mpfr_fma` accumulation and final `mpfr_fmma`. |
-| `04` | Explicit-context column AXPY wrapper: scale `y`, compute `temp = alpha * x[j]`, then `templ = temp * A[...]`, `y += templ`. | Reusable `temp` and `templ` through `with_context`. | Best serial wrapper source shape. |
-| `openmp_01` | Row-owned direct row-dot expression. | Each row owns its accumulator; separate parallel regions scale and update rows. | Race-free OpenMP baseline. |
-| `openmp_02` | Currently the same row-owned row-dot source shape as `openmp_01`. | Same policy as `openmp_01`. | Numbered placeholder; treat current source as duplicate of `openmp_01`. |
-| `openmp_03` | Explicit-context row-owned row-dot. | One reusable `temp` per thread through `with_context`. | Explicit-context row-dot and FMA comparison path. |
-| `openmp_04` | Explicit-context row-owned copy-then-multiply. | Per-thread reusable `temp` and `templ`; recomputes `alpha * x[j]` per row. | Race-free counterpart to serial column-AXPY logic, but with less reuse. |
-| `openmp_05` | Precompute `scaled_x[j] = alpha * x[j]`, then row-owned update. | Shared read-only `scaled_x`, per-thread reusable `templ`, explicit context. | Remove repeated `alpha * x[j]` from row-owned OpenMP. |
-| `openmp_06` | 256-row blocks, then column loop and contiguous row loop inside the block. | Per-thread reusable `temp` and `templ`, explicit context. | Restore contiguous `A` access inside each row block. |
-| `openmp_07` | Column partitioning with thread-local partial `y` vectors and final reduction. | `num_threads * m` partial accumulators plus reduction, explicit context. | Keep serial-like column-major `A` streaming without racing on `y`. |
+| `01` | Row-dot form: for each `i`, accumulate `sum_j A[i+j*lda] * x[j]`, then update `y[i]`. | Reusable row accumulator; wrapper `kernel_01` constructs row `temp` inside the row loop. | Baseline BLAS-like row-dot spelling; stresses strided column-major A access. |
+| `01_FMA` | Variant `01` with MPFR FMA in the dot or expression FMA enabled where available. | Same row-dot resource lifetime as `01`. | Check whether FMA alone changes the performance class. |
+| `02` | Column-major update: scale `y` by `beta`, then stream columns and update all rows. | Reusable `temp` and `templ` outside the timed inner loop. | Restore contiguous A access and reuse scratch objects. |
+| `02_FMA` | Variant `02` with `mpfr_fma` in the row update where available. | Same scratch lifetime as `02`. | Raw C serial FMA comparison for the column-major source shape. |
+| `03` | Explicit-context row-dot wrapper, or raw C row-dot with `mpfr_fma` plus final `mpfr_fmma`. | Reusable row accumulator; wrapper creates one explicit `evaluation_context`. | Compare explicit context against raw FMA/FMMA row-dot shape. |
+| `04` | Explicit-context column-major wrapper, or raw C column-major reusable-temp baseline. | Reusable `temp` and `templ`; wrapper uses `with_context` for assignments and updates. | Best serial wrapper source shape without OpenMP. |
+| `05` | OpenMP row partition with precomputed `alpha * x[j]`. | Precomputed scaled vector plus per-thread reusable product. | Remove repeated alpha*x work while keeping row-wise ownership of `y`. |
+| `06` | OpenMP 256-row blocks; column loop and contiguous row loop inside each block. | Per-thread reusable `temp` and `templ`; no shared-y race inside a row block. | Improve locality while preserving simple y ownership. |
+| `07` | OpenMP column partition with per-thread partial `y` vectors and final reduction. | `num_threads * m` partial accumulators plus final reduction. | Preserve serial-like column-major A streaming without racing on `y`. |
+| `05_FMA`, `06_FMA`, `07_FMA` | FMA versions of the OpenMP 05/06/07 source shapes. | Same ownership and scratch policy as the non-FMA variants. | Check whether fused arithmetic changes the locality-driven OpenMP ranking. |
+
+Serial executables currently cover variants `01`-`04`.  OpenMP executables currently cover variants `01`-`07`.  FMA variants are present only where a source-level FMA/FMMA comparison is meaningful for the implemented source shape.
 
 ## C Native Equivalent Kernels
 
-The mapping is based on the timed `_Rgemv()` source shape.
-
-| C native kernel | Equivalent wrapper kernel(s) | Notes |
-|-----------------|------------------------------|-------|
-| `C_native_01` | `kernel_01_*` | Row-dot baseline with raw reusable `mpfr_t temp` and `prod`. |
-| `C_native_01_FMA` | FMA-enabled `kernel_01_*` | Row-dot baseline using `mpfr_fma` accumulation and `mpfr_fmma` final update. |
-| `C_native_02` | `kernel_02_*` | Column AXPY with `alpha * x[j]` hoisted outside the row loop. |
-| `C_native_02_FMA` | Raw C FMA counterpart of the column-AXPY source class | Best serial raw C path. |
-| `C_native_03` | `kernel_03_mkII_FMA` | Raw C row-dot with `mpfr_fma` accumulation and final `mpfr_fmma`. |
-| `C_native_04` | `kernel_04_mkII` | Raw C counterpart of the explicit-context wrapper column-AXPY source shape. |
-| `C_native_openmp_01` | `kernel_openmp_01_*` | Row-owned dot-product source shape. |
-| `C_native_openmp_01_FMA` | FMA-enabled `kernel_openmp_01_*` | Raw C row-owned path with explicit `mpfr_fma`. |
-| `C_native_openmp_02` | `kernel_openmp_02_*` | Row-owned dot-product duplicate matching the current wrapper `openmp_02` placeholder. |
-| `C_native_openmp_02_FMA` | FMA-enabled `kernel_openmp_02_*` | FMA row-dot duplicate matching the current wrapper `openmp_02` placeholder. |
-| `C_native_openmp_03` | `kernel_openmp_03_mkII_FMA` | Row-owned raw C path with one private `temp`, `mpfr_fma`, and final `mpfr_fmma`. |
-| `C_native_openmp_04` | `kernel_openmp_04_mkII` | Row-owned copy-then-multiply; avoids races but recomputes `alpha * x[j]` per row. |
-| `C_native_openmp_04_FMA` | FMA counterpart of `kernel_openmp_04_mkII` | Row-owned copy-then-FMA source shape. |
-| `C_native_openmp_05` | `kernel_openmp_05_mkII` | Precomputed `scaled_x` counterpart; uses raw `mpfr_t` storage and one reusable `templ` per thread. |
-| `C_native_openmp_06` | `kernel_openmp_06_mkII` | 256-row-block counterpart; uses raw `mpfr_t temp` and `templ` per thread. |
-| `C_native_openmp_07` | `kernel_openmp_07_mkII` | Column-partition partial-vector counterpart; uses `num_threads * m` raw `mpfr_t` partial accumulators and final reduction. |
+| C native kernel | C++ wrapper kernel equivalent | Equivalence basis |
+|-----------------|-------------------------------|-------------------|
+| `C_native_01` | `kernel_01_mkII` | Both use row-dot source spelling and a final alpha/beta update. The wrapper expression form adds materialization overhead but keeps the same traversal. |
+| `C_native_01_FMA` | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | Closest row-dot FMA comparison. The wrapper path also includes fixed-precision expression scratch handling. |
+| `C_native_02` | `kernel_02_mkII` | Both scale `y`, then stream columns of `A` with reusable `temp`/`templ`. |
+| `C_native_02_FMA` | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | Closest column-major FMA comparison. Exact generated code differs because the wrapper uses ET assignment paths. |
+| `C_native_03` | `kernel_03_mkII_FMA` | Both test row-dot FMA-style accumulation. Raw C also uses `mpfr_fmma` for the final alpha/beta update. |
+| `C_native_04` | `kernel_04_mkII` | Both are column-major reusable-temp baselines; `kernel_04_mkII` adds explicit `evaluation_context`. |
+| `C_native_openmp_05` | `kernel_openmp_05_mkII` | Both precompute scaled `x` and partition rows. |
+| `C_native_openmp_06` | `kernel_openmp_06_mkII` | Both use 256-row blocks and per-thread reusable scratch. |
+| `C_native_openmp_07` | `kernel_openmp_07_mkII` | Both use column partitioning, per-thread partial y vectors, and final reduction. |
+| `C_native_openmp_05_FMA`, `06_FMA`, `07_FMA` | `kernel_openmp_05_mkII_FMA`, `06_mkII_FMA`, `07_mkII_FMA` | Same OpenMP ownership pattern plus a fused inner update where the source shape supports it. |
 
 ## Recorded Run
 
-The current checked-in data uses:
-
-```text
-M = 4000
-N = 4000
-precision = 512
-repeat = 10
-OMP_NUM_THREADS = 32
-OMP_PLACES = cores
-OMP_PROC_BIND = spread
-CPU = AMD Ryzen Threadripper 3970X 32-Core Processor
-```
-
-Results are stored in:
-
-```text
-results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/
-```
-
-Files:
-
-- [Raw log](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/benchmark_rgemv_mpfr_m4000_n4000_p512_repeat10.log)
-- [Raw CSV](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv)
-- [Summary CSV](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv)
-
-All 37 variants reported `Result OK` in all 10 runs, for 370 successful timed
-runs.
+| Field | Value |
+|-------|-------|
+| Run ID | `rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054` |
+| Date | 2026-05-18 |
+| CPU | AMD Ryzen Threadripper 3970X 32-Core Processor |
+| OS | Linux 6.8.0-94-generic x86_64 |
+| Compiler | `c++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0` |
+| Build type | Release |
+| CXX flags | `-O3 -DNDEBUG` |
+| OpenMP | `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, `OMP_PROC_BIND=spread` |
+| Raw result directory | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054/` |
+| Raw log | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054/benchmark_rgemv_mpfr_m4000_n4000_p512_repeat10.log` |
+| Raw CSV | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054/raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv` |
+| Summary CSV | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv` |
+| Correctness | 430 / 430 runs reported `Result OK`. |
 
 Plot regeneration command:
 
 ```bash
 python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
-    benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/benchmark_rgemv_mpfr_m4000_n4000_p512_repeat10.log \
-    --output-dir benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858 \
-    --output-prefix rgemv_mpfr_m4000_n4000_p512_repeat10 \
-    --title-prefix "MPFR Rgemv m=4000 n=4000 precision=512 repeat=10"
+  benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054/benchmark_rgemv_mpfr_m4000_n4000_p512_repeat10.log \
+  --output-dir benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054 \
+  --output-prefix rgemv_mpfr_m4000_n4000_p512_repeat10 \
+  --title-prefix "MPFR Rgemv m=4000 n=4000 precision=512 repeat=10"
 ```
 
-![MPFR Rgemv serial repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/rgemv_mpfr_m4000_n4000_p512_repeat10_serial.png)
+![MPFR Rgemv serial repeat summary](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054/rgemv_mpfr_m4000_n4000_p512_repeat10_serial.png)
 
-![MPFR Rgemv OpenMP repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_074858/rgemv_mpfr_m4000_n4000_p512_repeat10_openmp.png)
+![MPFR Rgemv OpenMP repeat summary](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_090054/rgemv_mpfr_m4000_n4000_p512_repeat10_openmp.png)
 
-## Resource and Bandwidth Estimates
+## Resource or Bandwidth Estimates
 
-These are model estimates derived from MFLOPS, not hardware-counter
-measurements.  On this LP64 system:
+These are model estimates derived from MFLOPS, not hardware-counter measurements.
 
-```text
-sizeof(__mpfr_struct) = 32 bytes
-sizeof(mp_limb_t)     = 8 bytes
-precision             = 512 bits
-active limbs          = 8
-active mpfr value     = 32-byte header + 8 limbs * 8 = 96 bytes
-```
+For 512-bit MPFR values, the active significand payload is 8 limbs = 64 bytes, and the `mpfr_t` header is 32 bytes on this platform.  The table uses two intentionally simple traffic models:
 
-For one matrix element at 512-bit precision:
+| Model | Formula | Includes | Excludes |
+|-------|---------|----------|----------|
+| Active-data GB/s estimate | `Avg MFLOPS * 96 / 1000` | 512-bit limb payload traffic plus amortized vector/accumulator traffic per two counted flops. | Cache reuse details, allocator metadata, OpenMP reduction traffic, and MPFR internal control traffic. |
+| Header-inclusive GB/s estimate | `Avg MFLOPS * 192 / 1000` | A conservative doubled model including `mpfr_t` header/pointer movement. | Hardware prefetch effects and actual cache-miss rates. |
 
-```text
-A+x active logical GB/s   = MFLOPS * 0.096
-A+x+y active logical GB/s = MFLOPS * 0.192
-```
+| Variant | Avg MFLOPS | Max MFLOPS | Active-data GB/s estimate | Header-inclusive GB/s estimate |
+|---------|-----------:|-----------:|--------------------------:|--------------------------------:|
+| `kernel_openmp_07_mkII` | 417.819 | 430.553 | 40.11 | 80.22 |
+| `C_native_openmp_07` | 416.322 | 427.951 | 39.97 | 79.93 |
+| `C_native_openmp_07_FMA` | 414.894 | 434.193 | 39.83 | 79.66 |
+| `kernel_openmp_07_mkII_FMA` | 414.740 | 430.394 | 39.82 | 79.63 |
+| `C_native_openmp_06` | 313.690 | 317.905 | 30.11 | 60.23 |
+| `kernel_openmp_06_mkII` | 299.606 | 310.649 | 28.76 | 57.52 |
+| `kernel_openmp_03_mkII_FMA` | 279.314 | 286.726 | 26.81 | 53.63 |
+| `kernel_openmp_05_mkII_FMA` | 274.691 | 278.656 | 26.37 | 52.74 |
+| `C_native_02_FMA` | 23.491 | 23.951 | 2.26 | 4.51 |
+| `kernel_04_mkII` | 20.563 | 21.027 | 1.97 | 3.95 |
 
-`A+x` counts one matrix value and one vector value per two floating-point
-operations.  `A+x+y` additionally counts one read and one write of `y`.
-Actual traffic can differ because `mpfr_t` headers are contiguous but each
-`_mpfr_d` points to limb storage.
-
-| Variant | Avg MFLOPS | Max MFLOPS | A+x avg GB/s | A+x+y avg GB/s |
-|---------|-----------:|-----------:|-------------:|---------------:|
-| `C_native_openmp_07` | 442.510 | 456.226 | 42.48 | 84.96 |
-| `kernel_openmp_07_mkII` | 431.660 | 447.584 | 41.44 | 82.88 |
-| `C_native_openmp_06` | 311.476 | 318.191 | 29.90 | 59.80 |
-| `kernel_openmp_06_mkII` | 301.489 | 309.504 | 28.94 | 57.89 |
-| `kernel_openmp_03_mkII_FMA` | 280.321 | 286.304 | 26.91 | 53.82 |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 276.625 | 281.978 | 26.56 | 53.11 |
-| `C_native_openmp_02` | 274.149 | 282.505 | 26.32 | 52.64 |
-| `C_native_02_FMA` | 23.586 | 23.776 | 2.26 | 4.53 |
-| `kernel_04_mkII` | 20.416 | 20.674 | 1.96 | 3.92 |
+The best OpenMP 07 class is about 40 GB/s under the active-data model and about 80 GB/s under the header-inclusive model.  This is consistent with a memory-traffic and layout sensitive kernel rather than a pure wrapper-dispatch problem.
 
 ## Serial Results
 
-Main interpretation table:
-
 | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 |---------|-----------:|-----------:|-----------:|----------------|
-| `C_native_02_FMA` | 23.776 | 23.586 | 23.459 | Best serial result; column AXPY hoists `alpha * x[j]` and uses one `mpfr_fma` per matrix element. |
-| `C_native_04` | 20.866 | 20.435 | 20.041 | Raw C counterpart of the explicit-context column-AXPY wrapper shape. |
-| `kernel_04_mkII` | 20.674 | 20.416 | 20.297 | Best serial wrapper; explicit context plus reusable `temp`/`templ`. |
-| `C_native_02` | 20.679 | 20.512 | 20.348 | Raw non-FMA column-AXPY baseline. |
-| `kernel_02_mkII` | 18.747 | 18.310 | 18.030 | Non-context wrapper column-AXPY path; same source class as raw `02`. |
-| `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.628 | 18.206 | 18.040 | Fixed precision plus FMA changes call shape but not the dominant serial memory walk. |
-| `C_native_01` | 11.403 | 10.682 | 10.040 | Raw row-dot baseline; strided column-major matrix walk is slow. |
-| `C_native_03` | 10.825 | 10.605 | 10.402 | Raw C row-dot with `mpfr_fma` and `mpfr_fmma`; row-dot traversal still dominates. |
-| `kernel_03_mkII_FMA` | 10.770 | 10.257 | 10.072 | Wrapper row-dot FMA path; close to `C_native_03`, still traversal-limited. |
+| `C_native_01` | 11.182 | 10.408 | 9.867 | Row-dot source shape with reusable temp/prod and final alpha/beta update. Strided column-major A access dominates the inner loop. |
+| `C_native_01_FMA` | 11.290 | 10.778 | 10.195 | Same row-dot traversal, but the inner product uses mpfr_fma and the final update remains explicit. FMA helps serially but does not fix A stride locality. |
+| `C_native_02` | 21.066 | 20.549 | 20.371 | Column-major update shape: scale y first, then stream A by columns with reusable temp/templ. This restores contiguous A access. |
+| `C_native_02_FMA` | 23.951 | 23.491 | 23.182 | Column-major update with mpfr_fma in the y update. This is the best serial result in this run. |
+| `C_native_03` | 11.000 | 10.701 | 10.238 | Row-dot shape using mpfr_fma in the dot and mpfr_fmma for alpha*temp+beta*y. FMMA does not overcome strided A traversal. |
+| `C_native_04` | 20.905 | 20.497 | 20.300 | Column-major update using direct temp/templ reuse. Same performance class as C_native_02 without FMA. |
+| `kernel_01_mkII` | 9.172 | 8.976 | 8.735 | Expression row-dot spelling; temp is constructed per row and expression temporaries remain visible in the hot path. |
+| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 9.817 | 9.501 | 9.228 | Same source shape as kernel_01, with fixed-precision scratch fastpath. It improves temporary handling but not row-strided A access. |
+| `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.279 | 10.102 | 9.818 | Expression row-dot with fixed precision and FMA enabled. It improves arithmetic call shape, but still stays in the row-dot performance class. |
+| `kernel_02_mkII` | 18.365 | 18.245 | 18.110 | Wrapper column-major update with reusable temp and templ. This is the closest wrapper analogue of C_native_02. |
+| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.549 | 18.122 | 17.794 | Same source shape as kernel_02 with fixed-precision scratch assumptions. The hot loop class is unchanged. |
+| `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.301 | 18.176 | 18.046 | Same column-major wrapper source shape with FMA enabled. In this run it is not faster than baseline kernel_02. |
+| `kernel_03_mkII` | 10.556 | 9.779 | 9.398 | Explicit-context row-dot. Rounding is carried by context, but the traversal remains row-strided. |
+| `kernel_03_mkII_FMA` | 10.459 | 10.236 | 10.082 | Explicit-context row-dot with FMA enabled. Better average than non-FMA kernel_03, still row-dot limited. |
+| `kernel_04_mkII` | 21.027 | 20.563 | 20.302 | Explicit-context column-major update with reusable temp/templ. Best serial wrapper result and close to C_native_02/C_native_04. |
 
 <details>
 <summary>Serial results sorted by Max MFLOPS</summary>
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
-| 1 | `C_native_02_FMA` | 23.776 | 23.586 | 23.459 |
-| 2 | `C_native_04` | 20.866 | 20.435 | 20.041 |
-| 3 | `C_native_02` | 20.679 | 20.512 | 20.348 |
-| 4 | `kernel_04_mkII` | 20.674 | 20.416 | 20.297 |
-| 5 | `kernel_02_mkII` | 18.747 | 18.310 | 18.030 |
-| 6 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.628 | 18.206 | 18.040 |
-| 7 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.150 | 17.967 | 17.781 |
-| 8 | `C_native_01` | 11.403 | 10.682 | 10.040 |
-| 9 | `C_native_01_FMA` | 11.149 | 10.719 | 10.406 |
-| 10 | `C_native_03` | 10.825 | 10.605 | 10.402 |
-| 11 | `kernel_03_mkII_FMA` | 10.770 | 10.257 | 10.072 |
-| 12 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 10.522 | 9.941 | 9.275 |
-| 13 | `kernel_03_mkII` | 10.424 | 9.612 | 9.112 |
-| 14 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.321 | 10.101 | 9.880 |
-| 15 | `kernel_01_mkII` | 9.308 | 8.983 | 8.723 |
+| 1 | `C_native_02_FMA` | 23.951 | 23.491 | 23.182 |
+| 2 | `C_native_02` | 21.066 | 20.549 | 20.371 |
+| 3 | `kernel_04_mkII` | 21.027 | 20.563 | 20.302 |
+| 4 | `C_native_04` | 20.905 | 20.497 | 20.300 |
+| 5 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.549 | 18.122 | 17.794 |
+| 6 | `kernel_02_mkII` | 18.365 | 18.245 | 18.110 |
+| 7 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.301 | 18.176 | 18.046 |
+| 8 | `C_native_01_FMA` | 11.290 | 10.778 | 10.195 |
+| 9 | `C_native_01` | 11.182 | 10.408 | 9.867 |
+| 10 | `C_native_03` | 11.000 | 10.701 | 10.238 |
+| 11 | `kernel_03_mkII` | 10.556 | 9.779 | 9.398 |
+| 12 | `kernel_03_mkII_FMA` | 10.459 | 10.236 | 10.082 |
+| 13 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.279 | 10.102 | 9.818 |
+| 14 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 9.817 | 9.501 | 9.228 |
+| 15 | `kernel_01_mkII` | 9.172 | 8.976 | 8.735 |
 
 </details>
 
@@ -247,67 +194,90 @@ Main interpretation table:
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
-| 1 | `C_native_02_FMA` | 23.776 | 23.586 | 23.459 |
-| 2 | `C_native_02` | 20.679 | 20.512 | 20.348 |
-| 3 | `C_native_04` | 20.866 | 20.435 | 20.041 |
-| 4 | `kernel_04_mkII` | 20.674 | 20.416 | 20.297 |
-| 5 | `kernel_02_mkII` | 18.747 | 18.310 | 18.030 |
-| 6 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.628 | 18.206 | 18.040 |
-| 7 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.150 | 17.967 | 17.781 |
-| 8 | `C_native_01_FMA` | 11.149 | 10.719 | 10.406 |
-| 9 | `C_native_01` | 11.403 | 10.682 | 10.040 |
-| 10 | `C_native_03` | 10.825 | 10.605 | 10.402 |
-| 11 | `kernel_03_mkII_FMA` | 10.770 | 10.257 | 10.072 |
-| 12 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.321 | 10.101 | 9.880 |
-| 13 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 10.522 | 9.941 | 9.275 |
-| 14 | `kernel_03_mkII` | 10.424 | 9.612 | 9.112 |
-| 15 | `kernel_01_mkII` | 9.308 | 8.983 | 8.723 |
+| 1 | `C_native_02_FMA` | 23.951 | 23.491 | 23.182 |
+| 2 | `kernel_04_mkII` | 21.027 | 20.563 | 20.302 |
+| 3 | `C_native_02` | 21.066 | 20.549 | 20.371 |
+| 4 | `C_native_04` | 20.905 | 20.497 | 20.300 |
+| 5 | `kernel_02_mkII` | 18.365 | 18.245 | 18.110 |
+| 6 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 18.301 | 18.176 | 18.046 |
+| 7 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 18.549 | 18.122 | 17.794 |
+| 8 | `C_native_01_FMA` | 11.290 | 10.778 | 10.195 |
+| 9 | `C_native_03` | 11.000 | 10.701 | 10.238 |
+| 10 | `C_native_01` | 11.182 | 10.408 | 9.867 |
+| 11 | `kernel_03_mkII_FMA` | 10.459 | 10.236 | 10.082 |
+| 12 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.279 | 10.102 | 9.818 |
+| 13 | `kernel_03_mkII` | 10.556 | 9.779 | 9.398 |
+| 14 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 9.817 | 9.501 | 9.228 |
+| 15 | `kernel_01_mkII` | 9.172 | 8.976 | 8.735 |
 
 </details>
 
 ## OpenMP Results
 
-Main interpretation table:
-
 | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 |---------|-----------:|-----------:|-----------:|----------------|
-| `C_native_openmp_07` | 456.226 | 442.510 | 416.431 | Best overall result; column partitioning keeps column-major `A` streaming and reduces raw thread-local partial `y` vectors. |
-| `kernel_openmp_07_mkII` | 447.584 | 431.660 | 408.902 | Best wrapper result; same source shape as `C_native_openmp_07` with wrapper-managed partial vectors. |
-| `C_native_openmp_06` | 318.191 | 311.476 | 299.564 | Best row-blocked raw C shape; 256-row blocking restores contiguous `A` access inside each block. |
-| `kernel_openmp_06_mkII` | 309.504 | 301.489 | 277.692 | Best row-blocked wrapper shape; close to the raw C counterpart. |
-| `kernel_openmp_03_mkII_FMA` | 286.304 | 280.321 | 252.779 | Best row-dot wrapper path; FMA/FMMA helps arithmetic shape but does not fix row traversal. |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.978 | 276.625 | 270.645 | Row-owned source class plus fixed precision and FMA; same performance class as `openmp_01` FMA. |
-| `C_native_openmp_02` | 282.505 | 274.149 | 262.166 | Raw row-owned duplicate of the current `openmp_02` placeholder. |
-| `kernel_openmp_05_mkII` | 265.694 | 260.170 | 247.676 | Precomputed `scaled_x`; removes repeated `alpha*x[j]` but remains row-traversal limited. |
-| `kernel_openmp_04_mkII` | 202.201 | 195.507 | 185.160 | Row-owned copy-then-multiply path; recomputes `alpha*x[j]` per row. |
+| `C_native_openmp_01` | 268.207 | 262.513 | 253.106 | OpenMP row partition of variant 01. Parallelism helps, but each worker still walks A with large stride. |
+| `C_native_openmp_01_FMA` | 208.520 | 204.681 | 198.427 | OpenMP row partition with FMA. Lower than non-FMA here, showing FMA alone is not the controlling factor. |
+| `C_native_openmp_02` | 280.097 | 270.172 | 257.978 | OpenMP column-major update with synchronization-safe work split. Good locality and reusable scratch. |
+| `C_native_openmp_02_FMA` | 266.664 | 259.262 | 245.031 | OpenMP column-major FMA version. Same broad class as 02 but lower average in this run. |
+| `C_native_openmp_03` | 261.412 | 253.479 | 220.152 | OpenMP row-dot with mpfr_fma/mpfr_fmma. Still constrained by row-strided A access. |
+| `C_native_openmp_04` | 200.888 | 197.351 | 189.296 | OpenMP variant with reusable temp/templ but less favorable parallel work shape than 05-07. |
+| `C_native_openmp_04_FMA` | 212.336 | 206.911 | 189.924 | FMA version of 04. It changes the arithmetic call sequence but remains below the locality-improved kernels. |
+| `C_native_openmp_05` | 268.393 | 261.622 | 255.432 | Precompute alpha*x and row-partition over y. It reduces repeated scalar work but keeps row-wise traversal over A. |
+| `C_native_openmp_05_FMA` | 273.848 | 268.778 | 259.872 | FMA version of 05. It improves the row-partition wrapper/native class, but not enough to reach 06/07 locality. |
+| `C_native_openmp_06` | 317.905 | 313.690 | 303.912 | 256-row block OpenMP shape. It keeps A contiguous within row blocks and avoids racing on y. |
+| `C_native_openmp_06_FMA` | 317.801 | 308.806 | 296.946 | FMA version of 06. Same locality class as 06; lower average here is likely call-path or run variance. |
+| `C_native_openmp_07` | 427.951 | 416.322 | 391.103 | Column partitioning with per-thread partial y vectors and final reduction. Best native average class. |
+| `C_native_openmp_07_FMA` | 434.193 | 414.894 | 365.502 | FMA version of 07. It has the best single max, but the average matches the non-FMA 07 class. |
+| `kernel_openmp_01_mkII` | 252.833 | 243.282 | 221.247 | OpenMP expression row-dot. Parallelism hides some cost, but source shape is still row-strided. |
+| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 266.206 | 253.112 | 210.338 | Same row-dot source with fixed-precision fastpath. Wide min/max spread suggests OpenMP variance. |
+| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 283.075 | 276.424 | 269.519 | Row-dot expression with fixed precision and FMA enabled. FMA improves the arithmetic sequence but not A locality. |
+| `kernel_openmp_02_mkII` | 250.611 | 246.253 | 233.346 | OpenMP wrapper column-major update with reusable temporaries. Comparable to the lower column-major class. |
+| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 266.947 | 256.518 | 240.800 | Same source shape with fixed precision. It shifts overhead but does not change memory traversal. |
+| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.974 | 275.993 | 268.944 | FMA-enabled wrapper 02. It reaches the same class as the best row-partition FMA variants. |
+| `kernel_openmp_03_mkII` | 255.405 | 250.561 | 240.228 | Explicit-context OpenMP row-dot. Rounding lookup is controlled, but A traversal remains the limiting source shape. |
+| `kernel_openmp_03_mkII_FMA` | 286.726 | 279.314 | 268.694 | Explicit-context row-dot with FMA enabled. It is the fastest row-dot wrapper class in this run. |
+| `kernel_openmp_04_mkII` | 202.950 | 199.326 | 194.112 | Explicit-context OpenMP column-major update, but the work split does not scale like 06/07. |
+| `kernel_openmp_05_mkII` | 268.217 | 260.722 | 240.400 | Precompute scaled x, then row-partition y. Reusable templ avoids loop-local construction but keeps row-wise A traversal. |
+| `kernel_openmp_05_mkII_FMA` | 278.656 | 274.691 | 267.675 | FMA version of 05. It improves average MFLOPS over non-FMA 05 by changing the inner update call sequence. |
+| `kernel_openmp_06_mkII` | 310.649 | 299.606 | 276.649 | 256-row block wrapper variant. This is the second OpenMP performance class behind 07. |
+| `kernel_openmp_06_mkII_FMA` | 300.214 | 291.418 | 280.069 | FMA version of 06. Same blocked locality class, but lower average than non-FMA in this run. |
+| `kernel_openmp_07_mkII` | 430.553 | 417.819 | 404.926 | Column partitioning with per-thread partial y vectors and final reduction. Best OpenMP average overall. |
+| `kernel_openmp_07_mkII_FMA` | 430.394 | 414.740 | 393.671 | FMA version of 07. Same top class as non-FMA 07, but not a better average in this run. |
 
 <details>
 <summary>OpenMP results sorted by Max MFLOPS</summary>
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
-| 1 | `C_native_openmp_07` | 456.226 | 442.510 | 416.431 |
-| 2 | `kernel_openmp_07_mkII` | 447.584 | 431.660 | 408.902 |
-| 3 | `C_native_openmp_06` | 318.191 | 311.476 | 299.564 |
-| 4 | `kernel_openmp_06_mkII` | 309.504 | 301.489 | 277.692 |
-| 5 | `kernel_openmp_03_mkII_FMA` | 286.304 | 280.321 | 252.779 |
-| 6 | `C_native_openmp_02` | 282.505 | 274.149 | 262.166 |
-| 7 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.978 | 276.625 | 270.645 |
-| 8 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.594 | 276.370 | 266.658 |
-| 9 | `C_native_openmp_01` | 275.700 | 268.765 | 256.168 |
-| 10 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 268.094 | 253.886 | 230.330 |
-| 11 | `C_native_openmp_02_FMA` | 267.292 | 262.298 | 246.478 |
-| 12 | `kernel_openmp_05_mkII` | 265.694 | 260.170 | 247.676 |
-| 13 | `C_native_openmp_03` | 265.537 | 261.454 | 258.557 |
-| 14 | `C_native_openmp_05` | 264.821 | 259.256 | 250.082 |
-| 15 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 264.264 | 259.202 | 254.078 |
-| 16 | `kernel_openmp_03_mkII` | 256.240 | 249.694 | 240.369 |
-| 17 | `kernel_openmp_01_mkII` | 252.671 | 246.742 | 241.724 |
-| 18 | `kernel_openmp_02_mkII` | 250.406 | 244.205 | 236.385 |
-| 19 | `C_native_openmp_01_FMA` | 213.581 | 210.304 | 204.646 |
-| 20 | `C_native_openmp_04_FMA` | 212.349 | 208.340 | 199.104 |
-| 21 | `C_native_openmp_04` | 202.858 | 198.898 | 191.888 |
-| 22 | `kernel_openmp_04_mkII` | 202.201 | 195.507 | 185.160 |
+| 1 | `C_native_openmp_07_FMA` | 434.193 | 414.894 | 365.502 |
+| 2 | `kernel_openmp_07_mkII` | 430.553 | 417.819 | 404.926 |
+| 3 | `kernel_openmp_07_mkII_FMA` | 430.394 | 414.740 | 393.671 |
+| 4 | `C_native_openmp_07` | 427.951 | 416.322 | 391.103 |
+| 5 | `C_native_openmp_06` | 317.905 | 313.690 | 303.912 |
+| 6 | `C_native_openmp_06_FMA` | 317.801 | 308.806 | 296.946 |
+| 7 | `kernel_openmp_06_mkII` | 310.649 | 299.606 | 276.649 |
+| 8 | `kernel_openmp_06_mkII_FMA` | 300.214 | 291.418 | 280.069 |
+| 9 | `kernel_openmp_03_mkII_FMA` | 286.726 | 279.314 | 268.694 |
+| 10 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 283.075 | 276.424 | 269.519 |
+| 11 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.974 | 275.993 | 268.944 |
+| 12 | `C_native_openmp_02` | 280.097 | 270.172 | 257.978 |
+| 13 | `kernel_openmp_05_mkII_FMA` | 278.656 | 274.691 | 267.675 |
+| 14 | `C_native_openmp_05_FMA` | 273.848 | 268.778 | 259.872 |
+| 15 | `C_native_openmp_05` | 268.393 | 261.622 | 255.432 |
+| 16 | `kernel_openmp_05_mkII` | 268.217 | 260.722 | 240.400 |
+| 17 | `C_native_openmp_01` | 268.207 | 262.513 | 253.106 |
+| 18 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 266.947 | 256.518 | 240.800 |
+| 19 | `C_native_openmp_02_FMA` | 266.664 | 259.262 | 245.031 |
+| 20 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 266.206 | 253.112 | 210.338 |
+| 21 | `C_native_openmp_03` | 261.412 | 253.479 | 220.152 |
+| 22 | `kernel_openmp_03_mkII` | 255.405 | 250.561 | 240.228 |
+| 23 | `kernel_openmp_01_mkII` | 252.833 | 243.282 | 221.247 |
+| 24 | `kernel_openmp_02_mkII` | 250.611 | 246.253 | 233.346 |
+| 25 | `C_native_openmp_04_FMA` | 212.336 | 206.911 | 189.924 |
+| 26 | `C_native_openmp_01_FMA` | 208.520 | 204.681 | 198.427 |
+| 27 | `kernel_openmp_04_mkII` | 202.950 | 199.326 | 194.112 |
+| 28 | `C_native_openmp_04` | 200.888 | 197.351 | 189.296 |
 
 </details>
 
@@ -316,119 +286,173 @@ Main interpretation table:
 
 | Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
 |------|---------|-----------:|-----------:|-----------:|
-| 1 | `C_native_openmp_07` | 456.226 | 442.510 | 416.431 |
-| 2 | `kernel_openmp_07_mkII` | 447.584 | 431.660 | 408.902 |
-| 3 | `C_native_openmp_06` | 318.191 | 311.476 | 299.564 |
-| 4 | `kernel_openmp_06_mkII` | 309.504 | 301.489 | 277.692 |
-| 5 | `kernel_openmp_03_mkII_FMA` | 286.304 | 280.321 | 252.779 |
-| 6 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.978 | 276.625 | 270.645 |
-| 7 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.594 | 276.370 | 266.658 |
-| 8 | `C_native_openmp_02` | 282.505 | 274.149 | 262.166 |
-| 9 | `C_native_openmp_01` | 275.700 | 268.765 | 256.168 |
-| 10 | `C_native_openmp_02_FMA` | 267.292 | 262.298 | 246.478 |
-| 11 | `C_native_openmp_03` | 265.537 | 261.454 | 258.557 |
-| 12 | `kernel_openmp_05_mkII` | 265.694 | 260.170 | 247.676 |
-| 13 | `C_native_openmp_05` | 264.821 | 259.256 | 250.082 |
-| 14 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 264.264 | 259.202 | 254.078 |
-| 15 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 268.094 | 253.886 | 230.330 |
-| 16 | `kernel_openmp_03_mkII` | 256.240 | 249.694 | 240.369 |
-| 17 | `kernel_openmp_01_mkII` | 252.671 | 246.742 | 241.724 |
-| 18 | `kernel_openmp_02_mkII` | 250.406 | 244.205 | 236.385 |
-| 19 | `C_native_openmp_01_FMA` | 213.581 | 210.304 | 204.646 |
-| 20 | `C_native_openmp_04_FMA` | 212.349 | 208.340 | 199.104 |
-| 21 | `C_native_openmp_04` | 202.858 | 198.898 | 191.888 |
-| 22 | `kernel_openmp_04_mkII` | 202.201 | 195.507 | 185.160 |
+| 1 | `kernel_openmp_07_mkII` | 430.553 | 417.819 | 404.926 |
+| 2 | `C_native_openmp_07` | 427.951 | 416.322 | 391.103 |
+| 3 | `C_native_openmp_07_FMA` | 434.193 | 414.894 | 365.502 |
+| 4 | `kernel_openmp_07_mkII_FMA` | 430.394 | 414.740 | 393.671 |
+| 5 | `C_native_openmp_06` | 317.905 | 313.690 | 303.912 |
+| 6 | `C_native_openmp_06_FMA` | 317.801 | 308.806 | 296.946 |
+| 7 | `kernel_openmp_06_mkII` | 310.649 | 299.606 | 276.649 |
+| 8 | `kernel_openmp_06_mkII_FMA` | 300.214 | 291.418 | 280.069 |
+| 9 | `kernel_openmp_03_mkII_FMA` | 286.726 | 279.314 | 268.694 |
+| 10 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | 283.075 | 276.424 | 269.519 |
+| 11 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 281.974 | 275.993 | 268.944 |
+| 12 | `kernel_openmp_05_mkII_FMA` | 278.656 | 274.691 | 267.675 |
+| 13 | `C_native_openmp_02` | 280.097 | 270.172 | 257.978 |
+| 14 | `C_native_openmp_05_FMA` | 273.848 | 268.778 | 259.872 |
+| 15 | `C_native_openmp_01` | 268.207 | 262.513 | 253.106 |
+| 16 | `C_native_openmp_05` | 268.393 | 261.622 | 255.432 |
+| 17 | `kernel_openmp_05_mkII` | 268.217 | 260.722 | 240.400 |
+| 18 | `C_native_openmp_02_FMA` | 266.664 | 259.262 | 245.031 |
+| 19 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 266.947 | 256.518 | 240.800 |
+| 20 | `C_native_openmp_03` | 261.412 | 253.479 | 220.152 |
+| 21 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 266.206 | 253.112 | 210.338 |
+| 22 | `kernel_openmp_03_mkII` | 255.405 | 250.561 | 240.228 |
+| 23 | `kernel_openmp_02_mkII` | 250.611 | 246.253 | 233.346 |
+| 24 | `kernel_openmp_01_mkII` | 252.833 | 243.282 | 221.247 |
+| 25 | `C_native_openmp_04_FMA` | 212.336 | 206.911 | 189.924 |
+| 26 | `C_native_openmp_01_FMA` | 208.520 | 204.681 | 198.427 |
+| 27 | `kernel_openmp_04_mkII` | 202.950 | 199.326 | 194.112 |
+| 28 | `C_native_openmp_04` | 200.888 | 197.351 | 189.296 |
 
 </details>
 
 ## Hotpath Disassembly
 
-The snippets below show representative call structure in the Release build.
-Addresses are intentionally omitted because they are build-local.
+Disassembly command used for representative kernels:
 
-### `C_native_02_FMA`
-
-Best serial raw C shape: default rounding is loaded once, `alpha*x[j]` is
-hoisted, and the inner row loop is one `mpfr_fma`.
-
-```asm
-call   mpfr_get_default_rounding_mode@plt
-call   mpfr_init2@plt
-...
-call   mpfr_mul@plt        # y[i] *= beta
-...
-call   mpfr_set@plt        # temp = alpha
-call   mpfr_mul@plt        # temp *= x[j]
-...
-call   mpfr_fma@plt        # y[i] = temp * A[i+j*lda] + y[i]
-...
-call   mpfr_clear@plt
+```bash
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/<executable>
 ```
 
-### `C_native_03` and `C_native_openmp_03`
+Addresses are build-specific.  The important information is the backend call sequence, temporary lifetime, OpenMP work split, and whether `mpfr_init2`/`mpfr_clear` are inside the per-element hot loop.
 
-Raw C row-dot comparison target for wrapper `03` FMA:
+### `Rgemv_mpfr_C_native_02_FMA`
 
-```asm
-call   mpfr_init2@plt
-call   mpfr_get_default_rounding_mode@plt
-call   mpfr_set_d@plt      # temp = 0
-...
-call   mpfr_fma@plt        # temp += A[i+j*lda] * x[j]
-...
-call   mpfr_fmma@plt       # y = alpha * temp + beta * y
-call   mpfr_clear@plt
-```
-
-### `kernel_openmp_03_mkII_FMA`
-
-Wrapper row-dot FMA path:
+Source file: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA.cpp`.
 
 ```asm
-call   mpfr_init2@plt
-call   mpfr_get_default_rounding_mode@plt
-call   mpfr_set_d@plt      # temp = 0
+2a58: call   mpfr_get_default_rounding_mode@plt
+2a65: call   mpfr_init2@plt              # reusable temp outside the j/i update loop
 ...
-call   mpfr_fma@plt        # temp += A[i+j*lda] * x[j]
+2a80: call   mpfr_mul@plt                # y[i] *= beta
 ...
-call   mpfr_fmma@plt       # y = alpha * temp + beta * y
-call   GOMP_barrier@plt
-call   mpfr_clear@plt
+2aef: call   mpfr_mul@plt                # temp = alpha * x[j]
+...
+2b20: mov    %r15,%rcx                   # y[i] addend
+2b23: mov    %r13,%rdx                   # A[i+j*lda]
+2b26: mov    %r15,%rdi                   # y[i] destination
+2b2c: mov    %rbx,%rsi                   # temp
+2b3b: call   mpfr_fma@plt                # y[i] += temp * A[i+j*lda]
+2b43: jne    2b20
+2b6c: call   mpfr_clear@plt
 ```
 
-### `kernel_openmp_07_mkII`
+This is the best serial kernel.  The hot loop has one `mpfr_fma` per matrix element and no `mpfr_init2`/`mpfr_clear` inside the per-element loop.  The source shape streams `A` contiguously by columns.
 
-`openmp_07` does not win by a new arithmetic primitive.  It wins by source
-shape: column partitioning streams contiguous column-major `A`, accumulates
-into thread-local partial `y`, then performs a reduction.  The arithmetic hot
-loop is still multiply plus add through reusable wrapper temporaries.
+### `Rgemv_mpfr_kernel_04_mkII`
+
+Source file: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04.cpp`.
+
+```asm
+2cd7: call   mpfr_get_default_rounding_mode@plt
+...
+2d2d: call   mpfr_init2@plt              # temp
+2d53: call   mpfr_init2@plt              # templ
+...
+2dd6: call   mpfr_mul@plt                # temp = alpha * x[j]
+...
+2e20: call   mpfr_mul@plt                # templ = temp * A[i+j*lda]
+2e3a: call   mpfr_add@plt                # y[i] += templ
+2e4f: jne    2e00
+...
+2e7a: call   mpfr_clear@plt
+2e84: call   mpfr_clear@plt
+```
+
+This wrapper kernel is the best serial wrapper result.  It has the same column-major reusable-temp performance class as raw C `C_native_02`/`C_native_04`; the remaining gap to `C_native_02_FMA` is mostly the lack of a fused per-element update in this source shape.
+
+### `Rgemv_mpfr_C_native_openmp_07_FMA`
+
+Source file: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07_FMA.cpp`.
+
+```asm
+2b21: call   omp_get_thread_num@plt
+2b3d: call   omp_get_num_threads@plt
+...
+2bab: call   mpfr_mul@plt                # y partition: y[i] *= beta
+2bc2: call   GOMP_barrier@plt
+...
+2c06: call   mpfr_init2@plt              # per-thread temp
+...
+2c7f: call   mpfr_mul@plt                # temp = alpha * x[j]
+...
+2ccb: call   mpfr_fma@plt                # local_y[i] += temp * A[i+j*lda]
+2cd3: jne    2cb0
+2cfb: call   GOMP_barrier@plt
+...
+2d5b: call   mpfr_add@plt                # final reduction into y
+2d85: call   GOMP_barrier@plt
+2d8d: call   mpfr_clear@plt
+```
+
+This kernel has the best single max MFLOPS.  The inner update is fused, and the final reduction is outside the per-column hot loop.  The average is essentially tied with non-FMA 07, so the dominant optimization is the column partition plus partial-y layout, not FMA alone.
+
+### `Rgemv_mpfr_kernel_openmp_07_mkII`
+
+Source file: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07.cpp`.
+
+```asm
+2ece: call   omp_get_thread_num@plt
+2ee2: call   omp_get_num_threads@plt
+...
+2f67: call   mpfr_mul@plt                # y[i] *= beta
+2f99: call   GOMP_barrier@plt
+...
+2ff1: call   mpfr_init2@plt              # per-thread temp
+301b: call   mpfr_init2@plt              # per-thread templ
+...
+30e1: call   mpfr_mul@plt                # temp = alpha * x[j]
+...
+311e: call   mpfr_mul@plt                # templ = temp * A[i+j*lda]
+3143: call   mpfr_add@plt                # local_y[i] += templ
+3155: jne    3110
+3186: call   GOMP_barrier@plt
+...
+320b: call   mpfr_add@plt                # final reduction into y
+3238: call   mpfr_clear@plt
+3242: call   mpfr_clear@plt
+```
+
+This is the best OpenMP average overall.  It does not use FMA, but it has the right parallel shape: each thread owns a partial y vector while streaming columns, and the reduction happens after the main matrix pass.  The wrapper overhead is outside the per-element hot loop.
+
+### `Rgemv_mpfr_kernel_openmp_05_mkII_FMA`
+
+Source file: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_FMA.cpp`.
+
+```asm
+2ce0: call   mpfr_mul@plt                # scaled_x[j] = alpha * x[j]
+2cea: call   GOMP_barrier@plt
+...
+2d76: call   mpfr_mul@plt                # y[i] *= beta
+...
+2dc2: call   mpfr_fma@plt                # y[i] += scaled_x[j] * A[i+j*lda]
+2dca: jne    2da0
+2df4: jmp    GOMP_barrier@plt
+```
+
+FMA improves variant 05, but the row-partition source shape still walks `A` row-wise through column-major storage.  That is why it remains below 06/07 even though the arithmetic call sequence is fused.
 
 ## Lessons Learned
 
-Serial MPFR Rgemv is dominated by source shape.  The column-AXPY shape wins
-because it hoists `alpha*x[j]` outside the inner row loop and streams
-column-major `A` contiguously.  `C_native_02_FMA` is the best serial result
-because the inner row loop is reduced to one `mpfr_fma` call.
+The main performance boundary is the Rgemv source shape, not wrapper syntax.  Serial column-major update variants (`C_native_02`, `C_native_04`, `kernel_04_mkII`) are in a different class from row-dot variants because they stream `A` contiguously.
 
-Explicit context helps the wrapper, but it cannot compensate for a poor memory
-walk.  `kernel_04_mkII` is the best serial wrapper because it combines
-column-AXPY traversal, reusable temporaries, and loop-invariant rounding.  The
-row-dot `kernel_03_mkII_FMA` reaches the intended `mpfr_fma`/`mpfr_fmma` shape
-but remains slow in serial because it walks a column-major matrix with a large
-stride.
+FMA is useful but secondary.  `C_native_02_FMA` is the best serial result, and `kernel_openmp_05_mkII_FMA` improves over non-FMA 05.  However, OpenMP 07 without FMA has the best average, and FMA 07 is statistically the same class.  Locality and ownership dominate the final ranking.
 
-OpenMP changes the best strategy.  Row-owned kernels avoid races on `y`, but
-they make the matrix access pattern poor.  `openmp_06` improves that with
-256-row blocks, and `openmp_07` goes further by partitioning columns and using
-thread-local partial `y` vectors.  That is why `C_native_openmp_07` reaches
-442.510 average MFLOPS and `kernel_openmp_07_mkII` reaches 431.660 average
-MFLOPS while the best row-owned FMA wrapper remains around 280 MFLOPS.
+The best OpenMP design in this run is column partitioning with per-thread partial y vectors and a final reduction.  It preserves a serial-like column-major A stream while avoiding shared-y races during the matrix pass.  The cost is `num_threads * m` MPFR partial accumulators and a reduction pass, but at `m=n=4000` that cost is amortized.
 
-`openmp_05` confirms that precomputing `scaled_x` alone is not enough.  It
-removes repeated `alpha*x[j]`, but without fixing the matrix traversal it stays
-below the blocked and column-partitioned variants.
+The 256-row block design is the second useful class.  It is simpler than partial-y reduction and avoids races by assigning row blocks, but it does not exploit the same column-partition locality over the whole matrix.
 
-Compared with GMP `mpf`, MPFR adds a rounding-mode dimension to every
-operation.  Explicit contexts remain important, but the largest gains in this
-benchmark come from restoring column-major streaming and avoiding write races
-without forcing row-strided matrix access.
+Explicit context matters for wrapper clarity and call-path control, but it does not compensate for an unfavorable memory traversal.  `kernel_04_mkII` shows that explicit-context wrapper code can reach the raw reusable-temp serial class when the source shape is aligned with the backend access pattern.
+
+Future work should prioritize packed or layout-aware MPFR storage and better column-partition reduction strategies before adding more arithmetic-call variants.  The current run already shows that adding FMA to a locality-limited variant does not move it into the top class.

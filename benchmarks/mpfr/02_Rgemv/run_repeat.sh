@@ -43,8 +43,11 @@ executables=(
     "Rgemv_mpfr_C_native_openmp_04"
     "Rgemv_mpfr_C_native_openmp_04_FMA"
     "Rgemv_mpfr_C_native_openmp_05"
+    "Rgemv_mpfr_C_native_openmp_05_FMA"
     "Rgemv_mpfr_C_native_openmp_06"
+    "Rgemv_mpfr_C_native_openmp_06_FMA"
     "Rgemv_mpfr_C_native_openmp_07"
+    "Rgemv_mpfr_C_native_openmp_07_FMA"
     "Rgemv_mpfr_kernel_01_mkII"
     "Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
     "Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
@@ -64,8 +67,11 @@ executables=(
     "Rgemv_mpfr_kernel_openmp_03_mkII_FMA"
     "Rgemv_mpfr_kernel_openmp_04_mkII"
     "Rgemv_mpfr_kernel_openmp_05_mkII"
+    "Rgemv_mpfr_kernel_openmp_05_mkII_FMA"
     "Rgemv_mpfr_kernel_openmp_06_mkII"
+    "Rgemv_mpfr_kernel_openmp_06_mkII_FMA"
     "Rgemv_mpfr_kernel_openmp_07_mkII"
+    "Rgemv_mpfr_kernel_openmp_07_mkII_FMA"
 )
 
 run_one() {
