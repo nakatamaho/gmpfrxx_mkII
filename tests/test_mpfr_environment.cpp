@@ -69,5 +69,29 @@ int main()
         std::abort();
     }
 
+    mpfr_set_default_prec(53);
+    if (mpfr_set_emax(MPFR_EMAX_DEFAULT) != 0 ||
+        mpfr_set_emin(MPFR_EMIN_DEFAULT) != 0) {
+        std::abort();
+    }
+    mpfr_set_default_rounding_mode(MPFR_RNDN);
+
+    const auto raw_reset_defaults = mpfrxx::default_options();
+    if (raw_reset_defaults.precision_bits != 53) {
+        std::abort();
+    }
+    if (raw_reset_defaults.emin != MPFR_EMIN_DEFAULT ||
+        raw_reset_defaults.emax != MPFR_EMAX_DEFAULT) {
+        std::abort();
+    }
+    if (raw_reset_defaults.rounding_mode != MPFR_RNDN) {
+        std::abort();
+    }
+
+    mpfrxx::mpfr_class raw_reset_value;
+    if (raw_reset_value.precision() != 53) {
+        std::abort();
+    }
+
     return 0;
 }

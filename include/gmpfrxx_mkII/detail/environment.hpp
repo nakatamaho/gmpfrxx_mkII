@@ -182,8 +182,6 @@ inline parsed_mpfr_environment load_mpfr_environment() noexcept
     mpfr_prec_t precision = result.precision;
     if (parse_mpfr_precision(precision_text, precision)) {
         result.precision = precision;
-    } else if (precision_text != nullptr) {
-        result.precision = mpfr_get_default_prec();
     }
 
     mpfr_exp_t emin = result.emin;

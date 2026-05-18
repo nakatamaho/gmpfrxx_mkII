@@ -90,7 +90,7 @@ int main()
     setenv("MPFRXX_EMAX", "-40", 1);
     const auto before_invalid_environment = mpfrxx::default_options();
     mpfrxx::reload_mpfr_defaults_from_environment();
-    if (mpfrxx::default_precision_bits() != before_invalid_environment.precision_bits ||
+    if (mpfrxx::default_precision_bits() != 512 ||
         mpfrxx::default_rounding_mode() != before_invalid_environment.rounding_mode ||
         mpfrxx::default_emin() == 40 ||
         mpfrxx::default_emax() == -40) {

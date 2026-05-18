@@ -139,7 +139,8 @@ public:
 
     explicit unary_expr(Expr expr) : expr_(std::move(expr)) {}
 
-    const Expr& expr() const noexcept { return expr_; }
+    const Expr& expr() const & noexcept { return expr_; }
+    Expr&& expr() && noexcept { return std::move(expr_); }
 
     Result eval() const { return Result(*this); }
 

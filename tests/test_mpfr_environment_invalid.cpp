@@ -36,7 +36,7 @@ int main()
 {
     const auto old_defaults = mpfrxx::default_options();
 
-    mpfrxx::set_default_precision_bits(512);
+    mpfr_set_default_prec(53);
     mpfrxx::set_default_rounding_mode(MPFR_RNDN);
     const mpfr_exp_t initial_emin = mpfr_get_emin();
     const mpfr_exp_t initial_emax = mpfr_get_emax();
@@ -82,7 +82,7 @@ int main()
         mpfrxx::reload_mpfr_defaults_from_environment();
 
         const auto oversized_defaults = mpfrxx::default_options();
-        if (oversized_defaults.precision_bits != valid_defaults.precision_bits) {
+        if (oversized_defaults.precision_bits != 512) {
             std::abort();
         }
     }

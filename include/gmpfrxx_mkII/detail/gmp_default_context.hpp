@@ -229,6 +229,7 @@ inline mp_bitcnt_t unsafe_get_gmp_global_mpf_precision_bits() noexcept
     return mpf_get_default_prec();
 }
 
+#if GMPXX_MKII_DEFAULT_CONTEXT_MODE == GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
 class default_mpf_precision_guard {
 public:
     explicit default_mpf_precision_guard(mp_bitcnt_t precision_bits) noexcept
@@ -248,6 +249,7 @@ public:
 private:
     mp_bitcnt_t old_precision_bits_;
 };
+#endif
 
 } // namespace gmpxx
 

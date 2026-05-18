@@ -18450,6 +18450,82 @@ Pass/fail result:
 Known issues:
 - Full CTest was not rerun in this phase.
 
+## Phase: MPFR Invalid Precision Environment Fallback
+
+Implemented features:
+- Changed invalid `MPFRXX_DEFAULT_PRECISION_BITS` parsing to keep the
+  wrapper builtin MPFR default precision instead of falling back to the current
+  libmpfr default precision.
+- Added regression coverage for the first-use typo case where raw MPFR default
+  precision is 53 but wrapper defaults must remain 512.
+- Updated existing invalid-environment expectations so invalid precision
+  follows the wrapper builtin fallback policy.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `tests/test_mpfr_environment_invalid.cpp`
+- `tests/test_mpfr_defaults.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfr_environment_invalid test_mpfr_defaults test_mpfr_environment -j`
+- `ctest --test-dir build -R 'test_mpfr_environment_invalid|test_mpfr_defaults|test_mpfr_environment' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFR environment tests: PASS.  9/9 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  167/167 tests passed.
+
+Known issues:
+- Invalid precision environment values now reset the precision component to
+  the wrapper builtin default.  Invalid rounding and exponent values continue
+  to preserve their current component defaults.
+
+## Phase: MPFR One-shot Default Initialization Regression
+
+Implemented features:
+- Verified that MPFR wrapper default initialization is guarded by a
+  DSO-local `thread_local` one-shot flag.
+- Added a regression check proving that after wrapper defaults have been
+  initialized from the environment, a user raw reset of MPFR defaults back to
+  the library initial values is not overwritten by the next wrapper API call.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `tests/test_mpfr_environment.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfr_environment -j`
+- `ctest --test-dir build -R 'test_mpfr_environment|test_mpfr_environment_first_use|test_mpfr_rounding_scope_stable' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFR environment and stable-rounding tests: PASS.  9/9 selected
+  tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  167/167 tests passed.
+
+Known issues:
+- If raw MPFR state is exactly library-initial before the first wrapper use,
+  the wrapper cannot distinguish that from untouched MPFR state and still
+  applies wrapper-owned environment defaults.  This matches the documented
+  first-use policy.
+
 ## Phase: MPFR Rdot C Native Equivalence Mapping Refresh
 
 Implemented features:
@@ -18698,6 +18774,90 @@ Known issues:
 - MPC defaults are still intentionally tied to MPFR's shared default rounding
   and precision policy.  Asymmetric MPC default rounding is rejected by the
   existing environment policy.
+
+## Phase: MPF Precision Guard Frozen-env Rejection
+
+Implemented features:
+- Made `gmpxx::default_mpf_precision_guard` available only in
+  `GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER` mode.
+- Removed the silent no-op RAII behavior in frozen-env mode, where
+  `set_default_mpf_precision_bits()` cannot mutate header-owned state.
+- Added compile-fail coverage proving that frozen-env code cannot construct
+  `gmpxx::default_mpf_precision_guard`.
+- Kept external-provider coverage where the guard remains available and
+  restores the previous thread default precision.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- `compile_fail_test_mpf_precision_guard_frozen_env`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/gmp_default_context.hpp`
+- `tests/CMakeLists.txt`
+- `tests/compile_fail/test_mpf_precision_guard_frozen_env.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpf_external_provider example16_mpf_thread_context -j`
+- `cmake --build build --target test_gmpxx_mkII -j`
+- `ctest --test-dir build -R 'compile_fail_test_mpf_precision_guard_frozen_env|test_mpf_external_provider|example16_mpf_thread_context|test_gmpxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted frozen-env compile-fail and external-provider guard tests: PASS.
+  4/4 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  166/166 tests passed.
+
+Known issues:
+- `set_default_mpf_precision_bits()` remains a compatibility no-op in
+  frozen-env mode.  The RAII guard is stricter because it represents scoped
+  mutation and would otherwise imply successful restoration.
+
+## Phase: Unary Expression Move Folding
+
+Implemented features:
+- Added an rvalue-qualified `unary_expr::expr() &&` accessor that returns the
+  stored child expression as an xvalue.
+- Preserved the existing const-lvalue accessor for evaluation, precision, and
+  reference-analysis paths.
+- Fixed rvalue unary folding such as `-std::move(unary_expr<neg_op, ...>)` so
+  the child subtree is moved into the folded expression instead of copied.
+- Added a focused test using a move-tracking expression leaf to prove rvalue
+  folding moves the child and performs no copy.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- `test_expr_unary_move_folding`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/expr.hpp`
+- `tests/CMakeLists.txt`
+- `tests/test_expr_unary_move_folding.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build --target test_expr_unary_move_folding test_unary_minus_simplification test_temporary_expression_lifetime -j`
+- `ctest --test-dir build -R 'test_expr_unary_move_folding|test_unary_minus_simplification|test_temporary_expression_lifetime|compile_fail_test_mpf_precision_guard_frozen_env|test_mpf_external_provider|example16_mpf_thread_context' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted unary expression move-folding and recent MPF guard tests: PASS.
+  6/6 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  167/167 tests passed.
+
+Known issues:
+- The rvalue optimization applies to the existing unary folding overloads.
+  Other expression node accessors still expose const lvalue references unless
+  they have a specific rvalue-moving use case.
 
 ## Phase: MPFR Rdot 08 Fixed-precision Target Check
 
