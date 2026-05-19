@@ -2253,6 +2253,15 @@ void mpfr_evaluate(
         return;
     }
 
+    if (mpfr_expression_references(dest, expr)) {
+        scoped_mpfr_temporary lhs(eval_precision);
+        scoped_mpfr_temporary rhs(eval_precision);
+        mpfr_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
+        mpfr_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
+        mpfr_apply_binary<Op>(dest, lhs.get(), rhs.get(), rnd);
+        return;
+    }
+
     if constexpr (
         build_options::enable_mpfr_fma &&
         is_mpfr_mul_direct_expr_v<Lhs> &&
@@ -2263,15 +2272,6 @@ void mpfr_evaluate(
         } else {
             mpfr_fmms_direct_apply(dest, expr, rnd);
         }
-        return;
-    }
-
-    if (mpfr_expression_references(dest, expr)) {
-        scoped_mpfr_temporary lhs(eval_precision);
-        scoped_mpfr_temporary rhs(eval_precision);
-        mpfr_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
-        mpfr_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
-        mpfr_apply_binary<Op>(dest, lhs.get(), rhs.get(), rnd);
         return;
     }
 

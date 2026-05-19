@@ -233,6 +233,8 @@ inline mp_bitcnt_t default_mpf_precision_bits() noexcept
 
 inline void set_default_mpf_precision_bits(mp_bitcnt_t precision) noexcept
 {
+    // In frozen-env builds this compatibility setter is intentionally a no-op;
+    // mutable per-thread MPF defaults require the external-provider mode.
     ::gmpfrxx_mkII::detail::set_default_mpf_precision_bits(precision);
 }
 

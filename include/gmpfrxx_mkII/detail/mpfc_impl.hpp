@@ -933,6 +933,8 @@ template <typename Op>
 void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, const gmpxx::mpfc_class& rhs)
 {
     if constexpr (std::is_same_v<Op, add_op>) {
+        // GMP mpf_add/mpf_sub permit destination aliasing with operands;
+        // only multiply/divide need explicit temporaries below.
         mpf_add(mpfc_real_ref(dest).mpf_data(), lhs.real().mpf_data(), rhs.real().mpf_data());
         mpf_add(mpfc_imag_ref(dest).mpf_data(), lhs.imag().mpf_data(), rhs.imag().mpf_data());
     } else if constexpr (std::is_same_v<Op, sub_op>) {

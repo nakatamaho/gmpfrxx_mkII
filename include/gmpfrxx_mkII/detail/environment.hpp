@@ -233,6 +233,9 @@ inline bool set_mpfr_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) no
         return true;
     }
 
+    // Rollback is best-effort.  If restoring the saved range also fails,
+    // this thread's MPFR exponent range may remain partially updated.
+    // The noexcept API can only report the original failure to the caller.
     (void)apply_ordered(current_emin, current_emax);
     return false;
 }
@@ -355,10 +358,12 @@ inline void set_default_rounding_mode(mpfr_rnd_t rounding) noexcept
 class rounding_mode_scope {
 public:
     explicit rounding_mode_scope(mpfr_rnd_t rounding) noexcept
-        : old_rounding_(mpfr_get_default_rounding_mode()),
-          old_stable_rounding_(::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode())
+        : old_rounding_(MPFR_RNDN),
+          old_stable_rounding_(MPFR_RNDN)
     {
         ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
+        // The saved values must be captured after first-use initialization;
+        // the member initializer list only supplies noexcept dummy values.
         old_rounding_ = mpfr_get_default_rounding_mode();
         old_stable_rounding_ = ::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode();
         mpfr_set_default_rounding_mode(rounding);

@@ -19247,3 +19247,69 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: MPFR FMMA Alias Ordering and Exponent Rollback Note
+
+Implemented features:
+- Moved the MPFR expression alias check ahead of the FMMA direct fastpath so aliasing expressions use the conservative temporary path before mpfr_fmma or mpfr_fmms can be selected.
+- Documented that exponent-range rollback in set_mpfr_default_exponent_range() is best-effort and may leave thread-local MPFR exponent state partially updated if rollback itself fails.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.  Existing MPFR alias and FMA tests cover the affected paths.
+
+Tests updated:
+- include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+- include/gmpfrxx_mkII/detail/environment.hpp
+- STATUS.md
+
+Exact commands run:
+- cmake --build build --target test_mpfr_aliasing test_mpfr_fixed_precision_fma_alloc_count test_mpfr_compound_assign -j
+- ctest --test-dir build -R "test_mpfr_aliasing|test_mpfr_fixed_precision_fma_alloc_count|test_mpfr_compound_assign" --output-on-failure
+- cmake --build build -j
+- ctest --test-dir build --output-on-failure
+
+Pass/fail result:
+- Targeted MPFR alias/FMA tests: PASS.  3/3 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  169/169 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: Clarify MPFR Scope and MPF/MPFC Policy Comments
+
+Implemented features:
+- Made `rounding_mode_scope` use explicit dummy member initialization and documented that saved rounding state is captured after MPFR first-use initialization.
+- Documented that MPFC add/sub paths rely on GMP `mpf_add`/`mpf_sub` destination aliasing support, while multiply/divide require explicit temporaries.
+- Documented that `gmpxx::set_default_mpf_precision_bits()` is a compatibility no-op in frozen-env builds and mutable thread defaults require external-provider mode.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.  This phase clarifies existing behavior without changing arithmetic semantics.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `include/gmpfrxx_mkII/detail/gmp_default_context.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfr_rounding_scope test_mpfr_rounding_scope_stable test_mpfc_precision_policy test_mpf_default_precision_env -j`
+- `ctest --test-dir build -R "test_mpfr_rounding_scope|test_mpfc_precision_policy|test_mpf_default_precision_env" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted clarification regression tests: PASS.  4/4 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  169/169 tests passed.
+
+Known issues:
+- None for this phase.
