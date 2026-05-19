@@ -250,10 +250,14 @@ public:
             return *this;
         }
 
-        if (precision() == other.precision()) {
+        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
             mpf_swap(value_, other.value_);
         } else {
-            mpf_set(value_, other.value_);
+            if (precision() == other.precision()) {
+                mpf_swap(value_, other.value_);
+            } else {
+                mpf_set(value_, other.value_);
+            }
         }
         return *this;
     }

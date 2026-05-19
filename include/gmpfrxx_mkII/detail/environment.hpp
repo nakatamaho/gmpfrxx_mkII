@@ -214,20 +214,27 @@ inline bool set_mpfr_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) no
     const mpfr_exp_t current_emin = mpfr_get_emin();
     const mpfr_exp_t current_emax = mpfr_get_emax();
 
-    if (emax > current_emax && mpfr_set_emax(emax) != 0) {
-        return false;
-    }
-    if (emin < current_emin && mpfr_set_emin(emin) != 0) {
-        return false;
-    }
-    if (emin >= current_emin && mpfr_set_emin(emin) != 0) {
-        return false;
-    }
-    if (emax <= current_emax && mpfr_set_emax(emax) != 0) {
-        return false;
+    const auto apply_ordered = [](mpfr_exp_t target_emin, mpfr_exp_t target_emax) noexcept {
+        const mpfr_exp_t from_emax = mpfr_get_emax();
+
+        if (target_emax > from_emax && mpfr_set_emax(target_emax) != 0) {
+            return false;
+        }
+        if (mpfr_set_emin(target_emin) != 0) {
+            return false;
+        }
+        if (target_emax <= from_emax && mpfr_set_emax(target_emax) != 0) {
+            return false;
+        }
+        return mpfr_get_emin() == target_emin && mpfr_get_emax() == target_emax;
+    };
+
+    if (apply_ordered(emin, emax)) {
+        return true;
     }
 
-    return mpfr_get_emin() == emin && mpfr_get_emax() == emax;
+    (void)apply_ordered(current_emin, current_emax);
+    return false;
 }
 
 inline void apply_mpfr_environment_defaults()

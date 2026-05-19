@@ -365,8 +365,14 @@ These environment values are applied to MPFR's thread-local default state.
 
 ### Per-Thread Initialization
 
-Environment-derived MPFR defaults are applied from wrapper code only while the
-calling thread's libmpfr default state still has MPFR's library-initial values:
+Wrapper initial MPFR defaults are applied at most once per linked image and per
+thread.  The initialization path applies environment-derived MPFR defaults when
+an `MPFRXX_*` environment variable is present, and otherwise applies the
+wrapper's builtin 512-bit initial precision policy.  This behavior is shared by
+`mpfrxx_mkII.h` and `gmpfrxx_mkII.h`.
+
+Implicit first-use initialization applies only if the calling thread's libmpfr
+default state still has MPFR's library-initial values:
 
 ```text
 precision = 53
@@ -375,14 +381,20 @@ emin      = MPFR_EMIN_DEFAULT
 emax      = MPFR_EMAX_DEFAULT
 ```
 
-The wrapper must not use a header-owned `thread_local` initialization flag for
-this decision. Inline function-local TLS can be DSO-local on some platforms,
-which would allow one linked image to reapply environment defaults after
-another image had already changed the same libmpfr TLS state. The libmpfr
-default state itself is the sentinel and the source of truth.
+The wrapper uses a DSO-local `thread_local` one-shot flag to avoid repeatedly
+probing and applying defaults from hot evaluation-context paths.  The flag does
+not store mutable MPFR default precision, rounding, `emin`, or `emax`; MPFR's
+own TLS state remains the source of truth for those values.
 
-Wrapper default-state accesses check this sentinel. Examples of such accesses
-include:
+The library-initial sentinel cannot distinguish untouched MPFR state from
+application code that deliberately set all MPFR default fields back to the same
+library-initial values before first wrapper access in that linked image.  In
+that case, the wrapper applies its initial-default policy.  After the one-shot
+initialization has run, later raw MPFR default-state changes in the same thread
+are not overwritten by implicit wrapper default access.
+
+Wrapper default-state accesses trigger the one-shot initialization check.
+Examples of such accesses include:
 
 - default construction of `mpfrxx::mpfr_class`
 - `mpfrxx::default_options()`
@@ -392,9 +404,10 @@ include:
 - `mpfrxx::set_default_exponent_range(...)`
 
 This means a worker thread receives the wrapper's initial 512-bit policy on
-first use if its libmpfr default state is still untouched. If application code
-or another linked image has already changed any MPFR default field in that
-thread, wrapper access must leave the existing libmpfr state alone.
+first use if its libmpfr default state still equals MPFR's library-initial
+state. If application code or another linked image has already changed any MPFR
+default field in that thread to a non-library-initial value, wrapper access
+must leave the existing libmpfr state alone.
 
 ### Runtime Mutation
 

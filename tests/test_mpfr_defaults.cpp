@@ -144,6 +144,27 @@ int main()
         mpfr_get_emax() != 20) {
         std::abort();
     }
+    mpfrxx::set_default_exponent_range(30, 40);
+    if (mpfrxx::default_emin() != 30 ||
+        mpfrxx::default_emax() != 40 ||
+        mpfr_get_emin() != 30 ||
+        mpfr_get_emax() != 40) {
+        std::abort();
+    }
+    mpfrxx::set_default_exponent_range(-40, -30);
+    if (mpfrxx::default_emin() != -40 ||
+        mpfrxx::default_emax() != -30 ||
+        mpfr_get_emin() != -40 ||
+        mpfr_get_emax() != -30) {
+        std::abort();
+    }
+    mpfrxx::set_default_exponent_range(-20, 20);
+    if (mpfrxx::default_emin() != -20 ||
+        mpfrxx::default_emax() != 20 ||
+        mpfr_get_emin() != -20 ||
+        mpfr_get_emax() != 20) {
+        std::abort();
+    }
     mpfrxx::set_default_exponent_range(20, -20);
     if (mpfrxx::default_emin() != -20 || mpfrxx::default_emax() != 20) {
         std::abort();

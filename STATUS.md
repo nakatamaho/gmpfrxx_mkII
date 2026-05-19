@@ -18450,6 +18450,124 @@ Pass/fail result:
 Known issues:
 - Full CTest was not rerun in this phase.
 
+## Phase: MPF Move Assignment Fixed-precision Fastpath
+
+Implemented features:
+- Made `gmpxx::mpf_class` move assignment match the MPFR/MPC fixed-precision
+  fastpath policy.
+- In `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` builds, MPF move
+  assignment now swaps unconditionally instead of checking precision first.
+- Normal builds keep the existing precision-preserving move assignment path.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `tests/test_mpf_fixed_precision_materialization.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpf_fixed_precision_materialization test_mpf_precision_policy test_construction_copy -j`
+- `ctest --test-dir build -R 'test_mpf_fixed_precision_materialization|test_mpf_precision_policy|test_construction_copy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPF move-assignment and precision tests: PASS.  3/3 selected tests
+  passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  167/167 tests passed.
+
+Known issues:
+- The fixed-precision fastpath assumes precision compatibility as a build-time
+  contract, matching the existing MPFR/MPC move-assignment behavior.
+
+## Phase: Document 512-bit Wrapper First-use Defaults
+
+Implemented features:
+- Documented that both `mpfrxx_mkII.h` and `gmpfrxx_mkII.h` apply the MPFR
+  512-bit wrapper initial-default policy on first wrapper access when the
+  thread's MPFR state still equals MPFR's library-initial state.
+- Documented that the wrapper cannot distinguish untouched MPFR state from an
+  application deliberately resetting all MPFR default fields to the same
+  library-initial values before first wrapper access.
+- Updated the DSO-local one-shot initialization flag documentation to match
+  the current implementation.
+- Added header smoke checks for env-unset GMP MPF and MPFR default precision
+  through the GMP-only, MPFR-only, and full aggregator headers.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `README.md`
+- `SPECIFICATIONS.md`
+- `tests/test_gmp_header_smoke.cpp`
+- `tests/test_mpfr_header_smoke.cpp`
+- `tests/test_aggregator_header_smoke.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_gmp_header_smoke test_mpfr_header_smoke test_aggregator_header_smoke -j`
+- `ctest --test-dir build -R 'test_gmp_header_smoke|test_mpfr_header_smoke|test_aggregator_header_smoke|test_mpfr_defaults|test_mpf_precision_policy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted header default precision tests: PASS.  5/5 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  167/167 tests passed.
+
+Known issues:
+- Deliberate raw MPFR reset to the exact library-initial state before first
+  wrapper access is intentionally treated as initial wrapper state and receives
+  the 512-bit wrapper policy.
+
+## Phase: MPFR Exponent Range Ordered Update
+
+Implemented features:
+- Replaced the redundant exponent-range update condition chain with an
+  ordered helper that expands `emax` before changing `emin` when needed, then
+  shrinks `emax` after `emin` is valid.
+- Added best-effort rollback to the previous MPFR exponent range if a
+  multi-step update fails after a partial state change.
+- Added regression coverage for disjoint upward and downward exponent-range
+  transitions.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `tests/test_mpfr_defaults.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfr_defaults test_mpfr_environment test_mpfr_environment_invalid test_mpfr_thread_safety -j`
+- `ctest --test-dir build -R 'test_mpfr_defaults|test_mpfr_environment|test_mpfr_thread_safety' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFR exponent-range and environment tests: PASS.  10/10 selected
+  tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  167/167 tests passed.
+
+Known issues:
+- Rollback uses the same MPFR setter APIs and is therefore best-effort if MPFR
+  itself rejects the restoration call.
+
 ## Phase: MPFR Invalid Precision Environment Fallback
 
 Implemented features:

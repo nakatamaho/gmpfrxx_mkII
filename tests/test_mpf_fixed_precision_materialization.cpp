@@ -29,6 +29,7 @@
 #include <gmpxx_mkII.h>
 
 #include <cassert>
+#include <utility>
 
 int main()
 {
@@ -57,6 +58,12 @@ int main()
     const mp_bitcnt_t destination_precision = destination.precision();
     destination = low + high;
     assert(destination.precision() == destination_precision);
+
+    auto move_destination = gmpxx::mpf_class::with_precision(128, -1.0);
+    auto move_source = gmpxx::mpf_class::with_precision(512, 3.5);
+    move_destination = std::move(move_source);
+    assert(move_destination.precision() == 512);
+    assert(mpf_cmp_d(move_destination.mpf_data(), 3.5) == 0);
 
     return 0;
 }

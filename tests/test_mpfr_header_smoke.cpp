@@ -28,12 +28,24 @@
 
 #include <mpfrxx_mkII.h>
 
+#include <cstdlib>
 #include <type_traits>
 
 int main()
 {
+    unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
+    unsetenv("MPFRXX_EMIN");
+    unsetenv("MPFRXX_EMAX");
+    unsetenv("MPFRXX_ROUNDING_MODE");
+
     static_assert(std::is_default_constructible_v<mpfrxx::mpz_class>);
     static_assert(std::is_default_constructible_v<mpfrxx::mpq_class>);
     static_assert(std::is_default_constructible_v<mpfrxx::mpfr_class>);
+
+    mpfrxx::mpfr_class value;
+    if (value.precision() != 512) {
+        std::abort();
+    }
+
     return 0;
 }

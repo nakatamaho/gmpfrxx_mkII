@@ -183,11 +183,20 @@ MPFR's library-initial values.  Runtime calls such as
 `mpfrxx::set_default_precision_bits()` update libmpfr's thread-local default
 state and affect only subsequently constructed MPFR objects in that thread.
 
+This 512-bit first-use policy is shared by `mpfrxx_mkII.h` and
+`gmpfrxx_mkII.h`.  If application code deliberately sets every MPFR default
+field back to MPFR's library-initial values before the first wrapper access in
+a thread, the wrapper cannot distinguish that from untouched MPFR state and
+will apply the wrapper initial-default policy.  After the wrapper has
+initialized a thread once, later raw MPFR changes in that thread are not
+overwritten by implicit wrapper default access.
+
 This policy requires an MPFR build with TLS support.  CMake checks
 `mpfr_buildopt_tls_p()` and fails configuration if libmpfr does not report TLS.
 Shared-library users must ensure all images use the same libmpfr shared
-library; wrapper-owned DSO-local MPFR default storage and DSO-local
-initialization flags are intentionally avoided.
+library.  The wrapper does not keep separate mutable MPFR default storage, but
+it does use a DSO-local one-shot initialization flag to avoid repeatedly
+applying the initial-default policy from hot evaluation-context paths.
 
 ### MPC Default Context
 

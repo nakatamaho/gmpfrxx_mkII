@@ -28,14 +28,34 @@
 
 #include <gmpfrxx_mkII.h>
 
+#include <cstdlib>
 #include <type_traits>
 
 int main()
 {
+    unsetenv("GMPXX_MKII_DEFAULT_MPF_PREC_BITS");
+    unsetenv("GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS");
+    unsetenv("MPFXX_DEFAULT_PREC_BITS");
+    unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
+    unsetenv("MPFRXX_EMIN");
+    unsetenv("MPFRXX_EMAX");
+    unsetenv("MPFRXX_ROUNDING_MODE");
+
     static_assert(std::is_default_constructible_v<gmpxx::mpz_class>);
     static_assert(std::is_default_constructible_v<gmpxx::mpq_class>);
     static_assert(std::is_default_constructible_v<gmpxx::mpf_class>);
     static_assert(std::is_default_constructible_v<mpfrxx::mpfr_class>);
     static_assert(std::is_default_constructible_v<mpfrxx::mpc_class>);
+
+    gmpxx::mpf_class mpf_value;
+    if (mpf_value.precision() < 512) {
+        std::abort();
+    }
+
+    mpfrxx::mpfr_class mpfr_value;
+    if (mpfr_value.precision() != 512) {
+        std::abort();
+    }
+
     return 0;
 }
