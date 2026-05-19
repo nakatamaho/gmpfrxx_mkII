@@ -121,6 +121,34 @@ int main()
         std::abort();
     }
 
+    auto one_real = gmpxx::mpf_class::with_precision(1024, 1.0);
+    auto eps_real = gmpxx::mpf_class::with_precision(1024, 1.0);
+    mpf_div_2exp(eps_real.mpf_data(), eps_real.mpf_data(), 700);
+    gmpxx::mpfc_class zero = gmpxx::mpfc_class::with_precision(1024, 0.0, 0.0);
+    gmpxx::mpfc_class one(one_real);
+    gmpxx::mpfc_class eps(eps_real);
+    gmpxx::mpfc_class nested_rhs_materialized = zero - (one + eps);
+    auto expected_nested_real = gmpxx::mpf_class::with_precision(1024, -1.0);
+    expected_nested_real -= eps_real;
+    gmpxx::mpfc_class expected_nested(expected_nested_real);
+    assert(nested_rhs_materialized.real_precision() == 1024);
+    assert(nested_rhs_materialized.imag_precision() == 1024);
+    assert(nested_rhs_materialized == expected_nested);
+
+    auto one_low_real = gmpxx::mpf_class::with_precision(512, 1.0);
+    auto eps_low_real = gmpxx::mpf_class::with_precision(512, 1.0);
+    mpf_div_2exp(eps_low_real.mpf_data(), eps_low_real.mpf_data(), 700);
+    gmpxx::mpfc_class one_low(one_low_real);
+    gmpxx::mpfc_class eps_low(eps_low_real);
+    gmpxx::mpfc_class assigned_high = gmpxx::mpfc_class::with_precision(1024, 1024);
+    assigned_high = 0 - (one_low + eps_low);
+    auto expected_assigned_real = gmpxx::mpf_class::with_precision(1024, -1.0);
+    expected_assigned_real -= gmpxx::mpf_class(eps_low_real, 1024);
+    gmpxx::mpfc_class expected_assigned(expected_assigned_real);
+    assert(assigned_high.real_precision() == 1024);
+    assert(assigned_high.imag_precision() == 1024);
+    assert(assigned_high == expected_assigned);
+
     auto a = gmpxx::mpfc_class::with_precision(256, 1.25, 2.5);
     auto b = gmpxx::mpfc_class::with_precision(256, -0.5, 4.0);
     auto c = gmpxx::mpfc_class::with_precision(256, 3.0, -1.25);

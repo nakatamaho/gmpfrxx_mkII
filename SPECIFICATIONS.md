@@ -153,6 +153,12 @@ when reallocated or cleared. Fixed-precision callers are expected to keep the
 same effective precision through the hot loop, so the cache must not restore
 the raw precision on every release.
 
+Fixed-precision scratch pools are bounded performance caches.  If a pool is
+exhausted by a deep expression tree, the implementation may fall back to a
+scoped backend temporary with normal initialization and cleanup.  Pool
+exhaustion must not change observable arithmetic results, precision policy, or
+exception behavior.
+
 `MPFRXX_ENABLE_FMA` enables MPFR's fused operations for supported expression
 shapes. `a += b * c` maps to `mpfr_fma`; `a -= b * c` maps to `mpfr_fms`
 with the rounding-mode adjustment required for the negated result.
@@ -251,6 +257,10 @@ GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS
 MPFXX_DEFAULT_PREC_BITS
 ```
 
+Invalid MPF precision environment values are user configuration errors, not
+binary integration failures.  They must be ignored with a diagnostic on
+`stderr`, and the built-in 512-bit wrapper default must be used instead.
+
 The environment is intentionally treated as immutable after first use. In this
 mode, `gmpxx::set_default_mpf_precision_bits(...)` is a compatibility no-op and
 `gmpxx::reload_default_mpf_precision_bits_from_environment()` keeps using the
@@ -309,6 +319,24 @@ All participating DSOs must observe the same provider token.
 Changing the wrapper default precision affects only subsequently constructed
 `gmpxx::mpf_class` objects. Assignment to an existing object preserves the
 left-hand-side precision.
+
+## Default-state Policy
+
+Wrapper-owned defaults must be explicit and predictable.
+
+For MPF, the wrapper owns the default precision and must not depend on GMP's
+process-global `mpf_set_default_prec()` state.  GMP global default access is
+available only through explicitly unsafe helper APIs and is not part of wrapper
+default construction.
+
+For MPFR, libmpfr's thread-local default state is the source of truth after the
+wrapper first-use initialization boundary.  Applications may establish that
+boundary explicitly with `mpfrxx::initialize_thread_defaults()` before applying
+raw MPFR default-state overrides.
+
+For MPC, default precision and rounding are represented by the same MPFR
+thread-local default state used by `mpfrxx::mpfr_class`; there is no separate
+wrapper-owned MPC default TLS state.
 
 ## MPFR Default State
 
@@ -437,6 +465,15 @@ threads.
 Applications that want consistent runtime defaults across worker threads must
 call the setter or reload API inside each worker thread, or pass explicit
 precision and rounding context to their own numeric kernels.
+
+## Environment Policy
+
+Invalid user environment values must not terminate the process.  They should be
+ignored with a diagnostic, and the relevant built-in default should be used.
+
+Provider ABI mismatches and internally inconsistent external default-context
+records may terminate the process after emitting a diagnostic, because they
+indicate binary integration errors rather than user configuration typos.
 
 ## MPC Default State
 

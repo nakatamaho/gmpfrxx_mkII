@@ -660,43 +660,50 @@ inline mp_bitcnt_t mpfc_expression_precision_max(mp_bitcnt_t real_precision, mp_
     return std::max(real_precision, imag_precision);
 }
 
-inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpfc_class>& expr)
+template <typename Expr>
+void mpfc_evaluate(
+    gmpxx::mpfc_class& dest,
+    const Expr& expr,
+    mp_bitcnt_t real_eval_precision,
+    mp_bitcnt_t imag_eval_precision);
+
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpfc_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpfc_real_ref(dest) = expr.get().real();
     mpfc_imag_ref(dest) = expr.get().imag();
 }
 
-inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpfc_class>& expr)
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpfc_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpfc_real_ref(dest) = expr.get().real();
     mpfc_imag_ref(dest) = expr.get().imag();
 }
 
-inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpf_class>& expr)
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpf_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpfc_real_ref(dest) = expr.get();
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
-inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpf_class>& expr)
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpf_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpfc_real_ref(dest) = expr.get();
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
-inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpz_class>& expr)
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpz_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpf_set_z(mpfc_real_ref(dest).mpf_data(), expr.get().mpz_data());
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
-inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpz_class>& expr)
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpz_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpf_set_z(mpfc_real_ref(dest).mpf_data(), expr.get().mpz_data());
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
-inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpq_class>& expr)
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpq_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpf_set_q_at_precision(mpfc_real_ref(dest).mpf_data(),
                            expr.get().mpq_data(),
@@ -704,7 +711,7 @@ inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const object_leaf<gmpxx::mpq_
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
-inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpq_class>& expr)
+inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gmpxx::mpq_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpf_set_q_at_precision(mpfc_real_ref(dest).mpf_data(),
                            expr.get().mpq_data(),
@@ -713,29 +720,29 @@ inline void mpfc_evaluate(gmpxx::mpfc_class& dest, const borrowed_object_leaf<gm
 }
 
 template <typename T, typename Result>
-void mpfc_evaluate(gmpxx::mpfc_class& dest, const scalar_leaf<T, Result>& expr)
+void mpfc_evaluate(gmpxx::mpfc_class& dest, const scalar_leaf<T, Result>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpfc_assign_scalar(mpfc_real_ref(dest), expr.value());
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
 template <typename T>
-void mpfc_evaluate(gmpxx::mpfc_class& dest, const scalar_leaf<T, gmpxx::mpf_class>& expr)
+void mpfc_evaluate(gmpxx::mpfc_class& dest, const scalar_leaf<T, gmpxx::mpf_class>& expr, mp_bitcnt_t, mp_bitcnt_t)
 {
     mpfc_assign_scalar(mpfc_real_ref(dest), expr.value());
     mpf_set_ui(mpfc_imag_ref(dest).mpf_data(), 0);
 }
 
 template <typename Expr, typename Result>
-void mpfc_evaluate(gmpxx::mpfc_class& dest, const unary_expr<pos_op, Expr, Result>& expr)
+void mpfc_evaluate(gmpxx::mpfc_class& dest, const unary_expr<pos_op, Expr, Result>& expr, mp_bitcnt_t real_eval_precision, mp_bitcnt_t imag_eval_precision)
 {
-    mpfc_evaluate(dest, expr.expr());
+    mpfc_evaluate(dest, expr.expr(), real_eval_precision, imag_eval_precision);
 }
 
 template <typename Expr, typename Result>
-void mpfc_evaluate(gmpxx::mpfc_class& dest, const unary_expr<neg_op, Expr, Result>& expr)
+void mpfc_evaluate(gmpxx::mpfc_class& dest, const unary_expr<neg_op, Expr, Result>& expr, mp_bitcnt_t real_eval_precision, mp_bitcnt_t imag_eval_precision)
 {
-    mpfc_evaluate(dest, expr.expr());
+    mpfc_evaluate(dest, expr.expr(), real_eval_precision, imag_eval_precision);
     mpf_neg(mpfc_real_ref(dest).mpf_data(), mpfc_real_ref(dest).mpf_data());
     mpf_neg(mpfc_imag_ref(dest).mpf_data(), mpfc_imag_ref(dest).mpf_data());
 }
@@ -1000,47 +1007,59 @@ void mpfc_apply_binary(gmpxx::mpfc_class& dest, const gmpxx::mpfc_class& lhs, co
 }
 
 template <typename Expr>
-void mpfc_evaluate_to_temporary(
-    gmpxx::mpfc_class& temp,
+gmpxx::mpfc_class mpfc_evaluate_to_fresh_temporary(
     const Expr& expr,
     mp_bitcnt_t real_precision,
     mp_bitcnt_t imag_precision)
 {
-    temp = gmpxx::mpfc_class::with_precision(real_precision, imag_precision);
-    mpfc_evaluate(temp, expr);
+    gmpxx::mpfc_class temp = gmpxx::mpfc_class::with_precision(real_precision, imag_precision);
+    mpfc_evaluate(temp, expr, real_precision, imag_precision);
+    return temp;
 }
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
-void mpfc_evaluate(gmpxx::mpfc_class& dest, const binary_expr<Op, Lhs, Rhs, Result>& expr)
+void mpfc_evaluate(
+    gmpxx::mpfc_class& dest,
+    const binary_expr<Op, Lhs, Rhs, Result>& expr,
+    mp_bitcnt_t real_eval_precision,
+    mp_bitcnt_t imag_eval_precision)
 {
     const mp_bitcnt_t real_precision =
-        mpfc_expression_precision_max(mpfc_expression_real_precision(expr.lhs()),
-                                      mpfc_expression_real_precision(expr.rhs()));
+        mpfc_expression_precision_max(real_eval_precision,
+                                      mpfc_expression_precision_max(mpfc_expression_real_precision(expr.lhs()),
+                                                                    mpfc_expression_real_precision(expr.rhs())));
     const mp_bitcnt_t imag_precision =
-        mpfc_expression_precision_max(mpfc_expression_imag_precision(expr.lhs()),
-                                      mpfc_expression_imag_precision(expr.rhs()));
+        mpfc_expression_precision_max(imag_eval_precision,
+                                      mpfc_expression_precision_max(mpfc_expression_imag_precision(expr.lhs()),
+                                                                    mpfc_expression_imag_precision(expr.rhs())));
     if (mpfc_expression_references(dest, expr)) {
-        gmpxx::mpfc_class lhs;
-        gmpxx::mpfc_class rhs;
-        mpfc_evaluate_to_temporary(lhs, expr.lhs(), real_precision, imag_precision);
-        mpfc_evaluate_to_temporary(rhs, expr.rhs(), real_precision, imag_precision);
+        gmpxx::mpfc_class lhs =
+            mpfc_evaluate_to_fresh_temporary(expr.lhs(), real_precision, imag_precision);
+        gmpxx::mpfc_class rhs =
+            mpfc_evaluate_to_fresh_temporary(expr.rhs(), real_precision, imag_precision);
         mpfc_apply_binary<Op>(dest, lhs, rhs);
     } else if constexpr (is_mpfc_class_leaf_v<Lhs> &&
                          is_mpfc_class_leaf_v<Rhs>) {
         mpfc_apply_binary<Op>(dest, expr.lhs().get(), expr.rhs().get());
     } else if constexpr (is_mpfc_class_leaf_v<Rhs>) {
-        mpfc_evaluate(dest, expr.lhs());
+        mpfc_evaluate(dest, expr.lhs(), real_precision, imag_precision);
         mpfc_apply_binary<Op>(dest, dest, expr.rhs().get());
     } else if constexpr (is_mpfc_class_leaf_v<Lhs> &&
                          (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
-        mpfc_evaluate(dest, expr.rhs());
+        mpfc_evaluate(dest, expr.rhs(), real_precision, imag_precision);
         mpfc_apply_binary<Op>(dest, expr.lhs().get(), dest);
     } else {
-        gmpxx::mpfc_class rhs;
-        mpfc_evaluate(dest, expr.lhs());
-        mpfc_evaluate_to_temporary(rhs, expr.rhs(), real_precision, imag_precision);
+        mpfc_evaluate(dest, expr.lhs(), real_precision, imag_precision);
+        gmpxx::mpfc_class rhs =
+            mpfc_evaluate_to_fresh_temporary(expr.rhs(), real_precision, imag_precision);
         mpfc_apply_binary<Op>(dest, dest, rhs);
     }
+}
+
+template <typename Expr>
+void mpfc_evaluate(gmpxx::mpfc_class& dest, const Expr& expr)
+{
+    mpfc_evaluate(dest, expr, dest.real_precision(), dest.imag_precision());
 }
 
 template <typename Op, typename Rhs>
@@ -1147,7 +1166,7 @@ mpfc_class& mpfc_class::operator=(const Expr& expr)
 {
     if (gmpfrxx_mkII::detail::mpfc_expression_references(*this, expr)) {
         mpfc_class temp = mpfc_class::with_precision(real_precision(), imag_precision());
-        gmpfrxx_mkII::detail::mpfc_evaluate(temp, expr);
+        gmpfrxx_mkII::detail::mpfc_evaluate(temp, expr, real_precision(), imag_precision());
         swap(temp);
     } else {
         gmpfrxx_mkII::detail::mpfc_evaluate(*this, expr);

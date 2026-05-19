@@ -19148,3 +19148,102 @@ Known issues:
 - The MPC reload alias still writes MPFR thread-local default precision and
   rounding by design, because MPC defaults are represented by the shared MPFR
   default state.
+
+
+## Phase: Default Policy Specification Text
+
+Implemented features:
+- Added explicit default-state policy text to `SPECIFICATIONS.md` for MPF,
+  MPFR, and MPC default ownership.
+- Documented that invalid user environment values should fall back to built-in
+  defaults with diagnostics, while provider ABI corruption may still abort.
+- Documented fixed-precision scratch pools as bounded performance caches whose
+  exhaustion may fall back to scoped backend temporaries without changing
+  observable arithmetic behavior.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.  This phase updates specification text only.
+
+Tests updated:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Specification diff check: PASS.
+- Full Debug CTest: PASS.  169/169 tests passed.
+
+Known issues:
+- None for this documentation-only phase.
+
+
+## Phase: MPFC Fresh Temporary Precision and MPF Scratch Pool Alignment
+
+Implemented features:
+- Changed MPFC expression subtemporary evaluation to create a fresh precision-tagged temporary and return it by value instead of assigning a precision-tagged temporary into an existing object.
+- Aligned the MPF fixed-precision TLS scratch pool slot count with the MPFR pool by increasing it from 4 to 16.
+
+Missing features:
+- MPFC nested expression evaluation still needs a separate eval-precision propagation pass so destination precision can be propagated into deeper subexpressions.
+
+Tests added:
+- Added an MPFC precision regression case that materializes `zero - (one + eps)` at 1024-bit precision and verifies that the RHS non-leaf temporary preserves the `2^-700` term.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `tests/test_mpfc_precision_policy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfc_precision_policy -j`
+- `ctest --test-dir build -R test_mpfc_precision_policy --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFC precision regression test: PASS.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  169/169 tests passed.
+
+Known issues:
+- The fresh temporary precision loss was fixed in this phase.  Destination precision propagation for nested MPFC subexpressions is resolved in the following phase.
+
+
+## Phase: MPFC Destination Precision Propagation
+
+Implemented features:
+- Added explicit real and imaginary evaluation precision propagation to MPFC expression evaluation.
+- MPFC nested subexpression temporaries now use the maximum of the destination component precision and leaf-derived expression precision.
+- Kept the public top-level evaluation behavior as a wrapper that uses the destination object precision.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Added an MPFC regression case where a 1024-bit destination evaluates `0 - (one512 + eps512)` and preserves the `2^-700` term that would be lost by 512-bit subtemporary evaluation.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `tests/test_mpfc_precision_policy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfc_precision_policy -j`
+- `ctest --test-dir build -R test_mpfc_precision_policy --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFC precision propagation regression test: PASS.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  169/169 tests passed.
+
+Known issues:
+- None for this phase.
