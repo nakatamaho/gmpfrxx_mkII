@@ -100,7 +100,32 @@ inline mpf_class norm(const mpfc_class& value)
 
 inline mpf_class abs(const mpfc_class& value)
 {
-    return sqrt(norm(value));
+    const mp_bitcnt_t precision = value.precision();
+    mpf_class real_abs = mpf_class::with_precision(precision);
+    mpf_class imag_abs = mpf_class::with_precision(precision);
+    mpf_abs(real_abs.mpf_data(), value.real().mpf_data());
+    mpf_abs(imag_abs.mpf_data(), value.imag().mpf_data());
+
+    const mpf_class* high = &real_abs;
+    const mpf_class* low = &imag_abs;
+    if (mpf_cmp(real_abs.mpf_data(), imag_abs.mpf_data()) < 0) {
+        high = &imag_abs;
+        low = &real_abs;
+    }
+
+    if (mpf_sgn(high->mpf_data()) == 0) {
+        return mpfc_math_detail::zero(precision);
+    }
+
+    mpf_class ratio = mpf_class::with_precision(precision);
+    mpf_div(ratio.mpf_data(), low->mpf_data(), high->mpf_data());
+    mpf_mul(ratio.mpf_data(), ratio.mpf_data(), ratio.mpf_data());
+    mpf_add_ui(ratio.mpf_data(), ratio.mpf_data(), 1);
+    mpf_sqrt(ratio.mpf_data(), ratio.mpf_data());
+
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_mul(result.mpf_data(), high->mpf_data(), ratio.mpf_data());
+    return result;
 }
 
 inline mpf_class arg(const mpfc_class& value)

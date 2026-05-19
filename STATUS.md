@@ -19313,3 +19313,38 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: MPF Invalid Environment Fallback and MPFC Scaled Absolute Value
+
+Implemented features:
+- Replaced `gmpxx::abs(mpfc_class)` with a scaled hypot implementation: `max(abs(real), abs(imag)) * sqrt(1 + (min/max)^2)`.
+- Added CTest coverage for an overflowing `GMPXX_MKII_DEFAULT_MPF_PREC_BITS` value to verify invalid MPF default precision input falls back to the 512-bit builtin default instead of aborting.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Added `test_mpf_default_precision_overflow_env` using `GMPXX_MKII_DEFAULT_MPF_PREC_BITS=18446744073709551616`.
+- Added an MPFC math regression case for exact `abs(3 + 4i)`, zero input, and a large-exponent diagonal value checked through a scaled ratio.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/math_mpfc.hpp`
+- `tests/test_mpfc_math.cpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build --target test_mpfc_math test_mpf_default_precision_invalid_env -j`
+- `ctest --test-dir build -R "test_mpfc_math|test_mpf_default_precision_invalid_env|test_mpf_default_precision_overflow_env" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFC math and MPF invalid-env tests: PASS.  3/3 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.
