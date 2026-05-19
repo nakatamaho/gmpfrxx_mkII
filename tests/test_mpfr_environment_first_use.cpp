@@ -90,6 +90,25 @@ void test_current_eval_context_first_use()
     require_environment_applied();
 }
 
+void test_initialize_thread_defaults_first_use()
+{
+    configure_environment();
+
+    mpfrxx::initialize_thread_defaults();
+    require_environment_applied();
+
+    mpfr_set_default_prec(53);
+    const auto defaults = mpfrxx::default_options();
+    if (defaults.precision_bits != 53) {
+        std::abort();
+    }
+
+    mpfrxx::mpfr_class value;
+    if (value.precision() != 53) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main(int argc, char** argv)
@@ -108,6 +127,10 @@ int main(int argc, char** argv)
     }
     if (std::strcmp(argv[1], "current_eval_context") == 0) {
         test_current_eval_context_first_use();
+        return 0;
+    }
+    if (std::strcmp(argv[1], "initialize_thread_defaults") == 0) {
+        test_initialize_thread_defaults_first_use();
         return 0;
     }
 

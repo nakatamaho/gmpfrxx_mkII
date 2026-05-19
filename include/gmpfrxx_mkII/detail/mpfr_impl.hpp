@@ -1957,7 +1957,7 @@ private:
 
 class mpfr_thread_scratch_pool {
 public:
-    static constexpr std::size_t slot_count = 4;
+    static constexpr std::size_t slot_count = 16;
     static constexpr mpfr_prec_t max_retained_precision = mpfr_prec_t{1} << 20;
 
     struct slot {

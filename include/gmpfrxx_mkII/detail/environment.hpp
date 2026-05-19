@@ -237,7 +237,7 @@ inline bool set_mpfr_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) no
     return false;
 }
 
-inline void apply_mpfr_environment_defaults()
+inline void apply_mpfr_environment_defaults() noexcept
 {
     const auto loaded = load_mpfr_environment();
     if (valid_mpfr_precision(loaded.precision)) {
@@ -262,7 +262,7 @@ inline bool mpfr_default_state_is_library_initial() noexcept
            mpfr_get_emax() == MPFR_EMAX_DEFAULT;
 }
 
-inline void initialize_mpfr_defaults_for_current_thread()
+inline void initialize_mpfr_defaults_for_current_thread() noexcept
 {
     auto& initialized = mpfr_defaults_initialized_storage();
     if (initialized) {
@@ -278,7 +278,7 @@ inline void initialize_mpfr_defaults_for_current_thread()
     }
 }
 
-inline mpfr_rnd_t current_mpfr_rounding_mode()
+inline mpfr_rnd_t current_mpfr_rounding_mode() noexcept
 {
     initialize_mpfr_defaults_for_current_thread();
     if constexpr (build_options::assume_stable_mpfr_rounding_mode) {
@@ -300,13 +300,18 @@ struct mpfr_default_options {
     mpfr_rnd_t rounding_mode;
 };
 
-inline void reload_mpfr_defaults_from_environment()
+inline void reload_mpfr_defaults_from_environment() noexcept
 {
     ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     ::gmpfrxx_mkII::detail::apply_mpfr_environment_defaults();
 }
 
-inline mpfr_default_options default_options()
+inline void initialize_thread_defaults() noexcept
+{
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
+}
+
+inline mpfr_default_options default_options() noexcept
 {
     ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     return mpfr_default_options{
@@ -317,17 +322,17 @@ inline mpfr_default_options default_options()
     };
 }
 
-inline mpfr_prec_t default_precision_bits()
+inline mpfr_prec_t default_precision_bits() noexcept
 {
     return default_options().precision_bits;
 }
 
-inline mpfr_prec_t default_prec()
+inline mpfr_prec_t default_prec() noexcept
 {
     return default_precision_bits();
 }
 
-inline void set_default_precision_bits(mpfr_prec_t precision)
+inline void set_default_precision_bits(mpfr_prec_t precision) noexcept
 {
     ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     if (::gmpfrxx_mkII::detail::valid_mpfr_precision(precision)) {
@@ -335,12 +340,12 @@ inline void set_default_precision_bits(mpfr_prec_t precision)
     }
 }
 
-inline mpfr_rnd_t default_rounding_mode()
+inline mpfr_rnd_t default_rounding_mode() noexcept
 {
     return default_options().rounding_mode;
 }
 
-inline void set_default_rounding_mode(mpfr_rnd_t rounding)
+inline void set_default_rounding_mode(mpfr_rnd_t rounding) noexcept
 {
     ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     mpfr_set_default_rounding_mode(rounding);
@@ -374,17 +379,17 @@ private:
     mpfr_rnd_t old_stable_rounding_;
 };
 
-inline mpfr_exp_t default_emin()
+inline mpfr_exp_t default_emin() noexcept
 {
     return default_options().emin;
 }
 
-inline mpfr_exp_t default_emax()
+inline mpfr_exp_t default_emax() noexcept
 {
     return default_options().emax;
 }
 
-inline void set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax)
+inline void set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) noexcept
 {
     ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
     ::gmpfrxx_mkII::detail::set_mpfr_default_exponent_range(emin, emax);

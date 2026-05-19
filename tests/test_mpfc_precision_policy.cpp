@@ -103,6 +103,24 @@ int main()
         std::abort();
     }
 
+    auto pow_base = gmpxx::mpfc_class::with_precision(192, 1.125, 0.25);
+    auto pow_exponent = gmpxx::mpf_class::with_precision(320, 1.5);
+    auto pow_result = gmpxx::pow(pow_base, pow_exponent);
+    const auto expected_pow_precision = std::max(pow_base.precision(), pow_exponent.precision());
+    if (pow_result.real_precision() != expected_pow_precision ||
+        pow_result.imag_precision() != expected_pow_precision) {
+        std::abort();
+    }
+
+    auto real_base = gmpxx::mpf_class::with_precision(128, 1.25);
+    auto complex_exponent = gmpxx::mpfc_class::with_precision(288, 1.125, 0.125);
+    auto reverse_pow_result = gmpxx::pow(real_base, complex_exponent);
+    const auto expected_reverse_pow_precision = std::max(real_base.precision(), complex_exponent.precision());
+    if (reverse_pow_result.real_precision() != expected_reverse_pow_precision ||
+        reverse_pow_result.imag_precision() != expected_reverse_pow_precision) {
+        std::abort();
+    }
+
     auto a = gmpxx::mpfc_class::with_precision(256, 1.25, 2.5);
     auto b = gmpxx::mpfc_class::with_precision(256, -0.5, 4.0);
     auto c = gmpxx::mpfc_class::with_precision(256, 3.0, -1.25);

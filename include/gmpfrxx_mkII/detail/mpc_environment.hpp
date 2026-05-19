@@ -108,11 +108,16 @@ inline mpc_default_options load_mpc_defaults_from_environment()
     };
 }
 
-inline void reload_mpc_defaults_from_environment()
+inline void reload_mpc_and_mpfr_defaults_from_environment()
 {
     const auto loaded = load_mpc_defaults_from_environment();
     set_default_precision_bits(loaded.real_precision_bits);
     set_default_rounding_mode(loaded.real_rounding_mode);
+}
+
+inline void reload_mpc_defaults_from_environment()
+{
+    reload_mpc_and_mpfr_defaults_from_environment();
 }
 
 inline mpc_default_options default_mpc_options()

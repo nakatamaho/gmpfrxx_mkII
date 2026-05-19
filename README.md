@@ -184,12 +184,18 @@ MPFR's library-initial values.  Runtime calls such as
 state and affect only subsequently constructed MPFR objects in that thread.
 
 This 512-bit first-use policy is shared by `mpfrxx_mkII.h` and
-`gmpfrxx_mkII.h`.  If application code deliberately sets every MPFR default
-field back to MPFR's library-initial values before the first wrapper access in
-a thread, the wrapper cannot distinguish that from untouched MPFR state and
-will apply the wrapper initial-default policy.  After the wrapper has
+`gmpfrxx_mkII.h`.  Applications that want to force the wrapper first-use
+initialization before applying their own raw MPFR defaults can call
+`mpfrxx::initialize_thread_defaults()` in the calling thread, then call raw
+MPFR APIs such as `mpfr_set_default_prec(...)`.  After the wrapper has
 initialized a thread once, later raw MPFR changes in that thread are not
 overwritten by implicit wrapper default access.
+
+If application code deliberately sets every MPFR default field back to MPFR's
+library-initial values before any wrapper default access in a thread, the
+wrapper cannot distinguish that from untouched MPFR state and will apply the
+wrapper initial-default policy.  Use `mpfrxx::initialize_thread_defaults()`
+first when that distinction matters.
 
 This policy requires an MPFR build with TLS support.  CMake checks
 `mpfr_buildopt_tls_p()` and fails configuration if libmpfr does not report TLS.
@@ -211,6 +217,11 @@ real and imaginary rounding modes must match.  Calls such as
 `std::invalid_argument` when the two component values differ.  Use explicit
 `mpfrxx::mpc_class::with_precision(real, imag)` construction when an individual
 object needs different real and imaginary precision.
+
+`mpfrxx::reload_mpc_and_mpfr_defaults_from_environment()` reloads MPC
+environment defaults by updating the shared MPFR thread-local default precision
+and rounding mode.  `mpfrxx::reload_mpc_defaults_from_environment()` remains as
+a compatibility alias for the same operation.
 
 ## Environment
 
@@ -235,7 +246,8 @@ MPFRXX_MPC_IMAG_ROUNDING_MODE
 For GMP MPF defaults, `GMPXX_MKII_DEFAULT_MPF_PREC_BITS` has priority over
 `GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS`, which has priority over the legacy
 `MPFXX_DEFAULT_PREC_BITS` name.  Invalid GMP MPF precision environment values
-fail fast.
+are ignored with a diagnostic on `stderr`, and the built-in 512-bit default is
+used instead.
 
 The fixed-precision fast path macro is currently disabled:
 

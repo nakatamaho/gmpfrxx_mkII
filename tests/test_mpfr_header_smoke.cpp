@@ -42,6 +42,8 @@ int main()
     static_assert(std::is_default_constructible_v<mpfrxx::mpq_class>);
     static_assert(std::is_default_constructible_v<mpfrxx::mpfr_class>);
 
+    mpfrxx::initialize_thread_defaults();
+
     mpfrxx::mpfr_class value;
     if (value.precision() != 512) {
         std::abort();

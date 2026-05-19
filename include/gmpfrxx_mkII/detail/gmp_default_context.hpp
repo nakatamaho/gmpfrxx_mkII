@@ -32,6 +32,7 @@
 #include <gmpfrxx_mkII/detail/config.hpp>
 
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <limits>
 
@@ -101,16 +102,34 @@ inline bool parse_mpf_precision_bits(const char* text, std::uint64_t& out) noexc
     return true;
 }
 
-inline mp_bitcnt_t checked_uint64_to_mp_bitcnt(std::uint64_t value) noexcept
+inline bool checked_uint64_to_mp_bitcnt(std::uint64_t value, mp_bitcnt_t& out) noexcept
 {
     if (value == 0 ||
         value > static_cast<std::uint64_t>(std::numeric_limits<mp_bitcnt_t>::max())) {
-        std::abort();
+        return false;
     }
-    return static_cast<mp_bitcnt_t>(value);
+    out = static_cast<mp_bitcnt_t>(value);
+    return true;
 }
 
-inline mp_bitcnt_t read_default_mpf_precision_from_environment_or_abort() noexcept
+inline mp_bitcnt_t checked_uint64_to_mp_bitcnt_or_abort(std::uint64_t value) noexcept
+{
+    mp_bitcnt_t result = 0;
+    if (!checked_uint64_to_mp_bitcnt(value, result)) {
+        std::fprintf(stderr, "gmpfrxx_mkII: invalid MPF default precision in provider context\n");
+        std::abort();
+    }
+    return result;
+}
+
+inline void warn_invalid_mpf_precision_environment(const char* text) noexcept
+{
+    std::fprintf(stderr,
+                 "gmpfrxx_mkII: ignoring invalid MPF default precision environment value '%s'; using 512-bit default\n",
+                 text == nullptr ? "" : text);
+}
+
+inline mp_bitcnt_t read_default_mpf_precision_from_environment() noexcept
 {
     const char* text = std::getenv("GMPXX_MKII_DEFAULT_MPF_PREC_BITS");
     if (text == nullptr) {
@@ -124,16 +143,19 @@ inline mp_bitcnt_t read_default_mpf_precision_from_environment_or_abort() noexce
     }
 
     std::uint64_t parsed = 0;
-    if (!parse_mpf_precision_bits(text, parsed)) {
-        std::abort();
+    mp_bitcnt_t precision = 0;
+    if (!parse_mpf_precision_bits(text, parsed) ||
+        !checked_uint64_to_mp_bitcnt(parsed, precision)) {
+        warn_invalid_mpf_precision_environment(text);
+        return builtin_default_mpf_precision_bits();
     }
-    return checked_uint64_to_mp_bitcnt(parsed);
+    return precision;
 }
 
 inline mp_bitcnt_t frozen_env_default_mpf_precision_bits() noexcept
 {
     // The environment is intentionally treated as immutable after first use.
-    static const mp_bitcnt_t value = read_default_mpf_precision_from_environment_or_abort();
+    static const mp_bitcnt_t value = read_default_mpf_precision_from_environment();
     return value;
 }
 
@@ -141,9 +163,11 @@ inline void validate_default_context_or_abort(const gmpxx_mkII_default_context_v
 {
     if (context.abi_version != gmp_default_context_abi_version ||
         context.struct_size != sizeof(gmpxx_mkII_default_context_v1)) {
+        std::fprintf(stderr,
+                     "gmpfrxx_mkII: invalid MPF default context provider ABI version or size\n");
         std::abort();
     }
-    (void)checked_uint64_to_mp_bitcnt(context.mpf_precision_bits);
+    (void)checked_uint64_to_mp_bitcnt_or_abort(context.mpf_precision_bits);
 }
 
 inline mp_bitcnt_t default_mpf_precision_bits() noexcept
@@ -155,7 +179,7 @@ inline mp_bitcnt_t default_mpf_precision_bits() noexcept
 
     gmpxx_mkII_get_current_default_context_v1(&raw);
     validate_default_context_or_abort(raw);
-    return checked_uint64_to_mp_bitcnt(raw.mpf_precision_bits);
+    return checked_uint64_to_mp_bitcnt_or_abort(raw.mpf_precision_bits);
 #else
     return frozen_env_default_mpf_precision_bits();
 #endif

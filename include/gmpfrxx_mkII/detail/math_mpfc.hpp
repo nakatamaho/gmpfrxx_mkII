@@ -307,7 +307,7 @@ inline mpfc_class pow(const mpfc_class& base, I exponent)
 inline mpfc_class pow(const mpfc_class& base, const mpf_class& exponent)
 {
     const mp_bitcnt_t precision = std::max(base.precision(), exponent.precision());
-    return exp(mpfc_class(mpf_class(exponent), mpfc_math_detail::zero(precision)) * log(base));
+    return exp(mpfc_class(mpf_class(exponent, precision), mpfc_math_detail::zero(precision)) * log(base));
 }
 
 inline mpfc_class pow(const mpfc_class& base, const mpfc_class& exponent)
@@ -318,7 +318,7 @@ inline mpfc_class pow(const mpfc_class& base, const mpfc_class& exponent)
 inline mpfc_class pow(const mpf_class& base, const mpfc_class& exponent)
 {
     const mp_bitcnt_t precision = std::max(base.precision(), exponent.precision());
-    return pow(mpfc_class(mpf_class(base), mpfc_math_detail::zero(precision)), exponent);
+    return pow(mpfc_class(mpf_class(base, precision), mpfc_math_detail::zero(precision)), exponent);
 }
 
 template <typename Scalar,

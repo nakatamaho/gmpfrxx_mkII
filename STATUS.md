@@ -19046,3 +19046,105 @@ Pass/fail result:
 
 Known issues:
 - Full CTest was not rerun in this phase.
+
+
+## Phase: MPFR Explicit Thread-default Initialization API
+
+Implemented features:
+- Added `mpfrxx::initialize_thread_defaults()` as a public API that runs the
+  wrapper's MPFR one-shot first-use default initialization for the calling
+  thread without constructing an `mpfrxx::mpfr_class` object.
+- Documented the intended sequence for applications that want to force wrapper
+  first-use initialization before applying their own raw MPFR defaults.
+- Kept the API visible through both `mpfrxx_mkII.h` and `gmpfrxx_mkII.h`.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- `test_mpfr_environment_first_use_initialize_thread_defaults`
+- `test_mpfr_environment_first_use_stable_initialize_thread_defaults`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `tests/CMakeLists.txt`
+- `tests/test_mpfr_environment_first_use.cpp`
+- `tests/test_mpfr_header_smoke.cpp`
+- `tests/test_aggregator_header_smoke.cpp`
+- `README.md`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfr_environment_first_use test_mpfr_environment_first_use_stable test_mpfr_header_smoke test_aggregator_header_smoke -j`
+- `ctest --test-dir build -R 'test_mpfr_environment_first_use.*initialize_thread_defaults|test_mpfr_header_smoke|test_aggregator_header_smoke' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted explicit initialization and header smoke tests: PASS.  4/4 selected
+  tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  169/169 tests passed.
+
+Known issues:
+- `mpfrxx::initialize_thread_defaults()` is per calling thread and per linked
+  image, matching the existing DSO-local one-shot initialization policy.
+
+
+## Phase: Precision Policy Cleanup Follow-ups
+
+Implemented features:
+- Made `gmpxx::mpfc_class` mixed `pow` helpers use precision-aware `mpf_class`
+  copies for real-only complex operands so real and imaginary component
+  precision follow the computed effective precision.
+- Changed invalid GMP MPF default precision environment values from process
+  aborts to a diagnostic on `stderr` plus fallback to the built-in 512-bit
+  default.
+- Added `mpfrxx::reload_mpc_and_mpfr_defaults_from_environment()` to make the
+  shared MPFR TLS side effect explicit, while keeping
+  `mpfrxx::reload_mpc_defaults_from_environment()` as a compatibility alias.
+- Increased the MPFR fixed-precision TLS scratch pool from 4 to 16 slots.
+- Marked MPFR default initialization and public default-state accessors
+  `noexcept` to match the non-throwing C API implementation path.
+
+Missing features:
+- `gmpxx::abs(mpfc_class)` still uses the existing `sqrt(norm(value))` shape;
+  a scaled hypot-style implementation remains a separate numerical-stability
+  improvement.
+
+Tests added:
+- None as separate test binaries.
+
+Tests updated:
+- `tests/test_mpf_default_precision_invalid_env.cpp`
+- `tests/test_mpfc_precision_policy.cpp`
+- `tests/test_mpc_environment.cpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Tests updated indirectly through implementation changes:
+- `include/gmpfrxx_mkII/detail/gmp_default_context.hpp`
+- `src/gmpxx_mkII_default_context_provider.cpp`
+- `include/gmpfrxx_mkII/detail/math_mpfc.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `README.md`
+- `SPECIFICATIONS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpf_default_precision_invalid_env test_mpfc_precision_policy test_mpc_environment test_mpfr_rounding_scope test_mpfr_rounding_scope_stable test_mpfr_environment_first_use test_mpfr_environment_first_use_stable -j`
+- `ctest --test-dir build -R 'test_mpf_default_precision_invalid_env|test_mpfc_precision_policy|test_mpc_environment$|test_mpfr_rounding_scope|test_mpfr_environment_first_use.*initialize_thread_defaults' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted cleanup regression tests: PASS.  7/7 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  169/169 tests passed.
+
+Known issues:
+- The MPC reload alias still writes MPFR thread-local default precision and
+  rounding by design, because MPC defaults are represented by the shared MPFR
+  default state.

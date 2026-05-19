@@ -36,7 +36,7 @@ gmpxx_mkII_default_context_v1 make_initial_context() noexcept
     context.abi_version = gmpfrxx_mkII::detail::gmp_default_context_abi_version;
     context.struct_size = sizeof(context);
     context.mpf_precision_bits =
-        static_cast<std::uint64_t>(gmpfrxx_mkII::detail::read_default_mpf_precision_from_environment_or_abort());
+        static_cast<std::uint64_t>(gmpfrxx_mkII::detail::read_default_mpf_precision_from_environment());
     return context;
 }
 

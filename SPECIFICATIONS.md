@@ -389,13 +389,17 @@ own TLS state remains the source of truth for those values.
 The library-initial sentinel cannot distinguish untouched MPFR state from
 application code that deliberately set all MPFR default fields back to the same
 library-initial values before first wrapper access in that linked image.  In
-that case, the wrapper applies its initial-default policy.  After the one-shot
-initialization has run, later raw MPFR default-state changes in the same thread
-are not overwritten by implicit wrapper default access.
+that case, the wrapper applies its initial-default policy.  Applications that
+need an explicit boundary can call `mpfrxx::initialize_thread_defaults()` first
+and then apply raw MPFR default-state changes such as
+`mpfr_set_default_prec(...)`.  After the one-shot initialization has run, later
+raw MPFR default-state changes in the same thread are not overwritten by
+implicit wrapper default access.
 
 Wrapper default-state accesses trigger the one-shot initialization check.
 Examples of such accesses include:
 
+- `mpfrxx::initialize_thread_defaults()`
 - default construction of `mpfrxx::mpfr_class`
 - `mpfrxx::default_options()`
 - `mpfrxx::default_precision_bits()`
@@ -421,6 +425,10 @@ mpfrxx::set_default_exponent_range(...)
 
 They affect only subsequently constructed objects in the calling thread.
 Assignment to an existing object preserves the destination object's precision.
+
+`mpfrxx::initialize_thread_defaults()` runs the wrapper one-shot first-use
+default initialization for the calling thread without constructing an MPFR
+object.
 
 `mpfrxx::reload_mpfr_defaults_from_environment()` reloads environment-derived
 defaults for the calling thread only. It does not broadcast changes to other
@@ -467,6 +475,11 @@ MPFRXX_MPC_IMAG_ROUNDING_MODE
 
 If real and imaginary environment defaults are both provided, they must be
 equal. Asymmetric defaults are not represented by wrapper-owned TLS state.
+
+`mpfrxx::reload_mpc_and_mpfr_defaults_from_environment()` reloads MPC
+environment defaults by writing the shared MPFR thread-local default precision
+and rounding mode.  `mpfrxx::reload_mpc_defaults_from_environment()` is a
+compatibility alias for the same operation.
 
 ## Rationale
 

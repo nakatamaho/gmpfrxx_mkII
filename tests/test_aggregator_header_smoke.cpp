@@ -52,6 +52,8 @@ int main()
         std::abort();
     }
 
+    mpfrxx::initialize_thread_defaults();
+
     mpfrxx::mpfr_class mpfr_value;
     if (mpfr_value.precision() != 512) {
         std::abort();

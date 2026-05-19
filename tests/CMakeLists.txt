@@ -98,6 +98,10 @@ add_test(
     NAME test_mpfr_environment_first_use_current_eval_context
     COMMAND test_mpfr_environment_first_use current_eval_context
 )
+add_test(
+    NAME test_mpfr_environment_first_use_initialize_thread_defaults
+    COMMAND test_mpfr_environment_first_use initialize_thread_defaults
+)
 add_executable(test_mpfr_environment_first_use_stable test_mpfr_environment_first_use.cpp)
 target_link_libraries(test_mpfr_environment_first_use_stable PRIVATE mpfrxx_mkII)
 target_compile_definitions(test_mpfr_environment_first_use_stable PRIVATE
@@ -115,6 +119,10 @@ add_test(
     NAME test_mpfr_environment_first_use_stable_current_eval_context
     COMMAND test_mpfr_environment_first_use_stable current_eval_context
 )
+add_test(
+    NAME test_mpfr_environment_first_use_stable_initialize_thread_defaults
+    COMMAND test_mpfr_environment_first_use_stable initialize_thread_defaults
+)
 add_phase0_test(test_mpfr_environment_invalid mpfrxx_mkII)
 add_phase0_test(test_mpfr_string_io mpfrxx_mkII)
 add_phase0_test(test_mpfr_math mpfrxx_mkII)
@@ -128,12 +136,9 @@ set_tests_properties(test_mpf_default_precision_env PROPERTIES
 )
 add_executable(test_mpf_default_precision_invalid_env test_mpf_default_precision_invalid_env.cpp)
 target_link_libraries(test_mpf_default_precision_invalid_env PRIVATE gmpxx_mkII)
-add_test(
-    NAME test_mpf_default_precision_invalid_env
-    COMMAND "${CMAKE_COMMAND}"
-        -DTEST_EXECUTABLE=$<TARGET_FILE:test_mpf_default_precision_invalid_env>
-        -DTEST_ENVIRONMENT=GMPXX_MKII_DEFAULT_MPF_PREC_BITS=abc
-        -P "${CMAKE_CURRENT_SOURCE_DIR}/expect_process_failure.cmake"
+add_test(NAME test_mpf_default_precision_invalid_env COMMAND test_mpf_default_precision_invalid_env)
+set_tests_properties(test_mpf_default_precision_invalid_env PROPERTIES
+    ENVIRONMENT "GMPXX_MKII_DEFAULT_MPF_PREC_BITS=abc"
 )
 add_phase0_test(test_mpf_external_provider gmpxx_mkII_default_context_provider)
 add_phase0_test(test_mpf_aliasing gmpxx_mkII)

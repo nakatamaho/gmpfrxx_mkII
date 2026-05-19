@@ -28,8 +28,18 @@
 
 #include <gmpxx_mkII.h>
 
+#include <cstdlib>
+
 int main()
 {
-    (void)gmpxx::default_mpf_precision_bits();
+    if (gmpxx::default_mpf_precision_bits() != 512) {
+        std::abort();
+    }
+
+    gmpxx::mpf_class value;
+    if (value.precision() < 512) {
+        std::abort();
+    }
+
     return 0;
 }
