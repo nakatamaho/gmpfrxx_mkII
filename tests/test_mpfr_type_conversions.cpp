@@ -353,6 +353,35 @@ void test_mixed_exact_mpfr_conversion_legality()
     }
 }
 
+void test_mpfr_to_mpq_rejects_nan_and_inf()
+{
+    mpfrxx::mpfr_class nan_value;
+    mpfr_set_nan(nan_value.mpfr_data());
+
+    bool threw_nan = false;
+    try {
+        (void)static_cast<mpfrxx::mpq_class>(nan_value);
+    } catch (const std::domain_error&) {
+        threw_nan = true;
+    }
+    if (!threw_nan) {
+        std::abort();
+    }
+
+    mpfrxx::mpfr_class inf_value;
+    mpfr_set_inf(inf_value.mpfr_data(), 1);
+
+    bool threw_inf = false;
+    try {
+        (void)static_cast<mpfrxx::mpq_class>(inf_value);
+    } catch (const std::domain_error&) {
+        threw_inf = true;
+    }
+    if (!threw_inf) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main()
@@ -366,6 +395,7 @@ int main()
     test_exact_wrapper_construction_and_assignment();
     test_accessors_and_bool();
     test_mixed_exact_mpfr_conversion_legality();
+    test_mpfr_to_mpq_rejects_nan_and_inf();
 
     mpfrxx::set_default_precision_bits(old_defaults.precision_bits);
     mpfrxx::set_default_rounding_mode(old_defaults.rounding_mode);

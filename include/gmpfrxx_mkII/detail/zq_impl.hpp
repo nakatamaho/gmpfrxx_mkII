@@ -2913,7 +2913,7 @@ inline mpz_class lcm(const Lhs& lhs, const Rhs& rhs)
 inline unsigned long mpz_to_ulong_checked(const mpz_class& value, const char* name)
 {
     if (!value.fits_ulong_p()) {
-        throw std::bad_alloc();
+        throw std::overflow_error(name != nullptr ? name : "mpz value does not fit unsigned long");
     }
     return value.get_ui();
 }

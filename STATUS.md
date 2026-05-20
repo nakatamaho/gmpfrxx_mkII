@@ -1,3 +1,50 @@
+Post-phase rational conversion diagnostics:
+DONE
+
+Implemented features:
+- Rejected NaN and Inf before converting `mpfrxx::mpfr_class` to
+  `gmpxx::mpq_class`, avoiding MPFR's erange-to-zero conversion result being
+  exposed as a valid rational value.
+- Changed `mpz_to_ulong_checked()` overflow reporting from `std::bad_alloc` to
+  `std::overflow_error` using the operation-specific diagnostic string.
+
+Tests added:
+- Added `test_mpfr_to_mpq_rejects_nan_and_inf` to cover NaN and Inf
+  conversion to `mpq_class`.
+- Added `factorial` overflow coverage to ensure oversized `mpz_class` inputs
+  throw `std::overflow_error` and not `std::bad_alloc`.
+
+Tests updated:
+- `tests/test_mpfr_type_conversions.cpp`
+- `tests/test_mpz_arithmetic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '430,455p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '2898,2922p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '330,360p' tests/test_mpfr_type_conversions.cpp`
+- `rg -n "mpz_to_ulong_checked|factorial|primorial|fibonacci|overflow_error|bad_alloc" tests include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1,45p' tests/test_mpfr_type_conversions.cpp`
+- `sed -n '290,345p' tests/test_mpz_arithmetic.cpp`
+- `sed -n '345,380p' tests/test_mpfr_type_conversions.cpp`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/zq_impl.hpp tests/test_mpfr_type_conversions.cpp tests/test_mpz_arithmetic.cpp`
+- `git status --short`
+- `cmake --build build -j`
+- `ctest --test-dir build -R "test_mpfr_type_conversions|test_mpz_arithmetic" --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j`: PASS.
+- Targeted regression tests: PASS, 2/2 tests passed.
+- Full CTest: PASS, 170/170 tests passed.
+
+Known issues:
+- `mpq_class` / `mpq_ptr` stream input intentionally remains compatible with
+  upstream `gmpxx.h` and may preserve non-canonical and zero-denominator raw
+  rationals at the input layer.  This phase does not change that stream
+  compatibility contract.
+
 Post-phase MPFR Rgemv strict native numbering:
 DONE
 

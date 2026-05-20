@@ -328,6 +328,19 @@ void check_integer_helpers()
     require_mpz_equal(gmpxx::fibonacci(-gmpxx::mpz_class(6)), gmpxx::mpz_class(-8));
     require_mpz_equal(gmpxx::mpz_class::fibonacci(gmpxx::mpz_class(2) * 2), gmpxx::mpz_class(3));
     require_mpz_equal(gmpxx::mpz_class::fibonacci(3.0f), gmpxx::mpz_class(2));
+
+    gmpxx::mpz_class too_large = gmpxx::mpz_class(std::numeric_limits<unsigned long>::max()) + 1;
+    bool threw_overflow = false;
+    try {
+        (void)gmpxx::factorial(too_large);
+    } catch (const std::overflow_error&) {
+        threw_overflow = true;
+    } catch (const std::bad_alloc&) {
+        std::abort();
+    }
+    if (!threw_overflow) {
+        std::abort();
+    }
 }
 
 } // namespace

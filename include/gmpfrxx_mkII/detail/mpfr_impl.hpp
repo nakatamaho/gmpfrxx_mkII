@@ -444,6 +444,9 @@ public:
 
     explicit operator gmpxx::mpq_class() const
     {
+        if (mpfr_nan_p(value_) != 0 || mpfr_inf_p(value_) != 0) {
+            throw std::domain_error("cannot convert NaN or Inf to mpq_class");
+        }
         gmpxx::mpq_class result;
         mpfr_get_q(result.mpq_data(), value_);
         result.canonicalize();
