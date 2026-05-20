@@ -150,6 +150,8 @@ public:
 
     static mpfc_class with_precision(mp_bitcnt_t precision, double real_value, double imag_value)
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(real_value, "mpfc_class real component");
+        gmpfrxx_mkII::detail::require_finite_gmp_double(imag_value, "mpfc_class imaginary component");
         mpfc_class result = with_precision(precision);
         mpf_set_d(result.real_.mpf_data(), real_value);
         mpf_set_d(result.imag_.mpf_data(), imag_value);

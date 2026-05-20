@@ -46,6 +46,20 @@ void require_mpf_equal(const gmpxx::mpf_class& got, const gmpxx::mpf_class& expe
     }
 }
 
+template <typename Function>
+void require_domain_error(Function&& function)
+{
+    bool threw = false;
+    try {
+        function();
+    } catch (const std::domain_error&) {
+        threw = true;
+    }
+    if (!threw) {
+        std::abort();
+    }
+}
+
 #if defined(__SIZEOF_INT128__)
 std::string uint128_to_string(__uint128_t value)
 {
@@ -352,6 +366,39 @@ void test_wrapper_construction_and_assignment()
     require_mpf_equal(f_assigned, expected_assigned_q);
 }
 
+void test_gmp_double_nan_inf_rejected()
+{
+    const double nan = std::numeric_limits<double>::quiet_NaN();
+    const double inf = std::numeric_limits<double>::infinity();
+
+    require_domain_error([&] { (void)gmpxx::mpz_class(nan); });
+    require_domain_error([&] { (void)gmpxx::mpz_class(inf); });
+    gmpxx::mpz_class z(1);
+    require_domain_error([&] { z = nan; });
+    require_domain_error([&] { z = inf; });
+
+    require_domain_error([&] { (void)gmpxx::mpq_class(nan); });
+    require_domain_error([&] { (void)gmpxx::mpq_class(inf); });
+    gmpxx::mpq_class q(1);
+    require_domain_error([&] { q = nan; });
+    require_domain_error([&] { q = inf; });
+
+    require_domain_error([&] { (void)gmpxx::mpf_class(nan); });
+    require_domain_error([&] { (void)gmpxx::mpf_class(inf); });
+    require_domain_error([&] { (void)gmpxx::mpf_class(nan, static_cast<mp_bitcnt_t>(128)); });
+    require_domain_error([&] { (void)gmpxx::mpf_class::with_precision(static_cast<mp_bitcnt_t>(128), inf); });
+    gmpxx::mpf_class f(1);
+    require_domain_error([&] { f = nan; });
+    require_domain_error([&] { f.set(inf); });
+    require_domain_error([&] { f = f + nan; });
+
+    require_domain_error([&] { (void)gmpxx::mpfc_class(nan); });
+    require_domain_error([&] { (void)gmpxx::mpfc_class(1.0, inf); });
+    require_domain_error([&] {
+        (void)gmpxx::mpfc_class::with_precision(static_cast<mp_bitcnt_t>(128), nan, 0.0);
+    });
+}
+
 void test_accessors_fit_queries_and_bool()
 {
     gmpxx::mpq_class value("3/4");
@@ -414,6 +461,7 @@ int main()
     test_int128_conversions();
     test_mpq_scalar_string_and_raw_construction();
     test_wrapper_construction_and_assignment();
+    test_gmp_double_nan_inf_rejected();
     test_accessors_fit_queries_and_bool();
     return 0;
 }

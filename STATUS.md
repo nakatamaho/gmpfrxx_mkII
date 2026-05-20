@@ -1,3 +1,53 @@
+Post-phase GMP invalid input guards:
+DONE
+
+Implemented features:
+- Added a shared GMP-side finite-double guard and applied it before raw
+  `mpz_set_d`, `mpq_set_d`, and `mpf_set_d` calls reachable from public
+  constructors, assignments, `with_precision`, `set`, and expression scalar
+  evaluation.
+- Extended the finite-double guard to `gmpxx::mpfc_class` scalar construction
+  paths that feed MPF components.
+- Rejected negative inputs before `gmpxx::sqrt(mpz_class)` reaches
+  `mpz_sqrt`.
+- Rejected negative inputs before `gmpxx::sqrt(mpf_class)` and internal
+  `mpf_math_detail::sqrt_prec` reach `mpf_sqrt`.
+
+Tests added:
+- `test_mpz_sqrt_negative_throws`
+- `test_mpf_sqrt_negative_throws`
+- `test_gmp_double_nan_inf_rejected`
+
+Tests updated:
+- `tests/test_mpf_math_functions.cpp`
+- `tests/test_type_conversions.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '25,70p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '25,75p' include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `sed -n '25,70p' include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `sed -n '25,65p' include/gmpfrxx_mkII/detail/mpfc_impl.hpp`
+- `sed -n '80,125p' tests/test_mpf_math_functions.cpp`
+- `sed -n '370,395p' tests/test_mpf_math_functions.cpp`
+- `sed -n '230,270p' tests/test_type_conversions.cpp`
+- `sed -n '400,425p' tests/test_type_conversions.cpp`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_math_functions.cpp tests/test_type_conversions.cpp`
+- `rg -n "require_finite_gmp_double|mpz square root|mpf square root|mp[xyzqf]+_set_d|test_gmp_double_nan_inf_rejected|test_mpz_sqrt_negative_throws|test_mpf_sqrt_negative_throws" include/gmpfrxx_mkII/detail tests/test_type_conversions.cpp tests/test_mpf_math_functions.cpp`
+- `cmake --build build -j`
+- `ctest --test-dir build -R "test_type_conversions|test_mpf_math_functions" --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `cmake --build build -j`: PASS.
+- Targeted regression tests: PASS, 2/2 tests passed.
+- Full CTest: PASS, 170/170 tests passed.
+
+Known issues:
+- `mpf_math_detail::div` still performs raw `mpf_div` and needs a separate
+  zero-divisor guard.
+
 Post-phase rational conversion diagnostics:
 DONE
 

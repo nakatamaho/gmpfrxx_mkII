@@ -115,11 +115,13 @@ public:
 
     mpf_class(double value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpf_class");
         mpf_set_d(value_, value);
     }
 
     mpf_class(double value, mp_bitcnt_t precision) : mpf_class(precision_tag{}, precision)
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpf_class");
         mpf_set_d(value_, value);
     }
 
@@ -324,6 +326,7 @@ public:
 
     static mpf_class with_precision(mp_bitcnt_t precision, double value)
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpf_class");
         mpf_class result = with_precision(precision);
         mpf_set_d(result.value_, value);
         return result;
@@ -436,6 +439,7 @@ public:
 
     void set(double value)
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpf_class");
         mpf_set_d(value_, value);
     }
 
@@ -1492,7 +1496,9 @@ template <typename T, typename Result>
 void mpf_evaluate(mpf_t dest, const scalar_leaf<T, Result>& expr, mp_bitcnt_t)
 {
     if constexpr (std::is_same_v<T, double>) {
-        mpf_set_d(dest, expr.value());
+        const double value = expr.value();
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpf_class");
+        mpf_set_d(dest, value);
     } else if constexpr (std::is_same_v<T, std::int64_t>) {
         if constexpr (std::numeric_limits<long>::digits >= 63) {
             mpf_set_si(dest, static_cast<long>(expr.value()));

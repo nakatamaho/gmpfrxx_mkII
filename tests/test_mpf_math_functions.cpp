@@ -111,6 +111,28 @@ void test_sqrt()
     assert_mpf_equal(zero_result, zero_expected);
 }
 
+void test_mpz_sqrt_negative_throws()
+{
+    bool threw = false;
+    try {
+        (void)gmpxx::sqrt(gmpxx::mpz_class(-1));
+    } catch (const std::domain_error&) {
+        threw = true;
+    }
+    assert(threw);
+}
+
+void test_mpf_sqrt_negative_throws()
+{
+    bool threw = false;
+    try {
+        (void)gmpxx::sqrt(gmpxx::mpf_class("-1.0", static_cast<mp_bitcnt_t>(256)));
+    } catch (const std::domain_error&) {
+        threw = true;
+    }
+    assert(threw);
+}
+
 void test_abs()
 {
     gmpxx::mpf_class negative("-3.5", static_cast<mp_bitcnt_t>(320));
@@ -383,6 +405,8 @@ int main()
 {
     test_compile_time_surface();
     test_sqrt();
+    test_mpz_sqrt_negative_throws();
+    test_mpf_sqrt_negative_throws();
     test_abs();
     test_neg();
     test_rounding_functions();

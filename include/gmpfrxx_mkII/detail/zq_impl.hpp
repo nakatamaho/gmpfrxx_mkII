@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdint>
+#include <cmath>
 #include <cstring>
 #include <istream>
 #include <locale>
@@ -50,6 +51,13 @@
 
 namespace gmpfrxx_mkII {
 namespace detail {
+
+inline void require_finite_gmp_double(double value, const char* target)
+{
+    if (!std::isfinite(value)) {
+        throw std::domain_error(std::string(target) + " double input must be finite");
+    }
+}
 
 class gmp_randstate_holder {
 public:
@@ -430,6 +438,7 @@ public:
 
     explicit mpz_class(double value)
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpz_class");
         mpz_init(value_);
         mpz_set_d(value_, value);
     }
@@ -500,6 +509,7 @@ public:
 
     mpz_class& operator=(double value)
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpz_class");
         mpz_set_d(value_, value);
         return *this;
     }
@@ -844,6 +854,7 @@ public:
 
     explicit mpq_class(double value)
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpq_class");
         mpq_init(value_);
         mpq_set_d(value_, value);
         mpq_canonicalize(value_);
@@ -888,6 +899,7 @@ public:
 
     mpq_class& operator=(double value)
     {
+        gmpfrxx_mkII::detail::require_finite_gmp_double(value, "mpq_class");
         mpq_set_d(value_, value);
         mpq_canonicalize(value_);
         return *this;
@@ -2869,6 +2881,9 @@ inline int sgn(const Expr& expr)
 
 inline mpz_class sqrt(const mpz_class& value)
 {
+    if (mpz_sgn(value.mpz_data()) < 0) {
+        throw std::domain_error("mpz square root of negative value");
+    }
     mpz_class result;
     mpz_sqrt(result.mpz_data(), value.mpz_data());
     return result;

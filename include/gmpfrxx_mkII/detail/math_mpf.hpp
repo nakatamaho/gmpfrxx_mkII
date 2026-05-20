@@ -182,6 +182,9 @@ inline mpf_class div(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t pre
 
 inline mpf_class sqrt_prec(const mpf_class& value, mp_bitcnt_t precision)
 {
+    if (mpf_sgn(value.mpf_data()) < 0) {
+        throw std::domain_error("mpf square root of negative value");
+    }
     mpf_class result = mpf_class::with_precision(precision);
     mpf_sqrt(result.mpf_data(), value.mpf_data());
     return result;
@@ -1535,9 +1538,7 @@ inline mpf_class two_pi()
 
 inline mpf_class sqrt(const mpf_class& value)
 {
-    mpf_class result = mpf_class::with_precision(value.precision());
-    mpf_sqrt(result.mpf_data(), value.mpf_data());
-    return result;
+    return mpf_math_detail::sqrt_prec(value, value.precision());
 }
 
 inline mpf_class abs(const mpf_class& value)
