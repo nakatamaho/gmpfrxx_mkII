@@ -30,7 +30,10 @@
 #include <mpcxx_mkII.h>
 
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
+#include <limits>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -43,6 +46,17 @@ struct has_less_than : std::false_type {};
 template <typename Lhs, typename Rhs>
 struct has_less_than<Lhs, Rhs, std::void_t<decltype(std::declval<Lhs>() < std::declval<Rhs>())>>
     : std::true_type {};
+
+template <typename Function>
+void require_invalid_argument(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::invalid_argument&) {
+        return;
+    }
+    std::abort();
+}
 
 template <typename T, typename = void>
 struct has_real_member_accessor : std::false_type {};
@@ -252,6 +266,43 @@ int main()
     if (!(complex_three != 3) || !(3 != complex_three) || !(complex_three != mpfr_three)) {
         std::abort();
     }
+
+    auto exact_edge_complex = mpfrxx::mpc_class::with_precision(53, 53, 0.0, 0.0);
+    mpfr_set_ui_2exp(mpc_realref(exact_edge_complex.mpc_data()), 1u, 100, MPFR_RNDN);
+    mpfrxx::mpz_class two_to_100_plus_one(1);
+    mpz_mul_2exp(two_to_100_plus_one.mpz_data(), two_to_100_plus_one.mpz_data(), 100);
+    two_to_100_plus_one += 1;
+    if (!(exact_edge_complex != two_to_100_plus_one) || two_to_100_plus_one == exact_edge_complex) {
+        std::abort();
+    }
+
+    mpfrxx::mpz_class rational_numerator(3);
+    mpz_mul_2exp(rational_numerator.mpz_data(), rational_numerator.mpz_data(), 100);
+    rational_numerator += 1;
+    const mpfrxx::mpq_class rational_above(rational_numerator, mpfrxx::mpz_class(3));
+    if (!(exact_edge_complex != rational_above) || rational_above == exact_edge_complex) {
+        std::abort();
+    }
+
+    const std::uint64_t max_u = std::numeric_limits<std::uint64_t>::max();
+    const mpfrxx::mpz_class max_u_z(max_u);
+    auto rounded_uint64_complex = mpfrxx::mpc_class::with_precision(53, 53, 0.0, 0.0);
+    mpfr_set_z(mpc_realref(rounded_uint64_complex.mpc_data()), max_u_z.mpz_data(), MPFR_RNDN);
+    if (!(rounded_uint64_complex != max_u) || max_u == rounded_uint64_complex) {
+        std::abort();
+    }
+
+    require_invalid_argument([] { (void)mpfrxx::mpc_class::with_precision(0); });
+    require_invalid_argument([] { (void)mpfrxx::mpc_class::with_precision(64, 0); });
+    require_invalid_argument([] { (void)mpfrxx::mpc_class("1+2i", 0); });
+    require_invalid_argument([] { (void)mpfrxx::mpc_class("1+2i", 64, 0, 0); });
+    if (MPFR_PREC_MAX < std::numeric_limits<mpfr_prec_t>::max()) {
+        const auto too_large_precision =
+            static_cast<mpfr_prec_t>(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
+        require_invalid_argument([&] { (void)mpfrxx::mpc_class::with_precision(too_large_precision); });
+        require_invalid_argument([&] { (void)mpfrxx::mpc_class::with_precision(64, too_large_precision); });
+    }
+
     auto nan_complex = mpfrxx::mpc_class::with_precision(160, 192, 0.0, 0.0);
     mpfr_set_nan(mpc_realref(nan_complex.mpc_data()));
     if (nan_complex == nan_complex) {

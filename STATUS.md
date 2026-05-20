@@ -19493,3 +19493,48 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: Exact MPFR/MPC Comparisons and Precision Validation
+
+Implemented features:
+- Added a throwing `require_valid_mpfr_precision()` helper and applied it before public MPFR/MPC precision entry points can reach `mpfr_init2`, `mpfr_prec_round`, or `mpc_init3`.
+- Changed direct MPFR comparisons against `mpz_class`, `mpq_class`, and supported scalar leaves to use exact MPFR comparison APIs instead of finite-precision materialization.
+- Added an expression-vs-exact comparison path so an exact operand is not rounded when the other side is an MPFR expression.
+- Changed `mpfrxx::cmp()` to report unordered NaN comparisons by throwing `std::domain_error` instead of exposing raw `mpfr_cmp()` zero results.
+- Changed MPC equality against exact real operands to require zero imaginary part and compare the real component without rounding the exact operand through `mpfr_class(real_precision)`.
+
+Missing features:
+- Expression-vs-expression comparison still evaluates non-leaf expressions through the existing MPFR expression evaluation path.  Direct exact leaf and expression-vs-exact comparisons no longer round exact operands.
+
+Tests added:
+- Exact MPFR integer, rational, scalar, and expression-vs-exact comparison regressions where finite materialization would round away the difference.
+- MPC exact scalar equality regressions for the same rounded-away cases.
+- Invalid precision regressions for MPFR constructors, `with_precision`, `set_prec`, and MPC precision constructors.
+- `mpfrxx::cmp()` NaN regression tests.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_mpfr_comparisons.cpp`
+- `tests/test_mpfr_precision_policy.cpp`
+- `tests/test_mpc_basic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfr_comparisons test_mpfr_precision_policy test_mpc_basic -j`
+- `ctest --test-dir build -R "test_mpfr_comparisons|test_mpfr_precision_policy|test_mpc_basic" --output-on-failure`
+- `cmake --build build --target test_mpfr_comparisons -j`
+- `ctest --test-dir build -R "test_mpfr_comparisons" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial targeted run exposed an old `355/113` exact-rational equality assumption; the test was corrected to use exactly representable `7/4` for equality and separate non-rounding rational regressions for inexact values.
+- Targeted MPFR/MPC comparison and precision tests: PASS.  3/3 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.

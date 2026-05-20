@@ -65,6 +65,17 @@ void require_invalid_argument(Function&& function)
     std::abort();
 }
 
+template <typename Function>
+void require_domain_error(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::domain_error&) {
+        return;
+    }
+    std::abort();
+}
+
 void assert_same_mpfr_value(const mpfrxx::mpfr_class& got, mpfr_srcptr expected)
 {
     assert(mpfr_cmp(got.mpfr_data(), expected) == 0);
@@ -107,12 +118,55 @@ void test_mpfr_objects_and_exact_operands()
     check_consistency(max_u_f, max_u_z);
     check_consistency(max_u_z, max_u_f);
 
-    mpfrxx::mpq_class rational("355/113");
+    mpfrxx::mpq_class rational("7/4");
     mpfrxx::mpfr_class rational_f(rational, 512);
     assert(rational_f == rational);
     assert(rational == rational_f);
     check_consistency(rational_f, rational);
     check_consistency(rational, rational_f);
+}
+
+void test_mpfr_exact_integer_rational_and_scalar_comparisons_do_not_round()
+{
+    mpfrxx::mpfr_class two_to_100 = mpfrxx::mpfr_class::with_precision(53);
+    mpfr_set_ui_2exp(two_to_100.mpfr_data(), 1u, 100, MPFR_RNDN);
+
+    mpfrxx::mpz_class two_to_100_plus_one(1);
+    mpz_mul_2exp(two_to_100_plus_one.mpz_data(), two_to_100_plus_one.mpz_data(), 100);
+    two_to_100_plus_one += 1;
+
+    assert(!(two_to_100 == two_to_100_plus_one));
+    assert(two_to_100 != two_to_100_plus_one);
+    assert(two_to_100 < two_to_100_plus_one);
+    assert(two_to_100_plus_one > two_to_100);
+    assert(cmp(two_to_100, two_to_100_plus_one) < 0);
+    assert(cmp(two_to_100_plus_one, two_to_100) > 0);
+
+    const auto zero_53 = mpfrxx::mpfr_class::with_precision(53, 0.0);
+    assert(!((two_to_100 + zero_53) == two_to_100_plus_one));
+    assert((two_to_100 + zero_53) < two_to_100_plus_one);
+    assert(two_to_100_plus_one > (two_to_100 + zero_53));
+    assert(cmp(two_to_100 + zero_53, two_to_100_plus_one) < 0);
+    assert(cmp(two_to_100_plus_one, two_to_100 + zero_53) > 0);
+
+    mpfrxx::mpz_class rational_numerator(3);
+    mpz_mul_2exp(rational_numerator.mpz_data(), rational_numerator.mpz_data(), 100);
+    rational_numerator += 1;
+    const mpfrxx::mpq_class rational_above(rational_numerator, mpfrxx::mpz_class(3));
+
+    assert(!(two_to_100 == rational_above));
+    assert(two_to_100 < rational_above);
+    assert(rational_above > two_to_100);
+    assert(cmp(two_to_100, rational_above) < 0);
+    assert(cmp(rational_above, two_to_100) > 0);
+
+    const std::uint64_t max_u = std::numeric_limits<std::uint64_t>::max();
+    const mpfrxx::mpfr_class rounded_uint64(mpfrxx::mpz_class(max_u), 53);
+    assert(!(rounded_uint64 == max_u));
+    assert(rounded_uint64 > max_u);
+    assert(max_u < rounded_uint64);
+    assert(cmp(rounded_uint64, max_u) > 0);
+    assert(cmp(max_u, rounded_uint64) < 0);
 }
 
 void test_mpfr_expression_comparisons()
@@ -194,6 +248,11 @@ void test_mpfr_nan_comparisons()
     assert(!((nan + one) <= one));
     assert(!((nan + one) > one));
     assert(!((nan + one) >= one));
+
+    require_domain_error([&] { (void)cmp(nan, one); });
+    require_domain_error([&] { (void)cmp(one, nan); });
+    require_domain_error([&] { (void)cmp(nan, 0); });
+    require_domain_error([&] { (void)cmp(0, nan); });
 }
 
 void test_mpfr_sign_next_and_predicates()
@@ -357,6 +416,7 @@ void test_mpfr_comparison_helpers()
 int main()
 {
     test_mpfr_objects_and_exact_operands();
+    test_mpfr_exact_integer_rational_and_scalar_comparisons_do_not_round();
     test_mpfr_expression_comparisons();
     test_mpfr_comparison_exception_path();
     test_mpfr_scalar_comparisons();

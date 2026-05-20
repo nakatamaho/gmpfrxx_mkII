@@ -36,6 +36,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
+#include <stdexcept>
 
 #include <mpfr.h>
 
@@ -83,6 +84,13 @@ inline void refresh_stable_mpfr_rounding_mode() noexcept
 inline bool valid_mpfr_precision(mpfr_prec_t precision) noexcept
 {
     return precision >= MPFR_PREC_MIN && precision <= MPFR_PREC_MAX;
+}
+
+inline void require_valid_mpfr_precision(mpfr_prec_t precision)
+{
+    if (!valid_mpfr_precision(precision)) {
+        throw std::invalid_argument("invalid MPFR precision");
+    }
 }
 
 inline bool parse_mpfr_precision(const char* text, mpfr_prec_t& out) noexcept

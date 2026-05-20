@@ -83,6 +83,7 @@ public:
     scoped_mpfr_init(mpfr_t value, mpfr_prec_t precision)
         : value_(value)
     {
+        require_valid_mpfr_precision(precision);
         mpfr_init2(value_, precision);
     }
 
@@ -424,6 +425,7 @@ public:
 
     void set_prec(mpfr_prec_t precision)
     {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
         mpfr_prec_round(value_, precision, context.rounding_mode);
     }
@@ -1928,6 +1930,7 @@ void mpfr_evaluate_to_temporary(
     mpfr_prec_t eval_precision,
     mpfr_rnd_t rnd)
 {
+    gmpfrxx_mkII::detail::require_valid_mpfr_precision(eval_precision);
     mpfr_init2(temp, eval_precision);
     try {
         mpfr_evaluate(temp, expr, eval_precision, rnd);
@@ -1941,6 +1944,7 @@ class scoped_mpfr_temporary {
 public:
     explicit scoped_mpfr_temporary(mpfr_prec_t precision)
     {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
         mpfr_init2(value_, precision);
     }
 
@@ -2017,6 +2021,7 @@ private:
 
     static void prepare(slot& item, mpfr_prec_t precision)
     {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
         if (!item.initialized) {
             mpfr_init2(item.value, precision);
             item.initialized = true;
@@ -2050,6 +2055,7 @@ public:
         : slot_(mpfr_current_thread_scratch_pool().acquire(precision))
     {
         if (slot_ == nullptr) {
+            gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
             mpfr_init2(fallback_, precision);
             using_fallback_ = true;
         }
@@ -2502,6 +2508,7 @@ template <typename Expr, typename>
 mpfr_class::mpfr_class(const Expr& expr)
 {
     const mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_constructor_materialization_precision(expr);
+    gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
     mpfr_init2(value_, precision);
     try {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
@@ -2515,6 +2522,7 @@ mpfr_class::mpfr_class(const Expr& expr)
 template <typename Expr, typename, typename>
 mpfr_class::mpfr_class(const Expr& expr, mpfr_prec_t precision)
 {
+    gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
     mpfr_init2(value_, precision);
     try {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
@@ -2554,6 +2562,7 @@ public:
           precision_(precision),
           rounding_mode_(rounding_mode)
     {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
         check_precision();
     }
 
@@ -2693,6 +2702,7 @@ class scoped_mpfr_t {
 public:
     explicit scoped_mpfr_t(mpfr_prec_t precision)
     {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
         mpfr_init2(value_, precision);
     }
 
@@ -2716,11 +2726,216 @@ struct mpfr_comparison_result {
     bool has_nan;
 };
 
+template <typename T>
+struct is_mpfr_class_comparison_leaf : std::false_type {};
+
+template <>
+struct is_mpfr_class_comparison_leaf<gmpfrxx_mkII::detail::object_leaf<mpfrxx::mpfr_class>> : std::true_type {};
+
+template <>
+struct is_mpfr_class_comparison_leaf<gmpfrxx_mkII::detail::borrowed_object_leaf<mpfrxx::mpfr_class>>
+    : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpfr_class_comparison_leaf_v =
+    is_mpfr_class_comparison_leaf<std::decay_t<T>>::value;
+
+template <typename T>
+struct is_mpfr_exact_comparison_leaf : std::false_type {};
+
+template <>
+struct is_mpfr_exact_comparison_leaf<gmpfrxx_mkII::detail::object_leaf<gmpxx::mpz_class>> : std::true_type {};
+
+template <>
+struct is_mpfr_exact_comparison_leaf<gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpz_class>>
+    : std::true_type {};
+
+template <>
+struct is_mpfr_exact_comparison_leaf<gmpfrxx_mkII::detail::object_leaf<gmpxx::mpq_class>> : std::true_type {};
+
+template <>
+struct is_mpfr_exact_comparison_leaf<gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpq_class>>
+    : std::true_type {};
+
+template <typename T, typename Result>
+struct is_mpfr_exact_comparison_leaf<gmpfrxx_mkII::detail::scalar_leaf<T, Result>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpfr_exact_comparison_leaf_v =
+    is_mpfr_exact_comparison_leaf<std::decay_t<T>>::value;
+
+inline int mpfr_reverse_comparison_order(int order) noexcept
+{
+    if (order < 0) {
+        return 1;
+    }
+    if (order > 0) {
+        return -1;
+    }
+    return 0;
+}
+
+inline mpfr_srcptr mpfr_comparison_leaf_ptr(
+    const gmpfrxx_mkII::detail::object_leaf<mpfrxx::mpfr_class>& expr) noexcept
+{
+    return expr.get().mpfr_data();
+}
+
+inline mpfr_srcptr mpfr_comparison_leaf_ptr(
+    const gmpfrxx_mkII::detail::borrowed_object_leaf<mpfrxx::mpfr_class>& expr) noexcept
+{
+    return expr.get().mpfr_data();
+}
+
+inline mpfr_comparison_result mpfr_compare_mpfr_to_exact_leaf(
+    mpfr_srcptr lhs,
+    const gmpfrxx_mkII::detail::object_leaf<gmpxx::mpz_class>& rhs)
+{
+    if (mpfr_nan_p(lhs) != 0) {
+        return {0, true};
+    }
+    return {mpfr_cmp_z(lhs, rhs.get().mpz_data()), false};
+}
+
+inline mpfr_comparison_result mpfr_compare_mpfr_to_exact_leaf(
+    mpfr_srcptr lhs,
+    const gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpz_class>& rhs)
+{
+    if (mpfr_nan_p(lhs) != 0) {
+        return {0, true};
+    }
+    return {mpfr_cmp_z(lhs, rhs.get().mpz_data()), false};
+}
+
+inline mpfr_comparison_result mpfr_compare_mpfr_to_exact_leaf(
+    mpfr_srcptr lhs,
+    const gmpfrxx_mkII::detail::object_leaf<gmpxx::mpq_class>& rhs)
+{
+    if (mpfr_nan_p(lhs) != 0) {
+        return {0, true};
+    }
+    return {mpfr_cmp_q(lhs, rhs.get().mpq_data()), false};
+}
+
+inline mpfr_comparison_result mpfr_compare_mpfr_to_exact_leaf(
+    mpfr_srcptr lhs,
+    const gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpq_class>& rhs)
+{
+    if (mpfr_nan_p(lhs) != 0) {
+        return {0, true};
+    }
+    return {mpfr_cmp_q(lhs, rhs.get().mpq_data()), false};
+}
+
+inline int mpfr_cmp_int64_exact(mpfr_srcptr lhs, std::int64_t rhs)
+{
+    if constexpr (std::numeric_limits<long>::digits >= 63) {
+        return mpfr_cmp_si(lhs, static_cast<long>(rhs));
+    } else {
+        const gmpxx::mpz_class integer(rhs);
+        return mpfr_cmp_z(lhs, integer.mpz_data());
+    }
+}
+
+inline int mpfr_cmp_uint64_exact(mpfr_srcptr lhs, std::uint64_t rhs)
+{
+    if constexpr (std::numeric_limits<unsigned long>::digits >= 64) {
+        return mpfr_cmp_ui(lhs, static_cast<unsigned long>(rhs));
+    } else {
+        const gmpxx::mpz_class integer(rhs);
+        return mpfr_cmp_z(lhs, integer.mpz_data());
+    }
+}
+
+template <typename T, typename Result>
+mpfr_comparison_result mpfr_compare_mpfr_to_exact_leaf(
+    mpfr_srcptr lhs,
+    const gmpfrxx_mkII::detail::scalar_leaf<T, Result>& rhs)
+{
+    if (mpfr_nan_p(lhs) != 0) {
+        return {0, true};
+    }
+    if constexpr (std::is_same_v<T, double>) {
+        if (std::isnan(rhs.value())) {
+            return {0, true};
+        }
+        return {mpfr_cmp_d(lhs, rhs.value()), false};
+    } else if constexpr (std::is_same_v<T, std::int64_t>) {
+        return {mpfr_cmp_int64_exact(lhs, rhs.value()), false};
+    } else if constexpr (std::is_same_v<T, std::uint64_t>) {
+        return {mpfr_cmp_uint64_exact(lhs, rhs.value()), false};
+    } else {
+        static_assert(std::is_same_v<T, double>, "unsupported MPFR comparison scalar leaf");
+    }
+}
+
+template <typename LhsLeaf, typename RhsLeaf>
+bool mpfr_try_exact_leaf_compare(const LhsLeaf& lhs, const RhsLeaf& rhs, mpfr_comparison_result& result)
+{
+    if constexpr (is_mpfr_class_comparison_leaf_v<LhsLeaf> && is_mpfr_class_comparison_leaf_v<RhsLeaf>) {
+        const mpfr_srcptr left = mpfr_comparison_leaf_ptr(lhs);
+        const mpfr_srcptr right = mpfr_comparison_leaf_ptr(rhs);
+        if (mpfr_nan_p(left) != 0 || mpfr_nan_p(right) != 0) {
+            result = {0, true};
+        } else {
+            result = {mpfr_cmp(left, right), false};
+        }
+        return true;
+    } else if constexpr (is_mpfr_class_comparison_leaf_v<LhsLeaf> && is_mpfr_exact_comparison_leaf_v<RhsLeaf>) {
+        result = mpfr_compare_mpfr_to_exact_leaf(mpfr_comparison_leaf_ptr(lhs), rhs);
+        return true;
+    } else if constexpr (is_mpfr_exact_comparison_leaf_v<LhsLeaf> && is_mpfr_class_comparison_leaf_v<RhsLeaf>) {
+        result = mpfr_compare_mpfr_to_exact_leaf(mpfr_comparison_leaf_ptr(rhs), lhs);
+        result.order = mpfr_reverse_comparison_order(result.order);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+template <typename Expr, typename ExactLeaf>
+mpfr_comparison_result mpfr_compare_expression_to_exact_leaf(const Expr& expr, const ExactLeaf& exact)
+{
+    mpfr_prec_t precision = gmpfrxx_mkII::detail::mpfr_expression_precision(expr);
+    if (precision == 0) {
+        precision = mpfr_class::default_precision();
+    }
+
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+    scoped_mpfr_t value(precision);
+    gmpfrxx_mkII::detail::mpfr_evaluate(value.get(), expr, precision, context.rounding_mode);
+    return mpfr_compare_mpfr_to_exact_leaf(value.get(), exact);
+}
+
+template <typename LhsExpr, typename RhsExpr>
+bool mpfr_try_expression_exact_compare(const LhsExpr& lhs, const RhsExpr& rhs, mpfr_comparison_result& result)
+{
+    if constexpr (!is_mpfr_exact_comparison_leaf_v<LhsExpr> && is_mpfr_exact_comparison_leaf_v<RhsExpr>) {
+        result = mpfr_compare_expression_to_exact_leaf(lhs, rhs);
+        return true;
+    } else if constexpr (is_mpfr_exact_comparison_leaf_v<LhsExpr> && !is_mpfr_exact_comparison_leaf_v<RhsExpr>) {
+        result = mpfr_compare_expression_to_exact_leaf(rhs, lhs);
+        result.order = mpfr_reverse_comparison_order(result.order);
+        return true;
+    } else {
+        return false;
+    }
+}
+
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline mpfr_comparison_result cmp_with_nan_status(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Lhs>(lhs));
     auto right = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Rhs>(rhs));
+
+    mpfr_comparison_result exact_result{0, false};
+    if (mpfr_try_exact_leaf_compare(left, right, exact_result)) {
+        return exact_result;
+    }
+    if (mpfr_try_expression_exact_compare(left, right, exact_result)) {
+        return exact_result;
+    }
+
     mpfr_prec_t precision = std::max(
         gmpfrxx_mkII::detail::mpfr_expression_precision(left),
         gmpfrxx_mkII::detail::mpfr_expression_precision(right));
@@ -2743,22 +2958,11 @@ inline mpfr_comparison_result cmp_with_nan_status(Lhs&& lhs, Rhs&& rhs)
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>
 inline int cmp(Lhs&& lhs, Rhs&& rhs)
 {
-    auto left = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Lhs>(lhs));
-    auto right = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Rhs>(rhs));
-    mpfr_prec_t precision = std::max(
-        gmpfrxx_mkII::detail::mpfr_expression_precision(left),
-        gmpfrxx_mkII::detail::mpfr_expression_precision(right));
-    if (precision == 0) {
-        precision = mpfr_class::default_precision();
+    const auto result = cmp_with_nan_status(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs));
+    if (result.has_nan) {
+        throw std::domain_error("unordered comparison with NaN");
     }
-
-    const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
-
-    scoped_mpfr_t lhs_value(precision);
-    scoped_mpfr_t rhs_value(precision);
-    gmpfrxx_mkII::detail::mpfr_evaluate(lhs_value.get(), left, precision, context.rounding_mode);
-    gmpfrxx_mkII::detail::mpfr_evaluate(rhs_value.get(), right, precision, context.rounding_mode);
-    return mpfr_cmp(lhs_value.get(), rhs_value.get());
+    return result.order;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpfr_comparison_pair<Lhs, Rhs>::value, int> = 0>

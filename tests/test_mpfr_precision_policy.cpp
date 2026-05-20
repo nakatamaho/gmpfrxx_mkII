@@ -30,6 +30,8 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <limits>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 
@@ -40,6 +42,17 @@ void require_mpfr_equal(const mpfrxx::mpfr_class& got, mpfr_srcptr expected)
     if (mpfr_cmp(got.mpfr_data(), expected) != 0) {
         std::abort();
     }
+}
+
+template <typename Function>
+void require_invalid_argument(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::invalid_argument&) {
+        return;
+    }
+    std::abort();
 }
 
 } // namespace
@@ -130,6 +143,22 @@ int main()
         }
         require_mpfr_equal(value, ref);
         mpfr_clear(ref);
+    }
+
+    {
+        require_invalid_argument([] { (void)mpfrxx::mpfr_class::with_precision(0); });
+        require_invalid_argument([] { (void)mpfrxx::mpfr_class(1.0, 0); });
+        require_invalid_argument([] { (void)mpfrxx::mpfr_class("1.0", 0); });
+
+        auto value = mpfrxx::mpfr_class::with_precision(64, 1.0);
+        require_invalid_argument([&] { value.set_prec(0); });
+
+        if (MPFR_PREC_MAX < std::numeric_limits<mpfr_prec_t>::max()) {
+            const auto too_large_precision =
+                static_cast<mpfr_prec_t>(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
+            require_invalid_argument([&] { (void)mpfrxx::mpfr_class::with_precision(too_large_precision); });
+            require_invalid_argument([&] { value.set_prec(too_large_precision); });
+        }
     }
 
     return 0;

@@ -60,6 +60,8 @@ public:
     scoped_mpc_init(mpc_t value, mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
         : value_(value)
     {
+        require_valid_mpfr_precision(real_precision);
+        require_valid_mpfr_precision(imag_precision);
         mpc_init3(value_, real_precision, imag_precision);
     }
 
@@ -316,6 +318,8 @@ public:
 
     mpc_class(const char* text, mpfr_prec_t real_precision, mpfr_prec_t imag_precision, int base)
     {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(real_precision);
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(imag_precision);
         mpc_init3(value_, real_precision, imag_precision);
         try {
             const auto context =
@@ -1227,6 +1231,8 @@ void mpc_evaluate_to_temporary(
     mpc_expression_precision_bits eval_precision,
     mpc_rnd_t rnd)
 {
+    gmpfrxx_mkII::detail::require_valid_mpfr_precision(eval_precision.real);
+    gmpfrxx_mkII::detail::require_valid_mpfr_precision(eval_precision.imag);
     mpc_init3(temp, eval_precision.real, eval_precision.imag);
     try {
         mpc_evaluate(temp, expr, eval_precision, rnd);
@@ -1240,6 +1246,8 @@ class scoped_mpc_temporary {
 public:
     explicit scoped_mpc_temporary(mpc_expression_precision_bits precision)
     {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision.real);
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision.imag);
         mpc_init3(value_, precision.real, precision.imag);
     }
 
@@ -1415,6 +1423,8 @@ template <typename Expr, typename>
 mpc_class::mpc_class(const Expr& expr)
 {
     const auto precision = gmpfrxx_mkII::detail::mpc_constructor_materialization_precision(expr);
+    gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision.real);
+    gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision.imag);
     mpc_init3(value_, precision.real, precision.imag);
     try {
         const auto context = gmpfrxx_mkII::detail::current_mpc_eval_context(precision);
@@ -1481,9 +1491,22 @@ inline bool operator!=(const mpfr_class& lhs, const mpc_class& rhs)
     return !(lhs == rhs);
 }
 
+template <typename Exact>
+inline bool mpc_real_component_equals_exact(const mpc_class& lhs, const Exact& rhs)
+{
+    if (gmpfrxx_mkII::detail::mpc_has_nan_component(lhs.mpc_data()) ||
+        mpfr_zero_p(mpc_imagref(lhs.mpc_data())) == 0) {
+        return false;
+    }
+
+    auto operand = gmpfrxx_mkII::detail::make_mpfr_operand(rhs);
+    const auto result = mpfr_compare_mpfr_to_exact_leaf(mpc_realref(lhs.mpc_data()), operand);
+    return !result.has_nan && result.order == 0;
+}
+
 inline bool operator==(const mpc_class& lhs, const gmpxx::mpz_class& rhs)
 {
-    return lhs == mpfr_class(rhs, lhs.real_precision());
+    return mpc_real_component_equals_exact(lhs, rhs);
 }
 
 inline bool operator==(const gmpxx::mpz_class& lhs, const mpc_class& rhs)
@@ -1503,7 +1526,7 @@ inline bool operator!=(const gmpxx::mpz_class& lhs, const mpc_class& rhs)
 
 inline bool operator==(const mpc_class& lhs, const gmpxx::mpq_class& rhs)
 {
-    return lhs == mpfr_class(rhs, lhs.real_precision());
+    return mpc_real_component_equals_exact(lhs, rhs);
 }
 
 inline bool operator==(const gmpxx::mpq_class& lhs, const mpc_class& rhs)
@@ -1524,7 +1547,7 @@ inline bool operator!=(const gmpxx::mpq_class& lhs, const mpc_class& rhs)
 template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
 inline bool operator==(const mpc_class& lhs, Scalar rhs)
 {
-    return lhs == mpfr_class(rhs, lhs.real_precision());
+    return mpc_real_component_equals_exact(lhs, rhs);
 }
 
 template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
