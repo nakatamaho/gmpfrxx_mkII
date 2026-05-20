@@ -175,6 +175,9 @@ inline mpf_class sqr(const mpf_class& value, mp_bitcnt_t precision)
 
 inline mpf_class div(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
 {
+    if (mpf_sgn(rhs.mpf_data()) == 0) {
+        throw std::domain_error("mpf division by zero");
+    }
     mpf_class result = mpf_class::with_precision(precision);
     mpf_div(result.mpf_data(), lhs.mpf_data(), rhs.mpf_data());
     return result;

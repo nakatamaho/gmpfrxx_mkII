@@ -1,3 +1,39 @@
+Post-phase MPF math helper division guard:
+DONE
+
+Implemented features:
+- Rejected zero denominators in `mpf_math_detail::div()` before calling raw
+  `mpf_div`, closing the public math-helper path that bypassed the existing
+  expression-template division guard.
+
+Tests added:
+- Added direct `mpf_math_detail::div(..., 0, ...)` coverage in
+  `test_epsilon_and_remainder` to ensure the helper throws
+  `std::domain_error` before GMP sees a zero divisor.
+
+Tests updated:
+- `tests/test_mpf_math_functions.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff -- include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_math_functions.cpp`
+- `git status --short`
+- `git diff --check`
+- `sed -n '1,160p' STATUS.md`
+- `cmake --build build -j`
+- `ctest --test-dir build -R test_mpf_math_functions --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- Targeted regression test: PASS, 1/1 test passed.
+- Full CTest: PASS, 170/170 tests passed.
+
+Known issues:
+- No known remaining issue for the `mpf_math_detail::div` zero-denominator
+  path.
+
 Post-phase GMP invalid input guards:
 DONE
 

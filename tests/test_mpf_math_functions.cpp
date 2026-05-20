@@ -312,6 +312,17 @@ void test_epsilon_and_remainder()
         threw = true;
     }
     assert(threw);
+
+    threw = false;
+    try {
+        (void)gmpxx::mpf_math_detail::div(
+            gmpxx::mpf_class("1"),
+            gmpxx::mpf_class("0"),
+            static_cast<mp_bitcnt_t>(128));
+    } catch (const std::domain_error&) {
+        threw = true;
+    }
+    assert(threw);
 }
 
 void test_sign_and_exact_math_functions()
