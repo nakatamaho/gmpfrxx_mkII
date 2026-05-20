@@ -65,6 +65,22 @@ operators such as `<`, `<=`, `>`, and `>=` are intentionally not defined. MPC
 values with a NaN component compare unequal to themselves, matching the usual
 IEEE-style NaN equality rule.
 
+## Scalar Common Types
+
+The wrapper-defined `std::common_type` specializations follow the same scalar
+policy as expression scalar leaves. Supported real scalar leaves such as
+`int`, fixed-width 64-bit integers, `float`, and `double` promote with
+`mpfrxx::mpfr_class` to `mpfrxx::mpfr_class`, and with `mpfrxx::mpc_class` to
+`mpfrxx::mpc_class`. `bool`, `long double`, and `__int128` remain outside the
+expression scalar-leaf contract and must not become common-type promotion
+backdoors.
+
+When `mpcxx_mkII.h` or `gmpfrxx_mkII.h` is included, `std::complex<double>` is
+accepted as an MPC scalar operand. It promotes with `mpfrxx::mpc_class` to
+`mpfrxx::mpc_class`; it also promotes with `mpfrxx::mpfr_class` to
+`mpfrxx::mpc_class` because the result has a complex component. This support is
+MPC-only and must not make `mpfrxx_mkII.h` depend on GNU MPC by itself.
+
 ## MPQ Stream Input and Arithmetic Readiness
 
 `gmpxx::mpq_class` and raw `mpq_ptr` stream extraction intentionally follow

@@ -19777,3 +19777,44 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: MPFR/MPC Scalar Common Types and Complex Scalar Promotion
+
+Implemented features:
+- Added explicit builtin scalar `std::common_type` support for `mpfrxx::mpfr_class`, matching the supported expression scalar leaves such as `int`, fixed-width 64-bit integers, `float`, and `double`.
+- Added explicit builtin scalar `std::common_type` support for `mpfrxx::mpc_class`.
+- Added `std::complex<double>` as an MPC scalar operand for construction, assignment, expression evaluation, arithmetic with `mpfrxx::mpc_class`, and arithmetic with `mpfrxx::mpfr_class` when the MPC header is included.
+- Added exact equality and inequality support between `mpfrxx::mpc_class` and `std::complex<double>`.
+- Documented the scalar common-type and `std::complex<double>` MPC promotion policy in `SPECIFICATIONS.md`.
+
+Missing features:
+- `std::complex<float>` and `std::complex<long double>` are not supported scalar leaves.  `std::complex<long double>` remains intentionally outside the scalar policy together with `long double`.
+- GMP-only `gmpxx::mpfc_class` was not changed in this phase.
+
+Tests added:
+- `test_common_type` coverage for MPFR/MPC scalar common types, `std::complex<double>` MPC promotion, and forbidden `bool`, `long double`, and `std::complex<long double>` promotion.
+- `test_mpc_basic` coverage for `std::complex<double>` construction, assignment, arithmetic, `mpfr_class` plus complex promotion, and equality/inequality.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_common_type.cpp`
+- `tests/test_mpc_basic.cpp`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build -R "test_common_type|test_mpc_basic" --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial full build caught a namespace qualification error for the MPFR exact comparison helper used by MPC complex equality; fixed by calling the helper in the correct `mpfrxx` namespace.
+- Second full Debug build: PASS.
+- Targeted common-type/MPC tests: PASS.  2/2 selected tests passed.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.

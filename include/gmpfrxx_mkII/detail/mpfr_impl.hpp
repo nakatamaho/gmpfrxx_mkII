@@ -29,6 +29,7 @@
 #ifndef GMPFRXX_MKII_DETAIL_MPFR_IMPL_HPP
 #define GMPFRXX_MKII_DETAIL_MPFR_IMPL_HPP
 
+#include <gmpfrxx_mkII/detail/common_type_macros.hpp>
 #include <gmpfrxx_mkII/detail/expr.hpp>
 #include <gmpfrxx_mkII/detail/eval_context.hpp>
 #include <gmpfrxx_mkII/detail/integer_conversion.hpp>
@@ -668,6 +669,8 @@ template <>
 struct common_type<mpfrxx::mpfr_class, mpfrxx::mpfr_class> {
     using type = mpfrxx::mpfr_class;
 };
+
+GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(mpfrxx::mpfr_class);
 
 } // namespace std
 

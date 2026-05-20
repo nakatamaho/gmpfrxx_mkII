@@ -30,6 +30,7 @@
 #include <mpcxx_mkII.h>
 
 #include <cmath>
+#include <complex>
 #include <cstdint>
 #include <cstdlib>
 #include <limits>
@@ -127,6 +128,7 @@ int main()
     mpfrxx::mpc_class constructed(ctor_real, ctor_imag);
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, double>);
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, int>);
+    static_assert(std::is_constructible_v<mpfrxx::mpc_class, std::complex<double>>);
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, mpfrxx::mpz_class>);
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, mpfrxx::mpq_class>);
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, mpfrxx::mpfr_class>);
@@ -134,6 +136,7 @@ int main()
     static_assert(std::is_constructible_v<mpfrxx::mpc_class, std::string>);
     static_assert(std::is_assignable_v<mpfrxx::mpc_class&, double>);
     static_assert(std::is_assignable_v<mpfrxx::mpc_class&, int>);
+    static_assert(std::is_assignable_v<mpfrxx::mpc_class&, std::complex<double>>);
     static_assert(std::is_assignable_v<mpfrxx::mpc_class&, mpfrxx::mpz_class>);
     static_assert(std::is_assignable_v<mpfrxx::mpc_class&, mpfrxx::mpq_class>);
     static_assert(std::is_assignable_v<mpfrxx::mpc_class&, mpfrxx::mpfr_class>);
@@ -156,6 +159,10 @@ int main()
     mpfrxx::mpc_class from_int(42);
     require_close(from_int.real_to_double(), 42.0);
     require_close(from_int.imag_to_double(), 0.0);
+
+    mpfrxx::mpc_class from_std_complex(std::complex<double>(-1.25, 3.5));
+    require_close(from_std_complex.real_to_double(), -1.25);
+    require_close(from_std_complex.imag_to_double(), 3.5);
 
     mpfrxx::mpc_class from_mpz(mpfrxx::mpz_class(5));
     require_close(from_mpz.real_to_double(), 5.0);
@@ -218,6 +225,12 @@ int main()
     assigned = std::string("6.5+0.75i");
     require_close(assigned.real_to_double(), 6.5);
     require_close(assigned.imag_to_double(), 0.75);
+    assigned = std::complex<double>(-2.25, 1.5);
+    require_close(assigned.real_to_double(), -2.25);
+    require_close(assigned.imag_to_double(), 1.5);
+    if (assigned.real_precision() != 193 || assigned.imag_precision() != 257) {
+        std::abort();
+    }
 
     mpfrxx::mpc_class result = z + w;
     require_close(result.real_to_double(), 4.0);
@@ -233,6 +246,18 @@ int main()
     result = z + r - exact_z + exact_q + 2;
     require_close(result.real_to_double(), 1.5);
     require_close(result.imag_to_double(), 2.0);
+
+    result = z + std::complex<double>(0.5, -1.25);
+    require_close(result.real_to_double(), 1.5);
+    require_close(result.imag_to_double(), 0.75);
+
+    result = std::complex<double>(0.5, -1.25) + r;
+    require_close(result.real_to_double(), 5.5);
+    require_close(result.imag_to_double(), -1.25);
+
+    result = r * std::complex<double>(2.0, -0.5);
+    require_close(result.real_to_double(), 10.0);
+    require_close(result.imag_to_double(), -2.5);
 
     result = -z;
     require_close(result.real_to_double(), -1.0);
@@ -261,6 +286,15 @@ int main()
         std::abort();
     }
     if (!(real_three == 3) || !(3 == real_three) || !(real_three == 3.0) || !(3.0 == real_three)) {
+        std::abort();
+    }
+    if (!(complex_three == std::complex<double>(3.0, 1.0)) ||
+        !(std::complex<double>(3.0, 1.0) == complex_three) ||
+        complex_three != std::complex<double>(3.0, 1.0)) {
+        std::abort();
+    }
+    if (!(complex_three != std::complex<double>(3.0, 0.0)) ||
+        !(std::complex<double>(3.0, 0.0) != complex_three)) {
         std::abort();
     }
     if (!(complex_three != 3) || !(3 != complex_three) || !(complex_three != mpfr_three)) {

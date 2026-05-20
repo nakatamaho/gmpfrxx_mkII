@@ -29,6 +29,7 @@
 #include <gmpfrxx_mkII.h>
 
 #include <cassert>
+#include <complex>
 #include <cstdint>
 #include <type_traits>
 
@@ -95,10 +96,27 @@ void require_mpfr_common_types()
     require_common_type<mpfrxx::mpfr_class, gmpxx::mpz_class, mpfrxx::mpfr_class>();
     require_common_type<mpfrxx::mpfr_class, gmpxx::mpq_class, mpfrxx::mpfr_class>();
     require_common_type<mpfrxx::mpfr_class, mpfrxx::mpfr_class, mpfrxx::mpfr_class>();
+    require_common_type<mpfrxx::mpfr_class, int, mpfrxx::mpfr_class>();
+    require_common_type<mpfrxx::mpfr_class, std::int64_t, mpfrxx::mpfr_class>();
+    require_common_type<mpfrxx::mpfr_class, std::uint64_t, mpfrxx::mpfr_class>();
+    require_common_type<mpfrxx::mpfr_class, float, mpfrxx::mpfr_class>();
+    require_common_type<mpfrxx::mpfr_class, double, mpfrxx::mpfr_class>();
     require_common_type<mpfrxx::mpc_class, gmpxx::mpz_class, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, gmpxx::mpq_class, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, mpfrxx::mpfr_class, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, mpfrxx::mpc_class, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, int, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, std::int64_t, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, std::uint64_t, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, float, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, double, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, std::complex<double>, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, mpfrxx::mpfr_class, std::complex<double>>();
+    static_assert(!has_common_type<mpfrxx::mpfr_class, bool>::value);
+    static_assert(!has_common_type<mpfrxx::mpc_class, bool>::value);
+    static_assert(!has_common_type<mpfrxx::mpfr_class, long double>::value);
+    static_assert(!has_common_type<mpfrxx::mpc_class, long double>::value);
+    static_assert(!has_common_type<mpfrxx::mpc_class, std::complex<long double>>::value);
 }
 
 void require_forbidden_cross_domain_common_types()

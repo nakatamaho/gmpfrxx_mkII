@@ -29,6 +29,7 @@
 #ifndef GMPFRXX_MKII_DETAIL_MPC_IMPL_HPP
 #define GMPFRXX_MKII_DETAIL_MPC_IMPL_HPP
 
+#include <gmpfrxx_mkII/detail/common_type_macros.hpp>
 #include <gmpfrxx_mkII/detail/expr.hpp>
 #include <gmpfrxx_mkII/detail/integer_conversion.hpp>
 #include <gmpfrxx_mkII/detail/mpc_environment.hpp>
@@ -37,6 +38,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <complex>
 #include <cstdint>
 #include <locale>
 #include <stdexcept>
@@ -278,6 +280,14 @@ public:
         set_real_value(real);
     }
 
+    explicit mpc_class(const std::complex<double>& value)
+        : mpc_class(precision_tag{},
+                    mpfrxx::default_mpc_real_precision_bits(),
+                    mpfrxx::default_mpc_imag_precision_bits())
+    {
+        set_complex_value(value);
+    }
+
     template <
         typename RealScalar,
         typename ImagScalar,
@@ -418,6 +428,12 @@ public:
     mpc_class& operator=(Scalar real)
     {
         set_real_value(real);
+        return *this;
+    }
+
+    mpc_class& operator=(const std::complex<double>& value)
+    {
+        set_complex_value(value);
         return *this;
     }
 
@@ -619,6 +635,14 @@ private:
         }
     }
 
+    void set_complex_value(const std::complex<double>& value)
+    {
+        const auto context =
+            gmpfrxx_mkII::detail::current_mpc_eval_context(real_precision(), imag_precision());
+        const int inex = mpc_set_d_d(value_, value.real(), value.imag(), context.rounding_mode);
+        gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, context.rounding_mode, inex);
+    }
+
     mpc_t value_;
 };
 
@@ -661,6 +685,28 @@ struct common_type<mpfrxx::mpc_class, mpfrxx::mpc_class> {
     using type = mpfrxx::mpc_class;
 };
 
+GMPFRXX_MKII_DEFINE_BUILTIN_COMMON_TYPES(mpfrxx::mpc_class);
+
+template <>
+struct common_type<mpfrxx::mpc_class, std::complex<double>> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<std::complex<double>, mpfrxx::mpc_class> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<mpfrxx::mpfr_class, std::complex<double>> {
+    using type = mpfrxx::mpc_class;
+};
+
+template <>
+struct common_type<std::complex<double>, mpfrxx::mpfr_class> {
+    using type = mpfrxx::mpc_class;
+};
+
 } // namespace std
 
 namespace gmpfrxx_mkII {
@@ -692,10 +738,29 @@ inline mpc_expression_precision_bits max_mpc_precision(
 }
 
 template <typename T>
-struct is_supported_mpc_scalar
+struct is_supported_mpc_complex_scalar : std::false_type {};
+
+template <>
+struct is_supported_mpc_complex_scalar<std::complex<double>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_supported_mpc_complex_scalar_v =
+    is_supported_mpc_complex_scalar<std::remove_cv_t<T>>::value;
+
+template <typename T>
+struct is_supported_mpc_real_scalar
     : std::bool_constant<is_supported_expression_integral_v<T> ||
                          std::is_same_v<std::remove_cv_t<T>, float> ||
                          std::is_same_v<std::remove_cv_t<T>, double>> {};
+
+template <typename T>
+inline constexpr bool is_supported_mpc_real_scalar_v =
+    is_supported_mpc_real_scalar<std::remove_cv_t<T>>::value;
+
+template <typename T>
+struct is_supported_mpc_scalar
+    : std::bool_constant<is_supported_mpc_real_scalar_v<T> ||
+                         is_supported_mpc_complex_scalar_v<T>> {};
 
 template <typename T>
 inline constexpr bool is_supported_mpc_scalar_v =
@@ -724,6 +789,11 @@ struct normalized_mpc_scalar<float> {
 template <>
 struct normalized_mpc_scalar<double> {
     using type = double;
+};
+
+template <>
+struct normalized_mpc_scalar<std::complex<double>> {
+    using type = std::complex<double>;
 };
 
 template <typename T>
@@ -778,6 +848,37 @@ struct is_mpc_object_or_node<
 
 template <typename T>
 inline constexpr bool is_mpc_object_or_node_v = is_mpc_object_or_node<T>::value;
+
+template <typename T, typename = void>
+struct is_mpc_non_scalar_operand : std::false_type {};
+
+template <typename T>
+struct is_mpc_non_scalar_operand<
+    T,
+    std::enable_if_t<std::is_same_v<std::decay_t<T>, mpfrxx::mpc_class> ||
+                     std::is_same_v<std::decay_t<T>, mpfrxx::mpfr_class> ||
+                     std::is_same_v<std::decay_t<T>, gmpxx::mpz_class> ||
+                     std::is_same_v<std::decay_t<T>, gmpxx::mpq_class>>> : std::true_type {};
+
+template <typename T>
+struct is_mpc_non_scalar_operand<
+    T,
+    std::enable_if_t<is_expression_node_v<std::decay_t<T>> &&
+                     (std::is_same_v<typename std::decay_t<T>::result_type, mpfrxx::mpc_class> ||
+                      std::is_same_v<typename std::decay_t<T>::result_type, mpfrxx::mpfr_class> ||
+                      std::is_same_v<typename std::decay_t<T>::result_type, gmpxx::mpz_class> ||
+                      std::is_same_v<typename std::decay_t<T>::result_type, gmpxx::mpq_class>)>>
+    : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_mpc_non_scalar_operand_v = is_mpc_non_scalar_operand<T>::value;
+
+template <typename Lhs, typename Rhs>
+inline constexpr bool is_mpc_operator_pair_v =
+    is_mpc_expression_operand_v<Lhs> && is_mpc_expression_operand_v<Rhs> &&
+    (is_mpc_object_or_node_v<Lhs> || is_mpc_object_or_node_v<Rhs> ||
+     (is_supported_mpc_complex_scalar_v<std::decay_t<Lhs>> && is_mpc_non_scalar_operand_v<Rhs>) ||
+     (is_supported_mpc_complex_scalar_v<std::decay_t<Rhs>> && is_mpc_non_scalar_operand_v<Lhs>));
 
 inline borrowed_object_leaf<mpfrxx::mpc_class> make_mpc_operand(const mpfrxx::mpc_class& value)
 {
@@ -982,6 +1083,9 @@ void mpc_evaluate(
 {
     if constexpr (std::is_same_v<T, double>) {
         const int inex = mpc_set_d(dest, expr.value(), rnd);
+        mpc_check_component_ranges(dest, rnd, inex);
+    } else if constexpr (std::is_same_v<T, std::complex<double>>) {
+        const int inex = mpc_set_d_d(dest, expr.value().real(), expr.value().imag(), rnd);
         mpc_check_component_ranges(dest, rnd, inex);
     } else if constexpr (std::is_same_v<T, std::int64_t> ||
                          std::is_same_v<T, std::uint64_t>) {
@@ -1341,10 +1445,7 @@ void mpc_compound_assign(mpfrxx::mpc_class& lhs, Rhs&& rhs)
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
-                                    is_mpc_expression_operand_v<Lhs> &&
-                                        is_mpc_expression_operand_v<Rhs> &&
-                                        (is_mpc_object_or_node_v<Lhs> ||
-                                         is_mpc_object_or_node_v<Rhs>),
+                                    is_mpc_operator_pair_v<Lhs, Rhs>,
                                     short> = 0>
 auto operator+(Lhs&& lhs, Rhs&& rhs)
 {
@@ -1355,10 +1456,7 @@ auto operator+(Lhs&& lhs, Rhs&& rhs)
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
-                                    is_mpc_expression_operand_v<Lhs> &&
-                                        is_mpc_expression_operand_v<Rhs> &&
-                                        (is_mpc_object_or_node_v<Lhs> ||
-                                         is_mpc_object_or_node_v<Rhs>),
+                                    is_mpc_operator_pair_v<Lhs, Rhs>,
                                     short> = 0>
 auto operator-(Lhs&& lhs, Rhs&& rhs)
 {
@@ -1369,10 +1467,7 @@ auto operator-(Lhs&& lhs, Rhs&& rhs)
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
-                                    is_mpc_expression_operand_v<Lhs> &&
-                                        is_mpc_expression_operand_v<Rhs> &&
-                                        (is_mpc_object_or_node_v<Lhs> ||
-                                         is_mpc_object_or_node_v<Rhs>),
+                                    is_mpc_operator_pair_v<Lhs, Rhs>,
                                     short> = 0>
 auto operator*(Lhs&& lhs, Rhs&& rhs)
 {
@@ -1383,10 +1478,7 @@ auto operator*(Lhs&& lhs, Rhs&& rhs)
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
-                                    is_mpc_expression_operand_v<Lhs> &&
-                                        is_mpc_expression_operand_v<Rhs> &&
-                                        (is_mpc_object_or_node_v<Lhs> ||
-                                         is_mpc_object_or_node_v<Rhs>),
+                                    is_mpc_operator_pair_v<Lhs, Rhs>,
                                     short> = 0>
 auto operator/(Lhs&& lhs, Rhs&& rhs)
 {
@@ -1544,26 +1636,75 @@ inline bool operator!=(const gmpxx::mpq_class& lhs, const mpc_class& rhs)
     return !(lhs == rhs);
 }
 
-template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
+template <typename Complex>
+inline bool mpc_components_equal_complex_scalar(const mpc_class& lhs, const Complex& rhs)
+{
+    if (gmpfrxx_mkII::detail::mpc_has_nan_component(lhs.mpc_data())) {
+        return false;
+    }
+
+    const auto real_operand = gmpfrxx_mkII::detail::make_mpfr_operand(rhs.real());
+    const auto imag_operand = gmpfrxx_mkII::detail::make_mpfr_operand(rhs.imag());
+    const auto real_result =
+        mpfr_compare_mpfr_to_exact_leaf(mpc_realref(lhs.mpc_data()), real_operand);
+    const auto imag_result =
+        mpfr_compare_mpfr_to_exact_leaf(mpc_imagref(lhs.mpc_data()), imag_operand);
+    return !real_result.has_nan && !imag_result.has_nan &&
+           real_result.order == 0 && imag_result.order == 0;
+}
+
+template <typename Scalar,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_real_scalar_v<Scalar>, int> = 0>
 inline bool operator==(const mpc_class& lhs, Scalar rhs)
 {
     return mpc_real_component_equals_exact(lhs, rhs);
 }
 
-template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
+template <typename Scalar,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_real_scalar_v<Scalar>, int> = 0>
 inline bool operator==(Scalar lhs, const mpc_class& rhs)
 {
     return rhs == lhs;
 }
 
-template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
+template <typename Complex,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_complex_scalar_v<Complex>, int> = 0>
+inline bool operator==(const mpc_class& lhs, const Complex& rhs)
+{
+    return mpc_components_equal_complex_scalar(lhs, rhs);
+}
+
+template <typename Complex,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_complex_scalar_v<Complex>, int> = 0>
+inline bool operator==(const Complex& lhs, const mpc_class& rhs)
+{
+    return rhs == lhs;
+}
+
+template <typename Scalar,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_real_scalar_v<Scalar>, int> = 0>
 inline bool operator!=(const mpc_class& lhs, Scalar rhs)
 {
     return !(lhs == rhs);
 }
 
-template <typename Scalar, std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_scalar_v<Scalar>, int> = 0>
+template <typename Scalar,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_real_scalar_v<Scalar>, int> = 0>
 inline bool operator!=(Scalar lhs, const mpc_class& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <typename Complex,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_complex_scalar_v<Complex>, int> = 0>
+inline bool operator!=(const mpc_class& lhs, const Complex& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <typename Complex,
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_mpc_complex_scalar_v<Complex>, int> = 0>
+inline bool operator!=(const Complex& lhs, const mpc_class& rhs)
 {
     return !(lhs == rhs);
 }
