@@ -1,3 +1,48 @@
+Post-phase AGENTS header role alignment:
+DONE
+
+Implemented features:
+- Updated `AGENTS.md` so `mpfrxx_mkII.h` is documented as the GMP + MPFR real
+  header and no longer as an MPC-exposing header.
+- Added the `mpcxx_mkII.h` opt-in MPC complex header role, matching the current
+  source layout, CMake interface targets, and `SPECIFICATIONS.md`.
+- Documented that `mpfrxx_mkII.h` must not expose `mpfrxx::mpc_class` or include
+  `<mpc.h>`, `mpcxx_mkII.h`, `mpc_environment.hpp`, or `mpc_impl.hpp`.
+- Updated the required interface-target list and compile-fail requirements to
+  include `mpcxx_mkII` and the MPC opt-in boundary.
+
+Tests added:
+- No tests were added; existing header-boundary tests already cover this
+  contract.
+
+Tests updated:
+- `AGENTS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '1,115p' AGENTS.md`
+- `rg -n "mpfrxx_mkII|mpcxx_mkII|mpc_class|MPC|mpc.h|mpc_impl|compile_fail_mpc|mpfr_header_must_not_expose_mpc" AGENTS.md`
+- `sed -n '1,70p' SPECIFICATIONS.md`
+- `sed -n '250,375p' AGENTS.md`
+- `sed -n '380,430p' AGENTS.md`
+- `rg -n "mpcxx_mkII|add_library\(mpcxx|mpfrxx_mkII|gmpfrxx_mkII" CMakeLists.txt cmake tests include`
+- `python3 - <<'PY' ...`
+- `git diff -- AGENTS.md`
+- `sed -n '35,95p' AGENTS.md`
+- `sed -n '270,370p' AGENTS.md`
+- `rg -n 'MPFR/MPC header|exposed by .mpfrxx_mkII|mpfrxx_mkII.*MPC|mpfrxx_mkII.h must not expose mpfrxx::mpc_class|mpcxx_mkII' AGENTS.md`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build -R "test_mpfr_header_smoke|test_mpc_header_smoke|test_header_boundaries|compile_fail_mpfr_header_must_not_expose_mpc|compile_fail_mpc_header_requires_mpfr_first" --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- Header-boundary CTest subset: PASS, 5/5 tests passed.
+
+Known issues:
+- This phase only updates `AGENTS.md`; it does not change source behavior.
+
 Post-phase MPF math helper division guard:
 DONE
 

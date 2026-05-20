@@ -9,7 +9,7 @@ Public namespaces:
 
 ```cpp
 namespace gmpxx;   // GMP-only public API
-namespace mpfrxx;  // MPFR/MPC public API
+namespace mpfrxx;  // MPFR public API; MPC is enabled by mpcxx_mkII.h
 ```
 
 Internal implementation namespace:
@@ -45,11 +45,36 @@ gmpxx_mkII.h
     mpc_t
 
 mpfrxx_mkII.h
-  MPFR/MPC header.
+  MPFR real header.
   Exposes:
     mpfrxx::mpz_class  // alias to gmpxx::mpz_class
     mpfrxx::mpq_class  // alias to gmpxx::mpq_class
     mpfrxx::mpfr_class
+  Depends on:
+    GMP + MPFR
+  Must not expose:
+    gmpxx::mpf_class
+    gmpxx::mpfc_class
+    mpfrxx::mpc_class
+  Must not include:
+    gmpxx_mkII.h
+    mpcxx_mkII.h
+    gmpfrxx_mkII/detail/mpf_impl.hpp
+    gmpfrxx_mkII/detail/mpfc_impl.hpp
+    gmpfrxx_mkII/detail/mpc_environment.hpp
+    gmpfrxx_mkII/detail/mpc_impl.hpp
+    <mpc.h>
+  May include:
+    <gmp.h>
+    <mpfr.h>
+    gmpfrxx_mkII/detail/zq_impl.hpp
+    gmpfrxx_mkII/detail/mpfr_impl.hpp
+
+mpcxx_mkII.h
+  MPC opt-in complex header.
+  Requires:
+    mpfrxx_mkII.h included first
+  Exposes:
     mpfrxx::mpc_class
   Depends on:
     GMP + MPFR + MPC
@@ -61,11 +86,8 @@ mpfrxx_mkII.h
     gmpfrxx_mkII/detail/mpf_impl.hpp
     gmpfrxx_mkII/detail/mpfc_impl.hpp
   May include:
-    <gmp.h>
-    <mpfr.h>
     <mpc.h>
-    gmpfrxx_mkII/detail/zq_impl.hpp
-    gmpfrxx_mkII/detail/mpfr_impl.hpp
+    gmpfrxx_mkII/detail/mpc_environment.hpp
     gmpfrxx_mkII/detail/mpc_impl.hpp
 
 gmpfrxx_mkII.h
@@ -82,8 +104,7 @@ gmpfrxx_mkII.h
   May include:
     gmpxx_mkII.h
     mpfrxx_mkII.h
-    <mpc.h>
-    gmpfrxx_mkII/detail/mpc_impl.hpp
+    mpcxx_mkII.h
 ```
 
 ## Namespace Rules
@@ -122,7 +143,7 @@ namespace mpfrxx {
 3. Do not include `gmpxx.h`.
 4. Do not link `libgmpxx`.
 5. Do not bridge to an existing `gmpxx_mkII.h` implementation.
-6. Generate `gmpxx_mkII.h`, `mpfrxx_mkII.h`, and `gmpfrxx_mkII.h` from scratch.
+6. Generate `gmpxx_mkII.h`, `mpfrxx_mkII.h`, `mpcxx_mkII.h`, and `gmpfrxx_mkII.h` from scratch.
 7. Use GMP C API from `<gmp.h>`.
 8. Use MPFR C API from `<mpfr.h>` only in MPFR/MPC implementation paths.
 9. Use MPC C API from `<mpc.h>` only in MPC implementation paths.
@@ -274,7 +295,7 @@ Existing-object assignment preserves destination precision. New expression mater
 
 ### MPC
 
-`mpfrxx::mpc_class` is MPC-backed and exposed by `mpfrxx_mkII.h` and `gmpfrxx_mkII.h`.
+`mpfrxx::mpc_class` is MPC-backed and exposed by `mpcxx_mkII.h` and `gmpfrxx_mkII.h`.
 
 Environment variables:
 
@@ -362,7 +383,8 @@ Required interface targets:
 
 ```text
 gmpxx_mkII       -> GMP only
-mpfrxx_mkII      -> GMP + MPFR + MPC
+mpfrxx_mkII      -> GMP + MPFR
+mpcxx_mkII       -> GMP + MPFR + MPC
 gmpfrxx_mkII     -> GMP + MPFR + MPC
 ```
 
@@ -389,6 +411,8 @@ At minimum:
 ```text
 mpfrxx_mkII.h must not expose gmpxx::mpf_class
 mpfrxx_mkII.h must not expose gmpxx::mpfc_class
+mpfrxx_mkII.h must not expose mpfrxx::mpc_class
+mpcxx_mkII.h must require mpfrxx_mkII.h to be included first
 gmpxx_mkII.h must not expose mpfrxx::mpfr_class
 gmpxx_mkII.h must not expose mpfrxx::mpc_class
 
@@ -409,6 +433,12 @@ Production code for `gmpxx_mkII.h` must not contain:
 
 ```cpp
 #include <mpfr.h>
+#include <mpc.h>
+```
+
+Production code for `mpfrxx_mkII.h` must not contain:
+
+```cpp
 #include <mpc.h>
 ```
 
