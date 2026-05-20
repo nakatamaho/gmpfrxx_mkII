@@ -74,7 +74,7 @@ int main()
     mp_set_memory_functions(count_alloc, count_realloc, count_free);
 
     constexpr mpfr_prec_t precision = 256;
-    auto move_dst = mpfrxx::mpfr_class::with_precision(128, -1.0);
+    auto move_dst = mpfrxx::mpfr_class::with_precision(precision, -1.0);
     auto move_src = mpfrxx::mpfr_class::with_precision(precision, 3.5);
     alloc_count = 0;
     move_dst = std::move(move_src);

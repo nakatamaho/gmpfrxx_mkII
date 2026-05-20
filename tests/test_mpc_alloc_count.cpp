@@ -139,7 +139,7 @@ int main()
     (void)moved_string_sink;
     (void)moved_expr_sink;
 
-    auto move_dst = mpfrxx::mpc_class::with_precision(96, 128, -1.0, -1.0);
+    auto move_dst = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, -1.0, -1.0);
     auto move_src = mpfrxx::mpc_class::with_precision(real_precision, imag_precision, 2.5, -3.5);
     alloc_count = 0;
     move_dst = std::move(move_src);

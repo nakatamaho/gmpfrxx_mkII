@@ -19453,3 +19453,43 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: Fixed-Precision Move Assignment Contract Assertions
+
+Implemented features:
+- Added debug `assert` checks to the fixed-precision fastpath branches of `mpf_class`, `mpfr_class`, and `mpc_class` move assignment.
+- The assertions require source and destination precision to match before the fastpath swap is used.
+- Updated fixed-precision tests so they no longer exercise mixed-precision move assignment under `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
+
+Missing features:
+- No release-mode runtime check is added.  The fixed-precision macro remains a caller contract for hot paths.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_mpf_fixed_precision_materialization.cpp`
+- `tests/test_mpc_alloc_count.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpf_fixed_precision_materialization test_mpfr_fixed_precision_materialization test_mpc_alloc_count -j`
+- `ctest --test-dir build -R "test_mpf_fixed_precision_materialization|test_mpfr_fixed_precision_materialization|test_mpc_alloc_count" --output-on-failure`
+- `cmake --build build --target test_mpfr_fixed_precision_fma_alloc_count -j`
+- `ctest --test-dir build -R "test_mpfr_fixed_precision_fma_alloc_count|test_mpf_fixed_precision_materialization|test_mpfr_fixed_precision_materialization|test_mpc_alloc_count" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial targeted fixed-precision tests caught existing mixed-precision move-assignment contract violations in MPF and MPC tests; those tests were updated.
+- Second targeted fixed-precision run caught the same contract violation in the MPFR FMA fixed-precision test; that test was updated.
+- Final targeted fixed-precision tests: PASS.  4/4 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.

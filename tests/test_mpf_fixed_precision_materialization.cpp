@@ -59,7 +59,7 @@ int main()
     destination = low + high;
     assert(destination.precision() == destination_precision);
 
-    auto move_destination = gmpxx::mpf_class::with_precision(128, -1.0);
+    auto move_destination = gmpxx::mpf_class::with_precision(512, -1.0);
     auto move_source = gmpxx::mpf_class::with_precision(512, 3.5);
     move_destination = std::move(move_source);
     assert(move_destination.precision() == 512);
