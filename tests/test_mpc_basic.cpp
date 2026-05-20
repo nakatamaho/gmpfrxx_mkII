@@ -58,6 +58,46 @@ void require_close(double actual, double expected)
     }
 }
 
+void check_mpc_division_near_32bit_exponent_edge()
+{
+    constexpr mpfr_exp_t edge_emax = 1073741759;
+    constexpr mpfr_exp_t edge_emin = -1073741759;
+    if (mpfr_get_emax_max() < edge_emax || mpfr_get_emin_min() > edge_emin) {
+        return;
+    }
+
+    const mpfr_exp_t old_emin = mpfr_get_emin();
+    const mpfr_exp_t old_emax = mpfr_get_emax();
+    if (mpfr_set_emin(edge_emin) != 0 || mpfr_set_emax(edge_emax) != 0) {
+        std::abort();
+    }
+
+    auto numerator = mpfrxx::mpc_class::with_precision(128);
+    auto denominator = mpfrxx::mpc_class::with_precision(128);
+    mpfr_set_ui_2exp(mpc_realref(numerator.mpc_data()), 1, edge_emax - 1, MPFR_RNDN);
+    mpfr_set_ui_2exp(mpc_imagref(numerator.mpc_data()), 1, edge_emax - 1, MPFR_RNDN);
+    mpfr_set_ui_2exp(mpc_realref(denominator.mpc_data()), 1, edge_emax - 1, MPFR_RNDN);
+    mpfr_set_ui_2exp(mpc_imagref(denominator.mpc_data()), 1, edge_emax - 1, MPFR_RNDN);
+    mpfr_check_range(mpc_realref(numerator.mpc_data()), 0, MPFR_RNDN);
+    mpfr_check_range(mpc_imagref(numerator.mpc_data()), 0, MPFR_RNDN);
+    mpfr_check_range(mpc_realref(denominator.mpc_data()), 0, MPFR_RNDN);
+    mpfr_check_range(mpc_imagref(denominator.mpc_data()), 0, MPFR_RNDN);
+
+    mpfr_clear_flags();
+    const mpfrxx::mpc_class quotient = numerator / denominator;
+    if (mpfr_overflow_p() != 0 ||
+        mpfr_inf_p(mpc_realref(quotient.mpc_data())) != 0 ||
+        mpfr_inf_p(mpc_imagref(quotient.mpc_data())) != 0 ||
+        mpfr_cmp_ui(mpc_realref(quotient.mpc_data()), 1u) != 0 ||
+        mpfr_zero_p(mpc_imagref(quotient.mpc_data())) == 0) {
+        std::abort();
+    }
+
+    if (mpfr_set_emin(old_emin) != 0 || mpfr_set_emax(old_emax) != 0) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main()
@@ -262,6 +302,8 @@ int main()
     if (compound.real_precision() != 192 || compound.imag_precision() != 224) {
         std::abort();
     }
+
+    check_mpc_division_near_32bit_exponent_edge();
 
     return 0;
 }

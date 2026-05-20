@@ -19348,3 +19348,40 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: MinGW MPC Division Exponent-Edge Workaround
+
+Implemented features:
+- Added a Windows-only near-exponent-edge finite-operand workaround for `mpfrxx::mpc_class` division.
+- The workaround avoids MinGW MPC builds where `mpc_div` can overflow near the 32-bit MPFR exponent limit even when the exact quotient is small, such as `(b + i*b) / (b + i*b) = 1 + 0*i`.
+- Kept NaN, Inf, and zero-divisor cases on the upstream `mpc_div` path so MPC special-value semantics remain delegated to MPC.
+
+Missing features:
+- No general replacement for `mpc_div`; this is intentionally a narrow MinGW workaround pending upstream handling.
+
+Tests added:
+- Added a `test_mpc_basic` regression that constructs values near the 32-bit MPFR exponent edge and checks that `mpc_class` division returns `1 + 0*i` without setting MPFR overflow.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_mpc_basic.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpc_basic -j`
+- `ctest --test-dir build -R test_mpc_basic --output-on-failure`
+- MinGW/Wine wrapper probe using `x86_64-w64-mingw32-g++` and Wine with GMP 6.3.0, MPFR 4.2.2, and MPC 1.4.1 DLLs from `/home/docker/mplapack/external/i`.
+- `cmake --build build --target test_mpc_basic test_mpc_aliasing test_mpc_math test_mpc_precision_policy -j`
+- `ctest --test-dir build -R "test_mpc_basic|test_mpc_aliasing|test_mpc_math|test_mpc_precision_policy" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- MinGW/Wine wrapper probe: PASS.  The edge quotient was finite, equal to `1 + 0*i`, and `mpfr_overflow_p()` was 0.
+- Targeted MPC tests: PASS.  4/4 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- The workaround is deliberately narrow and Windows-only.  It does not attempt to reproduce all MPC special-value behavior; those cases remain on `mpc_div`.

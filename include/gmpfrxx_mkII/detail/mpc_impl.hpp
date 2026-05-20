@@ -1079,6 +1079,93 @@ bool mpc_expression_references(const mpc_t target, const binary_expr<Op, Lhs, Rh
            mpc_expression_references(target, expr.rhs());
 }
 
+#if defined(_WIN32)
+inline bool mpc_component_is_finite_number(mpfr_srcptr value) noexcept
+{
+    return mpfr_number_p(value) != 0;
+}
+
+inline bool mpc_component_is_near_exponent_edge(mpfr_srcptr value) noexcept
+{
+    if (mpfr_regular_p(value) == 0) {
+        return false;
+    }
+    constexpr mpfr_exp_t edge_margin = 4;
+    const mpfr_exp_t exponent = mpfr_get_exp(value);
+    return exponent >= mpfr_get_emax() - edge_margin ||
+           exponent <= mpfr_get_emin() + edge_margin;
+}
+
+inline bool mpc_division_scaled_workaround_is_applicable(mpc_srcptr lhs, mpc_srcptr rhs) noexcept
+{
+    return mpc_component_is_finite_number(mpc_realref(lhs)) &&
+           mpc_component_is_finite_number(mpc_imagref(lhs)) &&
+           mpc_component_is_finite_number(mpc_realref(rhs)) &&
+           mpc_component_is_finite_number(mpc_imagref(rhs)) &&
+           !(mpfr_zero_p(mpc_realref(rhs)) != 0 &&
+             mpfr_zero_p(mpc_imagref(rhs)) != 0) &&
+           (mpc_component_is_near_exponent_edge(mpc_realref(lhs)) ||
+            mpc_component_is_near_exponent_edge(mpc_imagref(lhs)) ||
+            mpc_component_is_near_exponent_edge(mpc_realref(rhs)) ||
+            mpc_component_is_near_exponent_edge(mpc_imagref(rhs)));
+}
+
+inline int mpc_div_scaled_finite_workaround(mpc_t dest, mpc_srcptr lhs, mpc_srcptr rhs, mpc_rnd_t rnd)
+{
+    const mpfr_prec_t real_precision = mpfr_get_prec(mpc_realref(dest));
+    const mpfr_prec_t imag_precision = mpfr_get_prec(mpc_imagref(dest));
+    const mpfr_prec_t work_precision = std::max(real_precision, imag_precision);
+    const mpfr_rnd_t real_rounding = MPC_RND_RE(rnd);
+    const mpfr_rnd_t imag_rounding = MPC_RND_IM(rnd);
+    const mpfr_rnd_t work_rounding = MPFR_RNDN;
+
+    scoped_mpfr_temporary scale(work_precision);
+    scoped_mpfr_temporary ar(work_precision);
+    scoped_mpfr_temporary bi(work_precision);
+    scoped_mpfr_temporary cr(work_precision);
+    scoped_mpfr_temporary di(work_precision);
+    scoped_mpfr_temporary denominator(work_precision);
+    scoped_mpfr_temporary work(work_precision);
+    scoped_mpfr_temporary work2(work_precision);
+    scoped_mpfr_temporary real_result(real_precision);
+    scoped_mpfr_temporary imag_result(imag_precision);
+
+    const mpfr_srcptr a = mpc_realref(lhs);
+    const mpfr_srcptr b = mpc_imagref(lhs);
+    const mpfr_srcptr c = mpc_realref(rhs);
+    const mpfr_srcptr d = mpc_imagref(rhs);
+
+    if (mpfr_cmpabs(c, d) >= 0) {
+        mpfr_abs(scale.get(), c, work_rounding);
+    } else {
+        mpfr_abs(scale.get(), d, work_rounding);
+    }
+
+    mpfr_div(ar.get(), a, scale.get(), work_rounding);
+    mpfr_div(bi.get(), b, scale.get(), work_rounding);
+    mpfr_div(cr.get(), c, scale.get(), work_rounding);
+    mpfr_div(di.get(), d, scale.get(), work_rounding);
+
+    mpfr_sqr(denominator.get(), cr.get(), work_rounding);
+    mpfr_sqr(work.get(), di.get(), work_rounding);
+    mpfr_add(denominator.get(), denominator.get(), work.get(), work_rounding);
+
+    mpfr_mul(work.get(), ar.get(), cr.get(), work_rounding);
+    mpfr_mul(work2.get(), bi.get(), di.get(), work_rounding);
+    mpfr_add(work.get(), work.get(), work2.get(), work_rounding);
+    const int real_inex = mpfr_div(real_result.get(), work.get(), denominator.get(), real_rounding);
+
+    mpfr_mul(work.get(), bi.get(), cr.get(), work_rounding);
+    mpfr_mul(work2.get(), ar.get(), di.get(), work_rounding);
+    mpfr_sub(work.get(), work.get(), work2.get(), work_rounding);
+    const int imag_inex = mpfr_div(imag_result.get(), work.get(), denominator.get(), imag_rounding);
+
+    mpfr_set(mpc_realref(dest), real_result.get(), real_rounding);
+    mpfr_set(mpc_imagref(dest), imag_result.get(), imag_rounding);
+    return MPC_INEX(real_inex, imag_inex);
+}
+#endif
+
 template <typename Op>
 void mpc_apply_binary(mpc_t dest, const mpc_t lhs, const mpc_t rhs, mpc_rnd_t rnd)
 {
@@ -1090,7 +1177,16 @@ void mpc_apply_binary(mpc_t dest, const mpc_t lhs, const mpc_t rhs, mpc_rnd_t rn
     } else if constexpr (std::is_same_v<Op, mul_op>) {
         inex = mpc_mul(dest, lhs, rhs, rnd);
     } else if constexpr (std::is_same_v<Op, div_op>) {
-        inex = mpc_div(dest, lhs, rhs, rnd);
+#if defined(_WIN32)
+        if (mpc_division_scaled_workaround_is_applicable(lhs, rhs)) {
+            // Work around MinGW MPC builds where mpc_div can overflow near the
+            // 32-bit MPFR exponent limit even when the exact quotient is small.
+            inex = mpc_div_scaled_finite_workaround(dest, lhs, rhs, rnd);
+        } else
+#endif
+        {
+            inex = mpc_div(dest, lhs, rhs, rnd);
+        }
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPC expression operation");
     }
