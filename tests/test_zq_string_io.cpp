@@ -337,7 +337,17 @@ int main()
 
     std::istringstream zero_denominator_input("1/0");
     zero_denominator_input >> parsed_q;
-    if (zero_denominator_input.fail() || parsed_q.get_str() != "1/0") {
+    if (zero_denominator_input.fail() || parsed_q.get_str() != "1/0" ||
+        !parsed_q.has_zero_denominator()) {
+        std::abort();
+    }
+    bool canonicalize_zero_denominator_threw = false;
+    try {
+        parsed_q.canonicalize();
+    } catch (const std::domain_error&) {
+        canonicalize_zero_denominator_threw = true;
+    }
+    if (!canonicalize_zero_denominator_threw) {
         std::abort();
     }
 
@@ -357,7 +367,24 @@ int main()
     invalid_raw_q_input >> raw_q;
     if (invalid_raw_q_input.fail() ||
         mpz_cmp_ui(mpq_numref(raw_q), 1) != 0 ||
-        mpz_cmp_ui(mpq_denref(raw_q), 0) != 0) {
+        mpz_cmp_ui(mpq_denref(raw_q), 0) != 0 ||
+        !gmpxx::mpq_has_zero_denominator(raw_q)) {
+        std::abort();
+    }
+    bool raw_canonicalize_zero_denominator_threw = false;
+    try {
+        gmpxx::mpq_canonicalize_checked(raw_q);
+    } catch (const std::domain_error&) {
+        raw_canonicalize_zero_denominator_threw = true;
+    }
+    if (!raw_canonicalize_zero_denominator_threw) {
+        std::abort();
+    }
+    mpq_set_str(raw_q, "6/8", 10);
+    gmpxx::mpq_canonicalize_checked(raw_q);
+    if (gmpxx::mpq_has_zero_denominator(raw_q) ||
+        mpz_cmp_ui(mpq_numref(raw_q), 3) != 0 ||
+        mpz_cmp_ui(mpq_denref(raw_q), 4) != 0) {
         std::abort();
     }
     mpq_clear(raw_q);

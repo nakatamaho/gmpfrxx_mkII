@@ -65,6 +65,29 @@ operators such as `<`, `<=`, `>`, and `>=` are intentionally not defined. MPC
 values with a NaN component compare unequal to themselves, matching the usual
 IEEE-style NaN equality rule.
 
+## MPQ Stream Input and Arithmetic Readiness
+
+`gmpxx::mpq_class` and raw `mpq_ptr` stream extraction intentionally follow
+upstream `gmpxx.h` stream behavior.  Extraction uses `mpq_set_str`-compatible
+semantics, preserves the parsed numerator and denominator, and does not call
+`mpq_canonicalize`.  This means input such as `2/4` remains `2/4` at the
+stream layer, and structurally invalid raw rationals such as `1/0` or `0/0`
+are accepted by stream extraction rather than setting `failbit`.  The stream
+layer is a raw serialization compatibility boundary, not an arithmetic-ready
+normalization boundary.
+
+Constructors, `set_str`, expression evaluation, and arithmetic-producing paths
+must continue to reject zero denominators and/or produce canonical rationals.
+Before a value read through stream extraction is passed to GMP rational
+arithmetic, users must validate and canonicalize it.  For wrapper objects, call
+`mpq_class::canonicalize()`, which first rejects a zero denominator with
+`std::domain_error` and then calls `mpq_canonicalize`.  For raw `mpq_t` values
+read through `operator>>(std::istream&, mpq_ptr)`, use
+`gmpxx::mpq_canonicalize_checked(mpq_ptr)`.  Use
+`mpq_class::has_zero_denominator()` or
+`gmpxx::mpq_has_zero_denominator(mpq_srcptr)` when a caller needs to inspect
+the raw stream representation without mutating it.
+
 ## Expression Template Lifetime
 
 Public arithmetic operators return expression nodes. Expression nodes may borrow

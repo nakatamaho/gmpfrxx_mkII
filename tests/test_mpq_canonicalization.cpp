@@ -60,6 +60,17 @@ void require_invalid_argument(Function&& function)
     std::abort();
 }
 
+template <typename Function>
+void require_domain_error(Function&& function)
+{
+    try {
+        function();
+    } catch (const std::domain_error&) {
+        return;
+    }
+    std::abort();
+}
+
 } // namespace
 
 int main()
@@ -77,6 +88,41 @@ int main()
     require_invalid_argument([] {
         (void)gmpxx::mpq_class(1, 0);
     });
+
+    gmpxx::mpq_class stream_like;
+    mpq_set_str(stream_like.mpq_data(), "6/8", 10);
+    require_num_den(stream_like, 6, 8);
+    if (stream_like.has_zero_denominator()) {
+        std::abort();
+    }
+    stream_like.canonicalize();
+    require_num_den(stream_like, 3, 4);
+
+    mpq_set_str(stream_like.mpq_data(), "1/0", 10);
+    if (!stream_like.has_zero_denominator()) {
+        std::abort();
+    }
+    require_domain_error([&] {
+        stream_like.canonicalize();
+    });
+
+    mpq_t raw;
+    mpq_init(raw);
+    mpq_set_str(raw, "10/20", 10);
+    gmpxx::mpq_canonicalize_checked(raw);
+    if (gmpxx::mpq_has_zero_denominator(raw) ||
+        mpz_cmp_ui(mpq_numref(raw), 1) != 0 ||
+        mpz_cmp_ui(mpq_denref(raw), 2) != 0) {
+        std::abort();
+    }
+    mpq_set_str(raw, "0/0", 10);
+    if (!gmpxx::mpq_has_zero_denominator(raw)) {
+        std::abort();
+    }
+    require_domain_error([&] {
+        gmpxx::mpq_canonicalize_checked(raw);
+    });
+    mpq_clear(raw);
 
     gmpxx::mpq_class result = reduced + reduced;
     require_num_den(result, 1, 1);

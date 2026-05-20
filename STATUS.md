@@ -1,3 +1,64 @@
+Post-phase MPQ stream readiness contract:
+DONE
+
+Implemented features:
+- Documented the `mpq_class` / `mpq_ptr` stream extraction contract in
+  `SPECIFICATIONS.md`: stream input intentionally preserves raw `mpq_set_str`
+  behavior, including non-canonical rationals and zero denominators, for
+  upstream `gmpxx.h` compatibility.
+- Added checked canonicalization helpers for stream-read rationals:
+  `mpq_class::has_zero_denominator()`, `gmpxx::mpq_has_zero_denominator()`, and
+  `gmpxx::mpq_canonicalize_checked()`.
+- Strengthened `mpq_class::canonicalize()` so it rejects zero denominators with
+  `std::domain_error` before calling `mpq_canonicalize`.
+- Kept `operator>>(std::istream&, mpq_class&)` and
+  `operator>>(std::istream&, mpq_ptr)` raw and non-canonicalizing to preserve
+  the stream compatibility boundary.
+
+Tests added:
+- Added regression coverage for `mpq_class::canonicalize()` rejecting stream-read
+  zero denominators.
+- Added regression coverage for raw `mpq_t` validation and checked
+  canonicalization through `gmpxx::mpq_has_zero_denominator()` and
+  `gmpxx::mpq_canonicalize_checked()`.
+
+Tests updated:
+- `tests/test_zq_string_io.cpp`
+- `tests/test_mpq_canonicalization.cpp`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `rg -n "canonicalize\(|zero denominator|denominator|mpq_denref|mpq_class|operator>>\(std::istream&.*mpq|gmp_rational_has_zero_denominator|validate" include/gmpfrxx_mkII/detail/zq_impl.hpp tests SPECIFICATIONS.md`
+- `sed -n '1,140p' SPECIFICATIONS.md`
+- `sed -n '760,1085p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1,220p' tests/test_zq_string_io.cpp`
+- `sed -n '1,130p' tests/test_mpq_canonicalization.cpp`
+- `sed -n '25,70p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1460,1495p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '3090,3145p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '360,395p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1195,1225p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `sed -n '1015,1035p' include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp tests/test_zq_string_io.cpp tests/test_mpq_canonicalization.cpp SPECIFICATIONS.md`
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build -R "test_zq_string_io|test_mpq_canonicalization" --output-on-failure`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+- `cmake --build build -j`: PASS.
+- Targeted regression tests: PASS, 2/2 tests passed.
+- Full CTest: PASS, 170/170 tests passed.
+
+Known issues:
+- Stream extraction remains intentionally raw and may store zero-denominator
+  rationals.  This is now an explicit compatibility contract; callers must use
+  the checked helpers before arithmetic.
+
 Post-phase AGENTS header role alignment:
 DONE
 

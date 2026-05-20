@@ -389,6 +389,19 @@ inline bool gmp_rational_has_zero_denominator(const char* value, int base)
     return result;
 }
 
+inline bool mpq_has_zero_denominator_raw(mpq_srcptr value) noexcept
+{
+    return mpz_sgn(mpq_denref(value)) == 0;
+}
+
+inline void mpq_canonicalize_checked_raw(mpq_ptr value)
+{
+    if (mpq_has_zero_denominator_raw(value)) {
+        throw std::domain_error("mpq denominator must be nonzero");
+    }
+    mpq_canonicalize(value);
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -1020,9 +1033,14 @@ public:
         return set_str(value.c_str(), base);
     }
 
+    bool has_zero_denominator() const noexcept
+    {
+        return gmpfrxx_mkII::detail::mpq_has_zero_denominator_raw(value_);
+    }
+
     void canonicalize()
     {
-        mpq_canonicalize(value_);
+        gmpfrxx_mkII::detail::mpq_canonicalize_checked_raw(value_);
     }
 
     double get_d() const
@@ -1202,6 +1220,16 @@ inline std::ostream& operator<<(std::ostream& out, const mpq_class& value)
 {
     print_mpq(out, value.mpq_data());
     return out;
+}
+
+inline bool mpq_has_zero_denominator(mpq_srcptr value) noexcept
+{
+    return gmpfrxx_mkII::detail::mpq_has_zero_denominator_raw(value);
+}
+
+inline void mpq_canonicalize_checked(mpq_ptr value)
+{
+    gmpfrxx_mkII::detail::mpq_canonicalize_checked_raw(value);
 }
 
 template <
