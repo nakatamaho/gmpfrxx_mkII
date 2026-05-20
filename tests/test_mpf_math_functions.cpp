@@ -187,6 +187,13 @@ void test_hypot_and_scaling()
     assert(result.get_prec() == y.get_prec());
     assert_mpf_equal(result, gmpxx::mpf_class("5.0", result.get_prec()));
 
+    gmpxx::mpf_class large(1, static_cast<mp_bitcnt_t>(256));
+    mpf_mul_2exp(large.mpf_data(), large.mpf_data(), 100000);
+    gmpxx::mpf_class diagonal = gmpxx::hypot(large, large);
+    gmpxx::mpf_class ratio = diagonal / large;
+    gmpxx::mpf_class expected = gmpxx::sqrt(gmpxx::mpf_class(2, large.get_prec()));
+    assert_mpf_close(ratio, expected, 180);
+
     gmpxx::mpf_class value("2.0", static_cast<mp_bitcnt_t>(256));
     value.div_2exp(1);
     assert_mpf_equal(value, gmpxx::mpf_class("1.0", value.get_prec()));

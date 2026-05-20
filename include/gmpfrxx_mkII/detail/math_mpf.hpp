@@ -194,6 +194,32 @@ inline mpf_class abs_prec(const mpf_class& value, mp_bitcnt_t precision)
     return result;
 }
 
+inline mpf_class scaled_hypot_abs(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
+{
+    mpf_class lhs_abs = abs_prec(lhs, precision);
+    mpf_class rhs_abs = abs_prec(rhs, precision);
+
+    const mpf_class* high = &lhs_abs;
+    const mpf_class* low = &rhs_abs;
+    if (mpf_cmp(lhs_abs.mpf_data(), rhs_abs.mpf_data()) < 0) {
+        high = &rhs_abs;
+        low = &lhs_abs;
+    }
+
+    if (mpf_sgn(high->mpf_data()) == 0) {
+        return mpf_class::with_precision(precision);
+    }
+
+    mpf_class ratio = div(*low, *high, precision);
+    mpf_mul(ratio.mpf_data(), ratio.mpf_data(), ratio.mpf_data());
+    mpf_add_ui(ratio.mpf_data(), ratio.mpf_data(), 1);
+    mpf_sqrt(ratio.mpf_data(), ratio.mpf_data());
+
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_mul(result.mpf_data(), high->mpf_data(), ratio.mpf_data());
+    return result;
+}
+
 inline mpf_class average(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
 {
     mpf_class result = add(lhs, rhs, precision);
@@ -1557,9 +1583,7 @@ inline int sgn(const mpf_class& value)
 inline mpf_class hypot(const mpf_class& lhs, const mpf_class& rhs)
 {
     const mp_bitcnt_t precision = std::max(lhs.precision(), rhs.precision());
-    return sqrt(mpf_math_detail::add(mpf_math_detail::sqr(lhs, precision),
-                                     mpf_math_detail::sqr(rhs, precision),
-                                     precision));
+    return mpf_math_detail::scaled_hypot_abs(lhs, rhs, precision);
 }
 
 template <typename Rhs,

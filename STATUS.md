@@ -19385,3 +19385,71 @@ Pass/fail result:
 
 Known issues:
 - The workaround is deliberately narrow and Windows-only.  It does not attempt to reproduce all MPC special-value behavior; those cases remain on `mpc_div`.
+
+
+## Phase: MPF and MPFC Scaled Hypot Paths
+
+Implemented features:
+- Added `mpf_math_detail::scaled_hypot_abs()` and changed `gmpxx::hypot(mpf_class, mpf_class)` to use `max(abs(x), abs(y)) * sqrt(1 + (min/max)^2)` instead of `sqrt(x*x + y*y)`.
+- Reused the same scaled helper for `gmpxx::abs(mpfc_class)`.
+- Changed `gmpxx::norm(mpfc_class)` to compute `high^2 * (1 + (low/high)^2)` instead of directly summing both component squares.
+
+Missing features:
+- `mpfc_class::norm()` still returns the squared magnitude, so it cannot avoid overflow when the mathematically correct squared result is outside the active `mpf` exponent range.
+
+Tests added:
+- Added a large-exponent diagonal `mpf_class` hypot regression that checks `hypot(x, x) / x ~= sqrt(2)`.
+- Added `mpfc_class` norm coverage for exact `3 + 4i` and a large-exponent diagonal ratio.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `include/gmpfrxx_mkII/detail/math_mpfc.hpp`
+- `tests/test_mpf_math_functions.cpp`
+- `tests/test_mpfc_math.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpf_math_functions test_mpfc_math -j`
+- `ctest --test-dir build -R "test_mpf_math_functions|test_mpfc_math" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPF/MPFC math tests: PASS.  2/2 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: MPFR Rounding Scope Initialization Cleanup
+
+Implemented features:
+- Reworked `mpfrxx::rounding_mode_scope` so the saved default and stable rounding modes are captured in the member initializer through a `saved_rounding_state` helper.
+- Removed dummy member initialization followed by constructor-body reassignment.
+- Kept the `noexcept` contract explicit by using only the existing `noexcept` MPFR default-initialization and rounding-cache helpers in the capture path.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None. Existing rounding-scope tests already cover nested scope restoration and stable-rounding cache behavior.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build --target test_mpfr_rounding_scope test_mpfr_rounding_scope_stable -j`
+- `ctest --test-dir build -R "test_mpfr_rounding_scope|test_mpfr_rounding_scope_stable" --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFR rounding-scope tests: PASS.  2/2 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.

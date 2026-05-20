@@ -354,6 +354,7 @@ void test_abs_uses_scaled_hypot() {
     const mp_bitcnt_t precision = 256;
     mpfc_class exact = make_mpfc(mpf_class(3, precision), mpf_class(4, precision));
     assert(abs(exact) == mpf_class(5, precision));
+    assert(norm(exact) == mpf_class(25, precision));
 
     mpfc_class zero = make_mpfc(mpf_class(0, precision), mpf_class(0, precision));
     assert(abs(zero) == mpf_class(0, precision));
@@ -367,6 +368,10 @@ void test_abs_uses_scaled_hypot() {
     mpf_class tolerance(1, precision);
     mpf_div_2exp(tolerance.mpf_data(), tolerance.mpf_data(), 180);
     check_close_mpf(expected, ratio, tolerance);
+
+    mpf_class large_square = large * large;
+    mpf_class norm_ratio = norm(diagonal) / large_square;
+    check_close_mpf(mpf_class(2, precision), norm_ratio, tolerance);
 }
 
 }  // namespace

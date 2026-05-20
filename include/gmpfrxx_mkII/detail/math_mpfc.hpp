@@ -93,18 +93,8 @@ inline mpf_class imag(const mpfc_class& value)
 inline mpf_class norm(const mpfc_class& value)
 {
     const mp_bitcnt_t precision = value.precision();
-    mpf_class result = mpf_class::with_precision(precision);
-    result = value.real() * value.real() + value.imag() * value.imag();
-    return result;
-}
-
-inline mpf_class abs(const mpfc_class& value)
-{
-    const mp_bitcnt_t precision = value.precision();
-    mpf_class real_abs = mpf_class::with_precision(precision);
-    mpf_class imag_abs = mpf_class::with_precision(precision);
-    mpf_abs(real_abs.mpf_data(), value.real().mpf_data());
-    mpf_abs(imag_abs.mpf_data(), value.imag().mpf_data());
+    mpf_class real_abs = mpf_math_detail::abs_prec(value.real(), precision);
+    mpf_class imag_abs = mpf_math_detail::abs_prec(value.imag(), precision);
 
     const mpf_class* high = &real_abs;
     const mpf_class* low = &imag_abs;
@@ -117,15 +107,19 @@ inline mpf_class abs(const mpfc_class& value)
         return mpfc_math_detail::zero(precision);
     }
 
-    mpf_class ratio = mpf_class::with_precision(precision);
-    mpf_div(ratio.mpf_data(), low->mpf_data(), high->mpf_data());
+    mpf_class ratio = mpf_math_detail::div(*low, *high, precision);
     mpf_mul(ratio.mpf_data(), ratio.mpf_data(), ratio.mpf_data());
     mpf_add_ui(ratio.mpf_data(), ratio.mpf_data(), 1);
-    mpf_sqrt(ratio.mpf_data(), ratio.mpf_data());
 
-    mpf_class result = mpf_class::with_precision(precision);
-    mpf_mul(result.mpf_data(), high->mpf_data(), ratio.mpf_data());
+    mpf_class result = mpf_math_detail::sqr(*high, precision);
+    mpf_mul(result.mpf_data(), result.mpf_data(), ratio.mpf_data());
     return result;
+}
+
+inline mpf_class abs(const mpfc_class& value)
+{
+    const mp_bitcnt_t precision = value.precision();
+    return mpf_math_detail::scaled_hypot_abs(value.real(), value.imag(), precision);
 }
 
 inline mpf_class arg(const mpfc_class& value)

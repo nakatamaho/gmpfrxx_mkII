@@ -358,30 +358,37 @@ inline void set_default_rounding_mode(mpfr_rnd_t rounding) noexcept
 class rounding_mode_scope {
 public:
     explicit rounding_mode_scope(mpfr_rnd_t rounding) noexcept
-        : old_rounding_(MPFR_RNDN),
-          old_stable_rounding_(MPFR_RNDN)
+        : saved_(capture_current_rounding_state())
     {
-        ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
-        // The saved values must be captured after first-use initialization;
-        // the member initializer list only supplies noexcept dummy values.
-        old_rounding_ = mpfr_get_default_rounding_mode();
-        old_stable_rounding_ = ::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode();
         mpfr_set_default_rounding_mode(rounding);
         ::gmpfrxx_mkII::detail::refresh_stable_mpfr_rounding_mode();
     }
 
     ~rounding_mode_scope() noexcept
     {
-        mpfr_set_default_rounding_mode(old_rounding_);
-        ::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode_storage() = old_stable_rounding_;
+        mpfr_set_default_rounding_mode(saved_.default_rounding);
+        ::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode_storage() = saved_.stable_rounding;
     }
 
     rounding_mode_scope(const rounding_mode_scope&) = delete;
     rounding_mode_scope& operator=(const rounding_mode_scope&) = delete;
 
 private:
-    mpfr_rnd_t old_rounding_;
-    mpfr_rnd_t old_stable_rounding_;
+    struct saved_rounding_state {
+        mpfr_rnd_t default_rounding;
+        mpfr_rnd_t stable_rounding;
+    };
+
+    static saved_rounding_state capture_current_rounding_state() noexcept
+    {
+        ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
+        return saved_rounding_state{
+            mpfr_get_default_rounding_mode(),
+            ::gmpfrxx_mkII::detail::stable_mpfr_rounding_mode(),
+        };
+    }
+
+    saved_rounding_state saved_;
 };
 
 inline mpfr_exp_t default_emin() noexcept
