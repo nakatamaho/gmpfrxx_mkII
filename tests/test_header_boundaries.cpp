@@ -105,7 +105,7 @@ int main()
     require_absent(mpfr_header, "mpfc_impl.hpp");
 
     const std::string mpc_header = read_file(mpc_header_path.c_str());
-    require_present(mpc_header, "Include <mpfrxx_mkII.h> before <mpcxx_mkII.h>.");
+    require_present(mpc_header, "#include <mpfrxx_mkII.h>");
     require_present(mpc_header, "#include <mpc.h>");
     require_present(mpc_header, "mpc_impl.hpp");
     require_absent(mpc_header, "#include <gmpxx.h>");

@@ -29,10 +29,7 @@
 #ifndef MPCXX_MKII_H
 #define MPCXX_MKII_H
 
-#ifndef MPFRXX_MKII_H
-#error "Include <mpfrxx_mkII.h> before <mpcxx_mkII.h>."
-#endif
-
+#include <mpfrxx_mkII.h>
 #include <mpc.h>
 
 #include <gmpfrxx_mkII/detail/mpc_environment.hpp>

@@ -25,7 +25,8 @@ arithmetic should not need to include `<mpc.h>` or link `-lmpc`.
 
 `mpcxx_mkII.h` is the opt-in complex MPC header. It is used when
 `mpfrxx::mpc_class` is needed and therefore requires GNU MPC and `-lmpc`.
-It is layered on top of `mpfrxx_mkII.h`.
+It includes `mpfrxx_mkII.h` automatically and is layered on top of the real
+MPFR wrapper.
 
 `gmpfrxx_mkII.h` is a convenience aggregator for users that want all supported
 types and accept the full GMP + MPFR + MPC dependency set.

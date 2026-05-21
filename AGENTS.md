@@ -72,8 +72,8 @@ mpfrxx_mkII.h
 
 mpcxx_mkII.h
   MPC opt-in complex header.
-  Requires:
-    mpfrxx_mkII.h included first
+  Includes:
+    mpfrxx_mkII.h
   Exposes:
     mpfrxx::mpc_class
   Depends on:
@@ -416,7 +416,6 @@ At minimum:
 mpfrxx_mkII.h must not expose gmpxx::mpf_class
 mpfrxx_mkII.h must not expose gmpxx::mpfc_class
 mpfrxx_mkII.h must not expose mpfrxx::mpc_class
-mpcxx_mkII.h must require mpfrxx_mkII.h to be included first
 gmpxx_mkII.h must not expose mpfrxx::mpfr_class
 gmpxx_mkII.h must not expose mpfrxx::mpc_class
 

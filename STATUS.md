@@ -20023,3 +20023,46 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: MPC Header Automatic MPFR Include
+
+Implemented features:
+- Changed `mpcxx_mkII.h` to include `mpfrxx_mkII.h` automatically instead of requiring callers to include the MPFR header first.
+- Updated header-boundary tests to expect the automatic MPFR include.
+- Changed `test_mpc_header_smoke` so `<mpcxx_mkII.h>` is included by itself.
+- Removed the obsolete `mpc_header_requires_mpfr_first` compile-fail test registration and source file.
+- Updated AGENTS.md and SPECIFICATIONS.md to describe the new MPC header layering contract.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None. Existing smoke and boundary tests now cover standalone `mpcxx_mkII.h` inclusion.
+
+Tests updated:
+- `include/mpcxx_mkII.h`
+- `tests/test_mpc_header_smoke.cpp`
+- `tests/test_header_boundaries.cpp`
+- `tests/CMakeLists.txt`
+- `tests/compile_fail/mpc_header_requires_mpfr_first.cpp` removed
+- `AGENTS.md`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build`
+- `cmake --build build -j --target test_mpc_header_smoke test_header_boundaries test_mpfr_header_smoke test_mpfrxx_mkII test_mpc_basic`
+- `ctest --test-dir build -R 'test_mpc_header_smoke|test_header_boundaries|test_mpfr_header_smoke|test_mpfrxx_mkII|test_mpc_basic|compile_fail_mpfr_header_must_not_expose_mpc' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- CMake reconfigure: PASS.
+- Focused header build: PASS.
+- Focused header CTest: PASS.  6/6 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  173/173 tests passed.
+
+Known issues:
+- None for this phase.
