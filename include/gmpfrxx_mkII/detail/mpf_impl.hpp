@@ -39,7 +39,6 @@
 #include <cassert>
 #include <cerrno>
 #include <cctype>
-#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <istream>
@@ -680,30 +679,28 @@ inline void add_mpf_sign(std::string& text, mpf_srcptr value)
     }
 }
 
-inline mp_exp_t integral_digits_in_base(mpf_srcptr value, int base)
+inline std::size_t mpf_fixed_digits_wanted(
+    mpf_srcptr value,
+    int base,
+    std::size_t fractional_digits)
 {
-    if (mpf_sgn(value) == 0) {
-        return 1;
+    mp_exp_t exponent = 0;
+    (void)mpf_get_str_abs(value, exponent, base, 1);
+
+    const mp_exp_t integral_digits = std::max<mp_exp_t>(exponent, 1);
+    const auto integral_digits_unsigned = static_cast<std::uintmax_t>(integral_digits);
+    const auto max_size_unsigned = static_cast<std::uintmax_t>(std::numeric_limits<std::size_t>::max());
+    if (integral_digits_unsigned > max_size_unsigned) {
+        throw std::length_error("mpf fixed output is too large");
     }
 
-    signed long exponent = 0;
-    mpf_get_d_2exp(&exponent, value);
-    if (exponent <= 0) {
-        return 1;
+    const std::size_t integral = static_cast<std::size_t>(integral_digits);
+    constexpr std::size_t max_size = std::numeric_limits<std::size_t>::max();
+    if (integral > max_size - 1 || fractional_digits > max_size - integral - 1) {
+        throw std::length_error("mpf fixed output is too large");
     }
 
-    switch (base) {
-    case 16:
-        return static_cast<mp_exp_t>((exponent + 3) / 4);
-    case 8:
-        return static_cast<mp_exp_t>((exponent + 2) / 3);
-    case 10:
-        return static_cast<mp_exp_t>(std::floor(exponent / std::log2(10.0)) + 1);
-    case 2:
-        return static_cast<mp_exp_t>(exponent);
-    default:
-        return 0;
-    }
+    return integral + fractional_digits + 1;
 }
 
 inline std::size_t effective_mpf_base_precision(std::streamsize precision)
@@ -782,8 +779,7 @@ inline std::string mpf_to_base_string_fixed(
 {
     const std::size_t effective_precision = effective_mpf_base_precision(precision);
     mp_exp_t exponent = 0;
-    const std::size_t digits_wanted =
-        static_cast<std::size_t>(integral_digits_in_base(value, base)) + effective_precision + 1;
+    const std::size_t digits_wanted = mpf_fixed_digits_wanted(value, base, effective_precision);
     std::string digits = mpf_get_str_abs(value, exponent, base, digits_wanted);
     if (digits.empty()) {
         digits = "0";

@@ -19914,3 +19914,36 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: MPF Fixed Formatting Digit Count
+
+Implemented features:
+- Replaced the `mpf_to_base_string_fixed` digit-count estimate based on `mpf_get_d_2exp` and floating-point logarithms with a helper that asks `mpf_get_str` for the actual base exponent first.
+- Added overflow checks for the requested fixed-output digit count and report impossible fixed output with `std::length_error`.
+- Removed the now-unused `<cmath>` include from `mpf_impl.hpp`.
+
+Missing features:
+- This phase does not change decimal `std::fixed` output, which is still delegated to GMP formatting.
+
+Tests added:
+- None. Existing MPF string I/O tests exercise the hexadecimal and octal fixed-output paths.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff --check`
+- `cmake --build build --target test_mpf_string_io -j`
+- `ctest --test-dir build -R test_mpf_string_io --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Whitespace check: PASS.
+- Targeted MPF string I/O test: PASS.  1/1 selected test passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.
