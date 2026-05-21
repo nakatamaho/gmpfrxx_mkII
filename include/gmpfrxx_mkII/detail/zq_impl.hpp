@@ -375,15 +375,14 @@ inline bool gmp_rational_has_zero_denominator(const char* value, int base)
     if (value == nullptr) {
         return false;
     }
-    const std::string text(value);
-    const std::size_t slash = text.find('/');
-    if (slash == std::string::npos) {
+    const char* const slash = std::strchr(value, '/');
+    if (slash == nullptr) {
         return false;
     }
 
     mpz_t denominator;
     mpz_init(denominator);
-    const int rc = mpz_set_str(denominator, text.substr(slash + 1).c_str(), base);
+    const int rc = mpz_set_str(denominator, slash + 1, base);
     const bool result = rc == 0 && mpz_sgn(denominator) == 0;
     mpz_clear(denominator);
     return result;

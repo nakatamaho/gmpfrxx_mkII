@@ -20698,3 +20698,41 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: Trim Low-Risk String Parsing Overhead
+
+Implemented features:
+- Removed the temporary `std::string` and substring allocation from
+  `gmp_rational_has_zero_denominator`; the denominator is now parsed directly
+  from the slash-delimited C-string tail.
+- Cached `mpf_class::set_str` destination precision in a local variable before
+  initializing the temporary parse target.
+
+Tests added:
+- None. Existing string and canonicalization tests cover the behavior.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `nl -ba include/gmpfrxx_mkII/detail/zq_impl.hpp | sed -n '345,390p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpf_impl.hpp | sed -n '455,490p'`
+- `rg -n "gmp_rational_has_zero_denominator|set_str\(const char\* text" include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp tests`
+- `git status --short`
+- `nl -ba include/gmpfrxx_mkII/detail/zq_impl.hpp | sed -n '1,45p'`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `nl -ba include/gmpfrxx_mkII/detail/zq_impl.hpp | sed -n '373,389p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpf_impl.hpp | sed -n '470,484p'`
+- `cmake --build build -j --target test_zq_string_io test_mpq_canonicalization test_mpf_string_io`
+- `ctest --test-dir build -R 'test_zq_string_io|test_mpq_canonicalization|test_mpf_string_io' --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 3/3 tests passed.
+
+Known issues:
+- None for this phase.

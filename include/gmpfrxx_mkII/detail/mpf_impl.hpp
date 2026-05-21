@@ -474,7 +474,8 @@ public:
         }
 
         mpf_t temp;
-        mpf_init2(temp, precision());
+        const mp_bitcnt_t current_precision = precision();
+        mpf_init2(temp, current_precision);
         const int rc = mpf_set_str(temp, value, base);
         if (rc == 0) {
             mpf_set(value_, temp);
