@@ -46,7 +46,6 @@ struct gmpxx_mkII_default_context_v1 {
     std::uint64_t mpf_precision_bits;
 };
 
-#if GMPXX_MKII_DEFAULT_CONTEXT_MODE == GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
 GMPXX_MKII_API void gmpxx_mkII_get_current_default_context_v1(
     gmpxx_mkII_default_context_v1* out) noexcept;
 
@@ -58,7 +57,6 @@ GMPXX_MKII_API void gmpxx_mkII_reset_thread_default_context_v1() noexcept;
 GMPXX_MKII_API const void* gmpxx_mkII_default_context_provider_token_v1() noexcept;
 
 GMPXX_MKII_API int gmpxx_mkII_default_context_mode_v1() noexcept;
-#endif
 
 } // extern "C"
 
@@ -172,17 +170,17 @@ inline void validate_default_context_or_abort(const gmpxx_mkII_default_context_v
 
 inline mp_bitcnt_t default_mpf_precision_bits() noexcept
 {
-#if GMPXX_MKII_DEFAULT_CONTEXT_MODE == GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
-    gmpxx_mkII_default_context_v1 raw{};
-    raw.abi_version = gmp_default_context_abi_version;
-    raw.struct_size = sizeof(raw);
+    if constexpr (build_options::gmp_default_context_mode == GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER) {
+        gmpxx_mkII_default_context_v1 raw{};
+        raw.abi_version = gmp_default_context_abi_version;
+        raw.struct_size = sizeof(raw);
 
-    gmpxx_mkII_get_current_default_context_v1(&raw);
-    validate_default_context_or_abort(raw);
-    return checked_uint64_to_mp_bitcnt_or_abort(raw.mpf_precision_bits);
-#else
-    return frozen_env_default_mpf_precision_bits();
-#endif
+        gmpxx_mkII_get_current_default_context_v1(&raw);
+        validate_default_context_or_abort(raw);
+        return checked_uint64_to_mp_bitcnt_or_abort(raw.mpf_precision_bits);
+    } else {
+        return frozen_env_default_mpf_precision_bits();
+    }
 }
 
 inline void set_default_mpf_precision_bits(mp_bitcnt_t precision) noexcept
@@ -191,29 +189,29 @@ inline void set_default_mpf_precision_bits(mp_bitcnt_t precision) noexcept
         return;
     }
 
-#if GMPXX_MKII_DEFAULT_CONTEXT_MODE == GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
-    gmpxx_mkII_default_context_v1 raw{};
-    raw.abi_version = gmp_default_context_abi_version;
-    raw.struct_size = sizeof(raw);
-    raw.mpf_precision_bits = static_cast<std::uint64_t>(precision);
-    validate_default_context_or_abort(raw);
-    gmpxx_mkII_set_thread_default_context_v1(&raw);
-#else
-    // Frozen-env mode has no mutable header-owned storage.  This compatibility
-    // API is intentionally a no-op; default construction keeps using the frozen
-    // environment-derived value.
-    (void)precision;
-#endif
+    if constexpr (build_options::gmp_default_context_mode == GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER) {
+        gmpxx_mkII_default_context_v1 raw{};
+        raw.abi_version = gmp_default_context_abi_version;
+        raw.struct_size = sizeof(raw);
+        raw.mpf_precision_bits = static_cast<std::uint64_t>(precision);
+        validate_default_context_or_abort(raw);
+        gmpxx_mkII_set_thread_default_context_v1(&raw);
+    } else {
+        // Frozen-env mode has no mutable header-owned storage.  This compatibility
+        // API is intentionally a no-op; default construction keeps using the frozen
+        // environment-derived value.
+        (void)precision;
+    }
 }
 
 inline void reload_default_mpf_precision_bits_from_environment() noexcept
 {
-#if GMPXX_MKII_DEFAULT_CONTEXT_MODE == GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER
-    gmpxx_mkII_reset_thread_default_context_v1();
-#else
-    // Runtime environment mutation is unsupported in frozen-env mode.
-    (void)frozen_env_default_mpf_precision_bits();
-#endif
+    if constexpr (build_options::gmp_default_context_mode == GMPXX_MKII_DEFAULT_CONTEXT_EXTERNAL_PROVIDER) {
+        gmpxx_mkII_reset_thread_default_context_v1();
+    } else {
+        // Runtime environment mutation is unsupported in frozen-env mode.
+        (void)frozen_env_default_mpf_precision_bits();
+    }
 }
 
 } // namespace detail

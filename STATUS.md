@@ -19818,3 +19818,99 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Release Contract Specification Cleanup
+
+Implemented features:
+- Documented that checked MPQ canonicalization leaves a zero-denominator stream value unchanged when it throws, and that the value remains not arithmetic-ready.
+- Documented generative random expression semantics, including repeated evaluation and evaluation-order non-contracts.
+- Documented that `gmp_randclass` random generation is not internally synchronized and must be externally serialized when a state is shared across threads.
+- Documented moved-from floating-wrapper state as valid for destruction, assignment, and swap, with numeric value and precision valid but unspecified.
+- Documented MPFR DSO-local first-use initialization boundaries and the lack of cross-DSO synchronization through raw MPFR default-state mutation.
+- Documented `mpfrxx::with_context(...)` lifetime rules and fixed-precision fastpath precision-match contract.
+- Documented `mpfrxx::cmp(...)` NaN behavior versus NaN-aware equality and relational operators.
+- Documented environment variables as startup configuration and concurrent environment mutation as outside the supported contract.
+
+Missing features:
+- None for this documentation phase.
+
+Tests added:
+- None. This phase updates specification text only.
+
+Tests updated:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Whitespace check: PASS.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: GMP Default Context Constexpr Branch Cleanup
+
+Implemented features:
+- Changed GMP default-context mode dispatch in `gmp_default_context.hpp` from inline-function-body preprocessor branches to `if constexpr` over `build_options::gmp_default_context_mode`.
+- Kept external-provider C API declarations visible so discarded `if constexpr` branches remain well-formed without requiring provider symbols in frozen-env builds.
+- Documented that `GMPXX_MKII_DEFAULT_CONTEXT_MODE` is a program-wide build configuration and must not be mixed across translation units in one linked program.
+
+Missing features:
+- This does not make mixed frozen-env/external-provider translation units supported.  The program-wide mode contract remains required.
+
+Tests added:
+- None. Existing default-context and compile/link tests cover the behavior.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/gmp_default_context.hpp`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Whitespace check: PASS.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: Windows MPC Division Workaround Specification
+
+Implemented features:
+- Documented the `_WIN32` MPC division workaround as a narrow MinGW/MPC portability guard for exponent-edge finite divisions.
+- Documented the workaround trigger conditions: finite components, nonzero divisor, and at least one input component close to the current MPFR exponent range edge.
+- Documented that non-Windows builds call `mpc_div` directly and that last-bit differences are possible in the scaled workaround path.
+
+Missing features:
+- None for this documentation phase.
+
+Tests added:
+- None. This phase updates specification text only.
+
+Tests updated:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git diff --check`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Whitespace check: PASS.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  170/170 tests passed.
+
+Known issues:
+- None for this phase.

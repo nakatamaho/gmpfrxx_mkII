@@ -104,6 +104,11 @@ read through `operator>>(std::istream&, mpq_ptr)`, use
 `gmpxx::mpq_has_zero_denominator(mpq_srcptr)` when a caller needs to inspect
 the raw stream representation without mutating it.
 
+If `mpq_class::canonicalize()` or `gmpxx::mpq_canonicalize_checked(...)`
+throws because the denominator is zero, the target remains in its original raw
+stream state.  Such a value is not arithmetic-ready; the caller must replace it
+or repair the denominator before passing it to GMP rational arithmetic.
+
 ## Expression Template Lifetime
 
 Public arithmetic operators return expression nodes. Expression nodes may borrow
@@ -132,6 +137,29 @@ auto snapshot = gmpxx::mpf_class(a + b);
 Expression node types should be marked `[[nodiscard]]` so standalone discarded
 expressions such as `a + b;` can produce compiler diagnostics. This does not
 make saved expression nodes lifetime-safe.
+
+### Generative Random Expressions
+
+Random expressions returned by `gmpxx::gmp_randclass::get_f(...)` and
+`mpfrxx::gmp_randclass::get_fr...(...)` are expression nodes, but they are not
+pure value snapshots. Evaluating such a node consumes the associated
+`gmp_randstate_t` and may produce a fresh random value.
+
+The wrapper does not guarantee that a random expression appearing more than
+once in an expression tree, or evaluated through more than one materialization
+path, is generated exactly once. The generation count and evaluation order are
+not a semantic contract. If one random draw must be reused, materialize it
+first:
+
+```cpp
+mpfrxx::mpfr_class r = state.get_fr(prec);
+mpfrxx::mpfr_class y = r + r;
+```
+
+`gmp_randclass` random generation is not internally synchronized.
+`random_mpf_expr` and `random_mpfr_expr` may share the same underlying
+`gmp_randstate_t`; callers must use a state from one thread at a time or
+protect it with an external mutex.
 
 ## Move Semantics
 
@@ -167,6 +195,14 @@ This matches ordinary assignment semantics for existing objects. The
 `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro is currently disabled for
 floating wrapper move assignment and must not change `gmpxx::mpf_class`,
 `mpfrxx::mpfr_class`, or `mpfrxx::mpc_class` precision semantics.
+
+After a floating wrapper object has been moved from, it remains valid for
+destruction, assignment, and swap, but its numeric value and precision are
+valid but unspecified. Portable code must not read a moved-from wrapper for
+numeric meaning or precision policy decisions before assigning a new value to
+it. Container reallocation can therefore still be proportional to active
+precision; performance-critical arrays should reserve capacity or use stable
+storage when relocation cost matters.
 
 `gmpxx::mpfc_class` follows the MPF move behavior through its two
 `gmpxx::mpf_class` components.
@@ -270,6 +306,13 @@ These functions are not the wrapper default-precision policy.
 ### Default Context Modes
 
 There are two GMP-only default-context modes.
+
+`GMPXX_MKII_DEFAULT_CONTEXT_MODE` is a program-wide build configuration. All
+translation units that include this header and are linked into one program must
+use the same value. Mixing frozen-env and external-provider modes in different
+translation units is outside the supported contract, even though the
+implementation exposes the selected mode through `build_options` and uses
+`if constexpr` inside inline functions.
 
 #### Frozen-Env Header-Only Mode
 
@@ -453,6 +496,14 @@ probing and applying defaults from hot evaluation-context paths.  The flag does
 not store mutable MPFR default precision, rounding, `emin`, or `emax`; MPFR's
 own TLS state remains the source of truth for those values.
 
+Because the one-shot flag is DSO-local, two linked images that include the
+header-only wrapper can each perform their own first-use initialization in the
+same thread. Raw MPFR default-state mutation between those first-use points is
+not a cross-DSO synchronization mechanism. Applications that need deterministic
+defaults across shared-library boundaries should establish a startup boundary
+for every participating image and thread, or avoid raw MPFR default-state
+mutation after wrapper use begins.
+
 The library-initial sentinel cannot distinguish untouched MPFR state from
 application code that deliberately set all MPFR default fields back to the same
 library-initial values before first wrapper access in that linked image.  In
@@ -505,7 +556,35 @@ Applications that want consistent runtime defaults across worker threads must
 call the setter or reload API inside each worker thread, or pass explicit
 precision and rounding context to their own numeric kernels.
 
+### Explicit Evaluation Contexts
+
+`mpfrxx::with_context(value, context)` returns a lightweight non-owning handle
+to `value` plus an explicit evaluation context.  The handle must not outlive the
+referenced `mpfrxx::mpfr_class`, and must not be stored, returned, or used after
+that object is destroyed or moved from.
+
+Normal builds check that the context precision matches the target object where
+that check is needed. Builds that enable fixed-precision fastpaths may treat
+precision mismatch as a caller contract violation in hot paths and omit the
+check. Such builds are intended only for kernels where all participating
+objects are known to have the same fixed precision.
+
+### MPFR Comparisons
+
+`mpfrxx::cmp(...)` is a total-order-style helper only for ordered MPFR values.
+If either operand is NaN after materialization, `cmp` throws
+`std::domain_error` for an unordered comparison.  Equality and relational
+operators are NaN-aware predicates instead: equality is false for unordered
+operands, inequality is true, and ordering predicates are false when the
+comparison is unordered.
+
 ## Environment Policy
+
+Environment variables are process startup configuration for this wrapper.
+Callers must finalize `MPFXX_*`, `MPFRXX_*`, and `MPFRXX_MPC_*` variables before
+first wrapper default access and before worker threads begin wrapper numeric
+work. Concurrent `setenv`, `unsetenv`, or `putenv` calls racing with wrapper
+default reads are outside the supported contract.
 
 Invalid user environment values must not terminate the process.  They should be
 ignored with a diagnostic, and the relevant built-in default should be used.
@@ -537,6 +616,27 @@ mpfrxx::set_default_mpc_rounding_mode(real, imag)
 ```
 
 If the arguments differ, the wrapper throws `std::invalid_argument`.
+
+### Windows MPC Division Workaround
+
+On `_WIN32` builds, `mpfrxx::mpc_class` division may use a scaled finite-value
+workaround instead of calling `mpc_div` directly.  This is a portability guard
+for MinGW/MPC builds where direct MPC division can overflow near MPFR's
+32-bit-style exponent limits even when the exact quotient is finite and small.
+
+The workaround is intentionally narrow. It is considered only when all real and
+imaginary input components are finite MPFR numbers, the divisor is not
+`0 + 0i`, and at least one input component has an exponent within a small margin
+of the current MPFR `emin` or `emax`.  In that case the implementation scales
+the operands, performs Smith-style finite division in MPFR temporaries, and
+rounds the final real and imaginary components using the requested MPC
+rounding mode. Non-Windows builds call `mpc_div` directly.
+
+This workaround is not a separate mathematical semantics for complex division.
+It is a platform compatibility path intended to avoid spurious exponent-edge
+failure.  Last-bit differences from a direct `mpc_div` path are possible because
+the scaled path uses finite MPFR temporaries and then applies the requested
+component rounding.
 
 MPC environment variables follow the same rule:
 
