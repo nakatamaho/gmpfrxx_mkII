@@ -191,11 +191,18 @@ Move construction keeps the moved-from source as a valid backend object by
 initializing destination storage and swapping backend values. This may allocate,
 but it avoids wrapper-side ownership metadata and keeps dense-array layout.
 
-Move assignment to a valid destination preserves the left-hand-side precision.
-This matches ordinary assignment semantics for existing objects. The
-`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro is currently disabled for
-floating wrapper move assignment and must not change `gmpxx::mpf_class`,
-`mpfrxx::mpfr_class`, or `mpfrxx::mpc_class` precision semantics.
+Move assignment to a valid destination preserves the left-hand-side precision in normal builds.
+This matches ordinary assignment semantics for existing objects.
+
+When `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is enabled, floating wrapper
+move assignment is allowed to assume that the source and destination precisions
+match. A precision mismatch in `gmpxx::mpf_class`, `mpfrxx::mpfr_class`, or
+`mpfrxx::mpc_class` move assignment is a caller contract violation and is
+outside the normal left-hand-side precision preservation guarantee. Debug builds
+may assert this precondition; release builds may omit the check and keep the
+fast swap path. This macro must only be enabled for programs or benchmark kernels
+that maintain a fixed precision discipline for all participating floating
+objects.
 
 After a floating wrapper object has been moved from, it remains valid for
 destruction, assignment, and swap, but its numeric value and precision are
@@ -255,11 +262,15 @@ numeric kernel on the same thread.
 
 When enabled, wrapper arithmetic reads a thread-local cached rounding value
 for `current_eval_context()`. The cache is initialized to `MPFR_RNDN`, then
-refreshed when wrapper environment defaults are applied and when callers use
-`mpfrxx::set_default_rounding_mode(...)`. Direct calls to
-`mpfr_set_default_rounding_mode(...)` are outside this fast-path contract
-unless the caller refreshes the wrapper state by using the wrapper setter
-before continuing.
+refreshed during wrapper first-use initialization, when wrapper environment
+defaults are applied, and when callers use
+`mpfrxx::set_default_rounding_mode(...)`. If raw MPFR code sets a non-initial
+rounding mode before first wrapper access in a thread, first-use initialization
+must synchronize the cache to that existing MPFR TLS rounding mode without
+overwriting the raw MPFR state. Direct calls to
+`mpfr_set_default_rounding_mode(...)` after wrapper first use are outside this
+fast-path contract unless the caller refreshes the wrapper state by using the
+wrapper setter before continuing.
 
 This option does not change precision, exponent range, or object-lifetime
 semantics. It only removes repeated default-rounding reads from wrapper
@@ -472,7 +483,9 @@ MPFRXX_EMAX
 MPFRXX_ROUNDING_MODE
 ```
 
-These environment values are applied to MPFR's thread-local default state.
+These environment values are applied to MPFR's thread-local default state. Invalid
+MPFR environment values are ignored with a diagnostic written to `stderr`; the
+corresponding built-in or current thread-local fallback remains in effect.
 
 ### Per-Thread Initialization
 
@@ -530,7 +543,9 @@ This means a worker thread receives the wrapper's initial 512-bit policy on
 first use if its libmpfr default state still equals MPFR's library-initial
 state. If application code or another linked image has already changed any MPFR
 default field in that thread to a non-library-initial value, wrapper access
-must leave the existing libmpfr state alone.
+must leave the existing libmpfr state alone. Stable-rounding builds must still
+synchronize their cached rounding value to the existing MPFR TLS rounding mode
+during that first-use boundary.
 
 ### Runtime Mutation
 
@@ -596,27 +611,44 @@ indicate binary integration errors rather than user configuration typos.
 
 ## MPC Default State
 
-`mpfrxx::mpc_class` does not own separate wrapper-side default precision or
-rounding state.
+MPC defaults inherit MPFR's libmpfr-owned TLS defaults unless an MPC-specific
+precision or rounding override is installed for the current thread and linked
+image:
 
-MPC default precision and default rounding are derived from MPFR's
-libmpfr-owned TLS default state:
+- without an MPC precision override, default real precision equals MPFR default precision
+- without an MPC precision override, default imaginary precision equals MPFR default precision
+- without an MPC rounding override, default real rounding equals MPFR default rounding
+- without an MPC rounding override, default imaginary rounding equals MPFR default rounding
 
-- default real precision equals MPFR default precision
-- default imaginary precision equals MPFR default precision
-- default real rounding equals MPFR default rounding
-- default imaginary rounding equals MPFR default rounding
+MPC-specific overrides affect only `mpfrxx::mpc_class` defaults. They do not
+change `mpfrxx::mpfr_class` defaults and do not write MPFR's thread-local default
+precision or rounding mode.
 
-The wrapper intentionally supports only symmetric MPC defaults.
-
-These APIs are accepted only when both component arguments match:
+MPC default precision may be symmetric or asymmetric when explicitly requested
+through the MPC precision API:
 
 ```cpp
+mpfrxx::set_default_mpc_precision_bits(precision)
 mpfrxx::set_default_mpc_precision_bits(real, imag)
+```
+
+All precision arguments must be valid MPFR precisions. The one-argument API
+installs a symmetric MPC precision override. The two-argument API installs the
+specified real and imaginary precision override, including asymmetric precision
+when `real != imag`.
+
+MPC default rounding may also be symmetric or asymmetric when explicitly
+requested through the MPC rounding API:
+
+```cpp
+mpfrxx::set_default_mpc_rounding_mode(rounding)
 mpfrxx::set_default_mpc_rounding_mode(real, imag)
 ```
 
-If the arguments differ, the wrapper throws `std::invalid_argument`.
+The one-argument API installs a symmetric MPC rounding override. The two-argument
+API installs the specified real and imaginary rounding override, including
+asymmetric rounding when `real != imag`. The resulting `mpc_rnd_t` is formed with
+`MPC_RND(real, imag)`.
 
 ### Windows MPC Division Workaround
 
@@ -652,26 +684,30 @@ MPFRXX_MPC_IMAG_ROUNDING_MODE
 
 If any `MPFRXX_MPC_*` variable is present, first use of the MPC default API
 or default `mpc_class` construction reads the MPC environment once for the
-current linked image and thread.  The resulting symmetric MPC default is applied
-by writing the shared MPFR thread-local default precision and rounding mode.
-If no MPC-specific variable is present, MPC defaults simply inherit the current
-MPFR defaults.
+current linked image and thread. Valid MPC precision variables install an
+MPC-specific precision override. Valid MPC rounding variables install an
+MPC-specific rounding override. If no valid MPC-specific variable in a category
+is present, that category continues to inherit the current MPFR default.
 
-If real and imaginary environment defaults are both provided, they must be
-equal. Asymmetric defaults are not represented by wrapper-owned TLS state.  If
-only one component-specific value is provided, it becomes the symmetric shared
-default for both components.
+`MPFRXX_MPC_DEFAULT_PRECISION_BITS` and `MPFRXX_MPC_ROUNDING_MODE` set both
+components. `MPFRXX_MPC_REAL_*` and `MPFRXX_MPC_IMAG_*` override their respective
+component only; the other component inherits the corresponding MPC default or,
+if none was provided, the MPFR default. Therefore asymmetric MPC environment
+precision and rounding are valid and affect only `mpfrxx::mpc_class` defaults.
+Invalid MPC environment values are ignored with a diagnostic written to `stderr`;
+the inherited MPFR default or the valid component-specific fallback remains in
+effect.
 
-`mpfrxx::reload_mpc_and_mpfr_defaults_from_environment()` explicitly reloads
-MPC environment defaults by writing the shared MPFR thread-local default
-precision and rounding mode.  `mpfrxx::reload_mpc_defaults_from_environment()`
-is a compatibility alias for the same operation.
+`mpfrxx::reload_mpc_defaults_from_environment()` explicitly reloads MPC
+environment defaults into the MPC-specific override state. It does not change
+`mpfrxx::mpfr_class` default precision or rounding mode.
 
 ## Rationale
 
-MPFR already owns default precision, rounding mode, and exponent range. Keeping
-a second copy in this header-only wrapper risks divergence across shared-library
-or plugin boundaries.
+MPFR already owns default precision, rounding mode, and exponent range. MPC uses
+that MPFR state as the inherited default. MPC-specific override state is kept
+separate because MPC has two component precisions and two component rounding
+modes, which cannot be represented by MPFR's scalar default state.
 
 Using `libmpfr` as the source of truth avoids wrapper-owned DSO-local TLS
 state. Requiring MPFR TLS support makes per-thread defaults well-defined. The

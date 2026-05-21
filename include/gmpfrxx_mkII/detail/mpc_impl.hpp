@@ -93,9 +93,8 @@ struct mpc_eval_context {
 
 inline mpc_eval_context current_mpc_eval_context(mpfr_prec_t, mpfr_prec_t)
 {
-    const mpfr_rnd_t rounding = current_mpfr_rounding_mode();
     return mpc_eval_context{
-        MPC_RND(rounding, rounding),
+        mpfrxx::default_mpc_rounding_mode(),
     };
 }
 
@@ -615,6 +614,7 @@ private:
     {
         const auto context =
             gmpfrxx_mkII::detail::current_mpc_eval_context(real_precision(), imag_precision());
+        gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(real.mpq_data());
         const int inex = mpc_set_q(value_, real.mpq_data(), context.rounding_mode);
         gmpfrxx_mkII::detail::mpc_check_component_ranges(value_, context.rounding_mode, inex);
     }
@@ -1060,6 +1060,7 @@ inline void mpc_evaluate(
     mpc_expression_precision_bits,
     mpc_rnd_t rnd)
 {
+    gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(expr.get().mpq_data());
     const int inex = mpc_set_q(dest, expr.get().mpq_data(), rnd);
     mpc_check_component_ranges(dest, rnd, inex);
 }
@@ -1070,6 +1071,7 @@ inline void mpc_evaluate(
     mpc_expression_precision_bits,
     mpc_rnd_t rnd)
 {
+    gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(expr.get().mpq_data());
     const int inex = mpc_set_q(dest, expr.get().mpq_data(), rnd);
     mpc_check_component_ranges(dest, rnd, inex);
 }
@@ -1392,6 +1394,7 @@ void mpc_evaluate(
     } else if constexpr (std::is_same_v<Result, gmpxx::mpq_class>) {
         scoped_mpq_t exact;
         mpq_evaluate(exact.get(), expr);
+        gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(exact.get());
         const int inex = mpc_set_q(dest, exact.get(), rnd);
         mpc_check_component_ranges(dest, rnd, inex);
         return;

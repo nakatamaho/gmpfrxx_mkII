@@ -45,17 +45,22 @@ void clear_environment()
     unsetenv("MPFRXX_MPC_IMAG_ROUNDING_MODE");
 }
 
-void require_mpc_defaults(mpfr_prec_t precision, mpfr_rnd_t rounding)
+void require_mpc_defaults(mpfr_prec_t real_precision,
+                          mpfr_prec_t imag_precision,
+                          mpfr_rnd_t real_rounding,
+                          mpfr_rnd_t imag_rounding,
+                          mpfr_prec_t mpfr_precision,
+                          mpfr_rnd_t mpfr_rounding)
 {
     const auto defaults = mpfrxx::default_mpc_options();
-    if (defaults.real_precision_bits != precision || defaults.imag_precision_bits != precision) {
+    if (defaults.real_precision_bits != real_precision || defaults.imag_precision_bits != imag_precision) {
         std::abort();
     }
-    if (defaults.real_rounding_mode != rounding || defaults.imag_rounding_mode != rounding) {
+    if (defaults.real_rounding_mode != real_rounding || defaults.imag_rounding_mode != imag_rounding) {
         std::abort();
     }
-    if (mpfrxx::default_precision_bits() != precision ||
-        mpfrxx::default_rounding_mode() != rounding) {
+    if (mpfrxx::default_precision_bits() != mpfr_precision ||
+        mpfrxx::default_rounding_mode() != mpfr_rounding) {
         std::abort();
     }
 }
@@ -70,7 +75,7 @@ void test_missing_mpc_env_shares_mpfr_default()
     if (value.real_precision() != 176 || value.imag_precision() != 176) {
         std::abort();
     }
-    require_mpc_defaults(176, MPFR_RNDD);
+    require_mpc_defaults(176, 176, MPFR_RNDD, MPFR_RNDD, 176, MPFR_RNDD);
 }
 
 void test_mpc_env_overrides_first_use_default()
@@ -85,7 +90,7 @@ void test_mpc_env_overrides_first_use_default()
     if (value.real_precision() != 224 || value.imag_precision() != 224) {
         std::abort();
     }
-    require_mpc_defaults(224, MPFR_RNDU);
+    require_mpc_defaults(224, 224, MPFR_RNDU, MPFR_RNDU, 176, MPFR_RNDD);
 }
 
 void test_component_mpc_env_overrides_first_use_default()
@@ -97,22 +102,31 @@ void test_component_mpc_env_overrides_first_use_default()
     setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "RNDZ", 1);
 
     const mpfrxx::mpc_class value;
-    if (value.real_precision() != 256 || value.imag_precision() != 256) {
+    if (value.real_precision() != 256 || value.imag_precision() != 176) {
         std::abort();
     }
-    require_mpc_defaults(256, MPFR_RNDZ);
+    require_mpc_defaults(256, 176, MPFR_RNDZ, MPFR_RNDD, 176, MPFR_RNDD);
 }
 
-void test_mismatched_component_mpc_env_throws_on_first_use()
+void test_component_mpc_env_installs_asymmetric_override_on_first_use()
 {
     clear_environment();
+    mpfrxx::set_default_precision_bits(160);
+    mpfrxx::set_default_rounding_mode(MPFR_RNDN);
     setenv("MPFRXX_MPC_REAL_PRECISION_BITS", "192", 1);
     setenv("MPFRXX_MPC_IMAG_PRECISION_BITS", "224", 1);
+    setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "RNDU", 1);
+    setenv("MPFRXX_MPC_IMAG_ROUNDING_MODE", "RNDD", 1);
 
-    try {
-        (void)mpfrxx::default_mpc_options();
+    const auto defaults = mpfrxx::default_mpc_options();
+    if (defaults.real_precision_bits != 192 || defaults.imag_precision_bits != 224) {
         std::abort();
-    } catch (const std::invalid_argument&) {
+    }
+    if (defaults.real_rounding_mode != MPFR_RNDU || defaults.imag_rounding_mode != MPFR_RNDD) {
+        std::abort();
+    }
+    if (mpfrxx::default_precision_bits() != 160 || mpfrxx::default_rounding_mode() != MPFR_RNDN) {
+        std::abort();
     }
 }
 
@@ -136,8 +150,8 @@ int main(int argc, char** argv)
         test_component_mpc_env_overrides_first_use_default();
         return 0;
     }
-    if (std::strcmp(argv[1], "mismatch_throws") == 0) {
-        test_mismatched_component_mpc_env_throws_on_first_use();
+    if (std::strcmp(argv[1], "asymmetric_override") == 0) {
+        test_component_mpc_env_installs_asymmetric_override_on_first_use();
         return 0;
     }
 

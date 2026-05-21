@@ -156,6 +156,7 @@ public:
 
     mpf_class(const mpq_class& value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
     {
+        gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value.mpq_data());
         mpf_set_q(value_, value.mpq_data());
     }
 
@@ -166,6 +167,7 @@ public:
 
     mpf_class(const mpq_class& value, mp_bitcnt_t precision) : mpf_class(precision_tag{}, precision)
     {
+        gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value.mpq_data());
         mpf_set_q(value_, value.mpq_data());
     }
 
@@ -219,6 +221,7 @@ public:
             if constexpr (std::is_same_v<result_type, mpz_class>) {
                 mpf_set_z(value_, value.mpz_data());
             } else {
+                gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value.mpq_data());
                 mpf_set_q(value_, value.mpq_data());
             }
         } catch (...) {
@@ -287,6 +290,7 @@ public:
 
     mpf_class& operator=(const mpq_class& value)
     {
+        gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value.mpq_data());
         mpf_set_q(value_, value.mpq_data());
         return *this;
     }
@@ -1453,8 +1457,9 @@ inline void mpf_evaluate(mpf_t dest, const borrowed_object_leaf<gmpxx::mpf_class
     mpf_set(dest, expr.get().mpf_data());
 }
 
-inline void mpf_set_q_at_precision(mpf_t dest, const mpq_t value, mp_bitcnt_t eval_precision)
+inline void mpf_set_q_at_precision(mpf_t dest, mpq_srcptr value, mp_bitcnt_t eval_precision)
 {
+    gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value);
     mpf_t denominator;
     mpf_init2(denominator, eval_precision);
     mpf_set_z(dest, mpq_numref(value));

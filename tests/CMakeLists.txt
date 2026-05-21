@@ -28,6 +28,7 @@ add_phase0_test(test_common_type gmpfrxx_mkII)
 add_phase0_test(test_exception_support gmpxx_mkII)
 add_phase0_test(test_random gmpxx_mkII)
 add_phase0_test(test_type_conversions gmpxx_mkII)
+add_phase0_test(test_mpq_floating_conversion gmpfrxx_mkII)
 add_phase0_test(test_unary_minus_simplification gmpfrxx_mkII)
 add_phase0_test(test_user_defined_literals gmpxx_mkII)
 add_phase0_test(test_et_contract_mpfr mpfrxx_mkII)
@@ -102,6 +103,10 @@ add_test(
     NAME test_mpfr_environment_first_use_initialize_thread_defaults
     COMMAND test_mpfr_environment_first_use initialize_thread_defaults
 )
+add_test(
+    NAME test_mpfr_environment_first_use_raw_rounding_preserved
+    COMMAND test_mpfr_environment_first_use raw_rounding_preserved
+)
 add_executable(test_mpfr_environment_first_use_stable test_mpfr_environment_first_use.cpp)
 target_link_libraries(test_mpfr_environment_first_use_stable PRIVATE mpfrxx_mkII)
 target_compile_definitions(test_mpfr_environment_first_use_stable PRIVATE
@@ -122,6 +127,10 @@ add_test(
 add_test(
     NAME test_mpfr_environment_first_use_stable_initialize_thread_defaults
     COMMAND test_mpfr_environment_first_use_stable initialize_thread_defaults
+)
+add_test(
+    NAME test_mpfr_environment_first_use_stable_raw_rounding_preserved
+    COMMAND test_mpfr_environment_first_use_stable raw_rounding_preserved
 )
 add_phase0_test(test_mpfr_environment_invalid mpfrxx_mkII)
 add_phase0_test(test_mpfr_string_io mpfrxx_mkII)
@@ -218,8 +227,8 @@ add_test(
     COMMAND test_mpc_environment_first_use component_env
 )
 add_test(
-    NAME test_mpc_environment_first_use_mismatch_throws
-    COMMAND test_mpc_environment_first_use mismatch_throws
+    NAME test_mpc_environment_first_use_asymmetric_override
+    COMMAND test_mpc_environment_first_use asymmetric_override
 )
 add_phase0_test(test_mpc_environment_invalid mpcxx_mkII)
 add_phase0_test(test_mpc_precision_policy mpcxx_mkII)

@@ -66,17 +66,38 @@ int main()
         std::abort();
     }
 
-    try {
-        mpfrxx::set_default_mpc_precision_bits(160, 192);
+    mpfrxx::set_default_mpc_precision_bits(160, 192);
+    defaults = mpfrxx::default_mpc_options();
+    if (defaults.real_precision_bits != 160 || defaults.imag_precision_bits != 192) {
         std::abort();
-    } catch (const std::invalid_argument&) {
+    }
+    {
+        mpfrxx::mpc_class asymmetric_value;
+        if (asymmetric_value.real_precision() != 160 || asymmetric_value.imag_precision() != 192) {
+            std::abort();
+        }
+    }
+
+    if (mpfrxx::default_precision_bits() != 512 || mpfrxx::default_rounding_mode() != MPFR_RNDN) {
+        std::abort();
     }
 
     mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU);
-    try {
-        mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU, MPFR_RNDD);
+    defaults = mpfrxx::default_mpc_options();
+    if (defaults.real_rounding_mode != MPFR_RNDU || defaults.imag_rounding_mode != MPFR_RNDU) {
         std::abort();
-    } catch (const std::invalid_argument&) {
+    }
+    if (mpfrxx::default_rounding_mode() != MPFR_RNDN) {
+        std::abort();
+    }
+
+    mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU, MPFR_RNDD);
+    defaults = mpfrxx::default_mpc_options();
+    if (defaults.real_rounding_mode != MPFR_RNDU || defaults.imag_rounding_mode != MPFR_RNDD) {
+        std::abort();
+    }
+    if (mpfrxx::default_mpc_rounding_mode() != MPC_RND(MPFR_RNDU, MPFR_RNDD)) {
+        std::abort();
     }
 
     mpfrxx::set_default_mpc_precision_bits(192, 192);
@@ -93,6 +114,9 @@ int main()
         std::abort();
     }
     if (mpfrxx::default_mpc_rounding_mode() != MPC_RND(MPFR_RNDU, MPFR_RNDU)) {
+        std::abort();
+    }
+    if (mpfrxx::default_precision_bits() != 512 || mpfrxx::default_rounding_mode() != MPFR_RNDN) {
         std::abort();
     }
 

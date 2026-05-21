@@ -105,6 +105,44 @@ int main()
     require_domain_error([&] {
         stream_like.canonicalize();
     });
+    require_domain_error([&] {
+        (void)stream_like.get_d();
+    });
+    require_domain_error([&] {
+        (void)(stream_like == gmpxx::mpq_class(0));
+    });
+    require_domain_error([&] {
+        (void)(stream_like < gmpxx::mpq_class(1));
+    });
+    require_domain_error([&] {
+        (void)gmpxx::mpz_class(stream_like);
+    });
+    require_domain_error([&] {
+        gmpxx::mpz_class converted;
+        converted = stream_like;
+    });
+    require_domain_error([&] {
+        (void)gmpxx::mpq_class(stream_like + gmpxx::mpq_class(1));
+    });
+    require_domain_error([&] {
+        (void)gmpxx::mpq_class(gmpxx::mpq_class(1) + stream_like);
+    });
+
+    mpq_set_str(stream_like.mpq_data(), "6/8", 10);
+    require_num_den(stream_like, 6, 8);
+    if (!(stream_like == gmpxx::mpq_class(3, 4)) ||
+        stream_like != gmpxx::mpq_class(3, 4) ||
+        !(stream_like <= gmpxx::mpq_class(3, 4)) ||
+        !(stream_like >= gmpxx::mpq_class(3, 4))) {
+        std::abort();
+    }
+    gmpxx::mpq_class raw_sum = stream_like + gmpxx::mpq_class(1, 8);
+    require_num_den(raw_sum, 7, 8);
+    mpq_set_str(stream_like.mpq_data(), "10/5", 10);
+    const gmpxx::mpz_class integer_from_raw(stream_like);
+    if (integer_from_raw != gmpxx::mpz_class(2)) {
+        std::abort();
+    }
 
     mpq_t raw;
     mpq_init(raw);

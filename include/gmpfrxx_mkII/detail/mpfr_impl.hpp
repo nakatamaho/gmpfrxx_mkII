@@ -163,6 +163,7 @@ public:
     {
         gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
+        gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value.mpq_data());
         mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
         init_guard.release();
     }
@@ -301,6 +302,7 @@ public:
     mpfr_class& operator=(const gmpxx::mpq_class& value)
     {
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
+        gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value.mpq_data());
         mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
         return *this;
     }
@@ -487,14 +489,13 @@ public:
         }
 
         mpfr_t temp;
-        mpfr_init2(temp, precision());
+        gmpfrxx_mkII::detail::scoped_mpfr_init temp_guard(temp, precision());
         const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
         const std::string parse_text = gmpfrxx_mkII::detail::mpfr_trim_surrounding_whitespace(text);
         const int rc = mpfr_set_str(temp, parse_text.c_str(), base, context.rounding_mode);
         if (rc == 0) {
             mpfr_set(value_, temp, context.rounding_mode);
         }
-        mpfr_clear(temp);
         return rc;
     }
 
@@ -1754,6 +1755,7 @@ inline void mpfr_evaluate(
     mpfr_prec_t,
     mpfr_rnd_t rnd)
 {
+    gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(expr.get().mpq_data());
     mpfr_set_q(dest, expr.get().mpq_data(), rnd);
 }
 
@@ -1763,6 +1765,7 @@ inline void mpfr_evaluate(
     mpfr_prec_t,
     mpfr_rnd_t rnd)
 {
+    gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(expr.get().mpq_data());
     mpfr_set_q(dest, expr.get().mpq_data(), rnd);
 }
 
@@ -2247,6 +2250,7 @@ void mpfr_evaluate(
     } else if constexpr (std::is_same_v<Result, gmpxx::mpq_class>) {
         scoped_mpq_t exact;
         mpq_evaluate(exact.get(), expr);
+        gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(exact.get());
         mpfr_set_q(dest, exact.get(), rnd);
         return;
     }

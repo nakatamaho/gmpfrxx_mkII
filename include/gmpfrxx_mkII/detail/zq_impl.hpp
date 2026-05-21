@@ -394,12 +394,65 @@ inline bool mpq_has_zero_denominator_raw(mpq_srcptr value) noexcept
     return mpz_sgn(mpq_denref(value)) == 0;
 }
 
-inline void mpq_canonicalize_checked_raw(mpq_ptr value)
+inline void mpq_require_arithmetic_ready(mpq_srcptr value)
 {
     if (mpq_has_zero_denominator_raw(value)) {
-        throw std::domain_error("mpq denominator must be nonzero");
+        throw std::domain_error("mpq denominator must be nonzero for arithmetic conversion");
     }
+}
+
+inline void mpq_canonicalize_checked_raw(mpq_ptr value)
+{
+    mpq_require_arithmetic_ready(value);
     mpq_canonicalize(value);
+}
+
+class arithmetic_ready_mpq_temporary {
+public:
+    explicit arithmetic_ready_mpq_temporary(mpq_srcptr value)
+    {
+        mpq_init(value_);
+        try {
+            mpq_set(value_, value);
+            mpq_canonicalize_checked_raw(value_);
+        } catch (...) {
+            mpq_clear(value_);
+            throw;
+        }
+    }
+
+    arithmetic_ready_mpq_temporary(const arithmetic_ready_mpq_temporary&) = delete;
+    arithmetic_ready_mpq_temporary& operator=(const arithmetic_ready_mpq_temporary&) = delete;
+
+    ~arithmetic_ready_mpq_temporary()
+    {
+        mpq_clear(value_);
+    }
+
+    mpq_ptr get() noexcept { return value_; }
+    mpq_srcptr get() const noexcept { return value_; }
+
+private:
+    mpq_t value_;
+};
+
+inline int mpq_cmp_checked(mpq_srcptr lhs, mpq_srcptr rhs)
+{
+    const arithmetic_ready_mpq_temporary left(lhs);
+    const arithmetic_ready_mpq_temporary right(rhs);
+    return mpq_cmp(left.get(), right.get());
+}
+
+inline int mpq_cmp_z_checked(mpq_srcptr lhs, mpz_srcptr rhs)
+{
+    const arithmetic_ready_mpq_temporary left(lhs);
+    return mpq_cmp_z(left.get(), rhs);
+}
+
+inline double mpq_get_d_checked(mpq_srcptr value)
+{
+    const arithmetic_ready_mpq_temporary ready(value);
+    return mpq_get_d(ready.get());
 }
 
 } // namespace detail
@@ -1045,7 +1098,7 @@ public:
 
     double get_d() const
     {
-        return mpq_get_d(value_);
+        return gmpfrxx_mkII::detail::mpq_get_d_checked(value_);
     }
 
     explicit operator bool() const noexcept
@@ -1329,7 +1382,7 @@ inline bool operator>=(const mpz_class& lhs, const mpz_class& rhs)
 
 inline bool operator==(const mpq_class& lhs, const mpq_class& rhs)
 {
-    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) == 0;
+    return gmpfrxx_mkII::detail::mpq_cmp_checked(lhs.mpq_data(), rhs.mpq_data()) == 0;
 }
 
 inline bool operator!=(const mpq_class& lhs, const mpq_class& rhs)
@@ -1339,33 +1392,40 @@ inline bool operator!=(const mpq_class& lhs, const mpq_class& rhs)
 
 inline bool operator<(const mpq_class& lhs, const mpq_class& rhs)
 {
-    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) < 0;
+    return gmpfrxx_mkII::detail::mpq_cmp_checked(lhs.mpq_data(), rhs.mpq_data()) < 0;
 }
 
 inline bool operator<=(const mpq_class& lhs, const mpq_class& rhs)
 {
-    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) <= 0;
+    return gmpfrxx_mkII::detail::mpq_cmp_checked(lhs.mpq_data(), rhs.mpq_data()) <= 0;
 }
 
 inline bool operator>(const mpq_class& lhs, const mpq_class& rhs)
 {
-    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) > 0;
+    return gmpfrxx_mkII::detail::mpq_cmp_checked(lhs.mpq_data(), rhs.mpq_data()) > 0;
 }
 
 inline bool operator>=(const mpq_class& lhs, const mpq_class& rhs)
 {
-    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data()) >= 0;
+    return gmpfrxx_mkII::detail::mpq_cmp_checked(lhs.mpq_data(), rhs.mpq_data()) >= 0;
 }
 
 inline mpz_class::mpz_class(const mpq_class& value)
 {
     mpz_init(value_);
-    mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
+    try {
+        const gmpfrxx_mkII::detail::arithmetic_ready_mpq_temporary ready(value.mpq_data());
+        mpz_tdiv_q(value_, mpq_numref(ready.get()), mpq_denref(ready.get()));
+    } catch (...) {
+        mpz_clear(value_);
+        throw;
+    }
 }
 
 inline mpz_class& mpz_class::operator=(const mpq_class& value)
 {
-    mpz_tdiv_q(value_, mpq_numref(value.mpq_data()), mpq_denref(value.mpq_data()));
+    const gmpfrxx_mkII::detail::arithmetic_ready_mpq_temporary ready(value.mpq_data());
+    mpz_tdiv_q(value_, mpq_numref(ready.get()), mpq_denref(ready.get()));
     return *this;
 }
 
@@ -1718,17 +1778,17 @@ inline int cmp(const gmpxx::mpz_class& lhs, const gmpxx::mpz_class& rhs)
 
 inline int cmp(const gmpxx::mpq_class& lhs, const gmpxx::mpq_class& rhs)
 {
-    return mpq_cmp(lhs.mpq_data(), rhs.mpq_data());
+    return mpq_cmp_checked(lhs.mpq_data(), rhs.mpq_data());
 }
 
 inline int cmp(const gmpxx::mpq_class& lhs, const gmpxx::mpz_class& rhs)
 {
-    return mpq_cmp_z(lhs.mpq_data(), rhs.mpz_data());
+    return mpq_cmp_z_checked(lhs.mpq_data(), rhs.mpz_data());
 }
 
 inline int cmp(const gmpxx::mpz_class& lhs, const gmpxx::mpq_class& rhs)
 {
-    return -mpq_cmp_z(rhs.mpq_data(), lhs.mpz_data());
+    return -mpq_cmp_z_checked(rhs.mpq_data(), lhs.mpz_data());
 }
 
 inline int zq_cmp_mpz_unsigned_long(const mpz_t lhs, unsigned long rhs)
@@ -1775,17 +1835,19 @@ inline int zq_cmp_mpz_integral(const mpz_t lhs, T rhs)
 template <typename T, std::enable_if_t<is_zq_direct_integral_comparison_scalar_v<T>, int> = 0>
 inline int zq_cmp_mpq_integral(const mpq_t lhs, T rhs)
 {
+    const arithmetic_ready_mpq_temporary ready(lhs);
+    const mpq_srcptr checked_lhs = ready.get();
     using value_type = std::remove_cv_t<T>;
     if constexpr (std::is_signed_v<value_type>) {
         if (rhs < 0) {
             if constexpr (sizeof(value_type) <= sizeof(long)) {
-                return mpq_cmp_si(lhs, static_cast<long>(rhs), 1UL);
+                return mpq_cmp_si(checked_lhs, static_cast<long>(rhs), 1UL);
             } else {
                 if (rhs >= static_cast<value_type>(std::numeric_limits<long>::min())) {
-                    return mpq_cmp_si(lhs, static_cast<long>(rhs), 1UL);
+                    return mpq_cmp_si(checked_lhs, static_cast<long>(rhs), 1UL);
                 }
                 const gmpxx::mpz_class rhs_z(rhs);
-                return mpq_cmp_z(lhs, rhs_z.mpz_data());
+                return mpq_cmp_z(checked_lhs, rhs_z.mpz_data());
             }
         }
     }
@@ -1793,13 +1855,13 @@ inline int zq_cmp_mpq_integral(const mpq_t lhs, T rhs)
     using unsigned_type = std::make_unsigned_t<value_type>;
     const auto magnitude = static_cast<unsigned_type>(rhs);
     if constexpr (sizeof(unsigned_type) <= sizeof(unsigned long)) {
-        return mpq_cmp_ui(lhs, static_cast<unsigned long>(magnitude), 1UL);
+        return mpq_cmp_ui(checked_lhs, static_cast<unsigned long>(magnitude), 1UL);
     } else {
         if (magnitude <= static_cast<unsigned_type>(std::numeric_limits<unsigned long>::max())) {
-            return mpq_cmp_ui(lhs, static_cast<unsigned long>(magnitude), 1UL);
+            return mpq_cmp_ui(checked_lhs, static_cast<unsigned long>(magnitude), 1UL);
         }
         const gmpxx::mpz_class rhs_z(rhs);
-        return mpq_cmp_z(lhs, rhs_z.mpz_data());
+        return mpq_cmp_z(checked_lhs, rhs_z.mpz_data());
     }
 }
 
@@ -1862,7 +1924,7 @@ inline int cmp(const Lhs& lhs, const Rhs& rhs)
 {
     const gmpxx::mpq_class left = zq_comparison_value(lhs);
     const gmpxx::mpq_class right = zq_comparison_value(rhs);
-    return mpq_cmp(left.mpq_data(), right.mpq_data());
+    return mpq_cmp_checked(left.mpq_data(), right.mpq_data());
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_zq_comparison_pair_v<Lhs, Rhs>, int> = 0>
@@ -2127,7 +2189,8 @@ inline void mpq_evaluate(mpq_t dest, const object_leaf<gmpxx::mpz_class>& expr)
 
 inline void mpq_evaluate(mpq_t dest, const object_leaf<gmpxx::mpq_class>& expr)
 {
-    mpq_set(dest, expr.get().mpq_data());
+    const arithmetic_ready_mpq_temporary ready(expr.get().mpq_data());
+    mpq_set(dest, ready.get());
 }
 
 template <typename T, typename Result>
@@ -2188,17 +2251,19 @@ bool mpq_expression_references(const mpq_t target, const binary_expr<Op, Lhs, Rh
 template <typename Op>
 void mpq_apply_binary(mpq_t dest, const mpq_t lhs, const mpq_t rhs)
 {
+    const arithmetic_ready_mpq_temporary left(lhs);
+    const arithmetic_ready_mpq_temporary right(rhs);
     if constexpr (std::is_same_v<Op, add_op>) {
-        mpq_add(dest, lhs, rhs);
+        mpq_add(dest, left.get(), right.get());
     } else if constexpr (std::is_same_v<Op, sub_op>) {
-        mpq_sub(dest, lhs, rhs);
+        mpq_sub(dest, left.get(), right.get());
     } else if constexpr (std::is_same_v<Op, mul_op>) {
-        mpq_mul(dest, lhs, rhs);
+        mpq_mul(dest, left.get(), right.get());
     } else if constexpr (std::is_same_v<Op, div_op>) {
-        if (mpq_sgn(rhs) == 0) {
+        if (mpq_sgn(right.get()) == 0) {
             throw std::domain_error("mpq division by zero");
         }
-        mpq_div(dest, lhs, rhs);
+        mpq_div(dest, left.get(), right.get());
     } else {
         static_assert(std::is_same_v<Op, add_op>, "unsupported MPQ expression operation");
     }
@@ -2218,6 +2283,7 @@ void mpq_evaluate_to_temporary(mpq_t temp, const Expr& expr)
 
 inline void mpq_apply_shift(mpq_t dest, const mpz_t count, bool left_shift)
 {
+    mpq_canonicalize_checked_raw(dest);
     if (left_shift) {
         mpz_mul_2exp(mpq_numref(dest), mpq_numref(dest), zq_shift_count_from_mpz(count));
     } else {
@@ -2582,7 +2648,7 @@ mpq_class::mpq_class(const Expr& expr)
     mpq_init(value_);
     try {
         gmpfrxx_mkII::detail::mpq_evaluate(value_, expr);
-        mpq_canonicalize(value_);
+        gmpfrxx_mkII::detail::mpq_canonicalize_checked_raw(value_);
     } catch (...) {
         mpq_clear(value_);
         throw;
@@ -2593,7 +2659,7 @@ template <typename Expr, typename>
 mpq_class& mpq_class::operator=(const Expr& expr)
 {
     gmpfrxx_mkII::detail::mpq_evaluate(value_, expr);
-    mpq_canonicalize(value_);
+    gmpfrxx_mkII::detail::mpq_canonicalize_checked_raw(value_);
     return *this;
 }
 

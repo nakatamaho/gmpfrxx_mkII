@@ -178,6 +178,24 @@ inline bool parse_mpfr_rounding(const char* text, mpfr_rnd_t& out) noexcept
     return false;
 }
 
+inline void warn_invalid_environment_value(const char* variable, const char* value) noexcept
+{
+    if (value != nullptr) {
+        std::fprintf(stderr,
+                     "gmpfrxx_mkII: ignoring invalid environment value %s=%s\n",
+                     variable,
+                     value);
+    }
+}
+
+inline void warn_invalid_mpfr_exponent_range(const char* emin_text, const char* emax_text) noexcept
+{
+    std::fprintf(stderr,
+                 "gmpfrxx_mkII: ignoring invalid MPFR exponent range MPFRXX_EMIN=%s MPFRXX_EMAX=%s\n",
+                 emin_text != nullptr ? emin_text : "<unset>",
+                 emax_text != nullptr ? emax_text : "<unset>");
+}
+
 inline parsed_mpfr_environment load_mpfr_environment() noexcept
 {
     parsed_mpfr_environment result{
@@ -191,24 +209,44 @@ inline parsed_mpfr_environment load_mpfr_environment() noexcept
     mpfr_prec_t precision = result.precision;
     if (parse_mpfr_precision(precision_text, precision)) {
         result.precision = precision;
+    } else {
+        warn_invalid_environment_value("MPFRXX_DEFAULT_PRECISION_BITS", precision_text);
     }
 
     mpfr_exp_t emin = result.emin;
     mpfr_exp_t emax = result.emax;
-    const bool has_emin = parse_mpfr_exponent(std::getenv("MPFRXX_EMIN"), emin);
-    const bool has_emax = parse_mpfr_exponent(std::getenv("MPFRXX_EMAX"), emax);
+    const char* emin_text = std::getenv("MPFRXX_EMIN");
+    const char* emax_text = std::getenv("MPFRXX_EMAX");
+    const bool has_emin = parse_mpfr_exponent(emin_text, emin);
+    const bool has_emax = parse_mpfr_exponent(emax_text, emax);
+    if (!has_emin) {
+        warn_invalid_environment_value("MPFRXX_EMIN", emin_text);
+    }
+    if (!has_emax) {
+        warn_invalid_environment_value("MPFRXX_EMAX", emax_text);
+    }
+    bool applied_exponent_range = false;
     if (has_emin && has_emax && valid_mpfr_exponent_range(emin, emax)) {
         result.emin = emin;
         result.emax = emax;
+        applied_exponent_range = true;
     } else if (has_emin && !has_emax && valid_mpfr_exponent_range(emin, result.emax)) {
         result.emin = emin;
+        applied_exponent_range = true;
     } else if (!has_emin && has_emax && valid_mpfr_exponent_range(result.emin, emax)) {
         result.emax = emax;
+        applied_exponent_range = true;
+    }
+    if ((has_emin || has_emax) && !applied_exponent_range) {
+        warn_invalid_mpfr_exponent_range(emin_text, emax_text);
     }
 
     mpfr_rnd_t rounding = result.rounding;
-    if (parse_mpfr_rounding(std::getenv("MPFRXX_ROUNDING_MODE"), rounding)) {
+    const char* rounding_text = std::getenv("MPFRXX_ROUNDING_MODE");
+    if (parse_mpfr_rounding(rounding_text, rounding)) {
         result.rounding = rounding;
+    } else {
+        warn_invalid_environment_value("MPFRXX_ROUNDING_MODE", rounding_text);
     }
 
     return result;
@@ -290,6 +328,7 @@ inline void initialize_mpfr_defaults_for_current_thread() noexcept
     if (mpfr_default_state_is_library_initial()) {
         apply_mpfr_environment_defaults();
     }
+    refresh_stable_mpfr_rounding_mode();
 }
 
 inline mpfr_rnd_t current_mpfr_rounding_mode() noexcept

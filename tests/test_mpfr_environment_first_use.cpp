@@ -40,6 +40,14 @@ void configure_environment()
     setenv("MPFRXX_ROUNDING_MODE", "RNDU", 1);
 }
 
+void clear_environment()
+{
+    unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
+    unsetenv("MPFRXX_EMIN");
+    unsetenv("MPFRXX_EMAX");
+    unsetenv("MPFRXX_ROUNDING_MODE");
+}
+
 void require_environment_applied()
 {
     const auto defaults = mpfrxx::default_options();
@@ -109,6 +117,23 @@ void test_initialize_thread_defaults_first_use()
     }
 }
 
+void test_raw_rounding_preserved_first_use()
+{
+    clear_environment();
+    mpfr_set_default_rounding_mode(MPFR_RNDD);
+
+    const auto context = gmpfrxx_mkII::detail::current_eval_context(53);
+    if (context.rounding_mode != MPFR_RNDD) {
+        std::abort();
+    }
+    if (gmpfrxx_mkII::detail::current_rounding_mode() != MPFR_RNDD) {
+        std::abort();
+    }
+    if (mpfrxx::default_rounding_mode() != MPFR_RNDD) {
+        std::abort();
+    }
+}
+
 } // namespace
 
 int main(int argc, char** argv)
@@ -131,6 +156,10 @@ int main(int argc, char** argv)
     }
     if (std::strcmp(argv[1], "initialize_thread_defaults") == 0) {
         test_initialize_thread_defaults_first_use();
+        return 0;
+    }
+    if (std::strcmp(argv[1], "raw_rounding_preserved") == 0) {
+        test_raw_rounding_preserved_first_use();
         return 0;
     }
 

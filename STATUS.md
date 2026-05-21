@@ -20066,3 +20066,392 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: MPFR set_str Temporary RAII Guard
+
+Implemented features:
+- Changed `mpfrxx::mpfr_class::set_str(const char*, int)` to protect its temporary `mpfr_t` with `gmpfrxx_mkII::detail::scoped_mpfr_init`.
+- Removed the manual `mpfr_clear(temp)` from that path so exceptions between `mpfr_init2` and return cannot leak the temporary MPFR object.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None. The bug is an exception-safety path for allocation failure during string preprocessing; existing string and conversion tests cover behavior preservation.
+
+Tests updated:
+- None.
+
+Files changed:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpfr_type_conversions test_mpfrxx_mkII`
+- `ctest --test-dir build -R 'test_mpfr_type_conversions|test_mpfrxx_mkII' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused MPFR build: PASS.
+- Focused MPFR CTest: PASS. 2/2 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 173/173 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: Fixed-Precision Move Assignment Contract Specification
+
+Implemented features:
+- Strengthened `SPECIFICATIONS.md` to state that floating wrapper move assignment precision mismatch is a caller contract violation under `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
+- Clarified that normal builds preserve left-hand-side precision, while fixed-precision builds may keep the fast swap path and omit release-mode checks.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None. This phase changes specification text only.
+
+Tests updated:
+- None.
+
+Files changed:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "Fixed-Precision|ASSUME_FIXED_PRECISION|fixed precision|move assignment|precision mismatch|caller contract|SPEC" SPECIFICATIONS.md STATUS.md`
+- `rg -n -C 8 "floating wrapper move assignment|precision mismatch as a caller contract|Fixed-Precision|GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH" SPECIFICATIONS.md`
+
+Pass/fail result:
+- Not run. Specification-only text change.
+
+Known issues:
+- None for this phase.
+
+## Phase: MPQ Arithmetic-Ready Floating Conversion Guard
+
+Implemented features:
+- Added `gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(mpq_srcptr)` to reject zero-denominator rationals at arithmetic conversion boundaries.
+- Guarded `mpf_set_q`, `mpfr_set_q`, `mpc_set_q`, and `mpf_set_q_at_precision` call paths before converting `mpq_class` or evaluated `mpq_t` values into MPF, MPFR, MPC, or MPFC-backed floating objects.
+- Kept stream-input compatibility for non-canonical rationals; the new guard rejects only zero denominators when a rational is consumed by floating arithmetic.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- `test_mpq_floating_conversion` covers zero-denominator `mpq_class` rejection for MPF, MPFC expression materialization, MPFR, and MPC conversion paths.
+
+Tests updated:
+- `tests/CMakeLists.txt`
+
+Files changed:
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_mpq_floating_conversion.cpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "mpq_has_zero_denominator_raw|mpq_canonicalize_checked_raw|mpf_set_q|mpfr_set_q|mpc_set_q|mpf_set_q_at_precision|mpq_denref" include/gmpfrxx_mkII/detail tests`
+- `cmake -S . -B build`
+- `cmake --build build -j --target test_mpq_floating_conversion`
+- `ctest --test-dir build -R 'test_mpq_floating_conversion' --output-on-failure`
+- `cmake --build build -j --target test_type_conversions test_mpfr_type_conversions test_mpc_basic test_mixed_type_arithmetic test_mpq_floating_conversion`
+- `ctest --test-dir build -R 'test_type_conversions|test_mpfr_type_conversions|test_mpc_basic|test_mixed_type_arithmetic|test_mpq_floating_conversion' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- CMake reconfigure: PASS.
+- New regression test build: PASS.
+- New regression CTest: PASS. 1/1 selected test passed.
+- Focused conversion build: PASS.
+- Focused conversion CTest: PASS. 5/5 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 174/174 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: MPFR MPC Invalid Environment Diagnostics
+
+Implemented features:
+- Added stderr diagnostics for invalid `MPFRXX_*` environment values while preserving the existing fallback behavior.
+- Added stderr diagnostics for invalid `MPFRXX_MPC_*` environment values while preserving inherited MPFR/default MPC fallback behavior.
+- Documented that invalid MPFR and MPC environment values are ignored with diagnostics rather than terminating the process.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- Existing invalid-environment tests continue to cover fallback behavior.
+
+Files changed:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpfr_environment_invalid test_mpc_environment_invalid`
+- `ctest --test-dir build -R 'test_mpfr_environment_invalid|test_mpc_environment_invalid' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused invalid-environment test build: PASS.
+- Focused invalid-environment CTest: PASS. 2/2 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 174/174 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: Stable MPFR Rounding First-Use Cache Refresh
+
+Implemented features:
+- Refreshed the stable MPFR rounding cache after first-use MPFR default initialization, regardless of whether environment defaults were applied.
+- Preserved raw MPFR rounding mode set before first wrapper access when `GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` is enabled.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Added `raw_rounding_preserved` mode to `test_mpfr_environment_first_use`.
+- Added CTest entries for normal and stable-rounding first-use raw rounding preservation.
+
+Tests updated:
+- `tests/CMakeLists.txt`
+
+Files changed:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `tests/test_mpfr_environment_first_use.cpp`
+- `tests/CMakeLists.txt`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build`
+- `cmake --build build -j --target test_mpfr_environment_first_use test_mpfr_environment_first_use_stable`
+- `ctest --test-dir build -R 'test_mpfr_environment_first_use.*raw_rounding_preserved|test_mpfr_environment_first_use' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- CMake reconfigure: PASS.
+- Focused first-use test build: PASS.
+- Focused first-use CTest: PASS. 10/10 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: Stable MPFR Rounding First-Use Specification Update
+
+Implemented features:
+- Documented that stable MPFR rounding cache is refreshed during wrapper first-use initialization.
+- Clarified that raw MPFR rounding set before first wrapper access is synchronized into the stable cache without overwriting raw MPFR TLS state.
+- Clarified that raw `mpfr_set_default_rounding_mode(...)` after wrapper first use remains outside the stable fastpath contract unless refreshed through wrapper APIs.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- None.
+
+Files changed:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "Stable|stable|rounding|initialize_thread_defaults|Per-Thread Initialization|GMPFRXX_MKII_ASSUME_STABLE|MPFR" SPECIFICATIONS.md`
+- `nl -ba SPECIFICATIONS.md | sed -n '257,276p'`
+- `nl -ba SPECIFICATIONS.md | sed -n '542,551p'`
+
+Pass/fail result:
+- Not run. Specification-only text change after the prior full CTest pass.
+
+Known issues:
+- None for this phase.
+
+## Phase: MPQ Arithmetic Boundary Guard and MPC Environment Fallback
+
+Implemented features:
+- Treated asymmetric `MPFRXX_MPC_REAL_*` / `MPFRXX_MPC_IMAG_*` environment pairs as invalid environment configuration instead of API contract violations.
+- Emitted `stderr` diagnostics for asymmetric MPC environment pairs and kept the inherited MPFR default or valid symmetric fallback.
+- Kept explicit MPC setters strict: asymmetric explicit precision or rounding arguments still throw.
+- Added arithmetic-ready validation for raw `mpq_t` values before rational arithmetic, comparison, integer conversion, floating conversion, and expression materialization boundaries.
+- Canonicalized nonzero-denominator raw rationals at arithmetic boundaries while continuing to allow stream-compatible raw rational storage at the input layer.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Extended `test_mpq_canonicalization` with raw stream-like `1/0` rejection at arithmetic/comparison/conversion boundaries and noncanonical nonzero rational arithmetic checks.
+
+Tests updated:
+- Updated MPC environment tests so asymmetric environment values fall back with diagnostics instead of throwing.
+- Updated MPQ allocation-count expectations because checked canonical temporaries are now part of the safety boundary for rational arithmetic.
+- `tests/CMakeLists.txt`
+
+Files changed:
+- `SPECIFICATIONS.md`
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `tests/test_mpc_environment.cpp`
+- `tests/test_mpc_environment_first_use.cpp`
+- `tests/test_mpq_canonicalization.cpp`
+- `tests/test_mpz_mpq_alloc_count.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpz_mpq_alloc_count test_mpc_environment test_mpq_canonicalization test_zq_string_io test_mpc_environment_first_use`
+- `ctest --test-dir build -R 'test_mpz_mpq_alloc_count|test_mpc_environment|test_mpq_canonicalization|test_zq_string_io|test_mpc_environment_first_use' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused test build: PASS.
+- Focused CTest: PASS. 9/9 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: MPC Asymmetric Precision Default API
+
+Implemented features:
+- Allowed `mpfrxx::set_default_mpc_precision_bits(real, imag)` to accept valid asymmetric real and imaginary precision values.
+- Added thread-local MPC precision override storage for asymmetric default precision because MPFR's shared scalar default precision cannot represent two component precisions.
+- Kept `mpfrxx::set_default_mpc_precision_bits(precision)` as the symmetric path; it updates the shared MPFR default precision and clears the MPC precision override.
+- Kept MPC default rounding symmetric; `mpfrxx::set_default_mpc_rounding_mode(real, imag)` still throws `std::invalid_argument` when the component rounding modes differ.
+- Kept MPC environment defaults symmetric-only; asymmetric real/imag environment pairs remain invalid environment configuration with diagnostic fallback.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Extended `test_mpc_defaults` to verify asymmetric default precision is accepted and default `mpc_class` construction uses the requested real/imag precision split.
+
+Tests updated:
+- Updated `test_mpc_environment` so explicit asymmetric precision is accepted while the rounding policy remains symmetric.
+
+Files changed:
+- `SPECIFICATIONS.md`
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `tests/test_mpc_defaults.cpp`
+- `tests/test_mpc_environment.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpc_defaults test_mpc_environment test_mpc_environment_first_use test_mpc_precision_policy test_mpfr_user_defined_literals`
+- `ctest --test-dir build -R 'test_mpc_defaults|test_mpc_environment|test_mpc_environment_first_use|test_mpc_precision_policy|test_mpfr_user_defined_literals' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused test build: PASS.
+- Focused CTest: PASS. 9/9 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: MPC Asymmetric Default Rounding Override
+
+Implemented features:
+- Added thread-local MPC rounding override storage parallel to the MPC precision override storage.
+- Allowed `mpfrxx::set_default_mpc_rounding_mode(real, imag)` to accept asymmetric real and imaginary rounding modes.
+- Changed MPC-specific precision and rounding setters to affect only `mpfrxx::mpc_class` defaults; they no longer mutate MPFR scalar defaults.
+- Changed MPC environment handling so valid `MPFRXX_MPC_REAL_*` and `MPFRXX_MPC_IMAG_*` values install component-specific MPC overrides, including asymmetric precision and rounding.
+- Kept invalid MPC environment values as diagnostic fallback, without terminating the process.
+- Routed MPC evaluation context default rounding through `mpfrxx::default_mpc_rounding_mode()` so asymmetric MPC default rounding reaches MPC arithmetic calls.
+- Kept the no-override path on `current_mpfr_rounding_mode()` so stable MPFR rounding builds do not regain a raw MPFR default-rounding read in the MPC hot path.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None as new files.
+
+Tests updated:
+- Updated `test_mpc_defaults` to verify asymmetric default rounding and that MPC-specific setters do not mutate MPFR defaults.
+- Updated `test_mpc_environment` to verify asymmetric MPC environment precision and rounding are accepted and do not mutate MPFR defaults.
+- Updated `test_mpc_environment_first_use` and CTest naming from mismatch fallback to asymmetric override semantics.
+
+Files changed:
+- `SPECIFICATIONS.md`
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/CMakeLists.txt`
+- `tests/test_mpc_defaults.cpp`
+- `tests/test_mpc_environment.cpp`
+- `tests/test_mpc_environment_first_use.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpc_defaults test_mpc_environment test_mpc_environment_first_use test_mpc_environment_invalid test_mpc_precision_policy test_mpc_basic test_mpc_math test_mpfr_user_defined_literals`
+- `ctest --test-dir build -R 'test_mpc_defaults|test_mpc_environment|test_mpc_environment_first_use|test_mpc_environment_invalid|test_mpc_precision_policy|test_mpc_basic|test_mpc_math|test_mpfr_user_defined_literals' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused test build: PASS.
+- Focused CTest: PASS. 11/11 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: Remove Obsolete MPC Environment Reload Alias
+
+Implemented features:
+- Removed `mpfrxx::reload_mpc_and_mpfr_defaults_from_environment()`.
+- Kept `mpfrxx::reload_mpc_defaults_from_environment()` as the only public MPC environment reload API.
+- Updated MPC first-use initialization, SPEC, and tests to use the single API name.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None.
+
+Tests updated:
+- Updated `tests/test_mpc_environment.cpp` to call `mpfrxx::reload_mpc_defaults_from_environment()`.
+
+Files changed:
+- `SPECIFICATIONS.md`
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `tests/test_mpc_environment.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "reload_mpc_and_mpfr_defaults_from_environment|reload_mpc_defaults_from_environment" include tests SPECIFICATIONS.md STATUS.md`
+- `rg -n "reload_mpc_and_mpfr_defaults_from_environment" include tests SPECIFICATIONS.md`
+- `cmake --build build -j --target test_mpc_environment test_mpc_environment_first_use test_mpc_environment_invalid test_mpc_defaults`
+- `ctest --test-dir build -R 'test_mpc_environment|test_mpc_environment_first_use|test_mpc_environment_invalid|test_mpc_defaults' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused test build: PASS.
+- Focused CTest: PASS. 7/7 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+
