@@ -108,16 +108,48 @@ inline mpc_default_options load_mpc_defaults_from_environment()
     };
 }
 
+inline bool mpc_environment_is_present() noexcept
+{
+    return std::getenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS") != nullptr ||
+           std::getenv("MPFRXX_MPC_REAL_PRECISION_BITS") != nullptr ||
+           std::getenv("MPFRXX_MPC_IMAG_PRECISION_BITS") != nullptr ||
+           std::getenv("MPFRXX_MPC_ROUNDING_MODE") != nullptr ||
+           std::getenv("MPFRXX_MPC_REAL_ROUNDING_MODE") != nullptr ||
+           std::getenv("MPFRXX_MPC_IMAG_ROUNDING_MODE") != nullptr;
+}
+
+inline bool& mpc_defaults_initialized_storage() noexcept
+{
+    static thread_local bool initialized = false;
+    return initialized;
+}
+
 inline void reload_mpc_and_mpfr_defaults_from_environment()
 {
     const auto loaded = load_mpc_defaults_from_environment();
     set_default_precision_bits(loaded.real_precision_bits);
     set_default_rounding_mode(loaded.real_rounding_mode);
+    mpc_defaults_initialized_storage() = true;
 }
 
 inline void reload_mpc_defaults_from_environment()
 {
     reload_mpc_and_mpfr_defaults_from_environment();
+}
+
+inline void initialize_mpc_defaults_for_current_thread()
+{
+    auto& initialized = mpc_defaults_initialized_storage();
+    if (initialized) {
+        return;
+    }
+
+    if (mpc_environment_is_present()) {
+        reload_mpc_and_mpfr_defaults_from_environment();
+        return;
+    }
+
+    initialized = true;
 }
 
 inline mpc_default_options default_mpc_options()
@@ -126,6 +158,7 @@ inline mpc_default_options default_mpc_options()
     // Separate real/imaginary defaults are not stored in this header; callers
     // that need asymmetric component policy must pass explicit precision and
     // rounding to the object or operation.
+    initialize_mpc_defaults_for_current_thread();
     const auto inherited = default_options();
     return mpc_default_options{
         inherited.precision_bits,
@@ -137,26 +170,28 @@ inline mpc_default_options default_mpc_options()
 
 inline mpfr_prec_t default_mpc_real_precision_bits()
 {
-    return default_precision_bits();
+    return default_mpc_options().real_precision_bits;
 }
 
 inline mpfr_prec_t default_mpc_imag_precision_bits()
 {
-    return default_precision_bits();
+    return default_mpc_options().imag_precision_bits;
 }
 
 inline mpfr_prec_t default_mpc_precision_bits()
 {
-    return default_precision_bits();
+    return default_mpc_options().real_precision_bits;
 }
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t precision)
 {
+    initialize_mpc_defaults_for_current_thread();
     set_default_precision_bits(precision);
 }
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t real_precision, mpfr_prec_t imag_precision)
 {
+    initialize_mpc_defaults_for_current_thread();
     if (real_precision != imag_precision) {
         throw std::invalid_argument(
             "MPC default precision uses the shared MPFR default; real and imaginary precision must match");
@@ -169,27 +204,30 @@ inline void set_default_mpc_precision_bits(mpfr_prec_t real_precision, mpfr_prec
 
 inline mpfr_rnd_t default_mpc_real_rounding_mode()
 {
-    return default_rounding_mode();
+    return default_mpc_options().real_rounding_mode;
 }
 
 inline mpfr_rnd_t default_mpc_imag_rounding_mode()
 {
-    return default_rounding_mode();
+    return default_mpc_options().imag_rounding_mode;
 }
 
 inline mpc_rnd_t default_mpc_rounding_mode()
 {
+    initialize_mpc_defaults_for_current_thread();
     const auto rounding = ::gmpfrxx_mkII::detail::current_mpfr_rounding_mode();
     return MPC_RND(rounding, rounding);
 }
 
 inline void set_default_mpc_rounding_mode(mpfr_rnd_t rounding)
 {
+    initialize_mpc_defaults_for_current_thread();
     set_default_rounding_mode(rounding);
 }
 
 inline void set_default_mpc_rounding_mode(mpfr_rnd_t real_rounding, mpfr_rnd_t imag_rounding)
 {
+    initialize_mpc_defaults_for_current_thread();
     if (real_rounding != imag_rounding) {
         throw std::invalid_argument(
             "MPC default rounding uses the shared MPFR default; real and imaginary rounding modes must match");

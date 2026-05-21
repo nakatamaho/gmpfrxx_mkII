@@ -649,13 +649,22 @@ MPFRXX_MPC_REAL_ROUNDING_MODE
 MPFRXX_MPC_IMAG_ROUNDING_MODE
 ```
 
-If real and imaginary environment defaults are both provided, they must be
-equal. Asymmetric defaults are not represented by wrapper-owned TLS state.
+If any `MPFRXX_MPC_*` variable is present, first use of the MPC default API
+or default `mpc_class` construction reads the MPC environment once for the
+current linked image and thread.  The resulting symmetric MPC default is applied
+by writing the shared MPFR thread-local default precision and rounding mode.
+If no MPC-specific variable is present, MPC defaults simply inherit the current
+MPFR defaults.
 
-`mpfrxx::reload_mpc_and_mpfr_defaults_from_environment()` reloads MPC
-environment defaults by writing the shared MPFR thread-local default precision
-and rounding mode.  `mpfrxx::reload_mpc_defaults_from_environment()` is a
-compatibility alias for the same operation.
+If real and imaginary environment defaults are both provided, they must be
+equal. Asymmetric defaults are not represented by wrapper-owned TLS state.  If
+only one component-specific value is provided, it becomes the symmetric shared
+default for both components.
+
+`mpfrxx::reload_mpc_and_mpfr_defaults_from_environment()` explicitly reloads
+MPC environment defaults by writing the shared MPFR thread-local default
+precision and rounding mode.  `mpfrxx::reload_mpc_defaults_from_environment()`
+is a compatibility alias for the same operation.
 
 ## Rationale
 

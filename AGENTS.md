@@ -308,7 +308,11 @@ MPFRXX_MPC_REAL_ROUNDING_MODE
 MPFRXX_MPC_IMAG_ROUNDING_MODE
 ```
 
-MPC defaults inherit MPFR defaults unless MPC-specific variables are set.
+MPC defaults inherit MPFR defaults when no MPC-specific environment variables are set.
+If any `MPFRXX_MPC_*` variable is present, first use of the MPC default API
+or default `mpc_class` construction must read those variables once for the
+current thread and apply the resulting symmetric MPC default to the shared
+MPFR thread-local default precision and rounding mode.
 
 MPC environment variables must not affect `gmpxx::mpfc_class`.
 

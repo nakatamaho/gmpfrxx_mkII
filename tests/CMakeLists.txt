@@ -203,6 +203,24 @@ add_phase0_test(test_mpc_basic mpcxx_mkII)
 add_phase0_test(test_mpc_aliasing mpcxx_mkII)
 add_phase0_test(test_mpc_defaults mpcxx_mkII)
 add_phase0_test(test_mpc_environment mpcxx_mkII)
+add_executable(test_mpc_environment_first_use test_mpc_environment_first_use.cpp)
+target_link_libraries(test_mpc_environment_first_use PRIVATE mpcxx_mkII)
+add_test(
+    NAME test_mpc_environment_first_use_share_mpfr
+    COMMAND test_mpc_environment_first_use share_mpfr
+)
+add_test(
+    NAME test_mpc_environment_first_use_mpc_env
+    COMMAND test_mpc_environment_first_use mpc_env
+)
+add_test(
+    NAME test_mpc_environment_first_use_component_env
+    COMMAND test_mpc_environment_first_use component_env
+)
+add_test(
+    NAME test_mpc_environment_first_use_mismatch_throws
+    COMMAND test_mpc_environment_first_use mismatch_throws
+)
 add_phase0_test(test_mpc_environment_invalid mpcxx_mkII)
 add_phase0_test(test_mpc_precision_policy mpcxx_mkII)
 add_phase0_test(test_mpc_io mpcxx_mkII)

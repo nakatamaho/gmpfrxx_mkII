@@ -19947,3 +19947,79 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: MPC Environment First-Use Defaults
+
+Implemented features:
+- Added a per-thread MPC default initialization hook that checks `MPFRXX_MPC_*` variables on first use of the MPC default API or default `mpc_class` construction.
+- When an MPC-specific environment variable is present, first use now applies the resulting symmetric MPC default by writing the shared MPFR thread-local default precision and rounding mode.
+- When no MPC-specific environment variable is present, MPC defaults continue to inherit the current MPFR defaults.
+- Kept asymmetric MPC defaults unsupported because there is no separate wrapper-owned MPC default TLS state.
+- Updated AGENTS.md and SPECIFICATIONS.md to state the first-use MPC environment policy.
+
+Missing features:
+- Separate real/imaginary MPC default TLS state remains intentionally unsupported.
+
+Tests added:
+- `tests/test_mpc_environment_first_use.cpp`
+- `test_mpc_environment_first_use_share_mpfr`
+- `test_mpc_environment_first_use_mpc_env`
+- `test_mpc_environment_first_use_component_env`
+- `test_mpc_environment_first_use_mismatch_throws`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `tests/CMakeLists.txt`
+- `AGENTS.md`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake -S . -B build`
+- `cmake --build build -j --target test_mpc_environment_first_use test_mpc_environment test_mpc_environment_invalid test_mpc_defaults test_mpc_precision_policy`
+- `ctest --test-dir build -R 'test_mpc_environment|test_mpc_defaults|test_mpc_precision_policy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- CMake reconfigure: PASS.
+- Focused MPC environment/default build: PASS.
+- Focused MPC environment/default CTest: PASS.  8/8 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  174/174 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: MPFR Exponent Range Rollback Failure Handling
+
+Implemented features:
+- Changed `set_mpfr_default_exponent_range()` so a failed rollback after a partial MPFR exponent-range update prints a diagnostic and aborts instead of continuing with an indeterminate thread-local exponent range.
+- Added `<cstdio>` for the rollback failure diagnostic.
+
+Missing features:
+- No direct forced-rollback-failure test was added; normal MPFR builds should not fail to restore a previously valid exponent range.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpfr_environment test_mpfr_environment_invalid test_mpfr_thread_safety test_mpc_environment test_mpc_environment_first_use test_mpc_environment_invalid`
+- `ctest --test-dir build -R 'test_mpfr_environment|test_mpfr_thread_safety|test_mpc_environment' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused MPFR/MPC environment build: PASS.
+- Focused MPFR/MPC environment CTest: PASS.  17/17 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS.  174/174 tests passed.
+
+Known issues:
+- None for this phase.

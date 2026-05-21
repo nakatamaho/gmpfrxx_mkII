@@ -33,6 +33,7 @@
 
 #include <algorithm>
 #include <cerrno>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
@@ -241,10 +242,12 @@ inline bool set_mpfr_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) no
         return true;
     }
 
-    // Rollback is best-effort.  If restoring the saved range also fails,
-    // this thread's MPFR exponent range may remain partially updated.
-    // The noexcept API can only report the original failure to the caller.
-    (void)apply_ordered(current_emin, current_emax);
+    if (!apply_ordered(current_emin, current_emax)) {
+        std::fprintf(
+            stderr,
+            "gmpfrxx_mkII: failed to restore MPFR exponent range after set failure; aborting\n");
+        std::abort();
+    }
     return false;
 }
 
