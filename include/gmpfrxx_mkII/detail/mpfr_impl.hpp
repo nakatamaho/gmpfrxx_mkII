@@ -1921,6 +1921,18 @@ void mpfr_evaluate(
     mpfr_evaluate(dest, expr.expr(), eval_precision, rnd);
 }
 
+inline mpfr_rnd_t mpfr_dual_rounding_for_negated_result(mpfr_rnd_t rnd) noexcept
+{
+    switch (rnd) {
+    case MPFR_RNDU:
+        return MPFR_RNDD;
+    case MPFR_RNDD:
+        return MPFR_RNDU;
+    default:
+        return rnd;
+    }
+}
+
 template <typename Expr, typename Result>
 void mpfr_evaluate(
     mpfr_t dest,
@@ -1928,8 +1940,8 @@ void mpfr_evaluate(
     mpfr_prec_t eval_precision,
     mpfr_rnd_t rnd)
 {
-    mpfr_evaluate(dest, expr.expr(), eval_precision, rnd);
-    mpfr_neg(dest, dest, rnd);
+    mpfr_evaluate(dest, expr.expr(), eval_precision, mpfr_dual_rounding_for_negated_result(rnd));
+    mpfr_neg(dest, dest, MPFR_RNDN);
 }
 
 template <typename Expr>
@@ -2133,18 +2145,6 @@ mpfr_prec_t mpfr_constructor_materialization_precision(const Expr& expr)
         }
     }
     return precision;
-}
-
-inline mpfr_rnd_t mpfr_dual_rounding_for_negated_result(mpfr_rnd_t rnd) noexcept
-{
-    switch (rnd) {
-    case MPFR_RNDU:
-        return MPFR_RNDD;
-    case MPFR_RNDD:
-        return MPFR_RNDU;
-    default:
-        return rnd;
-    }
 }
 
 template <typename Lhs, typename Rhs>

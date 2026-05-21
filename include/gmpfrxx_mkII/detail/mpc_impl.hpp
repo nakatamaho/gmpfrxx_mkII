@@ -1318,6 +1318,13 @@ void mpc_evaluate(
     mpc_evaluate(dest, expr.expr(), eval_precision, rnd);
 }
 
+inline mpc_rnd_t mpc_dual_rounding_for_negated_result(mpc_rnd_t rnd) noexcept
+{
+    return MPC_RND(
+        mpfr_dual_rounding_for_negated_result(MPC_RND_RE(rnd)),
+        mpfr_dual_rounding_for_negated_result(MPC_RND_IM(rnd)));
+}
+
 template <typename Expr, typename Result>
 void mpc_evaluate(
     mpc_t dest,
@@ -1325,9 +1332,11 @@ void mpc_evaluate(
     mpc_expression_precision_bits eval_precision,
     mpc_rnd_t rnd)
 {
-    mpc_evaluate(dest, expr.expr(), eval_precision, rnd);
-    const int inex = mpc_neg(dest, dest, rnd);
-    mpc_check_component_ranges(dest, rnd, inex);
+    const mpc_rnd_t inner_rnd = mpc_dual_rounding_for_negated_result(rnd);
+    mpc_evaluate(dest, expr.expr(), eval_precision, inner_rnd);
+    const mpc_rnd_t exact_negation_rnd = MPC_RND(MPFR_RNDN, MPFR_RNDN);
+    const int inex = mpc_neg(dest, dest, exact_negation_rnd);
+    mpc_check_component_ranges(dest, exact_negation_rnd, inex);
 }
 
 template <typename Expr>

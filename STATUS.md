@@ -20455,3 +20455,42 @@ Pass/fail result:
 Known issues:
 - None for this phase.
 
+## Phase: Directed Rounding for Unary Minus Expressions
+
+Implemented features:
+- Fixed MPFR unary minus expression evaluation so directed rounding evaluates the inner expression with the dual rounding mode before exact negation.
+- Fixed MPC unary minus expression evaluation with component-wise dual rounding for real and imaginary parts before exact negation.
+- Reused the existing MPFR dual-rounding helper for both MPFR and MPC expression evaluation paths.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None as new test executables.
+
+Tests updated:
+- Added MPFR precision-policy regression checks for `-x` under `MPFR_RNDU` and `MPFR_RNDD` when assigning a high-precision source to a lower-precision destination.
+- Added MPC precision-policy regression coverage for asymmetric directed rounding in unary minus expression assignment.
+
+Files changed:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_mpfr_precision_policy.cpp`
+- `tests/test_mpc_precision_policy.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpfr_precision_policy test_mpc_precision_policy`
+- `ctest --test-dir build -R 'test_mpfr_precision_policy|test_mpc_precision_policy' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused test build: PASS.
+- Focused CTest: PASS. 2/2 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+

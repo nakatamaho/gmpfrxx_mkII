@@ -33,6 +33,45 @@
 #include <cstdlib>
 #include <utility>
 
+namespace {
+
+void require_mpc_equal(const mpfrxx::mpc_class& got, mpc_srcptr expected)
+{
+    if (mpfr_cmp(mpc_realref(got.mpc_data()), mpc_realref(expected)) != 0 ||
+        mpfr_cmp(mpc_imagref(got.mpc_data()), mpc_imagref(expected)) != 0) {
+        std::abort();
+    }
+}
+
+void require_directed_unary_minus_rounding()
+{
+    const auto old_defaults = mpfrxx::default_mpc_options();
+    const mpfrxx::mpfr_class real("1.1", 256);
+    const mpfrxx::mpfr_class imag("1.1", 256);
+    auto source = mpfrxx::mpc_class::with_precision(256, 256);
+    mpc_set_fr_fr(source.mpc_data(), real.mpfr_data(), imag.mpfr_data(), MPC_RNDNN);
+
+    auto got = mpfrxx::mpc_class::with_precision(4, 4);
+    const mpc_rnd_t rnd = MPC_RND(MPFR_RNDU, MPFR_RNDD);
+
+    mpc_t expected;
+    mpc_init3(expected, got.real_precision(), got.imag_precision());
+    mpc_neg(expected, source.mpc_data(), rnd);
+
+    mpfrxx::set_default_mpc_rounding_mode(MPFR_RNDU, MPFR_RNDD);
+    got = -source;
+    mpfrxx::set_default_mpc_rounding_mode(old_defaults.real_rounding_mode,
+                                          old_defaults.imag_rounding_mode);
+
+    if (got.real_precision() != 4 || got.imag_precision() != 4) {
+        std::abort();
+    }
+    require_mpc_equal(got, expected);
+    mpc_clear(expected);
+}
+
+} // namespace
+
 int main()
 {
     auto z = mpfrxx::mpc_class::with_precision(96, 128, 1.0, 2.0);
@@ -117,6 +156,8 @@ int main()
         std::abs(expr_assign.imag_to_double() - 5.0) > 1e-12) {
         std::abort();
     }
+
+    require_directed_unary_minus_rounding();
 
     auto move_same_prec = mpfrxx::mpc_class::with_precision(96, 128);
     auto move_same_source = mpfrxx::mpc_class::with_precision(96, 128, 7.0, -8.0);

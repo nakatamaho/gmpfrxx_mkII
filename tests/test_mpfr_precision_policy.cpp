@@ -55,6 +55,27 @@ void require_invalid_argument(Function&& function)
     std::abort();
 }
 
+void require_directed_unary_minus_rounding(mpfr_rnd_t rnd)
+{
+    const mpfr_rnd_t old_rounding = mpfrxx::default_rounding_mode();
+    const mpfrxx::mpfr_class source("1.1", 256);
+    auto got = mpfrxx::mpfr_class::with_precision(4);
+
+    mpfr_t expected;
+    mpfr_init2(expected, got.precision());
+    mpfr_neg(expected, source.mpfr_data(), rnd);
+
+    mpfrxx::set_default_rounding_mode(rnd);
+    got = -source;
+    mpfrxx::set_default_rounding_mode(old_rounding);
+
+    if (got.precision() != 4) {
+        std::abort();
+    }
+    require_mpfr_equal(got, expected);
+    mpfr_clear(expected);
+}
+
 } // namespace
 
 int main()
@@ -144,6 +165,9 @@ int main()
         require_mpfr_equal(value, ref);
         mpfr_clear(ref);
     }
+
+    require_directed_unary_minus_rounding(MPFR_RNDU);
+    require_directed_unary_minus_rounding(MPFR_RNDD);
 
     {
         require_invalid_argument([] { (void)mpfrxx::mpfr_class::with_precision(0); });
