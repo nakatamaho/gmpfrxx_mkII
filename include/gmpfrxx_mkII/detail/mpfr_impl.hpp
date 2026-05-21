@@ -635,6 +635,11 @@ private:
     mpfr_t value_;
 };
 
+static_assert(sizeof(mpfr_class) == sizeof(mpfr_t),
+              "mpfrxx::mpfr_class must preserve mpfr_t dense-array stride");
+static_assert(alignof(mpfr_class) == alignof(mpfr_t),
+              "mpfrxx::mpfr_class must preserve mpfr_t alignment");
+
 inline void swap(mpfr_class& lhs, mpfr_class& rhs) noexcept
 {
     lhs.swap(rhs);
@@ -2162,13 +2167,9 @@ void mpfr_compound_submul_fma_apply(
     const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
     mpfr_rnd_t rnd)
 {
-    mpfr_fms(
-        dest,
-        expr.lhs().get().mpfr_data(),
-        expr.rhs().get().mpfr_data(),
-        dest,
-        mpfr_dual_rounding_for_negated_result(rnd));
-    mpfr_neg(dest, dest, MPFR_RNDN);
+    mpfr_thread_scratch negated_lhs(expr.lhs().get().precision());
+    mpfr_neg(negated_lhs.get(), expr.lhs().get().mpfr_data(), MPFR_RNDN);
+    mpfr_fma(dest, negated_lhs.get(), expr.rhs().get().mpfr_data(), dest, rnd);
 }
 
 template <typename Lhs, typename Rhs>
@@ -2563,6 +2564,7 @@ public:
           precision_(context.precision),
           rounding_mode_(context.rounding_mode)
     {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(context.precision);
         check_precision();
     }
 

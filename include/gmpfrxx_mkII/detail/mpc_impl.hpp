@@ -646,6 +646,11 @@ private:
     mpc_t value_;
 };
 
+static_assert(sizeof(mpc_class) == sizeof(mpc_t),
+              "mpfrxx::mpc_class must preserve mpc_t dense-array stride");
+static_assert(alignof(mpc_class) == alignof(mpc_t),
+              "mpfrxx::mpc_class must preserve mpc_t alignment");
+
 } // namespace mpfrxx
 
 namespace std {

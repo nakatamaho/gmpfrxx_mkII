@@ -53,16 +53,25 @@ void assert_equal(const mpfrxx::mpfr_class& got, const mpfr_t ref, mpfr_prec_t p
     assert(mpfr_cmp(got.mpfr_data(), ref) == 0);
 }
 
-mpfr_rnd_t dual_rounding_for_negated_result(mpfr_rnd_t rnd)
+void apply_fused_submul_ref(
+    mpfr_t ref,
+    const mpfrxx::mpfr_class& accumulator,
+    const mpfrxx::mpfr_class& lhs,
+    const mpfrxx::mpfr_class& rhs,
+    mpfr_rnd_t rnd)
 {
-    switch (rnd) {
-    case MPFR_RNDU:
-        return MPFR_RNDD;
-    case MPFR_RNDD:
-        return MPFR_RNDU;
-    default:
-        return rnd;
-    }
+    mpfr_t negated_lhs;
+    mpfr_init2(negated_lhs, lhs.precision());
+    mpfr_neg(negated_lhs, lhs.mpfr_data(), MPFR_RNDN);
+    mpfr_fma(ref, negated_lhs, rhs.mpfr_data(), accumulator.mpfr_data(), rnd);
+    mpfr_clear(negated_lhs);
+}
+
+void assert_same_signed_zero(const mpfrxx::mpfr_class& got, const mpfr_t ref)
+{
+    assert(mpfr_zero_p(got.mpfr_data()) != 0);
+    assert(mpfr_zero_p(ref) != 0);
+    assert(mpfr_signbit(got.mpfr_data()) == mpfr_signbit(ref));
 }
 
 template <typename Rhs>
@@ -153,8 +162,7 @@ void check_compound_assignment_expression_fast_path()
 
     {
         mpfrxx::mpfr_class a("7.5", precision);
-        mpfr_fms(ref, b.mpfr_data(), c.mpfr_data(), a.mpfr_data(), dual_rounding_for_negated_result(rnd));
-        mpfr_neg(ref, ref, MPFR_RNDN);
+        apply_fused_submul_ref(ref, a, b, c, rnd);
         a -= b * c;
         assert_equal(a, ref, precision);
     }
@@ -209,11 +217,48 @@ void check_compound_assignment_mul_expr_uses_fused_rounding(mpfr_rnd_t rnd)
     {
         mpfr_t ref;
         mpfr_init2(ref, precision);
-        mpfr_fms(ref, b.mpfr_data(), c.mpfr_data(), a0.mpfr_data(), dual_rounding_for_negated_result(rnd));
-        mpfr_neg(ref, ref, MPFR_RNDN);
+        apply_fused_submul_ref(ref, a0, b, c, rnd);
         mpfrxx::mpfr_class a = a0;
         a -= b * c;
         assert_equal(a, ref, precision);
+        mpfr_clear(ref);
+    }
+
+    mpfrxx::set_default_rounding_mode(old_rnd);
+}
+
+void check_compound_submul_fma_preserves_signed_zero()
+{
+    const mpfr_rnd_t old_rnd = mpfrxx::default_rounding_mode();
+    mpfrxx::set_default_rounding_mode(MPFR_RNDN);
+
+    const mpfr_prec_t precision = 128;
+
+    {
+        mpfrxx::mpfr_class a = mpfrxx::mpfr_class::with_precision(precision);
+        mpfrxx::mpfr_class b = mpfrxx::mpfr_class::with_precision(precision);
+        mpfrxx::mpfr_class c("1", precision);
+        mpfr_set_zero(a.mpfr_data(), 1);
+        mpfr_set_zero(b.mpfr_data(), 1);
+
+        mpfr_t ref;
+        mpfr_init2(ref, precision);
+        apply_fused_submul_ref(ref, a, b, c, MPFR_RNDN);
+        a -= b * c;
+        assert_same_signed_zero(a, ref);
+        mpfr_clear(ref);
+    }
+
+    {
+        mpfrxx::mpfr_class a("1", precision);
+        const mpfrxx::mpfr_class b("1", precision);
+        const mpfrxx::mpfr_class c("1", precision);
+
+        mpfr_t ref;
+        mpfr_init2(ref, precision);
+        apply_fused_submul_ref(ref, a, b, c, MPFR_RNDN);
+        a -= b * c;
+        assert_same_signed_zero(a, ref);
         mpfr_clear(ref);
     }
 
@@ -269,6 +314,7 @@ int main()
     check_compound_assignment_mul_expr_uses_fused_rounding(MPFR_RNDU);
     check_compound_assignment_mul_expr_uses_fused_rounding(MPFR_RNDD);
     check_compound_assignment_mul_expr_uses_fused_rounding(MPFR_RNDZ);
+    check_compound_submul_fma_preserves_signed_zero();
     check_exact_lhs_mpfr_rhs();
     return 0;
 }

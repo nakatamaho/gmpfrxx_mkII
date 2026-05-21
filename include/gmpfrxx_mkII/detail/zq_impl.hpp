@@ -530,9 +530,7 @@ public:
     explicit mpz_class(const mpf_class& value);
     explicit mpz_class(const mpq_class& value);
 
-    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
-                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
-                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    template <typename T, typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
     mpz_class(T value)
     {
         mpz_init(value_);
@@ -641,9 +639,7 @@ public:
         mpz_swap(value_, other.value_);
     }
 
-    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
-                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
-                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    template <typename T, typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
     mpz_class& operator=(T value)
     {
         set_integral(value);
@@ -907,12 +903,8 @@ public:
     template <
         typename Numerator,
         typename Denominator,
-        typename = std::enable_if_t<std::is_integral_v<Numerator> &&
-                                    std::is_integral_v<Denominator> &&
-                                    !std::is_same_v<std::remove_cv_t<Numerator>, bool> &&
-                                    !std::is_same_v<std::remove_cv_t<Denominator>, bool> &&
-                                    (sizeof(Numerator) <= sizeof(std::uint64_t)) &&
-                                    (sizeof(Denominator) <= sizeof(std::uint64_t))>>
+        typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<Numerator> &&
+                                    gmpfrxx_mkII::detail::is_supported_expression_integral_v<Denominator>>>
     mpq_class(Numerator numerator, Denominator denominator)
         : mpq_class(mpz_class(numerator), mpz_class(denominator))
     {
@@ -928,9 +920,7 @@ public:
 
     explicit mpq_class(const mpf_class& value);
 
-    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
-                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
-                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    template <typename T, typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
     mpq_class(T value) : mpq_class(mpz_class(value))
     {
     }
@@ -1038,9 +1028,7 @@ public:
         mpq_swap(value_, other.value_);
     }
 
-    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
-                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
-                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    template <typename T, typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
     mpq_class& operator=(T value)
     {
         const mpz_class integer(value);
@@ -2736,9 +2724,7 @@ inline mpz_class& operator/=(mpz_class& lhs, const mpz_class& rhs)
 }
 
 template <typename Rhs,
-          std::enable_if_t<std::is_integral_v<std::decay_t<Rhs>> &&
-                               !std::is_same_v<std::remove_cv_t<std::decay_t<Rhs>>, bool> &&
-                               (sizeof(std::decay_t<Rhs>) <= sizeof(std::uint64_t)),
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<std::decay_t<Rhs>>,
                            int> = 0>
 inline mpz_class& operator/=(mpz_class& lhs, Rhs rhs)
 {
@@ -3122,9 +3108,7 @@ inline mpz_class operator%(double lhs, const mpz_class& rhs)
 }
 
 template <typename Rhs,
-          std::enable_if_t<std::is_integral_v<std::decay_t<Rhs>> &&
-                               !std::is_same_v<std::remove_cv_t<std::decay_t<Rhs>>, bool> &&
-                               (sizeof(std::decay_t<Rhs>) <= sizeof(std::uint64_t)),
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<std::decay_t<Rhs>>,
                            int> = 0>
 inline mpz_class operator%(const mpz_class& lhs, Rhs rhs)
 {
@@ -3132,9 +3116,7 @@ inline mpz_class operator%(const mpz_class& lhs, Rhs rhs)
 }
 
 template <typename Lhs,
-          std::enable_if_t<std::is_integral_v<std::decay_t<Lhs>> &&
-                               !std::is_same_v<std::remove_cv_t<std::decay_t<Lhs>>, bool> &&
-                               (sizeof(std::decay_t<Lhs>) <= sizeof(std::uint64_t)),
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<std::decay_t<Lhs>>,
                            int> = 0>
 inline mpz_class operator%(Lhs lhs, const mpz_class& rhs)
 {
@@ -3156,9 +3138,7 @@ inline mpz_class& operator%=(mpz_class& lhs, double rhs)
 }
 
 template <typename Rhs,
-          std::enable_if_t<std::is_integral_v<std::decay_t<Rhs>> &&
-                               !std::is_same_v<std::remove_cv_t<std::decay_t<Rhs>>, bool> &&
-                               (sizeof(std::decay_t<Rhs>) <= sizeof(std::uint64_t)),
+          std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<std::decay_t<Rhs>>,
                            int> = 0>
 inline mpz_class& operator%=(mpz_class& lhs, Rhs rhs)
 {

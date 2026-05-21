@@ -69,12 +69,19 @@ IEEE-style NaN equality rule.
 ## Scalar Common Types
 
 The wrapper-defined `std::common_type` specializations follow the same scalar
-policy as expression scalar leaves. Supported real scalar leaves such as
-`int`, fixed-width 64-bit integers, `float`, and `double` promote with
+policy as expression scalar leaves. Supported real scalar leaves include
+non-`bool` integral types up to 64 bits, `float`, and `double`. Integral scalar
+leaves are normalized before expression evaluation to signed or unsigned 64-bit
+storage, so platform-dependent public input types such as `long` and
+`unsigned long` are accepted only through that normalization policy rather than
+through GMP's native `long` ABI. These scalar leaves promote with
 `mpfrxx::mpfr_class` to `mpfrxx::mpfr_class`, and with `mpfrxx::mpc_class` to
-`mpfrxx::mpc_class`. `bool`, `long double`, and `__int128` remain outside the
-expression scalar-leaf contract and must not become common-type promotion
-backdoors.
+`mpfrxx::mpc_class`.
+
+`bool`, `wchar_t`, `char16_t`, `char32_t`, `long double`, and `__int128` remain
+outside the expression scalar-leaf contract and must not become common-type
+promotion backdoors. `wchar_t`, `char16_t`, and `char32_t` are character types,
+not numeric scalar operands for this wrapper.
 
 When `mpcxx_mkII.h` or `gmpfrxx_mkII.h` is included, `std::complex<double>` is
 accepted as an MPC scalar operand. It promotes with `mpfrxx::mpc_class` to
@@ -243,10 +250,11 @@ exhaustion must not change observable arithmetic results, precision policy, or
 exception behavior.
 
 `MPFRXX_ENABLE_FMA` enables MPFR's fused operations for supported expression
-shapes. `a += b * c` maps to `mpfr_fma`; `a -= b * c` maps to `mpfr_fms`
-with the rounding-mode adjustment required for the negated result.
-Materializing `a * b + c * d` maps to `mpfr_fmma`, and materializing
-`a * b - c * d` maps to `mpfr_fmms`.
+shapes. `a += b * c` maps to `mpfr_fma`. `a -= b * c` maps to
+`mpfr_fma` with an exactly negated multiplicand, so signed-zero behavior is
+left to MPFR's fused-add semantics instead of applying `mpfr_neg` to an
+already rounded result. Materializing `a * b + c * d` maps to `mpfr_fmma`,
+and materializing `a * b - c * d` maps to `mpfr_fmms`.
 
 These options are separate from the
 `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro because enabling FMA
@@ -660,10 +668,12 @@ for MinGW/MPC builds where direct MPC division can overflow near MPFR's
 The workaround is intentionally narrow. It is considered only when all real and
 imaginary input components are finite MPFR numbers, the divisor is not
 `0 + 0i`, and at least one input component has an exponent within a small margin
-of the current MPFR `emin` or `emax`.  In that case the implementation scales
-the operands, performs Smith-style finite division in MPFR temporaries, and
-rounds the final real and imaginary components using the requested MPC
-rounding mode. Non-Windows builds call `mpc_div` directly.
+of the current MPFR `emin` or `emax`.  In that case the implementation performs
+componentwise max-scaling in MPFR temporaries: all input components are divided
+by `max(abs(real(divisor)), abs(imag(divisor)))` before forming the bounded
+denominator `cr^2 + di^2`.  The final real and imaginary components are rounded
+using the requested MPC rounding mode. Non-Windows builds call `mpc_div`
+directly.
 
 This workaround is not a separate mathematical semantics for complex division.
 It is a platform compatibility path intended to avoid spurious exponent-edge

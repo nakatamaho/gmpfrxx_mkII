@@ -37,7 +37,11 @@ namespace detail {
 
 template <typename T>
 struct is_supported_expression_integral
-    : std::bool_constant<std::is_integral_v<T> && !std::is_same_v<std::remove_cv_t<T>, bool> &&
+    : std::bool_constant<std::is_integral_v<T> &&
+                         !std::is_same_v<std::remove_cv_t<T>, bool> &&
+                         !std::is_same_v<std::remove_cv_t<T>, wchar_t> &&
+                         !std::is_same_v<std::remove_cv_t<T>, char16_t> &&
+                         !std::is_same_v<std::remove_cv_t<T>, char32_t> &&
                          (sizeof(T) <= sizeof(std::uint64_t))> {};
 
 template <typename T>

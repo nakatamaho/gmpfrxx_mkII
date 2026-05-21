@@ -20494,3 +20494,207 @@ Pass/fail result:
 Known issues:
 - None for this phase.
 
+## Phase: Align Common-Type Scalar Policy
+
+Implemented features:
+- Removed `wchar_t`, `char16_t`, and `char32_t` from wrapper builtin `std::common_type` promotion macros.
+- Rejected wide character types from expression integral scalar leaves by centralizing the exclusion in `is_supported_expression_integral`.
+- Updated GMP integer/rational and MPF integral constructor and assignment constraints to use the same supported integral scalar trait.
+- Documented that `long` and `unsigned long` remain accepted only through the normalized signed/unsigned 64-bit scalar policy, not through GMP's native `long` ABI.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- None as new test executables.
+
+Tests updated:
+- Extended `test_common_type` to check `long` / `unsigned long` promotion and wide character rejection.
+- Extended `test_et_contract_mpfr_scalar` to check wide character scalar rejection.
+
+Files changed:
+- `SPECIFICATIONS.md`
+- `include/gmpfrxx_mkII/detail/common_type_macros.hpp`
+- `include/gmpfrxx_mkII/detail/integer_conversion.hpp`
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `tests/test_common_type.cpp`
+- `tests/test_et_contract_mpfr_scalar.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_common_type test_et_contract_mpfr_scalar`
+- `ctest --test-dir build -R 'test_common_type|test_et_contract_mpfr_scalar' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Focused test build: PASS.
+- Focused CTest: PASS. 2/2 selected tests passed.
+- Full Debug build: PASS.
+- Full Debug CTest: PASS. 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+
+## Phase: Enforce Dense-Array Wrapper Layout
+
+Implemented features:
+- Added compile-time size and alignment assertions for `gmpxx::mpf_class`,
+  `mpfrxx::mpfr_class`, and `mpfrxx::mpc_class` against `mpf_t`, `mpfr_t`,
+  and `mpc_t`.
+- Locked the dense-array stride contract so adding per-object wrapper fields
+  becomes a compile-time regression instead of silently changing ABI/stride.
+
+Tests added:
+- No runtime tests were added. The new `static_assert` checks are compile-time
+  layout tests exercised by every target that includes the corresponding
+  headers.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpf_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "class (mpf_class|mpfr_class|mpc_class)|^};|static_assert.*sizeof|static_assert.*alignof" include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `nl -ba include/gmpfrxx_mkII/detail/mpf_impl.hpp | sed -n '520,610p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpfr_impl.hpp | sed -n '600,680p'`
+- `nl -ba include/gmpfrxx_mkII/detail/mpc_impl.hpp | sed -n '610,690p'`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/mpf_impl.hpp include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- `cmake --build build -j`: PASS.
+- `ctest --test-dir build --output-on-failure`: PASS, 176/176 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: Validate MPFR Explicit Context Precision
+
+Implemented features:
+- Added `require_valid_mpfr_precision(context.precision)` to the
+  `mpfr_context_ref(mpfr_class&, evaluation_context)` constructor.
+- Made the `evaluation_context` constructor path match the explicit
+  `(precision, rounding)` constructor path before any fixed-precision fastpath
+  can skip the target precision equality check.
+
+Tests added:
+- Extended `test_mpfr_evaluation_context.cpp` with a regression test that
+  `with_context(value, evaluation_context{0, MPFR_RNDN})` throws the invalid
+  MPFR precision diagnostic instead of falling through to the precision-match
+  check or fastpath execution.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `tests/test_mpfr_evaluation_context.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `nl -ba include/gmpfrxx_mkII/detail/mpfr_impl.hpp | sed -n '2535,2595p'`
+- `rg -n "mpfr_context_ref|with_context|evaluation_context|require_valid_mpfr_precision|invalid precision|precision.*throw|domain_error" tests include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/eval_context.hpp`
+- `nl -ba tests/test_mpfr_evaluation_context.cpp | sed -n '1,150p'`
+- `nl -ba include/gmpfrxx_mkII/detail/environment.hpp | sed -n '80,105p'`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_evaluation_context.cpp`
+- `cmake --build build -j --target test_mpfr_evaluation_context test_mpfr_evaluation_context_fixed_precision`
+- `ctest --test-dir build -R 'test_mpfr_evaluation_context' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted evaluation-context build: PASS.
+- Targeted evaluation-context CTest: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- Full CTest: PASS, 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: MPFR Submul FMA Signed-Zero Semantics
+
+Implemented features:
+- Reworked the MPFR `a -= b * c` fused compound path to use `mpfr_fma` with an
+  exactly negated multiplicand instead of `mpfr_fms` followed by `mpfr_neg`.
+- Kept `mpfr_dual_rounding_for_negated_result()` for unary minus expression
+  evaluation, where evaluating the inner expression with dual rounding is still
+  required.
+- Updated `SPECIFICATIONS.md` so the Fused Compound Assignment contract states
+  that `a -= b * c` maps to `mpfr_fma` with a negated operand.
+
+Tests added:
+- Added signed-zero regression coverage for `a -= b * c` under `MPFR_RNDN`,
+  including both zero-product and exact-cancellation cases.
+
+Tests updated:
+- `tests/test_mpfr_compound_assign.cpp`
+- `tests/test_mpfr_fixed_precision_fma_alloc_count.cpp`
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "Fused Compound|fms|submul|a -=|mpfr_fms|mpfr_dual_rounding_for_negated_result|compound.*FMA" SPECIFICATIONS.md include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_compound_assign.cpp tests/test_mpfr_fixed_precision_fma_alloc_count.cpp`
+- `nl -ba include/gmpfrxx_mkII/detail/mpfr_impl.hpp | sed -n '2150,2185p'`
+- `nl -ba tests/test_mpfr_compound_assign.cpp | sed -n '1,260p'`
+- `nl -ba SPECIFICATIONS.md | sed -n '1,260p'`
+- `nl -ba tests/test_mpfr_compound_assign.cpp | sed -n '250,330p'`
+- `nl -ba tests/test_mpfr_fixed_precision_fma_alloc_count.cpp | sed -n '70,120p'`
+- `nl -ba SPECIFICATIONS.md | sed -n '248,270p'`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_compound_assign.cpp tests/test_mpfr_fixed_precision_fma_alloc_count.cpp SPECIFICATIONS.md`
+- `rg -n "mpfr_fms\(|dual_rounding_for_negated_result|apply_fused_submul_ref|check_compound_submul_fma_preserves_signed_zero|a -= b \* c" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_compound_assign.cpp tests/test_mpfr_fixed_precision_fma_alloc_count.cpp SPECIFICATIONS.md`
+- `cmake --build build -j --target test_mpfr_compound_assign test_mpfr_fixed_precision_fma_alloc_count`
+- `ctest --test-dir build -R 'test_mpfr_compound_assign|test_mpfr_fixed_precision_fma_alloc_count' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFR compound/FMA build: PASS.
+- Targeted MPFR compound/FMA tests: PASS, 2/2 tests passed.
+- `cmake --build build -j`: PASS.
+- Full CTest: PASS, 176/176 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: Clarify Windows MPC Division Scaling Specification
+
+Implemented features:
+- Updated the Windows MPC division workaround text in `SPECIFICATIONS.md` to
+  describe the current componentwise max-scaling implementation instead of
+  calling it Smith-style division.
+- Kept implementation unchanged; this phase is specification alignment only.
+
+Tests added:
+- None. This is a documentation/specification correction only.
+
+Tests updated:
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `nl -ba include/gmpfrxx_mkII/detail/mpc_impl.hpp | sed -n '1200,1265p'`
+- `nl -ba SPECIFICATIONS.md | sed -n '640,675p'`
+- `rg -n "Smith|scaling|division workaround|MinGW|Windows|_WIN32|mpc_div" SPECIFICATIONS.md include/gmpfrxx_mkII/detail/mpc_impl.hpp tests`
+- `nl -ba include/gmpfrxx_mkII/detail/mpc_impl.hpp | sed -n '1264,1312p'`
+- `python3 - <<'PY' ...`
+- `git diff -- SPECIFICATIONS.md`
+- `git diff --check`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+
+Known issues:
+- None for this phase.

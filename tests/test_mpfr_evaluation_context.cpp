@@ -30,6 +30,7 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <string>
 
 namespace {
 
@@ -93,6 +94,18 @@ void check_context_precision_must_match_target()
 #endif
 }
 
+void check_context_precision_must_be_valid()
+{
+    mpfrxx::mpfr_class acc("1", 8);
+    bool threw_invalid_precision = false;
+    try {
+        (void)mpfrxx::with_context(acc, mpfrxx::evaluation_context{0, MPFR_RNDN});
+    } catch (const std::invalid_argument& exception) {
+        threw_invalid_precision = std::string(exception.what()) == "invalid MPFR precision";
+    }
+    assert(threw_invalid_precision);
+}
+
 void check_context_assignment_uses_context_rounding()
 {
     mpfrxx::set_default_rounding_mode(MPFR_RNDN);
@@ -134,6 +147,7 @@ int main()
 {
     check_context_rounding_overrides_default_rounding();
     check_context_precision_must_match_target();
+    check_context_precision_must_be_valid();
     check_context_assignment_uses_context_rounding();
     return 0;
 }

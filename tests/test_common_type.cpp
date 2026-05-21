@@ -72,6 +72,8 @@ void require_gmp_common_types()
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, int>();
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, std::int64_t>();
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, std::uint64_t>();
+    require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, long>();
+    require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, unsigned long>();
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, unsigned long long>();
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, float>();
     require_common_type<gmpxx::mpz_class, gmpxx::mpz_class, double>();
@@ -80,6 +82,8 @@ void require_gmp_common_types()
     require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, int>();
     require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, std::int64_t>();
     require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, std::uint64_t>();
+    require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, long>();
+    require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, unsigned long>();
     require_common_type<gmpxx::mpf_class, gmpxx::mpf_class, double>();
     require_common_type<gmpxx::mpfc_class, gmpxx::mpfc_class, int>();
     require_common_type<gmpxx::mpfc_class, gmpxx::mpfc_class, double>();
@@ -88,6 +92,10 @@ void require_gmp_common_types()
     static_assert(!has_common_type<gmpxx::mpq_class, bool>::value);
     static_assert(!has_common_type<gmpxx::mpf_class, bool>::value);
     static_assert(!has_common_type<gmpxx::mpfc_class, bool>::value);
+    static_assert(!has_common_type<gmpxx::mpz_class, wchar_t>::value);
+    static_assert(!has_common_type<gmpxx::mpq_class, char16_t>::value);
+    static_assert(!has_common_type<gmpxx::mpf_class, char32_t>::value);
+    static_assert(!has_common_type<gmpxx::mpfc_class, wchar_t>::value);
     static_assert(!has_common_type<gmpxx::mpf_class, long double>::value);
 }
 
@@ -99,6 +107,8 @@ void require_mpfr_common_types()
     require_common_type<mpfrxx::mpfr_class, int, mpfrxx::mpfr_class>();
     require_common_type<mpfrxx::mpfr_class, std::int64_t, mpfrxx::mpfr_class>();
     require_common_type<mpfrxx::mpfr_class, std::uint64_t, mpfrxx::mpfr_class>();
+    require_common_type<mpfrxx::mpfr_class, long, mpfrxx::mpfr_class>();
+    require_common_type<mpfrxx::mpfr_class, unsigned long, mpfrxx::mpfr_class>();
     require_common_type<mpfrxx::mpfr_class, float, mpfrxx::mpfr_class>();
     require_common_type<mpfrxx::mpfr_class, double, mpfrxx::mpfr_class>();
     require_common_type<mpfrxx::mpc_class, gmpxx::mpz_class, mpfrxx::mpc_class>();
@@ -108,12 +118,20 @@ void require_mpfr_common_types()
     require_common_type<mpfrxx::mpc_class, int, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, std::int64_t, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, std::uint64_t, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, long, mpfrxx::mpc_class>();
+    require_common_type<mpfrxx::mpc_class, unsigned long, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, float, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, double, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, std::complex<double>, mpfrxx::mpc_class>();
     require_common_type<mpfrxx::mpc_class, mpfrxx::mpfr_class, std::complex<double>>();
     static_assert(!has_common_type<mpfrxx::mpfr_class, bool>::value);
     static_assert(!has_common_type<mpfrxx::mpc_class, bool>::value);
+    static_assert(!has_common_type<mpfrxx::mpfr_class, wchar_t>::value);
+    static_assert(!has_common_type<mpfrxx::mpfr_class, char16_t>::value);
+    static_assert(!has_common_type<mpfrxx::mpfr_class, char32_t>::value);
+    static_assert(!has_common_type<mpfrxx::mpc_class, wchar_t>::value);
+    static_assert(!has_common_type<mpfrxx::mpc_class, char16_t>::value);
+    static_assert(!has_common_type<mpfrxx::mpc_class, char32_t>::value);
     static_assert(!has_common_type<mpfrxx::mpfr_class, long double>::value);
     static_assert(!has_common_type<mpfrxx::mpc_class, long double>::value);
     static_assert(!has_common_type<mpfrxx::mpc_class, std::complex<long double>>::value);

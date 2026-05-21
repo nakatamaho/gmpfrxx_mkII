@@ -52,6 +52,9 @@ int main()
     static_assert(std::is_same_v<typename decltype(double_expr)::lhs_type::value_type, double>);
 
     static_assert(!gmpfrxx_mkII::detail::is_supported_mpfr_scalar_v<bool>);
+    static_assert(!gmpfrxx_mkII::detail::is_supported_mpfr_scalar_v<wchar_t>);
+    static_assert(!gmpfrxx_mkII::detail::is_supported_mpfr_scalar_v<char16_t>);
+    static_assert(!gmpfrxx_mkII::detail::is_supported_mpfr_scalar_v<char32_t>);
     static_assert(!gmpfrxx_mkII::detail::is_supported_mpfr_scalar_v<long double>);
 
 #if defined(__SIZEOF_INT128__)

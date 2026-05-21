@@ -127,17 +127,13 @@ public:
     mpf_class(bool) = delete;
     mpf_class(bool, mp_bitcnt_t) = delete;
 
-    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
-                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
-                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    template <typename T, typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
     mpf_class(T value) : mpf_class(precision_tag{}, default_mpf_precision_bits())
     {
         set_integral(value);
     }
 
-    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
-                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
-                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    template <typename T, typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
     mpf_class(T value, mp_bitcnt_t precision) : mpf_class(precision_tag{}, precision)
     {
         set_integral(value);
@@ -297,9 +293,7 @@ public:
 
     mpf_class& operator=(bool) = delete;
 
-    template <typename T, typename = std::enable_if_t<std::is_integral_v<T> &&
-                                                      !std::is_same_v<std::remove_cv_t<T>, bool> &&
-                                                      (sizeof(T) <= sizeof(std::uint64_t))>>
+    template <typename T, typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<T>>>
     mpf_class& operator=(T value)
     {
         set_integral(value);
@@ -583,6 +577,11 @@ private:
 
     mpf_t value_;
 };
+
+static_assert(sizeof(mpf_class) == sizeof(mpf_t),
+              "gmpxx::mpf_class must preserve mpf_t dense-array stride");
+static_assert(alignof(mpf_class) == alignof(mpf_t),
+              "gmpxx::mpf_class must preserve mpf_t alignment");
 
 inline void swap(mpf_class& lhs, mpf_class& rhs) noexcept
 {
