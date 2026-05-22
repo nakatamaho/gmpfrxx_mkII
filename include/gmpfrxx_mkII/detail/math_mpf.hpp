@@ -235,6 +235,9 @@ inline mpf_class average(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t
 
 inline mpf_class inv_sqrt_ui(unsigned long value, mp_bitcnt_t precision)
 {
+    if (value == 0ul) {
+        throw std::domain_error("mpf inverse square root of zero");
+    }
     mpf_class denominator = make_ui(value, precision);
     mpf_sqrt(denominator.mpf_data(), denominator.mpf_data());
 

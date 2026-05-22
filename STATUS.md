@@ -20950,3 +20950,34 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Guard MPF Inverse Square Root Zero Input
+
+Implemented features:
+- Added an explicit zero-input check to `mpf_math_detail::inv_sqrt_ui()` before
+  it reaches `mpf_ui_div(..., denominator=0)`.
+
+Tests added:
+- Added `test_mpf_inv_sqrt_ui_zero_throws` coverage.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `tests/test_mpf_math_functions.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "inv_sqrt_ui\(|sqrt_ui\(|inverse square|sqrt" include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_math_functions.cpp tests/test_mpf_transcendent_functions.cpp tests/test_mpf_extended_transcendent_functions.cpp tests/test_mpf_pi.cpp`
+- `nl -ba tests/test_mpf_math_functions.cpp | sed -n '80,130p'`
+- `sed -n '1,40p;410,432p' tests/test_mpf_math_functions.cpp`
+- `nl -ba tests/test_mpf_math_functions.cpp | sed -n '120,155p;380,414p'`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_math_functions.cpp STATUS.md`
+- `cmake --build build -j --target test_mpf_math_functions test_mpf_pi test_mpf_transcendent_functions`
+- `ctest --test-dir build -R 'test_mpf_math_functions|test_mpf_pi|test_mpf_transcendent_functions' --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 3/3 tests passed.
+
+Known issues:
+- None for this phase.
