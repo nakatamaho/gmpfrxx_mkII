@@ -21406,3 +21406,35 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: Canonicalize Environment Variable Names
+
+Implemented features:
+- Renamed the wrapper environment variables to a single canonical naming scheme without legacy aliases.
+- Updated MPF default precision parsing to use `GMPXX_DEFAULT_MPF_PRECISION_BITS`.
+- Updated MPFR default environment parsing to use `MPFRXX_DEFAULT_PRECISION_BITS`, `MPFRXX_DEFAULT_EMIN`, `MPFRXX_DEFAULT_EMAX`, and `MPFRXX_DEFAULT_ROUNDING_MODE`.
+- Updated MPC default environment parsing to use `MPCXX_DEFAULT_*` precision and rounding variables.
+- Updated README, SPECIFICATIONS, AGENTS, prompts, docs, and tests to match the canonical names.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new test executables. Existing environment tests were updated to use the canonical variable names and continue to cover valid and invalid environment input.
+
+Exact commands run:
+- `rg -n "GMPXX_MKII_DEFAULT_MPF_PREC_BITS|GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS|MPFXX_DEFAULT_PREC_BITS|MPFRXX_EMIN|MPFRXX_EMAX|MPFRXX_ROUNDING_MODE|MPFRXX_MPC_DEFAULT_PRECISION_BITS|MPFRXX_MPC_REAL_PRECISION_BITS|MPFRXX_MPC_IMAG_PRECISION_BITS|MPFRXX_MPC_ROUNDING_MODE|MPFRXX_MPC_REAL_ROUNDING_MODE|MPFRXX_MPC_IMAG_ROUNDING_MODE|MPFRXX_MPC_\*|MPFXX_\*" include tests README.md SPECIFICATIONS.md AGENTS.md PROMPTS.md docs`
+- `cmake --build build_fresh_release_20260522 -j`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+- `git status --short`
+- `git diff --stat`
+
+Pass/fail result:
+- Old-name source scan over implementation, tests, README, SPECIFICATIONS, AGENTS, PROMPTS, and docs: PASS, no matches.
+- Fresh release build: PASS.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Historical `STATUS.md` entries still mention older environment variable names as part of past command logs. They were not rewritten.
+

@@ -37,12 +37,12 @@ namespace {
 
 void clear_mpc_environment()
 {
-    unsetenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_REAL_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_IMAG_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_ROUNDING_MODE");
-    unsetenv("MPFRXX_MPC_REAL_ROUNDING_MODE");
-    unsetenv("MPFRXX_MPC_IMAG_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_REAL_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
 }
 
 } // namespace

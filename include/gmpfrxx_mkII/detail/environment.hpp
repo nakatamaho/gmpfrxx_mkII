@@ -191,7 +191,7 @@ inline void warn_invalid_environment_value(const char* variable, const char* val
 inline void warn_invalid_mpfr_exponent_range(const char* emin_text, const char* emax_text) noexcept
 {
     std::fprintf(stderr,
-                 "gmpfrxx_mkII: ignoring invalid MPFR exponent range MPFRXX_EMIN=%s MPFRXX_EMAX=%s\n",
+                 "gmpfrxx_mkII: ignoring invalid MPFR exponent range MPFRXX_DEFAULT_EMIN=%s MPFRXX_DEFAULT_EMAX=%s\n",
                  emin_text != nullptr ? emin_text : "<unset>",
                  emax_text != nullptr ? emax_text : "<unset>");
 }
@@ -215,15 +215,15 @@ inline parsed_mpfr_environment load_mpfr_environment() noexcept
 
     mpfr_exp_t emin = result.emin;
     mpfr_exp_t emax = result.emax;
-    const char* emin_text = std::getenv("MPFRXX_EMIN");
-    const char* emax_text = std::getenv("MPFRXX_EMAX");
+    const char* emin_text = std::getenv("MPFRXX_DEFAULT_EMIN");
+    const char* emax_text = std::getenv("MPFRXX_DEFAULT_EMAX");
     const bool has_emin = parse_mpfr_exponent(emin_text, emin);
     const bool has_emax = parse_mpfr_exponent(emax_text, emax);
     if (!has_emin) {
-        warn_invalid_environment_value("MPFRXX_EMIN", emin_text);
+        warn_invalid_environment_value("MPFRXX_DEFAULT_EMIN", emin_text);
     }
     if (!has_emax) {
-        warn_invalid_environment_value("MPFRXX_EMAX", emax_text);
+        warn_invalid_environment_value("MPFRXX_DEFAULT_EMAX", emax_text);
     }
     bool applied_exponent_range = false;
     if (has_emin && has_emax && valid_mpfr_exponent_range(emin, emax)) {
@@ -242,11 +242,11 @@ inline parsed_mpfr_environment load_mpfr_environment() noexcept
     }
 
     mpfr_rnd_t rounding = result.rounding;
-    const char* rounding_text = std::getenv("MPFRXX_ROUNDING_MODE");
+    const char* rounding_text = std::getenv("MPFRXX_DEFAULT_ROUNDING_MODE");
     if (parse_mpfr_rounding(rounding_text, rounding)) {
         result.rounding = rounding;
     } else {
-        warn_invalid_environment_value("MPFRXX_ROUNDING_MODE", rounding_text);
+        warn_invalid_environment_value("MPFRXX_DEFAULT_ROUNDING_MODE", rounding_text);
     }
 
     return result;

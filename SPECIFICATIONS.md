@@ -387,12 +387,10 @@ Properties:
 - runtime mutation of wrapper defaults is unsupported
 - GMP's `mpf_set_default_prec()` does not affect wrapper default construction
 
-Environment variables are checked in this priority order:
+Environment variable:
 
 ```text
-GMPXX_MKII_DEFAULT_MPF_PREC_BITS
-GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS
-MPFXX_DEFAULT_PREC_BITS
+GMPXX_DEFAULT_MPF_PRECISION_BITS
 ```
 
 Invalid MPF precision environment values are user configuration errors, not
@@ -522,9 +520,9 @@ MPFRXX_DEFAULT_PRECISION_BITS
 The wrapper also reads:
 
 ```text
-MPFRXX_EMIN
-MPFRXX_EMAX
-MPFRXX_ROUNDING_MODE
+MPFRXX_DEFAULT_EMIN
+MPFRXX_DEFAULT_EMAX
+MPFRXX_DEFAULT_ROUNDING_MODE
 ```
 
 These environment values are applied to MPFR's thread-local default state. Invalid
@@ -661,7 +659,7 @@ comparison is unordered.
 ## Environment Policy
 
 Environment variables are process startup configuration for this wrapper.
-Callers must finalize `MPFXX_*`, `MPFRXX_*`, and `MPFRXX_MPC_*` variables before
+Callers must finalize `GMPXX_*`, `MPFRXX_*`, and `MPCXX_*` variables before
 first wrapper default access and before worker threads begin wrapper numeric
 work. Concurrent `setenv`, `unsetenv`, or `putenv` calls racing with wrapper
 default reads are outside the supported contract.
@@ -744,23 +742,23 @@ component rounding.
 MPC environment variables follow the same rule:
 
 ```text
-MPFRXX_MPC_DEFAULT_PRECISION_BITS
-MPFRXX_MPC_REAL_PRECISION_BITS
-MPFRXX_MPC_IMAG_PRECISION_BITS
-MPFRXX_MPC_ROUNDING_MODE
-MPFRXX_MPC_REAL_ROUNDING_MODE
-MPFRXX_MPC_IMAG_ROUNDING_MODE
+MPCXX_DEFAULT_PRECISION_BITS
+MPCXX_DEFAULT_REAL_PRECISION_BITS
+MPCXX_DEFAULT_IMAG_PRECISION_BITS
+MPCXX_DEFAULT_ROUNDING_MODE
+MPCXX_DEFAULT_REAL_ROUNDING_MODE
+MPCXX_DEFAULT_IMAG_ROUNDING_MODE
 ```
 
-If any `MPFRXX_MPC_*` variable is present, first use of the MPC default API
+If any `MPCXX_*` variable is present, first use of the MPC default API
 or default `mpc_class` construction reads the MPC environment once for the
 current linked image and thread. Valid MPC precision variables install an
 MPC-specific precision override. Valid MPC rounding variables install an
 MPC-specific rounding override. If no valid MPC-specific variable in a category
 is present, that category continues to inherit the current MPFR default.
 
-`MPFRXX_MPC_DEFAULT_PRECISION_BITS` and `MPFRXX_MPC_ROUNDING_MODE` set both
-components. `MPFRXX_MPC_REAL_*` and `MPFRXX_MPC_IMAG_*` override their respective
+`MPCXX_DEFAULT_PRECISION_BITS` and `MPCXX_DEFAULT_ROUNDING_MODE` set both
+components. `MPCXX_DEFAULT_REAL_*` and `MPCXX_DEFAULT_IMAG_*` override their respective
 component only; the other component inherits the corresponding MPC default or,
 if none was provided, the MPFR default. Therefore asymmetric MPC environment
 precision and rounding are valid and affect only `mpfrxx::mpc_class` defaults.

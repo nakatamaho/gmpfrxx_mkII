@@ -141,17 +141,17 @@ add_phase0_test(test_mpf_basic gmpxx_mkII)
 add_phase0_test(test_mpf_precision_policy gmpxx_mkII)
 add_phase0_test(test_mpf_default_precision_env gmpxx_mkII)
 set_tests_properties(test_mpf_default_precision_env PROPERTIES
-    ENVIRONMENT "GMPXX_MKII_DEFAULT_MPF_PREC_BITS=1024"
+    ENVIRONMENT "GMPXX_DEFAULT_MPF_PRECISION_BITS=1024"
 )
 add_executable(test_mpf_default_precision_invalid_env test_mpf_default_precision_invalid_env.cpp)
 target_link_libraries(test_mpf_default_precision_invalid_env PRIVATE gmpxx_mkII)
 add_test(NAME test_mpf_default_precision_invalid_env COMMAND test_mpf_default_precision_invalid_env)
 set_tests_properties(test_mpf_default_precision_invalid_env PROPERTIES
-    ENVIRONMENT "GMPXX_MKII_DEFAULT_MPF_PREC_BITS=abc"
+    ENVIRONMENT "GMPXX_DEFAULT_MPF_PRECISION_BITS=abc"
 )
 add_test(NAME test_mpf_default_precision_overflow_env COMMAND test_mpf_default_precision_invalid_env)
 set_tests_properties(test_mpf_default_precision_overflow_env PROPERTIES
-    ENVIRONMENT "GMPXX_MKII_DEFAULT_MPF_PREC_BITS=18446744073709551616"
+    ENVIRONMENT "GMPXX_DEFAULT_MPF_PRECISION_BITS=18446744073709551616"
 )
 add_phase0_test(test_mpf_external_provider gmpxx_mkII_default_context_provider)
 add_phase0_test(test_mpf_aliasing gmpxx_mkII)

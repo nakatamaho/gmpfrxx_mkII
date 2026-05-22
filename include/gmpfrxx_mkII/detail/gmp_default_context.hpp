@@ -129,13 +129,7 @@ inline void warn_invalid_mpf_precision_environment(const char* text) noexcept
 
 inline mp_bitcnt_t read_default_mpf_precision_from_environment() noexcept
 {
-    const char* text = std::getenv("GMPXX_MKII_DEFAULT_MPF_PREC_BITS");
-    if (text == nullptr) {
-        text = std::getenv("GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS");
-    }
-    if (text == nullptr) {
-        text = std::getenv("MPFXX_DEFAULT_PREC_BITS");
-    }
+    const char* text = std::getenv("GMPXX_DEFAULT_MPF_PRECISION_BITS");
     if (text == nullptr) {
         return builtin_default_mpf_precision_bits();
     }

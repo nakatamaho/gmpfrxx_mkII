@@ -4,25 +4,24 @@ This document records precision and rounding policies for `gmpfrxx_mkII`.
 
 ## `mpf_class` Precision
 
-GMP's `mpf_set_default_prec()` model is process-global in the tested GMP build.
-It is not suitable for per-thread numeric defaults.
+`gmpfrxx_mkII` does not use GMP's process-global `mpf_set_default_prec()`
+state for wrapper default construction. The wrapper default precision is
+resolved through `gmpxx::default_mpf_precision_bits()`. In the default
+frozen-env mode, that value is read once from `GMPXX_DEFAULT_MPF_PRECISION_BITS`
+and otherwise falls back to 512 bits. Mutable per-thread defaults require the
+external-provider build mode.
 
-`gmpfrxx_mkII` routes MPF default precision through GMP's
-`mpf_get_default_prec()` and `mpf_set_default_prec()`. This makes GMP's
-process-global MPF default precision the single source of truth and avoids
-header-only DSO-local wrapper default state. Callers that mutate it at runtime
-are responsible for their own synchronization.
-
-Initial project default: **512 bits**, unless `MPFXX_DEFAULT_PREC_BITS` is set
-in the process environment before numeric code runs.
+Initial project default: **512 bits**, unless `GMPXX_DEFAULT_MPF_PRECISION_BITS`
+is set in the process environment before first wrapper default access.
 
 Rules:
 
-1. `mpf_class()` uses the current GMP MPF default precision through `mpf_get_default_prec()`. The reload API sets it from `MPFXX_DEFAULT_PREC_BITS` when that parses as a positive precision, otherwise 512 bits.
+1. `mpf_class()` uses the wrapper-owned MPF default precision, not GMP's process-global default.
 2. Existing-object assignment preserves the destination precision.
 3. New expression materialization uses the maximum precision of all `mpf_class` leaves in the expression tree.
 4. Intermediate temporaries use the selected evaluation precision.
-5. Runtime MPF default setter and environment reload APIs call `mpf_set_default_prec()`.
+5. In frozen-env mode, runtime MPF default setters are compatibility no-ops; the environment-derived value remains fixed after first use.
+6. Raw GMP global precision can be accessed only through explicitly named unsafe helper APIs.
 
 ### Boundary policy
 

@@ -36,13 +36,13 @@ namespace {
 void clear_environment()
 {
     unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_ROUNDING_MODE");
-    unsetenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_REAL_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_IMAG_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_ROUNDING_MODE");
-    unsetenv("MPFRXX_MPC_REAL_ROUNDING_MODE");
-    unsetenv("MPFRXX_MPC_IMAG_ROUNDING_MODE");
+    unsetenv("MPFRXX_DEFAULT_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_REAL_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
 }
 
 void require_mpc_defaults(mpfr_prec_t real_precision,
@@ -69,7 +69,7 @@ void test_missing_mpc_env_shares_mpfr_default()
 {
     clear_environment();
     setenv("MPFRXX_DEFAULT_PRECISION_BITS", "176", 1);
-    setenv("MPFRXX_ROUNDING_MODE", "RNDD", 1);
+    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDD", 1);
 
     const mpfrxx::mpc_class value;
     if (value.real_precision() != 176 || value.imag_precision() != 176) {
@@ -82,9 +82,9 @@ void test_mpc_env_overrides_first_use_default()
 {
     clear_environment();
     setenv("MPFRXX_DEFAULT_PRECISION_BITS", "176", 1);
-    setenv("MPFRXX_ROUNDING_MODE", "RNDD", 1);
-    setenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS", "224", 1);
-    setenv("MPFRXX_MPC_ROUNDING_MODE", "RNDU", 1);
+    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDD", 1);
+    setenv("MPCXX_DEFAULT_PRECISION_BITS", "224", 1);
+    setenv("MPCXX_DEFAULT_ROUNDING_MODE", "RNDU", 1);
 
     const mpfrxx::mpc_class value;
     if (value.real_precision() != 224 || value.imag_precision() != 224) {
@@ -97,9 +97,9 @@ void test_component_mpc_env_overrides_first_use_default()
 {
     clear_environment();
     setenv("MPFRXX_DEFAULT_PRECISION_BITS", "176", 1);
-    setenv("MPFRXX_ROUNDING_MODE", "RNDD", 1);
-    setenv("MPFRXX_MPC_REAL_PRECISION_BITS", "256", 1);
-    setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "RNDZ", 1);
+    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDD", 1);
+    setenv("MPCXX_DEFAULT_REAL_PRECISION_BITS", "256", 1);
+    setenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE", "RNDZ", 1);
 
     const mpfrxx::mpc_class value;
     if (value.real_precision() != 256 || value.imag_precision() != 176) {
@@ -113,10 +113,10 @@ void test_component_mpc_env_installs_asymmetric_override_on_first_use()
     clear_environment();
     mpfrxx::set_default_precision_bits(160);
     mpfrxx::set_default_rounding_mode(MPFR_RNDN);
-    setenv("MPFRXX_MPC_REAL_PRECISION_BITS", "192", 1);
-    setenv("MPFRXX_MPC_IMAG_PRECISION_BITS", "224", 1);
-    setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "RNDU", 1);
-    setenv("MPFRXX_MPC_IMAG_ROUNDING_MODE", "RNDD", 1);
+    setenv("MPCXX_DEFAULT_REAL_PRECISION_BITS", "192", 1);
+    setenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS", "224", 1);
+    setenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE", "RNDU", 1);
+    setenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE", "RNDD", 1);
 
     const auto defaults = mpfrxx::default_mpc_options();
     if (defaults.real_precision_bits != 192 || defaults.imag_precision_bits != 224) {

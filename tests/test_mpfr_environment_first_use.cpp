@@ -35,17 +35,17 @@ namespace {
 void configure_environment()
 {
     setenv("MPFRXX_DEFAULT_PRECISION_BITS", "160", 1);
-    setenv("MPFRXX_EMIN", "-64", 1);
-    setenv("MPFRXX_EMAX", "64", 1);
-    setenv("MPFRXX_ROUNDING_MODE", "RNDU", 1);
+    setenv("MPFRXX_DEFAULT_EMIN", "-64", 1);
+    setenv("MPFRXX_DEFAULT_EMAX", "64", 1);
+    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDU", 1);
 }
 
 void clear_environment()
 {
     unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_EMIN");
-    unsetenv("MPFRXX_EMAX");
-    unsetenv("MPFRXX_ROUNDING_MODE");
+    unsetenv("MPFRXX_DEFAULT_EMIN");
+    unsetenv("MPFRXX_DEFAULT_EMAX");
+    unsetenv("MPFRXX_DEFAULT_ROUNDING_MODE");
 }
 
 void require_environment_applied()

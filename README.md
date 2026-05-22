@@ -266,7 +266,7 @@ defaults. Use explicit `mpfrxx::mpc_class::with_precision(real, imag)` when an
 individual object needs a one-off precision independent of the default state.
 
 MPC environment variables are read on first MPC default access or explicit
-`mpfrxx::reload_mpc_defaults_from_environment()`. Valid `MPFRXX_MPC_*` precision
+`mpfrxx::reload_mpc_defaults_from_environment()`. Valid `MPCXX_*` precision
 or rounding variables install MPC-specific overrides. Invalid values are ignored
 with a diagnostic on `stderr`, and missing categories continue to inherit the
 current MPFR default.
@@ -283,26 +283,23 @@ thread default state. It is not a dynamic scope for eager MPC math functions.
 Supported environment variables:
 
 ```text
-GMPXX_MKII_DEFAULT_MPF_PREC_BITS
-GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS
-MPFXX_DEFAULT_PREC_BITS
+GMPXX_DEFAULT_MPF_PRECISION_BITS
 MPFRXX_DEFAULT_PRECISION_BITS
-MPFRXX_EMIN
-MPFRXX_EMAX
-MPFRXX_ROUNDING_MODE
-MPFRXX_MPC_DEFAULT_PRECISION_BITS
-MPFRXX_MPC_REAL_PRECISION_BITS
-MPFRXX_MPC_IMAG_PRECISION_BITS
-MPFRXX_MPC_ROUNDING_MODE
-MPFRXX_MPC_REAL_ROUNDING_MODE
-MPFRXX_MPC_IMAG_ROUNDING_MODE
+MPFRXX_DEFAULT_EMIN
+MPFRXX_DEFAULT_EMAX
+MPFRXX_DEFAULT_ROUNDING_MODE
+MPCXX_DEFAULT_PRECISION_BITS
+MPCXX_DEFAULT_REAL_PRECISION_BITS
+MPCXX_DEFAULT_IMAG_PRECISION_BITS
+MPCXX_DEFAULT_ROUNDING_MODE
+MPCXX_DEFAULT_REAL_ROUNDING_MODE
+MPCXX_DEFAULT_IMAG_ROUNDING_MODE
 ```
 
-For GMP MPF defaults, `GMPXX_MKII_DEFAULT_MPF_PREC_BITS` has priority over
-`GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS`, which has priority over the legacy
-`MPFXX_DEFAULT_PREC_BITS` name.  Invalid GMP MPF precision environment values
-are ignored with a diagnostic on `stderr`, and the built-in 512-bit default is
-used instead.
+Invalid GMP MPF, MPFR, and MPC environment values are ignored with a diagnostic
+on `stderr`, and the corresponding built-in or inherited default remains in
+effect. Environment variable names are canonical pre-release API names; legacy
+aliases are not supported.
 
 The fixed-precision fast path is an opt-in compile-time contract, not a
 runtime environment variable:

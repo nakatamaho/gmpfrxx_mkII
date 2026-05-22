@@ -42,9 +42,9 @@ int main()
     const mpfr_exp_t initial_emax = mpfr_get_emax();
 
     setenv("MPFRXX_DEFAULT_PRECISION_BITS", "0", 1);
-    setenv("MPFRXX_EMIN", "100", 1);
-    setenv("MPFRXX_EMAX", "-100", 1);
-    setenv("MPFRXX_ROUNDING_MODE", "SIDEWAYS", 1);
+    setenv("MPFRXX_DEFAULT_EMIN", "100", 1);
+    setenv("MPFRXX_DEFAULT_EMAX", "-100", 1);
+    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "SIDEWAYS", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
 
     const auto invalid_defaults = mpfrxx::default_options();
@@ -59,9 +59,9 @@ int main()
     }
 
     setenv("MPFRXX_DEFAULT_PRECISION_BITS", "96", 1);
-    setenv("MPFRXX_EMIN", "-200", 1);
-    setenv("MPFRXX_EMAX", "200", 1);
-    setenv("MPFRXX_ROUNDING_MODE", "MPFR_RNDD", 1);
+    setenv("MPFRXX_DEFAULT_EMIN", "-200", 1);
+    setenv("MPFRXX_DEFAULT_EMAX", "200", 1);
+    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "MPFR_RNDD", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
 
     const auto valid_defaults = mpfrxx::default_options();
@@ -76,9 +76,9 @@ int main()
         const std::string too_large_precision =
             std::to_string(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
         setenv("MPFRXX_DEFAULT_PRECISION_BITS", too_large_precision.c_str(), 1);
-        unsetenv("MPFRXX_EMIN");
-        unsetenv("MPFRXX_EMAX");
-        unsetenv("MPFRXX_ROUNDING_MODE");
+        unsetenv("MPFRXX_DEFAULT_EMIN");
+        unsetenv("MPFRXX_DEFAULT_EMAX");
+        unsetenv("MPFRXX_DEFAULT_ROUNDING_MODE");
         mpfrxx::reload_mpfr_defaults_from_environment();
 
         const auto oversized_defaults = mpfrxx::default_options();
@@ -92,11 +92,11 @@ int main()
     if (MPFR_EMIN_MIN > std::numeric_limits<mpfr_exp_t>::min()) {
         const std::string too_small_emin =
             std::to_string(static_cast<long long>(MPFR_EMIN_MIN) - 1ll);
-        setenv("MPFRXX_EMIN", too_small_emin.c_str(), 1);
+        setenv("MPFRXX_DEFAULT_EMIN", too_small_emin.c_str(), 1);
     } else {
-        setenv("MPFRXX_EMIN", "100", 1);
+        setenv("MPFRXX_DEFAULT_EMIN", "100", 1);
     }
-    setenv("MPFRXX_EMAX", "200", 1);
+    setenv("MPFRXX_DEFAULT_EMAX", "200", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
     const auto invalid_emin_defaults = mpfrxx::default_options();
     if (invalid_emin_defaults.emin != initial_emin ||
@@ -104,13 +104,13 @@ int main()
         std::abort();
     }
 
-    setenv("MPFRXX_EMIN", "-200", 1);
+    setenv("MPFRXX_DEFAULT_EMIN", "-200", 1);
     if (MPFR_EMAX_MAX < std::numeric_limits<mpfr_exp_t>::max()) {
         const std::string too_large_emax =
             std::to_string(static_cast<long long>(MPFR_EMAX_MAX) + 1ll);
-        setenv("MPFRXX_EMAX", too_large_emax.c_str(), 1);
+        setenv("MPFRXX_DEFAULT_EMAX", too_large_emax.c_str(), 1);
     } else {
-        setenv("MPFRXX_EMAX", "-100", 1);
+        setenv("MPFRXX_DEFAULT_EMAX", "-100", 1);
     }
     mpfrxx::reload_mpfr_defaults_from_environment();
     const auto invalid_emax_defaults = mpfrxx::default_options();

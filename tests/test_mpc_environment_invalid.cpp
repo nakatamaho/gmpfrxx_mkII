@@ -38,12 +38,12 @@ int main()
     mpfrxx::set_default_precision_bits(128);
     mpfrxx::set_default_rounding_mode(MPFR_RNDA);
 
-    setenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS", "0", 1);
-    setenv("MPFRXX_MPC_REAL_PRECISION_BITS", "not-a-number", 1);
-    setenv("MPFRXX_MPC_IMAG_PRECISION_BITS", "0", 1);
-    setenv("MPFRXX_MPC_ROUNDING_MODE", "SIDEWAYS", 1);
-    setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "NOPE", 1);
-    setenv("MPFRXX_MPC_IMAG_ROUNDING_MODE", "", 1);
+    setenv("MPCXX_DEFAULT_PRECISION_BITS", "0", 1);
+    setenv("MPCXX_DEFAULT_REAL_PRECISION_BITS", "not-a-number", 1);
+    setenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS", "0", 1);
+    setenv("MPCXX_DEFAULT_ROUNDING_MODE", "SIDEWAYS", 1);
+    setenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE", "NOPE", 1);
+    setenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE", "", 1);
     mpfrxx::reload_mpc_defaults_from_environment();
 
     const auto defaults = mpfrxx::default_mpc_options();
@@ -57,12 +57,12 @@ int main()
     if (MPFR_PREC_MAX < std::numeric_limits<mpfr_prec_t>::max()) {
         const std::string too_large_precision =
             std::to_string(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
-        setenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS", too_large_precision.c_str(), 1);
-        setenv("MPFRXX_MPC_REAL_PRECISION_BITS", too_large_precision.c_str(), 1);
-        setenv("MPFRXX_MPC_IMAG_PRECISION_BITS", too_large_precision.c_str(), 1);
-        unsetenv("MPFRXX_MPC_ROUNDING_MODE");
-        unsetenv("MPFRXX_MPC_REAL_ROUNDING_MODE");
-        unsetenv("MPFRXX_MPC_IMAG_ROUNDING_MODE");
+        setenv("MPCXX_DEFAULT_PRECISION_BITS", too_large_precision.c_str(), 1);
+        setenv("MPCXX_DEFAULT_REAL_PRECISION_BITS", too_large_precision.c_str(), 1);
+        setenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS", too_large_precision.c_str(), 1);
+        unsetenv("MPCXX_DEFAULT_ROUNDING_MODE");
+        unsetenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
+        unsetenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
         mpfrxx::reload_mpc_defaults_from_environment();
 
         const auto oversized_defaults = mpfrxx::default_mpc_options();

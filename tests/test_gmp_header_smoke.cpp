@@ -33,9 +33,7 @@
 
 int main()
 {
-    unsetenv("GMPXX_MKII_DEFAULT_MPF_PREC_BITS");
-    unsetenv("GMPFRXX_MKII_DEFAULT_MPF_PREC_BITS");
-    unsetenv("MPFXX_DEFAULT_PREC_BITS");
+    unsetenv("GMPXX_DEFAULT_MPF_PRECISION_BITS");
 
     static_assert(std::is_default_constructible_v<gmpxx::mpz_class>);
     static_assert(std::is_default_constructible_v<gmpxx::mpq_class>);

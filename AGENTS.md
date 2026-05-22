@@ -279,9 +279,9 @@ Environment variables:
 
 ```text
 MPFRXX_DEFAULT_PRECISION_BITS
-MPFRXX_EMIN
-MPFRXX_EMAX
-MPFRXX_ROUNDING_MODE
+MPFRXX_DEFAULT_EMIN
+MPFRXX_DEFAULT_EMAX
+MPFRXX_DEFAULT_ROUNDING_MODE
 ```
 
 Allowed rounding strings:
@@ -300,19 +300,20 @@ Existing-object assignment preserves destination precision. New expression mater
 Environment variables:
 
 ```text
-MPFRXX_MPC_DEFAULT_PRECISION_BITS
-MPFRXX_MPC_REAL_PRECISION_BITS
-MPFRXX_MPC_IMAG_PRECISION_BITS
-MPFRXX_MPC_ROUNDING_MODE
-MPFRXX_MPC_REAL_ROUNDING_MODE
-MPFRXX_MPC_IMAG_ROUNDING_MODE
+MPCXX_DEFAULT_PRECISION_BITS
+MPCXX_DEFAULT_REAL_PRECISION_BITS
+MPCXX_DEFAULT_IMAG_PRECISION_BITS
+MPCXX_DEFAULT_ROUNDING_MODE
+MPCXX_DEFAULT_REAL_ROUNDING_MODE
+MPCXX_DEFAULT_IMAG_ROUNDING_MODE
 ```
 
 MPC defaults inherit MPFR defaults when no MPC-specific environment variables are set.
-If any `MPFRXX_MPC_*` variable is present, first use of the MPC default API
+If any `MPCXX_*` variable is present, first use of the MPC default API
 or default `mpc_class` construction must read those variables once for the
-current thread and apply the resulting symmetric MPC default to the shared
-MPFR thread-local default precision and rounding mode.
+current thread and install MPC-specific precision or rounding overrides.
+MPC-specific environment overrides affect only `mpfrxx::mpc_class` defaults
+and do not change `mpfrxx::mpfr_class` defaults.
 
 MPC environment variables must not affect `gmpxx::mpfc_class`.
 
@@ -327,7 +328,7 @@ Do not call `mpf_set_default_prec()` from this library.
 Environment variable:
 
 ```text
-MPFXX_DEFAULT_PREC_BITS
+GMPXX_DEFAULT_MPF_PRECISION_BITS
 ```
 
 Existing-object assignment preserves destination precision. New expression materialization uses max leaf precision.

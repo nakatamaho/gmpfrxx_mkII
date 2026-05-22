@@ -23,12 +23,12 @@ The current header-only wrapper-owned state includes:
 These names are implementation details, but their boundary behavior affects
 performance caches.
 
-MPF default precision is not wrapper-owned mutable state. The MPF-facing public
-default APIs route to GMP's `mpf_get_default_prec()` and
-`mpf_set_default_prec()`. The environment reload API sets GMP's default from
-`MPFXX_DEFAULT_PREC_BITS`, falling back to 512 bits when the variable is absent
-or invalid. Runtime mutation is a user-managed process-global policy: callers
-must synchronize their own use.
+MPF default precision is wrapper-owned policy, not GMP process-global state.
+The MPF-facing public default APIs read `GMPXX_DEFAULT_MPF_PRECISION_BITS` once
+in frozen-env mode, falling back to 512 bits when the variable is absent or
+invalid. Mutable per-thread MPF defaults require the external-provider build
+mode. Raw GMP global default precision is exposed only through explicitly named
+unsafe helper APIs.
 
 MPFR default precision, default rounding mode, and `emin`/`emax` are not
 wrapper-owned state. The MPFR-facing public default APIs route to libmpfr:

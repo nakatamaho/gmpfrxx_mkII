@@ -49,54 +49,54 @@ struct mpc_default_options {
 inline mpc_default_options load_mpc_defaults_from_environment()
 {
     mpfr_prec_t precision = default_precision_bits();
-    const char* precision_text = std::getenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS");
+    const char* precision_text = std::getenv("MPCXX_DEFAULT_PRECISION_BITS");
     if (!::gmpfrxx_mkII::detail::parse_mpfr_precision(precision_text, precision)) {
         ::gmpfrxx_mkII::detail::warn_invalid_environment_value(
-            "MPFRXX_MPC_DEFAULT_PRECISION_BITS", precision_text);
+            "MPCXX_DEFAULT_PRECISION_BITS", precision_text);
     }
 
     mpfr_prec_t real_precision = precision;
-    const char* real_precision_text = std::getenv("MPFRXX_MPC_REAL_PRECISION_BITS");
+    const char* real_precision_text = std::getenv("MPCXX_DEFAULT_REAL_PRECISION_BITS");
     const bool has_real_precision =
         ::gmpfrxx_mkII::detail::parse_mpfr_precision(real_precision_text, real_precision);
     if (!has_real_precision) {
         ::gmpfrxx_mkII::detail::warn_invalid_environment_value(
-            "MPFRXX_MPC_REAL_PRECISION_BITS", real_precision_text);
+            "MPCXX_DEFAULT_REAL_PRECISION_BITS", real_precision_text);
     }
 
     mpfr_prec_t imag_precision = precision;
-    const char* imag_precision_text = std::getenv("MPFRXX_MPC_IMAG_PRECISION_BITS");
+    const char* imag_precision_text = std::getenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS");
     const bool has_imag_precision =
         ::gmpfrxx_mkII::detail::parse_mpfr_precision(imag_precision_text, imag_precision);
     if (!has_imag_precision) {
         ::gmpfrxx_mkII::detail::warn_invalid_environment_value(
-            "MPFRXX_MPC_IMAG_PRECISION_BITS", imag_precision_text);
+            "MPCXX_DEFAULT_IMAG_PRECISION_BITS", imag_precision_text);
     }
 
 
     mpfr_rnd_t rounding = default_rounding_mode();
-    const char* rounding_text = std::getenv("MPFRXX_MPC_ROUNDING_MODE");
+    const char* rounding_text = std::getenv("MPCXX_DEFAULT_ROUNDING_MODE");
     if (!::gmpfrxx_mkII::detail::parse_mpfr_rounding(rounding_text, rounding)) {
         ::gmpfrxx_mkII::detail::warn_invalid_environment_value(
-            "MPFRXX_MPC_ROUNDING_MODE", rounding_text);
+            "MPCXX_DEFAULT_ROUNDING_MODE", rounding_text);
     }
 
     mpfr_rnd_t real_rounding = rounding;
-    const char* real_rounding_text = std::getenv("MPFRXX_MPC_REAL_ROUNDING_MODE");
+    const char* real_rounding_text = std::getenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
     const bool has_real_rounding =
         ::gmpfrxx_mkII::detail::parse_mpfr_rounding(real_rounding_text, real_rounding);
     if (!has_real_rounding) {
         ::gmpfrxx_mkII::detail::warn_invalid_environment_value(
-            "MPFRXX_MPC_REAL_ROUNDING_MODE", real_rounding_text);
+            "MPCXX_DEFAULT_REAL_ROUNDING_MODE", real_rounding_text);
     }
 
     mpfr_rnd_t imag_rounding = rounding;
-    const char* imag_rounding_text = std::getenv("MPFRXX_MPC_IMAG_ROUNDING_MODE");
+    const char* imag_rounding_text = std::getenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
     const bool has_imag_rounding =
         ::gmpfrxx_mkII::detail::parse_mpfr_rounding(imag_rounding_text, imag_rounding);
     if (!has_imag_rounding) {
         ::gmpfrxx_mkII::detail::warn_invalid_environment_value(
-            "MPFRXX_MPC_IMAG_ROUNDING_MODE", imag_rounding_text);
+            "MPCXX_DEFAULT_IMAG_ROUNDING_MODE", imag_rounding_text);
     }
 
 
@@ -112,32 +112,32 @@ inline bool valid_mpc_precision_environment_override_is_present() noexcept
 {
     mpfr_prec_t parsed = 0;
     return ::gmpfrxx_mkII::detail::parse_mpfr_precision(
-               std::getenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS"), parsed) ||
+               std::getenv("MPCXX_DEFAULT_PRECISION_BITS"), parsed) ||
            ::gmpfrxx_mkII::detail::parse_mpfr_precision(
-               std::getenv("MPFRXX_MPC_REAL_PRECISION_BITS"), parsed) ||
+               std::getenv("MPCXX_DEFAULT_REAL_PRECISION_BITS"), parsed) ||
            ::gmpfrxx_mkII::detail::parse_mpfr_precision(
-               std::getenv("MPFRXX_MPC_IMAG_PRECISION_BITS"), parsed);
+               std::getenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS"), parsed);
 }
 
 inline bool valid_mpc_rounding_environment_override_is_present() noexcept
 {
     mpfr_rnd_t parsed = MPFR_RNDN;
     return ::gmpfrxx_mkII::detail::parse_mpfr_rounding(
-               std::getenv("MPFRXX_MPC_ROUNDING_MODE"), parsed) ||
+               std::getenv("MPCXX_DEFAULT_ROUNDING_MODE"), parsed) ||
            ::gmpfrxx_mkII::detail::parse_mpfr_rounding(
-               std::getenv("MPFRXX_MPC_REAL_ROUNDING_MODE"), parsed) ||
+               std::getenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE"), parsed) ||
            ::gmpfrxx_mkII::detail::parse_mpfr_rounding(
-               std::getenv("MPFRXX_MPC_IMAG_ROUNDING_MODE"), parsed);
+               std::getenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE"), parsed);
 }
 
 inline bool mpc_environment_is_present() noexcept
 {
-    return std::getenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS") != nullptr ||
-           std::getenv("MPFRXX_MPC_REAL_PRECISION_BITS") != nullptr ||
-           std::getenv("MPFRXX_MPC_IMAG_PRECISION_BITS") != nullptr ||
-           std::getenv("MPFRXX_MPC_ROUNDING_MODE") != nullptr ||
-           std::getenv("MPFRXX_MPC_REAL_ROUNDING_MODE") != nullptr ||
-           std::getenv("MPFRXX_MPC_IMAG_ROUNDING_MODE") != nullptr;
+    return std::getenv("MPCXX_DEFAULT_PRECISION_BITS") != nullptr ||
+           std::getenv("MPCXX_DEFAULT_REAL_PRECISION_BITS") != nullptr ||
+           std::getenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS") != nullptr ||
+           std::getenv("MPCXX_DEFAULT_ROUNDING_MODE") != nullptr ||
+           std::getenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE") != nullptr ||
+           std::getenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE") != nullptr;
 }
 
 inline bool& mpc_defaults_initialized_storage() noexcept

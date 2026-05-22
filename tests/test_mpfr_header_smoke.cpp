@@ -34,9 +34,9 @@
 int main()
 {
     unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_EMIN");
-    unsetenv("MPFRXX_EMAX");
-    unsetenv("MPFRXX_ROUNDING_MODE");
+    unsetenv("MPFRXX_DEFAULT_EMIN");
+    unsetenv("MPFRXX_DEFAULT_EMAX");
+    unsetenv("MPFRXX_DEFAULT_ROUNDING_MODE");
 
     static_assert(std::is_default_constructible_v<mpfrxx::mpz_class>);
     static_assert(std::is_default_constructible_v<mpfrxx::mpq_class>);

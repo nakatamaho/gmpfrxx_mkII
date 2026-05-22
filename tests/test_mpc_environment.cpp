@@ -38,15 +38,15 @@
 int main()
 {
     setenv("MPFRXX_DEFAULT_PRECISION_BITS", "144", 1);
-    setenv("MPFRXX_ROUNDING_MODE", "RNDD", 1);
+    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDD", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
 
-    unsetenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_REAL_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_IMAG_PRECISION_BITS");
-    unsetenv("MPFRXX_MPC_ROUNDING_MODE");
-    unsetenv("MPFRXX_MPC_REAL_ROUNDING_MODE");
-    unsetenv("MPFRXX_MPC_IMAG_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_REAL_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS");
+    unsetenv("MPCXX_DEFAULT_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
+    unsetenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
     mpfrxx::reload_mpc_defaults_from_environment();
 
     auto defaults = mpfrxx::default_mpc_options();
@@ -57,12 +57,12 @@ int main()
         std::abort();
     }
 
-    setenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS", "160", 1);
-    setenv("MPFRXX_MPC_REAL_PRECISION_BITS", "192", 1);
-    setenv("MPFRXX_MPC_IMAG_PRECISION_BITS", "224", 1);
-    setenv("MPFRXX_MPC_ROUNDING_MODE", "RNDU", 1);
-    setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "RNDD", 1);
-    setenv("MPFRXX_MPC_IMAG_ROUNDING_MODE", "RNDZ", 1);
+    setenv("MPCXX_DEFAULT_PRECISION_BITS", "160", 1);
+    setenv("MPCXX_DEFAULT_REAL_PRECISION_BITS", "192", 1);
+    setenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS", "224", 1);
+    setenv("MPCXX_DEFAULT_ROUNDING_MODE", "RNDU", 1);
+    setenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE", "RNDD", 1);
+    setenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE", "RNDZ", 1);
     mpfrxx::reload_mpc_defaults_from_environment();
     defaults = mpfrxx::default_mpc_options();
     if (defaults.real_precision_bits != 192 || defaults.imag_precision_bits != 224) {
@@ -75,10 +75,10 @@ int main()
         std::abort();
     }
 
-    setenv("MPFRXX_MPC_REAL_PRECISION_BITS", "224", 1);
-    setenv("MPFRXX_MPC_IMAG_PRECISION_BITS", "224", 1);
-    setenv("MPFRXX_MPC_REAL_ROUNDING_MODE", "RNDU", 1);
-    setenv("MPFRXX_MPC_IMAG_ROUNDING_MODE", "RNDU", 1);
+    setenv("MPCXX_DEFAULT_REAL_PRECISION_BITS", "224", 1);
+    setenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS", "224", 1);
+    setenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE", "RNDU", 1);
+    setenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE", "RNDU", 1);
     mpfrxx::reload_mpc_defaults_from_environment();
 
     defaults = mpfrxx::default_mpc_options();
