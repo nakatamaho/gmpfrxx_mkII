@@ -11,28 +11,32 @@ for raw C GMP, upstream `gmpxx`, and `gmpxx_mkII` wrapper kernels. The purpose i
 
 ## Build
 
-Build from the repository root:
+From the repository root:
 
 ```bash
 cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release
-cmake --build build_bench_release -j --target \
-    Raxpy_gmp_C_native_01 Raxpy_gmp_C_native_openmp_01 \
-    Raxpy_gmp_kernel_01_orig Raxpy_gmp_kernel_01_mkII Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH \
-    Raxpy_gmp_kernel_02_orig Raxpy_gmp_kernel_02_mkII Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH \
-    Raxpy_gmp_kernel_03_orig Raxpy_gmp_kernel_03_mkII Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH \
-    Raxpy_gmp_kernel_04_orig Raxpy_gmp_kernel_04_mkII Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH \
-    Raxpy_gmp_kernel_openmp_01_orig Raxpy_gmp_kernel_openmp_01_mkII Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH \
-    Raxpy_gmp_kernel_openmp_02_orig Raxpy_gmp_kernel_openmp_02_mkII Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH \
-    Raxpy_gmp_kernel_openmp_03_orig Raxpy_gmp_kernel_openmp_03_mkII Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+cmake --build build_bench_release -j --target Raxpy_gmp_C_native_01 Raxpy_gmp_C_native_openmp_01 Raxpy_gmp_kernel_03_mkII
+```
+
+The full run used all GMP Raxpy targets under:
+
+```text
+build_bench_release/benchmarks/gmp/01_Raxpy/
 ```
 
 Each executable takes:
 
 ```text
-< vector-size > < precision-bits >
+<vector size> <precision-bits>
 ```
 
 Example:
+
+```bash
+build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 512
+```
+
+OpenMP variants use the same executable arguments. The recorded run used:
 
 ```bash
 OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \

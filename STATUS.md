@@ -1,3 +1,45 @@
+Post-phase Raxpy README and plot style alignment:
+DONE
+
+Implemented features:
+- Aligned `benchmarks/gmp/01_Raxpy/README.md` Build instructions with the
+  concise MPFR Raxpy execution style.
+- Updated GMP and MPFR Raxpy plot scripts to use the same color palette,
+  legend grouping, average bars, and min/max range styling used by the Rdot
+  benchmark plots.
+- Regenerated the committed GMP and MPFR Raxpy serial/OpenMP plot images from
+  their existing repeat-10 summary CSV files.
+
+Tests added:
+- No library tests were added; this phase updates benchmark documentation and
+  reproducible plot generation only.
+
+Tests updated:
+- `benchmarks/gmp/01_Raxpy/README.md`
+- `benchmarks/gmp/01_Raxpy/plot_repeat_summary.py`
+- `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_serial.png`
+- `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_openmp.png`
+- `benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10_serial.png`
+- `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10_openmp.png`
+- `STATUS.md`
+
+Exact commands run:
+- `python3 -c ...` to update the GMP Raxpy README Build section.
+- `python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv --output-prefix benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10 --title-prefix "GMP Raxpy N=10000000 precision=512 repeat=10"`
+- `python3 benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/summary_raxpy_mpfr_n10000000_p512_repeat10.csv --output-prefix benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10 --title-prefix "MPFR Raxpy N=10000000 p=512 repeat=10"`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Plot regeneration: PASS.
+- `git diff --check`: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- This phase did not recollect benchmark timings; it only regenerated plots from
+  the already committed summary CSV files.
+
 Post-phase GMP Raxpy repeat-10 benchmark refresh:
 DONE
 
