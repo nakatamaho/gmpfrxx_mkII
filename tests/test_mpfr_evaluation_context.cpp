@@ -82,7 +82,7 @@ void check_context_rounding_overrides_default_rounding()
 
 void check_context_precision_must_match_target()
 {
-#if !defined(GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH)
+#if !defined(GMPFRXX_MKII_FAST_FIXED_PREC)
     mpfrxx::mpfr_class acc("1", 8);
     bool threw = false;
     try {

@@ -307,8 +307,8 @@ public:
             return *this;
         }
 
-        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT(
+        if constexpr (gmpfrxx_mkII::detail::build_options::fast_fixed_precision) {
+            GMPFRXX_MKII_ASSERT_FAST_FIXED_PREC_CONTRACT(
                 this->precision() == other.precision(),
                 "mpfr_class move assignment precision mismatch");
             mpfr_swap(value_, other.value_);
@@ -2236,7 +2236,7 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpfr_compound_mul_apply(
     mpfr_prec_t precision,
     mpfr_rnd_t rnd)
 {
-    if constexpr (build_options::assume_fixed_precision_fastpath) {
+    if constexpr (build_options::fast_fixed_precision) {
         mpfr_thread_scratch product(precision);
         mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
         mpfr_add(dest, dest, product.get(), rnd);
@@ -2254,7 +2254,7 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpfr_compound_submul_apply(
     mpfr_prec_t precision,
     mpfr_rnd_t rnd)
 {
-    if constexpr (build_options::assume_fixed_precision_fastpath) {
+    if constexpr (build_options::fast_fixed_precision) {
         mpfr_thread_scratch product(precision);
         mpfr_mul(product.get(), expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
         mpfr_sub(dest, dest, product.get(), rnd);
@@ -2341,7 +2341,7 @@ void mpfr_evaluate(
     }
 
     if constexpr (
-        build_options::enable_mpfr_fma &&
+        build_options::enable_fma &&
         is_mpfr_mul_direct_expr_v<Lhs> &&
         is_mpfr_mul_direct_expr_v<Rhs> &&
         (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
@@ -2525,7 +2525,7 @@ void mpfr_compound_assign_with_context(
     } else if constexpr (
         is_mpfr_mul_direct_expr_v<operand_type> &&
         (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
-        if constexpr (build_options::enable_mpfr_fma) {
+        if constexpr (build_options::enable_fma) {
             if constexpr (std::is_same_v<Op, add_op>) {
                 mpfr_compound_fma_apply(
                     lhs.mpfr_data(),
@@ -2638,7 +2638,7 @@ public:
 private:
     void check_precision() const
     {
-        if constexpr (!gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+        if constexpr (!gmpfrxx_mkII::detail::build_options::fast_fixed_precision) {
             if (precision_ != value_->precision()) {
                 throw std::invalid_argument("mpfr evaluation context precision must match target precision");
             }

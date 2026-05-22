@@ -57,7 +57,7 @@ void count_free(void* p, std::size_t)
 
 int main()
 {
-    static_assert(gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath);
+    static_assert(gmpfrxx_mkII::detail::build_options::fast_fixed_precision);
     mp_set_memory_functions(count_alloc, count_realloc, count_free);
 
     constexpr mp_bitcnt_t precision = 256;

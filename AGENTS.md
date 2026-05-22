@@ -338,17 +338,17 @@ Existing-object assignment preserves destination precision. New expression mater
 Canonical options:
 
 ```text
-GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
-GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE
-MPFRXX_ENABLE_FMA
+GMPFRXX_MKII_FAST_FIXED_PREC
+GMPFRXX_MKII_FAST_STABLE_RND
+GMPFRXX_MKII_ENABLE_FMA
 ```
 
 Use preprocessor checks only in `detail/config.hpp`, then expose constexpr flags such as:
 
 ```cpp
-gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath
-gmpfrxx_mkII::detail::build_options::assume_stable_mpfr_rounding_mode
-gmpfrxx_mkII::detail::build_options::enable_mpfr_fma
+gmpfrxx_mkII::detail::build_options::fast_fixed_precision
+gmpfrxx_mkII::detail::build_options::fast_stable_rounding
+gmpfrxx_mkII::detail::build_options::enable_fma
 ```
 
 The rest of the implementation must use `if constexpr` or ordinary runtime

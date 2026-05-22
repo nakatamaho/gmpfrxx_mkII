@@ -38,7 +38,7 @@ int main()
     static_assert(CHAR_BIT == 8, "Phase 0 assumes octet bytes for later import tests");
     static_assert(sizeof(std::uint64_t) >= 8);
     static_assert(std::numeric_limits<std::int64_t>::is_signed);
-    static_assert(gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath ||
-                  !gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath);
+    static_assert(gmpfrxx_mkII::detail::build_options::fast_fixed_precision ||
+                  !gmpfrxx_mkII::detail::build_options::fast_fixed_precision);
     return 0;
 }

@@ -33,7 +33,7 @@
 
 int main()
 {
-    static_assert(gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath);
+    static_assert(gmpfrxx_mkII::detail::build_options::fast_fixed_precision);
 
     gmpxx::set_default_mpf_precision_bits(160);
     const mp_bitcnt_t default_object_precision = gmpxx::mpf_class().precision();

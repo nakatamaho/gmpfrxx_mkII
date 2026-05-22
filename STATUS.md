@@ -21610,3 +21610,42 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked benchmark artifacts outside this phase remain untouched.
+
+
+## Phase: Canonicalize Non-Benchmark Fastpath Flags
+
+Implemented features:
+- Renamed the public fixed-precision fastpath macro to `GMPFRXX_MKII_FAST_FIXED_PREC`.
+- Renamed the public stable-rounding fastpath macro to `GMPFRXX_MKII_FAST_STABLE_RND`.
+- Renamed the public FMA enable macro to `GMPFRXX_MKII_ENABLE_FMA`.
+- Renamed internal build-option fields to `fast_fixed_precision`, `fast_stable_rounding`, and `enable_fma`.
+- Renamed the fixed-precision contract assertion helper to `GMPFRXX_MKII_ASSERT_FAST_FIXED_PREC_CONTRACT`.
+- Updated non-benchmark headers, tests, top-level documentation, and AGENTS instructions to use the canonical names.
+- Left benchmark-local target names and benchmark-local compile definitions unchanged by request; those will be migrated when benchmark data is refreshed.
+
+Missing features:
+- Benchmark target suffixes and benchmark-local compile definitions still use the old naming convention intentionally.
+
+Tests added:
+- No new tests. Existing fixed-precision, stable-rounding, FMA, and full-suite tests cover the renamed options.
+
+Exact commands run:
+- `rg -n "GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH|GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE|MPFRXX_ENABLE_FMA|assume_fixed_precision_fastpath|assume_stable_mpfr_rounding_mode|enable_mpfr_fma|ASSERT_FIXED_PRECISION_FASTPATH" include tests CMakeLists.txt README.md SPECIFICATIONS.md AGENTS.md -g '!benchmarks/**'`
+- `rg -n "GMPFRXX_MKII_FAST_FIXED_PREC|GMPFRXX_MKII_FAST_STABLE_RND|GMPFRXX_MKII_ENABLE_FMA|fast_fixed_precision|fast_stable_rounding|enable_fma|ASSERT_FAST_FIXED_PREC" include tests CMakeLists.txt README.md SPECIFICATIONS.md AGENTS.md -g '!benchmarks/**'`
+- `cmake -S . -B build_fresh_release_20260522 -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_fresh_release_20260522 -j`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Old-name scan outside `benchmarks/`: PASS, no matches.
+- New-name scan outside `benchmarks/`: PASS, expected matches only.
+- Configure in `build_fresh_release_20260522`: PASS.
+- Release build in `build_fresh_release_20260522`: PASS.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+- Diff whitespace check: PASS.
+
+Known issues:
+- Historical `STATUS.md` entries still mention old macro names as past command logs.
+- Existing benchmark sources and benchmark target names still use the old naming convention by request and must be migrated with the next benchmark refresh.
+- Existing untracked benchmark artifacts outside this phase remain untouched.

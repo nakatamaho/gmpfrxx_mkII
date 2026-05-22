@@ -129,7 +129,7 @@ void check_context_assignment_uses_context_rounding()
 
 void check_context_precision_must_match_target()
 {
-#if !defined(GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH)
+#if !defined(GMPFRXX_MKII_FAST_FIXED_PREC)
     auto z = mpfrxx::mpc_class::with_precision(8, 16);
     bool threw = false;
     try {

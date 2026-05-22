@@ -32,8 +32,8 @@
 
 int main()
 {
-    static_assert(gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath);
-    static_assert(gmpfrxx_mkII::detail::build_options::enable_mpfr_fma);
+    static_assert(gmpfrxx_mkII::detail::build_options::fast_fixed_precision);
+    static_assert(gmpfrxx_mkII::detail::build_options::enable_fma);
 
     mpfrxx::set_default_precision_bits(160);
     const mpfr_prec_t default_object_precision = mpfrxx::mpfr_class().precision();

@@ -213,7 +213,7 @@ but it avoids wrapper-side ownership metadata and keeps dense-array layout.
 Move assignment to a valid destination preserves the left-hand-side precision in normal builds.
 This matches ordinary assignment semantics for existing objects.
 
-When `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is enabled, floating wrapper
+When `GMPFRXX_MKII_FAST_FIXED_PREC` is enabled, floating wrapper
 move assignment is allowed to assume that the source and destination precisions
 match. A precision mismatch in `gmpxx::mpf_class`, `mpfrxx::mpfr_class`, or
 `mpfrxx::mpc_class` move assignment is a caller contract violation and is
@@ -242,9 +242,9 @@ and they must not silently change the default precision policy.
 
 | Option | Applies to | Required caller contract | Optimization class |
 |--------|------------|--------------------------|--------------------|
-| `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` | `gmpxx::mpf_class`, `mpfrxx::mpfr_class`, `mpfrxx::mpc_class` | All participating floating objects in the hot path have matching fixed precision. Mismatch is a contract violation. | Swap-based move assignment and bounded scratch reuse may skip precision-restoration work. |
-| `GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` | MPFR default-rounding paths; MPC paths that inherit MPFR default rounding | The default rounding mode is stable during the numeric kernel, except through wrapper APIs that refresh the cache. | Repeated MPFR default-rounding reads may be replaced by a cached thread-local value. |
-| `MPFRXX_ENABLE_FMA` | MPFR expression and compound-assignment paths | Fused MPFR rounding semantics are acceptable for supported expression shapes. | `mpfr_fma`, `mpfr_fmma`, `mpfr_fmms`, and related fused operations may replace materialized multiply-plus-add forms. |
+| `GMPFRXX_MKII_FAST_FIXED_PREC` | `gmpxx::mpf_class`, `mpfrxx::mpfr_class`, `mpfrxx::mpc_class` | All participating floating objects in the hot path have matching fixed precision. Mismatch is a contract violation. | Swap-based move assignment and bounded scratch reuse may skip precision-restoration work. |
+| `GMPFRXX_MKII_FAST_STABLE_RND` | MPFR default-rounding paths; MPC paths that inherit MPFR default rounding | The default rounding mode is stable during the numeric kernel, except through wrapper APIs that refresh the cache. | Repeated MPFR default-rounding reads may be replaced by a cached thread-local value. |
+| `GMPFRXX_MKII_ENABLE_FMA` | MPFR expression and compound-assignment paths | Fused MPFR rounding semantics are acceptable for supported expression shapes. | `mpfr_fma`, `mpfr_fmma`, `mpfr_fmms`, and related fused operations may replace materialized multiply-plus-add forms. |
 
 The three options are independent. Fixed precision does not imply stable
 rounding, stable rounding does not imply fused arithmetic, and FMA does not
@@ -256,13 +256,13 @@ The fixed-precision fastpath flag must not control multiply-fusion semantics.
 These rewrites are controlled by explicit compile-time options:
 
 ```text
-MPFRXX_ENABLE_FMA
+GMPFRXX_MKII_ENABLE_FMA
 ```
 
 GMP MPF has no wrapper fused multiply-add option. `a += b * c` and
 `a -= b * c` may use a direct multiply-then-add/subtract specialization, but it
 still follows MPF's two-step rounding behavior. When
-`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` is enabled, the direct
+`GMPFRXX_MKII_FAST_FIXED_PREC` is enabled, the direct
 leaf-product compound path may reuse a header-local thread scratch object for
 the intermediate product. This is a performance-only cache; it must not define
 public default precision state or change MPF precision semantics. In this mode
@@ -277,7 +277,7 @@ scoped backend temporary with normal initialization and cleanup.  Pool
 exhaustion must not change observable arithmetic results, precision policy, or
 exception behavior.
 
-`MPFRXX_ENABLE_FMA` enables MPFR's fused operations for supported expression
+`GMPFRXX_MKII_ENABLE_FMA` enables MPFR's fused operations for supported expression
 shapes. `a += b * c` maps to `mpfr_fma`. `a -= b * c` maps to
 `mpfr_fma` with an exactly negated multiplicand, so signed-zero behavior is
 left to MPFR's fused-add semantics instead of applying `mpfr_neg` to an
@@ -285,14 +285,14 @@ already rounded result. Materializing `a * b + c * d` maps to `mpfr_fmma`,
 and materializing `a * b - c * d` maps to `mpfr_fmms`.
 
 These options are separate from the
-`GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` macro because enabling FMA
+`GMPFRXX_MKII_FAST_FIXED_PREC` macro because enabling FMA
 changes numeric semantics, especially for MPFR where fused evaluation performs
 one rounding instead of materializing the product and then adding or
 subtracting.
 
 ## Stable MPFR Rounding Fast Path
 
-`GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` is an opt-in performance
+`GMPFRXX_MKII_FAST_STABLE_RND` is an opt-in performance
 macro for code that does not change the MPFR default rounding mode during a
 numeric kernel on the same thread.
 

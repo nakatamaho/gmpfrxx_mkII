@@ -334,7 +334,7 @@ inline void initialize_mpfr_defaults_for_current_thread() noexcept
 inline mpfr_rnd_t current_mpfr_rounding_mode() noexcept
 {
     initialize_mpfr_defaults_for_current_thread();
-    if constexpr (build_options::assume_stable_mpfr_rounding_mode) {
+    if constexpr (build_options::fast_stable_rounding) {
         return stable_mpfr_rounding_mode();
     } else {
         return mpfr_get_default_rounding_mode();

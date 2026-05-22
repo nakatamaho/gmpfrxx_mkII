@@ -381,8 +381,8 @@ public:
             return *this;
         }
 
-        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT(
+        if constexpr (gmpfrxx_mkII::detail::build_options::fast_fixed_precision) {
+            GMPFRXX_MKII_ASSERT_FAST_FIXED_PREC_CONTRACT(
                 real_precision() == other.real_precision() &&
                     imag_precision() == other.imag_precision(),
                 "mpc_class move assignment precision mismatch");
@@ -1947,7 +1947,7 @@ private:
 
     void check_precision() const
     {
-        if constexpr (!gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+        if constexpr (!gmpfrxx_mkII::detail::build_options::fast_fixed_precision) {
             if (precision_.real != value_->real_precision() ||
                 precision_.imag != value_->imag_precision()) {
                 throw std::invalid_argument("mpc evaluation context precision must match target precision");

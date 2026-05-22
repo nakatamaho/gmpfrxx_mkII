@@ -79,7 +79,7 @@ int main()
 {
     mp_set_memory_functions(count_alloc, count_realloc, count_free);
 
-    static_assert(gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath);
+    static_assert(gmpfrxx_mkII::detail::build_options::fast_fixed_precision);
     static_assert(std::is_nothrow_move_constructible<mpfrxx::mpc_class>::value,
                   "mpc_class move construction must remain noexcept");
 

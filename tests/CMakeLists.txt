@@ -44,31 +44,31 @@ add_phase0_test(test_mpfr_alloc_count mpfrxx_mkII)
 set_tests_properties(test_mpfr_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpfr_fixed_precision_materialization mpfrxx_mkII)
 target_compile_definitions(test_mpfr_fixed_precision_materialization PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
-    MPFRXX_ENABLE_FMA
+    GMPFRXX_MKII_FAST_FIXED_PREC
+    GMPFRXX_MKII_ENABLE_FMA
 )
 add_phase0_test(test_mpfr_fixed_precision_fma_alloc_count mpfrxx_mkII)
 target_compile_definitions(test_mpfr_fixed_precision_fma_alloc_count PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
-    MPFRXX_ENABLE_FMA
+    GMPFRXX_MKII_FAST_FIXED_PREC
+    GMPFRXX_MKII_ENABLE_FMA
 )
 set_tests_properties(test_mpfr_fixed_precision_fma_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpfr_fixed_precision_tls_scratch mpfrxx_mkII)
 target_compile_definitions(test_mpfr_fixed_precision_tls_scratch PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    GMPFRXX_MKII_FAST_FIXED_PREC
 )
 set_tests_properties(test_mpfr_fixed_precision_tls_scratch PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpfr_type_conversions mpfrxx_mkII)
 add_phase0_test(test_mpfr_comparisons mpfrxx_mkII)
 add_phase0_test(test_mpfr_compound_assign mpfrxx_mkII)
 target_compile_definitions(test_mpfr_compound_assign PRIVATE
-    MPFRXX_ENABLE_FMA
+    GMPFRXX_MKII_ENABLE_FMA
 )
 add_phase0_test(test_mpfr_evaluation_context mpfrxx_mkII)
 add_executable(test_mpfr_evaluation_context_fixed_precision test_mpfr_evaluation_context.cpp)
 target_link_libraries(test_mpfr_evaluation_context_fixed_precision PRIVATE mpfrxx_mkII)
 target_compile_definitions(test_mpfr_evaluation_context_fixed_precision PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    GMPFRXX_MKII_FAST_FIXED_PREC
 )
 add_test(
     NAME test_mpfr_evaluation_context_fixed_precision
@@ -78,7 +78,7 @@ add_phase0_test(test_mpfr_rounding_scope mpfrxx_mkII)
 add_executable(test_mpfr_rounding_scope_stable test_mpfr_rounding_scope.cpp)
 target_link_libraries(test_mpfr_rounding_scope_stable PRIVATE mpfrxx_mkII)
 target_compile_definitions(test_mpfr_rounding_scope_stable PRIVATE
-    GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE
+    GMPFRXX_MKII_FAST_STABLE_RND
 )
 add_test(NAME test_mpfr_rounding_scope_stable COMMAND test_mpfr_rounding_scope_stable)
 add_phase0_test(test_mpfr_exception_support mpcxx_mkII)
@@ -110,7 +110,7 @@ add_test(
 add_executable(test_mpfr_environment_first_use_stable test_mpfr_environment_first_use.cpp)
 target_link_libraries(test_mpfr_environment_first_use_stable PRIVATE mpfrxx_mkII)
 target_compile_definitions(test_mpfr_environment_first_use_stable PRIVATE
-    GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE
+    GMPFRXX_MKII_FAST_STABLE_RND
 )
 add_test(
     NAME test_mpfr_environment_first_use_stable_with_precision
@@ -162,11 +162,11 @@ add_phase0_test(test_mpf_scalar_alloc_count gmpxx_mkII)
 set_tests_properties(test_mpf_scalar_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpf_fixed_precision_materialization gmpxx_mkII)
 target_compile_definitions(test_mpf_fixed_precision_materialization PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    GMPFRXX_MKII_FAST_FIXED_PREC
 )
 add_phase0_test(test_mpf_fixed_precision_tls_scratch gmpxx_mkII)
 target_compile_definitions(test_mpf_fixed_precision_tls_scratch PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    GMPFRXX_MKII_FAST_FIXED_PREC
 )
 set_tests_properties(test_mpf_fixed_precision_tls_scratch PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 add_phase0_test(test_mpf_long_width_dispatch gmpxx_mkII)
@@ -236,7 +236,7 @@ add_phase0_test(test_mpc_evaluation_context mpcxx_mkII)
 add_executable(test_mpc_evaluation_context_fixed_precision test_mpc_evaluation_context.cpp)
 target_link_libraries(test_mpc_evaluation_context_fixed_precision PRIVATE mpcxx_mkII)
 target_compile_definitions(test_mpc_evaluation_context_fixed_precision PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    GMPFRXX_MKII_FAST_FIXED_PREC
 )
 add_test(
     NAME test_mpc_evaluation_context_fixed_precision
@@ -246,7 +246,7 @@ add_phase0_test(test_mpc_io mpcxx_mkII)
 add_phase0_test(test_mpc_math mpcxx_mkII)
 add_phase0_test(test_mpc_alloc_count mpcxx_mkII)
 target_compile_definitions(test_mpc_alloc_count PRIVATE
-    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+    GMPFRXX_MKII_FAST_FIXED_PREC
 )
 set_tests_properties(test_mpc_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 

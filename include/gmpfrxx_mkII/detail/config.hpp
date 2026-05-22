@@ -58,9 +58,9 @@
 #endif
 #endif
 
-#ifndef GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT
-#define GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT(condition, message) \
-    assert((condition) && "GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH contract violation: " message)
+#ifndef GMPFRXX_MKII_ASSERT_FAST_FIXED_PREC_CONTRACT
+#define GMPFRXX_MKII_ASSERT_FAST_FIXED_PREC_CONTRACT(condition, message) \
+    assert((condition) && "GMPFRXX_MKII_FAST_FIXED_PREC contract violation: " message)
 #endif
 
 #if __has_include(<gmpfrxx_mkII/detail/version.hpp>)
@@ -92,20 +92,20 @@ namespace gmpfrxx_mkII {
 namespace detail {
 
 struct build_options {
-#ifdef GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
-    static constexpr bool assume_fixed_precision_fastpath = true;
+#ifdef GMPFRXX_MKII_FAST_FIXED_PREC
+    static constexpr bool fast_fixed_precision = true;
 #else
-    static constexpr bool assume_fixed_precision_fastpath = false;
+    static constexpr bool fast_fixed_precision = false;
 #endif
-#ifdef MPFRXX_ENABLE_FMA
-    static constexpr bool enable_mpfr_fma = true;
+#ifdef GMPFRXX_MKII_ENABLE_FMA
+    static constexpr bool enable_fma = true;
 #else
-    static constexpr bool enable_mpfr_fma = false;
+    static constexpr bool enable_fma = false;
 #endif
-#ifdef GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE
-    static constexpr bool assume_stable_mpfr_rounding_mode = true;
+#ifdef GMPFRXX_MKII_FAST_STABLE_RND
+    static constexpr bool fast_stable_rounding = true;
 #else
-    static constexpr bool assume_stable_mpfr_rounding_mode = false;
+    static constexpr bool fast_stable_rounding = false;
 #endif
     static constexpr bool mpfr_has_buildopt_tls_p = GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P != 0;
     static constexpr bool mpfr_buildopt_tls = GMPFRXX_MKII_MPFR_BUILDOPT_TLS != 0;

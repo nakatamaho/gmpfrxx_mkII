@@ -251,8 +251,8 @@ public:
             return *this;
         }
 
-        if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT(
+        if constexpr (gmpfrxx_mkII::detail::build_options::fast_fixed_precision) {
+            GMPFRXX_MKII_ASSERT_FAST_FIXED_PREC_CONTRACT(
                 precision() == other.precision(),
                 "mpf_class move assignment precision mismatch");
             mpf_swap(value_, other.value_);
@@ -1884,7 +1884,7 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_mul_apply(
     const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
     mp_bitcnt_t precision)
 {
-    if constexpr (build_options::assume_fixed_precision_fastpath) {
+    if constexpr (build_options::fast_fixed_precision) {
         mpf_thread_scratch product(precision);
         mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
         mpf_add(dest, dest, product.get());
@@ -1901,7 +1901,7 @@ GMPFRXX_MKII_ALWAYS_INLINE void mpf_compound_submul_apply(
     const binary_expr<mul_op, Lhs, Rhs, gmpxx::mpf_class>& expr,
     mp_bitcnt_t precision)
 {
-    if constexpr (build_options::assume_fixed_precision_fastpath) {
+    if constexpr (build_options::fast_fixed_precision) {
         mpf_thread_scratch product(precision);
         mpf_mul(product.get(), expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
         mpf_sub(dest, dest, product.get());
