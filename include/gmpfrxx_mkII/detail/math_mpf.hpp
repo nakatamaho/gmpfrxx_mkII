@@ -396,14 +396,10 @@ inline const char* log_two_decimal_literal()
 
 inline bool has_hardcoded_log_two(mp_bitcnt_t target_precision)
 {
-    switch (target_precision) {
-    case 512:
-    case 1024:
-    case 2048:
-        return true;
-    default:
-        return false;
-    }
+    constexpr mp_bitcnt_t decimal_digits = 1000;
+    constexpr mp_bitcnt_t fractional_digits = decimal_digits - 1;
+    constexpr mp_bitcnt_t conservative_bits = (fractional_digits * 332) / 100;
+    return target_precision <= conservative_bits;
 }
 
 inline mpf_class hardcoded_log_two(mp_bitcnt_t target_precision)

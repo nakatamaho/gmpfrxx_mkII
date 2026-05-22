@@ -20874,3 +20874,36 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Widen MPF Log2 Literal Fast Path
+
+Implemented features:
+- Changed `mpf_math_detail::has_hardcoded_log_two()` from a 512/1024/2048-only
+  switch to the same conservative literal-bit policy used by `has_hardcoded_pi()`.
+- Added coverage that arbitrary precisions such as 600 and 1500 bits use the
+  hardcoded log2 literal while 4096 bits still falls back to computed/cache
+  evaluation.
+
+Tests added:
+- None.
+
+Tests updated:
+- `tests/test_mpf_pi.cpp`
+- `include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "has_hardcoded_log_two|hardcoded_log_two|has_hardcoded_pi|hardcoded_pi|log_two" include/gmpfrxx_mkII/detail/math_mpf.hpp tests`
+- `nl -ba include/gmpfrxx_mkII/detail/math_mpf.hpp | sed -n '270,420p'`
+- `nl -ba tests/test_mpf_pi.cpp | sed -n '130,235p'`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_mpf_pi.cpp STATUS.md`
+- `cmake --build build -j --target test_mpf_pi test_mpf_transcendent_functions test_mpf_extended_transcendent_functions`
+- `ctest --test-dir build -R 'test_mpf_pi|test_mpf_transcendent_functions|test_mpf_extended_transcendent_functions' --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 3/3 tests passed.
+
+Known issues:
+- None for this phase.

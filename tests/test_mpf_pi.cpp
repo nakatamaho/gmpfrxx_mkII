@@ -194,6 +194,11 @@ int main()
         std::abort();
     }
     require_log_two_prefix(log_two_96_again, 25);
+    if (!gmpxx::mpf_math_detail::has_hardcoded_log_two(static_cast<mp_bitcnt_t>(600)) ||
+        !gmpxx::mpf_math_detail::has_hardcoded_log_two(static_cast<mp_bitcnt_t>(1500)) ||
+        gmpxx::mpf_math_detail::has_hardcoded_log_two(static_cast<mp_bitcnt_t>(4096))) {
+        std::abort();
+    }
 
     const auto default_log_two = gmpxx::const_log2();
     if (default_log_two.precision() < gmpxx::default_mpf_precision_bits()) {
