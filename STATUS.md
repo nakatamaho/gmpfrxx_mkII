@@ -21789,3 +21789,31 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked benchmark artifacts outside this phase remain untouched.
+
+## Phase: Simplify GMP Rdot Build Section
+
+Implemented features:
+- Simplified the `benchmarks/gmp/00_Rdot/README.md` Build section.
+- Replaced the long explicit target list with the standard release configure/build commands, executable output directory, argument shape, and one representative invocation.
+- Kept the fixed-precision fastpath naming note.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. This phase is documentation-only.
+
+Exact commands run:
+- `sed -n '1,80p' benchmarks/gmp/00_Rdot/README.md`
+- `python3 - <<'PY' ...` to replace the Build section.
+- `sed -n '1,55p' benchmarks/gmp/00_Rdot/README.md`
+- `git diff --check`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- README Build section simplification: PASS.
+- Diff whitespace check: PASS.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked benchmark artifacts outside this phase remain untouched.

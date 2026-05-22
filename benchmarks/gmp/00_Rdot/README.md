@@ -19,59 +19,24 @@ From the repository root:
 
 ```bash
 cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release
-cmake --build build_bench_release -j --target \
-    Rdot_gmp_C_native_01 Rdot_gmp_C_native_02 Rdot_gmp_C_native_03 \
-    Rdot_gmp_C_native_04 Rdot_gmp_C_native_05 Rdot_gmp_C_native_06 \
-    Rdot_gmp_C_native_openmp_01 Rdot_gmp_C_native_openmp_02 \
-    Rdot_gmp_C_native_openmp_03 Rdot_gmp_C_native_openmp_04 \
-    Rdot_gmp_C_native_openmp_05 Rdot_gmp_C_native_openmp_06 \
-    Rdot_gmp_kernel_01_orig Rdot_gmp_kernel_01_mkII \
-    Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_02_orig Rdot_gmp_kernel_02_mkII \
-    Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_03_orig Rdot_gmp_kernel_03_mkII \
-    Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_04_orig Rdot_gmp_kernel_04_mkII \
-    Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_05_orig Rdot_gmp_kernel_05_mkII \
-    Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_06_orig Rdot_gmp_kernel_06_mkII \
-    Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_openmp_01_orig Rdot_gmp_kernel_openmp_01_mkII \
-    Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_openmp_02_orig Rdot_gmp_kernel_openmp_02_mkII \
-    Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_openmp_03_orig Rdot_gmp_kernel_openmp_03_mkII \
-    Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_openmp_04_orig Rdot_gmp_kernel_openmp_04_mkII \
-    Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_openmp_05_orig Rdot_gmp_kernel_openmp_05_mkII \
-    Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH \
-    Rdot_gmp_kernel_openmp_06_orig Rdot_gmp_kernel_openmp_06_mkII \
-    Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH
+cmake --build build_bench_release -j
 ```
 
-Executables are created under:
+Rdot executables are created under:
 
 ```text
 build_bench_release/benchmarks/gmp/00_Rdot/
 ```
 
-Each executable takes:
-
-```text
-<vector size> <precision>
-```
-
-Example:
+Each executable takes `<vector size> <precision>`. Example:
 
 ```bash
 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 512
 ```
 
-The mkII fixed-precision variants are built with the canonical fastpath macro
-`GMPFRXX_MKII_FAST_FIXED_PREC`; executable suffixes keep the historical
-`FIXED_PRECISION_FASTPATH` label for benchmark continuity.
+The mkII fixed-precision variants use `GMPFRXX_MKII_FAST_FIXED_PREC`;
+executable suffixes keep the historical `FIXED_PRECISION_FASTPATH` label for
+benchmark continuity.
 
 ## Kernel Shapes
 
