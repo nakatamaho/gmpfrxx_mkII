@@ -317,6 +317,14 @@ MPFR wrapper remains available. Feature detection must be centralized behind
 feature-named preprocessor macros instead of scattering backend-version checks
 through public wrapper declarations.
 
+For eager MPFR math functions with multiple operands, result precision is chosen
+from the MPFR object or MPFR expression operands before scalar and exact GMP
+operands are materialized. Supported scalar operands and exact `mpz_class` /
+`mpq_class` operands are converted at that chosen precision; they must not
+implicitly promote the result to the current default precision. If no MPFR object
+or MPFR expression operand contributes a positive precision, the normal wrapper
+default precision is used.
+
 ## GMP MPF Default Precision
 
 GMP's `mpf_set_default_prec()` and `mpf_get_default_prec()` are process-global

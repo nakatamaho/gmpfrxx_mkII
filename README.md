@@ -241,6 +241,11 @@ MPFR version-dependent math wrappers are exposed only when the included
 for newer functions such as `powr`, unit trigonometric functions, `rootn_si`,
 `compound_si`, `log2p1`, and `exp2m1`; other MPFR wrapper APIs remain available.
 
+For multi-operand eager MPFR math helpers, scalar and exact GMP operands are
+materialized at the precision selected from the MPFR object or expression
+operands. They do not by themselves raise the result to the current default
+precision.
+
 ### MPC Default Context
 
 `mpfrxx::mpc_class` defaults inherit the same libmpfr default precision and

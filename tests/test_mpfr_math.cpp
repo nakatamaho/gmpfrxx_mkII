@@ -1120,6 +1120,28 @@ void test_extended_transcendent_precision_policy()
     assert(lgamma_result.first.precision() == y.precision());
 }
 
+void test_scalar_mixed_math_operand_precision_policy()
+{
+    const mpfrxx::mpfr_class x("1.5", 100);
+    const mpfrxx::mpfr_class y("2.5", 100);
+    const mpfrxx::mpfr_class high("3.5", 160);
+
+    assert(mpfrxx::pow(x, 3).precision() == x.precision());
+    assert(mpfrxx::hypot(x, 4).precision() == x.precision());
+    assert(mpfrxx::atan2(0, x).precision() == x.precision());
+    assert(mpfrxx::fma(3, x, y).precision() == x.precision());
+    assert(mpfrxx::fmma(3, x, y, 4).precision() == x.precision());
+    assert(mpfrxx::remainder(x, 2).precision() == x.precision());
+    assert(mpfrxx::remquo(x, 2).first.precision() == x.precision());
+
+    const auto expression_result = mpfrxx::fma(x + 1, high, 2);
+    assert(expression_result.precision() == high.precision());
+
+#if GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG
+    assert(mpfrxx::atan2u(0, x, 360ul).precision() == x.precision());
+#endif
+}
+
 void test_destination_precision_preservation_for_helpers()
 {
     const mpfrxx::mpfr_class value("5.75", 192);
@@ -1273,6 +1295,7 @@ int main()
     test_paired_functions_against_mpfr();
     test_expression_inputs();
     test_extended_transcendent_precision_policy();
+    test_scalar_mixed_math_operand_precision_policy();
     test_destination_precision_preservation_for_helpers();
     test_double_trig_hyperbolic_random_smoke();
     test_double_transcendent_random_smoke_1e15();

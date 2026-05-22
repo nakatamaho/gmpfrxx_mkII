@@ -21226,3 +21226,41 @@ Pass/fail result:
 Known issues:
 - The actual feature availability still depends on the included MPFR header and
   linked MPFR library matching in the usual C-library ABI sense.
+
+## Phase: Preserve MPFR Math Precision with Scalar Operands
+
+Implemented features:
+- Changed eager multi-operand MPFR math helpers to choose result precision from
+  MPFR object and MPFR expression operands before materializing scalar or exact
+  GMP operands.
+- Materialized supported scalar operands and exact `mpz_class` / `mpq_class`
+  operands at the chosen math precision instead of first constructing them at
+  the current default precision.
+- Routed `remquo` and `atan2u` through the same binary math materialization
+  policy.
+- Documented that scalar and exact GMP operands must not implicitly raise eager
+  MPFR math result precision to the current default precision.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Added `test_scalar_mixed_math_operand_precision_policy` to verify that
+  `pow`, `hypot`, `atan2`, `fma`, `fmma`, `remainder`, `remquo`, and `atan2u`
+  with scalar operands preserve the MPFR operand precision instead of expanding
+  to the default precision.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpfr_math`
+- `ctest --test-dir build -R test_mpfr_math --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPFR math build: PASS.
+- Targeted MPFR math CTest: PASS, 1/1 test passed.
+- Full build: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.

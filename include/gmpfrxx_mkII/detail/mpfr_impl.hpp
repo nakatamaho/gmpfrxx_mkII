@@ -3241,13 +3241,46 @@ inline mpfr_class operator--(mpfr_class&& value, int)
 namespace detail {
 
 template <typename Expr>
+inline mpfr_prec_t mpfr_math_operand_precision(const Expr& expr)
+{
+    using operand_type = std::decay_t<Expr>;
+    if constexpr (std::is_same_v<operand_type, mpfr_class>) {
+        return expr.precision();
+    } else if constexpr (gmpfrxx_mkII::detail::is_expression_node_v<operand_type>) {
+        return gmpfrxx_mkII::detail::mpfr_expression_precision(expr);
+    } else {
+        return 0;
+    }
+}
+
+inline void update_mpfr_math_precision(mpfr_prec_t& precision, mpfr_prec_t candidate) noexcept
+{
+    if (candidate > precision) {
+        precision = candidate;
+    }
+}
+
+template <typename... Exprs>
+inline mpfr_prec_t mpfr_math_result_precision(const Exprs&... exprs)
+{
+    mpfr_prec_t precision = 0;
+    (update_mpfr_math_precision(precision, mpfr_math_operand_precision(exprs)), ...);
+    if (precision == 0) {
+        precision = mpfrxx::default_precision_bits();
+    }
+    return precision;
+}
+
+template <typename Expr>
+inline mpfr_class materialize_mpfr_math_operand(const Expr& expr, mpfr_prec_t precision)
+{
+    return mpfr_class(expr, precision);
+}
+
+template <typename Expr>
 inline mpfr_class materialize_mpfr_math_operand(const Expr& expr)
 {
-    if constexpr (std::is_same_v<std::decay_t<Expr>, mpfr_class>) {
-        return expr;
-    } else {
-        return mpfr_class(expr);
-    }
+    return materialize_mpfr_math_operand(expr, mpfr_math_result_precision(expr));
 }
 
 template <typename Expr>
@@ -3259,23 +3292,17 @@ inline mpfr_class materialize_mpfr_unary_value(const Expr& expr)
 template <typename Lhs, typename Rhs>
 inline std::pair<mpfr_class, mpfr_class> materialize_mpfr_binary_values(const Lhs& lhs, const Rhs& rhs)
 {
-    mpfr_class left = materialize_mpfr_math_operand(lhs);
-    mpfr_class right = materialize_mpfr_math_operand(rhs);
-    const mpfr_prec_t precision = std::max(left.precision(), right.precision());
-    if (left.precision() != precision) {
-        left = mpfr_class(left, precision);
-    }
-    if (right.precision() != precision) {
-        right = mpfr_class(right, precision);
-    }
-    return {std::move(left), std::move(right)};
+    const mpfr_prec_t precision = mpfr_math_result_precision(lhs, rhs);
+    return {materialize_mpfr_math_operand(lhs, precision),
+            materialize_mpfr_math_operand(rhs, precision)};
 }
 
 template <typename Expr, typename Function>
 inline mpfr_class unary_mpfr_math(const Expr& expr, Function function)
 {
-    const mpfr_class operand = materialize_mpfr_math_operand(expr);
-    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    const mpfr_prec_t precision = mpfr_math_result_precision(expr);
+    const mpfr_class operand = materialize_mpfr_math_operand(expr, precision);
+    mpfr_class result = mpfr_class::with_precision(precision);
     function(result.mpfr_data(), operand.mpfr_data(), mpfr_class::default_rounding());
     return result;
 }
@@ -3283,9 +3310,9 @@ inline mpfr_class unary_mpfr_math(const Expr& expr, Function function)
 template <typename Lhs, typename Rhs, typename Function>
 inline mpfr_class binary_mpfr_math(const Lhs& lhs, const Rhs& rhs, Function function)
 {
-    const mpfr_class left = materialize_mpfr_math_operand(lhs);
-    const mpfr_class right = materialize_mpfr_math_operand(rhs);
-    const mpfr_prec_t precision = std::max(left.precision(), right.precision());
+    const mpfr_prec_t precision = mpfr_math_result_precision(lhs, rhs);
+    const mpfr_class left = materialize_mpfr_math_operand(lhs, precision);
+    const mpfr_class right = materialize_mpfr_math_operand(rhs, precision);
     mpfr_class result = mpfr_class::with_precision(precision);
     function(result.mpfr_data(), left.mpfr_data(), right.mpfr_data(), mpfr_class::default_rounding());
     return result;
@@ -3294,10 +3321,10 @@ inline mpfr_class binary_mpfr_math(const Lhs& lhs, const Rhs& rhs, Function func
 template <typename A, typename B, typename C, typename Function>
 inline mpfr_class ternary_mpfr_math(const A& a, const B& b, const C& c, Function function)
 {
-    const mpfr_class first = materialize_mpfr_math_operand(a);
-    const mpfr_class second = materialize_mpfr_math_operand(b);
-    const mpfr_class third = materialize_mpfr_math_operand(c);
-    const mpfr_prec_t precision = std::max({first.precision(), second.precision(), third.precision()});
+    const mpfr_prec_t precision = mpfr_math_result_precision(a, b, c);
+    const mpfr_class first = materialize_mpfr_math_operand(a, precision);
+    const mpfr_class second = materialize_mpfr_math_operand(b, precision);
+    const mpfr_class third = materialize_mpfr_math_operand(c, precision);
     mpfr_class result = mpfr_class::with_precision(precision);
     function(result.mpfr_data(),
              first.mpfr_data(),
@@ -3310,14 +3337,11 @@ inline mpfr_class ternary_mpfr_math(const A& a, const B& b, const C& c, Function
 template <typename A, typename B, typename C, typename D, typename Function>
 inline mpfr_class quaternary_mpfr_math(const A& a, const B& b, const C& c, const D& d, Function function)
 {
-    const mpfr_class first = materialize_mpfr_math_operand(a);
-    const mpfr_class second = materialize_mpfr_math_operand(b);
-    const mpfr_class third = materialize_mpfr_math_operand(c);
-    const mpfr_class fourth = materialize_mpfr_math_operand(d);
-    const mpfr_prec_t precision = std::max({first.precision(),
-                                            second.precision(),
-                                            third.precision(),
-                                            fourth.precision()});
+    const mpfr_prec_t precision = mpfr_math_result_precision(a, b, c, d);
+    const mpfr_class first = materialize_mpfr_math_operand(a, precision);
+    const mpfr_class second = materialize_mpfr_math_operand(b, precision);
+    const mpfr_class third = materialize_mpfr_math_operand(c, precision);
+    const mpfr_class fourth = materialize_mpfr_math_operand(d, precision);
     mpfr_class result = mpfr_class::with_precision(precision);
     function(result.mpfr_data(),
              first.mpfr_data(),
@@ -4267,10 +4291,10 @@ template <
                      int> = 0>
 inline std::pair<mpfr_class, long> remquo(const Lhs& lhs, const Rhs& rhs)
 {
-    const mpfr_class left = detail::materialize_mpfr_math_operand(lhs);
-    const mpfr_class right = detail::materialize_mpfr_math_operand(rhs);
-    const mpfr_prec_t precision = std::max(left.precision(), right.precision());
-    mpfr_class result = mpfr_class::with_precision(precision);
+    const auto operands = detail::materialize_mpfr_binary_values(lhs, rhs);
+    const mpfr_class& left = operands.first;
+    const mpfr_class& right = operands.second;
+    mpfr_class result = mpfr_class::with_precision(left.precision());
     long quotient = 0;
     mpfr_remquo(result.mpfr_data(),
                 &quotient,
@@ -4351,10 +4375,10 @@ template <
                      int> = 0>
 inline mpfr_class atan2u(const Y& y, const X& x, unsigned long unit)
 {
-    const mpfr_class left = detail::materialize_mpfr_math_operand(y);
-    const mpfr_class right = detail::materialize_mpfr_math_operand(x);
-    const mpfr_prec_t precision = std::max(left.precision(), right.precision());
-    mpfr_class result = mpfr_class::with_precision(precision);
+    const auto operands = detail::materialize_mpfr_binary_values(y, x);
+    const mpfr_class& left = operands.first;
+    const mpfr_class& right = operands.second;
+    mpfr_class result = mpfr_class::with_precision(left.precision());
     mpfr_atan2u(result.mpfr_data(),
                 left.mpfr_data(),
                 right.mpfr_data(),
