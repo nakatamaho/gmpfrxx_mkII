@@ -1372,14 +1372,12 @@ public:
         gmp_randseed(state_->state, value.mpz_data());
     }
 
-    gmpxx::mpz_class get_z_bits(mp_bitcnt_t bits)
+    gmpxx::random_mpz_expr get_z_bits(mp_bitcnt_t bits)
     {
-        gmpxx::mpz_class result;
-        mpz_urandomb(result.mpz_data(), state_->state, bits);
-        return result;
+        return gmpxx::random_mpz_expr(state_, bits);
     }
 
-    gmpxx::mpz_class get_z_bits(const gmpxx::mpz_class& bits)
+    gmpxx::random_mpz_expr get_z_bits(const gmpxx::mpz_class& bits)
     {
         if (mpz_sgn(bits.mpz_data()) < 0) {
             throw std::invalid_argument("random bit count must be non-negative");
@@ -1390,14 +1388,12 @@ public:
         return get_z_bits(static_cast<mp_bitcnt_t>(mpz_get_ui(bits.mpz_data())));
     }
 
-    gmpxx::mpz_class get_z_range(const gmpxx::mpz_class& limit)
+    gmpxx::random_mpz_expr get_z_range(const gmpxx::mpz_class& limit)
     {
         if (mpz_sgn(limit.mpz_data()) <= 0) {
             throw std::invalid_argument("random range limit must be positive");
         }
-        gmpxx::mpz_class result;
-        mpz_urandomm(result.mpz_data(), state_->state, limit.mpz_data());
-        return result;
+        return gmpxx::random_mpz_expr(state_, limit);
     }
 
     random_mpfr_expr get_fr() noexcept
@@ -1696,6 +1692,11 @@ inline mpfr_prec_t mpfr_expression_precision(const borrowed_object_leaf<gmpxx::m
     return 0;
 }
 
+inline mpfr_prec_t mpfr_expression_precision(const gmpxx::random_mpz_expr&)
+{
+    return 0;
+}
+
 inline mpfr_prec_t mpfr_expression_precision(const object_leaf<gmpxx::mpq_class>&)
 {
     return 0;
@@ -1731,6 +1732,9 @@ mpfr_prec_t mpfr_expression_precision(const binary_expr<Op, Lhs, Rhs, Result>& e
 
 template <typename T>
 struct mpfr_expression_contains_random : std::false_type {};
+
+template <>
+struct mpfr_expression_contains_random<gmpxx::random_mpz_expr> : std::true_type {};
 
 template <>
 struct mpfr_expression_contains_random<mpfrxx::random_mpfr_expr> : std::true_type {};
@@ -1789,6 +1793,17 @@ inline void mpfr_evaluate(
     mpfr_rnd_t rnd)
 {
     mpfr_set_z(dest, expr.get().mpz_data(), rnd);
+}
+
+inline void mpfr_evaluate(
+    mpfr_t dest,
+    const gmpxx::random_mpz_expr& expr,
+    mpfr_prec_t,
+    mpfr_rnd_t rnd)
+{
+    scoped_mpz_t value;
+    expr.generate(value.get());
+    mpfr_set_z(dest, value.get(), rnd);
 }
 
 inline void mpfr_evaluate(
@@ -1870,6 +1885,11 @@ inline bool mpfr_expression_references(const mpfr_t, const object_leaf<gmpxx::mp
 }
 
 inline bool mpfr_expression_references(const mpfr_t, const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
+inline bool mpfr_expression_references(const mpfr_t, const gmpxx::random_mpz_expr&)
 {
     return false;
 }

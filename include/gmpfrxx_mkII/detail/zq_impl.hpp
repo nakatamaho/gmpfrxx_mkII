@@ -43,6 +43,7 @@
 #include <istream>
 #include <locale>
 #include <limits>
+#include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -1258,6 +1259,51 @@ inline void mpq_canonicalize_checked(mpq_ptr value)
     gmpfrxx_mkII::detail::mpq_canonicalize_checked_raw(value);
 }
 
+enum class random_mpz_distribution {
+    bits,
+    range
+};
+
+class random_mpz_expr {
+public:
+    using result_type = mpz_class;
+
+    random_mpz_expr(
+        std::shared_ptr<gmpfrxx_mkII::detail::gmp_randstate_holder> state,
+        mp_bitcnt_t bits) noexcept
+        : state_(std::move(state)),
+          distribution_(random_mpz_distribution::bits),
+          bits_(bits),
+          range_(1)
+    {
+    }
+
+    random_mpz_expr(
+        std::shared_ptr<gmpfrxx_mkII::detail::gmp_randstate_holder> state,
+        const mpz_class& range)
+        : state_(std::move(state)),
+          distribution_(random_mpz_distribution::range),
+          bits_(0),
+          range_(range)
+    {
+    }
+
+    void generate(mpz_t dest) const
+    {
+        if (distribution_ == random_mpz_distribution::bits) {
+            mpz_urandomb(dest, state_->state, bits_);
+        } else {
+            mpz_urandomm(dest, state_->state, range_.mpz_data());
+        }
+    }
+
+private:
+    std::shared_ptr<gmpfrxx_mkII::detail::gmp_randstate_holder> state_;
+    random_mpz_distribution distribution_;
+    mp_bitcnt_t bits_;
+    mpz_class range_;
+};
+
 template <
     typename Expr,
     std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
@@ -1520,6 +1566,9 @@ inline std::istream& operator>>(std::istream& in, mpq_ptr value)
 
 namespace gmpfrxx_mkII {
 namespace detail {
+
+template <>
+struct is_expression_node<gmpxx::random_mpz_expr> : std::true_type {};
 
 template <typename T, typename = void>
 struct is_zq_expression_operand : std::false_type {};
@@ -2034,6 +2083,11 @@ inline void mpz_evaluate(mpz_t dest, const object_leaf<gmpxx::mpz_class>& expr)
     mpz_set(dest, expr.get().mpz_data());
 }
 
+inline void mpz_evaluate(mpz_t dest, const gmpxx::random_mpz_expr& expr)
+{
+    expr.generate(dest);
+}
+
 template <typename T, typename Result>
 void mpz_evaluate(mpz_t dest, const scalar_leaf<T, Result>& expr)
 {
@@ -2065,6 +2119,11 @@ inline bool mpz_expression_references(const mpz_t target, const object_leaf<gmpx
 {
     return static_cast<const void*>(&target[0]) ==
            static_cast<const void*>(&expr.get().mpz_data()[0]);
+}
+
+inline bool mpz_expression_references(const mpz_t, const gmpxx::random_mpz_expr&)
+{
+    return false;
 }
 
 template <typename T, typename Result>
@@ -2160,6 +2219,13 @@ inline void mpq_evaluate(mpq_t dest, const object_leaf<gmpxx::mpz_class>& expr)
     mpq_set_z(dest, expr.get().mpz_data());
 }
 
+inline void mpq_evaluate(mpq_t dest, const gmpxx::random_mpz_expr& expr)
+{
+    scoped_mpz_t value;
+    expr.generate(value.get());
+    mpq_set_z(dest, value.get());
+}
+
 inline void mpq_evaluate(mpq_t dest, const object_leaf<gmpxx::mpq_class>& expr)
 {
     const arithmetic_ready_mpq_temporary ready(expr.get().mpq_data());
@@ -2192,6 +2258,11 @@ void mpq_evaluate(mpq_t dest, const unary_expr<neg_op, Expr, Result>& expr)
 }
 
 inline bool mpq_expression_references(const mpq_t, const object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
+inline bool mpq_expression_references(const mpq_t, const gmpxx::random_mpz_expr&)
 {
     return false;
 }

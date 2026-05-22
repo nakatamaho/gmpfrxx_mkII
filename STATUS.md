@@ -21264,3 +21264,145 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: Align Random Getters With Upstream Generator Expressions
+
+Implemented features:
+- Changed integer random getters to follow upstream `gmpxx.h` semantics: the
+  getters return generator expression nodes instead of immediate `mpz_class`
+  snapshots.
+- Added `gmpxx::random_mpz_expr` for `get_z_bits(...)` and `get_z_range(...)`.
+- Integrated `random_mpz_expr` with GMP integer/rational evaluation, GMP
+  floating evaluation, MPFR evaluation, and MPC mixed-expression evaluation.
+- Kept generated random expressions alive independently of the originating
+  `gmp_randclass` object by sharing the underlying random-state holder.
+- Documented that random getter expressions are generative and may consume the
+  random state on every materialization, matching upstream `gmpxx.h` policy.
+
+Missing features:
+- Direct `mpfrxx::mpc_class` construction from `random_mpz_expr` is not added;
+  materialize to `mpz_class` first or use the random expression inside an MPC
+  expression.
+
+Tests added:
+- Added static assertions that `gmpxx::random_mpz_expr` is an expression node.
+- Added GMP and MPFR random tests proving that the same integer random
+  expression materialized twice consumes the random state twice.
+- Added lifetime tests proving integer random expressions can outlive the
+  original `gmp_randclass` wrapper.
+- Added an MPC mixed-expression smoke test using an integer random expression.
+
+Exact commands run:
+- `cmake --build build -j --target test_random test_mpfr_random test_mpc_basic`
+- `ctest --test-dir build -R 'test_random|test_mpfr_random|test_mpc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Targeted random/MPC build: PASS.
+- Targeted random/MPC CTest: PASS, 3/3 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+- `git diff --check`: PASS.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: Cache MPF log_ten Constant
+
+Implemented features:
+- Added a thread-safe monotonic precision cache for `gmpxx::mpf_math_detail::log_ten(...)`.
+- Reused cached `log(10)` values for equal or lower requested work precision instead of recomputing through `compute_log(...)` and its AGM-based path on every call.
+- Kept the public result precision policy unchanged by returning a precision-adjusted copy of the cached value.
+
+Missing features:
+- No hardcoded decimal literal for `log(10)` was added; large precisions still compute once and then reuse the cached value.
+
+Tests added:
+- No new standalone test executable. Existing MPF constant and transcendental tests cover the value and precision contract.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpf_extended_transcendent_functions test_mpf_transcendent_functions test_mpf_pi`
+- `ctest --test-dir build -R '''test_mpf_extended_transcendent_functions|test_mpf_transcendent_functions|test_mpf_pi''' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPF transcendental build: PASS.
+- Targeted MPF transcendental CTest: PASS, 3/3 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: Use Direct MPF Negation in Math Helpers
+
+Implemented features:
+- Added `gmpxx::mpf_math_detail::neg_prec(...)` as a precision-aware unary
+  negation helper backed by `mpf_neg`.
+- Replaced MPF math helper expressions of the form `0 - x` with direct unary
+  negation in Taylor series, trigonometric reduction, inverse trigonometric
+  helpers, hyperbolic helpers, and gamma helper code.
+- Left MPFR/MPC fused multiply-add and fused subtract-multiply code paths
+  untouched; this phase only changes GMP `mpf_class` math helpers.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new standalone tests. Existing MPF transcendental, constant, and math
+  function tests cover the affected code paths.
+
+Exact commands run:
+- `rg -n "sub\(zero|sub\(make_ui\(0|sub\(mpf_math_detail::make_ui\(0" include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `cmake --build build -j --target test_mpf_transcendent_functions test_mpf_extended_transcendent_functions test_mpf_math_functions test_mpf_pi`
+- `ctest --test-dir build -R '''test_mpf_transcendent_functions|test_mpf_extended_transcendent_functions|test_mpf_math_functions|test_mpf_pi''' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Zero-minus source scan after replacement: PASS, no matches.
+- Targeted MPF math build: PASS.
+- Targeted MPF math CTest: PASS, 4/4 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: Use Nearest-Even Rounding for MPF exp Scaling
+
+Implemented features:
+- Changed `gmpxx::mpf_math_detail::round_to_nearest_mp_exp(...)` from
+  round-half-away-from-zero to round-half-to-even.
+- Aligned MPF `exp` range-reduction integer selection with the tie policy used
+  by MPF trigonometric quadrant reduction.
+- Kept MPFR/MPC fused multiply-add and signed-zero-sensitive paths unchanged.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Added `require_exp_scaling_rounds_ties_to_even` to cover positive and
+  negative half-tie cases and non-tie nearest rounding cases.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpf_transcendent_functions`
+- `ctest --test-dir build -R test_mpf_transcendent_functions --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPF transcendental build: PASS.
+- Targeted MPF transcendental CTest: PASS, 1/1 test passed.
+- Full build: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.

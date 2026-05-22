@@ -868,6 +868,21 @@ void require_pow_integer_and_domain_cases()
     }
 }
 
+void require_exp_scaling_rounds_ties_to_even()
+{
+    constexpr mp_bitcnt_t precision = 128;
+    using gmpxx::mpf_math_detail::round_to_nearest_mp_exp;
+
+    if (round_to_nearest_mp_exp(gmpxx::mpf_class("2.5", precision), precision) != 2 ||
+        round_to_nearest_mp_exp(gmpxx::mpf_class("3.5", precision), precision) != 4 ||
+        round_to_nearest_mp_exp(gmpxx::mpf_class("-2.5", precision), precision) != -2 ||
+        round_to_nearest_mp_exp(gmpxx::mpf_class("-3.5", precision), precision) != -4 ||
+        round_to_nearest_mp_exp(gmpxx::mpf_class("2.75", precision), precision) != 3 ||
+        round_to_nearest_mp_exp(gmpxx::mpf_class("-2.75", precision), precision) != -3) {
+        std::abort();
+    }
+}
+
 void require_exp_scaling_overflow_guard_cases()
 {
     const mp_bitcnt_t precision = 128;
@@ -1208,6 +1223,7 @@ int main()
     require_near_zero_and_near_one_cases();
     require_trig_reduction_cases();
     require_pow_integer_and_domain_cases();
+    require_exp_scaling_rounds_ties_to_even();
     require_exp_scaling_overflow_guard_cases();
 
     return 0;

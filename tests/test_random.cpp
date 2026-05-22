@@ -59,6 +59,8 @@ void test_compile_time_surface()
     static_assert(!std::is_copy_assignable_v<gmpxx::gmp_randclass>);
     static_assert(!std::is_move_constructible_v<gmpxx::gmp_randclass>);
     static_assert(!std::is_move_assignable_v<gmpxx::gmp_randclass>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<gmpxx::random_mpz_expr>);
+    static_assert(std::is_same_v<gmpxx::random_mpz_expr::result_type, gmpxx::mpz_class>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<gmpxx::random_mpf_expr>);
     static_assert(std::is_same_v<gmpxx::random_mpf_expr::result_type, gmpxx::mpf_class>);
 }
@@ -185,32 +187,39 @@ void test_lc_constructors()
 {
     gmpxx::gmp_randclass by_default_function(gmp_randinit_default);
     by_default_function.seed(37ul);
-    assert(mpz_sgn(by_default_function.get_z_bits(static_cast<mp_bitcnt_t>(43)).mpz_data()) >= 0);
+    const gmpxx::mpz_class default_value = by_default_function.get_z_bits(static_cast<mp_bitcnt_t>(43));
+    assert(mpz_sgn(default_value.mpz_data()) >= 0);
 
     gmpxx::gmp_randclass by_mt(gmp_randinit_mt);
     by_mt.seed(41ul);
-    assert(mpz_sgn(by_mt.get_z_bits(static_cast<mp_bitcnt_t>(47)).mpz_data()) >= 0);
+    const gmpxx::mpz_class mt_value = by_mt.get_z_bits(static_cast<mp_bitcnt_t>(47));
+    assert(mpz_sgn(mt_value.mpz_data()) >= 0);
 
     gmpxx::gmp_randclass by_size(gmp_randinit_lc_2exp_size, static_cast<mp_bitcnt_t>(48));
     by_size.seed(43ul);
-    assert(mpz_sgn(by_size.get_z_bits(static_cast<mp_bitcnt_t>(29)).mpz_data()) >= 0);
+    const gmpxx::mpz_class size_value = by_size.get_z_bits(static_cast<mp_bitcnt_t>(29));
+    assert(mpz_sgn(size_value.mpz_data()) >= 0);
 
     const gmpxx::mpz_class a = z(9);
     gmpxx::gmp_randclass by_params(gmp_randinit_lc_2exp, a, 7ul, static_cast<mp_bitcnt_t>(40));
     by_params.seed(47ul);
-    assert(mpz_sgn(by_params.get_z_bits(static_cast<mp_bitcnt_t>(31)).mpz_data()) >= 0);
+    const gmpxx::mpz_class params_value = by_params.get_z_bits(static_cast<mp_bitcnt_t>(31));
+    assert(mpz_sgn(params_value.mpz_data()) >= 0);
 
     gmpxx::gmp_randclass obsolete(GMP_RAND_ALG_LC, static_cast<mp_bitcnt_t>(56));
     obsolete.seed(53ul);
-    assert(mpz_sgn(obsolete.get_z_bits(static_cast<mp_bitcnt_t>(37)).mpz_data()) >= 0);
+    const gmpxx::mpz_class obsolete_value = obsolete.get_z_bits(static_cast<mp_bitcnt_t>(37));
+    assert(mpz_sgn(obsolete_value.mpz_data()) >= 0);
 
     gmpxx::gmp_randclass obsolete_default(GMP_RAND_ALG_DEFAULT, static_cast<mp_bitcnt_t>(64));
     obsolete_default.seed(59ul);
-    assert(mpz_sgn(obsolete_default.get_z_bits(static_cast<mp_bitcnt_t>(41)).mpz_data()) >= 0);
+    const gmpxx::mpz_class obsolete_default_value = obsolete_default.get_z_bits(static_cast<mp_bitcnt_t>(41));
+    assert(mpz_sgn(obsolete_default_value.mpz_data()) >= 0);
 
     gmpxx::gmp_randclass obsolete_zero(static_cast<gmp_randalg_t>(0), static_cast<mp_bitcnt_t>(72));
     obsolete_zero.seed(61ul);
-    assert(mpz_sgn(obsolete_zero.get_z_bits(static_cast<mp_bitcnt_t>(19)).mpz_data()) >= 0);
+    const gmpxx::mpz_class obsolete_zero_value = obsolete_zero.get_z_bits(static_cast<mp_bitcnt_t>(19));
+    assert(mpz_sgn(obsolete_zero_value.mpz_data()) >= 0);
 
     bool threw = false;
     try {
@@ -276,6 +285,38 @@ void test_f_statistics()
     assert(std::abs(variance - expected_variance) < 0.02);
 }
 
+void test_random_mpz_expr_is_generative()
+{
+    gmpxx::gmp_randclass r1(gmp_randinit_default);
+    gmpxx::gmp_randclass r2(gmp_randinit_default);
+    r1.seed(2029ul);
+    r2.seed(2029ul);
+
+    auto expr = r1.get_z_bits(static_cast<mp_bitcnt_t>(160));
+    const gmpxx::mpz_class first = expr;
+    const gmpxx::mpz_class second = expr;
+
+    const gmpxx::mpz_class expected_first = r2.get_z_bits(static_cast<mp_bitcnt_t>(160));
+    const gmpxx::mpz_class expected_second = r2.get_z_bits(static_cast<mp_bitcnt_t>(160));
+    assert_mpz_equal(first, expected_first);
+    assert_mpz_equal(second, expected_second);
+
+    const gmpxx::mpf_class as_float = expr;
+    assert(mpf_sgn(as_float.get_mpf_t()) >= 0);
+}
+
+void test_random_mpz_expr_outlives_randclass()
+{
+    auto expr = [] {
+        gmpxx::gmp_randclass r(gmp_randinit_default);
+        r.seed(31337ul);
+        return r.get_z_bits(static_cast<mp_bitcnt_t>(192));
+    }();
+
+    const gmpxx::mpz_class value(expr);
+    assert(mpz_sgn(value.mpz_data()) >= 0);
+}
+
 void test_random_mpf_expr_outlives_randclass()
 {
     auto expr = [] {
@@ -303,6 +344,8 @@ int main()
     test_lc_constructors();
     test_z_range_statistics();
     test_f_statistics();
+    test_random_mpz_expr_is_generative();
+    test_random_mpz_expr_outlives_randclass();
     test_random_mpf_expr_outlives_randclass();
     return 0;
 }

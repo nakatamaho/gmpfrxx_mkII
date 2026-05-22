@@ -1107,14 +1107,12 @@ public:
         gmp_randseed(state_->state, value.mpz_data());
     }
 
-    mpz_class get_z_bits(mp_bitcnt_t bits)
+    random_mpz_expr get_z_bits(mp_bitcnt_t bits)
     {
-        mpz_class result;
-        mpz_urandomb(result.mpz_data(), state_->state, bits);
-        return result;
+        return random_mpz_expr(state_, bits);
     }
 
-    mpz_class get_z_bits(const mpz_class& bits)
+    random_mpz_expr get_z_bits(const mpz_class& bits)
     {
         if (mpz_sgn(bits.mpz_data()) < 0) {
             throw std::invalid_argument("random bit count must be non-negative");
@@ -1125,14 +1123,12 @@ public:
         return get_z_bits(static_cast<mp_bitcnt_t>(mpz_get_ui(bits.mpz_data())));
     }
 
-    mpz_class get_z_range(const mpz_class& limit)
+    random_mpz_expr get_z_range(const mpz_class& limit)
     {
         if (mpz_sgn(limit.mpz_data()) <= 0) {
             throw std::invalid_argument("random range limit must be positive");
         }
-        mpz_class result;
-        mpz_urandomm(result.mpz_data(), state_->state, limit.mpz_data());
-        return result;
+        return random_mpz_expr(state_, limit);
     }
 
     random_mpf_expr get_f() noexcept
@@ -1356,6 +1352,11 @@ inline mp_bitcnt_t mpf_expression_precision(const borrowed_object_leaf<gmpxx::mp
     return 0;
 }
 
+inline mp_bitcnt_t mpf_expression_precision(const gmpxx::random_mpz_expr&)
+{
+    return 0;
+}
+
 inline mp_bitcnt_t mpf_expression_precision(const object_leaf<gmpxx::mpq_class>&)
 {
     return 0;
@@ -1404,6 +1405,9 @@ inline constexpr bool is_mpf_class_leaf_v =
 
 template <typename T>
 struct mpf_expression_contains_random : std::false_type {};
+
+template <>
+struct mpf_expression_contains_random<gmpxx::random_mpz_expr> : std::true_type {};
 
 template <>
 struct mpf_expression_contains_random<gmpxx::random_mpf_expr> : std::true_type {};
@@ -1478,6 +1482,13 @@ inline void mpf_evaluate(mpf_t dest, const borrowed_object_leaf<gmpxx::mpz_class
     mpf_set_z(dest, expr.get().mpz_data());
 }
 
+inline void mpf_evaluate(mpf_t dest, const gmpxx::random_mpz_expr& expr, mp_bitcnt_t)
+{
+    scoped_mpz_t value;
+    expr.generate(value.get());
+    mpf_set_z(dest, value.get());
+}
+
 inline void mpf_evaluate(mpf_t dest, const object_leaf<gmpxx::mpq_class>& expr, mp_bitcnt_t eval_precision)
 {
     mpf_set_q_at_precision(dest, expr.get().mpq_data(), eval_precision);
@@ -1537,6 +1548,11 @@ inline bool mpf_expression_references(const mpf_t, const object_leaf<gmpxx::mpz_
 }
 
 inline bool mpf_expression_references(const mpf_t, const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
+inline bool mpf_expression_references(const mpf_t, const gmpxx::random_mpz_expr&)
 {
     return false;
 }

@@ -59,6 +59,8 @@ void test_compile_time_surface()
     static_assert(!std::is_copy_assignable_v<mpfrxx::gmp_randclass>);
     static_assert(!std::is_move_constructible_v<mpfrxx::gmp_randclass>);
     static_assert(!std::is_move_assignable_v<mpfrxx::gmp_randclass>);
+    static_assert(gmpfrxx_mkII::detail::is_expression_node_v<gmpxx::random_mpz_expr>);
+    static_assert(std::is_same_v<gmpxx::random_mpz_expr::result_type, mpfrxx::mpz_class>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<mpfrxx::random_mpfr_expr>);
     static_assert(std::is_same_v<mpfrxx::random_mpfr_expr::result_type, mpfrxx::mpfr_class>);
 }
@@ -229,28 +231,34 @@ void test_lc_constructors()
 {
     mpfrxx::gmp_randclass by_default_function(gmp_randinit_default);
     by_default_function.seed(37ul);
-    assert(mpz_sgn(by_default_function.get_z_bits(static_cast<mp_bitcnt_t>(43)).mpz_data()) >= 0);
+    const mpfrxx::mpz_class default_value = by_default_function.get_z_bits(static_cast<mp_bitcnt_t>(43));
+    assert(mpz_sgn(default_value.mpz_data()) >= 0);
 
     mpfrxx::gmp_randclass by_mt(gmp_randinit_mt);
     by_mt.seed(41ul);
-    assert(mpz_sgn(by_mt.get_z_bits(static_cast<mp_bitcnt_t>(47)).mpz_data()) >= 0);
+    const mpfrxx::mpz_class mt_value = by_mt.get_z_bits(static_cast<mp_bitcnt_t>(47));
+    assert(mpz_sgn(mt_value.mpz_data()) >= 0);
 
     mpfrxx::gmp_randclass by_size(gmp_randinit_lc_2exp_size, static_cast<mp_bitcnt_t>(48));
     by_size.seed(43ul);
-    assert(mpz_sgn(by_size.get_z_bits(static_cast<mp_bitcnt_t>(29)).mpz_data()) >= 0);
+    const mpfrxx::mpz_class size_value = by_size.get_z_bits(static_cast<mp_bitcnt_t>(29));
+    assert(mpz_sgn(size_value.mpz_data()) >= 0);
 
     const mpfrxx::mpz_class a = z(9);
     mpfrxx::gmp_randclass by_params(gmp_randinit_lc_2exp, a, 7ul, static_cast<mp_bitcnt_t>(40));
     by_params.seed(47ul);
-    assert(mpz_sgn(by_params.get_z_bits(static_cast<mp_bitcnt_t>(31)).mpz_data()) >= 0);
+    const mpfrxx::mpz_class params_value = by_params.get_z_bits(static_cast<mp_bitcnt_t>(31));
+    assert(mpz_sgn(params_value.mpz_data()) >= 0);
 
     mpfrxx::gmp_randclass obsolete(GMP_RAND_ALG_LC, static_cast<mp_bitcnt_t>(56));
     obsolete.seed(53ul);
-    assert(mpz_sgn(obsolete.get_z_bits(static_cast<mp_bitcnt_t>(37)).mpz_data()) >= 0);
+    const mpfrxx::mpz_class obsolete_value = obsolete.get_z_bits(static_cast<mp_bitcnt_t>(37));
+    assert(mpz_sgn(obsolete_value.mpz_data()) >= 0);
 
     mpfrxx::gmp_randclass obsolete_default(GMP_RAND_ALG_DEFAULT, static_cast<mp_bitcnt_t>(64));
     obsolete_default.seed(59ul);
-    assert(mpz_sgn(obsolete_default.get_z_bits(static_cast<mp_bitcnt_t>(41)).mpz_data()) >= 0);
+    const mpfrxx::mpz_class obsolete_default_value = obsolete_default.get_z_bits(static_cast<mp_bitcnt_t>(41));
+    assert(mpz_sgn(obsolete_default_value.mpz_data()) >= 0);
 
     bool threw = false;
     try {
@@ -366,6 +374,38 @@ void test_exponential_statistics()
     assert(std::abs(variance - expected_variance) < 0.22);
 }
 
+void test_random_mpz_expr_is_generative()
+{
+    mpfrxx::gmp_randclass r1(gmp_randinit_default);
+    mpfrxx::gmp_randclass r2(gmp_randinit_default);
+    r1.seed(2029ul);
+    r2.seed(2029ul);
+
+    auto expr = r1.get_z_bits(static_cast<mp_bitcnt_t>(160));
+    const mpfrxx::mpz_class first = expr;
+    const mpfrxx::mpz_class second = expr;
+
+    const mpfrxx::mpz_class expected_first = r2.get_z_bits(static_cast<mp_bitcnt_t>(160));
+    const mpfrxx::mpz_class expected_second = r2.get_z_bits(static_cast<mp_bitcnt_t>(160));
+    assert_mpz_equal(first, expected_first);
+    assert_mpz_equal(second, expected_second);
+
+    const mpfrxx::mpfr_class as_real = expr;
+    assert(mpfr_sgn(as_real.mpfr_data()) >= 0);
+}
+
+void test_random_mpz_expr_outlives_randclass()
+{
+    auto expr = [] {
+        mpfrxx::gmp_randclass r(gmp_randinit_default);
+        r.seed(31337ul);
+        return r.get_z_bits(static_cast<mp_bitcnt_t>(192));
+    }();
+
+    const mpfrxx::mpz_class value(expr);
+    assert(mpz_sgn(value.mpz_data()) >= 0);
+}
+
 void test_random_mpfr_expr_outlives_randclass()
 {
     auto expr = [] {
@@ -395,6 +435,8 @@ int main()
     test_uniform_statistics();
     test_normal_statistics();
     test_exponential_statistics();
+    test_random_mpz_expr_is_generative();
+    test_random_mpz_expr_outlives_randclass();
     test_random_mpfr_expr_outlives_randclass();
     return 0;
 }

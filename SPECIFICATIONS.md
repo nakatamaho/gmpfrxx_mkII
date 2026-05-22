@@ -156,10 +156,14 @@ make saved expression nodes lifetime-safe.
 
 ### Generative Random Expressions
 
-Random expressions returned by `gmpxx::gmp_randclass::get_f(...)` and
-`mpfrxx::gmp_randclass::get_fr...(...)` are expression nodes, but they are not
-pure value snapshots. Evaluating such a node consumes the associated
-`gmp_randstate_t` and may produce a fresh random value.
+Random getters follow the upstream `gmpxx.h` policy: they return generator
+expression nodes, not pure value snapshots. This applies to
+`gmpxx::gmp_randclass::get_z_bits(...)`,
+`gmpxx::gmp_randclass::get_z_range(...)`,
+`gmpxx::gmp_randclass::get_f(...)`, the matching integer getters on
+`mpfrxx::gmp_randclass`, and the MPFR floating getters such as
+`mpfrxx::gmp_randclass::get_fr...(...)`. Evaluating such a node consumes the
+associated `gmp_randstate_t` and may produce a fresh random value.
 
 The wrapper does not guarantee that a random expression appearing more than
 once in an expression tree, or evaluated through more than one materialization
@@ -173,9 +177,9 @@ mpfrxx::mpfr_class y = r + r;
 ```
 
 `gmp_randclass` random generation is not internally synchronized.
-`random_mpf_expr` and `random_mpfr_expr` may share the same underlying
-`gmp_randstate_t`; callers must use a state from one thread at a time or
-protect it with an external mutex.
+`random_mpz_expr`, `random_mpf_expr`, and `random_mpfr_expr` may share the same
+underlying `gmp_randstate_t`; callers must use a state from one thread at a
+time or protect it with an external mutex.
 
 ## Move Semantics
 

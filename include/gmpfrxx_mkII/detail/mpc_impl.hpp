@@ -974,6 +974,11 @@ inline mpc_expression_precision_bits mpc_expression_precision(const borrowed_obj
     return mpc_expression_precision_bits{0, 0};
 }
 
+inline mpc_expression_precision_bits mpc_expression_precision(const gmpxx::random_mpz_expr&)
+{
+    return mpc_expression_precision_bits{0, 0};
+}
+
 inline mpc_expression_precision_bits mpc_expression_precision(const object_leaf<gmpxx::mpq_class>&)
 {
     return mpc_expression_precision_bits{0, 0};
@@ -1067,6 +1072,18 @@ inline void mpc_evaluate(
 
 inline void mpc_evaluate(
     mpc_t dest,
+    const gmpxx::random_mpz_expr& expr,
+    mpc_expression_precision_bits,
+    mpc_rnd_t rnd)
+{
+    scoped_mpz_t value;
+    expr.generate(value.get());
+    const int inex = mpc_set_z(dest, value.get(), rnd);
+    mpc_check_component_ranges(dest, rnd, inex);
+}
+
+inline void mpc_evaluate(
+    mpc_t dest,
     const object_leaf<gmpxx::mpq_class>& expr,
     mpc_expression_precision_bits,
     mpc_rnd_t rnd)
@@ -1138,6 +1155,11 @@ inline bool mpc_expression_references(const mpc_t, const object_leaf<gmpxx::mpz_
 }
 
 inline bool mpc_expression_references(const mpc_t, const borrowed_object_leaf<gmpxx::mpz_class>&)
+{
+    return false;
+}
+
+inline bool mpc_expression_references(const mpc_t, const gmpxx::random_mpz_expr&)
 {
     return false;
 }

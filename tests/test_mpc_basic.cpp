@@ -168,6 +168,13 @@ int main()
     require_close(from_mpz.real_to_double(), 5.0);
     require_close(from_mpz.imag_to_double(), 0.0);
 
+    mpfrxx::gmp_randclass random_state(gmp_randinit_default);
+    random_state.seed(2029ul);
+    const auto zero_for_random = mpfrxx::mpc_class::with_precision(96, 96, 0.0, 0.0);
+    mpfrxx::mpc_class from_random_mpz = zero_for_random + random_state.get_z_bits(static_cast<mp_bitcnt_t>(32));
+    assert(mpfr_sgn(mpc_realref(from_random_mpz.mpc_data())) >= 0);
+    assert(mpfr_zero_p(mpc_imagref(from_random_mpz.mpc_data())) != 0);
+
     mpfrxx::mpc_class from_mpq(exact_q);
     require_close(from_mpq.real_to_double(), 0.5);
     require_close(from_mpq.imag_to_double(), 0.0);

@@ -200,6 +200,13 @@ inline mpf_class abs_prec(const mpf_class& value, mp_bitcnt_t precision)
     return result;
 }
 
+inline mpf_class neg_prec(const mpf_class& value, mp_bitcnt_t precision)
+{
+    mpf_class result = mpf_class::with_precision(precision);
+    mpf_neg(result.mpf_data(), value.mpf_data());
+    return result;
+}
+
 inline mpf_class scaled_hypot_abs(const mpf_class& lhs, const mpf_class& rhs, mp_bitcnt_t precision)
 {
     mpf_class lhs_abs = abs_prec(lhs, precision);
@@ -552,7 +559,7 @@ inline mpf_class log1p_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
         power = mul(power, x, precision);
         mpf_class term = div(power, make_u64(k, precision), precision);
         if ((k & std::uint64_t{1}) == std::uint64_t{0}) {
-            term = sub(make_ui(0, precision), term, precision);
+            term = neg_prec(term, precision);
         }
         sum = add(sum, term, precision);
         if (mpf_cmp(abs_prec(term, precision).mpf_data(), epsilon.mpf_data()) < 0) {
@@ -685,7 +692,7 @@ inline mpf_class mul_signed_exp(const mpf_class& value, mp_exp_t multiplier, mp_
     mpf_class factor(checked_mp_exp_magnitude(multiplier), precision);
     mpf_class magnitude = mul(value, factor, precision);
     if (multiplier < 0) {
-        return sub(make_ui(0, precision), magnitude, precision);
+        return neg_prec(magnitude, precision);
     }
     return magnitude;
 }
@@ -862,18 +869,27 @@ inline void ensure_exp_scaling_exponent_fits(const mpf_class& value, mp_exp_t sh
 
 inline mp_exp_t round_to_nearest_mp_exp(const mpf_class& value, mp_bitcnt_t precision)
 {
-    const mpf_class zero = make_ui(0, precision);
-    mpf_class half = make_ui(1, precision);
-    mpf_div_2exp(half.mpf_data(), half.mpf_data(), 1);
-    mpf_class adjusted = set_prec_copy(value, precision);
-    if (mpf_cmp(adjusted.mpf_data(), zero.mpf_data()) >= 0) {
-        adjusted = add(adjusted, half, precision);
-    } else {
-        adjusted = sub(adjusted, half, precision);
-    }
+    const mpf_class adjusted = set_prec_copy(value, precision);
 
     mpz_class rounded_integer;
     mpz_set_f(rounded_integer.mpz_data(), adjusted.mpf_data());
+
+    mpf_class integer_part = mpf_class::with_precision(precision);
+    mpf_set_z(integer_part.mpf_data(), rounded_integer.mpz_data());
+    const mpf_class frac = sub(adjusted, integer_part, precision);
+
+    mpf_class half = make_ui(1, precision);
+    mpf_div_2exp(half.mpf_data(), half.mpf_data(), 1);
+    const mpf_class neg_half = neg_prec(half, precision);
+    const int frac_vs_half = mpf_cmp(frac.mpf_data(), half.mpf_data());
+    const int frac_vs_neg_half = mpf_cmp(frac.mpf_data(), neg_half.mpf_data());
+    if (frac_vs_half > 0 || (frac_vs_half == 0 && mpz_odd_p(rounded_integer.mpz_data()))) {
+        mpz_add_ui(rounded_integer.mpz_data(), rounded_integer.mpz_data(), 1);
+    } else if (frac_vs_neg_half < 0 ||
+               (frac_vs_neg_half == 0 && mpz_odd_p(rounded_integer.mpz_data()))) {
+        mpz_sub_ui(rounded_integer.mpz_data(), rounded_integer.mpz_data(), 1);
+    }
+
     if (!mpz_fits_slong_p(rounded_integer.mpz_data())) {
         throw std::overflow_error("exp(x) scaling exponent is too large");
     }
@@ -985,11 +1001,33 @@ inline mpf_class compute_expm1(const mpf_class& x_input, mp_bitcnt_t target_prec
     return set_prec_copy(result, target);
 }
 
+struct log_ten_cache_state {
+    std::mutex mutex;
+    mp_bitcnt_t cached_precision{0};
+    mpf_class cached_value;
+    bool initialized{false};
+};
+
+inline log_ten_cache_state& log_ten_cache()
+{
+    static log_ten_cache_state cache;
+    return cache;
+}
+
 inline mpf_class log_ten(mp_bitcnt_t target_precision)
 {
     const mp_bitcnt_t target = normalize_target_precision(target_precision);
     const mp_bitcnt_t work = target + guard_bits_for_log(target) + 8;
-    return set_prec_copy(compute_log(make_ui(10, work), work), target);
+
+    log_ten_cache_state& cache = log_ten_cache();
+    std::lock_guard<std::mutex> lock(cache.mutex);
+    if (!cache.initialized || cache.cached_precision < work) {
+        mpf_class computed = compute_log(make_ui(10, work), work);
+        cache.cached_value.swap(computed);
+        cache.cached_precision = work;
+        cache.initialized = true;
+    }
+    return set_prec_copy(cache.cached_value, target);
 }
 
 inline mp_bitcnt_t guard_bits_for_trig(mp_bitcnt_t)
@@ -1064,14 +1102,14 @@ inline sincos_result sincos_taylor_small(const mpf_class& x, mp_bitcnt_t precisi
         const std::uint64_t sin_den2 = checked_taylor_counter_add(sin_den1, std::uint64_t{1});
         const std::uint64_t sin_den = checked_taylor_counter_product(sin_den1, sin_den2);
         sin_term = div(mul(sin_term, x2, precision), make_u64(sin_den, precision), precision);
-        sin_term = sub(make_ui(0, precision), sin_term, precision);
+        sin_term = neg_prec(sin_term, precision);
         result.sin_value = add(result.sin_value, sin_term, precision);
 
         const std::uint64_t cos_den1 = sin_den1 - 1u;
         const std::uint64_t cos_den2 = sin_den1;
         const std::uint64_t cos_den = checked_taylor_counter_product(cos_den1, cos_den2);
         cos_term = div(mul(cos_term, x2, precision), make_u64(cos_den, precision), precision);
-        cos_term = sub(make_ui(0, precision), cos_term, precision);
+        cos_term = neg_prec(cos_term, precision);
         result.cos_value = add(result.cos_value, cos_term, precision);
 
         if (mpf_cmp(abs_prec(sin_term, precision).mpf_data(), epsilon.mpf_data()) < 0 &&
@@ -1138,7 +1176,6 @@ inline sincos_result compute_sincos(const mpf_class& x_input, mp_bitcnt_t target
 {
     const mp_bitcnt_t target = normalize_target_precision(target_precision);
     const mp_bitcnt_t work = working_precision_for_trig(target);
-    const mpf_class zero = make_ui(0, work);
     const mp_bitcnt_t const_precision = trig_constant_precision_for_argument(x_input, target);
     const mpf_class pio2 = trig_pi_over_two_at_precision(const_precision);
     const mpf_class two_over_pi = trig_two_over_pi_at_precision(const_precision);
@@ -1151,7 +1188,7 @@ inline sincos_result compute_sincos(const mpf_class& x_input, mp_bitcnt_t target
     mpf_set_z(integer_part.mpf_data(), k.mpz_data());
     const mpf_class frac = sub(q, integer_part, const_precision);
     const mpf_class half = div(make_ui(1, const_precision), make_ui(2, const_precision), const_precision);
-    const mpf_class neg_half = sub(make_ui(0, const_precision), half, const_precision);
+    const mpf_class neg_half = neg_prec(half, const_precision);
     const int frac_vs_half = mpf_cmp(frac.mpf_data(), half.mpf_data());
     const int frac_vs_neg_half = mpf_cmp(frac.mpf_data(), neg_half.mpf_data());
     if (frac_vs_half > 0) {
@@ -1183,14 +1220,14 @@ inline sincos_result compute_sincos(const mpf_class& x_input, mp_bitcnt_t target
         break;
     case 1:
         result.sin_value = set_prec_copy(base.cos_value, work);
-        result.cos_value = set_prec_copy(sub(zero, base.sin_value, work), work);
+        result.cos_value = neg_prec(base.sin_value, work);
         break;
     case 2:
-        result.sin_value = set_prec_copy(sub(zero, base.sin_value, work), work);
-        result.cos_value = set_prec_copy(sub(zero, base.cos_value, work), work);
+        result.sin_value = neg_prec(base.sin_value, work);
+        result.cos_value = neg_prec(base.cos_value, work);
         break;
     default:
-        result.sin_value = set_prec_copy(sub(zero, base.cos_value, work), work);
+        result.sin_value = neg_prec(base.cos_value, work);
         result.cos_value = set_prec_copy(base.sin_value, work);
         break;
     }
@@ -1237,7 +1274,7 @@ inline mpf_class atan_taylor_small(const mpf_class& x, mp_bitcnt_t precision)
         power = mul(power, x2, precision);
         mpf_class contribution = div(power, make_u64(checked_taylor_odd_denominator(k), precision), precision);
         if ((k & std::uint64_t{1}) == std::uint64_t{1}) {
-            contribution = sub(make_ui(0, precision), contribution, precision);
+            contribution = neg_prec(contribution, precision);
         }
         sum = add(sum, contribution, precision);
         if (mpf_cmp(abs_prec(contribution, precision).mpf_data(), epsilon.mpf_data()) < 0) {
@@ -1261,7 +1298,7 @@ inline mpf_class compute_atan(const mpf_class& x_input, mp_bitcnt_t target_preci
     }
 
     const bool negate = mpf_cmp(x.mpf_data(), zero.mpf_data()) < 0;
-    const mpf_class ax = negate ? sub(zero, x, work) : x;
+    const mpf_class ax = negate ? neg_prec(x, work) : x;
 
     mpf_class y = set_prec_copy(ax, work);
     std::uint64_t reductions = 0;
@@ -1281,7 +1318,7 @@ inline mpf_class compute_atan(const mpf_class& x_input, mp_bitcnt_t target_preci
     }
 
     if (negate) {
-        result = sub(zero, result, work);
+        result = neg_prec(result, work);
     }
     return set_prec_copy(result, target);
 }
@@ -1310,7 +1347,7 @@ inline mpf_class compute_atan2(const mpf_class& y_input, const mpf_class& x_inpu
         if (mpf_cmp(y.mpf_data(), zero.mpf_data()) > 0) {
             return set_prec_copy(pio2, target);
         }
-        return set_prec_copy(sub(make_ui(0, target + 2), pio2, target + 2), target);
+        return set_prec_copy(neg_prec(pio2, target + 2), target);
     }
 
     const mpf_class ratio = div(y, x, work);
@@ -1436,7 +1473,7 @@ inline mpf_class gamma_spouge_coefficient(int k, int a, mp_bitcnt_t work)
     }
     coefficient = div(coefficient, factorial, work);
     if ((k % 2) == 0) {
-        coefficient = sub(make_ui(0, work), coefficient, work);
+        coefficient = neg_prec(coefficient, work);
     }
     return coefficient;
 }
@@ -1467,7 +1504,7 @@ inline mpf_class gamma_spouge_positive(const mpf_class& x, mp_bitcnt_t target_pr
 
     mpf_class result = mul(
         mul(compute_pow(base, sub(x_work, half, work), work),
-            compute_exp(sub(make_ui(0, work), base, work), work),
+            compute_exp(neg_prec(base, work), work),
             work),
         sum,
         work);
@@ -1598,9 +1635,7 @@ inline mpf_class abs(const mpf_class& value)
 
 inline mpf_class neg(const mpf_class& value)
 {
-    mpf_class result = mpf_class::with_precision(value.precision());
-    mpf_neg(result.mpf_data(), value.mpf_data());
-    return result;
+    return mpf_math_detail::neg_prec(value, value.precision());
 }
 
 inline mpf_class ceil(const mpf_class& value)
@@ -1769,8 +1804,9 @@ inline mpf_class asin(const mpf_class& value)
     const mpf_class value_work = mpf_math_detail::set_prec_copy(value, work);
     const mpf_class zero = mpf_math_detail::make_ui(0, work);
     const mpf_class one = mpf_math_detail::make_ui(1, work);
+    const mpf_class neg_one = mpf_math_detail::neg_prec(one, work);
     if (mpf_cmp(value_work.mpf_data(), one.mpf_data()) > 0 ||
-        mpf_cmp(value_work.mpf_data(), mpf_math_detail::sub(zero, one, work).mpf_data()) < 0) {
+        mpf_cmp(value_work.mpf_data(), neg_one.mpf_data()) < 0) {
         throw std::domain_error("asin(x) is undefined for |x| > 1");
     }
     mpf_class radicand = mpf_math_detail::sub(
@@ -1791,8 +1827,9 @@ inline mpf_class acos(const mpf_class& value)
     const mpf_class value_work = mpf_math_detail::set_prec_copy(value, work);
     const mpf_class zero = mpf_math_detail::make_ui(0, work);
     const mpf_class one = mpf_math_detail::make_ui(1, work);
+    const mpf_class neg_one = mpf_math_detail::neg_prec(one, work);
     if (mpf_cmp(value_work.mpf_data(), one.mpf_data()) > 0 ||
-        mpf_cmp(value_work.mpf_data(), mpf_math_detail::sub(zero, one, work).mpf_data()) < 0) {
+        mpf_cmp(value_work.mpf_data(), neg_one.mpf_data()) < 0) {
         throw std::domain_error("acos(x) is undefined for |x| > 1");
     }
     mpf_class radicand = mpf_math_detail::sub(
@@ -1818,7 +1855,7 @@ inline mpf_class sinh(const mpf_class& value)
     const mpf_class value_work = mpf_math_detail::set_prec_copy(value, work);
     const mpf_class exp_x = mpf_math_detail::compute_exp(value_work, work);
     const mpf_class exp_neg_x = mpf_math_detail::compute_exp(
-        mpf_math_detail::sub(mpf_math_detail::make_ui(0, work), value_work, work), work);
+        mpf_math_detail::neg_prec(value_work, work), work);
     mpf_class result = mpf_math_detail::sub(exp_x, exp_neg_x, work);
     mpf_div_2exp(result.mpf_data(), result.mpf_data(), 1);
     return mpf_math_detail::set_prec_copy(result, target);
@@ -1831,7 +1868,7 @@ inline mpf_class cosh(const mpf_class& value)
     const mpf_class value_work = mpf_math_detail::set_prec_copy(value, work);
     const mpf_class exp_x = mpf_math_detail::compute_exp(value_work, work);
     const mpf_class exp_neg_x = mpf_math_detail::compute_exp(
-        mpf_math_detail::sub(mpf_math_detail::make_ui(0, work), value_work, work), work);
+        mpf_math_detail::neg_prec(value_work, work), work);
     mpf_class result = mpf_math_detail::add(exp_x, exp_neg_x, work);
     mpf_div_2exp(result.mpf_data(), result.mpf_data(), 1);
     return mpf_math_detail::set_prec_copy(result, target);
@@ -1897,7 +1934,7 @@ inline mpf_class atanh(const mpf_class& value)
     const mp_bitcnt_t work = target + mpf_math_detail::guard_bits_for_log1p(target) + 8;
     const mpf_class value_work = mpf_math_detail::set_prec_copy(value, work);
     const mpf_class one = mpf_math_detail::make_ui(1, work);
-    const mpf_class neg_one = mpf_math_detail::sub(mpf_math_detail::make_ui(0, work), one, work);
+    const mpf_class neg_one = mpf_math_detail::neg_prec(one, work);
     if (mpf_cmp(value_work.mpf_data(), neg_one.mpf_data()) <= 0 ||
         mpf_cmp(value_work.mpf_data(), one.mpf_data()) >= 0) {
         throw std::domain_error("atanh(x) is undefined for |x| >= 1");
