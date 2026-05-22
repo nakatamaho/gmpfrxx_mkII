@@ -20842,3 +20842,35 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Split Single-Value MPC Default Getters
+
+Implemented features:
+- Changed MPC environment loading and `default_mpc_options()` to inherit MPFR
+  precision and rounding through the single-value MPFR getters instead of the
+  full `default_options()` snapshot.
+- Changed `default_mpc_real_precision_bits()`,
+  `default_mpc_imag_precision_bits()`, `default_mpc_real_rounding_mode()`, and
+  `default_mpc_imag_rounding_mode()` to return only the requested component
+  default without materializing the full MPC default option struct.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpc_environment.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `nl -ba include/gmpfrxx_mkII/detail/mpc_environment.hpp | sed -n '1,310p'`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/mpc_environment.hpp STATUS.md`
+- `cmake --build build -j --target test_mpc_defaults test_mpc_environment test_mpc_environment_first_use test_mpc_environment_invalid test_mpfr_environment_first_use test_mpfr_rounding_scope_stable`
+- `ctest --test-dir build -R 'test_mpc_defaults|test_mpc_environment|test_mpfr_environment_first_use|test_mpfr_rounding_scope_stable' --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 18/18 tests passed.
+
+Known issues:
+- None for this phase.

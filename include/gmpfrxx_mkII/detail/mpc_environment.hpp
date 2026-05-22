@@ -48,8 +48,7 @@ struct mpc_default_options {
 
 inline mpc_default_options load_mpc_defaults_from_environment()
 {
-    const auto inherited = default_options();
-    mpfr_prec_t precision = inherited.precision_bits;
+    mpfr_prec_t precision = default_precision_bits();
     const char* precision_text = std::getenv("MPFRXX_MPC_DEFAULT_PRECISION_BITS");
     if (!::gmpfrxx_mkII::detail::parse_mpfr_precision(precision_text, precision)) {
         ::gmpfrxx_mkII::detail::warn_invalid_environment_value(
@@ -75,7 +74,7 @@ inline mpc_default_options load_mpc_defaults_from_environment()
     }
 
 
-    mpfr_rnd_t rounding = inherited.rounding_mode;
+    mpfr_rnd_t rounding = default_rounding_mode();
     const char* rounding_text = std::getenv("MPFRXX_MPC_ROUNDING_MODE");
     if (!::gmpfrxx_mkII::detail::parse_mpfr_rounding(rounding_text, rounding)) {
         ::gmpfrxx_mkII::detail::warn_invalid_environment_value(
@@ -225,30 +224,35 @@ inline void initialize_mpc_defaults_for_current_thread()
 inline mpc_default_options default_mpc_options()
 {
     initialize_mpc_defaults_for_current_thread();
-    const auto inherited = default_options();
+    const mpfr_prec_t inherited_precision = default_precision_bits();
+    const mpfr_rnd_t inherited_rounding = default_rounding_mode();
     const auto& precision_override = mpc_precision_override_storage();
     const auto& rounding_override = mpc_rounding_override_storage();
     return mpc_default_options{
-        precision_override.active ? precision_override.real_precision_bits : inherited.precision_bits,
-        precision_override.active ? precision_override.imag_precision_bits : inherited.precision_bits,
-        rounding_override.active ? rounding_override.real_rounding_mode : inherited.rounding_mode,
-        rounding_override.active ? rounding_override.imag_rounding_mode : inherited.rounding_mode,
+        precision_override.active ? precision_override.real_precision_bits : inherited_precision,
+        precision_override.active ? precision_override.imag_precision_bits : inherited_precision,
+        rounding_override.active ? rounding_override.real_rounding_mode : inherited_rounding,
+        rounding_override.active ? rounding_override.imag_rounding_mode : inherited_rounding,
     };
 }
 
 inline mpfr_prec_t default_mpc_real_precision_bits()
 {
-    return default_mpc_options().real_precision_bits;
+    initialize_mpc_defaults_for_current_thread();
+    const auto& precision_override = mpc_precision_override_storage();
+    return precision_override.active ? precision_override.real_precision_bits : default_precision_bits();
 }
 
 inline mpfr_prec_t default_mpc_imag_precision_bits()
 {
-    return default_mpc_options().imag_precision_bits;
+    initialize_mpc_defaults_for_current_thread();
+    const auto& precision_override = mpc_precision_override_storage();
+    return precision_override.active ? precision_override.imag_precision_bits : default_precision_bits();
 }
 
 inline mpfr_prec_t default_mpc_precision_bits()
 {
-    return default_mpc_options().real_precision_bits;
+    return default_mpc_real_precision_bits();
 }
 
 inline void set_default_mpc_precision_bits(mpfr_prec_t precision)
@@ -271,12 +275,18 @@ inline void set_default_mpc_precision_bits(mpfr_prec_t real_precision, mpfr_prec
 
 inline mpfr_rnd_t default_mpc_real_rounding_mode()
 {
-    return default_mpc_options().real_rounding_mode;
+    initialize_mpc_defaults_for_current_thread();
+    const auto& rounding_override = mpc_rounding_override_storage();
+    return rounding_override.active ? rounding_override.real_rounding_mode
+                                    : ::gmpfrxx_mkII::detail::current_mpfr_rounding_mode();
 }
 
 inline mpfr_rnd_t default_mpc_imag_rounding_mode()
 {
-    return default_mpc_options().imag_rounding_mode;
+    initialize_mpc_defaults_for_current_thread();
+    const auto& rounding_override = mpc_rounding_override_storage();
+    return rounding_override.active ? rounding_override.imag_rounding_mode
+                                    : ::gmpfrxx_mkII::detail::current_mpfr_rounding_mode();
 }
 
 inline mpc_rnd_t default_mpc_rounding_mode()
