@@ -27,7 +27,7 @@
  */
 
 /*
- * Example 06: Aberth-Ehrlich root finding with mpfrxx::mpc_class.
+ * Example 06: Aberth-Ehrlich root finding with mpc_class.
  *
  * This is the mpc_class version of example05.  It keeps the same
  * mathematical method and polynomial, but the complex arithmetic is now
@@ -65,8 +65,7 @@
 
 namespace {
 
-using mpfrxx::mpc_class;
-using mpfrxx::mpfr_class;
+using namespace mpfrxx;
 
 inline constexpr std::array polynomial_coefficients{
     13, -11, 7, -1, 0, 2, 0, -3, 0, 0, 1};
@@ -153,14 +152,14 @@ mpfr_class cauchy_radius(std::vector<mpfr_class> const& coefficients)
         throw std::invalid_argument("polynomial degree must be at least one");
     }
 
-    mpfr_class leading = mpfrxx::abs(coefficients.back());
+    mpfr_class leading = abs(coefficients.back());
     if (leading == mpfr_class(0)) {
         throw std::invalid_argument("leading coefficient must be nonzero");
     }
 
     mpfr_class max_ratio(0);
     for (std::size_t i = 0; i + 1 < coefficients.size(); ++i) {
-        mpfr_class ratio = mpfrxx::abs(coefficients[i]) / leading;
+        mpfr_class ratio = abs(coefficients[i]) / leading;
         if (ratio > max_ratio) {
             max_ratio = ratio;
         }
@@ -214,14 +213,14 @@ initial_circle(std::size_t degree, mpfr_class const& radius)
 
     mpfr_class two(2);
     mpfr_class quarter("0.25");
-    mpfr_class pi = mpfrxx::const_pi();
+    mpfr_class pi = const_pi();
     mpfr_class denominator(static_cast<unsigned long>(degree));
 
     for (std::size_t i = 0; i < degree; ++i) {
         mpfr_class index(static_cast<unsigned long>(i));
         mpfr_class angle = two * pi * (index + quarter) / denominator;
-        roots.push_back(make_complex(mpfr_class(radius * mpfrxx::cos(angle)),
-                                     mpfr_class(radius * mpfrxx::sin(angle))));
+        roots.push_back(make_complex(mpfr_class(radius * cos(angle)),
+                                     mpfr_class(radius * sin(angle))));
     }
 
     return roots;
@@ -262,7 +261,7 @@ std::vector<mpc_class> solve_with_aberth(
             mpc_class correction = ratio / (one - ratio * repulsion);
             next_roots[i] = roots[i] - correction;
 
-            mpfr_class update_size = mpfrxx::abs(correction);
+            mpfr_class update_size = abs(correction);
             if (update_size > max_update) {
                 max_update = update_size;
             }
@@ -286,7 +285,7 @@ void print_root(std::size_t index, mpc_class const& root,
     mpc_class residual = evaluate_polynomial(coefficients, root);
 
     std::cout << "root " << index << ": " << root;
-    std::cout << ", |f(root)| = " << mpfrxx::abs(residual) << '\n';
+    std::cout << ", |f(root)| = " << abs(residual) << '\n';
 }
 
 } // namespace
@@ -299,10 +298,10 @@ int main()
 
     mpfr_class radius = cauchy_radius(coefficients);
     mpfr_class tolerance =
-        mpfrxx::exp2(-mpfr_class(mpfrxx::default_precision_bits() / 2));
+        exp2(-mpfr_class(default_precision_bits() / 2));
 
     std::cout << std::scientific << std::setprecision(decimal_digits);
-    std::cout << "Aberth method using mpfrxx::mpc_class for f(z) = ";
+    std::cout << "Aberth method using mpc_class for f(z) = ";
     print_polynomial(std::cout, "z");
     std::cout << '\n';
     print_coefficients(std::cout);

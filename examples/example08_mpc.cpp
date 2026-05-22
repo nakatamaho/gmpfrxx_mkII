@@ -73,8 +73,7 @@
 
 namespace {
 
-using mpfrxx::mpfr_class;
-using mpfrxx::mpc_class;
+using namespace mpfrxx;
 
 mpc_class make_complex(mpfr_class const& real_value,
                         mpfr_class const& imag_value) {
@@ -184,7 +183,7 @@ std::vector<mpc_class> solve_with_aberth(
             mpc_class correction = ratio / (one - ratio * repulsion);
             next_roots[i] = roots[i] - correction;
 
-            mpfr_class update_size = mpfrxx::abs(correction);
+            mpfr_class update_size = abs(correction);
             if (update_size > max_update) {
                 max_update = update_size;
             }
@@ -206,7 +205,7 @@ std::vector<mpc_class> solve_with_aberth(
 void sort_by_real_part(std::vector<mpc_class>& roots) {
     std::sort(roots.begin(), roots.end(),
               [](mpc_class const& a, mpc_class const& b) {
-                  return mpfrxx::real(a) < mpfrxx::real(b);
+                  return real(a) < real(b);
               });
 }
 
@@ -220,7 +219,7 @@ void print_roots(char const* title, std::vector<mpc_class> roots,
     for (std::size_t i = 0; i < roots.size(); ++i) {
         mpc_class residual = evaluate_polynomial(coefficients, roots[i]);
         std::cout << std::setw(5) << (i + 1) << "  " << roots[i]
-                  << "  " << mpfrxx::abs(residual) << '\n';
+                  << "  " << abs(residual) << '\n';
     }
 }
 
@@ -232,7 +231,7 @@ void print_root_shift(std::vector<mpc_class> exact_roots,
     std::cout << "\nRoot movement after perturbing the x^19 coefficient\n";
     std::cout << " index            |delta root|\n";
     for (std::size_t i = 0; i < exact_roots.size(); ++i) {
-        mpfr_class shift = mpfrxx::abs(perturbed_roots[i] - exact_roots[i]);
+        mpfr_class shift = abs(perturbed_roots[i] - exact_roots[i]);
         std::cout << std::setw(5) << (i + 1) << "  " << shift << '\n';
     }
 }
@@ -248,10 +247,10 @@ int main() {
     perturbed[degree - 1] += mpfr_class("1e-10");
 
     mpfr_class tolerance =
-        mpfrxx::exp2(-mpfr_class(mpfrxx::default_precision_bits() / 2));
+        exp2(-mpfr_class(default_precision_bits() / 2));
 
     std::cout << std::scientific << std::setprecision(decimal_digits);
-    std::cout << "Wilkinson polynomial example using mpfrxx::mpc_class\n";
+    std::cout << "Wilkinson polynomial example using mpc_class\n";
     std::cout << "W_20(x) = product_{k=1}^{20} (x-k)\n";
     std::cout << "The second solve perturbs only the x^19 coefficient by"
                  " 1e-10.\n\n";

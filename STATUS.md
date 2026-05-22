@@ -21525,3 +21525,33 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: Simplify Remaining Example Namespace Use
+
+Implemented features:
+- Simplified `example01` with a local `using namespace gmpxx` declaration inside `main()`.
+- Simplified `example06_mpc` and `example08_mpc` with anonymous-namespace-local `using namespace mpfrxx`.
+- Removed remaining explicit `gmpxx::` and `mpfrxx::` qualifiers from those example sources.
+- Updated example output text so it refers to `mpc_class` consistently after the namespace import.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. Existing example CTest entries cover the affected sources.
+
+Exact commands run:
+- `rg -n "gmpxx::|mpfrxx::" examples/example01.cpp examples/example06_mpc.cpp examples/example08_mpc.cpp`
+- `cmake --build build_fresh_release_20260522 -j --target example01 example06_mpc example08_mpc`
+- `ctest --test-dir build_fresh_release_20260522 -R "example01|example06_mpc|example08_mpc" --output-on-failure`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- Remaining explicit namespace qualifier scan in the requested files: PASS, no matches.
+- Targeted example build: PASS.
+- Targeted example CTest: PASS, 3/3 tests passed.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.
