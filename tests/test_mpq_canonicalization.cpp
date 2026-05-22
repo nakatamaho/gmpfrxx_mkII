@@ -88,6 +88,20 @@ int main()
     require_invalid_argument([] {
         (void)gmpxx::mpq_class(1, 0);
     });
+    require_invalid_argument([] {
+        (void)gmpxx::mpq_class("1/0", 10);
+    });
+    require_invalid_argument([] {
+        (void)gmpxx::mpq_class("0x10/0x0", 0);
+    });
+
+    gmpxx::mpq_class parsed(1, 2);
+    if (parsed.set_str("1/0", 10) == 0 || parsed != gmpxx::mpq_class(1, 2)) {
+        std::abort();
+    }
+    if (parsed.set_str("0x10/0x0", 0) == 0 || parsed != gmpxx::mpq_class(1, 2)) {
+        std::abort();
+    }
 
     gmpxx::mpq_class stream_like;
     mpq_set_str(stream_like.mpq_data(), "6/8", 10);

@@ -20907,3 +20907,46 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Parse MPQ Strings Before Denominator Validation
+
+Implemented features:
+- Replaced the separate denominator preflight parser for `mpq_class` string
+  construction and `set_str` with a checked temporary that uses `mpq_set_str`
+  first, then rejects zero-denominator results before canonicalizing and
+  committing.
+- Preserved stream extraction compatibility: stream input can still keep raw
+  non-canonical or zero-denominator values, but arithmetic-ready construction
+  and `set_str` reject structurally invalid rationals.
+
+Tests added:
+- Added `mpq_class` string-constructor and `set_str` coverage for decimal and
+  base-0 zero-denominator inputs.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `tests/test_mpq_canonicalization.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `nl -ba include/gmpfrxx_mkII/detail/zq_impl.hpp | sed -n '820,1085p'`
+- `nl -ba tests/test_mpq_canonicalization.cpp | sed -n '80,175p'`
+- `nl -ba include/gmpfrxx_mkII/detail/zq_impl.hpp | sed -n '403,455p'`
+- `rg -n "#include <cstring>|std::strchr|gmp_rational_has_zero_denominator" include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `rg -n "mpq_class[^\n]*(1/0|0/0|invalid mpq|string)|set_str[^\n]*(1/0|0/0)|require_invalid_argument" tests/test_mpq_canonicalization.cpp tests/test_zq_string_io.cpp tests/test_type_conversions.cpp tests/test_mpq_basic.cpp`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp tests/test_mpq_canonicalization.cpp STATUS.md`
+- `rg -n "gmp_rational_has_zero_denominator|std::strchr|#include <cstring>|mpq_set_str_checked_raw" include/gmpfrxx_mkII/detail/zq_impl.hpp`
+- `cmake --build build -j --target test_mpq_canonicalization test_zq_string_io test_mpq_floating_conversion test_type_conversions`
+- `python3 - <<'PY' ...`
+- `cmake --build build -j --target test_mpq_canonicalization test_zq_string_io test_mpq_floating_conversion test_type_conversions`
+- `ctest --test-dir build -R 'test_mpq_canonicalization|test_zq_string_io|test_mpq_floating_conversion|test_type_conversions' --output-on-failure`
+
+Pass/fail result:
+- Initial targeted build: FAIL, removing `<cstring>` exposed existing `std::strlen` use in `gmp_allocated_string`.
+- Targeted build after restoring `<cstring>`: PASS.
+- Targeted CTest: PASS, 4/4 tests passed.
+
+Known issues:
+- None for this phase.

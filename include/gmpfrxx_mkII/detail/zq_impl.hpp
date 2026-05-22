@@ -370,24 +370,6 @@ inline std::string gmp_strip_leading_plus(std::string token)
     return token;
 }
 
-inline bool gmp_rational_has_zero_denominator(const char* value, int base)
-{
-    if (value == nullptr) {
-        return false;
-    }
-    const char* const slash = std::strchr(value, '/');
-    if (slash == nullptr) {
-        return false;
-    }
-
-    mpz_t denominator;
-    mpz_init(denominator);
-    const int rc = mpz_set_str(denominator, slash + 1, base);
-    const bool result = rc == 0 && mpz_sgn(denominator) == 0;
-    mpz_clear(denominator);
-    return result;
-}
-
 inline bool mpq_has_zero_denominator_raw(mpq_srcptr value) noexcept
 {
     return mpz_sgn(mpq_denref(value)) == 0;
@@ -404,6 +386,27 @@ inline void mpq_canonicalize_checked_raw(mpq_ptr value)
 {
     mpq_require_arithmetic_ready(value);
     mpq_canonicalize(value);
+}
+
+inline int mpq_set_str_checked_raw(mpq_ptr dest, const char* value, int base)
+{
+    if (value == nullptr) {
+        return -1;
+    }
+
+    mpq_t temp;
+    mpq_init(temp);
+    int rc = mpq_set_str(temp, value, base);
+    if (rc == 0) {
+        if (mpq_has_zero_denominator_raw(temp)) {
+            rc = -1;
+        } else {
+            mpq_canonicalize(temp);
+            mpq_swap(dest, temp);
+        }
+    }
+    mpq_clear(temp);
+    return rc;
 }
 
 class arithmetic_ready_mpq_temporary {
@@ -856,13 +859,10 @@ public:
     mpq_class(const char* value, int base = 0)
     {
         mpq_init(value_);
-        if (value == nullptr ||
-            gmpfrxx_mkII::detail::gmp_rational_has_zero_denominator(value, base) ||
-            mpq_set_str(value_, value, base) != 0) {
+        if (gmpfrxx_mkII::detail::mpq_set_str_checked_raw(value_, value, base) != 0) {
             mpq_clear(value_);
             throw std::invalid_argument("invalid mpq_class string");
         }
-        mpq_canonicalize(value_);
     }
 
     mpq_class(const std::string& value, int base = 0)
@@ -1051,21 +1051,7 @@ public:
 
     int set_str(const char* value, int base = 10)
     {
-        if (value == nullptr) {
-            return -1;
-        }
-        if (gmpfrxx_mkII::detail::gmp_rational_has_zero_denominator(value, base)) {
-            return -1;
-        }
-        mpq_t temp;
-        mpq_init(temp);
-        const int rc = mpq_set_str(temp, value, base);
-        if (rc == 0) {
-            mpq_canonicalize(temp);
-            mpq_swap(value_, temp);
-        }
-        mpq_clear(temp);
-        return rc;
+        return gmpfrxx_mkII::detail::mpq_set_str_checked_raw(value_, value, base);
     }
 
     int set_str(const std::string& value, int base = 10)
