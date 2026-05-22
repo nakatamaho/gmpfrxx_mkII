@@ -21649,3 +21649,42 @@ Known issues:
 - Historical `STATUS.md` entries still mention old macro names as past command logs.
 - Existing benchmark sources and benchmark target names still use the old naming convention by request and must be migrated with the next benchmark refresh.
 - Existing untracked benchmark artifacts outside this phase remain untouched.
+
+## Phase: Refresh MPFR Rdot Fastpath Benchmark Results
+
+Implemented features:
+- Updated benchmark compile definitions to use `GMPFRXX_MKII_FAST_FIXED_PREC`, `GMPFRXX_MKII_FAST_STABLE_RND`, and `GMPFRXX_MKII_ENABLE_FMA`.
+- Removed stale MPFR Rdot result data under `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260518_185352`.
+- Rebuilt and reran only `benchmarks/mpfr/00_Rdot` for `N=10000000`, `precision=512`, and `repeat=10`.
+- Generated fresh raw CSV, summary CSV, and serial/OpenMP plots under `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260522_171957`.
+- Updated `benchmarks/mpfr/00_Rdot/README.md` without changing the section structure; only fastpath names, recorded-run paths, result tables, bandwidth estimates, and result interpretations were refreshed.
+
+Missing features:
+- Benchmark executable suffixes still use historical result labels such as `FIXED_PRECISION_FASTPATH` and `STABLE_ROUNDING_FMA` to preserve the existing benchmark naming and README structure.
+- Hotpath disassembly snippets were not regenerated because this phase was limited to fastpath naming, benchmark results, and interpretation text.
+
+Tests added:
+- No new tests. This phase refreshes benchmark data and report text only.
+
+Exact commands run:
+- `perl -0pi -e 's/GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE/GMPFRXX_MKII_FAST_STABLE_RND/g; s/GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH/GMPFRXX_MKII_FAST_FIXED_PREC/g; s/MPFRXX_ENABLE_FMA/GMPFRXX_MKII_ENABLE_FMA/g' benchmarks/CMakeLists.txt`
+- `rm -rf benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260518_185352`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target ...` with the MPFR 00_Rdot target set only.
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread ...` custom MPFR 00_Rdot repeat runner for 74 variants.
+- `python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260522_171957/benchmark_rdot_mpfr_n10000000_p512_repeat10.log --output-dir benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260522_171957 --output-prefix rdot_mpfr_n10000000_p512_repeat10 --title-prefix "MPFR Rdot N=10000000 precision=512 repeat=10"`
+- `rg -n "GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH|GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE|MPFRXX_ENABLE_FMA" benchmarks/CMakeLists.txt benchmarks/mpfr/00_Rdot/README.md`
+- `git diff --check`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- MPFR 00_Rdot target rebuild: PASS.
+- MPFR 00_Rdot benchmark run: PASS, 74 variants completed with successful correctness checks.
+- CSV and plot generation: PASS.
+- Old macro scan in refreshed benchmark files: PASS, no matches.
+- Diff whitespace check: PASS.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked benchmark artifacts outside `benchmarks/mpfr/00_Rdot` remain untouched.
+- This phase intentionally does not rewrite the README structure or regenerate disassembly snippets.

@@ -63,7 +63,7 @@ function(add_mkii_variant subdir source base suffix)
     target_link_libraries(${target} PRIVATE gmpxx_mkII::gmpxx_mkII)
     if(suffix STREQUAL "mkII_FIXED_PRECISION_FASTPATH")
         target_compile_definitions(${target} PRIVATE
-            GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH)
+            GMPFRXX_MKII_FAST_FIXED_PREC)
     endif()
 endfunction()
 
@@ -111,15 +111,15 @@ function(add_mpfr_mkii_variant subdir source base suffix)
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
     if(suffix MATCHES "STABLE_ROUNDING")
         target_compile_definitions(${target} PRIVATE
-            GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE)
+            GMPFRXX_MKII_FAST_STABLE_RND)
     endif()
     if(suffix MATCHES "FIXED_PRECISION_FASTPATH")
         target_compile_definitions(${target} PRIVATE
-            GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH)
+            GMPFRXX_MKII_FAST_FIXED_PREC)
     endif()
     if(suffix MATCHES "FMA")
         target_compile_definitions(${target} PRIVATE
-            MPFRXX_ENABLE_FMA)
+            GMPFRXX_MKII_ENABLE_FMA)
     endif()
 endfunction()
 
