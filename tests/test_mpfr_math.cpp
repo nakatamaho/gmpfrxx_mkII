@@ -427,6 +427,7 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::sech(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::csch(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::coth(std::declval<const mpfr_class&>())), mpfr_class>::value);
+#if GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG
     static_assert(std::is_same<decltype(mpfrxx::sinu(std::declval<const mpfr_class&>(), 360ul)), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::cosu(std::declval<const mpfr_class&>(), 360ul)), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::tanu(std::declval<const mpfr_class&>(), 360ul)), mpfr_class>::value);
@@ -437,6 +438,7 @@ void test_compile_time_surface()
                                                        std::declval<const mpfr_class&>(),
                                                        360ul)),
                                mpfr_class>::value);
+#endif
     static_assert(std::is_same<decltype(mpfrxx::sinpi(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::cospi(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::tanpi(std::declval<const mpfr_class&>())), mpfr_class>::value);
@@ -449,14 +451,18 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::cbrt(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::rootn_ui(std::declval<const mpfr_class&>(), 3ul)),
                                mpfr_class>::value);
+#if GMPFRXX_MKII_MPFR_HAS_ROOTN_SI
     static_assert(std::is_same<decltype(mpfrxx::rootn_si(std::declval<const mpfr_class&>(), 3l)),
                                mpfr_class>::value);
+#endif
     static_assert(std::is_same<decltype(mpfrxx::pow(std::declval<const mpfr_class&>(),
                                                     std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
+#if GMPFRXX_MKII_MPFR_HAS_POWR
     static_assert(std::is_same<decltype(mpfrxx::powr(std::declval<const mpfr_class&>(),
                                                      std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
+#endif
     static_assert(std::is_same<decltype(mpfrxx::min(std::declval<const mpfr_class&>(),
                                                     std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
@@ -485,33 +491,41 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::pow_z(std::declval<const mpfr_class&>(),
                                                       std::declval<const mpfrxx::mpz_class&>())),
                                mpfr_class>::value);
+#if GMPFRXX_MKII_MPFR_HAS_INTMAX_POWER
     static_assert(std::is_same<decltype(mpfrxx::pow_sj(std::declval<const mpfr_class&>(),
                                                        static_cast<intmax_t>(-3))),
                                mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::pow_uj(std::declval<const mpfr_class&>(),
                                                        static_cast<uintmax_t>(3))),
                                mpfr_class>::value);
+#endif
     static_assert(std::is_same<decltype(mpfrxx::ui_pow(3ul, std::declval<const mpfr_class&>())),
                                mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::ui_pow_ui(3ul, 5ul)), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::ui_pow_ui(3ul, 5ul, static_cast<mpfr_prec_t>(128))),
                                mpfr_class>::value);
+#if GMPFRXX_MKII_MPFR_HAS_COMPOUND_SI
     static_assert(std::is_same<decltype(mpfrxx::compound_si(std::declval<const mpfr_class&>(), 3l)),
                                mpfr_class>::value);
+#endif
     static_assert(std::is_same<decltype(mpfrxx::log(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::log2(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::log10(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::log1p(std::declval<const mpfr_class&>())), mpfr_class>::value);
+#if GMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP
     static_assert(std::is_same<decltype(mpfrxx::log2p1(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::log10p1(std::declval<const mpfr_class&>())), mpfr_class>::value);
+#endif
     static_assert(std::is_same<decltype(mpfrxx::log_ui(5ul)), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::log_ui(5ul, static_cast<mpfr_prec_t>(128))), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::exp(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::exp2(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::exp10(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::expm1(std::declval<const mpfr_class&>())), mpfr_class>::value);
+#if GMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP
     static_assert(std::is_same<decltype(mpfrxx::exp2m1(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::exp10m1(std::declval<const mpfr_class&>())), mpfr_class>::value);
+#endif
     static_assert(std::is_same<decltype(mpfrxx::eint(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::li2(std::declval<const mpfr_class&>())), mpfr_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::erf(std::declval<const mpfr_class&>())), mpfr_class>::value);
@@ -643,27 +657,35 @@ void test_unary_functions_against_mpfr()
         check_unary(value, mpfr_asinpi, mpfrxx::asinpi);
         check_unary(value, mpfr_acospi, mpfrxx::acospi);
         check_unary(value, mpfr_atanpi, mpfrxx::atanpi);
+#if GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG
         check_unary_u(value, 360ul, mpfr_sinu, mpfrxx::sinu);
         check_unary_u(value, 360ul, mpfr_cosu, mpfrxx::cosu);
         check_unary_u(value, 360ul, mpfr_tanu, mpfrxx::tanu);
         check_unary_u(value, 360ul, mpfr_asinu, mpfrxx::asinu);
         check_unary_u(value, 360ul, mpfr_acosu, mpfrxx::acosu);
         check_unary_u(value, 360ul, mpfr_atanu, mpfrxx::atanu);
+#endif
         check_unary(value, mpfr_cbrt, mpfrxx::cbrt);
         check_unary_u(value, 3ul, mpfr_rootn_ui, mpfrxx::rootn_ui);
+#if GMPFRXX_MKII_MPFR_HAS_ROOTN_SI
         check_unary_long(value, 3l, mpfr_rootn_si, mpfrxx::rootn_si);
+#endif
         check_unary(value, mpfr_log, mpfrxx::log);
         check_unary(value, mpfr_log2, mpfrxx::log2);
         check_unary(value, mpfr_log10, mpfrxx::log10);
         check_unary(value, mpfr_log1p, mpfrxx::log1p);
+#if GMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP
         check_unary(value, mpfr_log2p1, mpfrxx::log2p1);
         check_unary(value, mpfr_log10p1, mpfrxx::log10p1);
+#endif
         check_unary(value, mpfr_exp, mpfrxx::exp);
         check_unary(value, mpfr_exp2, mpfrxx::exp2);
         check_unary(value, mpfr_exp10, mpfrxx::exp10);
         check_unary(value, mpfr_expm1, mpfrxx::expm1);
+#if GMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP
         check_unary(value, mpfr_exp2m1, mpfrxx::exp2m1);
         check_unary(value, mpfr_exp10m1, mpfrxx::exp10m1);
+#endif
         check_unary(value, mpfr_eint, mpfrxx::eint);
         check_unary(value, mpfr_erf, mpfrxx::erf);
         check_unary(value, mpfr_erfc, mpfrxx::erfc);
@@ -859,9 +881,13 @@ void test_binary_and_ternary_against_mpfr()
     check_binary(lhs, rhs, mpfr_agm, mpfrxx::agm);
     check_binary(lhs, rhs, mpfr_atan2, mpfrxx::atan2);
     check_binary(lhs, rhs, mpfr_atan2pi, mpfrxx::atan2pi);
+#if GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG
     check_binary_u(lhs, rhs, 360ul, mpfr_atan2u, mpfrxx::atan2u);
+#endif
     check_binary(lhs, rhs, mpfr_pow, mpfrxx::pow);
+#if GMPFRXX_MKII_MPFR_HAS_POWR
     check_binary(lhs, rhs, mpfr_powr, mpfrxx::powr);
+#endif
     check_binary(lhs, rhs, mpfr_min, mpfrxx::min);
     check_binary(lhs, rhs, mpfr_max, mpfrxx::max);
     check_binary(rhs, lhs, mpfr_dim, mpfrxx::dim);
@@ -893,9 +919,13 @@ void test_power_scalar_functions_against_mpfr()
 
     check_unary_long(base, -3l, mpfr_pow_si, mpfrxx::pow_si);
     check_unary_u(base, 5ul, mpfr_pow_ui, mpfrxx::pow_ui);
+#if GMPFRXX_MKII_MPFR_HAS_INTMAX_POWER
     check_unary_intmax(base, static_cast<intmax_t>(-3), mpfr_pow_sj, mpfrxx::pow_sj);
     check_unary_uintmax(base, static_cast<uintmax_t>(5), mpfr_pow_uj, mpfrxx::pow_uj);
+#endif
+#if GMPFRXX_MKII_MPFR_HAS_COMPOUND_SI
     check_unary_long(base, 4l, mpfr_compound_si, mpfrxx::compound_si);
+#endif
 
     mpfr_t expected;
     mpfr_init2(expected, base.precision());
@@ -1169,6 +1199,7 @@ void test_double_trig_hyperbolic_random_smoke()
         assert_double_close(mpfrxx::csch(value), 1.0 / std::sinh(input));
         assert_double_close(mpfrxx::coth(value), 1.0 / std::tanh(input));
 
+#if GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG
         assert_double_close(mpfrxx::sinu(value, 360ul), std::sin(input * 2.0 * pi / 360.0));
         assert_double_close(mpfrxx::cosu(value, 360ul), std::cos(input * 2.0 * pi / 360.0));
         assert_double_close(mpfrxx::tanu(value, 360ul), std::tan(input * 2.0 * pi / 360.0));
@@ -1176,6 +1207,7 @@ void test_double_trig_hyperbolic_random_smoke()
         assert_double_close(mpfrxx::acosu(value, 360ul), std::acos(input) * 360.0 / (2.0 * pi));
         assert_double_close(mpfrxx::atanu(value, 360ul), std::atan(input) * 360.0 / (2.0 * pi));
         assert_double_close(mpfrxx::atan2u(y_value, x_value, 360ul), std::atan2(y, x) * 360.0 / (2.0 * pi));
+#endif
 
         assert_double_close(mpfrxx::sinpi(value), std::sin(pi * input));
         assert_double_close(mpfrxx::cospi(value), std::cos(pi * input));

@@ -54,6 +54,43 @@
 
 #include <mpfr.h>
 
+#ifndef GMPFRXX_MKII_MPFR_HAS_IEEE_754_2019_FUNCTIONS
+#if defined(MPFR_VERSION) && defined(MPFR_VERSION_NUM) && \
+    MPFR_VERSION >= MPFR_VERSION_NUM(4, 2, 0)
+#define GMPFRXX_MKII_MPFR_HAS_IEEE_754_2019_FUNCTIONS 1
+#else
+#define GMPFRXX_MKII_MPFR_HAS_IEEE_754_2019_FUNCTIONS 0
+#endif
+#endif
+
+#ifndef GMPFRXX_MKII_MPFR_HAS_POWR
+#define GMPFRXX_MKII_MPFR_HAS_POWR GMPFRXX_MKII_MPFR_HAS_IEEE_754_2019_FUNCTIONS
+#endif
+
+#ifndef GMPFRXX_MKII_MPFR_HAS_COMPOUND_SI
+#define GMPFRXX_MKII_MPFR_HAS_COMPOUND_SI GMPFRXX_MKII_MPFR_HAS_IEEE_754_2019_FUNCTIONS
+#endif
+
+#ifndef GMPFRXX_MKII_MPFR_HAS_ROOTN_SI
+#define GMPFRXX_MKII_MPFR_HAS_ROOTN_SI GMPFRXX_MKII_MPFR_HAS_IEEE_754_2019_FUNCTIONS
+#endif
+
+#ifndef GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG
+#define GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG GMPFRXX_MKII_MPFR_HAS_IEEE_754_2019_FUNCTIONS
+#endif
+
+#ifndef GMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP
+#define GMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP GMPFRXX_MKII_MPFR_HAS_IEEE_754_2019_FUNCTIONS
+#endif
+
+#ifndef GMPFRXX_MKII_MPFR_HAS_INTMAX_POWER
+#if defined(_MPFR_H_HAVE_INTMAX_T) && defined(mpfr_pow_sj) && defined(mpfr_pow_uj)
+#define GMPFRXX_MKII_MPFR_HAS_INTMAX_POWER 1
+#else
+#define GMPFRXX_MKII_MPFR_HAS_INTMAX_POWER 0
+#endif
+#endif
+
 namespace gmpfrxx_mkII {
 namespace detail {
 
@@ -3481,14 +3518,18 @@ GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log2)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log10)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log1p)
+#if GMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log2p1)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(log10p1)
+#endif
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp2)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp10)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(expm1)
+#if GMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp2m1)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(exp10m1)
+#endif
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(eint)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(li2)
 GMPFRXX_MKII_DEFINE_MPFR_UNARY_FUNCTION(erf)
@@ -3875,6 +3916,7 @@ inline mpfr_class pow_ui(const Expr& expr, unsigned long exponent)
     return result;
 }
 
+#if GMPFRXX_MKII_MPFR_HAS_INTMAX_POWER
 template <
     typename Expr,
     std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
@@ -3900,6 +3942,7 @@ inline mpfr_class pow_uj(const Expr& expr, uintmax_t exponent)
     mpfr_pow_uj(result.mpfr_data(), operand.mpfr_data(), exponent, mpfr_class::default_rounding());
     return result;
 }
+#endif
 
 template <
     typename Expr,
@@ -3927,6 +3970,7 @@ inline mpfr_class ui_pow(unsigned long base, const Expr& exponent)
     return result;
 }
 
+#if GMPFRXX_MKII_MPFR_HAS_COMPOUND_SI
 template <
     typename Expr,
     std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
@@ -3939,6 +3983,7 @@ inline mpfr_class compound_si(const Expr& expr, long exponent)
     mpfr_compound_si(result.mpfr_data(), operand.mpfr_data(), exponent, mpfr_class::default_rounding());
     return result;
 }
+#endif
 
 template <
     typename Expr,
@@ -3953,6 +3998,7 @@ inline mpfr_class rootn_ui(const Expr& expr, unsigned long root_index)
     return result;
 }
 
+#if GMPFRXX_MKII_MPFR_HAS_ROOTN_SI
 template <
     typename Expr,
     std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
@@ -3965,6 +4011,7 @@ inline mpfr_class rootn_si(const Expr& expr, long root_index)
     mpfr_rootn_si(result.mpfr_data(), operand.mpfr_data(), root_index, mpfr_class::default_rounding());
     return result;
 }
+#endif
 
 template <
     typename Expr,
@@ -3992,6 +4039,7 @@ inline mpfr_class yn(long order, const Expr& expr)
     return result;
 }
 
+#if GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG
 template <
     typename Expr,
     std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
@@ -4070,6 +4118,8 @@ inline mpfr_class atanu(const Expr& expr, unsigned long unit)
     return result;
 }
 
+#endif
+
 template <
     typename Lhs,
     typename Rhs,
@@ -4100,6 +4150,7 @@ inline mpfr_class pow(const Lhs& lhs, const Rhs& rhs)
     });
 }
 
+#if GMPFRXX_MKII_MPFR_HAS_POWR
 template <
     typename Lhs,
     typename Rhs,
@@ -4114,6 +4165,7 @@ inline mpfr_class powr(const Lhs& lhs, const Rhs& rhs)
         mpfr_powr(rop, op1, op2, rnd);
     });
 }
+#endif
 
 template <
     typename Lhs,
@@ -4288,6 +4340,7 @@ inline mpfr_class atan2pi(const Y& y, const X& x)
     });
 }
 
+#if GMPFRXX_MKII_MPFR_HAS_UNIT_TRIG
 template <
     typename Y,
     typename X,
@@ -4309,6 +4362,7 @@ inline mpfr_class atan2u(const Y& y, const X& x, unsigned long unit)
                 mpfr_class::default_rounding());
     return result;
 }
+#endif
 
 template <
     typename A,

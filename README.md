@@ -236,6 +236,11 @@ calling thread's current MPFR default rounding mode. `mpfrxx::with_context(...)`
 is a target-bound assignment and compound-assignment handle; it is not a dynamic
 math-function rounding scope.
 
+MPFR version-dependent math wrappers are exposed only when the included
+`<mpfr.h>` provides the backend function. Older MPFR headers may omit wrappers
+for newer functions such as `powr`, unit trigonometric functions, `rootn_si`,
+`compound_si`, `log2p1`, and `exp2m1`; other MPFR wrapper APIs remain available.
+
 ### MPC Default Context
 
 `mpfrxx::mpc_class` defaults inherit the same libmpfr default precision and

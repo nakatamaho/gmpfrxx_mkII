@@ -21181,3 +21181,48 @@ Known issues:
   not a correctly rounded MPFR replacement. Very large arguments can now force
   larger cached constants, so runtime and memory scale with the argument
   exponent as required by the argument-reduction precision model.
+
+## Phase: Gate MPFR Version-dependent Math Wrappers
+
+Implemented features:
+- Added centralized feature-name preprocessor guards for MPFR backend functions
+  that are not available in older MPFR headers.
+- Hid wrappers for version-dependent MPFR functions such as `powr`, unit
+  trigonometric functions, `rootn_si`, `compound_si`, `log2p1`, `exp2m1`, and
+  intmax power helpers when the included `<mpfr.h>` does not advertise the
+  corresponding backend entry point.
+- Guarded `test_mpfr_math.cpp` compile-time and runtime coverage with the same
+  feature macros so old MPFR headers do not compile references to unavailable
+  backend functions.
+- Documented the feature-dependent MPFR math surface in `SPECIFICATIONS.md` and
+  `README.md`.
+
+Missing features:
+- No runtime fallback implementations are provided for MPFR functions missing
+  from the backend header. Older MPFR headers simply omit those wrappers.
+
+Tests added:
+- No new standalone test executable.
+- Added a compile-only smoke check with the MPFR feature macros forced off to
+  verify that `test_mpfr_math.cpp` no longer references hidden wrappers or raw
+  unavailable MPFR function names.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpfr_math`
+- `ctest --test-dir build -R test_mpfr_math --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `g++ -std=c++17 -Iinclude -Ibuild/generated -DGMPFRXX_MKII_MPFR_HAS_POWR=0 -DGMPFRXX_MKII_MPFR_HAS_COMPOUND_SI=0 -DGMPFRXX_MKII_MPFR_HAS_ROOTN_SI=0 -DGMPFRXX_MKII_MPFR_HAS_UNIT_TRIG=0 -DGMPFRXX_MKII_MPFR_HAS_PLUS_ONE_LOG_EXP=0 -DGMPFRXX_MKII_MPFR_HAS_INTMAX_POWER=0 -c tests/test_mpfr_math.cpp -o /tmp/test_mpfr_math_feature_off.o`
+- `git diff --check`
+
+Pass/fail result:
+- Targeted MPFR math build: PASS.
+- Targeted MPFR math CTest: PASS, 1/1 test passed.
+- Full build: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+- Feature-off compile smoke: PASS.
+- `git diff --check`: PASS.
+
+Known issues:
+- The actual feature availability still depends on the included MPFR header and
+  linked MPFR library matching in the usual C-library ABI sense.

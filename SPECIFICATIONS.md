@@ -308,6 +308,15 @@ cache, but they are not affected by `mpfrxx::with_context(...)`. Use a
 rounding-mode scope or explicit future math overloads when a math function
 itself needs a non-default rounding mode.
 
+Some MPFR math functions are version-dependent backend features. Wrappers for
+functions such as `powr`, unit-based trigonometric functions, `rootn_si`,
+`compound_si`, `log2p1`, `exp2m1`, and intmax power helpers are exposed only
+when the included `<mpfr.h>` advertises the corresponding backend entry point.
+Older MPFR headers therefore omit only those wrapper functions; the rest of the
+MPFR wrapper remains available. Feature detection must be centralized behind
+feature-named preprocessor macros instead of scattering backend-version checks
+through public wrapper declarations.
+
 ## GMP MPF Default Precision
 
 GMP's `mpf_set_default_prec()` and `mpf_get_default_prec()` are process-global
