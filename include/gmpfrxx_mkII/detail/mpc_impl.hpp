@@ -1447,6 +1447,35 @@ void mpc_evaluate(
     }
 }
 
+template <typename Expr>
+bool mpc_try_assign_direct_leaf_binary(mpc_t, const Expr&, mpc_rnd_t)
+{
+    return false;
+}
+
+template <typename Op, typename Lhs, typename Rhs, typename Result>
+bool mpc_try_assign_direct_leaf_binary(
+    mpc_t dest,
+    const binary_expr<Op, Lhs, Rhs, Result>& expr,
+    mpc_rnd_t rnd)
+{
+    if constexpr (std::is_same_v<Result, mpfrxx::mpc_class> &&
+                  is_mpc_class_leaf_v<Lhs> &&
+                  is_mpc_class_leaf_v<Rhs> &&
+                  (std::is_same_v<Op, add_op> ||
+                   std::is_same_v<Op, sub_op> ||
+                   std::is_same_v<Op, mul_op> ||
+                   std::is_same_v<Op, div_op>)) {
+        if (mpc_expression_references(dest, expr)) {
+            return false;
+        }
+        mpc_apply_binary<Op>(dest, expr.lhs().get().mpc_data(), expr.rhs().get().mpc_data(), rnd);
+        return true;
+    } else {
+        return false;
+    }
+}
+
 template <typename Op, typename Rhs>
 void mpc_compound_assign_with_context(
     mpfrxx::mpc_class& lhs,
@@ -1567,6 +1596,9 @@ mpc_class& mpc_class::operator=(const Expr& expr)
         this->imag_precision(),
     };
     const auto context = gmpfrxx_mkII::detail::current_mpc_eval_context(precision);
+    if (gmpfrxx_mkII::detail::mpc_try_assign_direct_leaf_binary(value_, expr, context.rounding_mode)) {
+        return *this;
+    }
     gmpfrxx_mkII::detail::mpc_evaluate(value_, expr, precision, context.rounding_mode);
     return *this;
 }
@@ -1816,6 +1848,12 @@ public:
     mpc_context_ref& operator=(Rhs&& rhs)
     {
         auto operand = gmpfrxx_mkII::detail::make_mpc_operand(std::forward<Rhs>(rhs));
+        if (gmpfrxx_mkII::detail::mpc_try_assign_direct_leaf_binary(
+                value_->mpc_data(),
+                operand,
+                rounding_mode_)) {
+            return *this;
+        }
         gmpfrxx_mkII::detail::mpc_evaluate(
             value_->mpc_data(),
             operand,

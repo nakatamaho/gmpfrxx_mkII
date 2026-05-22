@@ -818,6 +818,21 @@ void require_trig_reduction_cases()
     require_within_ulp(gmpxx::atan2(one, zero), pi_over_two, precision, 2);
     require_within_ulp(gmpxx::atan2(-one, zero), -pi_over_two, precision, 2);
     require_within_ulp(gmpxx::atan2(zero, zero), zero, precision, 1);
+
+    constexpr mp_bitcnt_t low_precision = 128;
+    constexpr mp_bitcnt_t reference_precision = 768;
+    gmpxx::mpf_class large_argument(1, low_precision);
+    mpf_mul_2exp(large_argument.mpf_data(), large_argument.mpf_data(), 300);
+    const gmpxx::mpf_class large_reference = rounded_to(large_argument, reference_precision);
+
+    require_close_bits(gmpxx::sin(large_argument),
+                       rounded_to(gmpxx::sin(large_reference), low_precision),
+                       low_precision,
+                       72);
+    require_close_bits(gmpxx::cos(large_argument),
+                       rounded_to(gmpxx::cos(large_reference), low_precision),
+                       low_precision,
+                       72);
 }
 
 void require_pow_integer_and_domain_cases()

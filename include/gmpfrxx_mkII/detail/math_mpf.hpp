@@ -1004,7 +1004,38 @@ inline mp_bitcnt_t working_precision_for_trig(mp_bitcnt_t target_precision)
 
 inline mp_bitcnt_t trig_constant_precision(mp_bitcnt_t target_precision)
 {
-    return (2 * normalize_target_precision(target_precision)) + 64;
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    if (target > (std::numeric_limits<mp_bitcnt_t>::max() - 64) / 2) {
+        throw std::overflow_error("MPF trigonometric constant precision exceeds mp_bitcnt_t");
+    }
+    return (2 * target) + 64;
+}
+
+inline mp_bitcnt_t checked_trig_precision_add(mp_bitcnt_t lhs, mp_bitcnt_t rhs)
+{
+    if (rhs > std::numeric_limits<mp_bitcnt_t>::max() - lhs) {
+        throw std::overflow_error("MPF trigonometric argument reduction precision exceeds mp_bitcnt_t");
+    }
+    return lhs + rhs;
+}
+
+inline mp_bitcnt_t trig_constant_precision_for_argument(const mpf_class& x_input, mp_bitcnt_t target_precision)
+{
+    const mp_bitcnt_t target = normalize_target_precision(target_precision);
+    mp_bitcnt_t precision = trig_constant_precision(target);
+    if (mpf_sgn(x_input.mpf_data()) == 0) {
+        return precision;
+    }
+
+    mp_exp_t x_exponent = 0;
+    mpf_get_d_2exp(&x_exponent, x_input.mpf_data());
+    if (x_exponent <= 0) {
+        return precision;
+    }
+
+    mp_bitcnt_t required = checked_trig_precision_add(target, guard_bits_for_trig(target));
+    required = checked_trig_precision_add(required, checked_mp_exp_magnitude(x_exponent));
+    return std::max(precision, required);
 }
 
 inline trig_constant_cache_state& trig_constant_cache()
@@ -1052,9 +1083,9 @@ inline sincos_result sincos_taylor_small(const mpf_class& x, mp_bitcnt_t precisi
     throw_iteration_limit_exceeded("sincos_taylor_small");
 }
 
-inline void ensure_trig_constants(mp_bitcnt_t target_precision)
+inline void ensure_trig_constants_at_precision(mp_bitcnt_t cache_precision)
 {
-    const mp_bitcnt_t cache_precision = trig_constant_precision(target_precision);
+    cache_precision = normalize_target_precision(cache_precision);
     trig_constant_cache_state& cache = trig_constant_cache();
     std::lock_guard<std::mutex> lock(cache.mutex);
     if (!cache.initialized || cache.cached_precision < cache_precision) {
@@ -1072,20 +1103,35 @@ inline void ensure_trig_constants(mp_bitcnt_t target_precision)
     }
 }
 
-inline mpf_class trig_pi_over_two(mp_bitcnt_t target_precision)
+inline void ensure_trig_constants(mp_bitcnt_t target_precision)
 {
-    ensure_trig_constants(target_precision);
+    ensure_trig_constants_at_precision(trig_constant_precision(target_precision));
+}
+
+inline mpf_class trig_pi_over_two_at_precision(mp_bitcnt_t precision)
+{
+    ensure_trig_constants_at_precision(precision);
     trig_constant_cache_state& cache = trig_constant_cache();
     std::lock_guard<std::mutex> lock(cache.mutex);
-    return set_prec_copy(cache.pi_over_two_value, trig_constant_precision(target_precision));
+    return set_prec_copy(cache.pi_over_two_value, precision);
+}
+
+inline mpf_class trig_pi_over_two(mp_bitcnt_t target_precision)
+{
+    return trig_pi_over_two_at_precision(trig_constant_precision(target_precision));
+}
+
+inline mpf_class trig_two_over_pi_at_precision(mp_bitcnt_t precision)
+{
+    ensure_trig_constants_at_precision(precision);
+    trig_constant_cache_state& cache = trig_constant_cache();
+    std::lock_guard<std::mutex> lock(cache.mutex);
+    return set_prec_copy(cache.two_over_pi_value, precision);
 }
 
 inline mpf_class trig_two_over_pi(mp_bitcnt_t target_precision)
 {
-    ensure_trig_constants(target_precision);
-    trig_constant_cache_state& cache = trig_constant_cache();
-    std::lock_guard<std::mutex> lock(cache.mutex);
-    return set_prec_copy(cache.two_over_pi_value, trig_constant_precision(target_precision));
+    return trig_two_over_pi_at_precision(trig_constant_precision(target_precision));
 }
 
 inline sincos_result compute_sincos(const mpf_class& x_input, mp_bitcnt_t target_precision)
@@ -1093,9 +1139,9 @@ inline sincos_result compute_sincos(const mpf_class& x_input, mp_bitcnt_t target
     const mp_bitcnt_t target = normalize_target_precision(target_precision);
     const mp_bitcnt_t work = working_precision_for_trig(target);
     const mpf_class zero = make_ui(0, work);
-    const mp_bitcnt_t const_precision = trig_constant_precision(target);
-    const mpf_class pio2 = set_prec_copy(trig_pi_over_two(target), const_precision);
-    const mpf_class two_over_pi = set_prec_copy(trig_two_over_pi(target), const_precision);
+    const mp_bitcnt_t const_precision = trig_constant_precision_for_argument(x_input, target);
+    const mpf_class pio2 = trig_pi_over_two_at_precision(const_precision);
+    const mpf_class two_over_pi = trig_two_over_pi_at_precision(const_precision);
 
     const mpf_class scaled_x = set_prec_copy(x_input, const_precision);
     const mpf_class q = mul(scaled_x, two_over_pi, const_precision);

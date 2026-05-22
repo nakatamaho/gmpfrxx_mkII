@@ -21081,3 +21081,103 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Add MPC Direct Leaf Assignment Fast Path
+
+Implemented features:
+- Added `mpc_try_assign_direct_leaf_binary()` to mirror the existing MPFR and
+  MPF direct leaf assignment helpers.
+- Routed `mpfrxx::mpc_class::operator=(Expr)` through the direct helper before
+  falling back to full `mpc_evaluate()`.
+- Routed `mpfrxx::mpc_context_ref::operator=(Expr)` through the same helper so
+  explicit-context assignment gets the same leaf/leaf fast path.
+- Kept alias safety by declining the direct helper when the destination appears
+  in the expression; aliasing expressions continue through the existing
+  temporary-safe evaluation path.
+
+Tests added:
+- Added direct leaf and aliasing regression cases to `test_mpc_aliasing.cpp`.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/test_mpc_aliasing.cpp`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j --target test_mpc_aliasing test_mpc_evaluation_context test_mpc_evaluation_context_fixed_precision test_mpc_basic`
+- `ctest --test-dir build -R 'test_mpc_aliasing|test_mpc_evaluation_context|test_mpc_basic' --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 4/4 tests passed.
+- Full build: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.
+
+## Phase: Document MPF atan2 Signed-zero Limitation
+
+Implemented features:
+- Documented that GMP `mpf_t` does not model signed zero, NaN, or infinity.
+- Clarified that MPF-backed `gmpxx::atan2(0, 0)` returns `+0` and cannot
+  distinguish the four IEEE-754 signed-zero `atan2(+-0, +-0)` branch cases.
+
+Missing features:
+- None. This is a specification and README clarification for an MPF backend
+  limitation.
+
+Tests added:
+- None. Existing `test_atan2` coverage already expects the MPF `0,0` case to
+  materialize as zero; signed-zero variants cannot be represented by `mpf_t`.
+
+Exact commands run:
+- `rg -n -C 5 "values with a NaN component|Known Limitations|gmpxx::mpfc_class math|compute_atan2|atan2\(" SPECIFICATIONS.md README.md include/gmpfrxx_mkII/detail/math_mpf.hpp tests/test_gmpxx_mkII.cpp`
+- `git diff --check`
+
+Pass/fail result:
+- `git diff --check`: PASS.
+
+Known issues:
+- None.
+
+## Phase: Dynamic MPF Trigonometric Argument Reduction Precision
+
+Implemented features:
+- Changed MPF `compute_sincos()` argument reduction to size the cached `pi/2`
+  and `2/pi` constants from both the target precision and the binary exponent
+  of the input argument.
+- Kept the existing trigonometric constant cache monotonic: a larger argument
+  extends the cache to the required precision and smaller later calls reuse it.
+- Added overflow checks for trigonometric constant and argument-reduction
+  precision arithmetic.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- Added a regression case for `sin(2^300)` and `cos(2^300)` at 128-bit MPF
+  precision, comparing against the same exact input evaluated at 768-bit
+  precision and rounded back down.
+
+Exact commands run:
+- `cmake --build build -j --target test_mpf_transcendent_functions`
+- `git diff --check`
+- `ctest --test-dir build -R test_mpf_transcendent_functions --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Targeted MPF transcendent build: PASS.
+- `git diff --check`: PASS.
+- Targeted MPF transcendent CTest: PASS, 1/1 test passed.
+- Full build: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- The MPF trigonometric implementation remains a GMP `mpf_t` approximation,
+  not a correctly rounded MPFR replacement. Very large arguments can now force
+  larger cached constants, so runtime and memory scale with the argument
+  exponent as required by the argument-reduction precision model.

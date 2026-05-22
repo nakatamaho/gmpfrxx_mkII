@@ -66,6 +66,14 @@ operators such as `<`, `<=`, `>`, and `>=` are intentionally not defined. MPC
 values with a NaN component compare unequal to themselves, matching the usual
 IEEE-style NaN equality rule.
 
+`gmpxx::mpf_class` and `gmpxx::mpfc_class` are backed by GMP `mpf_t`. They do
+not model IEEE signed zero, NaN, or infinity. MPF-backed math functions
+therefore cannot reproduce IEEE-754 signed-zero branch cuts. In particular,
+`gmpxx::atan2(0, 0)` returns `+0`; the four IEEE cases `atan2(+0,+0)`,
+`atan2(-0,+0)`, `atan2(+0,-0)`, and `atan2(-0,-0)` are not distinguishable in
+the MPF backend. Use `mpfrxx::mpfr_class` or `mpfrxx::mpc_class` when signed-zero
+branch behavior is part of the numeric contract.
+
 ## Scalar Common Types
 
 The wrapper-defined `std::common_type` specializations follow the same scalar

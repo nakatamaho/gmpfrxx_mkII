@@ -52,5 +52,30 @@ int main()
     require_close(z.real_to_double(), 6.0);
     require_close(z.imag_to_double(), 7.0);
 
+    auto add_alias = mpfrxx::mpc_class::with_precision(128, 1.0, 2.0);
+    add_alias = add_alias + w;
+    require_close(add_alias.real_to_double(), 4.0);
+    require_close(add_alias.imag_to_double(), 1.0);
+
+    auto rhs_alias = mpfrxx::mpc_class::with_precision(128, 1.0, 2.0);
+    rhs_alias = w + rhs_alias;
+    require_close(rhs_alias.real_to_double(), 4.0);
+    require_close(rhs_alias.imag_to_double(), 1.0);
+
+    auto mul_alias = mpfrxx::mpc_class::with_precision(128, 1.0, 2.0);
+    mul_alias = mul_alias * w;
+    require_close(mul_alias.real_to_double(), 5.0);
+    require_close(mul_alias.imag_to_double(), 5.0);
+
+    auto div_alias = mpfrxx::mpc_class::with_precision(128, 1.0, 2.0);
+    div_alias = div_alias / w;
+    require_close(div_alias.real_to_double(), 0.1);
+    require_close(div_alias.imag_to_double(), 0.7);
+
+    auto direct_leaf = mpfrxx::mpc_class::with_precision(128, 0.0, 0.0);
+    direct_leaf = mpfrxx::mpc_class::with_precision(128, 1.0, 2.0) + w;
+    require_close(direct_leaf.real_to_double(), 4.0);
+    require_close(direct_leaf.imag_to_double(), 1.0);
+
     return 0;
 }

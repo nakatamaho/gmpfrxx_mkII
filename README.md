@@ -64,6 +64,10 @@ operators such as `<`, `<=`, `>`, and `>=` are intentionally not defined.  MPC
 values with a NaN component compare unequal to themselves, matching the usual
 IEEE-style NaN equality rule.
 
+GMP `mpf_t` has no signed zero, NaN, or infinity. MPF-backed functions such as
+`gmpxx::atan2(0, 0)` therefore cannot reproduce IEEE-754 signed-zero branch
+cases; use the MPFR/MPC wrappers when those branch cuts matter.
+
 ## Scalar and Stream Policy
 
 Expression scalar leaves and wrapper `std::common_type` specializations follow
@@ -404,6 +408,9 @@ benchmarks/common/run_benchmarks.sh build 128 8 8 4 4 3 3 3
 - `gmpxx::mpfc_class` math APIs are present, but the current MPF transcendental
   helpers are GMP-only double-backed approximations. Full arbitrary-precision
   MPF transcendental algorithms are still future work.
+- GMP `mpf_t` does not carry signed-zero state, so MPF-backed `atan2` cannot
+  distinguish the four IEEE-754 `atan2(+-0, +-0)` cases. `gmpxx::atan2(0, 0)`
+  returns `+0`.
 - `gmpxx::mpfc_class` is a GMP-only complex convenience type, not a replacement
   for MPC. Division uses a Smith-style scaled formula, but MPF-backed
   multiplication and inverse/transcendental formulas still do not provide
