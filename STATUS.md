@@ -20981,3 +20981,61 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Align Top README With Specifications
+
+Implemented features:
+- Updated the top-level `README.md` header-role table and prose so
+  `mpcxx_mkII.h` is documented as including `mpfrxx_mkII.h` automatically.
+- Added concise scalar/common-type and MPQ stream/arithmetic-readiness policy
+  text matching `SPECIFICATIONS.md`.
+- Updated the MPFR default context section to mention `rounding_mode_scope`,
+  eager MPFR math rounding, and the target-bound nature of `with_context`.
+- Updated the MPC default context section to match current MPC-specific
+  override behavior: MPC overrides may be asymmetric, affect only
+  `mpfrxx::mpc_class`, and do not mutate `mpfrxx::mpfr_class` defaults.
+- Updated the fixed-precision fastpath and FMA text to match the current
+  compile-time contracts and removed obsolete `GMPXX_ENABLE_FMA` and
+  `reload_mpc_and_mpfr_defaults_from_environment()` references.
+
+Tests added:
+- None. Documentation alignment only.
+
+Tests updated:
+- `README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `rg -n "Header Roles|gmpxx_mkII|mpfrxx_mkII|mpcxx_mkII|gmpfrxx_mkII|default precision|MPQ Stream|Fixed-Precision|with_context|rounding_mode_scope|MPC defaults|MPFRXX_MPC|componentwise|max-scaling|fastpath|common_type|scalar" README.md SPECIFICATIONS.md`
+- `sed -n '1,90p' README.md`
+- `sed -n '150,255p' README.md`
+- `sed -n '620,735p' SPECIFICATIONS.md`
+- `sed -n '7,37p' SPECIFICATIONS.md`
+- `sed -n '255,360p' README.md`
+- `sed -n '200,250p' README.md`
+- `sed -n '250,310p' README.md`
+- `sed -n '218,255p' SPECIFICATIONS.md`
+- `sed -n '180,225p' SPECIFICATIONS.md`
+- `rg -n "GMPXX_ENABLE_FMA|MPFRXX_ENABLE_FMA|ENABLE_FMA|assume_fixed_precision_fastpath|GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH" include/gmpfrxx_mkII/detail SPECIFICATIONS.md README.md tests benchmarks/CMakeLists.txt`
+- `sed -n '330,445p' SPECIFICATIONS.md`
+- `sed -n '120,185p' README.md`
+- `sed -n '60,95p' SPECIFICATIONS.md`
+- `rg -n "reload_mpc_and_mpfr_defaults_from_environment|reload_mpc_defaults_from_environment|set_default_mpc_precision_bits|set_default_mpc_rounding_mode" include tests README.md SPECIFICATIONS.md`
+- `python3 - <<'PY' ...`
+- `sed -n '26,120p' README.md`
+- `sed -n '205,285p' README.md`
+- `sed -n '300,330p' README.md`
+- `git diff -- README.md`
+- `rg -n 'reload_mpc_and_mpfr|include after|GMPXX_ENABLE_FMA|must match|default MPC real and imaginary|compatibility alias|updating the shared MPFR|currently disabled|default_options\(\)\.' README.md`
+- `ctest --test-dir build -N | rg -n "header|include|source|compile|mpc_defaults|mpc_environment|mpfr_environment|mpfr_rounding_scope"`
+- `cmake --build build -j --target test_gmp_header_smoke test_mpfr_header_smoke test_mpc_header_smoke test_aggregator_header_smoke test_header_boundaries test_mpfr_rounding_scope test_mpfr_rounding_scope_stable test_mpc_defaults test_mpc_environment`
+- `ctest --test-dir build -R 'test_gmp_header_smoke|test_mpfr_header_smoke|test_mpc_header_smoke|test_aggregator_header_smoke|test_header_boundaries|test_mpfr_rounding_scope|test_mpc_defaults|test_mpc_environment|compile_fail_mpfr_header_must_not_expose|compile_fail_gmp_header_must_not_expose|compile_fail_test_mpf_plus_mpfr|compile_fail_test_mpfr_plus_mpf|compile_fail_test_mpf_plus_mpc|compile_fail_test_mpc_plus_mpf' --output-on-failure`
+
+Pass/fail result:
+- Stale README wording scan: PASS, no matches.
+- Targeted build: PASS.
+- Targeted CTest: PASS, 24/24 tests passed.
+
+Known issues:
+- Full CTest still remains the final release gate.

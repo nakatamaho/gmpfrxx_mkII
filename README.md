@@ -29,7 +29,7 @@ namespace gmpfrxx_mkII::detail;
 |---|---|---|
 | `gmpxx_mkII.h` | `gmpxx::mpz_class`, `gmpxx::mpq_class`, `gmpxx::mpf_class`, `gmpxx::mpfc_class` | GMP only |
 | `mpfrxx_mkII.h` | `mpfrxx::mpz_class`, `mpfrxx::mpq_class`, `mpfrxx::mpfr_class` | GMP + MPFR |
-| `mpcxx_mkII.h` | `mpfrxx::mpc_class`; include after `mpfrxx_mkII.h` | GMP + MPFR + MPC |
+| `mpcxx_mkII.h` | `mpfrxx::mpc_class` | GMP + MPFR + MPC |
 | `gmpfrxx_mkII.h` | Combined aggregator | GMP + MPFR + MPC |
 
 `mpfrxx::mpz_class` and `mpfrxx::mpq_class` are aliases to the GMP-only
@@ -41,8 +41,8 @@ MPFR or MPC at link time.
 
 `mpfrxx_mkII.h` intentionally stops at MPFR. It must not include `<mpc.h>`,
 must not expose `mpfrxx::mpc_class`, and must not link MPC. Include
-`mpcxx_mkII.h` after `mpfrxx_mkII.h`, or include `gmpfrxx_mkII.h`, when MPC
-complex support is needed.
+`mpcxx_mkII.h`, which includes `mpfrxx_mkII.h` automatically, or include
+`gmpfrxx_mkII.h` when MPC complex support is needed.
 
 ## Public Types
 
@@ -63,6 +63,27 @@ intentionally rejected.
 operators such as `<`, `<=`, `>`, and `>=` are intentionally not defined.  MPC
 values with a NaN component compare unequal to themselves, matching the usual
 IEEE-style NaN equality rule.
+
+## Scalar and Stream Policy
+
+Expression scalar leaves and wrapper `std::common_type` specializations follow
+the same normalization policy. Supported real scalar leaves include non-`bool`
+integral types up to 64 bits, `float`, and `double`; integral leaves are
+normalized to signed or unsigned 64-bit storage before expression evaluation.
+`bool`, `wchar_t`, `char16_t`, `char32_t`, `long double`, and `__int128` are not
+expression scalar leaves or common-type promotion backdoors. Direct
+`gmpxx::mpz_class` support for `__int128` is separate from the expression scalar
+contract.
+
+`gmpxx::mpq_class` and raw `mpq_ptr` stream extraction intentionally follow
+upstream `gmpxx.h` raw input behavior: extraction uses `mpq_set_str`-compatible
+semantics and does not call `mpq_canonicalize`. Inputs such as `2/4` remain
+non-canonical at the stream layer, and raw `1/0` or `0/0` can be preserved for
+compatibility. Constructors, `set_str`, expression evaluation, comparison, and
+arithmetic-producing paths validate/canonicalize before entering GMP rational
+arithmetic. Use `mpq_class::canonicalize()` or
+`gmpxx::mpq_canonicalize_checked(mpq_ptr)` before using stream-read raw values
+as arithmetic operands.
 
 ## Expression Templates
 
@@ -204,24 +225,33 @@ library.  The wrapper does not keep separate mutable MPFR default storage, but
 it does use a DSO-local one-shot initialization flag to avoid repeatedly
 applying the initial-default policy from hot evaluation-context paths.
 
+`mpfrxx::rounding_mode_scope` changes the calling thread's MPFR default rounding
+mode and updates the stable-rounding cache for the scope lifetime. Eager MPFR
+math functions and constants such as `sin`, `exp`, and `const_pi` use the
+calling thread's current MPFR default rounding mode. `mpfrxx::with_context(...)`
+is a target-bound assignment and compound-assignment handle; it is not a dynamic
+math-function rounding scope.
+
 ### MPC Default Context
 
-`mpfrxx::mpc_class` default precision and rounding are derived from the same
-libmpfr default state used by `mpfrxx::mpfr_class`.  The wrapper does not keep
-separate mutable default state for MPC real and imaginary components.
+`mpfrxx::mpc_class` defaults inherit the same libmpfr default precision and
+rounding used by `mpfrxx::mpfr_class` unless an MPC-specific override is
+installed for the current thread and linked image. MPC-specific overrides affect
+only `mpfrxx::mpc_class` defaults; they do not modify `mpfrxx::mpfr_class`
+default precision or rounding mode.
 
-Default MPC real and imaginary precision therefore must match, and default MPC
-real and imaginary rounding modes must match.  Calls such as
+MPC default precision and rounding may be symmetric or asymmetric. The
+one-argument setters install symmetric defaults, while
 `mpfrxx::set_default_mpc_precision_bits(real, imag)` and
-`mpfrxx::set_default_mpc_rounding_mode(real, imag)` throw
-`std::invalid_argument` when the two component values differ.  Use explicit
-`mpfrxx::mpc_class::with_precision(real, imag)` construction when an individual
-object needs different real and imaginary precision.
+`mpfrxx::set_default_mpc_rounding_mode(real, imag)` install component-specific
+defaults. Use explicit `mpfrxx::mpc_class::with_precision(real, imag)` when an
+individual object needs a one-off precision independent of the default state.
 
-`mpfrxx::reload_mpc_and_mpfr_defaults_from_environment()` reloads MPC
-environment defaults by updating the shared MPFR thread-local default precision
-and rounding mode.  `mpfrxx::reload_mpc_defaults_from_environment()` remains as
-a compatibility alias for the same operation.
+MPC environment variables are read on first MPC default access or explicit
+`mpfrxx::reload_mpc_defaults_from_environment()`. Valid `MPFRXX_MPC_*` precision
+or rounding variables install MPC-specific overrides. Invalid values are ignored
+with a diagnostic on `stderr`, and missing categories continue to inherit the
+current MPFR default.
 
 ## Environment
 
@@ -249,26 +279,30 @@ For GMP MPF defaults, `GMPXX_MKII_DEFAULT_MPF_PREC_BITS` has priority over
 are ignored with a diagnostic on `stderr`, and the built-in 512-bit default is
 used instead.
 
-The fixed-precision fast path macro is currently disabled:
+The fixed-precision fast path is an opt-in compile-time contract, not a
+runtime environment variable:
 
 ```text
 GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
 ```
 
-It is not a runtime environment variable, and current wrapper builds do not use
-it to change floating move-assignment or arithmetic semantics.
+When enabled, floating wrapper move assignment may assume matching source and
+destination precision. A mismatch is outside the normal left-hand-side precision
+preservation guarantee. The same option also enables fixed-precision scratch
+reuse in selected hot paths; it must only be used for programs or benchmark
+kernels that maintain fixed precision discipline.
 
-Compound-assignment multiply fusion is controlled by separate compile-time
-options because it can change rounding semantics:
+Compound-assignment multiply fusion is controlled by a separate compile-time
+option because it can change rounding semantics:
 
 ```text
-GMPXX_ENABLE_FMA
 MPFRXX_ENABLE_FMA
 ```
 
-`GMPXX_ENABLE_FMA` enables the GMP MPF `a += b * c` and `a -= b * c` scratch
-paths. `MPFRXX_ENABLE_FMA` enables MPFR `mpfr_fma`, `mpfr_fms`,
-`mpfr_fmma`, and `mpfr_fmms` paths for supported fused expression shapes.
+`MPFRXX_ENABLE_FMA` enables MPFR fused operations such as `mpfr_fma`, `mpfr_fmma`,
+and related paths for supported expression shapes. GMP MPF has no fused
+operation option; its direct `a += b * c` and `a -= b * c` paths still follow
+MPF two-step rounding.
 
 ## Examples
 
@@ -309,7 +343,6 @@ int main()
 MPC:
 
 ```cpp
-#include <mpfrxx_mkII.h>
 #include <mpcxx_mkII.h>
 
 #include <iostream>
