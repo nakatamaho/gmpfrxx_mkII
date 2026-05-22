@@ -21438,3 +21438,62 @@ Pass/fail result:
 Known issues:
 - Historical `STATUS.md` entries still mention older environment variable names as part of past command logs. They were not rewritten.
 
+
+## Phase: Clean Aberth Example Polynomial Coefficients
+
+Implemented features:
+- Removed the temporary shared `examples/aberth_polynomial.hpp` direction and embedded the example-local helpers directly in each affected source file.
+- Replaced duplicated coefficient object initializers in `example05_mpf`, `example05_mpfr`, `example06_mpfc`, and `example06_mpc` with a single local `polynomial_coefficients` array per file.
+- Generated the polynomial display string and coefficient list from that array so the only hardcoded polynomial data in each file is the coefficient list itself.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. Existing example CTest targets cover the affected sources.
+
+Exact commands run:
+- `cmake --build build_fresh_release_20260522 -j --target example05_mpf example05_mpfr example06_mpfc example06_mpc`
+- `ctest --test-dir build_fresh_release_20260522 -R "example0[56]" --output-on-failure`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- Targeted example build: PASS.
+- Targeted example CTest: PASS, 4/4 tests passed.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.
+
+
+## Phase: Rename Example MPC Source Files
+
+Implemented features:
+- Renamed `examples/example02_mpfr_mpc.cpp` to `examples/example02_mpc.cpp`.
+- Renamed `examples/example03_mpfc_math.cpp` to `examples/example03_mpfc.cpp`.
+- Updated `examples/CMakeLists.txt` target and CTest names to `example02_mpc` and `example03_mpfc`.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. Existing example CTest entries were renamed with the targets.
+
+Exact commands run:
+- `git mv examples/example02_mpfr_mpc.cpp examples/example02_mpc.cpp`
+- `git mv examples/example03_mpfc_math.cpp examples/example03_mpfc.cpp`
+- `rg -n "example02_mpfr_mpc|example03_mpfc_math" examples CMakeLists.txt README.md SPECIFICATIONS.md AGENTS.md PROMPTS.md tests docs`
+- `cmake -S . -B build_fresh_release_20260522 -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_fresh_release_20260522 -j --target example02_mpc example03_mpfc`
+- `ctest --test-dir build_fresh_release_20260522 -R "example02_mpc|example03_mpfc" --output-on-failure`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- Current-source old-name scan outside historical `STATUS.md`: PASS, no matches.
+- Reconfigure: PASS.
+- Targeted example build: PASS.
+- Targeted example CTest: PASS, 2/2 tests passed.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Historical `STATUS.md` entries still mention the old example names as past command logs. They were not rewritten.

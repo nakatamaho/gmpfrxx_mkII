@@ -56,6 +56,7 @@
 
 #include <mpfrxx_mkII.h>
 
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <iomanip>
@@ -66,6 +67,72 @@
 namespace {
 
 using mpfrxx::mpfr_class;
+
+inline constexpr std::array polynomial_coefficients{
+    13, -11, 7, -1, 0, 2, 0, -3, 0, 0, 1};
+
+template <typename Real>
+std::vector<Real> make_coefficients()
+{
+    std::vector<Real> coefficients;
+    coefficients.reserve(polynomial_coefficients.size());
+    for (int coefficient : polynomial_coefficients) {
+        coefficients.emplace_back(coefficient);
+    }
+    return coefficients;
+}
+
+void print_polynomial(std::ostream& out, char const* variable)
+{
+    bool first_term = true;
+    for (std::size_t exponent = polynomial_coefficients.size(); exponent-- > 0;) {
+        int coefficient = polynomial_coefficients[exponent];
+        if (coefficient == 0) {
+            continue;
+        }
+
+        if (first_term) {
+            if (coefficient < 0) {
+                out << "-";
+            }
+        } else {
+            out << (coefficient < 0 ? " - " : " + ");
+        }
+
+        int magnitude = coefficient < 0 ? -coefficient : coefficient;
+        if (exponent == 0 || magnitude != 1) {
+            out << magnitude;
+            if (exponent != 0) {
+                out << " ";
+            }
+        }
+
+        if (exponent != 0) {
+            out << variable;
+            if (exponent != 1) {
+                out << "^" << exponent;
+            }
+        }
+        first_term = false;
+    }
+
+    if (first_term) {
+        out << "0";
+    }
+}
+
+void print_coefficients(std::ostream& out)
+{
+    out << "coefficients a0..a" << (polynomial_coefficients.size() - 1)
+        << " = {";
+    for (std::size_t i = 0; i < polynomial_coefficients.size(); ++i) {
+        if (i != 0) {
+            out << ", ";
+        }
+        out << polynomial_coefficients[i];
+    }
+    out << "}\n";
+}
 
 struct complex_mpfr {
     mpfr_class re;
@@ -277,20 +344,17 @@ int main()
 {
     constexpr int decimal_digits = 60;
 
-    std::vector<mpfr_class> coefficients = {
-        mpfr_class(13), mpfr_class(-11), mpfr_class(7), mpfr_class(-1),
-        mpfr_class(0),  mpfr_class(2),   mpfr_class(0), mpfr_class(-3),
-        mpfr_class(0),  mpfr_class(0),   mpfr_class(1)};
+    std::vector<mpfr_class> coefficients = make_coefficients<mpfr_class>();
 
     mpfr_class radius = cauchy_radius(coefficients);
     mpfr_class tolerance =
         mpfrxx::exp2(-mpfr_class(mpfrxx::default_precision_bits() / 2));
 
     std::cout << std::scientific << std::setprecision(decimal_digits);
-    std::cout << "Aberth method for f(z) = z^10 - 3 z^7 + 2 z^5"
-                 " - z^3 + 7 z^2 - 11 z + 13\n";
-    std::cout << "coefficients a0..a10 ="
-                 " {13, -11, 7, -1, 0, 2, 0, -3, 0, 0, 1}\n";
+    std::cout << "Aberth method for f(z) = ";
+    print_polynomial(std::cout, "z");
+    std::cout << '\n';
+    print_coefficients(std::cout);
     std::cout << "initial radius = " << radius << '\n';
 
     std::vector<complex_mpfr> roots =
