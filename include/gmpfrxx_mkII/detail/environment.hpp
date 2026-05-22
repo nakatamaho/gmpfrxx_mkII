@@ -377,7 +377,8 @@ inline mpfr_default_options default_options() noexcept
 
 inline mpfr_prec_t default_precision_bits() noexcept
 {
-    return default_options().precision_bits;
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
+    return mpfr_get_default_prec();
 }
 
 inline mpfr_prec_t default_prec() noexcept
@@ -443,12 +444,14 @@ private:
 
 inline mpfr_exp_t default_emin() noexcept
 {
-    return default_options().emin;
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
+    return mpfr_get_emin();
 }
 
 inline mpfr_exp_t default_emax() noexcept
 {
-    return default_options().emax;
+    ::gmpfrxx_mkII::detail::initialize_mpfr_defaults_for_current_thread();
+    return mpfr_get_emax();
 }
 
 inline void set_default_exponent_range(mpfr_exp_t emin, mpfr_exp_t emax) noexcept

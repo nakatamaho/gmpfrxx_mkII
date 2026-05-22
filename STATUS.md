@@ -20811,3 +20811,34 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Split Single-Value MPFR Default Getters
+
+Implemented features:
+- Changed `mpfrxx::default_precision_bits()`, `mpfrxx::default_emin()`, and
+  `mpfrxx::default_emax()` to initialize the current thread defaults and then
+  read only the requested MPFR TLS value.
+- Left `mpfrxx::default_options()` as the full snapshot API for callers that
+  intentionally need precision, exponent range, and rounding together.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `nl -ba include/gmpfrxx_mkII/detail/environment.hpp | sed -n '360,460p'`
+- `rg -n "default_precision_bits\(\)|default_emin\(\)|default_emax\(\)|default_options\(\)" include/gmpfrxx_mkII/detail/environment.hpp tests/test_mpfr_defaults.cpp tests/test_mpfr_environment.cpp tests/test_mpfr_environment_invalid.cpp`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/environment.hpp STATUS.md`
+- `cmake --build build -j --target test_mpfr_defaults test_mpfr_environment test_mpfr_environment_invalid test_mpfr_environment_first_use test_mpfr_environment_first_use_stable test_mpc_defaults test_mpc_environment`
+- `ctest --test-dir build -R 'test_mpfr_defaults|test_mpfr_environment|test_mpfr_environment_first_use|test_mpc_defaults|test_mpc_environment' --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 20/20 tests passed.
+
+Known issues:
+- None for this phase.
