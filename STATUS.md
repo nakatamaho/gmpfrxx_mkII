@@ -1,3 +1,57 @@
+Post-phase GMP Raxpy repeat-10 benchmark refresh:
+DONE
+
+Implemented features:
+- Re-ran the full `benchmarks/gmp/01_Raxpy` target matrix with
+  `N=10000000`, `precision=512`, and `repeat=10`.
+- Removed stale committed GMP Raxpy raw-data files and stored the fresh run under
+  `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/`.
+- Generated raw CSV, summary CSV, benchmark log, progress log, and serial/OpenMP
+  MFLOPS plots with mean bars and min/max error bars.
+- Rewrote `benchmarks/gmp/01_Raxpy/README.md` using the benchmark report
+  template requested for this phase: Build, Kernel Shapes, C Native Equivalent
+  Kernels, Recorded Run, Headline Results, Serial Results, OpenMP Results,
+  Memory Bandwidth Estimates, Hotpath Disassembly, and Lessons Learned.
+- Added `benchmarks/gmp/01_Raxpy/plot_repeat_summary.py` so the committed plots
+  can be regenerated from the committed summary CSV.
+
+Tests added:
+- No library tests were added; this phase updates benchmark data and benchmark
+  documentation.
+
+Tests updated:
+- `benchmarks/gmp/01_Raxpy/README.md`
+- `benchmarks/gmp/01_Raxpy/plot_repeat_summary.py`
+- `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/*`
+- `STATUS.md`
+
+Exact commands run:
+- `rm -rf benchmarks/gmp/01_Raxpy/results_raw`
+- `mkdir -p benchmarks/gmp/01_Raxpy/results_raw`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Raxpy_gmp_C_native_01 Raxpy_gmp_C_native_openmp_01 Raxpy_gmp_kernel_01_orig Raxpy_gmp_kernel_01_mkII Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_02_orig Raxpy_gmp_kernel_02_mkII Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_03_orig Raxpy_gmp_kernel_03_mkII Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_04_orig Raxpy_gmp_kernel_04_mkII Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_openmp_01_orig Raxpy_gmp_kernel_openmp_01_mkII Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_openmp_02_orig Raxpy_gmp_kernel_openmp_02_mkII Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH Raxpy_gmp_kernel_openmp_03_orig Raxpy_gmp_kernel_openmp_03_mkII Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH`
+- `python3 - <<'PY' ...` to run all 23 variants with `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, `OMP_PROC_BIND=spread`, `N=10000000`, `precision=512`, and `repeat=10`.
+- `python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv --output-prefix benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10 --title-prefix "GMP Raxpy N=10000000 precision=512 repeat=10"`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3bd0 --stop-address=0x3c60 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3250 --stop-address=0x32e0 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig`
+- `objdump -Cd --no-show-raw-insn --start-address=0x5040 --stop-address=0x5100 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII`
+- `objdump -Cd --no-show-raw-insn --start-address=0x4bc0 --stop-address=0x4d00 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig | rg -n "<_Raxpy.*omp_fn|__gmpf_mul|__gmpf_add|GOMP_barrier" -C 6`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Benchmark run: PASS. All 23 variants completed 10 repeats and reported
+  `Result OK`.
+- `git diff --check`: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- Memory bandwidth values in the README are model estimates derived from MFLOPS,
+  not hardware-counter measurements.
+- OpenMP rankings should be interpreted by performance class and variance;
+  the best max and best average variants differ in this run.
+
 Post-phase MPQ stream readiness contract:
 DONE
 
@@ -21817,3 +21871,46 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked benchmark artifacts outside this phase remain untouched.
+
+## Phase: Refresh MPFR Raxpy Repeat-10 Report
+
+Implemented features:
+- Rebuilt all MPFR 01_Raxpy benchmark targets in `build_bench_release`.
+- Removed the old tracked 512-bit MPFR Raxpy raw run and collected a fresh `N=10000000`, precision 512-bit, repeat-10 sweep for 43 variants.
+- Wrote fresh raw log, raw CSV, summary CSV with min/max/average/variance/stddev MFLOPS, and serial/OpenMP plot images under `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/`.
+- Added `benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py` for reproducible mean-bar plots with min/max error bars.
+- Rewrote `benchmarks/mpfr/01_Raxpy/README.md` using the requested benchmark report template: Build, Kernel Shapes, C Native Equivalent Kernels, Recorded Run, Headline Results, Serial Results, OpenMP Results, Memory Bandwidth Estimates, Hotpath Disassembly, and Lessons Learned.
+- Added representative hotpath disassembly for raw C split multiply/add, raw C FMA, mkII direct FMA, mkII reusable-product split path, explicit-context FMA, and OpenMP FMA worker loops.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No unit tests. This phase updates benchmark data, plots, and documentation.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_01_FMA Raxpy_mpfr_C_native_packed_custom_layout_FMA Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_01_FMA ... Raxpy_mpfr_kernel_openmp_06_mkII`
+- `python3 - <<'PY' ...` to remove the old tracked 512-bit run and collect the full 43-variant repeat-10 MPFR Raxpy sweep.
+- `python3 benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/summary_raxpy_mpfr_n10000000_p512_repeat10.csv --output-prefix benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10 --title-prefix "MPFR Raxpy N=10000000 p=512 repeat=10"`
+- `objdump -Cd --no-show-raw-insn --start-address=0x49e0 --stop-address=0x4a55 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01`
+- `objdump -Cd --no-show-raw-insn --start-address=0x49c0 --stop-address=0x4a15 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA`
+- `objdump -Cd --no-show-raw-insn --start-address=0x4ff0 --stop-address=0x5148 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`
+- `objdump -Cd --no-show-raw-insn --start-address=0x6080 --stop-address=0x61c8 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`
+- `objdump -Cd --no-show-raw-insn --start-address=0x6180 --stop-address=0x62d8 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA`
+- `objdump -Cd --no-show-raw-insn --start-address=0x4a20 --stop-address=0x4a50 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA`
+- `objdump -Cd --no-show-raw-insn --start-address=0x5250 --stop-address=0x5358 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA`
+- `python3 - <<'PY' ...` to regenerate the README from the fresh summary CSV and disassembly notes.
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release benchmark target rebuild: PASS.
+- MPFR Raxpy repeat-10 benchmark sweep: PASS, 43 variants and 430 timed runs completed with `Result OK`.
+- CSV, plot, and README generation: PASS.
+- Diff whitespace check: PASS.
+- Full CTest from `build`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked 1024-bit MPFR Raxpy raw data remains untouched.
+- Existing uncommitted GMP Raxpy benchmark changes remain outside this phase.

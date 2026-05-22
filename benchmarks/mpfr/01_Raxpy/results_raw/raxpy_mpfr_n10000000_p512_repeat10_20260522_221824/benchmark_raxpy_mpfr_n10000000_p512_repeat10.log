@@ -1,0 +1,3464 @@
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+BENCHMARK_PARAMS precision=512 raxpy_n=10000000 repeat=10
+OPENMP_AFFINITY OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 1/10
+Elapsed time: 0.886184 s
+MFLOPS: 22.5687
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.97
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 2/10
+Elapsed time: 0.882201 s
+MFLOPS: 22.6706
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.92
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 3/10
+Elapsed time: 0.905331 s
+MFLOPS: 22.0914
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.12
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 4/10
+Elapsed time: 0.895929 s
+MFLOPS: 22.3232
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.05
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 5/10
+Elapsed time: 0.884206 s
+MFLOPS: 22.6192
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.98
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 6/10
+Elapsed time: 0.864331 s
+MFLOPS: 23.1393
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.76
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 7/10
+Elapsed time: 0.896471 s
+MFLOPS: 22.3097
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 8/10
+Elapsed time: 0.883366 s
+MFLOPS: 22.6407
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.06
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 9/10
+Elapsed time: 0.892619 s
+MFLOPS: 22.406
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.04
+
+COMMAND Raxpy C_native_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 10000000 512
+RUN 10/10
+Elapsed time: 0.886469 s
+MFLOPS: 22.5614
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.883164 s
+MFLOPS: 22.6458
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.871186 s
+MFLOPS: 22.9572
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.96
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.871873 s
+MFLOPS: 22.9391
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.95
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.871754 s
+MFLOPS: 22.9422
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.80
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.883737 s
+MFLOPS: 22.6312
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.882229 s
+MFLOPS: 22.6699
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 10.11
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.873174 s
+MFLOPS: 22.905
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 10.04
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.87819 s
+MFLOPS: 22.7741
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 10.01
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.870499 s
+MFLOPS: 22.9753
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 10.02
+
+COMMAND Raxpy C_native_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.877672 s
+MFLOPS: 22.7875
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 10.01
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 1/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.899947 s
+MFLOPS: 22.2235
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.09
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 2/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.887308 s
+MFLOPS: 22.5401
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.00
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 3/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.870526 s
+MFLOPS: 22.9746
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.92
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 4/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.88307 s
+MFLOPS: 22.6483
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 5/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.88501 s
+MFLOPS: 22.5986
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.97
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 6/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.878963 s
+MFLOPS: 22.7541
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 7/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.871141 s
+MFLOPS: 22.9584
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 8/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.880786 s
+MFLOPS: 22.707
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.01
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 9/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.880816 s
+MFLOPS: 22.7062
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Raxpy C_native_packed_custom_layout_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 10000000 512
+RUN 10/10
+Packed significand bytes: 64
+Packed element stride: 96 bytes
+Elapsed time: 0.883657 s
+MFLOPS: 22.6332
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.93
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 1/10
+Elapsed time: 0.0499201 s
+MFLOPS: 400.64
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.42
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 2/10
+Elapsed time: 0.050731 s
+MFLOPS: 394.236
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.46
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 3/10
+Elapsed time: 0.0498543 s
+MFLOPS: 401.169
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.40
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 4/10
+Elapsed time: 0.0494611 s
+MFLOPS: 404.358
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.43
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 5/10
+Elapsed time: 0.0502048 s
+MFLOPS: 398.369
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.48
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 6/10
+Elapsed time: 0.0502603 s
+MFLOPS: 397.928
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.54
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 7/10
+Elapsed time: 0.0504537 s
+MFLOPS: 396.403
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.45
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 8/10
+Elapsed time: 0.0523488 s
+MFLOPS: 382.053
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.44
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 9/10
+Elapsed time: 0.0496649 s
+MFLOPS: 402.699
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.39
+
+COMMAND Raxpy C_native_openmp_01 /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01 10000000 512
+RUN 10/10
+Elapsed time: 0.0498317 s
+MFLOPS: 401.351
+L1 Norm of difference: 4.392e-11
+Result OK
+WALL_SECONDS 9.37
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0503476 s
+MFLOPS: 397.239
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.26
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0490065 s
+MFLOPS: 408.109
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.17
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0473209 s
+MFLOPS: 422.647
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.35
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0483464 s
+MFLOPS: 413.681
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.27
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0486517 s
+MFLOPS: 411.085
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.22
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0478565 s
+MFLOPS: 417.916
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.21
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0491173 s
+MFLOPS: 407.188
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.21
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0480031 s
+MFLOPS: 416.64
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.14
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.048869 s
+MFLOPS: 409.258
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.24
+
+COMMAND Raxpy C_native_openmp_01_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0480442 s
+MFLOPS: 416.284
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.23
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 1/10
+Elapsed time: 1.14925 s
+MFLOPS: 17.4027
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.53
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 2/10
+Elapsed time: 1.15813 s
+MFLOPS: 17.2693
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 3/10
+Elapsed time: 1.14853 s
+MFLOPS: 17.4136
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 4/10
+Elapsed time: 1.13443 s
+MFLOPS: 17.63
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 5/10
+Elapsed time: 1.1476 s
+MFLOPS: 17.4276
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.59
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 6/10
+Elapsed time: 1.14587 s
+MFLOPS: 17.454
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 7/10
+Elapsed time: 1.1441 s
+MFLOPS: 17.4809
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.62
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 8/10
+Elapsed time: 1.14985 s
+MFLOPS: 17.3935
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.48
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 9/10
+Elapsed time: 1.1521 s
+MFLOPS: 17.3596
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.62
+
+COMMAND Raxpy kernel_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII 10000000 512
+RUN 10/10
+Elapsed time: 1.1392 s
+MFLOPS: 17.5561
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 1.08526 s
+MFLOPS: 18.4287
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.86
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 1.11286 s
+MFLOPS: 17.9717
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.09
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 1.09647 s
+MFLOPS: 18.2403
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.89
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 1.10021 s
+MFLOPS: 18.1783
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.00
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 1.09748 s
+MFLOPS: 18.2236
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.89
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 1.12527 s
+MFLOPS: 17.7735
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.96
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 1.12239 s
+MFLOPS: 17.8192
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.95
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 1.09023 s
+MFLOPS: 18.3447
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.94
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 1.11089 s
+MFLOPS: 18.0036
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.00
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 1.08849 s
+MFLOPS: 18.3741
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.97
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.914841 s
+MFLOPS: 21.8617
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.31
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.946582 s
+MFLOPS: 21.1287
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.57
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.94217 s
+MFLOPS: 21.2276
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.63
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.937918 s
+MFLOPS: 21.3238
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.55
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.937522 s
+MFLOPS: 21.3328
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.56
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.936956 s
+MFLOPS: 21.3457
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.52
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.950098 s
+MFLOPS: 21.0505
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.63
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.934445 s
+MFLOPS: 21.4031
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.55
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.939015 s
+MFLOPS: 21.2989
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.52
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.950726 s
+MFLOPS: 21.0366
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.48
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.879799 s
+MFLOPS: 22.7325
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.53
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.859016 s
+MFLOPS: 23.2824
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.33
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.88904 s
+MFLOPS: 22.4962
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.61
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.888224 s
+MFLOPS: 22.5168
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.54
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.871436 s
+MFLOPS: 22.9506
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.41
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.855 s
+MFLOPS: 23.3918
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.26
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.891594 s
+MFLOPS: 22.4317
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.53
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.895342 s
+MFLOPS: 22.3378
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.58
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.88041 s
+MFLOPS: 22.7167
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.58
+
+COMMAND Raxpy kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.889286 s
+MFLOPS: 22.49
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.51
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 1/10
+Elapsed time: 1.10178 s
+MFLOPS: 18.1524
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 2/10
+Elapsed time: 1.10405 s
+MFLOPS: 18.1151
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 3/10
+Elapsed time: 1.10362 s
+MFLOPS: 18.1222
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.55
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 4/10
+Elapsed time: 1.08485 s
+MFLOPS: 18.4357
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.44
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 5/10
+Elapsed time: 1.0885 s
+MFLOPS: 18.3739
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.47
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 6/10
+Elapsed time: 1.09451 s
+MFLOPS: 18.273
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.64
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 7/10
+Elapsed time: 1.09969 s
+MFLOPS: 18.1869
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.55
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 8/10
+Elapsed time: 1.07556 s
+MFLOPS: 18.5949
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.36
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 9/10
+Elapsed time: 1.09523 s
+MFLOPS: 18.261
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy kernel_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII 10000000 512
+RUN 10/10
+Elapsed time: 1.10848 s
+MFLOPS: 18.0428
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.56
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 1.00305 s
+MFLOPS: 19.9391
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.89
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.997955 s
+MFLOPS: 20.041
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.85
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 1.01042 s
+MFLOPS: 19.7938
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.97
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 1.01568 s
+MFLOPS: 19.6912
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.05
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 1.00247 s
+MFLOPS: 19.9507
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.89
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 1.00931 s
+MFLOPS: 19.8154
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.98
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 1.00737 s
+MFLOPS: 19.8537
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.93
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 1.02019 s
+MFLOPS: 19.6042
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.99
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 1.00944 s
+MFLOPS: 19.813
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.00
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 1.01217 s
+MFLOPS: 19.7594
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.88
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 1.02738 s
+MFLOPS: 19.467
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.74
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 1.02007 s
+MFLOPS: 19.6065
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.75
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 1.00982 s
+MFLOPS: 19.8054
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.66
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 1.01853 s
+MFLOPS: 19.6361
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.78
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 1.02161 s
+MFLOPS: 19.5769
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.66
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 1.01862 s
+MFLOPS: 19.6344
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.78
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 1.0128 s
+MFLOPS: 19.7473
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.68
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 1.02345 s
+MFLOPS: 19.5417
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.78
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 1.02044 s
+MFLOPS: 19.5994
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.75
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 1.0281 s
+MFLOPS: 19.4534
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.79
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 1.00198 s
+MFLOPS: 19.9604
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.69
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 1.00977 s
+MFLOPS: 19.8065
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.75
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 1.00539 s
+MFLOPS: 19.8928
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.68
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 1.00141 s
+MFLOPS: 19.9718
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.66
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.978064 s
+MFLOPS: 20.4486
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.50
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 1.0089 s
+MFLOPS: 19.8235
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.79
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 1.02435 s
+MFLOPS: 19.5245
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.81
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 1.00135 s
+MFLOPS: 19.973
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.75
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.982095 s
+MFLOPS: 20.3646
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.47
+
+COMMAND Raxpy kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 1.00571 s
+MFLOPS: 19.8864
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.78
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.966913 s
+MFLOPS: 20.6844
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.42
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.959573 s
+MFLOPS: 20.8426
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.44
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.967474 s
+MFLOPS: 20.6724
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.37
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.969462 s
+MFLOPS: 20.63
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.44
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.945929 s
+MFLOPS: 21.1432
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.22
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.965711 s
+MFLOPS: 20.7101
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.38
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.961225 s
+MFLOPS: 20.8068
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.39
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.970056 s
+MFLOPS: 20.6174
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.49
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.963182 s
+MFLOPS: 20.7645
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.34
+
+COMMAND Raxpy kernel_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.968077 s
+MFLOPS: 20.6595
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.39
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.882204 s
+MFLOPS: 22.6705
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.76
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.854781 s
+MFLOPS: 23.3978
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.54
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.857284 s
+MFLOPS: 23.3295
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.43
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.880378 s
+MFLOPS: 22.7175
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.70
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.880147 s
+MFLOPS: 22.7235
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.82
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.884045 s
+MFLOPS: 22.6233
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.81
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.894738 s
+MFLOPS: 22.3529
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.78
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.881542 s
+MFLOPS: 22.6875
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.75
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.891919 s
+MFLOPS: 22.4236
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.91
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.879601 s
+MFLOPS: 22.7376
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.76
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.863896 s
+MFLOPS: 23.1509
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.45
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.889625 s
+MFLOPS: 22.4814
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.67
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.892199 s
+MFLOPS: 22.4165
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.66
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.885047 s
+MFLOPS: 22.5977
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.63
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.890513 s
+MFLOPS: 22.459
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.58
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.882023 s
+MFLOPS: 22.6751
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.57
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.887461 s
+MFLOPS: 22.5362
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.57
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.894543 s
+MFLOPS: 22.3578
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.67
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.901032 s
+MFLOPS: 22.1968
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.67
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.881994 s
+MFLOPS: 22.6759
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.62
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.893041 s
+MFLOPS: 22.3954
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.58
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.875739 s
+MFLOPS: 22.8379
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.61
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.896461 s
+MFLOPS: 22.31
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.65
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.864986 s
+MFLOPS: 23.1218
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.37
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.875243 s
+MFLOPS: 22.8508
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.50
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.876628 s
+MFLOPS: 22.8147
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.58
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.8894 s
+MFLOPS: 22.4871
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.64
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.878474 s
+MFLOPS: 22.7668
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.57
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.882893 s
+MFLOPS: 22.6528
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.59
+
+COMMAND Raxpy kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.884851 s
+MFLOPS: 22.6027
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.66
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 1/10
+Elapsed time: 1.20545 s
+MFLOPS: 16.5913
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.39
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 2/10
+Elapsed time: 1.26106 s
+MFLOPS: 15.8597
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.77
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 3/10
+Elapsed time: 1.22545 s
+MFLOPS: 16.3206
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.72
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 4/10
+Elapsed time: 1.23559 s
+MFLOPS: 16.1866
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.78
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 5/10
+Elapsed time: 1.26182 s
+MFLOPS: 15.8501
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.73
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 6/10
+Elapsed time: 1.25101 s
+MFLOPS: 15.9871
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.73
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 7/10
+Elapsed time: 1.23673 s
+MFLOPS: 16.1716
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.60
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 8/10
+Elapsed time: 1.23223 s
+MFLOPS: 16.2307
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.70
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 9/10
+Elapsed time: 1.2507 s
+MFLOPS: 15.991
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.71
+
+COMMAND Raxpy kernel_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII 10000000 512
+RUN 10/10
+Elapsed time: 1.24331 s
+MFLOPS: 16.0861
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.62
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 1.07895 s
+MFLOPS: 18.5365
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.79
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 1.11302 s
+MFLOPS: 17.9692
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.98
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 1.11706 s
+MFLOPS: 17.9042
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.02
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 1.11649 s
+MFLOPS: 17.9133
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.98
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 1.11418 s
+MFLOPS: 17.9504
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.06
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 1.10218 s
+MFLOPS: 18.1458
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.90
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 1.11299 s
+MFLOPS: 17.9696
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.02
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 1.13143 s
+MFLOPS: 17.6768
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.04
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 1.11717 s
+MFLOPS: 17.9023
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.02
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 1.1147 s
+MFLOPS: 17.942
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.99
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 1.19942 s
+MFLOPS: 16.6748
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.95
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 1.18574 s
+MFLOPS: 16.8671
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.95
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 1.19283 s
+MFLOPS: 16.7668
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.88
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 1.16225 s
+MFLOPS: 17.2081
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.71
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 1.19261 s
+MFLOPS: 16.7699
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.88
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 1.17739 s
+MFLOPS: 16.9867
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.74
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 1.20119 s
+MFLOPS: 16.6502
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.95
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 1.20336 s
+MFLOPS: 16.6201
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 10.12
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 1.19922 s
+MFLOPS: 16.6774
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.97
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 1.1674 s
+MFLOPS: 17.1321
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.81
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 1.10987 s
+MFLOPS: 18.0202
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.88
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 1.10544 s
+MFLOPS: 18.0923
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.82
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 1.09779 s
+MFLOPS: 18.2184
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.79
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 1.09838 s
+MFLOPS: 18.2086
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.79
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 1.09975 s
+MFLOPS: 18.1859
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.82
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 1.11405 s
+MFLOPS: 17.9525
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.84
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 1.10569 s
+MFLOPS: 18.0882
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.79
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 1.0924 s
+MFLOPS: 18.3083
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.77
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 1.10052 s
+MFLOPS: 18.1732
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.84
+
+COMMAND Raxpy kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 1.07924 s
+MFLOPS: 18.5316
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 9.51
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 1/10
+Elapsed time: 1.10816 s
+MFLOPS: 18.0479
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 2/10
+Elapsed time: 1.08731 s
+MFLOPS: 18.394
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 3/10
+Elapsed time: 1.09552 s
+MFLOPS: 18.2561
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 4/10
+Elapsed time: 1.09183 s
+MFLOPS: 18.3179
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 5/10
+Elapsed time: 1.08567 s
+MFLOPS: 18.4219
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.49
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 6/10
+Elapsed time: 1.1091 s
+MFLOPS: 18.0327
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 7/10
+Elapsed time: 1.1001 s
+MFLOPS: 18.1802
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 8/10
+Elapsed time: 1.10008 s
+MFLOPS: 18.1806
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 9/10
+Elapsed time: 1.09314 s
+MFLOPS: 18.2959
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.43
+
+COMMAND Raxpy kernel_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII 10000000 512
+RUN 10/10
+Elapsed time: 1.10265 s
+MFLOPS: 18.1382
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.64
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.879881 s
+MFLOPS: 22.7303
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.14
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.876317 s
+MFLOPS: 22.8228
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.02
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.885332 s
+MFLOPS: 22.5904
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.04
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.870805 s
+MFLOPS: 22.9673
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.889992 s
+MFLOPS: 22.4721
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.16
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.878654 s
+MFLOPS: 22.7621
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.873719 s
+MFLOPS: 22.8907
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.93
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.886129 s
+MFLOPS: 22.5701
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.08
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.886924 s
+MFLOPS: 22.5498
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.99
+
+COMMAND Raxpy kernel_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_05_mkII_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.872964 s
+MFLOPS: 22.9104
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.87759 s
+MFLOPS: 22.7897
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.41
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.889159 s
+MFLOPS: 22.4932
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.882581 s
+MFLOPS: 22.6608
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.879422 s
+MFLOPS: 22.7422
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.41
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.88223 s
+MFLOPS: 22.6698
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.44
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.876165 s
+MFLOPS: 22.8268
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.37
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.86395 s
+MFLOPS: 23.1495
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.24
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.871769 s
+MFLOPS: 22.9419
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.39
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.884231 s
+MFLOPS: 22.6185
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.37
+
+COMMAND Raxpy kernel_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_06_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.882123 s
+MFLOPS: 22.6726
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.39
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0509163 s
+MFLOPS: 392.801
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.47
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0513195 s
+MFLOPS: 389.715
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.48
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.0536235 s
+MFLOPS: 372.971
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.52
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0506639 s
+MFLOPS: 394.758
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.53
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0521798 s
+MFLOPS: 383.29
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.49
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0503078 s
+MFLOPS: 397.552
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.46
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0516846 s
+MFLOPS: 386.963
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.63
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0504823 s
+MFLOPS: 396.179
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.44
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0530102 s
+MFLOPS: 377.286
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.52
+
+COMMAND Raxpy kernel_openmp_01_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0514682 s
+MFLOPS: 388.59
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.47
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0516279 s
+MFLOPS: 387.387
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.97
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0527792 s
+MFLOPS: 378.937
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0521358 s
+MFLOPS: 383.613
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.94
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0529142 s
+MFLOPS: 377.971
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.13
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0517767 s
+MFLOPS: 386.274
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.00
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0514297 s
+MFLOPS: 388.881
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.04
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0518821 s
+MFLOPS: 385.489
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.00
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0531038 s
+MFLOPS: 376.621
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.01
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0516927 s
+MFLOPS: 386.902
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.05
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.0534506 s
+MFLOPS: 374.177
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.04
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0473246 s
+MFLOPS: 422.613
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0477218 s
+MFLOPS: 419.095
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0486227 s
+MFLOPS: 411.33
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.86
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0494063 s
+MFLOPS: 404.807
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.73
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0482826 s
+MFLOPS: 414.228
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0483486 s
+MFLOPS: 413.663
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0477622 s
+MFLOPS: 418.741
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0479875 s
+MFLOPS: 416.775
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0477403 s
+MFLOPS: 418.933
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.16
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0492818 s
+MFLOPS: 405.829
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.71
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0477153 s
+MFLOPS: 419.153
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0481229 s
+MFLOPS: 415.603
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.68
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.0504491 s
+MFLOPS: 396.439
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.68
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.0495917 s
+MFLOPS: 403.293
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0479781 s
+MFLOPS: 416.856
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0476346 s
+MFLOPS: 419.863
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.65
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0486227 s
+MFLOPS: 411.331
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0476178 s
+MFLOPS: 420.011
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.65
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0490868 s
+MFLOPS: 407.442
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Raxpy kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0478333 s
+MFLOPS: 418.119
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0499478 s
+MFLOPS: 400.418
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.68
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0501589 s
+MFLOPS: 398.733
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.56
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.0505778 s
+MFLOPS: 395.43
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.60
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0496572 s
+MFLOPS: 402.761
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.71
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0507763 s
+MFLOPS: 393.884
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.63
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0499402 s
+MFLOPS: 400.479
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.54
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.05065 s
+MFLOPS: 394.866
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.59
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.050801 s
+MFLOPS: 393.693
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.59
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0499084 s
+MFLOPS: 400.734
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.58
+
+COMMAND Raxpy kernel_openmp_02_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.050739 s
+MFLOPS: 394.174
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.58
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0518003 s
+MFLOPS: 386.098
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.98
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0495258 s
+MFLOPS: 403.83
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.93
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0495417 s
+MFLOPS: 403.7
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.05
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0603347 s
+MFLOPS: 331.484
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.98
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0503196 s
+MFLOPS: 397.46
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0494541 s
+MFLOPS: 404.415
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.01
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0502686 s
+MFLOPS: 397.863
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0501262 s
+MFLOPS: 398.993
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.92
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0539128 s
+MFLOPS: 370.969
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.91
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.0525308 s
+MFLOPS: 380.729
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0503598 s
+MFLOPS: 397.143
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0506401 s
+MFLOPS: 394.944
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0494611 s
+MFLOPS: 404.358
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0490857 s
+MFLOPS: 407.451
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0491755 s
+MFLOPS: 406.706
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0494266 s
+MFLOPS: 404.64
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0490052 s
+MFLOPS: 408.12
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.75
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.051392 s
+MFLOPS: 389.165
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.05013 s
+MFLOPS: 398.963
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0501581 s
+MFLOPS: 398.74
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0525756 s
+MFLOPS: 380.405
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0525112 s
+MFLOPS: 380.871
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.0522792 s
+MFLOPS: 382.561
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.90
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.051639 s
+MFLOPS: 387.304
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.82
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0501965 s
+MFLOPS: 398.434
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0495013 s
+MFLOPS: 404.03
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0494505 s
+MFLOPS: 404.445
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0496701 s
+MFLOPS: 402.657
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.82
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0514487 s
+MFLOPS: 388.737
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Raxpy kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0519289 s
+MFLOPS: 385.142
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0519418 s
+MFLOPS: 385.046
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.55
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0497794 s
+MFLOPS: 401.773
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.59
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.0495128 s
+MFLOPS: 403.936
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.54
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0504915 s
+MFLOPS: 396.106
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.50
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0493674 s
+MFLOPS: 405.126
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.53
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0516178 s
+MFLOPS: 387.463
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.53
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0536607 s
+MFLOPS: 372.712
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.51
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0504246 s
+MFLOPS: 396.632
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.48
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0498779 s
+MFLOPS: 400.979
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.58
+
+COMMAND Raxpy kernel_openmp_03_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0495323 s
+MFLOPS: 403.777
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.55
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0496929 s
+MFLOPS: 402.472
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0490048 s
+MFLOPS: 408.123
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.97
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.049043 s
+MFLOPS: 407.805
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.97
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0490473 s
+MFLOPS: 407.77
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.93
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0496585 s
+MFLOPS: 402.751
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0505265 s
+MFLOPS: 395.832
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.94
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0510866 s
+MFLOPS: 391.492
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.94
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0484343 s
+MFLOPS: 412.93
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.97
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0484413 s
+MFLOPS: 412.871
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.02
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.049188 s
+MFLOPS: 406.604
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.01
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.051218 s
+MFLOPS: 390.488
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0513993 s
+MFLOPS: 389.111
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0496833 s
+MFLOPS: 402.55
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0537113 s
+MFLOPS: 372.361
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0514358 s
+MFLOPS: 388.835
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0493713 s
+MFLOPS: 405.094
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0515156 s
+MFLOPS: 388.232
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0484042 s
+MFLOPS: 413.187
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0491113 s
+MFLOPS: 407.239
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.82
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0499234 s
+MFLOPS: 400.614
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0487944 s
+MFLOPS: 409.883
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0487262 s
+MFLOPS: 410.457
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.0503946 s
+MFLOPS: 396.868
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.0501692 s
+MFLOPS: 398.651
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0489235 s
+MFLOPS: 408.802
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0493057 s
+MFLOPS: 405.632
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.04941 s
+MFLOPS: 404.776
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0505082 s
+MFLOPS: 395.976
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0493791 s
+MFLOPS: 405.03
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Raxpy kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0494894 s
+MFLOPS: 404.127
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0522572 s
+MFLOPS: 382.723
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.55
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.052215 s
+MFLOPS: 383.032
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.55
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.0506475 s
+MFLOPS: 394.886
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.59
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0519449 s
+MFLOPS: 385.023
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.56
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0539245 s
+MFLOPS: 370.889
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.56
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0532548 s
+MFLOPS: 375.553
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.57
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0516091 s
+MFLOPS: 387.528
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.57
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0517983 s
+MFLOPS: 386.113
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.63
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.051266 s
+MFLOPS: 390.122
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.56
+
+COMMAND Raxpy kernel_openmp_04_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0540204 s
+MFLOPS: 370.23
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.52
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 1/10
+Elapsed time: 0.0529044 s
+MFLOPS: 378.04
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 2/10
+Elapsed time: 0.0525903 s
+MFLOPS: 380.298
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.98
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 3/10
+Elapsed time: 0.0499592 s
+MFLOPS: 400.326
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 4/10
+Elapsed time: 0.0514324 s
+MFLOPS: 388.86
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.93
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 5/10
+Elapsed time: 0.0541975 s
+MFLOPS: 369.021
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.91
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 6/10
+Elapsed time: 0.0511334 s
+MFLOPS: 391.134
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 7/10
+Elapsed time: 0.0497541 s
+MFLOPS: 401.977
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.92
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 8/10
+Elapsed time: 0.0530694 s
+MFLOPS: 376.865
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.97
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 9/10
+Elapsed time: 0.0516179 s
+MFLOPS: 387.462
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.92
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING 10000000 512
+RUN 10/10
+Elapsed time: 0.050441 s
+MFLOPS: 396.503
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0517917 s
+MFLOPS: 386.162
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0507583 s
+MFLOPS: 394.024
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0528154 s
+MFLOPS: 378.677
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.0586225 s
+MFLOPS: 341.166
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0561446 s
+MFLOPS: 356.223
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0506098 s
+MFLOPS: 395.181
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0514565 s
+MFLOPS: 388.678
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.0519218 s
+MFLOPS: 385.194
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.0505695 s
+MFLOPS: 395.495
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0520894 s
+MFLOPS: 383.955
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 1/10
+Elapsed time: 0.0525873 s
+MFLOPS: 380.32
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 2/10
+Elapsed time: 0.0504882 s
+MFLOPS: 396.132
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 3/10
+Elapsed time: 0.0508346 s
+MFLOPS: 393.433
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 4/10
+Elapsed time: 0.0500742 s
+MFLOPS: 399.407
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 5/10
+Elapsed time: 0.0513387 s
+MFLOPS: 389.57
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 6/10
+Elapsed time: 0.0535478 s
+MFLOPS: 373.498
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 7/10
+Elapsed time: 0.0500545 s
+MFLOPS: 399.565
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 8/10
+Elapsed time: 0.0506877 s
+MFLOPS: 394.573
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 9/10
+Elapsed time: 0.0501917 s
+MFLOPS: 398.472
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Raxpy kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH 10000000 512
+RUN 10/10
+Elapsed time: 0.0505256 s
+MFLOPS: 395.839
+L1 Norm of difference: 5.741e-149
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0497412 s
+MFLOPS: 402.081
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.62
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.050723 s
+MFLOPS: 394.298
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.54
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.049472 s
+MFLOPS: 404.269
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.55
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0542451 s
+MFLOPS: 368.697
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.60
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.0505921 s
+MFLOPS: 395.318
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.59
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0512676 s
+MFLOPS: 390.11
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.57
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0515919 s
+MFLOPS: 387.658
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.59
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0528139 s
+MFLOPS: 378.688
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.56
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0503596 s
+MFLOPS: 397.144
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.59
+
+COMMAND Raxpy kernel_openmp_05_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0503985 s
+MFLOPS: 396.837
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.57
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 1/10
+Elapsed time: 0.0479569 s
+MFLOPS: 417.041
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.38
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 2/10
+Elapsed time: 0.0475167 s
+MFLOPS: 420.905
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.36
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 3/10
+Elapsed time: 0.0484388 s
+MFLOPS: 412.892
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.45
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 4/10
+Elapsed time: 0.047814 s
+MFLOPS: 418.287
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.37
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 5/10
+Elapsed time: 0.0511266 s
+MFLOPS: 391.186
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.43
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 6/10
+Elapsed time: 0.0477608 s
+MFLOPS: 418.753
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.37
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 7/10
+Elapsed time: 0.0474138 s
+MFLOPS: 421.818
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.39
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 8/10
+Elapsed time: 0.047691 s
+MFLOPS: 419.367
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.38
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 9/10
+Elapsed time: 0.049002 s
+MFLOPS: 408.146
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.41
+
+COMMAND Raxpy kernel_openmp_05_mkII_FMA /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_05_mkII_FMA 10000000 512
+RUN 10/10
+Elapsed time: 0.0495763 s
+MFLOPS: 403.418
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.41
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 1/10
+Elapsed time: 0.0491407 s
+MFLOPS: 406.994
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.48
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 2/10
+Elapsed time: 0.0492532 s
+MFLOPS: 406.065
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.54
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 3/10
+Elapsed time: 0.0485112 s
+MFLOPS: 412.276
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.50
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 4/10
+Elapsed time: 0.0497105 s
+MFLOPS: 402.329
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.56
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 5/10
+Elapsed time: 0.049562 s
+MFLOPS: 403.535
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.55
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 6/10
+Elapsed time: 0.0492426 s
+MFLOPS: 406.152
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.77
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 7/10
+Elapsed time: 0.0494676 s
+MFLOPS: 404.305
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.48
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 8/10
+Elapsed time: 0.0489601 s
+MFLOPS: 408.496
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.51
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 9/10
+Elapsed time: 0.0487901 s
+MFLOPS: 409.919
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.71
+
+COMMAND Raxpy kernel_openmp_06_mkII /home/docker/gmpfrxx_mkII/build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_06_mkII 10000000 512
+RUN 10/10
+Elapsed time: 0.0488362 s
+MFLOPS: 409.532
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.39

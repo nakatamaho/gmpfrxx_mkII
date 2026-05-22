@@ -1,507 +1,345 @@
 <!-- SPDX-License-Identifier: BSD-2-Clause -->
-
 # 01_Raxpy
 
-This directory benchmarks the GMP real AXPY operation
+This benchmark measures GMP `mpf` RAXPY,
 
 ```text
-y_i = y_i + alpha * x_i
+y[i] <- alpha * x[i] + y[i]
 ```
 
-with random `mpf` data at a fixed precision.  It compares raw `mpf_t`,
-upstream `gmpxx.h`, and `gmpxx_mkII`.
+for raw C GMP, upstream `gmpxx`, and `gmpxx_mkII` wrapper kernels. The purpose is to identify which source-level temporary lifetime and fixed-precision fastpath choices change the generated hot loop and the repeat-10 MFLOPS distribution.
 
 ## Build
 
-From the repository root:
+Build from the repository root:
 
 ```bash
 cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release
-cmake --build build_bench_release -j
+cmake --build build_bench_release -j --target \
+    Raxpy_gmp_C_native_01 Raxpy_gmp_C_native_openmp_01 \
+    Raxpy_gmp_kernel_01_orig Raxpy_gmp_kernel_01_mkII Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH \
+    Raxpy_gmp_kernel_02_orig Raxpy_gmp_kernel_02_mkII Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH \
+    Raxpy_gmp_kernel_03_orig Raxpy_gmp_kernel_03_mkII Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH \
+    Raxpy_gmp_kernel_04_orig Raxpy_gmp_kernel_04_mkII Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH \
+    Raxpy_gmp_kernel_openmp_01_orig Raxpy_gmp_kernel_openmp_01_mkII Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH \
+    Raxpy_gmp_kernel_openmp_02_orig Raxpy_gmp_kernel_openmp_02_mkII Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH \
+    Raxpy_gmp_kernel_openmp_03_orig Raxpy_gmp_kernel_openmp_03_mkII Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
 ```
 
-The executables are created under:
+Each executable takes:
 
 ```text
-build_bench_release/benchmarks/gmp/01_Raxpy/
-```
-
-## Run
-
-Run the whole GMP benchmark set through the top-level runner:
-
-```bash
-benchmarks/common/run_benchmarks.sh build_bench_release 512
-```
-
-That runner also executes Rdot, Rgemv, and Rgemm.  For a quick full-suite
-smoke run, pass smaller dimensions:
-
-```bash
-benchmarks/common/run_benchmarks.sh build_bench_release 128 1000 1000 32 32 16 16 16 \
-    benchmarks/gmp/results-smoke
-```
-
-The second vector-size argument is used for Raxpy.  Individual executables take:
-
-```text
-<vector size> <precision>
+< vector-size > < precision-bits >
 ```
 
 Example:
 
 ```bash
-build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 512
-```
-
-For repeat runs, keep OpenMP affinity explicit:
-
-```bash
 OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
-build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII \
-    10000000 512
+    build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 512
 ```
-
-## Reading Results
-
-Each executable prints `Elapsed time`, `MFLOPS`, `L1 Norm of difference`, and a
-`Result OK` or `Result NG` check against the reference result.  Higher MFLOPS is
-better when comparing runs with the same vector size, precision, compiler
-flags, and machine.
-
-Unlike the current Rdot executables, the Raxpy executables do not yet print a
-timed-kernel GMP allocator profile.  The current analysis therefore relies on
-source shape, release disassembly, MFLOPS, and the fact that every recorded
-variant reports `Result OK`.
-
-Variant names:
-
-- `C_native`: raw `mpf_t` implementation.
-- `C_native_openmp`: raw `mpf_t` implementation with OpenMP.
-- `*_orig`: upstream `gmpxx.h`.
-- `*_mkII`: this header with the default precision policy.
-- `*_mkII_FIXED_PRECISION_FASTPATH`: this header with `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
-- `*_openmp_*`: OpenMP variant where the eager benchmark provided one.
-
-## Recorded go.sh Sample
-
-![Raxpy serial benchmark](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_serial_Raxpy.png)
-
-![Raxpy OpenMP benchmark](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_openmp_Raxpy.png)
-
-The committed sample run uses the original `go.sh` dimensions:
-
-```text
-N = 100000000, precision = 512
-```
-
-Results are stored in [../results_raw/Linux_Ryzen_3970X_32-Core/](../results_raw/Linux_Ryzen_3970X_32-Core/):
-
-- [Raw log](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331.log)
-- [Serial plot](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_serial_Raxpy.png)
-- [Serial PDF](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_serial_Raxpy.pdf)
-- [OpenMP plot](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_openmp_Raxpy.png)
-- [OpenMP PDF](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_openmp_Raxpy.pdf)
-
-All Raxpy variants in that run report `Result OK`.
-
-The OpenMP variants improve the timed AXPY body by about 11-14x in the
-recorded run.  As with Rdot, total wall time is dominated by allocation,
-random initialization, and verification for the 100000000-element vectors.
-The serial `kernel_02` family is faster than `kernel_01` in this run, and the
-`mkII`/`mkII_FIXED_PRECISION_FASTPATH` results stay close to the upstream `gmpxx.h`
-variants.
-
-That sample predates the `kernel_03`, `kernel_04`, and `kernel_openmp_03`
-source-shape split.  New runs should use the common runner so the additional
-variants are included.
-
-## Recorded Repeat-10 Samples
-
-The focused local repeat-10 runs used:
-
-```text
-precision = 512
-OMP_NUM_THREADS = 32
-OMP_PLACES = cores
-OMP_PROC_BIND = spread
-```
-
-Results are stored in this directory:
-
-- [N=1000000 raw log](results_raw/benchmark_raxpy_n1000000_p512_repeat10_20260515_142301.log)
-- [N=1000000 CSV](results_raw/benchmark_raxpy_n1000000_p512_repeat10_20260515_142301.csv)
-- [N=10000000 raw log](results_raw/benchmark_raxpy_n10000000_p512_repeat10_20260515_142725.log)
-- [N=10000000 CSV](results_raw/benchmark_raxpy_n10000000_p512_repeat10_20260515_142725.csv)
-
-All 23 variants report `Result OK` in all 10 runs for both vector sizes.
-
-### N = 10000000
-
-The larger run is the more stable Raxpy comparison because OpenMP startup and
-short timed-loop noise are much smaller than in the N=1000000 run.
-
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
-|---------|------------|------------|------------|----------------|
-| `C_native_01` | 35.018 | 33.987 | 33.650 | Raw serial baseline. |
-| `kernel_01_orig` | 29.989 | 29.301 | 28.535 | Expression-first source; product materialization remains costly. |
-| `kernel_01_mkII` | 29.310 | 29.021 | 28.636 | Same performance class as upstream `kernel_01`. |
-| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 33.342 | 32.439 | 32.158 | Fastpath narrows most of the gap to C native. |
-| `kernel_02_orig` | 32.767 | 31.994 | 31.672 | Reused product object with `temp = alpha; temp *= x[i]`; pays a copy of `alpha`. |
-| `kernel_02_mkII` | 32.017 | 31.776 | 31.549 | Same source shape as upstream `kernel_02`. |
-| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 32.096 | 31.838 | 31.549 | Fastpath does not materially change this explicit reused-temp shape. |
-| `kernel_03_orig` | 34.092 | 33.815 | 33.385 | Reused product object assigned from the expression. |
-| `kernel_03_mkII` | 34.670 | 33.831 | 33.394 | Best default wrapper shape; same broad class as C native. |
-| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 33.996 | 33.584 | 33.243 | Same class as default `kernel_03`; no per-element construction remains to remove. |
-| `kernel_04_orig` | 28.639 | 28.352 | 28.179 | Loop-local product object; intentionally allocation-heavy. |
-| `kernel_04_mkII` | 28.774 | 28.347 | 27.966 | Same loop-local lifetime problem as upstream `kernel_04`. |
-| `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 28.708 | 28.397 | 28.153 | Fastpath does not rescue explicit loop-local object construction. |
-| `C_native_openmp_01` | 394.852 | 392.036 | 390.058 | Raw OpenMP baseline. |
-| `kernel_openmp_01_orig` | 388.015 | 383.869 | 376.694 | Expression-first OpenMP source, still in the same broad class at N=10000000. |
-| `kernel_openmp_01_mkII` | 392.292 | 388.232 | 381.875 | Default mkII OpenMP 01; close to C native for this larger vector. |
-| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 394.603 | 392.394 | 387.789 | Fastpath reaches the C native OpenMP range. |
-| `kernel_openmp_02_orig` | 396.014 | 390.650 | 371.507 | Reused product object per thread with an explicit copy of `alpha`. |
-| `kernel_openmp_02_mkII` | 394.085 | 390.414 | 379.509 | Same source shape as upstream OpenMP 02. |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 394.174 | 391.085 | 382.559 | Same broad class; variation is mostly OpenMP noise. |
-| `kernel_openmp_03_orig` | 396.093 | 392.837 | 389.932 | Reused expression-product object per thread. |
-| `kernel_openmp_03_mkII` | 395.652 | 393.917 | 391.485 | Best average in this run, effectively C native OpenMP class. |
-| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 394.839 | 392.832 | 388.654 | Same class as default OpenMP 03. |
-
-The main serial result is that `kernel_03` is the useful wrapper shape.  It
-keeps product storage outside the loop and lets the loop reduce to one
-`mpf_mul` plus one `mpf_add`, just like the C native implementation.
-`kernel_04` is deliberately worse because it constructs the product object
-inside the loop.
-
-The main OpenMP result is different from Rdot: Raxpy has no reduction and no
-final `critical` accumulation.  Each iteration writes an independent `y[i]`.
-At N=10000000 all OpenMP source shapes run in a narrow range around 384-394
-average MFLOPS.  The small ordering differences among C native, upstream
-`gmpxx.h`, default `mkII`, and fixed-precision `mkII` should be read as
-OpenMP/memory-system variance unless disassembly shows a different call
-sequence.
-
-### N = 1000000
-
-The N=1000000 run is useful as a noise check.  It has the same correctness
-result but more variation in OpenMP timings because the timed loop is short.
-
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
-|---------|------------|------------|------------|----------------|
-| `C_native_01` | 34.688 | 34.123 | 33.374 | Raw serial baseline, consistent with the larger run. |
-| `kernel_03_mkII` | 34.256 | 33.992 | 33.642 | Same class as C native serial. |
-| `kernel_04_mkII` | 28.766 | 28.496 | 28.121 | Loop-local product construction remains slower. |
-| `C_native_openmp_01` | 276.262 | 263.095 | 248.973 | Raw OpenMP baseline for the shorter vector. |
-| `kernel_openmp_03_mkII` | 276.148 | 244.324 | 216.526 | Same max class, but more run-to-run spread. |
-| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 273.727 | 252.460 | 214.295 | Same short-loop variance class. |
-
-The shorter-vector data supports the same serial conclusion, but it should not
-be overinterpreted for OpenMP.  With only 1000000 elements, the timed loop is
-around a few milliseconds and affinity, first-touch placement, scheduling, and
-verification effects are much easier to see.
 
 ## Kernel Shapes
 
-The timed body is `_Raxpy()` in each benchmark executable.  The `Raxpy()`
-helper in `Raxpy.hpp` is the post-run correctness reference and should not be
-mixed with the timed-kernel source-shape comparison.
+| Variant | Timed source shape | Temporary/resource policy | Purpose |
+|---------|--------------------|---------------------------|---------|
+| `01` | `y[i] += alpha * x[i]` | Product is expressed as an ET expression. | Test expression materialization and fixed-precision scratch behavior. |
+| `02` | `temp = alpha; temp *= x[i]; y[i] += temp` | One reusable product object outside the loop. | Test explicit copy-then-multiply source shape. |
+| `03` | `temp = alpha * x[i]; y[i] += temp` | One reusable product object outside the loop. | Test the closest C++ wrapper spelling to the raw C reusable-temp baseline. |
+| `04` | `mpf_class temp = alpha * x[i]; y[i] += temp` | Product object lifetime is inside the loop. | Stress per-iteration construction. |
+| `openmp_01` | Parallel `01` | OpenMP static partition; per-worker resources where applicable. | Compare expression spelling under parallel memory traffic. |
+| `openmp_02` | Parallel `02` | One reusable product object per worker. | Compare explicit copy-then-multiply under OpenMP. |
+| `openmp_03` | Parallel `03` | One reusable product object per worker. | Compare reusable-product wrapper source with raw C OpenMP. |
 
-Raxpy is not a reduction.  Unlike Rdot, it has no final accumulator dependency
-to break and no serial merge step; each iteration updates one independent
-`y[i]`.  The useful wrapper stages therefore focus on expression fusion and
-product-temporary lifetime rather than accumulator unrolling.
+## C Native Equivalent Kernels
 
-| Variant | Timed source shape | Temporary policy | Hotpath meaning |
-|---------|--------------------|------------------|-----------------|
-| `C_native_01` | `mpf_mul(temp, alpha, x[i]); mpf_add(y[i], y[i], temp);` | Raw `mpf_t` product object initialized once. | Baseline: one multiply and one add per element, no wrapper temporary. |
-| `C_native_openmp_01` | Same raw `mpf_t` AXPY inside `#pragma omp for`. | Each iteration writes an independent `y[i]`. | Measures parallel raw-GMP throughput without reduction overhead. |
-| `kernel_01` | `y[i] += alpha * x[i];` | Expression-first source shape. | Tests whether wrapper expression templates or fixed-precision fast paths can avoid materializing a product object. |
-| `kernel_02` | `temp = alpha; temp *= x[i]; y[i] += temp;` | One reusable product object, assigned from `alpha` and multiplied in place. | Avoids per-iteration construction but pays an `mpf_set`-like copy of `alpha` each iteration. |
-| `kernel_03` | `temp = alpha * x[i]; y[i] += temp;` | One reusable product object assigned from the product expression. | Best current wrapper shape: reusable storage with direct expression assignment. |
-| `kernel_04` | `mpf_class temp = alpha * x[i]; y[i] += temp;` | Loop-local product object. | Deliberately allocation-heavy comparison point for product-object lifetime. |
-| `kernel_openmp_01` | Parallel `y[i] += alpha * x[i];` | Expression-first source shape per element. | Parallel version of `kernel_01`; no reduction or critical section is needed. |
-| `kernel_openmp_02` | Parallel `temp = alpha; temp *= x[i]; y[i] += temp;` | One private reusable product object per thread. | Parallel version of `kernel_02`; uses `schedule(static)` for contiguous chunks. |
-| `kernel_openmp_03` | Parallel `temp = alpha * x[i]; y[i] += temp;` | One private reusable product object per thread. | Parallel version of `kernel_03`; useful for comparing expression assignment against in-place multiply under OpenMP. |
+| C native kernel | Closest wrapper kernel | Equivalence |
+|-----------------|------------------------|-------------|
+| `C_native_01` | `kernel_03_orig`, `kernel_03_mkII`, `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | Same timed hot-loop class: one reusable product temporary outside the loop, one `mpf_mul`, and one `mpf_add` per element. |
+| `C_native_openmp_01` | `kernel_openmp_03_orig`, `kernel_openmp_03_mkII`, `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | Same per-worker class: each worker owns one product temporary and updates a contiguous slice of `y`. |
+| none | `kernel_01_*` | Expression-template spelling has no exact raw C source equivalent; the fixed-precision mkII build can still lower into the reusable-temp performance class. |
+| none | `kernel_02_*` | Copy-then-multiply source shape is intentionally different from the raw C multiply-into-temp baseline. |
+| none | `kernel_04_*` | Loop-local construction stress case; the raw C matrix does not include an init/clear-inside-loop equivalent. |
 
-Four-way unrolled variants are intentionally not part of the current Raxpy
-split.  Rdot uses unrolls to test accumulator dependency and reduction
-behavior.  Raxpy already exposes independent destination updates, so `kernel_05`
-and `kernel_06` should only be added if profiling shows real loop-overhead or
-store/load scheduling headroom after the 01-04/OpenMP 01-03 split.
+## Recorded Run
 
-## Hotpath Expectations
+| Field | Value |
+|-------|-------|
+| Run ID | `raxpy_gmp_n10000000_p512_repeat10_20260522_214039` |
+| Problem size | `N=10000000` |
+| Precision | `512` bits |
+| Repeat count | `10` |
+| Compiler | `g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0` |
+| Build type | `Release` |
+| CPU | `AMD Ryzen Threadripper 3970X 32-Core Processor` |
+| OS | `Linux 7c430536ccee 6.8.0-94-generic x86_64` |
+| OpenMP | `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, `OMP_PROC_BIND=spread` |
+| Raw directory | `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039` |
+| Raw log | `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/benchmark_raxpy_gmp_n10000000_p512_repeat10.log` |
+| Raw CSV | `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raw_raxpy_gmp_n10000000_p512_repeat10.csv` |
+| Summary CSV | `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv` |
+| Correctness | All variants reported `Result OK` for all repeats. |
 
-The important serial comparison follows directly from the source shapes and the
-Rdot disassembly pattern.
-
-`C_native_01` and `kernel_03` should both reduce to this call class inside the
-loop:
-
-```text
-mpf_mul(product, alpha, x[i])
-mpf_add(y[i], y[i], product)
-```
-
-That is why `kernel_03_mkII` averages 33.831 MFLOPS while `C_native_01`
-averages 33.987 MFLOPS in the N=10000000 repeat-10 run.
-
-`kernel_02` keeps the product object outside the loop but computes the product
-through an explicit copy of `alpha`:
-
-```text
-mpf_set(product, alpha)
-mpf_mul(product, product, x[i])
-mpf_add(y[i], y[i], product)
-```
-
-That extra copy keeps it behind `kernel_03`.
-
-`kernel_04` constructs the product object inside the loop.  It is the Raxpy
-counterpart to allocation-heavy Rdot source shapes and remains the slowest
-serial family in the current run.
-
-For OpenMP 03, the expected hot loop is also the same class as C native
-OpenMP: one multiply, one add, pointer movement, and a loop branch.  Unlike
-Rdot, there is no per-thread accumulator and no final `critical`, so once
-product lifetime is under control the wrapper variants are mainly measuring
-the same GMP arithmetic and memory traffic.
-
-## Hotpath Disassembly Comparison
-
-The snippets below are from the local release binaries under
-`build_bench_release/benchmarks/gmp/01_Raxpy/` and were extracted with:
+Plot regeneration:
 
 ```bash
-objdump -Cd --no-show-raw-insn <binary> | c++filt
+python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py \
+    benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv \
+    --output-prefix benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10 \
+    --title-prefix "GMP Raxpy N=10000000 precision=512 repeat=10"
 ```
 
-Addresses are build-specific.  The relevant comparison is the call sequence
-inside the timed `_Raxpy()` loop.
+![Serial GMP Raxpy repeat-10 MFLOPS](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_serial.png)
 
-`Raxpy_gmp_C_native_01` is the serial baseline.  The loop has one product
-temporary initialized outside the loop and one `__gmpf_mul` plus one
-`__gmpf_add` per element:
+![OpenMP GMP Raxpy repeat-10 MFLOPS](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_openmp.png)
 
-```asm
-3d10: mov    %rbp,%rdx          # x[i]
-3d13: mov    %r14,%rsi          # alpha
-3d16: mov    %rsp,%rdi          # temp
-3d19: call   __gmpf_mul@plt
-3d22: mov    %rbx,%rsi          # y[i]
-3d25: mov    %rbx,%rdi          # y[i]
-3d28: mov    %rsp,%rdx          # temp
-3d2b: call   __gmpf_add@plt
-3d30: add    $0x18,%rbp
-3d34: add    $0x18,%rbx
-3d3b: jne    3d10
-```
+## Headline Results
 
-Default `kernel_01_mkII` is source-clean but materializes the expression
-product in the loop.  Its hotpath pays `mpf_get_prec`, `mpf_init2`, `mpf_mul`,
-`mpf_add`, and `mpf_clear` per element:
+| Metric | Variant | Value | Interpretation |
+|--------|---------|-------|----------------|
+| Best serial max | `kernel_03_orig` | 34.735 MFLOPS | Reusable product object is the best serial class. |
+| Best serial average | `kernel_03_orig` | 33.908 MFLOPS | Same `03` reusable-product source is also best by repeat average. |
+| Best OpenMP max | `kernel_openmp_03_orig` | 396.989 MFLOPS | OpenMP top variants differ by small run-to-run variance. |
+| Best OpenMP average | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 393.019 MFLOPS | Fixed-precision expression spelling has the best repeat average in this run. |
+| Best average OpenMP / best average serial | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` / `kernel_03_orig` | 11.59x | Parallel scaling is useful, but far from 32x because each update streams scattered GMP limb storage. |
 
-```asm
-5130: mov    %rbx,%rdi          # y[i]
-5133: call   __gmpf_get_prec@plt
-5138: mov    %rbp,%rdi          # scoped product
-513e: call   __gmpf_init2@plt
-5143: mov    %r12,%rdx          # x[i]
-5146: mov    %r14,%rsi          # alpha
-5149: mov    %rbp,%rdi          # scoped product
-514c: call   __gmpf_mul@plt
-5151: mov    %rbp,%rdx          # scoped product
-5154: mov    %rbx,%rsi          # y[i]
-5157: mov    %rbx,%rdi          # y[i]
-515a: call   __gmpf_add@plt
-516e: call   __gmpf_clear@plt
-5176: jne    5130
-```
+## Serial Results
 
-`kernel_01_mkII_FIXED_PRECISION_FASTPATH` removes the usual per-element
-`mpf_init2`/`mpf_clear` path when thread-local scratch is available, but it is
-still heavier than C native or `kernel_03`: each iteration checks scratch state
-and may fall back to local initialization if no scratch slot is usable.
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
+|---------|------------|------------|------------|------------|---------------|----------------|
+| `C_native_01` | 33.910 | 33.634 | 33.378 | 0.032 | 0.180 | Raw C baseline with one `mpf_t temp` initialized outside the timed loop; one `mpf_mul` and one `mpf_add` per element. |
+| `kernel_01_orig` | 29.329 | 28.969 | 28.620 | 0.059 | 0.243 | Expression spelling `y[i] += alpha * x[i]`; product materialization is controlled by upstream gmpxx expression lowering. |
+| `kernel_01_mkII` | 29.504 | 28.928 | 27.968 | 0.220 | 0.469 | mkII expression spelling `y[i] += alpha * x[i]`; baseline expression path remains below the reusable-temp class in serial. |
+| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 33.042 | 32.259 | 31.806 | 0.137 | 0.370 | Expression spelling with fixed-precision scratch fastpath; removes enough wrapper overhead to approach the raw reusable-temp baseline. |
+| `kernel_02_orig` | 32.026 | 31.802 | 31.560 | 0.020 | 0.141 | One reusable product object, copy `alpha` then multiply in place; avoids loop-local construction but has an extra copy source shape. |
+| `kernel_02_mkII` | 32.468 | 31.869 | 31.412 | 0.066 | 0.258 | mkII copy-then-multiply reusable object; same performance class as upstream orig for this source shape. |
+| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 31.977 | 31.754 | 31.441 | 0.029 | 0.171 | Fixed-precision build does not materially change this explicit reusable-temp source shape. |
+| `kernel_03_orig` | 34.735 | 33.908 | 33.389 | 0.198 | 0.445 | Reusable product object assigned from `alpha * x[i]`; closest C++ equivalent to the raw C reusable-temp kernel and best serial class in this run. |
+| `kernel_03_mkII` | 34.056 | 33.682 | 33.287 | 0.051 | 0.225 | mkII reusable-product source; disassembly shows the same one `mpf_mul` plus one `mpf_add` hot loop class as C native. |
+| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 34.553 | 33.759 | 33.235 | 0.136 | 0.369 | Fixed-precision build keeps the same hot loop class as mkII `03`; differences are within serial run variance. |
+| `kernel_04_orig` | 28.649 | 28.281 | 28.035 | 0.039 | 0.197 | Loop-local product object; temporary lifetime is inside the loop and remains expensive. |
+| `kernel_04_mkII` | 28.792 | 28.409 | 27.724 | 0.106 | 0.326 | mkII loop-local product object; same slow class as upstream orig because source-level lifetime dominates. |
+| `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 25.775 | 25.301 | 25.003 | 0.036 | 0.190 | Fixed-precision fastpath does not rescue the explicit loop-local construction shape in this run. |
 
-```asm
-5dd1: cmpb   $0x0,%fs:0xffffffffffffff59
-5de0: cmpb   $0x0,%fs:0xffffffffffffff89
-5def: cmpb   $0x0,%fs:0xffffffffffffffb9
-5dfe: cmpb   $0x0,%fs:0xffffffffffffffe9
-5e2d: lea    0x20(%rsp),%rdi    # fallback product path
-5e32: mov    (%rsp),%rsi        # alpha
-5e36: mov    %rbp,%rdx          # x[i]
-5e39: call   __gmpf_mul@plt
-5e43: lea    0x20(%rsp),%rdx
-5e48: mov    %rbx,%rsi          # y[i]
-5e4b: mov    %rbx,%rdi          # y[i]
-5e54: call   __gmpf_add@plt
-5e70: je     5edb
-```
+<details>
+<summary>Serial results sorted by Max MFLOPS</summary>
 
-`kernel_02_mkII` reuses a product object, but the loop explicitly copies
-`alpha` before multiplying:
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS |
+|------|---------|------------|------------|------------|------------|
+| 1 | `kernel_03_orig` | 34.735 | 33.908 | 33.389 | 0.198 |
+| 2 | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 34.553 | 33.759 | 33.235 | 0.136 |
+| 3 | `kernel_03_mkII` | 34.056 | 33.682 | 33.287 | 0.051 |
+| 4 | `C_native_01` | 33.910 | 33.634 | 33.378 | 0.032 |
+| 5 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 33.042 | 32.259 | 31.806 | 0.137 |
+| 6 | `kernel_02_mkII` | 32.468 | 31.869 | 31.412 | 0.066 |
+| 7 | `kernel_02_orig` | 32.026 | 31.802 | 31.560 | 0.020 |
+| 8 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 31.977 | 31.754 | 31.441 | 0.029 |
+| 9 | `kernel_01_mkII` | 29.504 | 28.928 | 27.968 | 0.220 |
+| 10 | `kernel_01_orig` | 29.329 | 28.969 | 28.620 | 0.059 |
+| 11 | `kernel_04_mkII` | 28.792 | 28.409 | 27.724 | 0.106 |
+| 12 | `kernel_04_orig` | 28.649 | 28.281 | 28.035 | 0.039 |
+| 13 | `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 25.775 | 25.301 | 25.003 | 0.036 |
 
-```asm
-5160: mov    %r14,%rsi          # alpha
-5163: mov    %rsp,%rdi          # temp
-5166: call   __gmpf_set@plt
-516b: mov    %r12,%rdx          # x[i]
-516e: mov    %rsp,%rsi          # temp
-5171: mov    %rsp,%rdi          # temp
-5174: call   __gmpf_mul@plt
-5179: mov    %rsp,%rdx          # temp
-517c: mov    %rbp,%rsi          # y[i]
-517f: mov    %rbp,%rdi          # y[i]
-5182: call   __gmpf_add@plt
-5196: jne    5160
-```
+</details>
 
-`kernel_03_mkII` is the closest wrapper loop to C native.  The reusable product
-object is initialized before the loop, and the loop itself is one multiply plus
-one add:
+<details>
+<summary>Serial results sorted by Avg MFLOPS</summary>
 
-```asm
-51b0: mov    %rbp,%rdx          # x[i]
-51b3: mov    %r14,%rsi          # alpha
-51b6: mov    %rsp,%rdi          # temp
-51b9: call   __gmpf_mul@plt
-51be: mov    %rsp,%rdx          # temp
-51c1: mov    %rbx,%rsi          # y[i]
-51c4: mov    %rbx,%rdi          # y[i]
-51c7: call   __gmpf_add@plt
-51d0: add    $0x18,%rbp
-51d4: add    $0x18,%rbx
-51db: jne    51b0
-```
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS |
+|------|---------|------------|------------|------------|------------|
+| 1 | `kernel_03_orig` | 34.735 | 33.908 | 33.389 | 0.198 |
+| 2 | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 34.553 | 33.759 | 33.235 | 0.136 |
+| 3 | `kernel_03_mkII` | 34.056 | 33.682 | 33.287 | 0.051 |
+| 4 | `C_native_01` | 33.910 | 33.634 | 33.378 | 0.032 |
+| 5 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 33.042 | 32.259 | 31.806 | 0.137 |
+| 6 | `kernel_02_mkII` | 32.468 | 31.869 | 31.412 | 0.066 |
+| 7 | `kernel_02_orig` | 32.026 | 31.802 | 31.560 | 0.020 |
+| 8 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 31.977 | 31.754 | 31.441 | 0.029 |
+| 9 | `kernel_01_orig` | 29.329 | 28.969 | 28.620 | 0.059 |
+| 10 | `kernel_01_mkII` | 29.504 | 28.928 | 27.968 | 0.220 |
+| 11 | `kernel_04_mkII` | 28.792 | 28.409 | 27.724 | 0.106 |
+| 12 | `kernel_04_orig` | 28.649 | 28.281 | 28.035 | 0.039 |
+| 13 | `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 25.775 | 25.301 | 25.003 | 0.036 |
 
-`kernel_04_mkII` deliberately constructs the product object inside the loop.
-The hotpath therefore has precision discovery, `mpf_init2`, multiply, add, and
-clear per element:
+</details>
 
-```asm
-51f0: mov    %rbp,%rdi          # x[i]
-51f3: call   __gmpf_get_prec@plt
-51f8: mov    %r14,%rdi          # alpha
-51fe: call   __gmpf_get_prec@plt
-5203: lea    0x10(%rsp),%rdi    # loop-local product
-5212: call   __gmpf_init2@plt
-5217: mov    %rbp,%rdx          # x[i]
-521a: mov    %r14,%rsi          # alpha
-5222: call   __gmpf_mul@plt
-5227: lea    0x10(%rsp),%rdx
-522c: mov    %rbx,%rsi          # y[i]
-522f: mov    %rbx,%rdi          # y[i]
-5232: call   __gmpf_add@plt
-5248: call   __gmpf_clear@plt
-5252: jne    51f0
-```
+## OpenMP Results
 
-OpenMP 03 confirms why the N=10000000 OpenMP results are tightly clustered.
-The C native, upstream `gmpxx.h`, and mkII worker loops all have the same
-essential arithmetic body: one `__gmpf_mul`, one `__gmpf_add`, pointer
-increments, and a branch.  The OpenMP worker setup and final barrier are
-outside that inner arithmetic loop.
+| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
+|---------|------------|------------|------------|------------|---------------|----------------|
+| `C_native_openmp_01` | 395.204 | 390.629 | 385.749 | 9.120 | 3.020 | Raw C OpenMP baseline; each worker reuses a private `mpf_t temp`, then updates its assigned contiguous `y` slice. |
+| `kernel_openmp_01_orig` | 391.480 | 386.546 | 381.336 | 7.425 | 2.725 | OpenMP expression spelling; generated worker loop stays in the same broad class as the raw OpenMP baseline. |
+| `kernel_openmp_01_mkII` | 394.816 | 390.218 | 377.921 | 19.320 | 4.395 | mkII OpenMP expression spelling; one low repeat creates higher variance, but max performance matches the top class. |
+| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 395.063 | 393.019 | 391.013 | 1.567 | 1.252 | OpenMP expression spelling with fixed-precision scratch; best average MFLOPS in this run and low variance. |
+| `kernel_openmp_02_orig` | 393.950 | 391.322 | 386.174 | 6.306 | 2.511 | OpenMP copy-then-multiply reusable object; per-thread temp is outside the worker loop. |
+| `kernel_openmp_02_mkII` | 394.626 | 390.735 | 386.714 | 6.079 | 2.466 | mkII OpenMP copy-then-multiply source; same performance class as orig and C native. |
+| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 394.185 | 391.939 | 387.192 | 3.474 | 1.864 | Fixed-precision build is still in the same OpenMP memory-traffic class. |
+| `kernel_openmp_03_orig` | 396.989 | 392.657 | 389.225 | 4.681 | 2.164 | OpenMP reusable product object; best max MFLOPS in this run, but only marginally above other top-class OpenMP variants. |
+| `kernel_openmp_03_mkII` | 394.688 | 390.391 | 375.463 | 27.591 | 5.253 | mkII OpenMP reusable-product source; one slow repeat increases variance while the max remains top-class. |
+| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 394.542 | 392.564 | 388.286 | 2.706 | 1.645 | Fixed-precision OpenMP reusable-product source; average is close to the best OpenMP class with lower variance than baseline mkII `03`. |
 
-`Raxpy_gmp_C_native_openmp_01`:
+<details>
+<summary>OpenMP results sorted by Max MFLOPS</summary>
 
-```asm
-3850: mov    %rbx,%rdx          # x[i]
-3853: mov    %r13,%rsi          # alpha
-3856: mov    %rbp,%rdi          # temp
-385d: call   __gmpf_mul@plt
-3862: mov    %r15,%rsi          # y[i]
-3865: mov    %r15,%rdi          # y[i]
-3868: mov    %rbp,%rdx          # temp
-386b: call   __gmpf_add@plt
-3878: cmp    %r14,%r12
-387b: jne    3850
-```
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS |
+|------|---------|------------|------------|------------|------------|
+| 1 | `kernel_openmp_03_orig` | 396.989 | 392.657 | 389.225 | 4.681 |
+| 2 | `C_native_openmp_01` | 395.204 | 390.629 | 385.749 | 9.120 |
+| 3 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 395.063 | 393.019 | 391.013 | 1.567 |
+| 4 | `kernel_openmp_01_mkII` | 394.816 | 390.218 | 377.921 | 19.320 |
+| 5 | `kernel_openmp_03_mkII` | 394.688 | 390.391 | 375.463 | 27.591 |
+| 6 | `kernel_openmp_02_mkII` | 394.626 | 390.735 | 386.714 | 6.079 |
+| 7 | `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 394.542 | 392.564 | 388.286 | 2.706 |
+| 8 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 394.185 | 391.939 | 387.192 | 3.474 |
+| 9 | `kernel_openmp_02_orig` | 393.950 | 391.322 | 386.174 | 6.306 |
+| 10 | `kernel_openmp_01_orig` | 391.480 | 386.546 | 381.336 | 7.425 |
 
-`Raxpy_gmp_kernel_openmp_03_orig`:
+</details>
 
-```asm
-2f60: mov    0x8(%r15),%rsi     # alpha
-2f64: mov    %r12,%rdx          # x[i]
-2f67: lea    0x10(%rsp),%rdi    # temp
-2f74: call   __gmpf_mul@plt
-2f79: mov    %rbp,%rsi          # y[i]
-2f7c: mov    %rbp,%rdi          # y[i]
-2f7f: lea    0x10(%rsp),%rdx    # temp
-2f84: call   __gmpf_add@plt
-2f90: jne    2f60
-```
+<details>
+<summary>OpenMP results sorted by Avg MFLOPS</summary>
 
-`Raxpy_gmp_kernel_openmp_03_mkII`:
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS |
+|------|---------|------------|------------|------------|------------|
+| 1 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 395.063 | 393.019 | 391.013 | 1.567 |
+| 2 | `kernel_openmp_03_orig` | 396.989 | 392.657 | 389.225 | 4.681 |
+| 3 | `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 394.542 | 392.564 | 388.286 | 2.706 |
+| 4 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 394.185 | 391.939 | 387.192 | 3.474 |
+| 5 | `kernel_openmp_02_orig` | 393.950 | 391.322 | 386.174 | 6.306 |
+| 6 | `kernel_openmp_02_mkII` | 394.626 | 390.735 | 386.714 | 6.079 |
+| 7 | `C_native_openmp_01` | 395.204 | 390.629 | 385.749 | 9.120 |
+| 8 | `kernel_openmp_03_mkII` | 394.688 | 390.391 | 375.463 | 27.591 |
+| 9 | `kernel_openmp_01_mkII` | 394.816 | 390.218 | 377.921 | 19.320 |
+| 10 | `kernel_openmp_01_orig` | 391.480 | 386.546 | 381.336 | 7.425 |
 
-```asm
-4d30: mov    0x8(%r15),%rsi     # alpha
-4d34: mov    %r13,%rdx          # x[i]
-4d37: lea    0x10(%rsp),%rdi    # temp
-4d44: call   __gmpf_mul@plt
-4d49: mov    %rbp,%rsi          # y[i]
-4d4c: mov    %rbp,%rdi          # y[i]
-4d4f: lea    0x10(%rsp),%rdx    # temp
-4d54: call   __gmpf_add@plt
-4d60: jne    4d30
-```
+</details>
 
-## Bandwidth Estimate
+## Memory Bandwidth Estimates
 
-For 512-bit `mpf_t`, a lower-bound payload model counts only the mantissa data
-for `x` and `y`:
+These are model estimates, not hardware-counter measurements. At 512-bit precision, this report assumes 8 used limbs per `mpf_t` value, 8 bytes per limb, and a 24-byte `mpf_t` header on this x86_64 build. The timed RAXPY loop reads `x`, reads and writes `y`, and keeps `alpha` hot.
+
+| Model | Bytes/element |
+|-------|---------------|
+| Limb-only active traffic | `x` limbs read 64 B + `y` limbs read 64 B + `y` limbs write 64 B = 192 B |
+| Header-inclusive active traffic | `x` header+limbs read 88 B + `y` header+limbs read 88 B + `y` header+limbs write 88 B = 264 B |
+| Timed active footprint | `x` + `y` headers and limbs: about 1.76 GB for `N=10000000`, excluding allocator metadata. |
+| Full check footprint | `x` + `y` + `yy`: about 2.64 GB, but `yy` is outside the timed RAXPY loop. |
+
+Conversion formula:
 
 ```text
-x read  = 64 bytes
-y read  = 64 bytes
-y write = 64 bytes
-minimum payload = 192 bytes/element
+GB/s = MFLOPS * bytes_per_element / 2000
 ```
 
-Using the N=10000000 average MFLOPS:
+| Case | MFLOPS source | Bytes/element model | Estimated GB/s | Notes |
+|------|---------------|---------------------|----------------|-------|
+| Best serial average `kernel_03_orig` | 33.908 | Limb-only active traffic: 192 B/element | 3.26 | Model estimate, not hardware counters. |
+| Best serial average `kernel_03_orig` | 33.908 | Header-inclusive active traffic: 264 B/element | 4.48 | Model estimate, not hardware counters. |
+| Best OpenMP average `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 393.019 | Limb-only active traffic: 192 B/element | 37.73 | Model estimate, not hardware counters. |
+| Best OpenMP average `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 393.019 | Header-inclusive active traffic: 264 B/element | 51.88 | Model estimate, not hardware counters. |
+| Best OpenMP max `kernel_openmp_03_orig` | 396.989 | Limb-only active traffic: 192 B/element | 38.11 | Model estimate, not hardware counters. |
+| Best OpenMP max `kernel_openmp_03_orig` | 396.989 | Header-inclusive active traffic: 264 B/element | 52.40 | Model estimate, not hardware counters. |
 
-| Variant | Avg MFLOPS | Avg Melem/s | Minimum payload GB/s | With product-temp local traffic GB/s |
-|---------|------------|-------------|----------------------|--------------------------------------|
-| `kernel_openmp_03_mkII` | 393.917 | 196.958 | 37.82 | 63.03 |
-| `kernel_openmp_03_orig` | 392.837 | 196.419 | 37.71 | 62.85 |
-| `C_native_openmp_01` | 392.036 | 196.018 | 37.64 | 62.73 |
-| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 392.832 | 196.416 | 37.71 | 62.85 |
-| `C_native_01` | 33.987 | 16.993 | 3.26 | 5.44 |
-| `kernel_03_mkII` | 33.831 | 16.915 | 3.25 | 5.41 |
+## Hotpath Disassembly
 
-The minimum payload number is the useful DRAM lower bound.  The product
-temporary is per thread and should usually be cache resident, so the higher
-number is better read as local cache traffic rather than required memory-bus
-bandwidth.
+Representative command shape:
+
+```bash
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/01_Raxpy/<binary>
+```
+
+`C_native_01` has one `mpf_t temp` initialized before the loop and cleared after the loop. The hot loop has exactly one `__gmpf_mul` and one `__gmpf_add` per element.
+
+```asm
+3c0d: call   __gmpf_init@plt
+3c20: mov    %rbp,%rdx        # x[i]
+3c23: mov    %r14,%rsi        # alpha
+3c26: mov    %rsp,%rdi        # temp
+3c2d: call   __gmpf_mul@plt
+3c32: mov    %rbx,%rsi        # y[i]
+3c35: mov    %rbx,%rdi        # y[i]
+3c38: mov    %rsp,%rdx        # temp
+3c3b: call   __gmpf_add@plt
+3c40: add    $0x18,%rbp       # x++
+3c44: add    $0x18,%rbx       # y++
+3c4b: jne    3c20
+3c50: call   __gmpf_clear@plt
+```
+
+`kernel_03_orig` lowers to the same hot-loop class as C native: reusable temporary outside the loop and one multiply/add pair inside the loop.
+
+```asm
+328d: call   __gmpf_init@plt
+32a0: mov    %rbp,%rdx        # x[i]
+32a3: mov    %r14,%rsi        # alpha
+32a6: mov    %rsp,%rdi        # temp
+32a9: call   __gmpf_mul@plt
+32ae: mov    %rsp,%rdx        # temp
+32b1: mov    %rbx,%rsi        # y[i]
+32b4: mov    %rbx,%rdi        # y[i]
+32b7: call   __gmpf_add@plt
+32c0: add    $0x18,%rbp
+32c4: add    $0x18,%rbx
+32cb: jne    32a0
+32d0: call   __gmpf_clear@plt
+```
+
+`kernel_03_mkII` also reaches the same arithmetic loop. The wrapper-owned default precision guard and `mpf_init2` occur before the loop; the loop body still has one backend multiply and one backend add per element.
+
+```asm
+5076: movzbl default_mpf_precision_guard,%eax
+5089: test   %al,%al
+509e: call   __gmpf_init2@plt
+50c0: mov    %rbp,%rdx        # x[i]
+50c3: mov    %r14,%rsi        # alpha
+50c6: mov    %rsp,%rdi        # temp
+50c9: call   __gmpf_mul@plt
+50ce: mov    %rsp,%rdx        # temp
+50d1: mov    %rbx,%rsi        # y[i]
+50d4: mov    %rbx,%rdi        # y[i]
+50d7: call   __gmpf_add@plt
+50e0: add    $0x18,%rbp
+50e4: add    $0x18,%rbx
+50eb: jne    50c0
+50f0: call   __gmpf_clear@plt
+```
+
+`kernel_openmp_03_orig` and `kernel_openmp_03_mkII` both use an OpenMP outlined worker. The hot worker loop is still one `mpf_mul` plus one `mpf_add`; the `GOMP_barrier` and `mpf_clear` are after the per-worker loop.
+
+```asm
+# kernel_openmp_03_orig worker
+2f60: mov    0x8(%r15),%rsi   # alpha
+2f64: mov    %r12,%rdx        # x[i]
+2f67: lea    0x10(%rsp),%rdi  # temp
+2f74: call   __gmpf_mul@plt
+2f79: mov    %rbp,%rsi        # y[i]
+2f7c: mov    %rbp,%rdi        # y[i]
+2f7f: lea    0x10(%rsp),%rdx  # temp
+2f84: call   __gmpf_add@plt
+2f89: add    $0x18,%rbp
+2f90: jne    2f60
+2f92: call   GOMP_barrier@plt
+2f9c: call   __gmpf_clear@plt
+
+# kernel_openmp_03_mkII worker
+4c70: mov    0x8(%r15),%rsi   # alpha
+4c74: mov    %r13,%rdx        # x[i]
+4c77: lea    0x10(%rsp),%rdi  # temp
+4c84: call   __gmpf_mul@plt
+4c89: mov    %rbp,%rsi        # y[i]
+4c8c: mov    %rbp,%rdi        # y[i]
+4c8f: lea    0x10(%rsp),%rdx  # temp
+4c94: call   __gmpf_add@plt
+4c99: add    $0x18,%rbp
+4ca0: jne    4c70
+4ca2: call   GOMP_barrier@plt
+4cac: call   __gmpf_clear@plt
+```
 
 ## Lessons Learned
 
-The current GMP Raxpy benchmark series is simpler than Rdot because Raxpy has
-no reduction.  Once the loop writes independent `y[i]` elements, OpenMP can
-parallelize the operation without a final GMP critical section.  The remaining
-wrapper-specific question is product temporary lifetime.
+The main serial boundary is temporary lifetime. `kernel_03` and C native share the practical reusable-product baseline, while `kernel_04` pays for loop-local product construction and drops into a slower class. `kernel_01_mkII_FIXED_PRECISION_FASTPATH` improves the expression spelling, but the explicit reusable-product source remains the clean serial baseline.
 
-The decisive source-shape distinction is:
+OpenMP changes the dominant boundary. Most OpenMP variants cluster around 390 MFLOPS average because the worker hot loop is the same multiply/add sequence and the workload streams `mpf_t` headers plus separately allocated limb storage. The best max and best average variants differ, so single-run ordering is less meaningful than performance class and variance.
 
-| Shape | Result |
-|-------|--------|
-| `y[i] += alpha * x[i]` | Best source readability, but default expression materialization can still cost enough to lose to explicit reusable storage in serial. |
-| `temp = alpha; temp *= x[i]; y[i] += temp` | Reuses storage but adds an explicit copy of `alpha` each iteration. |
-| `temp = alpha * x[i]; y[i] += temp` with `temp` outside the loop | Recommended optimized wrapper shape; it matches the raw C native multiply-add call class. |
-| `mpf_class temp = alpha * x[i]` inside the loop | Negative-result benchmark; it makes object lifetime intentionally bad and remains slow. |
-
-`kernel_03` is therefore the recommended serial wrapper shape for this
-`mpf_class`-compatible API.  It is explicit enough to control lifetime while
-still using expression assignment for the product.
-
-The OpenMP result is less sensitive than Rdot once N is large enough.  At
-N=10000000, C native OpenMP, upstream OpenMP 03, default mkII OpenMP 03, and
-fixed-precision mkII OpenMP 03 all sit around 392-394 average MFLOPS.  Small
-ordering changes among them should be treated as run-to-run variance unless a
-hotpath disassembly shows a different inner loop.
-
-Four-way unroll 05/06 is not currently justified for Raxpy.  Rdot needed those
-experiments to test accumulator dependency and product-temporary reuse.  Raxpy
-already has independent destination updates and the current OpenMP 03 result
-is in the C native range.  Keeping the suite at 01-04 plus OpenMP 01-03 makes
-the source-shape comparison sharper; add 05/06 later only if profiling points
-to a real remaining loop-level bottleneck.
+The generated hot loop is the deciding evidence. For the important `03` variants, C native, upstream orig, and mkII all execute one backend multiply and one backend add per element with temporary initialization outside the hot loop. Wrapper syntax is not the bottleneck once the source shape makes temporary lifetime explicit.
