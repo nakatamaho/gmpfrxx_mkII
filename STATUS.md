@@ -21555,3 +21555,31 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: Remove Obsolete Top-Level Benchmark Raw Results
+
+Implemented features:
+- Removed obsolete top-level raw benchmark result directories:
+  - `benchmarks/gmp/results_raw`
+  - `benchmarks/mpfr/results_raw`
+  - `benchmarks/results_raw`
+- Left benchmark-specific result directories outside those requested paths untouched.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. This phase removes obsolete benchmark output data only.
+
+Exact commands run:
+- `rm -rf benchmarks/gmp/results_raw benchmarks/mpfr/results_raw benchmarks/results_raw`
+- `ls -ld benchmarks/gmp/results_raw benchmarks/mpfr/results_raw benchmarks/results_raw`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- Requested directories removed: PASS, all three paths report `No such file or directory`.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked benchmark artifacts outside the requested paths remain untouched.
