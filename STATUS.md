@@ -21688,3 +21688,69 @@ Pass/fail result:
 Known issues:
 - Existing untracked benchmark artifacts outside `benchmarks/mpfr/00_Rdot` remain untouched.
 - This phase intentionally does not rewrite the README structure or regenerate disassembly snippets.
+
+## Phase: Remove MPFR Rdot GMP Comparison Section
+
+Implemented features:
+- Removed the `Comparison with GMP Rdot` section from `benchmarks/mpfr/00_Rdot/README.md` by request.
+- Kept the surrounding MPFR Rdot benchmark report sections and result tables unchanged.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. This phase is documentation-only.
+
+Exact commands run:
+- `rg -n "^## |Comparison with GMP Rdot|GMP Rdot" benchmarks/mpfr/00_Rdot/README.md`
+- `python3 - <<'PY' ...` to remove the section between `## Comparison with GMP Rdot` and `## Lessons Learned`.
+- `rg -n "^## |Comparison with GMP Rdot" benchmarks/mpfr/00_Rdot/README.md`
+- `git diff -- benchmarks/mpfr/00_Rdot/README.md`
+- `git diff --check`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- Section removal: PASS, `Comparison with GMP Rdot` no longer appears in `benchmarks/mpfr/00_Rdot/README.md`.
+- Diff whitespace check: PASS.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked benchmark artifacts outside this phase remain untouched.
+
+## Phase: Refresh GMP Rdot Benchmark README Template Run
+
+Implemented features:
+- Added `benchmarks/README_TEMPLATE.md` with the benchmark README section order requested for future reports.
+- Removed stale GMP Rdot result data under `benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207`.
+- Rebuilt and reran only `benchmarks/gmp/00_Rdot` for `N=10000000`, `precision=512`, and `repeat=10`.
+- Generated fresh raw CSV, summary CSV, and serial/OpenMP plots under `benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144`.
+- Rewrote `benchmarks/gmp/00_Rdot/README.md` to the requested benchmark template structure: Build, Kernel Shapes, C Native Equivalent Kernels, Recorded Run, Headline Results, Serial Results, OpenMP Results, Memory Bandwidth Estimates, Hotpath Disassembly, and Lessons Learned.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. This phase refreshes benchmark data and report text only.
+
+Exact commands run:
+- `python3 - <<'PY' ...` to create `benchmarks/README_TEMPLATE.md`.
+- `rm -rf benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260516_210207`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target ...` with the GMP 00_Rdot target set only.
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread ...` custom GMP 00_Rdot repeat runner for 48 variants.
+- `python3 - <<'PY' ...` to generate raw and summary CSV files from the fresh log.
+- `python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144/summary_rdot_gmp_n10000000_p512_repeat10.csv --output-prefix benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144/rdot_gmp_n10000000_p512_repeat10 --title-prefix "GMP Rdot N=10000000 precision=512 repeat=10"`
+- `rg -n "^#|^## " benchmarks/gmp/00_Rdot/README.md benchmarks/README_TEMPLATE.md`
+- `git diff --check`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- GMP 00_Rdot target rebuild: PASS.
+- GMP 00_Rdot benchmark run: PASS, 48 variants completed with successful correctness checks.
+- CSV and plot generation: PASS.
+- README template structure check: PASS.
+- Diff whitespace check: PASS.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked benchmark artifacts outside this phase remain untouched.

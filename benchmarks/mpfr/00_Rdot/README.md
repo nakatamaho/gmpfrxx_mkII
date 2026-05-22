@@ -594,22 +594,6 @@ register.  Generic wrapper kernels must either use the generic default lookup
 path or rely on a stable-rounding build path that may still show a TLS load in
 the disassembly.
 
-## Comparison with GMP Rdot
-
-GMP `mpf` arithmetic does not pass a rounding mode to every hot operation.
-After product temporary construction is removed, the GMP wrapper hotpath can get
-very close to the raw C loop.
-
-MPFR has an extra policy axis.  Avoiding product temporary materialization is
-necessary, but not sufficient: the hot loop also needs a stable or explicit
-rounding source.  The current data show three useful MPFR tiers:
-
-| Tier | Representative | Avg MFLOPS | Meaning |
-|------|----------------|-----------:|---------|
-| Generic wrapper expression | `kernel_01_mkII` | 16.490 | Product materialization and generic rounding delivery are both visible. |
-| Stable reusable product / unrolled product | `kernel_03_mkII_STABLE_ROUNDING`, `kernel_06_mkII_STABLE_ROUNDING` | 23.307, 23.515 | Reused product objects plus stable rounding reach the raw C range. |
-| Stable or explicit FMA | `kernel_01_mkII_STABLE_ROUNDING_FMA`, `kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 23.151, 23.150 | One `mpfr_fma` per element; explicit context removes the TLS load. |
-
 ## Lessons Learned
 
 `kernel_01` is the source shape that tests MPFR FMA fusion.  The expression
