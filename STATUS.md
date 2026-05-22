@@ -20736,3 +20736,44 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Route MPFR Math Rounding Through Current Context
+
+Implemented features:
+- Changed `mpfrxx::mpfr_class::default_rounding()` to use
+  `current_mpfr_rounding_mode()` so eager MPFR math functions and constants use
+  the stable-rounding cache when that build option is enabled instead of
+  falling through `default_options()` and reading precision, exponent range,
+  and rounding from MPFR TLS.
+- Documented that eager MPFR math functions observe the current thread default
+  rounding mode and `mpfrxx::rounding_mode_scope`, while
+  `mpfrxx::with_context(...)` remains a target-bound assignment and compound
+  assignment handle rather than a dynamic math-function context.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `SPECIFICATIONS.md`
+- `STATUS.md`
+
+Exact commands run:
+- `git status --short`
+- `rg -n "static mpfr_rnd_t default_rounding|unary_mpfr_math|binary_mpfr_math|with_context|rounding_mode_scope|Eager|math functions|current_mpfr_rounding_mode" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/environment.hpp SPECIFICATIONS.md STATUS.md`
+- `sed -n '580,610p' include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n '270,310p' SPECIFICATIONS.md`
+- `sed -n '575,610p' SPECIFICATIONS.md`
+- `tail -n 80 STATUS.md`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/mpfr_impl.hpp SPECIFICATIONS.md STATUS.md`
+- `rg -n "test_mpfr_math|test_mpfr_rounding_scope|rounding_scope|mpfr_math" tests CMakeLists.txt`
+- `cmake --build build -j --target test_mpfr_math test_mpfr_rounding_scope test_mpfr_rounding_scope_stable`
+- `ctest --test-dir build -R 'test_mpfr_math|test_mpfr_rounding_scope' --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 3/3 tests passed.
+
+Known issues:
+- None for this phase.

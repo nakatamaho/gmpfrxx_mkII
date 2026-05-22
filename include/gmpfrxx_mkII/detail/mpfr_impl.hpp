@@ -601,7 +601,7 @@ public:
 
     static mpfr_rnd_t default_rounding() noexcept
     {
-        return default_rounding_mode();
+        return gmpfrxx_mkII::detail::current_mpfr_rounding_mode();
     }
 
 private:

@@ -293,6 +293,13 @@ builds can place one scope around a numeric loop and avoid repeated MPFR
 default-rounding getter calls in wrapper arithmetic. Nested scopes are
 supported.
 
+Eager MPFR math functions, such as `sin`, `cos`, `exp`, `log`, and constants
+such as `const_pi`, use the calling thread's current MPFR default rounding mode.
+They therefore observe `mpfrxx::rounding_mode_scope` and the stable-rounding
+cache, but they are not affected by `mpfrxx::with_context(...)`. Use a
+rounding-mode scope or explicit future math overloads when a math function
+itself needs a non-default rounding mode.
+
 ## GMP MPF Default Precision
 
 GMP's `mpf_set_default_prec()` and `mpf_get_default_prec()` are process-global
@@ -592,6 +599,11 @@ that check is needed. Builds that enable fixed-precision fastpaths may treat
 precision mismatch as a caller contract violation in hot paths and omit the
 check. Such builds are intended only for kernels where all participating
 objects are known to have the same fixed precision.
+
+The context handle is target-bound. It applies to assignment and compound
+assignment through that handle; it does not create a dynamic rounding scope and
+does not affect independently materialized eager math functions such as
+`sin(x)`, `exp(x)`, or `const_pi(precision)`.
 
 ### MPFR Comparisons
 
