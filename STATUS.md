@@ -21583,3 +21583,30 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked benchmark artifacts outside the requested paths remain untouched.
+
+
+## Phase: Organize Compile-Time Fast-Path Contracts
+
+Implemented features:
+- Centralized fixed-precision fastpath contract assertions behind `GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT` in `detail/config.hpp`.
+- Updated `mpf_class`, `mpfr_class`, and `mpc_class` move assignment fastpath diagnostics to use the shared contract assertion.
+- Reworked README fastpath documentation into a compile-time option table for fixed precision, stable rounding, and MPFR FMA.
+- Added the same compile-time fastpath option table to `SPECIFICATIONS.md` and clarified that the three options are independent contracts.
+- Updated `AGENTS.md` so all three canonical fastpath-related compile-time options are routed through `detail/config.hpp` and `build_options`.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. Existing fixed-precision, stable-rounding, FMA, and full-suite tests cover the affected paths.
+
+Exact commands run:
+- `cmake --build build_fresh_release_20260522 -j`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- Full rebuild from `build_fresh_release_20260522`: PASS.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked benchmark artifacts outside this phase remain untouched.

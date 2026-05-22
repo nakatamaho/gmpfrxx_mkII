@@ -29,6 +29,7 @@
 #ifndef GMPFRXX_MKII_DETAIL_CONFIG_HPP
 #define GMPFRXX_MKII_DETAIL_CONFIG_HPP
 
+#include <cassert>
 #include <ostream>
 
 #define GMPXX_MKII_DEFAULT_CONTEXT_FROZEN_ENV 0
@@ -55,6 +56,11 @@
 #else
 #define GMPFRXX_MKII_ALWAYS_INLINE inline
 #endif
+#endif
+
+#ifndef GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT
+#define GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT(condition, message) \
+    assert((condition) && "GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH contract violation: " message)
 #endif
 
 #if __has_include(<gmpfrxx_mkII/detail/version.hpp>)

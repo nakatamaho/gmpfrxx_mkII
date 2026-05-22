@@ -234,6 +234,22 @@ storage when relocation cost matters.
 `gmpxx::mpfc_class` follows the MPF move behavior through its two
 `gmpxx::mpf_class` components.
 
+## Compile-Time Fast-Path Options
+
+Fast-path options are compile-time contracts. They must be enabled deliberately
+for a translation unit or benchmark target; they are not environment variables
+and they must not silently change the default precision policy.
+
+| Option | Applies to | Required caller contract | Optimization class |
+|--------|------------|--------------------------|--------------------|
+| `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` | `gmpxx::mpf_class`, `mpfrxx::mpfr_class`, `mpfrxx::mpc_class` | All participating floating objects in the hot path have matching fixed precision. Mismatch is a contract violation. | Swap-based move assignment and bounded scratch reuse may skip precision-restoration work. |
+| `GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` | MPFR default-rounding paths; MPC paths that inherit MPFR default rounding | The default rounding mode is stable during the numeric kernel, except through wrapper APIs that refresh the cache. | Repeated MPFR default-rounding reads may be replaced by a cached thread-local value. |
+| `MPFRXX_ENABLE_FMA` | MPFR expression and compound-assignment paths | Fused MPFR rounding semantics are acceptable for supported expression shapes. | `mpfr_fma`, `mpfr_fmma`, `mpfr_fmms`, and related fused operations may replace materialized multiply-plus-add forms. |
+
+The three options are independent. Fixed precision does not imply stable
+rounding, stable rounding does not imply fused arithmetic, and FMA does not
+imply any fixed-precision contract.
+
 ## Fused Compound Assignment
 
 The fixed-precision fastpath flag must not control multiply-fusion semantics.

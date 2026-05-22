@@ -333,23 +333,27 @@ GMPXX_DEFAULT_MPF_PRECISION_BITS
 
 Existing-object assignment preserves destination precision. New expression materialization uses max leaf precision.
 
-## Fixed-Precision Fast Path
+## Compile-Time Fast Path Options
 
-Canonical option:
+Canonical options:
 
 ```text
 GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE
+MPFRXX_ENABLE_FMA
 ```
 
-Use preprocessor checks only in `detail/config.hpp`, then expose a constexpr flag such as:
+Use preprocessor checks only in `detail/config.hpp`, then expose constexpr flags such as:
 
 ```cpp
 gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath
+gmpfrxx_mkII::detail::build_options::assume_stable_mpfr_rounding_mode
+gmpfrxx_mkII::detail::build_options::enable_mpfr_fma
 ```
 
-The rest of the implementation must use `if constexpr`.
-
-Do not scatter `#ifdef GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
+The rest of the implementation must use `if constexpr` or ordinary runtime
+branches on these constexpr flags. Do not scatter `#ifdef` checks for these
+options outside `detail/config.hpp`.
 
 ## Type Promotion
 

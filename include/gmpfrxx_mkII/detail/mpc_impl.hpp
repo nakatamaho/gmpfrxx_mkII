@@ -382,10 +382,10 @@ public:
         }
 
         if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            assert((real_precision() == other.real_precision() &&
-                    imag_precision() == other.imag_precision()) &&
-                   "mpc_class move assignment precision mismatch under "
-                   "GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH");
+            GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT(
+                real_precision() == other.real_precision() &&
+                    imag_precision() == other.imag_precision(),
+                "mpc_class move assignment precision mismatch");
             mpc_swap(value_, other.value_);
         } else {
             if (real_precision() == other.real_precision() &&

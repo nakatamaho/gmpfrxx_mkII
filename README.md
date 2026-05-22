@@ -301,30 +301,20 @@ on `stderr`, and the corresponding built-in or inherited default remains in
 effect. Environment variable names are canonical pre-release API names; legacy
 aliases are not supported.
 
-The fixed-precision fast path is an opt-in compile-time contract, not a
-runtime environment variable:
+Compile-time fast-path options are explicit contracts, not runtime environment
+variables:
 
-```text
-GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
-```
+| Option | Applies to | Contract | Effect |
+|--------|------------|----------|--------|
+| `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH` | MPF, MPFR, MPC | All participating floating objects in the hot path keep matching fixed precision. Precision mismatch is a caller contract violation. | Enables fast swap-based move assignment and selected fixed-precision scratch reuse. |
+| `GMPFRXX_MKII_ASSUME_STABLE_MPFR_ROUNDING_MODE` | MPFR default-rounding paths, and MPC paths that inherit MPFR default rounding | The MPFR default rounding mode is fixed during the numeric kernel, except through wrapper setters or scopes that refresh the cache. | Uses a cached thread-local rounding value instead of repeated MPFR default-rounding reads. |
+| `MPFRXX_ENABLE_FMA` | MPFR expression and compound-assignment paths | Fused MPFR semantics are acceptable for supported shapes. | Enables `mpfr_fma`, `mpfr_fmma`, `mpfr_fmms`, and related fused paths. |
 
-When enabled, floating wrapper move assignment may assume matching source and
-destination precision. A mismatch is outside the normal left-hand-side precision
-preservation guarantee. The same option also enables fixed-precision scratch
-reuse in selected hot paths; it must only be used for programs or benchmark
-kernels that maintain fixed precision discipline.
-
-Compound-assignment multiply fusion is controlled by a separate compile-time
-option because it can change rounding semantics:
-
-```text
-MPFRXX_ENABLE_FMA
-```
-
-`MPFRXX_ENABLE_FMA` enables MPFR fused operations such as `mpfr_fma`, `mpfr_fmma`,
-and related paths for supported expression shapes. GMP MPF has no fused
-operation option; its direct `a += b * c` and `a -= b * c` paths still follow
-MPF two-step rounding.
+The fixed-precision option must not be used as a general optimization flag; it is
+only valid for programs or benchmark kernels that maintain fixed precision
+discipline. The FMA option is separate because it can change rounding semantics.
+GMP MPF has no fused operation option; its direct `a += b * c` and `a -= b * c`
+paths still follow MPF two-step rounding.
 
 ## Examples
 

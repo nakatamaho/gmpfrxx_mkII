@@ -308,9 +308,9 @@ public:
         }
 
         if constexpr (gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
-            assert((this->precision() == other.precision()) &&
-                   "mpfr_class move assignment precision mismatch under "
-                   "GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH");
+            GMPFRXX_MKII_ASSERT_FIXED_PRECISION_FASTPATH_CONTRACT(
+                this->precision() == other.precision(),
+                "mpfr_class move assignment precision mismatch");
             mpfr_swap(value_, other.value_);
         } else {
             if (this->precision() == other.precision()) {
