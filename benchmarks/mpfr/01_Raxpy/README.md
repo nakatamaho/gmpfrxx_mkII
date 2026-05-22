@@ -314,6 +314,49 @@ header-inclusive active traffic under this simple model.  This excludes MPFR
 internal metadata, allocator effects, cache-line overfetch, and repeated
 initialization outside the timed loop.
 
+## Comparison with GMP version
+
+The MPFR and GMP Raxpy runs should be compared by source-level class, not only
+by the fastest headline row.  In the serial split multiply/add class, GMP is
+still faster: the GMP `C_native_01` average is 33.634 MFLOPS, while the MPFR
+`C_native_01` average is 22.533 MFLOPS.  That comparison has the closest timed
+loop shape on both sides: one reusable product object, one multiply, and one add
+per element.
+
+The apparent MPFR advantage appears in the OpenMP and FMA classes.  The OpenMP
+split baselines are close (`C_native_openmp_01`: GMP 390.629 MFLOPS average,
+MPFR 397.921 MFLOPS average), which is small enough to treat as the same broad
+memory-traffic class.  The MPFR FMA paths are a different class: `mpfr_fma`
+removes the explicit product temporary and changes the backend arithmetic call
+sequence.  GMP `mpf_t` has no equivalent fused Raxpy call in this benchmark, so
+the MPFR FMA rows should not be interpreted as direct evidence that the MPFR
+split multiply/add implementation is faster than GMP.
+
+The object-layout model also needs care.  The GMP report's 88-byte
+header-inclusive estimate is an active-limb model: 24-byte `mpf_t` header plus
+8 active 64-bit limbs.  On this build, however, `mpf_init2(..., 512)` gives
+`_mp_prec = 9`, so the allocated-capacity footprint is closer to 96 bytes per
+value.  MPFR at 512 bits uses a 32-byte `mpfr_t` header and 8 limbs, also about
+96 bytes per value.  The useful distinction is therefore less "88 bytes versus
+96 bytes" and more the header stride and backend policy: GMP arrays advance by
+24 bytes per header, while MPFR arrays advance by 32 bytes per header, and MPFR
+adds an explicit rounding operand to each arithmetic call.
+
+This suggests the current performance picture:
+
+| Comparison point | GMP average | MPFR average | Interpretation |
+|------------------|------------:|-------------:|----------------|
+| Serial split C native | 33.634 MFLOPS | 22.533 MFLOPS | GMP is faster for the closest split multiply/add serial baseline. |
+| OpenMP split C native | 390.629 MFLOPS | 397.921 MFLOPS | Same broad streaming class; MPFR is slightly ahead in this run. |
+| OpenMP fused C native | none | 412.005 MFLOPS | MPFR-only FMA class; not directly comparable to GMP split Raxpy. |
+| Best OpenMP wrapper | 393.019 MFLOPS | 414.601 MFLOPS | MPFR best row uses an FMA-capable direct-expression path. |
+
+The practical conclusion is that MPFR is not generally faster in the matching
+serial split path.  Its best OpenMP rows benefit from a fused backend operation
+and a 32-byte header stride that may be friendlier to cache-line streaming than
+GMP's 24-byte header stride, while GMP's effective 512-bit `mpf_t` allocation is
+not actually smaller once the extra precision limb is included.
+
 ## Hotpath Disassembly
 
 Representative command shape:

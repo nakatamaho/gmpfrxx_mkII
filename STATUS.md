@@ -1,3 +1,32 @@
+Post-phase MPFR Raxpy GMP comparison section:
+DONE
+
+Implemented features:
+- Added `## Comparison with GMP version` to `benchmarks/mpfr/01_Raxpy/README.md`.
+- Documented why MPFR only appears faster in OpenMP/FMA classes, while GMP remains faster in the closest serial split multiply/add baseline.
+- Clarified that GMP's 88-byte active-limb estimate differs from the allocated-capacity view where `mpf_init2(..., 512)` uses 9 limbs, making the footprint closer to 96 bytes per value.
+
+Tests added:
+- No library tests were added; this phase updates benchmark documentation only.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `sed -n '286,330p' benchmarks/mpfr/01_Raxpy/README.md`
+- `sed -n '226,252p' benchmarks/gmp/01_Raxpy/README.md`
+- `python3 - <<'PY' ...` to insert the comparison section.
+- `git diff --check`
+
+Pass/fail result:
+- Documentation update: PASS.
+- `git diff --check`: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- This phase did not recollect benchmark timings; it interprets the committed GMP and MPFR Raxpy runs.
+
 Post-phase MPFR Raxpy disassembly alignment:
 DONE
 
