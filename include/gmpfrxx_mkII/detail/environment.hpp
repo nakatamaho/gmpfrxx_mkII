@@ -395,7 +395,7 @@ inline void set_default_precision_bits(mpfr_prec_t precision) noexcept
 
 inline mpfr_rnd_t default_rounding_mode() noexcept
 {
-    return default_options().rounding_mode;
+    return ::gmpfrxx_mkII::detail::current_mpfr_rounding_mode();
 }
 
 inline void set_default_rounding_mode(mpfr_rnd_t rounding) noexcept

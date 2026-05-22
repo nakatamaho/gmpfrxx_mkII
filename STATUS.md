@@ -20777,3 +20777,37 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+## Phase: Route Public MPFR Default Rounding Through Current Context
+
+Implemented features:
+- Changed `mpfrxx::default_rounding_mode()` to use
+  `current_mpfr_rounding_mode()` directly, avoiding the full `default_options()`
+  path when callers only need the rounding mode.
+- Kept `default_options()` unchanged for callers that need the complete
+  precision, exponent range, and rounding snapshot.
+
+Tests added:
+- None.
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/environment.hpp`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "default_rounding\(\)|default_rounding_mode\(|default_mpc_rounding_mode|current_mpfr_rounding_mode|mpc_rnd|rounding" include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/mpc_environment.hpp SPECIFICATIONS.md STATUS.md`
+- `rg -n "default_rounding_mode\(|default_options\(|mpfr_class::default_rounding\(|current_mpfr_rounding_mode\(" include/gmpfrxx_mkII/detail tests SPECIFICATIONS.md`
+- `rg -n "default_rounding\(\)" include/gmpfrxx_mkII/detail/mpfr_impl.hpp include/gmpfrxx_mkII/detail/mpc_impl.hpp include/gmpfrxx_mkII/detail/mpfc_impl.hpp include/gmpfrxx_mkII/detail/math_mpf.hpp`
+- `nl -ba include/gmpfrxx_mkII/detail/environment.hpp | sed -n '320,405p'`
+- `rg -n "default_rounding_mode\(\)|current_mpfr_rounding_mode\(\)" include/gmpfrxx_mkII/detail/environment.hpp tests/test_mpfr_defaults.cpp tests/test_mpfr_rounding_scope.cpp tests/test_mpfr_environment_first_use.cpp`
+- `python3 - <<'PY' ...`
+- `git diff -- include/gmpfrxx_mkII/detail/environment.hpp STATUS.md`
+- `cmake --build build -j --target test_mpfr_defaults test_mpfr_rounding_scope test_mpfr_rounding_scope_stable test_mpfr_environment_first_use test_mpfr_environment_first_use_stable test_mpc_defaults test_mpc_environment`
+- `ctest --test-dir build -R 'test_mpfr_defaults|test_mpfr_rounding_scope|test_mpfr_environment_first_use|test_mpc_defaults|test_mpc_environment' --output-on-failure`
+
+Pass/fail result:
+- Targeted build: PASS.
+- Targeted CTest: PASS, 20/20 tests passed.
+
+Known issues:
+- None for this phase.
