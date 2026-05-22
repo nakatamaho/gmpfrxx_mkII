@@ -1,3 +1,42 @@
+Post-phase MPFR Raxpy disassembly alignment:
+DONE
+
+Implemented features:
+- Reworked `benchmarks/mpfr/01_Raxpy/README.md` Hotpath Disassembly to match
+  the GMP Raxpy report style.
+- Expanded the MPFR split multiply/add snippets so `mpfr_init` or `mpfr_init2`,
+  the hot loop, and `mpfr_clear` are visible in the same excerpt.
+- Added an explicit contrast between split reusable-temporary paths and direct
+  FMA paths, where no product temporary exists and therefore no init/clear pair
+  appears around the hot loop.
+- Added an OpenMP worker excerpt showing worker-local `mpfr_init2`, split
+  multiply/add, `GOMP_barrier`, and `mpfr_clear`.
+
+Tests added:
+- No library tests were added; this phase updates benchmark documentation only.
+
+Tests updated:
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `objdump -Cd --no-show-raw-insn --start-address=0x49a0 --stop-address=0x4a80 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01`
+- `objdump -Cd --no-show-raw-insn --start-address=0x49a0 --stop-address=0x4a30 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA`
+- `objdump -Cd --no-show-raw-insn --start-address=0x60e0 --stop-address=0x6210 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`
+- `objdump -Cd --no-show-raw-insn --start-address=0x55e0 --stop-address=0x58d0 build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING`
+- `python3 -c ...` to update the MPFR Raxpy Hotpath Disassembly section.
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Documentation update: PASS.
+- `git diff --check`: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- This phase did not recollect benchmark timings; it only refreshes the
+  disassembly discussion from the existing release build binaries.
+
 Post-phase GMP Raxpy recorded-run style alignment:
 DONE
 

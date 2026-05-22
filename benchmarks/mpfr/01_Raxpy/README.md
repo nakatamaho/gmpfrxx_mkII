@@ -316,132 +316,139 @@ initialization outside the timed loop.
 
 ## Hotpath Disassembly
 
-Command shape:
+Representative command shape:
 
 ```bash
 objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/01_Raxpy/<executable>
 ```
 
-Addresses are build-specific; the relevant points are backend calls, rounding
-loads, temporary lifetime, and loop shape.
+Addresses are build-specific; the relevant evidence is the backend call
+sequence, where reusable temporaries are initialized and cleared, and whether
+rounding is cached or read inside the loop.
 
-`Raxpy_mpfr_C_native_01` split multiply/add baseline:
+`Raxpy_mpfr_C_native_01` has one reusable `mpfr_t` product object.  It is
+initialized before the timed loop, the rounding mode is cached once, and the
+loop body has one `mpfr_mul` plus one `mpfr_add` per element.  The temporary is
+cleared after the loop.
 
 ```asm
-4a10: mov    %rbp,%rdx
+49db: lea    0x10(%rsp),%rdi   # reusable temp
+49e9: call   mpfr_init@plt
+49ee: call   mpfr_get_default_rounding_mode@plt
+49f3: mov    %eax,%r13d        # cached rounding
+
+4a10: mov    %rbp,%rdx         # x[i]
 4a13: mov    %r13d,%ecx        # cached rounding
 4a16: mov    %r15,%rsi         # alpha
-4a1d: lea    0x10(%rsp),%rdi   # reusable temp
+4a1d: lea    0x10(%rsp),%rdi   # temp
+4a22: add    $0x20,%rbp        # x++
 4a26: call   mpfr_mul@plt
 4a2b: mov    %rbx,%rsi         # y[i]
 4a2e: mov    %rbx,%rdi         # y[i]
 4a31: mov    %r13d,%ecx        # cached rounding
-4a34: lea    0x10(%rsp),%rdx   # reusable temp
+4a34: lea    0x10(%rsp),%rdx   # temp
+4a39: add    $0x20,%rbx        # y++
 4a3d: call   mpfr_add@plt
 4a47: jne    4a10
+
+4a49: lea    0x10(%rsp),%rdi   # reusable temp
+4a4e: call   mpfr_clear@plt
 ```
 
-`Raxpy_mpfr_C_native_01_FMA` raw FMA baseline:
+`Raxpy_mpfr_C_native_01_FMA` is the raw FMA baseline.  There is no reusable
+product temporary in this source shape, so no `mpfr_init`/`mpfr_clear` appears
+around the hot loop; the loop has one `mpfr_fma` per element and uses the cached
+rounding register.
 
 ```asm
 49ca: call   mpfr_get_default_rounding_mode@plt
-49cf: mov    %eax,%r14d
+49cf: mov    %eax,%r14d        # cached rounding
+
 49e0: mov    %rbx,%rcx         # y[i] addend
 49e3: mov    %rbp,%rdx         # x[i]
 49e6: mov    %rbx,%rdi         # y[i] destination
 49e9: mov    %r14d,%r8d        # cached rounding
 49ec: mov    %r13,%rsi         # alpha
+49f3: add    $0x20,%rbx        # y++
+49f7: add    $0x20,%rbp        # x++
 49fb: call   mpfr_fma@plt
 4a03: jne    49e0
 ```
 
-`Raxpy_mpfr_kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`:
+`Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` stays in
+the split multiply/add class even in an FMA-enabled build, because source variant
+`03` explicitly materializes `temp = alpha * x[i]` before adding it to `y[i]`.
+The wrapper initializes one reusable `mpfr_class` product object before the loop
+and clears it after the loop.  Compared with C native split mode, the loop still
+has one `mpfr_mul` and one `mpfr_add`, but it also carries stable-rounding TLS
+loads and first-use initialization checks.
 
 ```asm
-5060: mov    %fs:0xfffffffffffffffc,%r8d  # stable rounding TLS load
-5069: mov    %rbp,%rcx                    # y[i] addend
-506c: mov    %r13,%rdx                    # x[i]
-506f: mov    %rbx,%rsi                    # alpha
-5072: mov    %rbp,%rdi                    # y[i] destination
-5075: call   mpfr_fma@plt
-507a: cmpb   $0x0,%fs:0xfffffffffffffff8  # defaults-initialized check
-5083: je     52e0
-```
+60f5: mov    %r13,%rdi         # reusable temp
+60f8: call   mpfr_init2@plt
+610c: mov    %fs:0xfffffffffffffffc,%edx
+6116: mov    %r13,%rdi         # temp
+6119: call   mpfr_set_ui@plt
 
-This is the same arithmetic class as C native FMA: one `mpfr_fma` per element.
-The remaining difference is wrapper default-state machinery in the loop: stable
-rounding is loaded from TLS, and the first-use initialization guard is checked.
-
-`Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`:
-
-```asm
-6130: mov    %fs:0xfffffffffffffffc,%ecx
-6138: mov    %rbp,%rdx
-613b: mov    %r15,%rsi
-613e: mov    %r13,%rdi
+6130: mov    %fs:0xfffffffffffffffc,%ecx  # stable rounding TLS load
+6138: mov    %rbp,%rdx                    # x[i]
+613b: mov    %r15,%rsi                    # alpha
+613e: mov    %r13,%rdi                    # temp
 6141: call   mpfr_mul@plt
-6146: cmpb   $0x0,%fs:0xfffffffffffffff8
-6151: mov    %fs:0xfffffffffffffffc,%ecx
-6159: mov    %r13,%rdx
-615c: mov    %rbx,%rsi
-615f: mov    %rbx,%rdi
+6146: cmpb   $0x0,%fs:0xfffffffffffffff8  # defaults-initialized check
+6151: mov    %fs:0xfffffffffffffffc,%ecx  # stable rounding TLS load
+6159: mov    %r13,%rdx                    # temp
+615c: mov    %rbx,%rsi                    # y[i]
+615f: mov    %rbx,%rdi                    # y[i]
 6162: call   mpfr_add@plt
+616b: add    $0x20,%rbx                   # y++
+616f: add    $0x20,%rbp                   # x++
 6176: je     61e0
+6178: cmpb   $0x0,%fs:0xfffffffffffffff8
+6181: jne    6130
+
+61e0: mov    %r13,%rdi                    # reusable temp
+61e3: call   mpfr_clear@plt
 ```
 
-Even in an FMA-enabled build, `03` remains a split multiply/add path because the
-source shape explicitly materializes the product into `temp` before adding it to
-`y[i]`.
-
-`Raxpy_mpfr_kernel_05_mkII_FMA` explicit context:
+`Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING` uses an OpenMP outlined worker.
+Each worker initializes one reusable product object before its slice, runs the
+same split multiply/add loop, then reaches `GOMP_barrier` and clears the worker
+local temporary after the hot loop.
 
 ```asm
-6210: add    $0x20,%r14
-6214: add    $0x20,%rbx
-6218: cmp    %rbp,(%r14)       # context precision check
-6221: mov    0x8(%rsp),%r8d    # cached context rounding
-6226: mov    %r14,%rcx         # y[i] addend
-6229: mov    %rbx,%rdx         # x[i]
-622c: mov    %r13,%rsi         # alpha
-622f: mov    %r14,%rdi         # y[i] destination
-6236: call   mpfr_fma@plt
-623e: jg     6210
+5644: mov    %r13,%rdi         # worker-local temp
+5647: call   mpfr_init2@plt
+565b: mov    %fs:0xfffffffffffffffc,%edx
+5665: mov    %r13,%rdi         # temp
+5668: call   mpfr_set_ui@plt
+
+56c8: mov    %fs:0xfffffffffffffffc,%ecx  # stable rounding TLS load
+56d0: mov    %r12,%rdx                    # x[i]
+56d3: mov    %r14,%rsi                    # alpha
+56d6: mov    %r13,%rdi                    # temp
+56d9: call   mpfr_mul@plt
+56de: cmpb   $0x0,%fs:0xfffffffffffffff8  # defaults-initialized check
+56e9: mov    %fs:0xfffffffffffffffc,%ecx  # stable rounding TLS load
+56f1: mov    %rbp,%rsi                    # y[i]
+56f4: mov    %rbp,%rdi                    # y[i]
+56f7: mov    %r13,%rdx                    # temp
+56fe: call   mpfr_add@plt
+5703: add    $0x20,%rbp                   # y++
+5707: add    $0x20,%r12                   # x++
+5710: je     5780
+571f: jne    56c8
+
+5780: call   GOMP_barrier@plt
+5785: mov    %r13,%rdi                    # worker-local temp
+5788: call   mpfr_clear@plt
 ```
 
-This path avoids the per-iteration stable-rounding TLS load, but it keeps a
-precision check for each `with_context(y[i], ctx)` binding.  In this run its
-average is close to the direct stable FMA class rather than a separate speed tier.
-
-`Raxpy_mpfr_C_native_openmp_01_FMA` worker hot loop:
-
-```asm
-4a20: mov    %rbp,%rcx
-4a23: mov    %r12,%rdx
-4a26: mov    %rbp,%rdi
-4a29: mov    %r14d,%r8d        # cached rounding
-4a2c: mov    %r13,%rsi
-4a3b: call   mpfr_fma@plt
-4a43: jne    4a20
-```
-
-`Raxpy_mpfr_kernel_openmp_05_mkII_FMA` worker hot loop:
-
-```asm
-52c0: mov    0x20(%r15),%rdx
-52c4: mov    (%rdx),%rax
-52c7: mov    0x8(%rdx),%r8d    # context rounding
-52d8: cmp    0x0(%rbp),%rax    # precision check
-52e2: mov    0x8(%r15),%rsi
-52e6: mov    %rbp,%rcx
-52e9: mov    %r12,%rdx
-52ec: mov    %rbp,%rdi
-52fb: call   mpfr_fma@plt
-5303: jne    52c0
-```
-
-The OpenMP explicit-context FMA worker has the same one-`mpfr_fma` arithmetic
-shape as C native OpenMP FMA, with extra context precision/rounding loads inside
-the worker loop.
+The important comparison with the GMP Raxpy disassembly is structural: the
+split MPFR variants mirror the GMP reusable-temporary pattern, but MPFR carries
+rounding-mode operands and, in wrapper paths, default-state TLS checks.  Direct
+FMA variants are a different source-level class: they remove the product
+temporary entirely and therefore do not show init/clear around the hot loop.
 
 ## Lessons Learned
 
