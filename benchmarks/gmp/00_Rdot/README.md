@@ -470,10 +470,32 @@ stress case.
 340f: jne    33e0
 ```
 
+### orig 03
+
+`kernel_03_orig` has the same hot loop class as `kernel_03_mkII`: one
+upstream `gmpxx.h` product object is reused outside the loop, and the loop body
+contains one `mpf_mul` and one `mpf_add` per element.
+
+```asm
+3440: mov    %rbx,%rdx
+3443: mov    %rbp,%rsi
+3446: mov    %rsp,%rdi
+3449: call   __gmpf_mul@plt
+344e: mov    %rsp,%rdx
+3451: mov    %r12,%rsi
+3454: mov    %r12,%rdi
+3457: call   __gmpf_add@plt
+345c: add    $0x1,%r15
+3460: add    $0x18,%rbp
+3464: add    $0x18,%rbx
+346b: jne    3440
+```
+
 ### mkII 03
 
-`kernel_03_mkII` has the same hot loop class as `C_native_03`: one multiply,
-one add, and pointer increments. The wrapper work is outside the timed loop.
+`kernel_03_mkII` has the same hot loop class as `C_native_03` and
+`kernel_03_orig`: one multiply, one add, and pointer increments. The wrapper
+work is outside the timed loop.
 
 ```asm
 33c0: mov    %rbx,%rdx
@@ -492,9 +514,9 @@ one add, and pointer increments. The wrapper work is outside the timed loop.
 
 ### OpenMP 03
 
-`C_native_openmp_03` and `kernel_openmp_03_mkII` have the same per-thread inner
-loop shape. The final reduction is outside this loop and uses a critical
-section.
+`C_native_openmp_03`, `kernel_openmp_03_orig`, and
+`kernel_openmp_03_mkII` have the same per-thread inner loop shape. The final
+reduction is outside this loop and uses a critical section.
 
 ```asm
 # C_native_openmp_03
@@ -510,6 +532,20 @@ section.
 3442: lea    0x10(%rsp),%rdi
 3447: call   __gmpf_add@plt
 344f: jne    3420
+
+# kernel_openmp_03_orig
+3010: mov    %r15,%rdx
+3013: mov    %r13,%rsi
+3016: mov    %rbp,%rdi
+3019: add    $0x1,%r14
+301d: call   __gmpf_mul@plt
+3022: mov    %rbp,%rdx
+3025: add    $0x18,%r13
+3029: add    $0x18,%r15
+302d: lea    0x10(%rsp),%rsi
+3032: lea    0x10(%rsp),%rdi
+3037: call   __gmpf_add@plt
+303f: jne    3010
 
 # kernel_openmp_03_mkII
 34e0: mov    %rbx,%rdx
@@ -535,6 +571,44 @@ accumulation across four accumulators, but it does not reduce the number of GMP
 arithmetic calls per element.
 
 ```asm
+# kernel_05_orig
+34c0: mov    %rbp,%rdx
+34c3: mov    %r12,%rsi
+34c6: mov    %rbx,%rdi
+34c9: call   __gmpf_mul@plt
+34ce: mov    %rbx,%rdx
+34d1: mov    %r13,%rsi
+34d4: mov    %r13,%rdi
+34d7: call   __gmpf_add@plt
+34dc: lea    0x18(%rbp),%rdx
+34e0: lea    0x18(%r12),%rsi
+34e5: mov    %rbx,%rdi
+34e8: call   __gmpf_mul@plt
+34ed: mov    0x8(%rsp),%rdi
+34f2: mov    %rbx,%rdx
+34f5: mov    %rdi,%rsi
+34f8: call   __gmpf_add@plt
+34fd: lea    0x30(%rbp),%rdx
+3501: lea    0x30(%r12),%rsi
+3506: mov    %rbx,%rdi
+3509: call   __gmpf_mul@plt
+350e: mov    %rbx,%rdx
+3511: lea    0x50(%rsp),%rsi
+3516: lea    0x50(%rsp),%rdi
+351b: call   __gmpf_add@plt
+3520: lea    0x48(%rbp),%rdx
+3524: lea    0x48(%r12),%rsi
+3529: mov    %rbx,%rdi
+352c: call   __gmpf_mul@plt
+3531: mov    (%rsp),%rdi
+3535: mov    %rbx,%rdx
+3538: mov    %rdi,%rsi
+353b: call   __gmpf_add@plt
+3540: add    $0x4,%r14
+3544: add    $0x60,%r12
+3548: add    $0x60,%rbp
+3551: jne    34c0
+
 # kernel_05_mkII
 3510: mov    %rbp,%rdx
 3513: mov    %r12,%rsi
@@ -563,6 +637,112 @@ arithmetic calls per element.
 3594: add    $0x60,%r12
 3598: add    $0x60,%rbp
 35a1: jne    3510
+```
+
+### OpenMP 05
+
+`kernel_openmp_05_orig` had the highest max sample among the OpenMP 05
+wrapper variants in this run. The hot loop is still the same four-way unrolled
+`mpf_mul` + `mpf_add` class as `C_native_openmp_05` and
+`kernel_openmp_05_mkII`; the low minimum sample in the result table is run
+variance, not a different instruction class.
+
+```asm
+# C_native_openmp_05
+3600: mov    %rbp,%rdx
+3603: mov    %r12,%rsi
+3606: mov    %rbx,%rdi
+3609: add    $0x4,%r13
+360d: call   __gmpf_mul@plt
+3612: mov    0x8(%rsp),%rsi
+3617: mov    %rbx,%rdx
+361a: mov    %rsi,%rdi
+361d: call   __gmpf_add@plt
+3622: lea    0x18(%rbp),%rdx
+3626: lea    0x18(%r12),%rsi
+362b: mov    %rbx,%rdi
+362e: call   __gmpf_mul@plt
+3637: mov    %rbx,%rdx
+363d: call   __gmpf_add@plt
+3642: lea    0x30(%rbp),%rdx
+3646: lea    0x30(%r12),%rsi
+364b: mov    %rbx,%rdi
+364e: call   __gmpf_mul@plt
+3653: mov    %rbx,%rdx
+365c: call   __gmpf_add@plt
+3661: lea    0x48(%rbp),%rdx
+3665: lea    0x48(%r12),%rsi
+366a: mov    %rbx,%rdi
+366d: call   __gmpf_mul@plt
+3672: mov    %rbx,%rdx
+367b: call   __gmpf_add@plt
+3680: add    $0x60,%r12
+3684: add    $0x60,%rbp
+368d: jg     3600
+
+# kernel_openmp_05_orig
+30b0: mov    %rbp,%rdx
+30b3: mov    %r12,%rsi
+30b6: mov    %rbx,%rdi
+30b9: add    $0x4,%r13
+30bd: call   __gmpf_mul@plt
+30c2: mov    0x8(%rsp),%rdi
+30c7: mov    %rbx,%rdx
+30ca: mov    %rdi,%rsi
+30cd: call   __gmpf_add@plt
+30d2: lea    0x18(%rbp),%rdx
+30d6: lea    0x18(%r12),%rsi
+30db: mov    %rbx,%rdi
+30de: call   __gmpf_mul@plt
+30e7: mov    %rbx,%rdx
+30ed: call   __gmpf_add@plt
+30f2: lea    0x30(%rbp),%rdx
+30f6: lea    0x30(%r12),%rsi
+30fb: mov    %rbx,%rdi
+30fe: call   __gmpf_mul@plt
+3103: mov    %rbx,%rdx
+310c: call   __gmpf_add@plt
+3111: lea    0x48(%rbp),%rdx
+3115: lea    0x48(%r12),%rsi
+311a: mov    %rbx,%rdi
+311d: call   __gmpf_mul@plt
+3122: mov    %rbx,%rdx
+312b: call   __gmpf_add@plt
+3130: add    $0x60,%r12
+3134: add    $0x60,%rbp
+313d: jg     30b0
+
+# kernel_openmp_05_mkII
+3700: mov    %rbp,%rdx
+3703: mov    %r13,%rsi
+3706: mov    %rbx,%rdi
+3709: add    $0x4,%r12
+370d: call   __gmpf_mul@plt
+3712: mov    0x8(%rsp),%rdi
+3717: mov    %rbx,%rdx
+371a: mov    %rdi,%rsi
+371d: call   __gmpf_add@plt
+3722: lea    0x18(%rbp),%rdx
+3726: lea    0x18(%r13),%rsi
+372a: mov    %rbx,%rdi
+372d: call   __gmpf_mul@plt
+3736: mov    %rbx,%rdx
+373c: call   __gmpf_add@plt
+3741: lea    0x30(%rbp),%rdx
+3745: lea    0x30(%r13),%rsi
+3749: mov    %rbx,%rdi
+374c: call   __gmpf_mul@plt
+3751: mov    %rbx,%rdx
+375a: call   __gmpf_add@plt
+375f: lea    0x48(%rbp),%rdx
+3763: lea    0x48(%r13),%rsi
+3767: mov    %rbx,%rdi
+376a: call   __gmpf_mul@plt
+376f: mov    %rbx,%rdx
+3778: call   __gmpf_add@plt
+377d: add    $0x60,%r13
+3781: add    $0x60,%rbp
+378a: jg     3700
 ```
 
 ## Lessons Learned

@@ -21754,3 +21754,38 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked benchmark artifacts outside this phase remain untouched.
+
+## Phase: Add GMP Rdot orig Hotpath Disassembly
+
+Implemented features:
+- Added `kernel_03_orig` serial hotpath disassembly to `benchmarks/gmp/00_Rdot/README.md`.
+- Added `kernel_openmp_03_orig` hotpath disassembly to the OpenMP 03 comparison block.
+- Added `kernel_05_orig` serial hotpath disassembly to the Kernel 05 comparison block.
+- Added `C_native_openmp_05`, `kernel_openmp_05_orig`, and `kernel_openmp_05_mkII` hotpath disassembly to show that OpenMP 05 is the same four-way unrolled `mpf_mul` plus `mpf_add` class.
+- Clarified that upstream `gmpxx.h` `orig` 03 and mkII 03 have the same `mpf_mul` plus `mpf_add` hot loop class.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. This phase is documentation-only.
+
+Exact commands run:
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig | sed -n '1250,1325p'`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig | rg -n '__gmpf_mul|__gmpf_add|_Rdot' -C 8 | head -180`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig | rg -n "_Rdot|__gmpf_mul|__gmpf_add" -C 10`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig | rg -n "_Rdot|\.omp_fn|__gmpf_mul|__gmpf_add" -C 10`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII | rg -n "\.omp_fn|__gmpf_mul|__gmpf_add|_Rdot" -C 10`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 | rg -n "\.omp_fn|__gmpf_mul|__gmpf_add|_Rdot" -C 10`
+- `python3 - <<'PY' ...` to update the README hotpath section.
+- `git diff --check`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- Disassembly extraction: PASS.
+- README update: PASS.
+- Diff whitespace check: PASS.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked benchmark artifacts outside this phase remain untouched.
