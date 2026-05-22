@@ -29,7 +29,7 @@
 /*
  * Example 02: direct square-root evaluation.
  *
- * This is a small API example for mpfrxx::sqrt(mpfr_class).  It uses the
+ * This is a small API example for sqrt(mpfr_class).  It uses the
  * library overload so that overload resolution cannot fall back to
  * std::sqrt(double), which would silently truncate the computation to
  * IEEE-754 double precision.  The example is meant to show the direct
@@ -47,8 +47,9 @@
 
 int main()
 {
-    mpfrxx::mpfr_class two("2.0");
-    mpfrxx::mpfr_class result = mpfrxx::sqrt(two);
+    using namespace mpfrxx;
+    mpfr_class two("2.0");
+    mpfr_class result = sqrt(two);
 
     std::cout << std::setprecision(50)
               << "sqrt(2) = " << result << '\n';

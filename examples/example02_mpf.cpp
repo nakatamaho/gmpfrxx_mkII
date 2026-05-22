@@ -29,7 +29,7 @@
 /*
  * Example 02: direct square-root evaluation.
  *
- * This is a small API example for gmpxx::sqrt(mpf_class).  It uses the
+ * This is a small API example for sqrt(mpf_class).  It uses the
  * library overload so that overload resolution cannot fall back to
  * std::sqrt(double), which would silently truncate the computation to
  * IEEE-754 double precision.  The example is meant to show the direct
@@ -47,8 +47,9 @@
 
 int main()
 {
-    gmpxx::mpf_class two("2.0");
-    gmpxx::mpf_class result = gmpxx::sqrt(two);
+    using namespace gmpxx;
+    mpf_class two("2.0");
+    mpf_class result = sqrt(two);
 
     std::cout << std::setprecision(50)
               << "sqrt(2) = " << result << '\n';

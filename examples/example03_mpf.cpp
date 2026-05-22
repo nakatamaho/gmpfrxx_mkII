@@ -52,13 +52,14 @@
 
 int main()
 {
+    using namespace gmpxx;
     constexpr int decimal_digits = 50;
 
-    gmpxx::mpf_class x("1.0");
-    gmpxx::mpf_class previous("0.0");
-    gmpxx::mpf_class two("2.0");
-    gmpxx::mpf_class tolerance =
-        gmpxx::exp2(-gmpxx::mpf_class(gmpxx::default_mpf_precision_bits() / 2));
+    mpf_class x("1.0");
+    mpf_class previous("0.0");
+    mpf_class two("2.0");
+    mpf_class tolerance =
+        exp2(-mpf_class(default_mpf_precision_bits() / 2));
 
     std::cout << std::fixed << std::setprecision(decimal_digits);
     std::cout << "Newton iteration for sqrt(2)\n";
@@ -70,9 +71,9 @@ int main()
         ++iteration;
         std::cout << "iteration " << std::setw(2) << iteration
                   << ": " << x << '\n';
-    } while (gmpxx::abs(x - previous) > tolerance);
+    } while (abs(x - previous) > tolerance);
 
-    gmpxx::mpf_class reference = gmpxx::sqrt(two);
+    mpf_class reference = sqrt(two);
     std::cout << "sqrt() result: " << reference << '\n';
     return 0;
 }

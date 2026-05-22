@@ -21497,3 +21497,31 @@ Pass/fail result:
 
 Known issues:
 - Historical `STATUS.md` entries still mention the old example names as past command logs. They were not rewritten.
+
+
+## Phase: Simplify Example 02-04 Namespace Use
+
+Implemented features:
+- Simplified `example02_mpf`, `example02_mpfr`, and `example02_mpc` with local `using namespace` declarations inside `main()`.
+- Removed `auto` from `example02_mpc` and used explicit `mpfr_class`, `mpq_class`, and `mpc_class` declarations.
+- Simplified `example03_mpf`, `example03_mpfr`, `example03_mpfc`, `example04_mpf`, and `example04_mpfr` with local namespace imports inside `main()`.
+- Kept namespace imports local to function scope so the example headers do not broaden namespace exposure.
+
+Missing features:
+- None for this phase.
+
+Tests added:
+- No new tests. Existing example CTest entries cover the affected sources.
+
+Exact commands run:
+- `cmake --build build_fresh_release_20260522 -j --target example02_mpf example02_mpfr example02_mpc example03_mpf example03_mpfr example03_mpfc example04_mpf example04_mpfr`
+- `ctest --test-dir build_fresh_release_20260522 -R "example0[234]" --output-on-failure`
+- `ctest --test-dir build_fresh_release_20260522 --output-on-failure`
+
+Pass/fail result:
+- Targeted example build: PASS.
+- Targeted example CTest: PASS, 8/8 tests passed.
+- Full CTest from `build_fresh_release_20260522`: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.

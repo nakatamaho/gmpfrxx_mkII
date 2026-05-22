@@ -52,13 +52,14 @@
 
 int main()
 {
+    using namespace mpfrxx;
     constexpr int decimal_digits = 50;
 
-    mpfrxx::mpfr_class x("1.0");
-    mpfrxx::mpfr_class previous("0.0");
-    mpfrxx::mpfr_class two("2.0");
-    mpfrxx::mpfr_class tolerance =
-        mpfrxx::exp2(-mpfrxx::mpfr_class(mpfrxx::default_precision_bits() / 2));
+    mpfr_class x("1.0");
+    mpfr_class previous("0.0");
+    mpfr_class two("2.0");
+    mpfr_class tolerance =
+        exp2(-mpfr_class(default_precision_bits() / 2));
 
     std::cout << std::fixed << std::setprecision(decimal_digits);
     std::cout << "Newton iteration for sqrt(2)\n";
@@ -70,9 +71,9 @@ int main()
         ++iteration;
         std::cout << "iteration " << std::setw(2) << iteration
                   << ": " << x << '\n';
-    } while (mpfrxx::abs(x - previous) > tolerance);
+    } while (abs(x - previous) > tolerance);
 
-    mpfrxx::mpfr_class reference = mpfrxx::sqrt(two);
+    mpfr_class reference = sqrt(two);
     std::cout << "sqrt() result: " << reference << '\n';
     return 0;
 }

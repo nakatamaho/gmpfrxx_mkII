@@ -33,13 +33,13 @@
 
 int main()
 {
-    const auto real = mpfrxx::mpfr_class(1.25);
-    const auto offset = mpfrxx::mpq_class("3/4");
-    const auto complex =
-        mpfrxx::mpc_class(mpfrxx::mpfr_class(1.0), mpfrxx::mpfr_class(2.0));
+    using namespace mpfrxx;
+    const mpfr_class real(1.25);
+    const mpq_class offset("3/4");
+    const mpc_class complex(mpfr_class(1.0), mpfr_class(2.0));
 
-    mpfrxx::mpfr_class real_result = real + offset + 2;
-    mpfrxx::mpc_class complex_result = complex * complex + real_result;
+    mpfr_class real_result = real + offset + 2;
+    mpc_class complex_result = complex * complex + real_result;
 
     std::cout << "real: " << real_result.to_double() << '\n';
     std::cout << "complex: "

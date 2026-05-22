@@ -64,20 +64,21 @@ int decimal_digits_for_bits(mpfr_prec_t bits)
 
 int main()
 {
+    using namespace mpfrxx;
     const int decimal_digits =
-        decimal_digits_for_bits(mpfrxx::default_precision_bits());
+        decimal_digits_for_bits(default_precision_bits());
 
-    mpfrxx::mpfr_class one("1.0");
-    mpfrxx::mpfr_class two("2.0");
-    mpfrxx::mpfr_class four("4.0");
-    mpfrxx::mpfr_class a = one;
-    mpfrxx::mpfr_class b = one / mpfrxx::sqrt(two);
-    mpfrxx::mpfr_class t("0.25");
-    mpfrxx::mpfr_class p = one;
-    mpfrxx::mpfr_class pi("0.0");
-    mpfrxx::mpfr_class previous_pi("0.0");
-    mpfrxx::mpfr_class tolerance =
-        mpfrxx::exp2(-mpfrxx::mpfr_class(mpfrxx::default_precision_bits() / 2));
+    mpfr_class one("1.0");
+    mpfr_class two("2.0");
+    mpfr_class four("4.0");
+    mpfr_class a = one;
+    mpfr_class b = one / sqrt(two);
+    mpfr_class t("0.25");
+    mpfr_class p = one;
+    mpfr_class pi("0.0");
+    mpfr_class previous_pi("0.0");
+    mpfr_class tolerance =
+        exp2(-mpfr_class(default_precision_bits() / 2));
 
     std::cout << std::fixed << std::setprecision(decimal_digits);
     std::cout << "Gauss-Legendre iteration for pi\n";
@@ -86,22 +87,22 @@ int main()
     do {
         previous_pi = pi;
 
-        mpfrxx::mpfr_class next_a = (a + b) / two;
-        mpfrxx::mpfr_class next_b = mpfrxx::sqrt(a * b);
-        mpfrxx::mpfr_class delta = a - next_a;
+        mpfr_class next_a = (a + b) / two;
+        mpfr_class next_b = sqrt(a * b);
+        mpfr_class delta = a - next_a;
         t = t - p * delta * delta;
         p = two * p;
         a = next_a;
         b = next_b;
 
-        mpfrxx::mpfr_class sum = a + b;
+        mpfr_class sum = a + b;
         pi = sum * sum / (four * t);
 
         ++iteration;
         std::cout << "iteration " << std::setw(2) << iteration
                   << ": " << pi << '\n';
-    } while (iteration == 1 || mpfrxx::abs(pi - previous_pi) > tolerance);
+    } while (iteration == 1 || abs(pi - previous_pi) > tolerance);
 
-    std::cout << "const_pi() result: " << mpfrxx::const_pi() << '\n';
+    std::cout << "const_pi() result: " << const_pi() << '\n';
     return 0;
 }

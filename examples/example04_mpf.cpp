@@ -64,20 +64,21 @@ int decimal_digits_for_bits(mp_bitcnt_t bits)
 
 int main()
 {
+    using namespace gmpxx;
     const int decimal_digits =
-        decimal_digits_for_bits(gmpxx::default_mpf_precision_bits());
+        decimal_digits_for_bits(default_mpf_precision_bits());
 
-    gmpxx::mpf_class one("1.0");
-    gmpxx::mpf_class two("2.0");
-    gmpxx::mpf_class four("4.0");
-    gmpxx::mpf_class a = one;
-    gmpxx::mpf_class b = one / gmpxx::sqrt(two);
-    gmpxx::mpf_class t("0.25");
-    gmpxx::mpf_class p = one;
-    gmpxx::mpf_class pi("0.0");
-    gmpxx::mpf_class previous_pi("0.0");
-    gmpxx::mpf_class tolerance =
-        gmpxx::exp2(-gmpxx::mpf_class(gmpxx::default_mpf_precision_bits() / 2));
+    mpf_class one("1.0");
+    mpf_class two("2.0");
+    mpf_class four("4.0");
+    mpf_class a = one;
+    mpf_class b = one / sqrt(two);
+    mpf_class t("0.25");
+    mpf_class p = one;
+    mpf_class pi("0.0");
+    mpf_class previous_pi("0.0");
+    mpf_class tolerance =
+        exp2(-mpf_class(default_mpf_precision_bits() / 2));
 
     std::cout << std::fixed << std::setprecision(decimal_digits);
     std::cout << "Gauss-Legendre iteration for pi\n";
@@ -86,22 +87,22 @@ int main()
     do {
         previous_pi = pi;
 
-        gmpxx::mpf_class next_a = (a + b) / two;
-        gmpxx::mpf_class next_b = gmpxx::sqrt(a * b);
-        gmpxx::mpf_class delta = a - next_a;
+        mpf_class next_a = (a + b) / two;
+        mpf_class next_b = sqrt(a * b);
+        mpf_class delta = a - next_a;
         t = t - p * delta * delta;
         p = two * p;
         a = next_a;
         b = next_b;
 
-        gmpxx::mpf_class sum = a + b;
+        mpf_class sum = a + b;
         pi = sum * sum / (four * t);
 
         ++iteration;
         std::cout << "iteration " << std::setw(2) << iteration
                   << ": " << pi << '\n';
-    } while (iteration == 1 || gmpxx::abs(pi - previous_pi) > tolerance);
+    } while (iteration == 1 || abs(pi - previous_pi) > tolerance);
 
-    std::cout << "const_pi() result: " << gmpxx::const_pi() << '\n';
+    std::cout << "const_pi() result: " << const_pi() << '\n';
     return 0;
 }
