@@ -1,3 +1,41 @@
+Post-phase GMP Raxpy recorded-run style alignment:
+DONE
+
+Implemented features:
+- Reworked `benchmarks/gmp/01_Raxpy/README.md` Recorded Run to match the
+  MPFR Raxpy report style: text run summary, raw-data links, plot description,
+  plot images, and regeneration command.
+- Reworked the GMP Raxpy Memory Bandwidth Estimates section to match the MPFR
+  Raxpy structure: assumptions block, representative variant table, and concise
+  interpretation.
+- Regenerated the GMP Raxpy serial and OpenMP plots with the README command and
+  MPFR-style title prefix spelling.
+
+Tests added:
+- No library tests were added; this phase updates benchmark documentation and
+  regenerated plot images only.
+
+Tests updated:
+- `benchmarks/gmp/01_Raxpy/README.md`
+- `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_serial.png`
+- `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_openmp.png`
+- `STATUS.md`
+
+Exact commands run:
+- `python3 -c ...` to update the GMP Raxpy Recorded Run and Memory Bandwidth Estimates sections.
+- `python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv --output-prefix benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10 --title-prefix "GMP Raxpy N=10000000 p=512 repeat=10"`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Plot regeneration: PASS.
+- `git diff --check`: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- This phase did not recollect benchmark timings; it only reformatted the report
+  and regenerated plots from the existing committed summary CSV.
+
 Post-phase Raxpy README and plot style alignment:
 DONE
 

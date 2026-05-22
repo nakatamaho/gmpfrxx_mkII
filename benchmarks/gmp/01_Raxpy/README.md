@@ -67,35 +67,40 @@ OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
 
 ## Recorded Run
 
-| Field | Value |
-|-------|-------|
-| Run ID | `raxpy_gmp_n10000000_p512_repeat10_20260522_214039` |
-| Problem size | `N=10000000` |
-| Precision | `512` bits |
-| Repeat count | `10` |
-| Compiler | `g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0` |
-| Build type | `Release` |
-| CPU | `AMD Ryzen Threadripper 3970X 32-Core Processor` |
-| OS | `Linux 7c430536ccee 6.8.0-94-generic x86_64` |
-| OpenMP | `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, `OMP_PROC_BIND=spread` |
-| Raw directory | `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039` |
-| Raw log | `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/benchmark_raxpy_gmp_n10000000_p512_repeat10.log` |
-| Raw CSV | `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raw_raxpy_gmp_n10000000_p512_repeat10.csv` |
-| Summary CSV | `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv` |
-| Correctness | All variants reported `Result OK` for all repeats. |
+```text
+N = 10000000
+precision = 512 bits
+repeat = 10
+compiler = g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+build type = Release
+CPU = AMD Ryzen Threadripper 3970X 32-Core Processor
+OS = Linux 6.8.0-94-generic x86_64
+OMP_NUM_THREADS = 32
+OMP_PLACES = cores
+OMP_PROC_BIND = spread
+all timed runs = Result OK
+```
 
-Plot regeneration:
+Raw data:
+
+- [Raw log](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/benchmark_raxpy_gmp_n10000000_p512_repeat10.log)
+- [Raw CSV](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raw_raxpy_gmp_n10000000_p512_repeat10.csv)
+- [Summary CSV](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv)
+
+Plots use average MFLOPS bars with min/max error bars over 10 repeats:
+
+![GMP Raxpy serial repeat-10](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_serial.png)
+
+![GMP Raxpy OpenMP repeat-10](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_openmp.png)
+
+Regenerate plots with:
 
 ```bash
 python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py \
     benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv \
     --output-prefix benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10 \
-    --title-prefix "GMP Raxpy N=10000000 precision=512 repeat=10"
+    --title-prefix "GMP Raxpy N=10000000 p=512 repeat=10"
 ```
-
-![Serial GMP Raxpy repeat-10 MFLOPS](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_serial.png)
-
-![OpenMP GMP Raxpy repeat-10 MFLOPS](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_openmp.png)
 
 ## Headline Results
 
@@ -220,29 +225,28 @@ python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py \
 
 ## Memory Bandwidth Estimates
 
-These are model estimates, not hardware-counter measurements. At 512-bit precision, this report assumes 8 used limbs per `mpf_t` value, 8 bytes per limb, and a 24-byte `mpf_t` header on this x86_64 build. The timed RAXPY loop reads `x`, reads and writes `y`, and keeps `alpha` hot.
-
-| Model | Bytes/element |
-|-------|---------------|
-| Limb-only active traffic | `x` limbs read 64 B + `y` limbs read 64 B + `y` limbs write 64 B = 192 B |
-| Header-inclusive active traffic | `x` header+limbs read 88 B + `y` header+limbs read 88 B + `y` header+limbs write 88 B = 264 B |
-| Timed active footprint | `x` + `y` headers and limbs: about 1.76 GB for `N=10000000`, excluding allocator metadata. |
-| Full check footprint | `x` + `y` + `yy`: about 2.64 GB, but `yy` is outside the timed RAXPY loop. |
-
-Conversion formula:
+These are model estimates, not hardware-counter measurements. For 512-bit GMP
+`mpf_t`, this report assumes an `mpf_t` header stride of 24 bytes and 8 limbs =
+64 limb bytes per value on this x86_64 build. The timed operation reads `x[i]`,
+reads `y[i]`, and writes `y[i]`; `alpha` is loop-invariant and excluded.
 
 ```text
-GB/s = MFLOPS * bytes_per_element / 2000
+limb-only bytes/element      = 64 x + 64 y read + 64 y write = 192 B
+header-inclusive bytes/elem  = 88 x + 88 y read + 88 y write = 264 B
+GB/s estimate                = Avg MFLOPS * bytes_per_element / 2000
 ```
 
-| Case | MFLOPS source | Bytes/element model | Estimated GB/s | Notes |
-|------|---------------|---------------------|----------------|-------|
-| Best serial average `kernel_03_orig` | 33.908 | Limb-only active traffic: 192 B/element | 3.26 | Model estimate, not hardware counters. |
-| Best serial average `kernel_03_orig` | 33.908 | Header-inclusive active traffic: 264 B/element | 4.48 | Model estimate, not hardware counters. |
-| Best OpenMP average `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 393.019 | Limb-only active traffic: 192 B/element | 37.73 | Model estimate, not hardware counters. |
-| Best OpenMP average `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 393.019 | Header-inclusive active traffic: 264 B/element | 51.88 | Model estimate, not hardware counters. |
-| Best OpenMP max `kernel_openmp_03_orig` | 396.989 | Limb-only active traffic: 192 B/element | 38.11 | Model estimate, not hardware counters. |
-| Best OpenMP max `kernel_openmp_03_orig` | 396.989 | Header-inclusive active traffic: 264 B/element | 52.40 | Model estimate, not hardware counters. |
+| Variant | Mode | Avg MFLOPS | Limb-only GB/s | Header-inclusive GB/s |
+|---------|------|-----------:|---------------:|----------------------:|
+| `C_native_01` | Serial | 33.634 | 3.23 | 4.44 |
+| `kernel_03_orig` | Serial | 33.908 | 3.26 | 4.48 |
+| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | OpenMP | 393.019 | 37.73 | 51.88 |
+| `kernel_openmp_03_orig` | OpenMP | 392.657 | 37.69 | 51.83 |
+
+The OpenMP best paths imply roughly 38 GB/s limb-only traffic and 52 GB/s
+header-inclusive active traffic under this simple model. This excludes GMP
+internal metadata, allocator effects, cache-line overfetch, and repeated
+initialization outside the timed loop.
 
 ## Hotpath Disassembly
 
