@@ -232,6 +232,16 @@ add_test(
 )
 add_phase0_test(test_mpc_environment_invalid mpcxx_mkII)
 add_phase0_test(test_mpc_precision_policy mpcxx_mkII)
+add_phase0_test(test_mpc_evaluation_context mpcxx_mkII)
+add_executable(test_mpc_evaluation_context_fixed_precision test_mpc_evaluation_context.cpp)
+target_link_libraries(test_mpc_evaluation_context_fixed_precision PRIVATE mpcxx_mkII)
+target_compile_definitions(test_mpc_evaluation_context_fixed_precision PRIVATE
+    GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH
+)
+add_test(
+    NAME test_mpc_evaluation_context_fixed_precision
+    COMMAND test_mpc_evaluation_context_fixed_precision
+)
 add_phase0_test(test_mpc_io mpcxx_mkII)
 add_phase0_test(test_mpc_math mpcxx_mkII)
 add_phase0_test(test_mpc_alloc_count mpcxx_mkII)

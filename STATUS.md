@@ -44,6 +44,8 @@ Exact commands run:
 - `python3 - <<'PY' ...`
 - `git diff -- include/gmpfrxx_mkII/detail/zq_impl.hpp tests/test_zq_string_io.cpp tests/test_mpq_canonicalization.cpp SPECIFICATIONS.md`
 - `git diff --check`
+- Documentation update for `mpc_class` real-assignment semantics
+- `git diff --check`
 - `cmake --build build -j`
 - `ctest --test-dir build -R "test_zq_string_io|test_mpq_canonicalization" --output-on-failure`
 - `ctest --test-dir build --output-on-failure`
@@ -21039,3 +21041,43 @@ Pass/fail result:
 
 Known issues:
 - Full CTest still remains the final release gate.
+
+## Phase: Add MPC Explicit Evaluation Context
+
+Implemented features:
+- Added `mpfrxx::mpc_evaluation_context` and the target-bound
+  `mpfrxx::mpc_context_ref` handle returned by `mpfrxx::with_context(...)`.
+- Routed `mpc_class` compound assignment through a context-aware helper so
+  explicit-context loops can pass a cached `mpc_rnd_t` instead of looking up
+  default MPC rounding per operation.
+- Added constructors for symmetric MPC rounding, asymmetric real/imaginary
+  component rounding, and full explicit context objects.
+- Documented the MPC explicit-context lifetime, precision, and non-scope
+  contract alongside the existing MPFR context contract.
+- Documented that real-to-`mpc_class` assignment sets the imaginary component
+  to `+0`, matching GNU MPC real-assignment semantics.
+
+Tests added:
+- `tests/test_mpc_evaluation_context.cpp`
+
+Tests updated:
+- `include/gmpfrxx_mkII/detail/mpc_impl.hpp`
+- `tests/CMakeLists.txt`
+- `SPECIFICATIONS.md`
+- `README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `cmake --build build -j`
+- `ctest --test-dir build -R test_mpc_evaluation_context --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `git diff --check`
+
+Pass/fail result:
+- Full build: PASS.
+- Targeted MPC explicit-context CTest: PASS, 2/2 tests passed.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- None for this phase.

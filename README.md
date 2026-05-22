@@ -240,6 +240,10 @@ installed for the current thread and linked image. MPC-specific overrides affect
 only `mpfrxx::mpc_class` defaults; they do not modify `mpfrxx::mpfr_class`
 default precision or rounding mode.
 
+Assigning a real value (`mpfr_class`, `mpz_class`, `mpq_class`, or supported
+scalar) to `mpfrxx::mpc_class` sets the imaginary component to `+0`, matching
+GNU MPC's real-to-complex assignment semantics.
+
 MPC default precision and rounding may be symmetric or asymmetric. The
 one-argument setters install symmetric defaults, while
 `mpfrxx::set_default_mpc_precision_bits(real, imag)` and
@@ -252,6 +256,13 @@ MPC environment variables are read on first MPC default access or explicit
 or rounding variables install MPC-specific overrides. Invalid values are ignored
 with a diagnostic on `stderr`, and missing categories continue to inherit the
 current MPFR default.
+
+MPC also has the same target-bound explicit context pattern as MPFR.
+`mpfrxx::mpc_evaluation_context` stores real precision, imaginary precision, and
+an `mpc_rnd_t`; `mpfrxx::with_context(z, ctx)` returns a non-owning handle for
+assignment and compound assignment through `z`. This is intended for fixed-context
+loops that want the rounding mode captured outside the loop without changing the
+thread default state. It is not a dynamic scope for eager MPC math functions.
 
 ## Environment
 

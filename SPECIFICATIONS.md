@@ -600,10 +600,25 @@ precision mismatch as a caller contract violation in hot paths and omit the
 check. Such builds are intended only for kernels where all participating
 objects are known to have the same fixed precision.
 
-The context handle is target-bound. It applies to assignment and compound
+The MPFR context handle is target-bound. It applies to assignment and compound
 assignment through that handle; it does not create a dynamic rounding scope and
 does not affect independently materialized eager math functions such as
 `sin(x)`, `exp(x)`, or `const_pi(precision)`.
+
+MPC provides the parallel target-bound API.
+`mpfrxx::mpc_evaluation_context` stores real precision, imaginary precision, and
+an `mpc_rnd_t`; `mpfrxx::with_context(mpc_value, context)` returns a
+non-owning handle to an `mpfrxx::mpc_class`. Assignment and compound assignment
+through that handle evaluate with the cached `mpc_rnd_t` and target component
+precisions, avoiding per-operation default MPC rounding lookup in fixed-context
+loops. The handle may also be constructed from separate real and imaginary MPFR
+rounding modes, which are packed with `MPC_RND(real, imag)`.
+
+The MPC context handle follows the same lifetime and precision-contract rules as
+the MPFR handle: it must not outlive the referenced object, normal builds check
+that the context precision matches the target, and fixed-precision fastpath
+builds may treat a mismatch as caller contract violation. It is not a dynamic
+MPC math-function scope and does not change MPC or MPFR defaults.
 
 ### MPFR Comparisons
 
@@ -643,6 +658,10 @@ image:
 MPC-specific overrides affect only `mpfrxx::mpc_class` defaults. They do not
 change `mpfrxx::mpfr_class` defaults and do not write MPFR's thread-local default
 precision or rounding mode.
+
+Assigning a real value to `mpfrxx::mpc_class`, including `mpfr_class`,
+`mpz_class`, `mpq_class`, and supported scalar inputs, sets the imaginary
+component to `+0`, following GNU MPC's `mpc_set_fr`-family semantics.
 
 MPC default precision may be symmetric or asymmetric when explicitly requested
 through the MPC precision API:

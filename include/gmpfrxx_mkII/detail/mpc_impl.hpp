@@ -203,6 +203,12 @@ inline bool mpc_has_nan_component(mpc_srcptr value)
 
 namespace mpfrxx {
 
+struct mpc_evaluation_context {
+    mpfr_prec_t real_precision;
+    mpfr_prec_t imag_precision;
+    mpc_rnd_t rounding_mode;
+};
+
 class mpc_class {
 public:
     mpc_class()
@@ -1442,16 +1448,14 @@ void mpc_evaluate(
 }
 
 template <typename Op, typename Rhs>
-void mpc_compound_assign(mpfrxx::mpc_class& lhs, Rhs&& rhs)
+void mpc_compound_assign_with_context(
+    mpfrxx::mpc_class& lhs,
+    Rhs&& rhs,
+    mpc_expression_precision_bits precision,
+    mpc_rnd_t rnd)
 {
     auto operand = make_mpc_operand(std::forward<Rhs>(rhs));
     using operand_type = std::decay_t<decltype(operand)>;
-    mpfr_prec_t real_precision = 0;
-    mpfr_prec_t imag_precision = 0;
-    mpc_get_prec2(&real_precision, &imag_precision, lhs.mpc_data());
-    const mpc_expression_precision_bits precision{real_precision, imag_precision};
-    const auto context = current_mpc_eval_context(precision);
-    const mpc_rnd_t rnd = context.rounding_mode;
     if constexpr (is_mpc_class_leaf_v<operand_type>) {
         mpc_apply_binary<Op>(lhs.mpc_data(), lhs.mpc_data(), operand.get().mpc_data(), rnd);
     } else {
@@ -1459,6 +1463,17 @@ void mpc_compound_assign(mpfrxx::mpc_class& lhs, Rhs&& rhs)
         mpc_evaluate(value.get(), operand, precision, rnd);
         mpc_apply_binary<Op>(lhs.mpc_data(), lhs.mpc_data(), value.get(), rnd);
     }
+}
+
+template <typename Op, typename Rhs>
+void mpc_compound_assign(mpfrxx::mpc_class& lhs, Rhs&& rhs)
+{
+    mpfr_prec_t real_precision = 0;
+    mpfr_prec_t imag_precision = 0;
+    mpc_get_prec2(&real_precision, &imag_precision, lhs.mpc_data());
+    const mpc_expression_precision_bits precision{real_precision, imag_precision};
+    const auto context = current_mpc_eval_context(precision);
+    mpc_compound_assign_with_context<Op>(lhs, std::forward<Rhs>(rhs), precision, context.rounding_mode);
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<
@@ -1752,6 +1767,172 @@ inline mpc_class& operator/=(mpc_class& lhs, Rhs&& rhs)
 {
     gmpfrxx_mkII::detail::mpc_compound_assign<gmpfrxx_mkII::detail::div_op>(lhs, std::forward<Rhs>(rhs));
     return lhs;
+}
+
+class mpc_context_ref {
+public:
+    mpc_context_ref(mpc_class& value, mpc_evaluation_context context)
+        : value_(&value),
+          context_(context),
+          precision_{context.real_precision, context.imag_precision},
+          rounding_mode_(context.rounding_mode)
+    {
+        validate_precision();
+        check_precision();
+    }
+
+    mpc_context_ref(mpc_class& value, mpfr_prec_t precision, mpc_rnd_t rounding_mode)
+        : mpc_context_ref(value, precision, precision, rounding_mode)
+    {
+    }
+
+    mpc_context_ref(mpc_class& value, mpfr_prec_t real_precision, mpfr_prec_t imag_precision, mpc_rnd_t rounding_mode)
+        : value_(&value),
+          context_{real_precision, imag_precision, rounding_mode},
+          precision_{real_precision, imag_precision},
+          rounding_mode_(rounding_mode)
+    {
+        validate_precision();
+        check_precision();
+    }
+
+    mpc_context_ref(mpc_class& value,
+                    mpfr_prec_t real_precision,
+                    mpfr_prec_t imag_precision,
+                    mpfr_rnd_t real_rounding_mode,
+                    mpfr_rnd_t imag_rounding_mode)
+        : mpc_context_ref(
+              value,
+              real_precision,
+              imag_precision,
+              MPC_RND(real_rounding_mode, imag_rounding_mode))
+    {
+    }
+
+    mpc_context_ref(const mpc_context_ref&) = default;
+    mpc_context_ref& operator=(const mpc_context_ref&) = default;
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+    mpc_context_ref& operator=(Rhs&& rhs)
+    {
+        auto operand = gmpfrxx_mkII::detail::make_mpc_operand(std::forward<Rhs>(rhs));
+        gmpfrxx_mkII::detail::mpc_evaluate(
+            value_->mpc_data(),
+            operand,
+            precision_,
+            rounding_mode_);
+        return *this;
+    }
+
+    mpc_class& value() const noexcept
+    {
+        return *value_;
+    }
+
+    const mpc_evaluation_context& context() const noexcept
+    {
+        return context_;
+    }
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+    mpc_context_ref& operator+=(Rhs&& rhs)
+    {
+        gmpfrxx_mkII::detail::mpc_compound_assign_with_context<gmpfrxx_mkII::detail::add_op>(
+            *value_,
+            std::forward<Rhs>(rhs),
+            precision_,
+            rounding_mode_);
+        return *this;
+    }
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+    mpc_context_ref& operator-=(Rhs&& rhs)
+    {
+        gmpfrxx_mkII::detail::mpc_compound_assign_with_context<gmpfrxx_mkII::detail::sub_op>(
+            *value_,
+            std::forward<Rhs>(rhs),
+            precision_,
+            rounding_mode_);
+        return *this;
+    }
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+    mpc_context_ref& operator*=(Rhs&& rhs)
+    {
+        gmpfrxx_mkII::detail::mpc_compound_assign_with_context<gmpfrxx_mkII::detail::mul_op>(
+            *value_,
+            std::forward<Rhs>(rhs),
+            precision_,
+            rounding_mode_);
+        return *this;
+    }
+
+    template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Rhs>, int> = 0>
+    mpc_context_ref& operator/=(Rhs&& rhs)
+    {
+        gmpfrxx_mkII::detail::mpc_compound_assign_with_context<gmpfrxx_mkII::detail::div_op>(
+            *value_,
+            std::forward<Rhs>(rhs),
+            precision_,
+            rounding_mode_);
+        return *this;
+    }
+
+private:
+    void validate_precision() const
+    {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision_.real);
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision_.imag);
+    }
+
+    void check_precision() const
+    {
+        if constexpr (!gmpfrxx_mkII::detail::build_options::assume_fixed_precision_fastpath) {
+            if (precision_.real != value_->real_precision() ||
+                precision_.imag != value_->imag_precision()) {
+                throw std::invalid_argument("mpc evaluation context precision must match target precision");
+            }
+        }
+    }
+
+    mpc_class* value_;
+    mpc_evaluation_context context_;
+    gmpfrxx_mkII::detail::mpc_expression_precision_bits precision_;
+    mpc_rnd_t rounding_mode_;
+};
+
+inline mpc_context_ref with_context(mpc_class& value, mpc_evaluation_context context)
+{
+    return mpc_context_ref(value, context);
+}
+
+inline mpc_context_ref with_context(mpc_class& value, mpfr_prec_t precision, mpc_rnd_t rounding_mode)
+{
+    return mpc_context_ref(value, precision, rounding_mode);
+}
+
+inline mpc_context_ref with_context(
+    mpc_class& value,
+    mpfr_prec_t real_precision,
+    mpfr_prec_t imag_precision,
+    mpc_rnd_t rounding_mode)
+{
+    return mpc_context_ref(value, real_precision, imag_precision, rounding_mode);
+}
+
+inline mpc_context_ref with_context(
+    mpc_class& value,
+    mpfr_prec_t real_precision,
+    mpfr_prec_t imag_precision,
+    mpfr_rnd_t real_rounding_mode,
+    mpfr_rnd_t imag_rounding_mode)
+{
+    return mpc_context_ref(
+        value,
+        real_precision,
+        imag_precision,
+        real_rounding_mode,
+        imag_rounding_mode);
 }
 
 namespace detail {
