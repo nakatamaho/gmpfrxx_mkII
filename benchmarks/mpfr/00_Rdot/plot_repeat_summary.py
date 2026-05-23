@@ -50,10 +50,14 @@ def variant_color(name):
         return "#8c8c8c"
     if "STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH" in name:
         return "#2ca02c"
-    if "STABLE_ROUNDING_FMA" in name:
-        return "#9467bd"
+    if "FIXED_PRECISION_FASTPATH_FMA" in name:
+        return "#2ca02c"
+    if "FIXED_PRECISION_FASTPATH" in name:
+        return "#d62728"
     if "STABLE_ROUNDING" in name:
-        return "#73bf69"
+        if "FMA" in name:
+            return "#9467bd"
+        return "#d62728"
     if name.endswith("_FMA"):
         return "#9467bd"
     return "#4c78a8"
@@ -210,9 +214,9 @@ def plot_rows(rows, title, output):
     legend_items = [
         ("C native", "#8c8c8c"),
         ("mkII", "#4c78a8"),
-        ("stable rounding", "#73bf69"),
-        ("stable rounding + FMA", "#9467bd"),
-        ("stable rounding + FMA + fixed precision", "#2ca02c"),
+        ("stable rounding / fixed precision", "#d62728"),
+        ("FMA", "#9467bd"),
+        ("FMA + fixed precision", "#2ca02c"),
     ]
     handles = [Patch(facecolor=color, label=label) for label, color in legend_items]
     ax.legend(

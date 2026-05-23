@@ -1,3 +1,47 @@
+Post-phase benchmark plot palette alignment:
+DONE
+
+Implemented features:
+- Added the benchmark plot palette convention to `benchmarks/README_TEMPLATE.md`, using the MPFR Rgemv palette as the shared reference.
+- Updated GMP Rdot, GMP Raxpy, and GMP Rgemv plot scripts so upstream `orig` / `gmpxx.h` wrapper variants are green, C native variants are gray, mkII default variants are blue, and fixed-precision fastpath variants are red.
+- Kept MPFR Rdot and MPFR Raxpy plot scripts aligned with the MPFR Rgemv palette for stable-rounding, FMA, and fixed-precision classes.
+- Regenerated committed plot images for GMP/MPFR Rdot and Raxpy, plus GMP Rgemv, from the existing committed summary CSV or raw log data.
+
+Tests added:
+- No library tests were added; this phase updates benchmark reporting scripts, benchmark template documentation, and regenerated plot images.
+
+Tests updated:
+- `benchmarks/README_TEMPLATE.md`
+- `benchmarks/gmp/00_Rdot/plot_repeat_summary.py`
+- `benchmarks/gmp/01_Raxpy/plot_repeat_summary.py`
+- `benchmarks/gmp/02_Rgemv/plot_repeat_summary.py`
+- `benchmarks/mpfr/00_Rdot/plot_repeat_summary.py`
+- `benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py`
+- Regenerated plot PNGs under the corresponding committed `results_raw/` run directories.
+- `STATUS.md`
+
+Exact commands run:
+- `python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144/summary_rdot_gmp_n10000000_p512_repeat10.csv --output-prefix benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144/rdot_gmp_n10000000_p512_repeat10 --title-prefix "GMP Rdot N=10000000 precision=512 repeat=10"`
+- `python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv --output-prefix benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10 --title-prefix "GMP Raxpy N=10000000 precision=512 repeat=10"`
+- `python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p1024_repeat10_20260523_073628/summary_raxpy_gmp_n10000000_p1024_repeat10.csv --output-prefix benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p1024_repeat10_20260523_073628/raxpy_gmp_n10000000_p1024_repeat10 --title-prefix "GMP Raxpy N=10000000 precision=1024 repeat=10"`
+- `python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260523_131832/benchmark_rgemv_gmp_m4000_n4000_p512_repeat10.log --output-dir benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260523_131832 --output-prefix rgemv_gmp_m4000_n4000_p512_repeat10 --title-prefix "GMP Rgemv m=4000 n=4000 precision=512 repeat=10"`
+- `python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260522_171957/benchmark_rdot_mpfr_n10000000_p512_repeat10.log --output-dir benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p512_repeat10_20260522_171957 --output-prefix rdot_mpfr_n10000000_p512_repeat10 --title-prefix "MPFR Rdot N=10000000 precision=512 repeat=10"`
+- `python3 benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/summary_raxpy_mpfr_n10000000_p512_repeat10.csv --output-prefix benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10 --title-prefix "MPFR Raxpy N=10000000 precision=512 repeat=10"`
+- `python3 benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/summary_raxpy_mpfr_n10000000_p1024_repeat10.csv --output-prefix benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/raxpy_mpfr_n10000000_p1024_repeat10 --title-prefix "MPFR Raxpy N=10000000 precision=1024 repeat=10"`
+- `python3 -m py_compile benchmarks/gmp/00_Rdot/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/02_Rgemv/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Plot regeneration: PASS.
+- Python syntax check: PASS.
+- `git diff --check`: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- This phase did not recollect benchmark timings; it only refreshed plot palette rules and regenerated images from committed run data.
+- `benchmarks/gmp/02_Rgemv/README.md~` remains an unrelated untracked backup file and was not touched.
+
 Post-phase MPFR Raxpy GMP comparison section:
 DONE
 

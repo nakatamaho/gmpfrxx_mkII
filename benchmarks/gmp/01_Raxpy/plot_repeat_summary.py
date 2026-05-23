@@ -45,13 +45,15 @@ def natural_key(name: str) -> tuple[int, int, int, str]:
 def variant_color(name: str) -> str:
     if name.startswith("C_native"):
         return "#8c8c8c"
-    if "mkII_FIXED_PRECISION_FASTPATH" in name:
-        return "#2ca02c"
-    if "mkII" in name:
-        return "#73bf69"
     if "orig" in name:
-        return "#4c78a8"
-    return "#8c8c8c"
+        return "#2ca02c"
+    if "FIXED_PRECISION_FASTPATH_FMA" in name:
+        return "#2ca02c"
+    if "FIXED_PRECISION_FASTPATH" in name:
+        return "#d62728"
+    if name.endswith("_FMA"):
+        return "#9467bd"
+    return "#4c78a8"
 
 
 def plot_mode(rows: list[dict[str, str]], mode: str, output: Path, title_prefix: str) -> None:
@@ -96,17 +98,18 @@ def plot_mode(rows: list[dict[str, str]], mode: str, output: Path, title_prefix:
     ax.set_ylim(0, max_value * 1.22)
 
     legend_items = [
-        ("native C", "#8c8c8c"),
-        ("orig(gmpxx.h)", "#4c78a8"),
-        ("mkII", "#73bf69"),
-        ("mkII fixed precision fastpath", "#2ca02c"),
+        ("C native", "#8c8c8c"),
+        ("orig", "#2ca02c"),
+        ("mkII", "#4c78a8"),
+        ("mkII + FMA", "#9467bd"),
+        ("fixed precision", "#d62728"),
     ]
     handles = [Patch(facecolor=color, label=label) for label, color in legend_items]
     ax.legend(
         handles=handles,
         loc="lower right",
         bbox_to_anchor=(1.0, 1.01),
-        ncol=4,
+        ncol=3,
         frameon=False,
         fontsize=9,
     )

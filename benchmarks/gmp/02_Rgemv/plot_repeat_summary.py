@@ -47,6 +47,8 @@ def natural_key(name):
 def variant_color(name):
     if name.startswith("C_native"):
         return "#8c8c8c"
+    if "orig" in name:
+        return "#2ca02c"
     if "FIXED_PRECISION_FASTPATH_FMA" in name:
         return "#2ca02c"
     if "FIXED_PRECISION_FASTPATH" in name:
@@ -204,10 +206,10 @@ def plot_rows(rows, title, output):
 
     legend_items = [
         ("C native", "#8c8c8c"),
+        ("orig", "#2ca02c"),
         ("mkII", "#4c78a8"),
         ("mkII + FMA", "#9467bd"),
         ("fixed precision", "#d62728"),
-        ("fixed precision + FMA", "#2ca02c"),
     ]
     handles = [Patch(facecolor=color, label=label) for label, color in legend_items]
     ax.legend(handles=handles, loc="lower right", bbox_to_anchor=(1.0, 1.01), ncol=3, frameon=False, fontsize=9)

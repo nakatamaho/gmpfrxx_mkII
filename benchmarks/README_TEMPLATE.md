@@ -37,6 +37,22 @@ comparison point.
 State the exact committed run parameters, run environment, raw-data directory,
 log/CSV/plot paths, and correctness result.
 
+## Plot Style
+
+Use the MPFR Rgemv plot palette consistently across benchmark reports:
+
+| Class | Color | Notes |
+|-------|-------|-------|
+| `C native` | `#8c8c8c` | Raw C baseline. |
+| `mkII` | `#4c78a8` | Default mkII wrapper path. |
+| `mkII + FMA` | `#9467bd` | FMA-enabled mkII or C-native FMA class. |
+| `fixed precision` | `#d62728` | Fixed-precision fastpath, or MPFR stable-rounding/fixed-precision class when no separate color is useful. |
+| `fixed precision + FMA` | `#2ca02c` | Combined fixed-precision/FMA class. |
+
+For GMP reports that include upstream `orig` / `gmpxx.h` wrapper variants, color
+`orig` as green (`#2ca02c`) so it is visually distinct from mkII blue and C
+native gray.  Keep this mapping explicit in the plot legend.
+
 ## Headline Results
 
 Summarize the main performance conclusions from the committed run.
