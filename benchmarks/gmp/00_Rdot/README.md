@@ -151,36 +151,6 @@ python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py \
 
 ## Serial Results
 
-GitHub Markdown tables cannot run JavaScript sorting in a README. The
-collapsible views below provide the useful sorted orders directly.
-
-| Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
-|---------|------------|------------|----------------|
-| `C_native_01` | 26.146 | 25.666 | Raw per-iteration `mpf_init2` / `mpf_clear` product; intentionally allocation-heavy. |
-| `C_native_02` | 25.568 | 25.399 | Raw loop-local product object; same stress class as 01. |
-| `C_native_03` | 33.221 | 32.715 | Raw reusable-product baseline with one `mpf_mul` and one `mpf_add` per element. |
-| `C_native_04` | 31.608 | 31.228 | Raw reusable product plus explicit `mpf_set`; extra copy keeps it behind 03. |
-| `C_native_05` | 32.995 | 32.598 | Four accumulators with one product object; unrolled but same arithmetic-call count. |
-| `C_native_06` | 33.024 | 32.646 | Four accumulators with four product objects; same broad serial class as 03/05. |
-| `kernel_01_orig` | 28.338 | 27.708 | Expression product materializes inside the loop in upstream `gmpxx.h`. |
-| `kernel_01_mkII` | 25.271 | 24.961 | Normal mkII expression path still pays product materialization cost. |
-| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 31.930 | 31.392 | Fixed-precision scratch fastpath removes repeated product allocation from expression form. |
-| `kernel_02_orig` | 28.125 | 27.365 | Explicit loop-local construction remains expensive. |
-| `kernel_02_mkII` | 27.491 | 26.555 | Same loop-local construction class as upstream 02. |
-| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 27.337 | 27.180 | Fastpath cannot remove an object the source explicitly constructs in the loop. |
-| `kernel_03_orig` | 33.362 | 32.852 | Reused product object; reaches the raw reusable-product class. |
-| `kernel_03_mkII` | 33.114 | 32.744 | Same hot loop shape as C native 03; wrapper work is outside the timed loop. |
-| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 33.699 | 32.955 | Same reusable-product class as 03; fixed-precision path does not change the hot loop. |
-| `kernel_04_orig` | 31.936 | 31.386 | Reusable product plus explicit copy before multiply. |
-| `kernel_04_mkII` | 31.291 | 31.078 | Same source shape as upstream 04. |
-| `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 31.375 | 30.798 | Same copy-then-multiply source shape as 04. |
-| `kernel_05_orig` | 32.904 | 32.684 | Four accumulators with one product temporary; no new serial performance class. |
-| `kernel_05_mkII` | 33.269 | 32.799 | Unrolled mkII path stays in the reusable-product class. |
-| `kernel_05_mkII_FIXED_PRECISION_FASTPATH` | 32.937 | 32.696 | Same unrolled class; temporaries are already outside the loop. |
-| `kernel_06_orig` | 33.502 | 32.992 | Best serial average in this run; still the reusable-product/unroll class. |
-| `kernel_06_mkII` | 33.158 | 32.821 | Four product temporaries; same broad class as 03/05. |
-| `kernel_06_mkII_FIXED_PRECISION_FASTPATH` | 33.568 | 32.797 | Four product temporaries with fixed precision; same broad class as 06. |
-
 <details>
 <summary>Serial results sorted by Max MFLOPS</summary>
 
@@ -246,33 +216,6 @@ collapsible views below provide the useful sorted orders directly.
 </details>
 
 ## OpenMP Results
-
-| Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
-|---------|------------|------------|----------------|
-| `C_native_openmp_01` | 569.716 | 547.755 | Raw OpenMP per-iteration product initialization; parallelism hides some but not all overhead. |
-| `C_native_openmp_02` | 568.615 | 533.655 | Raw OpenMP loop-local product object; lower average reflects run-to-run variance. |
-| `C_native_openmp_03` | 584.371 | 575.234 | Raw OpenMP reusable product per thread; best overall average in this run. |
-| `C_native_openmp_04` | 582.329 | 570.500 | Raw OpenMP reusable product plus copy; still in the C native OpenMP class. |
-| `C_native_openmp_05` | 578.394 | 570.002 | Raw OpenMP unrolled accumulator shape; same broad class as 03. |
-| `C_native_openmp_06` | 579.015 | 566.714 | Raw OpenMP four-product unroll; same broad class, with a lower minimum sample. |
-| `kernel_openmp_01_orig` | 43.586 | 43.381 | Per-element product allocation dominates and does not scale. |
-| `kernel_openmp_01_mkII` | 37.279 | 37.037 | Normal expression materialization remains the bottleneck under OpenMP. |
-| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 583.173 | 555.914 | Scratch fastpath lifts expression form into the C native OpenMP class. |
-| `kernel_openmp_02_orig` | 43.522 | 43.389 | Explicit loop-local construction dominates. |
-| `kernel_openmp_02_mkII` | 37.206 | 37.114 | Same loop-local construction cost as upstream 02. |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 37.216 | 37.056 | Fastpath does not help explicit loop-local construction. |
-| `kernel_openmp_03_orig` | 578.441 | 572.814 | Reused product per thread reaches the raw OpenMP class. |
-| `kernel_openmp_03_mkII` | 589.682 | 574.444 | Best mkII OpenMP average in this run; same hot loop as C native 03. |
-| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 585.289 | 573.914 | Same class as OpenMP 03; fixed precision does not change the intended hot loop. |
-| `kernel_openmp_04_orig` | 584.881 | 563.980 | Copy-then-multiply OpenMP path remains in the reusable-product class. |
-| `kernel_openmp_04_mkII` | 580.377 | 569.934 | Same broad class as OpenMP 03/04. |
-| `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH` | 581.985 | 552.765 | Same source shape as OpenMP 04; lower average is likely variance. |
-| `kernel_openmp_05_orig` | 583.015 | 556.063 | Unrolled upstream path; one low sample lowers the average. |
-| `kernel_openmp_05_mkII` | 579.492 | 564.031 | Same broad OpenMP class as 03/04. |
-| `kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH` | 582.824 | 573.859 | Unrolled mkII path with fixed precision; same OpenMP class as 03. |
-| `kernel_openmp_06_orig` | 587.098 | 573.568 | Four product objects; same OpenMP class as 03/05. |
-| `kernel_openmp_06_mkII` | 583.560 | 570.006 | Same broad OpenMP class as 03/05/06. |
-| `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 583.092 | 552.906 | Four product objects with one low outlier; interpret by class, not one sample. |
 
 <details>
 <summary>OpenMP results sorted by Max MFLOPS</summary>

@@ -138,24 +138,6 @@ Precision scaling by best average:
 
 ### 512-bit Serial Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|-----------:|--------------:|----------------|
-| `C_native_01` | 33.910 | 33.634 | 33.378 | 0.032 | 0.180 | Raw C reusable-product baseline with one `mpf_mul` and one `mpf_add` per element. |
-| `kernel_01_orig` | 29.329 | 28.969 | 28.620 | 0.059 | 0.243 | Expression spelling `y[i] += alpha * x[i]`; fixed-precision mkII builds can remove enough wrapper work to enter the reusable-temp class. Upstream gmpxx wrapper. |
-| `kernel_01_mkII` | 29.504 | 28.928 | 27.968 | 0.220 | 0.469 | Expression spelling `y[i] += alpha * x[i]`; fixed-precision mkII builds can remove enough wrapper work to enter the reusable-temp class. mkII wrapper. |
-| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 33.042 | 32.259 | 31.806 | 0.137 | 0.370 | Expression spelling `y[i] += alpha * x[i]`; fixed-precision mkII builds can remove enough wrapper work to enter the reusable-temp class. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_02_orig` | 32.026 | 31.802 | 31.560 | 0.020 | 0.141 | Reusable product object using copy-then-multiply source shape. Upstream gmpxx wrapper. |
-| `kernel_02_mkII` | 32.468 | 31.869 | 31.412 | 0.066 | 0.258 | Reusable product object using copy-then-multiply source shape. mkII wrapper. |
-| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 31.977 | 31.754 | 31.441 | 0.029 | 0.171 | Reusable product object using copy-then-multiply source shape. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_03_orig` | 34.735 | 33.908 | 33.389 | 0.198 | 0.445 | Reusable product object assigned from `alpha * x[i]`; closest wrapper source shape to the raw C reusable-temp baseline. Upstream gmpxx wrapper. |
-| `kernel_03_mkII` | 34.056 | 33.682 | 33.287 | 0.051 | 0.225 | Reusable product object assigned from `alpha * x[i]`; closest wrapper source shape to the raw C reusable-temp baseline. mkII wrapper. |
-| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 34.553 | 33.759 | 33.235 | 0.136 | 0.369 | Reusable product object assigned from `alpha * x[i]`; closest wrapper source shape to the raw C reusable-temp baseline. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_04_orig` | 28.649 | 28.281 | 28.035 | 0.039 | 0.197 | Loop-local product object; intentionally expensive construction-control path. Upstream gmpxx wrapper. |
-| `kernel_04_mkII` | 28.792 | 28.409 | 27.724 | 0.106 | 0.326 | Loop-local product object; intentionally expensive construction-control path. mkII wrapper. |
-| `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 25.775 | 25.301 | 25.003 | 0.036 | 0.190 | Loop-local product object; intentionally expensive construction-control path. mkII wrapper. Fixed-precision fastpath enabled. |
-
-
-
 <details>
 <summary>512-bit Serial results sorted by Max MFLOPS</summary>
 
@@ -176,8 +158,6 @@ Precision scaling by best average:
 | 13 | `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 25.775 | 25.301 | 25.003 | 0.036 | 0.190 |
 
 </details>
-
-
 
 <details>
 <summary>512-bit Serial results sorted by Avg MFLOPS</summary>
@@ -202,24 +182,6 @@ Precision scaling by best average:
 
 ### 1024-bit Serial Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|-----------:|--------------:|----------------|
-| `C_native_01` | 12.164 | 11.954 | 11.845 | 0.008 | 0.091 | Raw C reusable-product baseline with one `mpf_mul` and one `mpf_add` per element. |
-| `kernel_01_orig` | 11.433 | 11.263 | 11.147 | 0.006 | 0.076 | Expression spelling `y[i] += alpha * x[i]`; fixed-precision mkII builds can remove enough wrapper work to enter the reusable-temp class. Upstream gmpxx wrapper. |
-| `kernel_01_mkII` | 25.645 | 24.668 | 23.230 | 0.549 | 0.741 | Expression spelling `y[i] += alpha * x[i]`; fixed-precision mkII builds can remove enough wrapper work to enter the reusable-temp class. mkII wrapper. |
-| `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 28.159 | 27.899 | 27.317 | 0.056 | 0.238 | Expression spelling `y[i] += alpha * x[i]`; fixed-precision mkII builds can remove enough wrapper work to enter the reusable-temp class. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_02_orig` | 11.645 | 11.574 | 11.485 | 0.003 | 0.054 | Reusable product object using copy-then-multiply source shape. Upstream gmpxx wrapper. |
-| `kernel_02_mkII` | 28.150 | 27.606 | 27.139 | 0.071 | 0.266 | Reusable product object using copy-then-multiply source shape. mkII wrapper. |
-| `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 27.930 | 27.567 | 27.306 | 0.028 | 0.168 | Reusable product object using copy-then-multiply source shape. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_03_orig` | 12.044 | 11.919 | 11.829 | 0.004 | 0.065 | Reusable product object assigned from `alpha * x[i]`; closest wrapper source shape to the raw C reusable-temp baseline. Upstream gmpxx wrapper. |
-| `kernel_03_mkII` | 29.231 | 29.033 | 28.843 | 0.011 | 0.106 | Reusable product object assigned from `alpha * x[i]`; closest wrapper source shape to the raw C reusable-temp baseline. mkII wrapper. |
-| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 29.268 | 28.994 | 28.730 | 0.029 | 0.170 | Reusable product object assigned from `alpha * x[i]`; closest wrapper source shape to the raw C reusable-temp baseline. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_04_orig` | 11.247 | 11.148 | 11.008 | 0.006 | 0.075 | Loop-local product object; intentionally expensive construction-control path. Upstream gmpxx wrapper. |
-| `kernel_04_mkII` | 24.911 | 24.432 | 23.963 | 0.127 | 0.356 | Loop-local product object; intentionally expensive construction-control path. mkII wrapper. |
-| `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 25.515 | 24.607 | 24.073 | 0.154 | 0.393 | Loop-local product object; intentionally expensive construction-control path. mkII wrapper. Fixed-precision fastpath enabled. |
-
-
-
 <details>
 <summary>1024-bit Serial results sorted by Max MFLOPS</summary>
 
@@ -240,8 +202,6 @@ Precision scaling by best average:
 | 13 | `kernel_04_orig` | 11.247 | 11.148 | 11.008 | 0.006 | 0.075 |
 
 </details>
-
-
 
 <details>
 <summary>1024-bit Serial results sorted by Avg MFLOPS</summary>
@@ -268,21 +228,6 @@ Precision scaling by best average:
 
 ### 512-bit OpenMP Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|-----------:|--------------:|----------------|
-| `C_native_openmp_01` | 395.204 | 390.629 | 385.749 | 9.120 | 3.020 | OpenMP worker loop; Raw C reusable-product baseline with one `mpf_mul` and one `mpf_add` per element. |
-| `kernel_openmp_01_orig` | 391.480 | 386.546 | 381.336 | 7.425 | 2.725 | OpenMP worker loop; GMP wrapper Raxpy variant. Upstream gmpxx wrapper. |
-| `kernel_openmp_01_mkII` | 394.816 | 390.218 | 377.921 | 19.320 | 4.395 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. |
-| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 395.063 | 393.019 | 391.013 | 1.567 | 1.252 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_openmp_02_orig` | 393.950 | 391.322 | 386.174 | 6.306 | 2.511 | OpenMP worker loop; GMP wrapper Raxpy variant. Upstream gmpxx wrapper. |
-| `kernel_openmp_02_mkII` | 394.626 | 390.735 | 386.714 | 6.079 | 2.466 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 394.185 | 391.939 | 387.192 | 3.474 | 1.864 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_openmp_03_orig` | 396.989 | 392.657 | 389.225 | 4.681 | 2.164 | OpenMP worker loop; GMP wrapper Raxpy variant. Upstream gmpxx wrapper. |
-| `kernel_openmp_03_mkII` | 394.688 | 390.391 | 375.463 | 27.591 | 5.253 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. |
-| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 394.542 | 392.564 | 388.286 | 2.706 | 1.645 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. Fixed-precision fastpath enabled. |
-
-
-
 <details>
 <summary>512-bit OpenMP results sorted by Max MFLOPS</summary>
 
@@ -300,8 +245,6 @@ Precision scaling by best average:
 | 10 | `kernel_openmp_01_orig` | 391.480 | 386.546 | 381.336 | 7.425 | 2.725 |
 
 </details>
-
-
 
 <details>
 <summary>512-bit OpenMP results sorted by Avg MFLOPS</summary>
@@ -323,21 +266,6 @@ Precision scaling by best average:
 
 ### 1024-bit OpenMP Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|-----------:|--------------:|----------------|
-| `C_native_openmp_01` | 252.358 | 248.587 | 241.816 | 8.127 | 2.851 | OpenMP worker loop; Raw C reusable-product baseline with one `mpf_mul` and one `mpf_add` per element. |
-| `kernel_openmp_01_orig` | 249.890 | 237.823 | 228.122 | 48.304 | 6.950 | OpenMP worker loop; GMP wrapper Raxpy variant. Upstream gmpxx wrapper. |
-| `kernel_openmp_01_mkII` | 389.134 | 384.773 | 379.822 | 6.085 | 2.467 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. |
-| `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 389.273 | 382.096 | 353.747 | 118.410 | 10.882 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_openmp_02_orig` | 252.065 | 247.884 | 238.401 | 21.411 | 4.627 | OpenMP worker loop; GMP wrapper Raxpy variant. Upstream gmpxx wrapper. |
-| `kernel_openmp_02_mkII` | 391.027 | 387.765 | 384.889 | 3.650 | 1.910 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. |
-| `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 390.044 | 386.379 | 376.453 | 13.642 | 3.694 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. Fixed-precision fastpath enabled. |
-| `kernel_openmp_03_orig` | 250.938 | 245.965 | 230.745 | 36.484 | 6.040 | OpenMP worker loop; GMP wrapper Raxpy variant. Upstream gmpxx wrapper. |
-| `kernel_openmp_03_mkII` | 392.388 | 389.155 | 385.720 | 3.192 | 1.787 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. |
-| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 392.125 | 388.119 | 376.883 | 16.603 | 4.075 | OpenMP worker loop; GMP wrapper Raxpy variant. mkII wrapper. Fixed-precision fastpath enabled. |
-
-
-
 <details>
 <summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
 
@@ -355,8 +283,6 @@ Precision scaling by best average:
 | 10 | `kernel_openmp_01_orig` | 249.890 | 237.823 | 228.122 | 48.304 | 6.950 |
 
 </details>
-
-
 
 <details>
 <summary>1024-bit OpenMP results sorted by Avg MFLOPS</summary>

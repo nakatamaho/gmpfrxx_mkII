@@ -191,19 +191,6 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
 
 ## Serial Results
 
-Main interpretation table:
-
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|----------------|
-| `C_native_06` | 23.688 | 23.542 | 23.287 | Best serial raw C average in this run; four accumulators and four reused products. |
-| `kernel_06_mkII_STABLE_ROUNDING` | 23.724 | 23.515 | 23.307 | Best serial wrapper average; stable rounding plus four accumulators/four products reaches the raw C unrolled class. |
-| `kernel_03_mkII_STABLE_ROUNDING` | 24.004 | 23.307 | 22.862 | Reusable-product non-FMA wrapper shape; stable rounding puts it in the top serial class. |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 23.564 | 23.151 | 22.884 | Expression spelling lowers to one MPFR FMA call per element. |
-| `kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 23.459 | 23.150 | 22.846 | Explicit-context FMA path with cached rounding and fixed-precision context checks compiled out. |
-| `kernel_08_mkII_FIXED_PRECISION_FASTPATH` | 23.438 | 23.046 | 22.783 | Explicit-context reusable-product non-FMA path; matches the raw `C_native_03` call shape. |
-| `C_native_01_FMA` | 23.605 | 23.203 | 22.951 | Raw C FMA baseline with rounding loaded before the loop. |
-| `kernel_01_mkII` | 16.692 | 16.490 | 16.261 | Generic wrapper expression path; product materialization and generic rounding delivery are both visible. |
-
 <details>
 <summary>Serial results sorted by Max MFLOPS</summary>
 
@@ -295,19 +282,6 @@ Main interpretation table:
 </details>
 
 ## OpenMP Results
-
-Main interpretation table:
-
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|----------------|
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 579.031 | 554.490 | 543.438 | Best OpenMP wrapper average in this run; expression FMA with stable rounding and fixed precision. |
-| `C_native_openmp_01_FMA` | 579.952 | 553.249 | 517.083 | Best OpenMP raw C average; one `mpfr_fma` call per element with cached rounding. |
-| `C_native_openmp_03` | 567.639 | 550.842 | 531.772 | Raw OpenMP reusable-product non-FMA baseline; close to the best wrapper average in this run. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 576.793 | 550.225 | 500.010 | Reusable-product wrapper path in the upper OpenMP class; range still shows OpenMP variance. |
-| `kernel_openmp_08_mkII_FIXED_PRECISION_FASTPATH` | 573.447 | 548.290 | 513.005 | Explicit-context OpenMP reusable-product path; cached rounding and fixed-precision context checks compiled out. |
-| `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA` | 582.990 | 547.109 | 510.640 | Four-accumulator/four-product OpenMP control; in the upper OpenMP class but not a distinct tier. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 517.870 | 501.946 | 471.086 | Reusable-product stable-rounding non-FMA path; lower than the FMA/fixed top class in this run. |
-| `kernel_openmp_01_mkII` | 420.727 | 405.447 | 365.891 | Generic OpenMP wrapper expression path remains below stable/FMA/context paths. |
 
 <details>
 <summary>OpenMP results sorted by Max MFLOPS</summary>

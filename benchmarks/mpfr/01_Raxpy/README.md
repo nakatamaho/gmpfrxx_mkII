@@ -142,33 +142,6 @@ Precision scaling by best average:
 
 ### 512-bit Serial Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|-----------:|--------------:|----------------|
-| `C_native_01` | 23.139 | 22.533 | 22.091 | 0.071 | 0.267 | Raw C split multiply/add baseline with one reusable product and cached rounding. |
-| `C_native_01_FMA` | 22.975 | 22.823 | 22.631 | 0.017 | 0.131 | Raw C FMA baseline with one `mpfr_fma` call per element and cached rounding. |
-| `C_native_packed_custom_layout_FMA` | 22.975 | 22.674 | 22.224 | 0.041 | 0.202 | Packed MPFR header+limb storage; same arithmetic as the raw FMA baseline, used to test layout effects. |
-| `kernel_01_mkII` | 17.630 | 17.439 | 17.269 | 0.009 | 0.096 | Direct expression form; FMA builds can lower this source shape to one `mpfr_fma` per element. |
-| `kernel_01_mkII_STABLE_ROUNDING` | 18.429 | 18.136 | 17.773 | 0.048 | 0.220 | Direct expression form; FMA builds can lower this source shape to one `mpfr_fma` per element. Stable rounding enabled. |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 21.862 | 21.301 | 21.037 | 0.050 | 0.223 | Direct expression form; FMA builds can lower this source shape to one `mpfr_fma` per element. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.392 | 22.735 | 22.338 | 0.119 | 0.345 | Direct expression form; FMA builds can lower this source shape to one `mpfr_fma` per element. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_02_mkII` | 18.595 | 18.256 | 18.043 | 0.026 | 0.161 | Reusable product object using copy-then-multiply source shape. |
-| `kernel_02_mkII_STABLE_ROUNDING` | 20.041 | 19.826 | 19.604 | 0.015 | 0.122 | Reusable product object using copy-then-multiply source shape. Stable rounding enabled. |
-| `kernel_02_mkII_STABLE_ROUNDING_FMA` | 19.805 | 19.607 | 19.453 | 0.011 | 0.104 | Reusable product object using copy-then-multiply source shape. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 20.449 | 19.965 | 19.524 | 0.064 | 0.254 | Reusable product object using copy-then-multiply source shape. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_03_mkII` | 21.143 | 20.753 | 20.617 | 0.022 | 0.148 | Reusable product object assigned from the product expression; split multiply/add hot loop. |
-| `kernel_03_mkII_STABLE_ROUNDING` | 23.398 | 22.766 | 22.353 | 0.105 | 0.323 | Reusable product object assigned from the product expression; split multiply/add hot loop. Stable rounding enabled. |
-| `kernel_03_mkII_STABLE_ROUNDING_FMA` | 23.151 | 22.555 | 22.197 | 0.059 | 0.242 | Reusable product object assigned from the product expression; split multiply/add hot loop. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.122 | 22.684 | 22.310 | 0.054 | 0.232 | Reusable product object assigned from the product expression; split multiply/add hot loop. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_04_mkII` | 16.591 | 16.127 | 15.850 | 0.046 | 0.214 | Loop-local product object; intentionally expensive construction-control path. |
-| `kernel_04_mkII_STABLE_ROUNDING` | 18.537 | 17.991 | 17.677 | 0.045 | 0.211 | Loop-local product object; intentionally expensive construction-control path. Stable rounding enabled. |
-| `kernel_04_mkII_STABLE_ROUNDING_FMA` | 17.208 | 16.835 | 16.620 | 0.039 | 0.198 | Loop-local product object; intentionally expensive construction-control path. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 18.532 | 18.178 | 17.953 | 0.024 | 0.154 | Loop-local product object; intentionally expensive construction-control path. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_05_mkII` | 18.422 | 18.227 | 18.033 | 0.016 | 0.127 | Explicit-context direct expression; rounding is captured outside the loop. |
-| `kernel_05_mkII_FMA` | 22.967 | 22.727 | 22.472 | 0.027 | 0.164 | Explicit-context direct expression; rounding is captured outside the loop. FMA enabled where the source shape is eligible. |
-| `kernel_06_mkII` | 23.149 | 22.756 | 22.493 | 0.031 | 0.175 | Explicit-context reusable product object; cached context rounding with split multiply/add. |
-
-
-
 <details>
 <summary>512-bit Serial results sorted by Max MFLOPS</summary>
 
@@ -198,8 +171,6 @@ Precision scaling by best average:
 | 22 | `kernel_04_mkII` | 16.591 | 16.127 | 15.850 | 0.046 | 0.214 |
 
 </details>
-
-
 
 <details>
 <summary>512-bit Serial results sorted by Avg MFLOPS</summary>
@@ -233,33 +204,6 @@ Precision scaling by best average:
 
 ### 1024-bit Serial Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|-----------:|--------------:|----------------|
-| `C_native_01` | 9.251 | 9.054 | 8.980 | 0.005 | 0.073 | Raw C split multiply/add baseline with one reusable product and cached rounding. |
-| `C_native_01_FMA` | 9.555 | 9.304 | 9.229 | 0.008 | 0.089 | Raw C FMA baseline with one `mpfr_fma` call per element and cached rounding. |
-| `C_native_packed_custom_layout_FMA` | 9.130 | 9.011 | 8.871 | 0.004 | 0.065 | Packed MPFR header+limb storage; same arithmetic as the raw FMA baseline, used to test layout effects. |
-| `kernel_01_mkII` | 8.327 | 8.104 | 8.016 | 0.007 | 0.085 | Direct expression form; FMA builds can lower this source shape to one `mpfr_fma` per element. |
-| `kernel_01_mkII_STABLE_ROUNDING` | 8.275 | 8.189 | 8.107 | 0.003 | 0.051 | Direct expression form; FMA builds can lower this source shape to one `mpfr_fma` per element. Stable rounding enabled. |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 9.413 | 9.133 | 9.029 | 0.010 | 0.100 | Direct expression form; FMA builds can lower this source shape to one `mpfr_fma` per element. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.525 | 9.315 | 9.176 | 0.011 | 0.103 | Direct expression form; FMA builds can lower this source shape to one `mpfr_fma` per element. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_02_mkII` | 8.705 | 8.556 | 8.457 | 0.004 | 0.065 | Reusable product object using copy-then-multiply source shape. |
-| `kernel_02_mkII_STABLE_ROUNDING` | 9.178 | 8.926 | 8.811 | 0.009 | 0.096 | Reusable product object using copy-then-multiply source shape. Stable rounding enabled. |
-| `kernel_02_mkII_STABLE_ROUNDING_FMA` | 8.972 | 8.871 | 8.796 | 0.003 | 0.053 | Reusable product object using copy-then-multiply source shape. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.024 | 8.919 | 8.864 | 0.002 | 0.045 | Reusable product object using copy-then-multiply source shape. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_03_mkII` | 8.955 | 8.790 | 8.720 | 0.005 | 0.071 | Reusable product object assigned from the product expression; split multiply/add hot loop. |
-| `kernel_03_mkII_STABLE_ROUNDING` | 9.232 | 9.032 | 8.932 | 0.007 | 0.084 | Reusable product object assigned from the product expression; split multiply/add hot loop. Stable rounding enabled. |
-| `kernel_03_mkII_STABLE_ROUNDING_FMA` | 9.189 | 9.018 | 8.917 | 0.005 | 0.069 | Reusable product object assigned from the product expression; split multiply/add hot loop. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.069 | 9.001 | 8.947 | 0.002 | 0.045 | Reusable product object assigned from the product expression; split multiply/add hot loop. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_04_mkII` | 8.161 | 8.027 | 7.949 | 0.003 | 0.053 | Loop-local product object; intentionally expensive construction-control path. |
-| `kernel_04_mkII_STABLE_ROUNDING` | 8.415 | 8.234 | 8.147 | 0.008 | 0.092 | Loop-local product object; intentionally expensive construction-control path. Stable rounding enabled. |
-| `kernel_04_mkII_STABLE_ROUNDING_FMA` | 8.413 | 8.237 | 8.114 | 0.006 | 0.075 | Loop-local product object; intentionally expensive construction-control path. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 8.274 | 8.208 | 8.167 | 0.001 | 0.036 | Loop-local product object; intentionally expensive construction-control path. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_05_mkII` | 8.381 | 8.246 | 8.179 | 0.004 | 0.060 | Explicit-context direct expression; rounding is captured outside the loop. |
-| `kernel_05_mkII_FMA` | 9.420 | 9.270 | 9.175 | 0.006 | 0.076 | Explicit-context direct expression; rounding is captured outside the loop. FMA enabled where the source shape is eligible. |
-| `kernel_06_mkII` | 9.049 | 8.978 | 8.912 | 0.002 | 0.046 | Explicit-context reusable product object; cached context rounding with split multiply/add. |
-
-
-
 <details>
 <summary>1024-bit Serial results sorted by Max MFLOPS</summary>
 
@@ -289,8 +233,6 @@ Precision scaling by best average:
 | 22 | `kernel_04_mkII` | 8.161 | 8.027 | 7.949 | 0.003 | 0.053 |
 
 </details>
-
-
 
 <details>
 <summary>1024-bit Serial results sorted by Avg MFLOPS</summary>
@@ -326,32 +268,6 @@ Precision scaling by best average:
 
 ### 512-bit OpenMP Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|-----------:|--------------:|----------------|
-| `C_native_openmp_01` | 404.358 | 397.921 | 382.053 | 36.185 | 6.015 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `C_native_openmp_01_FMA` | 422.647 | 412.005 | 397.239 | 45.560 | 6.750 | OpenMP worker loop; MPFR wrapper Raxpy variant. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_01_mkII` | 397.552 | 388.010 | 372.971 | 59.407 | 7.708 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING` | 388.881 | 382.625 | 374.177 | 24.528 | 4.953 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 422.613 | 414.601 | 404.807 | 30.961 | 5.564 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 420.011 | 412.811 | 396.439 | 58.378 | 7.641 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_openmp_02_mkII` | 402.761 | 397.517 | 393.693 | 10.690 | 3.270 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING` | 404.415 | 387.554 | 331.484 | 461.276 | 21.477 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 408.120 | 401.023 | 389.165 | 35.026 | 5.918 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 404.445 | 391.459 | 380.405 | 87.876 | 9.374 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_openmp_03_mkII` | 405.126 | 395.355 | 372.712 | 99.632 | 9.982 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 412.930 | 404.865 | 391.492 | 43.049 | 6.561 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 413.187 | 395.771 | 372.361 | 131.640 | 11.473 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 410.457 | 404.020 | 395.976 | 24.756 | 4.976 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_openmp_04_mkII` | 394.886 | 382.610 | 370.230 | 59.005 | 7.681 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_04_mkII_STABLE_ROUNDING` | 401.977 | 387.049 | 369.021 | 106.410 | 10.316 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. |
-| `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 395.495 | 380.476 | 341.166 | 289.604 | 17.018 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 399.565 | 392.081 | 373.498 | 67.905 | 8.240 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_openmp_05_mkII` | 404.269 | 391.510 | 368.697 | 105.857 | 10.289 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_05_mkII_FMA` | 421.818 | 413.181 | 391.186 | 84.907 | 9.215 | OpenMP worker loop; MPFR wrapper Raxpy variant. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_06_mkII` | 412.276 | 406.960 | 402.329 | 8.767 | 2.961 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-
-
-
 <details>
 <summary>512-bit OpenMP results sorted by Max MFLOPS</summary>
 
@@ -380,8 +296,6 @@ Precision scaling by best average:
 | 21 | `kernel_openmp_01_mkII_STABLE_ROUNDING` | 388.881 | 382.625 | 374.177 | 24.528 | 4.953 |
 
 </details>
-
-
 
 <details>
 <summary>512-bit OpenMP results sorted by Avg MFLOPS</summary>
@@ -414,32 +328,6 @@ Precision scaling by best average:
 
 ### 1024-bit OpenMP Results
 
-| Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS | Interpretation |
-|---------|-----------:|-----------:|-----------:|-----------:|--------------:|----------------|
-| `C_native_openmp_01` | 247.423 | 244.719 | 242.700 | 2.489 | 1.578 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `C_native_openmp_01_FMA` | 256.361 | 252.101 | 241.479 | 23.022 | 4.798 | OpenMP worker loop; MPFR wrapper Raxpy variant. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_01_mkII` | 222.326 | 216.774 | 206.693 | 23.415 | 4.839 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING` | 224.539 | 216.630 | 206.711 | 42.233 | 6.499 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 258.391 | 246.258 | 220.340 | 172.317 | 13.127 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 257.519 | 251.175 | 242.115 | 23.406 | 4.838 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_openmp_02_mkII` | 241.189 | 237.876 | 233.294 | 6.493 | 2.548 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING` | 249.422 | 245.761 | 243.830 | 2.450 | 1.565 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 249.382 | 245.225 | 241.009 | 6.803 | 2.608 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 246.658 | 242.667 | 231.067 | 18.904 | 4.348 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_openmp_03_mkII` | 243.988 | 239.630 | 234.461 | 7.844 | 2.801 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING` | 246.854 | 243.348 | 237.407 | 7.287 | 2.700 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 247.078 | 243.982 | 240.779 | 5.342 | 2.311 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 248.119 | 244.436 | 240.526 | 5.884 | 2.426 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_openmp_04_mkII` | 220.873 | 215.097 | 203.137 | 39.175 | 6.259 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_04_mkII_STABLE_ROUNDING` | 226.014 | 219.683 | 209.480 | 25.508 | 5.051 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. |
-| `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 225.673 | 220.669 | 210.751 | 16.497 | 4.062 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 224.838 | 219.073 | 206.807 | 36.127 | 6.011 | OpenMP worker loop; MPFR wrapper Raxpy variant. Stable rounding enabled. FMA enabled where the source shape is eligible. Fixed-precision fastpath enabled. |
-| `kernel_openmp_05_mkII` | 223.985 | 217.284 | 197.772 | 61.560 | 7.846 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-| `kernel_openmp_05_mkII_FMA` | 257.902 | 251.567 | 247.225 | 13.278 | 3.644 | OpenMP worker loop; MPFR wrapper Raxpy variant. FMA enabled where the source shape is eligible. |
-| `kernel_openmp_06_mkII` | 248.596 | 240.716 | 227.820 | 27.710 | 5.264 | OpenMP worker loop; MPFR wrapper Raxpy variant. |
-
-
-
 <details>
 <summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
 
@@ -468,8 +356,6 @@ Precision scaling by best average:
 | 21 | `kernel_openmp_04_mkII` | 220.873 | 215.097 | 203.137 | 39.175 | 6.259 |
 
 </details>
-
-
 
 <details>
 <summary>1024-bit OpenMP results sorted by Avg MFLOPS</summary>

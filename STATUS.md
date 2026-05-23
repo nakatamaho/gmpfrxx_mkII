@@ -22100,3 +22100,33 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+
+## Phase: Fold Rdot and Raxpy Result Tables
+
+Implemented features:
+- Removed the visible main interpretation tables from `Serial Results` and `OpenMP Results` in the GMP/MPFR `00_Rdot` and `01_Raxpy` benchmark reports.
+- Kept only the folded sorted result views for Max MFLOPS and Avg MFLOPS in those sections.
+- Preserved headline interpretation tables and non-result analysis sections.
+
+Missing features:
+- None for this documentation-only phase.
+
+Tests added:
+- No new tests. This phase changes benchmark report formatting only.
+
+Exact commands run:
+- `rg -n "^## Serial Results|^## OpenMP Results|^### .*Results|<summary>.*sorted by" benchmarks/gmp/00_Rdot/README.md benchmarks/mpfr/00_Rdot/README.md benchmarks/gmp/01_Raxpy/README.md benchmarks/mpfr/01_Raxpy/README.md`
+- `python3 - <<'PY' ...` to remove the visible result tables and leave the folded sorted tables.
+- `python3 - <<'PY' ...` to normalize extra blank lines.
+- `rg -n "Main interpretation table|\| Variant \| Max MFLOPS \| Avg MFLOPS.*Interpretation" benchmarks/gmp/00_Rdot/README.md benchmarks/mpfr/00_Rdot/README.md benchmarks/gmp/01_Raxpy/README.md benchmarks/mpfr/01_Raxpy/README.md`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- README table folding update: PASS.
+- Diff whitespace check: PASS.
+- Full CTest from `build`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
