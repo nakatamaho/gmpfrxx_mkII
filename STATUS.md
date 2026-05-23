@@ -22062,3 +22062,41 @@ Pass/fail result:
 Known issues:
 - Existing untracked 1024-bit MPFR Raxpy raw data remains untouched.
 - Existing uncommitted GMP Raxpy benchmark changes remain outside this phase.
+
+
+## Phase: Add 1024-bit GMP and MPFR Raxpy Repeat-10 Reports
+
+Implemented features:
+- Rebuilt the release benchmark tree in `build_bench_release`.
+- Collected fresh 1024-bit `N=10000000`, repeat-10 sweeps for GMP 01_Raxpy and MPFR 01_Raxpy.
+- Stored GMP raw log, raw CSV, summary CSV, progress log, and serial/OpenMP plots under `benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p1024_repeat10_20260523_073628/`.
+- Stored MPFR raw log, raw CSV, summary CSV, progress log, and serial/OpenMP plots under `benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/`.
+- Updated both Raxpy README reports to present 512-bit and 1024-bit runs in parallel: recorded-run tables, headline precision scaling, serial and OpenMP result sections, bandwidth models, plot links, and lessons learned.
+- Updated the MPFR Raxpy comparison with the GMP version to discuss both 512-bit and 1024-bit behavior.
+
+Missing features:
+- No unit-test feature work was part of this phase.
+
+Tests added:
+- No new tests. This phase updates benchmark data, plots, and documentation.
+
+Exact commands run:
+- `cmake --build build_bench_release -j`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread /tmp/run_raxpy_repeat.py gmp --build-dir build_bench_release --n 10000000 --precision 1024 --repeat 10`
+- `python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p1024_repeat10_20260523_073628/summary_raxpy_gmp_n10000000_p1024_repeat10.csv --output-prefix benchmarks/gmp/01_Raxpy/results_raw/raxpy_gmp_n10000000_p1024_repeat10_20260523_073628/raxpy_gmp_n10000000_p1024_repeat10 --title-prefix "GMP Raxpy N=10000000 p=1024 repeat=10"`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread /tmp/run_raxpy_repeat.py mpfr --build-dir build_bench_release --n 10000000 --precision 1024 --repeat 10`
+- `python3 benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/summary_raxpy_mpfr_n10000000_p1024_repeat10.csv --output-prefix benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/raxpy_mpfr_n10000000_p1024_repeat10 --title-prefix "MPFR Raxpy N=10000000 p=1024 repeat=10"`
+- `python3 /tmp/update_raxpy_readmes.py`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release benchmark rebuild: PASS.
+- GMP Raxpy 1024-bit repeat-10 sweep: PASS, 23 variants and 230 timed runs completed with `Result OK`.
+- MPFR Raxpy 1024-bit repeat-10 sweep: PASS, 43 variants and 430 timed runs completed with `Result OK`.
+- Plot and README regeneration: PASS.
+- Diff whitespace check: PASS.
+- Full CTest from `build`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
