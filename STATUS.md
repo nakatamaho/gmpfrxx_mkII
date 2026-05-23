@@ -22130,3 +22130,50 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+## Phase: Refresh GMP and MPFR Rgemv Repeat-10 Reports
+
+Implemented features:
+- Added GMP 02_Rgemv repeat-summary tooling parallel to the MPFR Rgemv workflow: `run_repeat.sh` and `plot_repeat_summary.py`.
+- Removed stale committed GMP and MPFR 02_Rgemv raw-result directories before collecting fresh data.
+- Rebuilt the release benchmark tree in `build_bench_release`.
+- Collected fresh GMP 02_Rgemv repeat-10 data for `m=4000`, `n=4000`, `precision=512`, `OMP_NUM_THREADS=32`.
+- Collected fresh MPFR 02_Rgemv repeat-10 data for `m=4000`, `n=4000`, `precision=512`, `OMP_NUM_THREADS=32`.
+- Stored GMP raw log, raw CSV, summary CSV, and serial/OpenMP plots under `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260523_131832/`.
+- Stored MPFR raw log, raw CSV, summary CSV, and serial/OpenMP plots under `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260523_173328/`.
+- Rewrote both GMP and MPFR 02_Rgemv README reports using the requested 00_Rdot-style section order: Build, Kernel Shapes, C Native Equivalent Kernels, Recorded Run, Headline Results, Serial Results, OpenMP Results, Memory Bandwidth Estimates, Hotpath Disassembly, and Lessons Learned.
+- Updated README tables, plot links, bandwidth estimates, and representative disassembly discussion from the fresh repeat-10 results.
+
+Missing features:
+- No library feature work was part of this phase.
+
+Tests added:
+- No unit tests. This phase updates benchmark tooling, raw benchmark data, plots, and documentation.
+
+Exact commands run:
+- `cmake --build build_bench_release -j`
+- `rm -rf benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p512_repeat10_20260516_184101`
+- `rm -rf benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260518_121840`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/gmp/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 512 10`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 512 10`
+- `objdump -Cd --no-show-raw-insn --start-address=0x5460 --stop-address=0x55a0 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03`
+- `objdump -Cd --no-show-raw-insn --start-address=0x54a0 --stop-address=0x5600 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3ee0 --stop-address=0x4060 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII`
+- `objdump -Cd --no-show-raw-insn --start-address=0x2b50 --stop-address=0x2ce0 build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3090 --stop-address=0x3240 build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_mkII`
+- `objdump -Cd --no-show-raw-insn --start-address=0x2bf0 --stop-address=0x2d60 build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07`
+- `objdump -Cd --no-show-raw-insn --start-address=0x3200 --stop-address=0x3380 build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA`
+- `python3 - <<'PY' ...` to regenerate both Rgemv README reports from fresh summary CSV data and disassembly notes.
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release benchmark rebuild: PASS.
+- GMP Rgemv repeat-10 sweep: PASS, 44 variants and 440 timed runs completed with `Result OK`.
+- MPFR Rgemv repeat-10 sweep: PASS, 49 variants and 490 timed runs completed with `Result OK`.
+- Plot and README regeneration: PASS.
+- Diff whitespace check: PASS.
+- Full CTest from `build`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
