@@ -1,0 +1,3728 @@
+RUN_ID rdot_gmp_n10000000_p1024_repeat10_20260523_194451
+2026-05-23T19:44:51+09:00
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+N=10000000 PREC=1024 REPEAT=10
+OMP_NUM_THREADS=32
+OMP_PLACES=cores
+OMP_PROC_BIND=spread
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 1
+Elapsed time: 1.84079 s
+MFLOPS: 10.8649
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.829498
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 2
+Elapsed time: 1.83579 s
+MFLOPS: 10.8945
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.827914
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 3
+Elapsed time: 1.84855 s
+MFLOPS: 10.8193
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.837217
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 4
+Elapsed time: 1.81461 s
+MFLOPS: 11.0216
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.658283
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 5
+Elapsed time: 1.85541 s
+MFLOPS: 10.7793
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.797410
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 6
+Elapsed time: 1.8385 s
+MFLOPS: 10.8784
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.839701
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 7
+Elapsed time: 1.84473 s
+MFLOPS: 10.8417
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.864490
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 8
+Elapsed time: 1.85412 s
+MFLOPS: 10.7868
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.845754
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 9
+Elapsed time: 1.83696 s
+MFLOPS: 10.8876
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.860779
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+REPEAT 10
+Elapsed time: 1.79867 s
+MFLOPS: 11.1193
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.590285
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 1
+Elapsed time: 1.85918 s
+MFLOPS: 10.7574
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.889696
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 2
+Elapsed time: 1.84598 s
+MFLOPS: 10.8344
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.896343
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 3
+Elapsed time: 1.85971 s
+MFLOPS: 10.7544
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.886280
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 4
+Elapsed time: 1.84683 s
+MFLOPS: 10.8294
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.874980
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 5
+Elapsed time: 1.8448 s
+MFLOPS: 10.8413
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.842595
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 6
+Elapsed time: 1.83335 s
+MFLOPS: 10.909
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.804491
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 7
+Elapsed time: 1.84664 s
+MFLOPS: 10.8305
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.835490
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 8
+Elapsed time: 1.858 s
+MFLOPS: 10.7643
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.910409
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 9
+Elapsed time: 1.8562 s
+MFLOPS: 10.7747
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.905435
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+REPEAT 10
+Elapsed time: 1.86407 s
+MFLOPS: 10.7292
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.904381
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 1
+Elapsed time: 1.71147 s
+MFLOPS: 11.6859
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.837293
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 2
+Elapsed time: 1.68359 s
+MFLOPS: 11.8793
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.684319
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 3
+Elapsed time: 1.69881 s
+MFLOPS: 11.7729
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.761110
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 4
+Elapsed time: 1.70939 s
+MFLOPS: 11.7001
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.738867
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 5
+Elapsed time: 1.67913 s
+MFLOPS: 11.9109
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.674750
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 6
+Elapsed time: 1.64425 s
+MFLOPS: 12.1636
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.529147
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 7
+Elapsed time: 1.68798 s
+MFLOPS: 11.8485
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.661846
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 8
+Elapsed time: 1.66052 s
+MFLOPS: 12.0444
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.529494
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 9
+Elapsed time: 1.70843 s
+MFLOPS: 11.7066
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.775840
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+REPEAT 10
+Elapsed time: 1.67891 s
+MFLOPS: 11.9125
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.696554
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 1
+Elapsed time: 1.73055 s
+MFLOPS: 11.557
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.750897
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 2
+Elapsed time: 1.75381 s
+MFLOPS: 11.4038
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.783927
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 3
+Elapsed time: 1.75582 s
+MFLOPS: 11.3907
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.750271
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 4
+Elapsed time: 1.74254 s
+MFLOPS: 11.4775
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.779226
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 5
+Elapsed time: 1.75607 s
+MFLOPS: 11.3891
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.897732
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 6
+Elapsed time: 1.74831 s
+MFLOPS: 11.4396
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.771367
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 7
+Elapsed time: 1.75934 s
+MFLOPS: 11.3679
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.847413
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 8
+Elapsed time: 1.7417 s
+MFLOPS: 11.4831
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.758180
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 9
+Elapsed time: 1.73962 s
+MFLOPS: 11.4967
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.754886
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+REPEAT 10
+Elapsed time: 1.73919 s
+MFLOPS: 11.4996
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.735720
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 1
+Elapsed time: 1.6966 s
+MFLOPS: 11.7883
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.701324
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 2
+Elapsed time: 1.69677 s
+MFLOPS: 11.7871
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.758519
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 3
+Elapsed time: 1.68706 s
+MFLOPS: 11.855
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.725037
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 4
+Elapsed time: 1.70848 s
+MFLOPS: 11.7063
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.839862
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 5
+Elapsed time: 1.70064 s
+MFLOPS: 11.7603
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.750606
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 6
+Elapsed time: 1.69867 s
+MFLOPS: 11.7739
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.726555
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 7
+Elapsed time: 1.6777 s
+MFLOPS: 11.9211
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.667660
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 8
+Elapsed time: 1.68952 s
+MFLOPS: 11.8377
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.714468
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 9
+Elapsed time: 1.69394 s
+MFLOPS: 11.8068
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.717804
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+REPEAT 10
+Elapsed time: 1.68423 s
+MFLOPS: 11.8748
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.716373
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 1
+Elapsed time: 1.70016 s
+MFLOPS: 11.7636
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.737742
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 2
+Elapsed time: 1.68833 s
+MFLOPS: 11.846
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.670361
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 3
+Elapsed time: 1.70057 s
+MFLOPS: 11.7607
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.760159
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 4
+Elapsed time: 1.69351 s
+MFLOPS: 11.8098
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.728416
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 5
+Elapsed time: 1.69333 s
+MFLOPS: 11.811
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.698999
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 6
+Elapsed time: 1.70801 s
+MFLOPS: 11.7095
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.762618
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 7
+Elapsed time: 1.67761 s
+MFLOPS: 11.9217
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.687612
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 8
+Elapsed time: 1.6899 s
+MFLOPS: 11.835
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.703069
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 9
+Elapsed time: 1.689 s
+MFLOPS: 11.8413
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.729948
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+REPEAT 10
+Elapsed time: 1.70567 s
+MFLOPS: 11.7256
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.744586
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 1
+Elapsed time: 0.0662938 s
+MFLOPS: 301.687
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.136659
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 2
+Elapsed time: 0.0673332 s
+MFLOPS: 297.03
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.144991
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 3
+Elapsed time: 0.0672823 s
+MFLOPS: 297.255
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.171163
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 4
+Elapsed time: 0.0676077 s
+MFLOPS: 295.824
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.202668
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 5
+Elapsed time: 0.0658385 s
+MFLOPS: 303.774
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.172891
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 6
+Elapsed time: 0.0673783 s
+MFLOPS: 296.831
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.158104
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 7
+Elapsed time: 0.0649947 s
+MFLOPS: 307.718
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.169544
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 8
+Elapsed time: 0.070364 s
+MFLOPS: 284.236
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.181184
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 9
+Elapsed time: 0.0664966 s
+MFLOPS: 300.767
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.164753
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+REPEAT 10
+Elapsed time: 0.0664912 s
+MFLOPS: 300.792
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.171424
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 1
+Elapsed time: 0.0662463 s
+MFLOPS: 301.904
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.113788
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 2
+Elapsed time: 0.0673388 s
+MFLOPS: 297.005
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.158999
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 3
+Elapsed time: 0.0661727 s
+MFLOPS: 302.239
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.146921
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 4
+Elapsed time: 0.0670545 s
+MFLOPS: 298.265
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.179052
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 5
+Elapsed time: 0.0661375 s
+MFLOPS: 302.4
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.172019
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 6
+Elapsed time: 0.0687197 s
+MFLOPS: 291.037
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.134503
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 7
+Elapsed time: 0.0660915 s
+MFLOPS: 302.611
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.125831
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 8
+Elapsed time: 0.0663359 s
+MFLOPS: 301.496
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.129355
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 9
+Elapsed time: 0.0706441 s
+MFLOPS: 283.109
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.196697
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+REPEAT 10
+Elapsed time: 0.0755339 s
+MFLOPS: 264.782
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.183047
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 1
+Elapsed time: 0.0633131 s
+MFLOPS: 315.89
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.122389
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 2
+Elapsed time: 0.0643752 s
+MFLOPS: 310.679
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.160705
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 3
+Elapsed time: 0.064004 s
+MFLOPS: 312.48
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.182477
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 4
+Elapsed time: 0.0677624 s
+MFLOPS: 295.149
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.269711
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 5
+Elapsed time: 0.0614274 s
+MFLOPS: 325.588
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.134623
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 6
+Elapsed time: 0.0625876 s
+MFLOPS: 319.552
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.127641
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 7
+Elapsed time: 0.0730538 s
+MFLOPS: 273.771
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.179852
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 8
+Elapsed time: 0.0621919 s
+MFLOPS: 321.585
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.148267
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 9
+Elapsed time: 0.06266 s
+MFLOPS: 319.183
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.187629
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+REPEAT 10
+Elapsed time: 0.0625691 s
+MFLOPS: 319.647
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.145216
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 1
+Elapsed time: 0.0682122 s
+MFLOPS: 293.202
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.153794
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 2
+Elapsed time: 0.0637956 s
+MFLOPS: 313.501
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.141227
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 3
+Elapsed time: 0.0661328 s
+MFLOPS: 302.422
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.193823
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 4
+Elapsed time: 0.0663252 s
+MFLOPS: 301.545
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.191937
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 5
+Elapsed time: 0.0727038 s
+MFLOPS: 275.089
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.149642
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 6
+Elapsed time: 0.065109 s
+MFLOPS: 307.177
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.144065
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 7
+Elapsed time: 0.0652177 s
+MFLOPS: 306.665
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.143037
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 8
+Elapsed time: 0.0639795 s
+MFLOPS: 312.6
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.146481
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 9
+Elapsed time: 0.0640861 s
+MFLOPS: 312.08
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.158395
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+REPEAT 10
+Elapsed time: 0.0656763 s
+MFLOPS: 304.524
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.138156
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 1
+Elapsed time: 0.0625014 s
+MFLOPS: 319.993
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.281936
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 2
+Elapsed time: 0.0628109 s
+MFLOPS: 318.416
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.120700
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 3
+Elapsed time: 0.0636013 s
+MFLOPS: 314.459
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.221631
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 4
+Elapsed time: 0.0646594 s
+MFLOPS: 309.313
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.148100
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 5
+Elapsed time: 0.0643738 s
+MFLOPS: 310.686
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.123389
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 6
+Elapsed time: 0.064158 s
+MFLOPS: 311.73
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.259706
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 7
+Elapsed time: 0.0644558 s
+MFLOPS: 310.29
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.174205
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 8
+Elapsed time: 0.0654453 s
+MFLOPS: 305.599
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.219007
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 9
+Elapsed time: 0.0628593 s
+MFLOPS: 318.171
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.176250
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+REPEAT 10
+Elapsed time: 0.0657443 s
+MFLOPS: 304.209
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.171627
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 1
+Elapsed time: 0.064631 s
+MFLOPS: 309.449
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.569903
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 2
+Elapsed time: 0.0652196 s
+MFLOPS: 306.656
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.203537
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 3
+Elapsed time: 0.0644732 s
+MFLOPS: 310.207
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.210336
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 4
+Elapsed time: 0.0648759 s
+MFLOPS: 308.281
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.206905
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 5
+Elapsed time: 0.0635964 s
+MFLOPS: 314.483
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.181339
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 6
+Elapsed time: 0.0653018 s
+MFLOPS: 306.27
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.199892
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 7
+Elapsed time: 0.0638844 s
+MFLOPS: 313.066
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.194413
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 8
+Elapsed time: 0.0638091 s
+MFLOPS: 313.435
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.163321
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 9
+Elapsed time: 0.0627993 s
+MFLOPS: 318.475
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.180534
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+REPEAT 10
+Elapsed time: 0.0688875 s
+MFLOPS: 290.328
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.203164
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.78805 s
+MFLOPS: 11.1854
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.107939
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.82167 s
+MFLOPS: 10.9789
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.154395
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.81442 s
+MFLOPS: 11.0228
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.183817
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.79698 s
+MFLOPS: 11.1298
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.109008
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.80132 s
+MFLOPS: 11.103
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.116492
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.82274 s
+MFLOPS: 10.9725
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.226675
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.78421 s
+MFLOPS: 11.2094
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.076322
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.78806 s
+MFLOPS: 11.1853
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.078663
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.80585 s
+MFLOPS: 11.0751
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.167414
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.78253 s
+MFLOPS: 11.22
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.067423
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.8229 s
+MFLOPS: 10.9715
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.808366
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.76085 s
+MFLOPS: 11.3581
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.545542
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.80456 s
+MFLOPS: 11.083
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.817747
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.80037 s
+MFLOPS: 11.1088
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.764683
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.81834 s
+MFLOPS: 10.999
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.876023
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.84445 s
+MFLOPS: 10.8434
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.855017
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.8226 s
+MFLOPS: 10.9733
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.874996
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.82852 s
+MFLOPS: 10.9378
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.882526
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.76372 s
+MFLOPS: 11.3397
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.609353
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000144 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000144
+Elapsed time: 1.81991 s
+MFLOPS: 10.9895
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.859752
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.68998 s
+MFLOPS: 11.8345
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.657960
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.69979 s
+MFLOPS: 11.7662
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.751808
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.68998 s
+MFLOPS: 11.8345
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.704727
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.69399 s
+MFLOPS: 11.8064
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.712363
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.6902 s
+MFLOPS: 11.8329
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.703352
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.71098 s
+MFLOPS: 11.6892
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.819933
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.71444 s
+MFLOPS: 11.6656
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.743882
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.68674 s
+MFLOPS: 11.8572
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.688971
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.68171 s
+MFLOPS: 11.8927
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.687901
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.68447 s
+MFLOPS: 11.8732
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.671511
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.69317 s
+MFLOPS: 11.8122
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.558589
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.75043 s
+MFLOPS: 11.4257
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.790110
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.75171 s
+MFLOPS: 11.4174
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.774567
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.69819 s
+MFLOPS: 11.7772
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.508829
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.74652 s
+MFLOPS: 11.4513
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.794110
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.75246 s
+MFLOPS: 11.4126
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.804630
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.74194 s
+MFLOPS: 11.4815
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.766352
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.7636 s
+MFLOPS: 11.3404
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.858795
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.72378 s
+MFLOPS: 11.6024
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.725619
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=288 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=288
+Elapsed time: 1.72854 s
+MFLOPS: 11.5704
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.744788
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.69483 s
+MFLOPS: 11.8006
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.744681
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.69819 s
+MFLOPS: 11.7773
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.780366
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.69341 s
+MFLOPS: 11.8105
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.745608
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.68358 s
+MFLOPS: 11.8794
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.673495
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.63846 s
+MFLOPS: 12.2066
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.408981
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.70075 s
+MFLOPS: 11.7595
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.748664
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.65799 s
+MFLOPS: 12.0628
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.497106
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.68983 s
+MFLOPS: 11.8355
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.684334
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.68278 s
+MFLOPS: 11.8851
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.690448
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=720
+Elapsed time: 1.69745 s
+MFLOPS: 11.7823
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.740083
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.68181 s
+MFLOPS: 11.8919
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.644772
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.6438 s
+MFLOPS: 12.167
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.425847
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.71193 s
+MFLOPS: 11.6827
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.837704
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.69745 s
+MFLOPS: 11.7824
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.785707
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.68522 s
+MFLOPS: 11.8679
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.711704
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.69921 s
+MFLOPS: 11.7702
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.721708
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.69067 s
+MFLOPS: 11.8296
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.708090
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.70074 s
+MFLOPS: 11.7596
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.705840
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.6952 s
+MFLOPS: 11.798
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.708742
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=1152 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1152
+Elapsed time: 1.69776 s
+MFLOPS: 11.7802
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.756550
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.91112 s
+MFLOPS: 21.951
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.193140
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.907518 s
+MFLOPS: 22.0381
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.145379
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.90977 s
+MFLOPS: 21.9836
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.098389
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.893453 s
+MFLOPS: 22.3851
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.011880
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.918802 s
+MFLOPS: 21.7675
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.232344
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.907791 s
+MFLOPS: 22.0315
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.155018
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.906956 s
+MFLOPS: 22.0518
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.155398
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.920078 s
+MFLOPS: 21.7373
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.229308
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.907573 s
+MFLOPS: 22.0368
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.184344
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.918952 s
+MFLOPS: 21.7639
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.216106
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.831622 s
+MFLOPS: 24.0494
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.767821
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.821874 s
+MFLOPS: 24.3346
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.714114
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.828107 s
+MFLOPS: 24.1515
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.811981
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.828303 s
+MFLOPS: 24.1457
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.843882
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.835455 s
+MFLOPS: 23.939
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.865929
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.831821 s
+MFLOPS: 24.0436
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.867578
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.823678 s
+MFLOPS: 24.2813
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.781963
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.832699 s
+MFLOPS: 24.0183
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.904276
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.839785 s
+MFLOPS: 23.8156
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.879950
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=800000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800000080
+Elapsed time: 0.823786 s
+MFLOPS: 24.2782
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.822938
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.704947 s
+MFLOPS: 28.3709
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.746903
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.700899 s
+MFLOPS: 28.5348
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.630993
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.703596 s
+MFLOPS: 28.4254
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.725667
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.706712 s
+MFLOPS: 28.3001
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.732903
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.709307 s
+MFLOPS: 28.1965
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.746151
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.706072 s
+MFLOPS: 28.3257
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.732230
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.701702 s
+MFLOPS: 28.5021
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.721874
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.710983 s
+MFLOPS: 28.1301
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.801103
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.713818 s
+MFLOPS: 28.0183
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.771833
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.705792 s
+MFLOPS: 28.3369
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.746964
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.737143 s
+MFLOPS: 27.1318
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.763467
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.723248 s
+MFLOPS: 27.653
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.547145
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.745753 s
+MFLOPS: 26.8185
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.796134
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.741732 s
+MFLOPS: 26.9639
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.812883
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.737128 s
+MFLOPS: 27.1323
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.785573
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.747449 s
+MFLOPS: 26.7577
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.794227
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.751871 s
+MFLOPS: 26.6003
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.877922
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.737494 s
+MFLOPS: 27.1188
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.693420
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.746726 s
+MFLOPS: 26.7836
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.853274
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.746097 s
+MFLOPS: 26.8062
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.790541
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.706037 s
+MFLOPS: 28.3271
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.824674
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.704406 s
+MFLOPS: 28.3927
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.756891
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.704508 s
+MFLOPS: 28.3886
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.804442
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.707788 s
+MFLOPS: 28.257
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.735601
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.700811 s
+MFLOPS: 28.5383
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.681894
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.685086 s
+MFLOPS: 29.1934
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.570275
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.718567 s
+MFLOPS: 27.8332
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.858546
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.697642 s
+MFLOPS: 28.668
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.711748
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.683921 s
+MFLOPS: 29.2431
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.507276
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.711606 s
+MFLOPS: 28.1054
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.770803
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.707494 s
+MFLOPS: 28.2688
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.717425
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.698976 s
+MFLOPS: 28.6133
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.663565
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.698507 s
+MFLOPS: 28.6325
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.618829
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.688952 s
+MFLOPS: 29.0296
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.524030
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.709777 s
+MFLOPS: 28.1778
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.777109
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.704795 s
+MFLOPS: 28.377
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.673751
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.70519 s
+MFLOPS: 28.3612
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.697542
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.707475 s
+MFLOPS: 28.2695
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.747229
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.696338 s
+MFLOPS: 28.7217
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.635445
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.711998 s
+MFLOPS: 28.09
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.775093
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.737319 s
+MFLOPS: 27.1253
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.630969
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.748352 s
+MFLOPS: 26.7254
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.612750
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.730666 s
+MFLOPS: 27.3723
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.407932
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.734954 s
+MFLOPS: 27.2126
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.667147
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.741046 s
+MFLOPS: 26.9889
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.409526
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.744218 s
+MFLOPS: 26.8738
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.545966
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.729756 s
+MFLOPS: 27.4064
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.485033
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.727607 s
+MFLOPS: 27.4874
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.387046
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.734481 s
+MFLOPS: 27.2301
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.475034
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=1 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=80
+Elapsed time: 0.731436 s
+MFLOPS: 27.3435
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.437714
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.79399 s
+MFLOPS: 11.1483
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.832079
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.78727 s
+MFLOPS: 11.1902
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.799974
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.81323 s
+MFLOPS: 11.03
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.869950
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.79921 s
+MFLOPS: 11.116
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.941231
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.7884 s
+MFLOPS: 11.1832
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.904866
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.80263 s
+MFLOPS: 11.0949
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.926706
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.8047 s
+MFLOPS: 11.0822
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.868351
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.7919 s
+MFLOPS: 11.1614
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.922061
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.7524 s
+MFLOPS: 11.4129
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.705859
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000001 realloc=0 free=10000001 alloc_bytes=1440000080 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440000080
+Elapsed time: 1.79027 s
+MFLOPS: 11.1715
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.869714
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.710124 s
+MFLOPS: 28.1641
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.825558
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.70817 s
+MFLOPS: 28.2418
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.773806
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.702136 s
+MFLOPS: 28.4845
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.760123
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.714003 s
+MFLOPS: 28.0111
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.828642
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.704099 s
+MFLOPS: 28.4051
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.811382
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.700966 s
+MFLOPS: 28.532
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.791820
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.686716 s
+MFLOPS: 29.1241
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.581236
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.712875 s
+MFLOPS: 28.0554
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.906491
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.702728 s
+MFLOPS: 28.4605
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.804887
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.70624 s
+MFLOPS: 28.319
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.771190
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.743096 s
+MFLOPS: 26.9144
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.801617
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.746007 s
+MFLOPS: 26.8094
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.793653
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.745497 s
+MFLOPS: 26.8277
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.841975
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.751521 s
+MFLOPS: 26.6127
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.826189
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.739243 s
+MFLOPS: 27.0547
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.736799
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.752467 s
+MFLOPS: 26.5792
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.846919
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.752583 s
+MFLOPS: 26.5751
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.921854
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.735759 s
+MFLOPS: 27.1828
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.800838
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.748002 s
+MFLOPS: 26.7379
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.909290
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=2 realloc=0 free=2 alloc_bytes=160 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=160
+Elapsed time: 0.745094 s
+MFLOPS: 26.8423
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.856347
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.706426 s
+MFLOPS: 28.3115
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.805934
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.703203 s
+MFLOPS: 28.4413
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.726051
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.70672 s
+MFLOPS: 28.2998
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.851770
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.709362 s
+MFLOPS: 28.1944
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.787280
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.705804 s
+MFLOPS: 28.3365
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.786467
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.726365 s
+MFLOPS: 27.5344
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.808002
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.712877 s
+MFLOPS: 28.0553
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.847474
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.698589 s
+MFLOPS: 28.6291
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.782095
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.704849 s
+MFLOPS: 28.3749
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.711158
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=5 realloc=0 free=5 alloc_bytes=400 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=400
+Elapsed time: 0.710839 s
+MFLOPS: 28.1358
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.836019
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.70299 s
+MFLOPS: 28.4499
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.666411
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.691085 s
+MFLOPS: 28.94
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.704690
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.732542 s
+MFLOPS: 27.3022
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.917916
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.704659 s
+MFLOPS: 28.3825
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.712533
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.708274 s
+MFLOPS: 28.2376
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.805949
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.70493 s
+MFLOPS: 28.3716
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.738664
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.707221 s
+MFLOPS: 28.2797
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.771256
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.711155 s
+MFLOPS: 28.1233
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.788958
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.701357 s
+MFLOPS: 28.5161
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.703106
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=8 realloc=0 free=8 alloc_bytes=640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=640
+Elapsed time: 0.705621 s
+MFLOPS: 28.3438
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.785838
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.467218 s
+MFLOPS: 42.8066
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.735102
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.467826 s
+MFLOPS: 42.7509
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.726771
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.468787 s
+MFLOPS: 42.6633
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.749258
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.46775 s
+MFLOPS: 42.7578
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.770547
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.467796 s
+MFLOPS: 42.7537
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.685661
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.468295 s
+MFLOPS: 42.7081
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.728794
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.467408 s
+MFLOPS: 42.7891
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.731423
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.468028 s
+MFLOPS: 42.7325
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.697370
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.468393 s
+MFLOPS: 42.6992
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.663079
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=1440004896 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004896
+Elapsed time: 0.471175 s
+MFLOPS: 42.4471
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.730691
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.471827 s
+MFLOPS: 42.3884
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.619298
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.472473 s
+MFLOPS: 42.3305
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.642176
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.472119 s
+MFLOPS: 42.3622
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.627063
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.473111 s
+MFLOPS: 42.2734
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.617557
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.472452 s
+MFLOPS: 42.3323
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.620532
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.472467 s
+MFLOPS: 42.331
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.631602
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.472506 s
+MFLOPS: 42.3275
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.767559
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.471799 s
+MFLOPS: 42.3909
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.689232
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.471442 s
+MFLOPS: 42.4231
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.678632
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440004752 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440004752
+Elapsed time: 0.472468 s
+MFLOPS: 42.3309
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.619145
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0651474 s
+MFLOPS: 306.996
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.187701
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0614179 s
+MFLOPS: 325.638
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.208531
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0621801 s
+MFLOPS: 321.646
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.211912
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0639167 s
+MFLOPS: 312.907
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.221107
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0630891 s
+MFLOPS: 317.012
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.241818
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0624604 s
+MFLOPS: 320.203
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.207347
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.061938 s
+MFLOPS: 322.904
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.213431
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0627424 s
+MFLOPS: 318.764
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.259265
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0643202 s
+MFLOPS: 310.944
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.215826
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0649896 s
+MFLOPS: 307.741
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.228344
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0636647 s
+MFLOPS: 314.146
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.200526
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0638668 s
+MFLOPS: 313.152
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.242369
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0657188 s
+MFLOPS: 304.327
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.265112
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0650412 s
+MFLOPS: 307.497
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.284362
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0645729 s
+MFLOPS: 309.727
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.236048
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0640982 s
+MFLOPS: 312.021
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.268635
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0671364 s
+MFLOPS: 297.901
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.231575
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0655573 s
+MFLOPS: 305.076
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.229181
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0699566 s
+MFLOPS: 285.891
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.224821
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=9360 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=9360
+Elapsed time: 0.0658928 s
+MFLOPS: 303.523
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.208473
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0627494 s
+MFLOPS: 318.728
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.254537
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0643791 s
+MFLOPS: 310.66
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.273262
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0651883 s
+MFLOPS: 306.804
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.214880
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0664654 s
+MFLOPS: 300.908
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.255067
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0640129 s
+MFLOPS: 312.437
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.223984
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0649641 s
+MFLOPS: 307.863
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.273365
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0635205 s
+MFLOPS: 314.859
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.265464
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0636986 s
+MFLOPS: 313.979
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.246042
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0698743 s
+MFLOPS: 286.228
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.244507
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=23184 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=23184
+Elapsed time: 0.0634421 s
+MFLOPS: 315.248
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.240226
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0632513 s
+MFLOPS: 316.199
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.253552
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0623739 s
+MFLOPS: 320.647
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.236547
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0664993 s
+MFLOPS: 300.755
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.272367
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0639299 s
+MFLOPS: 312.843
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.255763
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0658283 s
+MFLOPS: 303.821
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.236473
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0628066 s
+MFLOPS: 318.438
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.281753
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0630101 s
+MFLOPS: 317.409
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.244777
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0654465 s
+MFLOPS: 305.593
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.260611
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0638616 s
+MFLOPS: 313.177
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.249189
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=37008 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=37008
+Elapsed time: 0.0637059 s
+MFLOPS: 313.942
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.231112
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.5381 s
+MFLOPS: 37.1678
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.601603
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.536495 s
+MFLOPS: 37.279
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.625038
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.536737 s
+MFLOPS: 37.2622
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.626027
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.536651 s
+MFLOPS: 37.2681
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.606152
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.537361 s
+MFLOPS: 37.2189
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.682685
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.537291 s
+MFLOPS: 37.2237
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.682681
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.536186 s
+MFLOPS: 37.3005
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.622959
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.536804 s
+MFLOPS: 37.2575
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.625787
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.537661 s
+MFLOPS: 37.1981
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.683522
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000034 realloc=0 free=10000034 alloc_bytes=800002720 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002720
+Elapsed time: 0.536417 s
+MFLOPS: 37.2844
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.637326
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.537892 s
+MFLOPS: 37.1821
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.583122
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.537008 s
+MFLOPS: 37.2434
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.591290
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.537959 s
+MFLOPS: 37.1775
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.604618
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.537753 s
+MFLOPS: 37.1918
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.636131
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.538461 s
+MFLOPS: 37.1429
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.574582
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.538608 s
+MFLOPS: 37.1328
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.617246
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.538092 s
+MFLOPS: 37.1684
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.603772
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.536922 s
+MFLOPS: 37.2493
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.580995
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.537732 s
+MFLOPS: 37.1933
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.626106
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=800002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=800002640
+Elapsed time: 0.537201 s
+MFLOPS: 37.23
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.594530
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0354918 s
+MFLOPS: 563.51
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.076740
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0349196 s
+MFLOPS: 572.745
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.073343
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0351955 s
+MFLOPS: 568.255
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.122592
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0361799 s
+MFLOPS: 552.793
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.100332
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0355333 s
+MFLOPS: 562.852
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.136168
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0357573 s
+MFLOPS: 559.327
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.111377
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0374514 s
+MFLOPS: 534.026
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.122558
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0360807 s
+MFLOPS: 554.312
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.111036
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0364302 s
+MFLOPS: 548.995
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.123232
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0357213 s
+MFLOPS: 559.89
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.106856
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0361006 s
+MFLOPS: 554.007
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.117068
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0350974 s
+MFLOPS: 569.843
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.094832
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0355247 s
+MFLOPS: 562.988
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.146189
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0361625 s
+MFLOPS: 553.059
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.060657
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0359368 s
+MFLOPS: 556.532
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.104214
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0349562 s
+MFLOPS: 572.145
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.129017
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.035431 s
+MFLOPS: 564.477
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.120350
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0376843 s
+MFLOPS: 530.725
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.109329
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0411407 s
+MFLOPS: 486.136
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.120894
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0357334 s
+MFLOPS: 559.701
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.073177
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0366804 s
+MFLOPS: 545.251
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.065074
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0349821 s
+MFLOPS: 571.721
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.077208
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0358733 s
+MFLOPS: 557.517
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.093391
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0386122 s
+MFLOPS: 517.97
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.061198
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0380212 s
+MFLOPS: 526.022
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.091006
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0351616 s
+MFLOPS: 568.803
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.142274
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0353333 s
+MFLOPS: 566.038
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.099384
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0511226 s
+MFLOPS: 391.216
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.097726
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0376066 s
+MFLOPS: 531.821
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.079032
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0361771 s
+MFLOPS: 552.835
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.086345
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.036101 s
+MFLOPS: 554.002
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.140893
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.038616 s
+MFLOPS: 517.921
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.105923
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0365794 s
+MFLOPS: 546.755
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.094945
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0367671 s
+MFLOPS: 543.965
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.119476
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0356656 s
+MFLOPS: 560.765
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.120903
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0366044 s
+MFLOPS: 546.383
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.085036
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0359926 s
+MFLOPS: 555.669
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.113825
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0363162 s
+MFLOPS: 550.719
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.077711
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0377096 s
+MFLOPS: 530.369
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.134373
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0357907 s
+MFLOPS: 558.805
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.100414
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0516662 s
+MFLOPS: 387.1
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.112999
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0526182 s
+MFLOPS: 380.096
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.061988
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0525444 s
+MFLOPS: 380.63
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.142901
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0517578 s
+MFLOPS: 386.415
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.075953
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0520908 s
+MFLOPS: 383.945
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.058319
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0574269 s
+MFLOPS: 348.269
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.179554
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0556318 s
+MFLOPS: 359.507
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.126361
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0517907 s
+MFLOPS: 386.169
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.066918
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0517257 s
+MFLOPS: 386.655
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.124692
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=66 realloc=0 free=34 alloc_bytes=5280 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=2720
+Elapsed time: 0.0538975 s
+MFLOPS: 371.075
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.178535
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.536991 s
+MFLOPS: 37.2446
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.608710
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.536291 s
+MFLOPS: 37.2932
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.604820
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.53685 s
+MFLOPS: 37.2544
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.596940
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.537422 s
+MFLOPS: 37.2147
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.556761
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.538623 s
+MFLOPS: 37.1317
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.578644
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.538019 s
+MFLOPS: 37.1734
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.574176
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.537408 s
+MFLOPS: 37.2156
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.698289
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.538096 s
+MFLOPS: 37.1681
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.566139
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.536659 s
+MFLOPS: 37.2676
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.621757
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=10000033 realloc=0 free=10000033 alloc_bytes=1440002640 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=1440002640
+Elapsed time: 0.537806 s
+MFLOPS: 37.1882
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.641596
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.051605 s
+MFLOPS: 387.559
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.103144
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0508495 s
+MFLOPS: 393.317
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.134247
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0517824 s
+MFLOPS: 386.232
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.127076
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0516639 s
+MFLOPS: 387.117
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.158684
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0516156 s
+MFLOPS: 387.48
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.209953
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.052392 s
+MFLOPS: 381.738
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.178885
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0515844 s
+MFLOPS: 387.714
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.223954
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0609691 s
+MFLOPS: 328.035
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.091912
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.053097 s
+MFLOPS: 376.669
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.140436
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0531752 s
+MFLOPS: 376.115
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.115956
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0515252 s
+MFLOPS: 388.16
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.094272
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0533024 s
+MFLOPS: 375.217
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.080862
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0597775 s
+MFLOPS: 334.574
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.189519
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0555631 s
+MFLOPS: 359.951
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.056396
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0533506 s
+MFLOPS: 374.879
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.171445
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.051243 s
+MFLOPS: 390.297
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.131485
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0517433 s
+MFLOPS: 386.524
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.122485
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0521253 s
+MFLOPS: 383.691
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.094882
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0507631 s
+MFLOPS: 393.987
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.096721
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=65 realloc=0 free=65 alloc_bytes=5200 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=5200
+Elapsed time: 0.0515325 s
+MFLOPS: 388.104
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.047013
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0511377 s
+MFLOPS: 391.101
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.065751
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0510764 s
+MFLOPS: 391.57
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.174868
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0512581 s
+MFLOPS: 390.182
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.083570
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0522215 s
+MFLOPS: 382.984
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.116504
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0506442 s
+MFLOPS: 394.912
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.143641
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0510686 s
+MFLOPS: 391.63
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.074348
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0510049 s
+MFLOPS: 392.119
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.084543
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0513416 s
+MFLOPS: 389.548
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.151632
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0520938 s
+MFLOPS: 383.923
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.088000
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=161 realloc=0 free=161 alloc_bytes=12880 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=12880
+Elapsed time: 0.0517935 s
+MFLOPS: 386.149
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.057465
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 1
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0513766 s
+MFLOPS: 389.282
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.138170
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 2
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0516758 s
+MFLOPS: 387.028
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.268637
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 3
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0519628 s
+MFLOPS: 384.891
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.082696
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 4
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0514879 s
+MFLOPS: 388.441
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.111108
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 5
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.051287 s
+MFLOPS: 389.963
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.133420
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 6
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0510425 s
+MFLOPS: 391.83
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.118290
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 7
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0507119 s
+MFLOPS: 394.385
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.178009
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 8
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0527866 s
+MFLOPS: 378.884
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.195619
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 9
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.0506213 s
+MFLOPS: 395.091
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.150299
+
+COMMAND_LINE build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+REPEAT 10
+BENCH_ALLOC_COUNTS label=timed_kernel alloc=257 realloc=0 free=257 alloc_bytes=20560 realloc_old_bytes=0 realloc_new_bytes=0 free_bytes=20560
+Elapsed time: 0.051868 s
+MFLOPS: 385.594
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.356554

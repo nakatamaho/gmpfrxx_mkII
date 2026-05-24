@@ -121,6 +121,44 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
     --title-prefix "MPFR Rgemv m=4000 n=4000 precision=512 repeat=10"
 ```
 
+<!-- BEGIN 1024-BIT RECORDED RUN -->
+
+### 1024-bit run
+
+The 1024-bit addendum uses the same release build, CPU affinity, input shape,
+and repeat count as the 512-bit run, with only the precision changed.
+
+| Field | Value |
+|-------|-------|
+| Run ID | `rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200` |
+| Date | 2026-05-24 |
+| Problem size | `m=4000`, `n=4000` |
+| Precision | 1024 bits |
+| Repeat count | 10 |
+| OpenMP | `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, `OMP_PROC_BIND=spread` |
+| Benchmark command | `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 1024 10` |
+| Raw result directory | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/` |
+| Raw log | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/benchmark_rgemv_mpfr_m4000_n4000_p1024_repeat10.log` |
+| Raw CSV | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/raw_rgemv_mpfr_m4000_n4000_p1024_repeat10.csv` |
+| Summary CSV | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/summary_rgemv_mpfr_m4000_n4000_p1024_repeat10.csv` |
+| Correctness | 490 / 490 runs reported `Result OK`. |
+
+![MPFR 02_Rgemv serial 1024-bit repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/rgemv_mpfr_m4000_n4000_p1024_repeat10_serial.png)
+
+![MPFR 02_Rgemv OpenMP 1024-bit repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/rgemv_mpfr_m4000_n4000_p1024_repeat10_openmp.png)
+
+Plot regeneration command:
+
+```bash
+python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
+    benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/benchmark_rgemv_mpfr_m4000_n4000_p1024_repeat10.log \
+    --output-dir benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200 \
+    --output-prefix rgemv_mpfr_m4000_n4000_p1024_repeat10 \
+    --title-prefix "MPFR Rgemv m=4000 n=4000 precision=1024 repeat=10"
+```
+
+<!-- END 1024-BIT RECORDED RUN -->
+
 ## Headline Results
 
 | Observation | Evidence | Interpretation |
@@ -130,6 +168,20 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 | Best OpenMP average | `C_native_openmp_07` at 443.477 MFLOPS avg, 450.387 max | Column partitioning with per-thread partial y vectors is again the dominant OpenMP class. |
 | Best wrapper OpenMP average | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` at 432.347 MFLOPS avg | The wrapper 07 fixed-precision path remains close to the raw C 07 class; FMA is not automatically best for this OpenMP run. |
 | FMA effect is source-shape dependent | Serial `C_native_02_FMA` 23.399 avg vs `C_native_02` 20.138 avg; OpenMP `C_native_openmp_07_FMA` 434.211 avg vs `C_native_openmp_07` 443.477 avg | FMA improves the serial column-major raw C path, but OpenMP locality and variance dominate the 07 class. |
+
+<!-- BEGIN 1024-BIT HEADLINE RESULTS -->
+
+### 1024-bit headline results
+
+| Observation | Evidence | Interpretation |
+|-------------|----------|----------------|
+| Best serial average | `C_native_02_FMA` at 10.135 MFLOPS avg, 10.239 max | The raw C column-major FMA path is the best serial class. |
+| Best wrapper serial average | `kernel_04_mkII` at 9.446 avg, 9.505 max | The explicit-context reusable temporary wrapper path is close to the non-FMA raw column-major class. |
+| Best OpenMP average | `C_native_openmp_07_FMA` at 235.044 MFLOPS avg, 237.861 max | Column partitioning with FMA is the top MPFR OpenMP class at 1024 bits. |
+| Best wrapper OpenMP average | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` at 230.708 avg, 234.710 max | The wrapper fixed-precision/FMA 07 class is close to the raw C 07_FMA class. |
+| 512 -> 1024 scaling | best OpenMP average changes from 443.477 to 235.044 MFLOPS | The best MPFR Rgemv OpenMP class falls to about half of the 512-bit throughput. |
+
+<!-- END 1024-BIT HEADLINE RESULTS -->
 
 ## Serial Results
 
@@ -178,6 +230,48 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 | 15 | `kernel_01_mkII` | 8.911 | 8.552 | 8.266 |
 
 </details>
+
+<!-- BEGIN 1024-BIT SERIAL RESULTS -->
+
+### 1024-bit serial results
+
+<details>
+<summary>1024-bit serial results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `C_native_02_FMA` | 10.239 | 10.135 | 9.835 |
+| 2 | `C_native_04` | 9.664 | 9.428 | 9.317 |
+| 3 | `C_native_02` | 9.664 | 9.453 | 9.342 |
+| 4 | `kernel_04_mkII` | 9.505 | 9.446 | 9.389 |
+| 5 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 9.218 | 9.021 | 8.947 |
+| 6 | `kernel_02_mkII` | 9.101 | 9.037 | 8.978 |
+| 7 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 9.085 | 9.020 | 8.981 |
+| 8 | `C_native_03` | 8.428 | 8.247 | 8.191 |
+| 9 | `C_native_01_FMA` | 8.385 | 8.244 | 8.136 |
+| 10 | `kernel_03_mkII_FMA` | 8.311 | 8.251 | 8.210 |
+
+</details>
+
+<details>
+<summary>1024-bit serial results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `C_native_02_FMA` | 10.239 | 10.135 | 9.835 |
+| 2 | `C_native_02` | 9.664 | 9.453 | 9.342 |
+| 3 | `kernel_04_mkII` | 9.505 | 9.446 | 9.389 |
+| 4 | `C_native_04` | 9.664 | 9.428 | 9.317 |
+| 5 | `kernel_02_mkII` | 9.101 | 9.037 | 8.978 |
+| 6 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | 9.218 | 9.021 | 8.947 |
+| 7 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 9.085 | 9.020 | 8.981 |
+| 8 | `kernel_03_mkII_FMA` | 8.311 | 8.251 | 8.210 |
+| 9 | `C_native_03` | 8.428 | 8.247 | 8.191 |
+| 10 | `C_native_01_FMA` | 8.385 | 8.244 | 8.136 |
+
+</details>
+
+<!-- END 1024-BIT SERIAL RESULTS -->
 
 ## OpenMP Results
 
@@ -265,6 +359,48 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 
 </details>
 
+<!-- BEGIN 1024-BIT OPENMP RESULTS -->
+
+### 1024-bit OpenMP results
+
+<details>
+<summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_openmp_07_mkII_FMA` | 238.141 | 230.373 | 222.581 |
+| 2 | `C_native_openmp_07_FMA` | 237.861 | 235.044 | 231.015 |
+| 3 | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 234.710 | 230.708 | 220.919 |
+| 4 | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 224.660 | 219.624 | 205.421 |
+| 5 | `kernel_openmp_07_mkII` | 222.382 | 218.241 | 212.073 |
+| 6 | `C_native_openmp_07` | 221.874 | 218.409 | 212.869 |
+| 7 | `C_native_openmp_02` | 210.243 | 207.057 | 205.570 |
+| 8 | `C_native_openmp_01` | 209.675 | 207.353 | 205.424 |
+| 9 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 202.107 | 197.466 | 194.432 |
+| 10 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 200.523 | 197.032 | 194.997 |
+
+</details>
+
+<details>
+<summary>1024-bit OpenMP results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `C_native_openmp_07_FMA` | 237.861 | 235.044 | 231.015 |
+| 2 | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 234.710 | 230.708 | 220.919 |
+| 3 | `kernel_openmp_07_mkII_FMA` | 238.141 | 230.373 | 222.581 |
+| 4 | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 224.660 | 219.624 | 205.421 |
+| 5 | `C_native_openmp_07` | 221.874 | 218.409 | 212.869 |
+| 6 | `kernel_openmp_07_mkII` | 222.382 | 218.241 | 212.073 |
+| 7 | `C_native_openmp_01` | 209.675 | 207.353 | 205.424 |
+| 8 | `C_native_openmp_02` | 210.243 | 207.057 | 205.570 |
+| 9 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | 202.107 | 197.466 | 194.432 |
+| 10 | `kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | 200.523 | 197.032 | 194.997 |
+
+</details>
+
+<!-- END 1024-BIT OPENMP RESULTS -->
+
 ## Memory Bandwidth Estimates
 
 These are model estimates derived from MFLOPS, not hardware-counter
@@ -297,6 +433,52 @@ The table uses two simple traffic models:
 | `kernel_openmp_03_mkII_FMA` | 276.867 | 280.251 | 26.58 | 53.16 |
 | `C_native_02_FMA` | 23.399 | 23.694 | 2.25 | 4.49 |
 | `kernel_04_mkII` | 20.405 | 20.827 | 1.96 | 3.92 |
+
+<!-- BEGIN 1024-BIT MEMORY ESTIMATES -->
+
+### 1024-bit estimates
+
+For 1024-bit MPFR values, the active payload has 16 limbs and one
+`mpfr_t` value is modeled as 160 bytes including its 32-byte header:
+
+```text
+active-data GB/s estimate      = Avg MFLOPS * 0.160
+header-inclusive GB/s estimate = Avg MFLOPS * 0.320
+```
+
+| Variant | Avg MFLOPS | Max MFLOPS | Active-data GB/s estimate | Header-inclusive GB/s estimate |
+|---------|-----------:|-----------:|--------------------------:|--------------------------------:|
+| `C_native_openmp_07_FMA` | 235.044 | 237.861 | 37.607 | 75.214 |
+| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 230.708 | 234.710 | 36.913 | 73.827 |
+| `C_native_02_FMA` | 10.135 | 10.239 | 1.622 | 3.243 |
+
+<!-- END 1024-BIT MEMORY ESTIMATES -->
+
+<!-- BEGIN COMPARISON WITH GMP VERSION -->
+
+## Comparison with GMP version
+
+The table compares the best average MFLOPS in the MPFR report with the
+corresponding GMP report collected on the same machine and problem size.
+These are benchmark-level comparisons: MPFR has explicit rounding and
+range semantics, while GMP `mpf` has a different precision and rounding
+model, so equal MFLOPS does not imply equal numerical semantics.
+
+| Precision | Mode | MPFR best average variant | MPFR Avg MFLOPS | GMP best average variant | GMP Avg MFLOPS | MPFR/GMP |
+|-----------|------|---------------------------|----------------:|--------------------------|---------------:|---------:|
+| 512 | Serial | `C_native_02_FMA` | 23.399 | `kernel_03_mkII` | 31.493 | 0.74x |
+| 512 | OpenMP | `C_native_openmp_07` | 443.477 | `kernel_openmp_07_mkII` | 538.770 | 0.82x |
+| 1024 | Serial | `C_native_02_FMA` | 10.135 | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 29.030 | 0.35x |
+| 1024 | OpenMP | `C_native_openmp_07_FMA` | 235.044 | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 508.233 | 0.46x |
+
+For Rgemv, both backends select the same high-level OpenMP idea:
+column partitioning with per-thread partial `y` vectors. The MPFR 1024-bit
+winner is the 07 FMA class and remains close to its raw C counterpart,
+but it is substantially below the best GMP mkII 07 class because MPFR
+pays explicit rounding/range costs and has heavier per-operation backend
+semantics.
+
+<!-- END COMPARISON WITH GMP VERSION -->
 
 ## Hotpath Disassembly
 

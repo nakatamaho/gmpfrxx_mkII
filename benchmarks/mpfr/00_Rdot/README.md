@@ -180,6 +180,44 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
     --title-prefix "MPFR Rdot N=10000000 precision=512 repeat=10"
 ```
 
+<!-- BEGIN 1024-BIT RECORDED RUN -->
+
+### 1024-bit run
+
+The 1024-bit addendum uses the same release build, CPU affinity, input shape,
+and repeat count as the 512-bit run, with only the precision changed.
+
+| Field | Value |
+|-------|-------|
+| Run ID | `rdot_mpfr_n10000000_p1024_repeat10_20260523_205402` |
+| Date | 2026-05-23 |
+| Problem size | `N=10000000` |
+| Precision | 1024 bits |
+| Repeat count | 10 |
+| OpenMP | `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, `OMP_PROC_BIND=spread` |
+| Benchmark command | Each MPFR Rdot executable was run for 10 repeats with arguments `10000000 1024`. |
+| Raw result directory | `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402/` |
+| Raw log | `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402/benchmark_rdot_mpfr_n10000000_p1024_repeat10.log` |
+| Raw CSV | `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402/raw_rdot_mpfr_n10000000_p1024_repeat10.csv` |
+| Summary CSV | `benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402/summary_rdot_mpfr_n10000000_p1024_repeat10.csv` |
+| Correctness | 740 / 740 runs reported `Result OK`. |
+
+![MPFR 00_Rdot serial 1024-bit repeat-10](results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402/rdot_mpfr_n10000000_p1024_repeat10_serial.png)
+
+![MPFR 00_Rdot OpenMP 1024-bit repeat-10](results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402/rdot_mpfr_n10000000_p1024_repeat10_openmp.png)
+
+Plot regeneration command:
+
+```bash
+python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
+    benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402/benchmark_rdot_mpfr_n10000000_p1024_repeat10.log \
+    --output-dir benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402 \
+    --output-prefix rdot_mpfr_n10000000_p1024_repeat10 \
+    --title-prefix "MPFR Rdot N=10000000 precision=1024 repeat=10"
+```
+
+<!-- END 1024-BIT RECORDED RUN -->
+
 ## Headline Results
 
 | Class | Best average variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Notes |
@@ -188,6 +226,19 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
 | Serial raw C | `C_native_06` | 23.688 | 23.542 | 23.287 | Best serial raw C average in this run. |
 | OpenMP wrapper | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 579.031 | 554.490 | 543.438 | Best OpenMP wrapper average; expression FMA with stable rounding and fixed precision. |
 | OpenMP raw C | `C_native_openmp_01_FMA` | 579.952 | 553.249 | 517.083 | Best OpenMP raw C average; FMA with cached rounding. |
+
+<!-- BEGIN 1024-BIT HEADLINE RESULTS -->
+
+### 1024-bit headline results
+
+| Observation | Evidence | Interpretation |
+|-------------|----------|----------------|
+| Best serial average | `kernel_01_mkII_STABLE_ROUNDING_FMA` at 10.152 MFLOPS avg, 10.222 max | The best serial path is the FMA expression class; it is effectively the raw `mpfr_fma` class. |
+| Best raw C serial class | `C_native_01_FMA` at 10.087 avg, 10.197 max | Raw C FMA and mkII FMA are within the same serial performance band. |
+| Best OpenMP average | `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` at 283.261 MFLOPS avg, 286.955 max | The best OpenMP mkII result is the stable-rounding/FMA/fixed-precision class, matching the raw FMA class by average. |
+| 512 -> 1024 scaling | best OpenMP average changes from 554.490 to 283.261 MFLOPS | Doubling precision roughly halves the best MPFR OpenMP throughput, consistent with larger limb arithmetic and MPFR rounding/range work. |
+
+<!-- END 1024-BIT HEADLINE RESULTS -->
 
 ## Serial Results
 
@@ -281,6 +332,48 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
 
 </details>
 
+<!-- BEGIN 1024-BIT SERIAL RESULTS -->
+
+### 1024-bit serial results
+
+<details>
+<summary>1024-bit serial results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.225 | 10.114 | 9.987 |
+| 2 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 10.222 | 10.152 | 10.085 |
+| 3 | `kernel_07_mkII_FMA` | 10.215 | 10.111 | 9.991 |
+| 4 | `C_native_01_FMA` | 10.197 | 10.087 | 9.956 |
+| 5 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 10.180 | 10.083 | 9.996 |
+| 6 | `C_native_06` | 9.973 | 9.907 | 9.845 |
+| 7 | `kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.940 | 9.841 | 9.755 |
+| 8 | `kernel_06_mkII_STABLE_ROUNDING` | 9.868 | 9.780 | 9.738 |
+| 9 | `kernel_06_mkII` | 9.833 | 9.602 | 9.496 |
+| 10 | `kernel_06_mkII_STABLE_ROUNDING_FMA` | 9.805 | 9.747 | 9.690 |
+
+</details>
+
+<details>
+<summary>1024-bit serial results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 10.222 | 10.152 | 10.085 |
+| 2 | `kernel_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 10.225 | 10.114 | 9.987 |
+| 3 | `kernel_07_mkII_FMA` | 10.215 | 10.111 | 9.991 |
+| 4 | `C_native_01_FMA` | 10.197 | 10.087 | 9.956 |
+| 5 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 10.180 | 10.083 | 9.996 |
+| 6 | `C_native_06` | 9.973 | 9.907 | 9.845 |
+| 7 | `kernel_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.940 | 9.841 | 9.755 |
+| 8 | `kernel_06_mkII_STABLE_ROUNDING` | 9.868 | 9.780 | 9.738 |
+| 9 | `kernel_06_mkII_STABLE_ROUNDING_FMA` | 9.805 | 9.747 | 9.690 |
+| 10 | `kernel_06_mkII` | 9.833 | 9.602 | 9.496 |
+
+</details>
+
+<!-- END 1024-BIT SERIAL RESULTS -->
+
 ## OpenMP Results
 
 <details>
@@ -373,6 +466,48 @@ python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py \
 
 </details>
 
+<!-- BEGIN 1024-BIT OPENMP RESULTS -->
+
+### 1024-bit OpenMP results
+
+<details>
+<summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `C_native_openmp_01_FMA` | 294.050 | 283.027 | 236.839 |
+| 2 | `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 286.955 | 283.261 | 275.118 |
+| 3 | `kernel_openmp_06_mkII_STABLE_ROUNDING` | 285.883 | 282.565 | 279.624 |
+| 4 | `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA` | 285.612 | 282.435 | 280.576 |
+| 5 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 285.065 | 279.791 | 268.464 |
+| 6 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 283.088 | 276.649 | 254.273 |
+| 7 | `kernel_openmp_06_mkII` | 279.871 | 275.638 | 270.233 |
+| 8 | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 278.232 | 272.109 | 260.889 |
+| 9 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 278.037 | 275.305 | 268.924 |
+| 10 | `kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 277.743 | 273.134 | 267.542 |
+
+</details>
+
+<details>
+<summary>1024-bit OpenMP results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 286.955 | 283.261 | 275.118 |
+| 2 | `C_native_openmp_01_FMA` | 294.050 | 283.027 | 236.839 |
+| 3 | `kernel_openmp_06_mkII_STABLE_ROUNDING` | 285.883 | 282.565 | 279.624 |
+| 4 | `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA` | 285.612 | 282.435 | 280.576 |
+| 5 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 285.065 | 279.791 | 268.464 |
+| 6 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 283.088 | 276.649 | 254.273 |
+| 7 | `kernel_openmp_06_mkII` | 279.871 | 275.638 | 270.233 |
+| 8 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 278.037 | 275.305 | 268.924 |
+| 9 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | 277.453 | 274.431 | 271.688 |
+| 10 | `kernel_openmp_05_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 277.743 | 273.134 | 267.542 |
+
+</details>
+
+<!-- END 1024-BIT OPENMP RESULTS -->
+
 ## Memory Bandwidth Estimates
 
 The benchmark reports one dot-product operation as two FLOPs per element.  At
@@ -420,6 +555,54 @@ The top MPFR OpenMP Rdot kernels use roughly 35 GB/s by the limb-only model,
 MFLOPS, not hardware-counter measurements.  The achieved MFLOPS are still
 controlled by MPFR call cost, rounding delivery, limb arithmetic, and reduction
 structure; bandwidth estimates alone are not enough to explain the ranking.
+
+<!-- BEGIN 1024-BIT MEMORY ESTIMATES -->
+
+### 1024-bit estimates
+
+At 1024-bit precision each MPFR mantissa has 16 limbs, or 128 bytes.
+The Rdot lower-bound stream coefficients therefore double relative to
+the 512-bit run:
+
+```text
+limb payload GB/s                  = MFLOPS * 0.128
+limb + _mpfr_d pointer GB/s        = MFLOPS * 0.136
+limb + full mpfr_t header GB/s     = MFLOPS * 0.160
+```
+
+| Variant | Avg MFLOPS | Limb payload GB/s | Limb + `_mpfr_d` pointer GB/s | Limb + full `mpfr_t` header GB/s |
+|---------|-----------:|------------------:|------------------------------:|---------------------------------:|
+| `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 283.261 | 36.257 | 38.523 | 45.322 |
+| `C_native_openmp_01_FMA` | 283.027 | 36.227 | 38.492 | 45.284 |
+| `kernel_01_mkII_STABLE_ROUNDING_FMA` | 10.152 | 1.299 | 1.381 | 1.624 |
+| `C_native_01_FMA` | 10.087 | 1.291 | 1.372 | 1.614 |
+
+<!-- END 1024-BIT MEMORY ESTIMATES -->
+
+<!-- BEGIN COMPARISON WITH GMP VERSION -->
+
+## Comparison with GMP version
+
+The table compares the best average MFLOPS in the MPFR report with the
+corresponding GMP report collected on the same machine and problem size.
+These are benchmark-level comparisons: MPFR has explicit rounding and
+range semantics, while GMP `mpf` has a different precision and rounding
+model, so equal MFLOPS does not imply equal numerical semantics.
+
+| Precision | Mode | MPFR best average variant | MPFR Avg MFLOPS | GMP best average variant | GMP Avg MFLOPS | MPFR/GMP |
+|-----------|------|---------------------------|----------------:|--------------------------|---------------:|---------:|
+| 512 | Serial | `C_native_06` | 23.542 | `kernel_06_orig` | 32.992 | 0.71x |
+| 512 | OpenMP | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 554.490 | `C_native_openmp_03` | 575.234 | 0.96x |
+| 1024 | Serial | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 10.152 | `kernel_05_mkII` | 28.495 | 0.36x |
+| 1024 | OpenMP | `kernel_openmp_06_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 283.261 | `kernel_openmp_03_mkII` | 557.670 | 0.51x |
+
+For 512-bit Rdot, the best MPFR OpenMP FMA path is close to the GMP
+OpenMP class. At 1024 bits, MPFR throughput falls to roughly half of the
+best GMP mkII OpenMP result. The MPFR serial winner is the FMA path and
+tracks the raw `mpfr_fma` baseline, while GMP and MPFR should still be
+compared by hot-loop shape rather than by source syntax alone.
+
+<!-- END COMPARISON WITH GMP VERSION -->
 
 ## Hotpath Disassembly
 

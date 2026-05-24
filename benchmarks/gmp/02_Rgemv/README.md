@@ -121,6 +121,44 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
     --title-prefix "GMP Rgemv m=4000 n=4000 precision=512 repeat=10"
 ```
 
+<!-- BEGIN 1024-BIT RECORDED RUN -->
+
+### 1024-bit run
+
+The 1024-bit addendum uses the same release build, CPU affinity, input shape,
+and repeat count as the 512-bit run, with only the precision changed.
+
+| Field | Value |
+|-------|-------|
+| Run ID | `rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006` |
+| Date | 2026-05-23 |
+| Problem size | `m=4000`, `n=4000` |
+| Precision | 1024 bits |
+| Repeat count | 10 |
+| OpenMP | `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, `OMP_PROC_BIND=spread` |
+| Benchmark command | `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/gmp/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 1024 10` |
+| Raw result directory | `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006/` |
+| Raw log | `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006/benchmark_rgemv_gmp_m4000_n4000_p1024_repeat10.log` |
+| Raw CSV | `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006/raw_rgemv_gmp_m4000_n4000_p1024_repeat10.csv` |
+| Summary CSV | `benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006/summary_rgemv_gmp_m4000_n4000_p1024_repeat10.csv` |
+| Correctness | 440 / 440 runs reported `Result OK`. |
+
+![GMP 02_Rgemv serial 1024-bit repeat-10](results_raw/rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006/rgemv_gmp_m4000_n4000_p1024_repeat10_serial.png)
+
+![GMP 02_Rgemv OpenMP 1024-bit repeat-10](results_raw/rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006/rgemv_gmp_m4000_n4000_p1024_repeat10_openmp.png)
+
+Plot regeneration command:
+
+```bash
+python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
+    benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006/benchmark_rgemv_gmp_m4000_n4000_p1024_repeat10.log \
+    --output-dir benchmarks/gmp/02_Rgemv/results_raw/rgemv_gmp_m4000_n4000_p1024_repeat10_20260523_233006 \
+    --output-prefix rgemv_gmp_m4000_n4000_p1024_repeat10 \
+    --title-prefix "GMP Rgemv m=4000 n=4000 precision=1024 repeat=10"
+```
+
+<!-- END 1024-BIT RECORDED RUN -->
+
 ## Headline Results
 
 | Observation | Evidence | Interpretation |
@@ -130,6 +168,19 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 | Best OpenMP average | `kernel_openmp_07_mkII` at 538.770 MFLOPS avg, 556.607 max | Column partitioning with per-thread partial y vectors is the top class in this run. |
 | Best raw C OpenMP average | `C_native_openmp_07` at 531.855 MFLOPS avg | The raw C and mkII 07 kernels are in the same locality-driven class; wrapper overhead is outside the inner matrix loop. |
 | OpenMP locality progression | `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` 242.913 avg -> `kernel_openmp_06_mkII` 397.721 avg -> `kernel_openmp_07_mkII` 538.770 avg | Work partitioning and matrix traversal dominate over small wrapper differences. |
+
+<!-- BEGIN 1024-BIT HEADLINE RESULTS -->
+
+### 1024-bit headline results
+
+| Observation | Evidence | Interpretation |
+|-------------|----------|----------------|
+| Best serial average | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` at 29.030 MFLOPS avg, 29.410 max | The mkII reusable column-major path remains the top serial class in the 1024-bit run. |
+| Best raw C serial class | `C_native_03` at 11.256 avg, 11.304 max | Raw C 1024-bit serial throughput is much lower than the mkII wrapper class in this run. |
+| Best OpenMP average | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` at 508.233 MFLOPS avg, 520.109 max | Column partitioning with per-thread partial `y` remains the dominant OpenMP shape. |
+| Best raw/upstream OpenMP class | `C_native_openmp_07` at 254.075 avg; best upstream wrapper at 257.288 avg | The raw C and upstream 07 kernels form a lower locality-equivalent class than mkII in this 1024-bit run. |
+
+<!-- END 1024-BIT HEADLINE RESULTS -->
 
 ## Serial Results
 
@@ -180,6 +231,48 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 | 16 | `kernel_01_mkII` | 17.043 | 16.628 | 16.406 |
 
 </details>
+
+<!-- BEGIN 1024-BIT SERIAL RESULTS -->
+
+### 1024-bit serial results
+
+<details>
+<summary>1024-bit serial results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_03_mkII` | 29.746 | 29.021 | 28.811 |
+| 2 | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 29.410 | 29.030 | 28.732 |
+| 3 | `kernel_02_mkII` | 28.119 | 27.664 | 27.417 |
+| 4 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 27.858 | 27.578 | 27.294 |
+| 5 | `kernel_01_mkII` | 15.307 | 15.051 | 14.810 |
+| 6 | `kernel_04_mkII` | 15.235 | 15.128 | 15.041 |
+| 7 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 15.231 | 14.856 | 14.377 |
+| 8 | `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 15.222 | 14.936 | 13.301 |
+| 9 | `kernel_03_orig` | 11.527 | 11.278 | 11.179 |
+| 10 | `C_native_03` | 11.304 | 11.256 | 11.173 |
+
+</details>
+
+<details>
+<summary>1024-bit serial results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 29.410 | 29.030 | 28.732 |
+| 2 | `kernel_03_mkII` | 29.746 | 29.021 | 28.811 |
+| 3 | `kernel_02_mkII` | 28.119 | 27.664 | 27.417 |
+| 4 | `kernel_02_mkII_FIXED_PRECISION_FASTPATH` | 27.858 | 27.578 | 27.294 |
+| 5 | `kernel_04_mkII` | 15.235 | 15.128 | 15.041 |
+| 6 | `kernel_01_mkII` | 15.307 | 15.051 | 14.810 |
+| 7 | `kernel_04_mkII_FIXED_PRECISION_FASTPATH` | 15.222 | 14.936 | 13.301 |
+| 8 | `kernel_01_mkII_FIXED_PRECISION_FASTPATH` | 15.231 | 14.856 | 14.377 |
+| 9 | `kernel_03_orig` | 11.527 | 11.278 | 11.179 |
+| 10 | `C_native_03` | 11.304 | 11.256 | 11.173 |
+
+</details>
+
+<!-- END 1024-BIT SERIAL RESULTS -->
 
 ## OpenMP Results
 
@@ -255,6 +348,48 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 
 </details>
 
+<!-- BEGIN 1024-BIT OPENMP RESULTS -->
+
+### 1024-bit OpenMP results
+
+<details>
+<summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_openmp_07_mkII` | 523.324 | 502.353 | 456.467 |
+| 2 | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 520.109 | 508.233 | 466.735 |
+| 3 | `kernel_openmp_06_mkII` | 380.300 | 369.120 | 349.279 |
+| 4 | `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 376.954 | 366.289 | 349.665 |
+| 5 | `kernel_openmp_05_mkII` | 294.220 | 284.361 | 232.931 |
+| 6 | `kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH` | 293.446 | 288.131 | 284.684 |
+| 7 | `kernel_openmp_07_orig` | 265.025 | 257.288 | 237.076 |
+| 8 | `C_native_openmp_07` | 262.723 | 254.075 | 214.117 |
+| 9 | `kernel_openmp_03_mkII` | 243.750 | 237.344 | 233.917 |
+| 10 | `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 242.684 | 238.201 | 235.040 |
+
+</details>
+
+<details>
+<summary>1024-bit OpenMP results sorted by Avg MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+|------|---------|-----------:|-----------:|-----------:|
+| 1 | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 520.109 | 508.233 | 466.735 |
+| 2 | `kernel_openmp_07_mkII` | 523.324 | 502.353 | 456.467 |
+| 3 | `kernel_openmp_06_mkII` | 380.300 | 369.120 | 349.279 |
+| 4 | `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 376.954 | 366.289 | 349.665 |
+| 5 | `kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH` | 293.446 | 288.131 | 284.684 |
+| 6 | `kernel_openmp_05_mkII` | 294.220 | 284.361 | 232.931 |
+| 7 | `kernel_openmp_07_orig` | 265.025 | 257.288 | 237.076 |
+| 8 | `C_native_openmp_07` | 262.723 | 254.075 | 214.117 |
+| 9 | `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 242.684 | 238.201 | 235.040 |
+| 10 | `kernel_openmp_03_mkII` | 243.750 | 237.344 | 233.917 |
+
+</details>
+
+<!-- END 1024-BIT OPENMP RESULTS -->
+
 ## Memory Bandwidth Estimates
 
 These are model estimates derived from MFLOPS, not hardware-counter
@@ -296,6 +431,29 @@ of active limbs scales these estimates by `96 / 88 = 1.091`.
 | `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 242.913 | 244.805 | 10.69 | 32.06 | 42.75 |
 | `kernel_03_mkII` | 31.493 | 32.097 | 1.39 | 4.16 | 5.54 |
 | `C_native_03` | 31.488 | 32.115 | 1.39 | 4.16 | 5.54 |
+
+<!-- BEGIN 1024-BIT MEMORY ESTIMATES -->
+
+### 1024-bit estimates
+
+For 1024-bit GMP Rgemv, one active value is modeled as a 24-byte header
+plus 16 active limbs, or 152 bytes. The logical traffic coefficients are:
+
+```text
+A-only active stream GB/s = Avg MFLOPS * 0.076
+A+y active logical GB/s   = Avg MFLOPS * 0.228
+A+x+y active logical GB/s = Avg MFLOPS * 0.304
+```
+
+| Variant | Avg MFLOPS | Max MFLOPS | A-only avg GB/s | A+y avg GB/s | A+x+y avg GB/s |
+|---------|-----------:|-----------:|----------------:|-------------:|---------------:|
+| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 508.233 | 520.109 | 38.626 | 115.877 | 154.503 |
+| `C_native_openmp_07` | 254.075 | 262.723 | 19.310 | 57.929 | 77.239 |
+| `kernel_openmp_07_orig` | 257.288 | 265.025 | 19.554 | 58.662 | 78.215 |
+| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 29.030 | 29.410 | 2.206 | 6.619 | 8.825 |
+| `C_native_03` | 11.256 | 11.304 | 0.855 | 2.566 | 3.422 |
+
+<!-- END 1024-BIT MEMORY ESTIMATES -->
 
 ## Hotpath Disassembly
 

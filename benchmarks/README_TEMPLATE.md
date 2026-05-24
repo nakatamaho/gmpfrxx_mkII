@@ -74,6 +74,19 @@ State whether values are model estimates or hardware-counter measurements.
 Document object sizes, limb sizes, precision, byte-count formulas, and what the
 model includes or excludes.
 
+<!-- BEGIN MPFR GMP COMPARISON TEMPLATE NOTE -->
+
+## Comparison with GMP version
+
+For MPFR benchmark reports that have a GMP counterpart, include this section
+between `Memory Bandwidth Estimates` and `Hotpath Disassembly`. Compare the
+same problem size, precision, repeat count, and execution mode against the GMP
+report. State clearly that MPFR and GMP have different numerical semantics:
+MPFR has explicit rounding and range behavior, while GMP `mpf` uses GMP's
+floating-point model. GMP-only reports should omit this section.
+
+<!-- END MPFR GMP COMPARISON TEMPLATE NOTE -->
+
 ## Hotpath Disassembly
 
 Include representative disassembly snippets and explain temporary lifetime,

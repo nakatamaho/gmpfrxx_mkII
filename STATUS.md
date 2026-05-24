@@ -22221,3 +22221,44 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+
+## Phase: Add 1024-bit Rdot and Rgemv Benchmark Reports
+
+Implemented features:
+- Added committed 1024-bit repeat-10 benchmark data for GMP and MPFR `00_Rdot`.
+- Added committed 1024-bit repeat-10 benchmark data for GMP and MPFR `02_Rgemv`.
+- Stored new raw logs, raw CSVs, summary CSVs, and serial/OpenMP plots under run-specific `results_raw/` directories.
+- Updated `benchmarks/gmp/00_Rdot/README.md`, `benchmarks/mpfr/00_Rdot/README.md`, `benchmarks/gmp/02_Rgemv/README.md`, and `benchmarks/mpfr/02_Rgemv/README.md` with 1024-bit recorded-run addenda, headline results, folded top serial/OpenMP tables, plots, and bandwidth estimates.
+- Added `Comparison with GMP version` sections to the MPFR Rdot and MPFR Rgemv reports.
+- Updated `benchmarks/README_TEMPLATE.md` to require `Comparison with GMP version` only for MPFR reports that have a GMP counterpart.
+
+Missing features:
+- No library feature work was part of this phase.
+
+Tests added:
+- No unit tests. This phase updates benchmark data, plots, and documentation.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/gmp/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 1024 10`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 1024 10`
+- Rdot repeat-10 executable sweeps for GMP and MPFR with `N=10000000`, `precision=1024`, `repeat=10`.
+- `python3 benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402/benchmark_rdot_mpfr_n10000000_p1024_repeat10.log --output-dir benchmarks/mpfr/00_Rdot/results_raw/rdot_mpfr_n10000000_p1024_repeat10_20260523_205402 --output-prefix rdot_mpfr_n10000000_p1024_repeat10 --title-prefix "MPFR Rdot N=10000000 precision=1024 repeat=10"`
+- `python3 - <<'PY' ...` to summarize CSV files and update the four benchmark READMEs plus `benchmarks/README_TEMPLATE.md`.
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Release benchmark rebuild: PASS.
+- GMP Rdot 1024-bit repeat-10 sweep: PASS, 48 variants and 480 timed runs completed with `Result OK`.
+- MPFR Rdot 1024-bit repeat-10 sweep: PASS, 74 variants and 740 timed runs completed with `Result OK`.
+- GMP Rgemv 1024-bit repeat-10 sweep: PASS, 44 variants and 440 timed runs completed with `Result OK`.
+- MPFR Rgemv 1024-bit repeat-10 sweep: PASS, 49 variants and 490 timed runs completed with `Result OK`.
+- README/template update: PASS.
+- Diff whitespace check: PASS.
+- Full CTest from `build`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
