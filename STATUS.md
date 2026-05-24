@@ -1,3 +1,50 @@
+
+## Phase: MPFR Rdot Target Taxonomy Staging
+
+Implemented features:
+- Reworked the MPFR Rdot benchmark target matrix so wrapper targets omit the
+  unnecessary `mkII` suffix in this MPFR-only directory.
+- Split numbered source variants from build suffixes: baseline, `PRECISION`,
+  `FMA`, and `PRECISION_FMA`.
+- Added `benchmarks/mpfr/00_Rdot/run_repeat.sh` parallel to the MPFR Rgemv
+  repeat runner.
+- Updated the shared MPFR benchmark runner's Rdot executable list to the new
+  target names.
+- Updated the Rdot plot script sorting and color classes for the new suffix
+  taxonomy.
+- Rewrote `benchmarks/mpfr/00_Rdot/README.md` to remove stale result tables and
+  document the new target matrix, C native equivalence, benchmark command,
+  bandwidth model, and pending disassembly checks.
+- Removed old MPFR Rdot raw result directories from the previous
+  `mkII_STABLE_ROUNDING_*` naming matrix.
+
+Missing features:
+- A fresh repeat-10 MPFR Rdot benchmark run for the new target matrix is still
+  pending.  An attempted run was interrupted before completion and its partial
+  output was not committed.
+- Representative hotpath disassembly snippets still need to be regenerated after
+  the fresh run.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rdot_mpfr_kernel_01 Rdot_mpfr_kernel_01_PRECISION Rdot_mpfr_kernel_01_FMA Rdot_mpfr_kernel_01_PRECISION_FMA Rdot_mpfr_kernel_07 Rdot_mpfr_kernel_07_PRECISION Rdot_mpfr_kernel_07_FMA Rdot_mpfr_kernel_07_PRECISION_FMA Rdot_mpfr_kernel_openmp_07 Rdot_mpfr_kernel_openmp_07_PRECISION Rdot_mpfr_kernel_openmp_07_FMA Rdot_mpfr_kernel_openmp_07_PRECISION_FMA -j`
+- `cmake --build build_bench_release -j`
+- `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/mpfr/00_Rdot/run_repeat.sh build_bench_release 10000000 512 10`
+
+Pass/fail result:
+- Release configure: PASS.
+- Representative new Rdot targets: PASS.
+- Full Release build: PASS.
+- Repeat-10 benchmark: INTERRUPTED before completion.  Partial output was
+  deleted and is not referenced by README.md.
+
+Known issues:
+- README.md currently documents the new benchmark taxonomy and marks result
+  tables as pending.  It should be regenerated with fresh result tables, plots,
+  and disassembly after the full repeat-10 run completes.
 Post-phase hotpath selection policy documentation:
 DONE
 

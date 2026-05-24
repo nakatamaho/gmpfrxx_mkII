@@ -136,6 +136,30 @@ function(add_mpfr_rdot_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH)
 endfunction()
 
+function(add_mpfr_rdot_cpp_target subdir source target)
+    add_executable(${target} "${subdir}/${source}")
+    configure_eager_benchmark(${target} ${subdir})
+    target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
+    if(target MATCHES "PRECISION")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_FAST_FIXED_PREC)
+    endif()
+    if(target MATCHES "_FMA$")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_ENABLE_FMA)
+    endif()
+endfunction()
+
+function(add_mpfr_rdot_base_variants subdir source base)
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base})
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_PRECISION)
+endfunction()
+
+function(add_mpfr_rdot_fma_capture_variants subdir source base)
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_FMA)
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_PRECISION_FMA)
+endfunction()
+
 function(add_mpfr_raxpy_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING)
@@ -259,54 +283,30 @@ add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_06.cpp
     Rdot_mpfr_C_native_openmp_06)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_01_FMA.cpp
     Rdot_mpfr_C_native_openmp_01_FMA)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01.cpp
+foreach(variant 01 02 03 04 05 06)
+    add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_${variant}.cpp
+        Rdot_mpfr_kernel_${variant})
+endforeach()
+add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01.cpp
     Rdot_mpfr_kernel_01)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_02.cpp
-    Rdot_mpfr_kernel_02)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_03.cpp
-    Rdot_mpfr_kernel_03)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_04.cpp
-    Rdot_mpfr_kernel_04)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_05.cpp
-    Rdot_mpfr_kernel_05)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_06.cpp
-    Rdot_mpfr_kernel_06)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
-    Rdot_mpfr_kernel_07 mkII)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
-    Rdot_mpfr_kernel_07 mkII_FIXED_PRECISION_FASTPATH)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
-    Rdot_mpfr_kernel_07 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
-    Rdot_mpfr_kernel_07 mkII_FIXED_PRECISION_FASTPATH_FMA)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_08.cpp
-    Rdot_mpfr_kernel_08 mkII)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_08.cpp
-    Rdot_mpfr_kernel_08 mkII_FIXED_PRECISION_FASTPATH)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
+add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
+    Rdot_mpfr_kernel_07)
+add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
+    Rdot_mpfr_kernel_07)
+add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_08.cpp
+    Rdot_mpfr_kernel_08)
+foreach(variant 01 02 03 04 05 06)
+    add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_${variant}.cpp
+        Rdot_mpfr_kernel_openmp_${variant})
+endforeach()
+add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
     Rdot_mpfr_kernel_openmp_01)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_02.cpp
-    Rdot_mpfr_kernel_openmp_02)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_03.cpp
-    Rdot_mpfr_kernel_openmp_03)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_04.cpp
-    Rdot_mpfr_kernel_openmp_04)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_05.cpp
-    Rdot_mpfr_kernel_openmp_05)
-add_mpfr_rdot_kernel_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_06.cpp
-    Rdot_mpfr_kernel_openmp_06)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
-    Rdot_mpfr_kernel_openmp_07 mkII)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
-    Rdot_mpfr_kernel_openmp_07 mkII_FIXED_PRECISION_FASTPATH)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
-    Rdot_mpfr_kernel_openmp_07 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
-    Rdot_mpfr_kernel_openmp_07 mkII_FIXED_PRECISION_FASTPATH_FMA)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_08.cpp
-    Rdot_mpfr_kernel_openmp_08 mkII)
-add_mpfr_mkii_variant(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_08.cpp
-    Rdot_mpfr_kernel_openmp_08 mkII_FIXED_PRECISION_FASTPATH)
+add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
+    Rdot_mpfr_kernel_openmp_07)
+add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
+    Rdot_mpfr_kernel_openmp_07)
+add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_08.cpp
+    Rdot_mpfr_kernel_openmp_08)
 
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp
     Raxpy_mpfr_C_native_01)

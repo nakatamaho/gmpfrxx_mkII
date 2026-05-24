@@ -30,13 +30,11 @@ def natural_key(name):
     else:
         family = 1
     openmp = 1 if "openmp" in name else 0
-    if "STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH" in name:
-        flavor = 4
-    elif "STABLE_ROUNDING_FMA" in name:
+    if "PRECISION" in name and name.endswith("_FMA"):
         flavor = 3
-    elif "STABLE_ROUNDING" in name:
-        flavor = 2
     elif name.endswith("_FMA"):
+        flavor = 2
+    elif "PRECISION" in name:
         flavor = 1
     else:
         flavor = 0
@@ -48,15 +46,9 @@ def natural_key(name):
 def variant_color(name):
     if name.startswith("C_native"):
         return "#8c8c8c"
-    if "STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH" in name:
+    if "PRECISION" in name and name.endswith("_FMA"):
         return "#2ca02c"
-    if "FIXED_PRECISION_FASTPATH_FMA" in name:
-        return "#2ca02c"
-    if "FIXED_PRECISION_FASTPATH" in name:
-        return "#d62728"
-    if "STABLE_ROUNDING" in name:
-        if "FMA" in name:
-            return "#9467bd"
+    if "PRECISION" in name:
         return "#d62728"
     if name.endswith("_FMA"):
         return "#9467bd"
@@ -213,8 +205,8 @@ def plot_rows(rows, title, output):
 
     legend_items = [
         ("C native", "#8c8c8c"),
-        ("mkII", "#4c78a8"),
-        ("stable rounding / fixed precision", "#d62728"),
+        ("wrapper", "#4c78a8"),
+        ("fixed precision", "#d62728"),
         ("FMA", "#9467bd"),
         ("FMA + fixed precision", "#2ca02c"),
     ]
