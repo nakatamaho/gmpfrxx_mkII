@@ -31,64 +31,102 @@ build_bench_release/benchmarks/mpfr/02_Rgemv/
 Each executable takes `<rows m> <cols n> <precision>`. Example:
 
 ```bash
-build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA 4000 4000 512
+build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA 4000 4000 512
 ```
 
-The repeat-10 run used:
+The repeat-10 runner uses the same source/build taxonomy:
 
 ```bash
 OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
     benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 4000 4000 512 10
 ```
 
-The mkII optimization variants use canonical build options such as
-`GMPFRXX_MKII_FAST_FIXED_PREC` and `GMPFRXX_MKII_ENABLE_FMA`; executable
-suffixes keep historical labels such as `FIXED_PRECISION_FASTPATH` for
-benchmark continuity.
+MPFR Rgemv wrapper targets omit a separate `mkII` implementation suffix because
+this directory has only the mkII wrapper implementation.  The target suffixes
+separate source changes from build flags:
+
+| Suffix | Kind | Meaning |
+|--------|------|---------|
+| none | source baseline | Ordinary wrapper source for the numbered algorithm. |
+| `ROUNDING` | source modifier | Captures `mpfrxx::evaluation_context` before the loop and uses `with_context` in the timed body.  No compile-time flag is implied. |
+| `ROUNDING_FMA_CAPTURE` | source modifier | Uses the same loop-external rounding context and spells the inner update as an expression that can be captured by the ET FMA path. |
+| `PRECISION` | build modifier | Builds the same source with `GMPFRXX_MKII_FAST_FIXED_PREC`. |
+| final `FMA` | build modifier | Builds the FMA-capturable source with `GMPFRXX_MKII_ENABLE_FMA`. |
+
+The C native targets encode FMA directly in their source, so they do not split
+into `ROUNDING` and non-`ROUNDING` forms.
 
 ## Kernel Shapes
 
-The timed body is `_Rgemv()`. `A` is stored in column-major order. Serial
-variants cover row-dot and column-major source shapes. OpenMP variants cover
-row partitioning, precomputed scaling, row blocking, and column partitioning
-with per-thread partial `y` vectors.
+The timed body is `_Rgemv()`. `A` is stored in column-major order.  The numbered
+variant is written as a one-step escalation: each row says what changed from the
+previous source shape and why that change is measured.  `ROUNDING`,
+`ROUNDING_FMA_CAPTURE`, `PRECISION`, and final `FMA` suffixes modify the same
+numbered shape without changing the variant number.
 
-| Variant | Timed source shape | Temporary/resource policy | Purpose |
-|---------|--------------------|---------------------------|---------|
-| `01` | Row-dot form: for each `i`, accumulate `sum_j A[i+j*lda] * x[j]`, then update `y[i]`. | Reusable row accumulator; wrapper expression forms still materialize expression temporaries. | Baseline row-dot spelling; stresses strided column-major `A` access. |
-| `01_FMA` | Variant `01` with MPFR FMA where a fused source shape is available. | Same ownership and scratch lifetime as `01`. | Check whether FMA alone changes the row-dot performance class. |
-| `02` | Column-major update: scale `y` by `beta`, then stream columns and update all rows. | Reusable `temp` and `templ` outside the inner loop. | Restore contiguous `A` access and reuse scratch objects. |
-| `02_FMA` | Variant `02` with `mpfr_fma` in the row update where available. | Same scratch lifetime as `02`. | Raw C serial FMA comparison for the column-major source shape. |
-| `03` | Explicit-context row-dot wrapper, or raw C row-dot with `mpfr_fma` plus final `mpfr_fmma`. | Reusable row accumulator; wrapper creates one explicit `evaluation_context`. | Compare explicit context against raw FMA/FMMA row-dot shape. |
-| `04` | Explicit-context column-major wrapper, or raw C column-major reusable-temp baseline. | Reusable `temp` and `templ`; wrapper uses `with_context` for assignments and updates. | Best serial wrapper source shape without OpenMP. |
-| `05` | OpenMP row partition with precomputed `alpha * x[j]`. | Precomputed scaled vector plus per-thread reusable product. | Remove repeated alpha*x work while keeping row-wise ownership of `y`. |
-| `06` | OpenMP 256-row blocks; column loop and contiguous row loop inside each block. | Per-thread reusable scratch; no shared-y race inside a row block. | Improve locality while preserving simple y ownership. |
-| `07` | OpenMP column partition with per-thread partial `y` vectors and final reduction. | `num_threads * m` partial accumulators plus final reduction. | Preserve serial-like column-major `A` streaming without racing on `y`. |
-| `05_FMA`, `06_FMA`, `07_FMA` | FMA versions of the OpenMP 05/06/07 source shapes. | Same ownership and scratch policy as the non-FMA variants. | Check whether fused arithmetic changes the locality-driven OpenMP ranking. |
+| Variant | Escalation from previous step | Timed source shape | Temporary/resource policy | Purpose |
+|---------|-------------------------------|--------------------|---------------------------|---------|
+| `01` | Starting point. | Row-dot form: for each row `i`, accumulate `sum_j A[i+j*lda] * x[j]`, then update `y[i]`. | Reusable row accumulator and reusable product object. | Baseline row-owned Rgemv spelling; exposes the cost of strided column-major `A` access. |
+| `02` | `01 -> 02`: change traversal from row-dot to column-major streaming. | Scale `y`, then stream columns of `A` and update all rows for each `j`. | Reusable `temp = alpha * x[j]` and reusable `templ = temp * A[i+j*lda]`. | Separates wrapper overhead from the dominant `A` access pattern and avoids FMA as a confounder. |
+| `03` | `02 -> 03`: switch from reusable product temporaries to an FMA-capturable expression spelling. | Row-dot direct-expression form: `temp += A[i+j*lda] * x[j]`, then `y[i] = alpha * temp + beta * y[i]`. | Reusable accumulator; expression product is FMA-capturable only in the `ROUNDING_FMA_CAPTURE` source. | Tests whether ET fusion can reach the raw C row-dot `mpfr_fma` / `mpfr_fmma` class. |
+| `04` | `03 -> 04`: return to the column-major reusable-temporary shape and make it the serial context/rounding comparison point. | Column-major reusable-temporary form. | Reusable `temp` and `templ`; `ROUNDING` variants route all updates through a loop-external context. | Measures whether explicit rounding capture changes the reusable-temp column-major class. |
+| `05` | `04 -> 05`: add OpenMP row partitioning and precompute `alpha * x`. | OpenMP row partition with precomputed `scaled_x[j] = alpha * x[j]`. | Precomputed scaled vector plus per-thread reusable product. | Removes repeated column-scalar work while each thread owns rows of `y`. |
+| `06` | `05 -> 06`: add fixed 256-row blocking inside the row-owned OpenMP shape. | OpenMP 256-row blocks with column loop and contiguous row loop inside each block. | Per-thread reusable scratch; no shared-y race inside a block. | Trades extra loop structure for better locality in row-owned OpenMP code. |
+| `07` | `06 -> 07`: switch from row ownership to column partitioning with reduction. | OpenMP column partition with per-thread partial `y` vectors and final reduction. | `num_threads * m` partial accumulators plus final reduction outside the hot column loop. | Preserves serial-like column-major `A` streaming without racing on `y`. |
 
-Serial executables cover variants `01`-`04`. OpenMP executables cover variants
-`01`-`07`.
+Serial wrapper executables cover variants `01`-`04`; OpenMP wrapper executables
+cover variants `01`-`07`.
+
+## Source Escalation
+
+The escalation table above is intentionally one-dimensional.  A variant number
+changes the source algorithm; suffixes then ask separate questions about
+rounding capture, FMA capture, and fixed precision.
+
+For each applicable wrapper source, the generated target family is:
+
+```text
+<base>
+<base>_PRECISION
+<base>_ROUNDING
+<base>_ROUNDING_PRECISION
+<base>_ROUNDING_FMA_CAPTURE_FMA
+<base>_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+```
+
+The `ROUNDING_FMA_CAPTURE` source is only built as an FMA target because its
+purpose is to test ET FMA lowering.  Non-FMA reusable-temporary variants remain
+separate so they continue to match raw C kernels that avoid local allocation
+without using FMA.
 
 ## C Native Equivalent Kernels
 
 The mapping is based on the timed `_Rgemv()` source shape and generated hot
-loop, not just on matching numeric suffixes.
+loop, not just on matching numeric suffixes.  Raw C kernels encode rounding and
+FMA directly; wrapper kernels use suffixes to isolate those effects.
 
-| C native kernel | C++ wrapper kernel equivalent | Equivalence basis |
-|-----------------|-------------------------------|-------------------|
-| `C_native_01` | `kernel_01_mkII` | Both use row-dot source spelling and a final alpha/beta update. |
-| `C_native_01_FMA` | `kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA` | Closest row-dot FMA comparison; the wrapper also includes fixed-precision expression scratch handling. |
-| `C_native_02` | `kernel_02_mkII` | Both scale `y`, then stream columns of `A` with reusable `temp`/`templ`. |
-| `C_native_02_FMA` | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | Closest column-major FMA comparison. Exact generated code differs because the wrapper uses expression assignment paths. |
-| `C_native_03` | `kernel_03_mkII_FMA` | Both test row-dot FMA-style accumulation. Raw C also uses `mpfr_fmma` for the final alpha/beta update. |
-| `C_native_04` | `kernel_04_mkII` | Both are column-major reusable-temp baselines; `kernel_04_mkII` adds explicit `evaluation_context`. |
-| `C_native_openmp_04_FMA` | `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA` | Both partition rows, reuse one thread-local `temp`, compute `temp = alpha * x[j]`, and use `mpfr_fma` for the row update. |
-| `C_native_openmp_05` | `kernel_openmp_05_mkII` | Both precompute scaled `x` and partition rows. |
-| `C_native_openmp_06` | `kernel_openmp_06_mkII` | Both use 256-row blocks and per-thread reusable scratch. |
-| `C_native_openmp_07` | `kernel_openmp_07_mkII` | Both use column partitioning, per-thread partial y vectors, and final reduction. |
-| `C_native_openmp_07_FMA` | `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | Closest current FMA hot-loop comparison: both use one `mpfr_mul` per column and one row update per matrix element inside the OpenMP worker loop. |
+| C native kernel | Equivalent C++ wrapper kernel(s) | Equivalence basis |
+|-----------------|----------------------------------|-------------------|
+| `C_native_01` | `kernel_01`, `kernel_01_PRECISION` | Row-dot source with reusable row accumulator and product temporary. |
+| `C_native_01_FMA` | `kernel_01_ROUNDING_FMA_CAPTURE_FMA`, `kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Same row-dot algorithm, but the wrapper source uses context capture and an FMA-capturable expression. |
+| `C_native_02` | `kernel_02`, `kernel_02_PRECISION`, `kernel_02_ROUNDING`, `kernel_02_ROUNDING_PRECISION` | Column-major reusable `temp`/`templ` source, intentionally non-FMA. |
+| `C_native_02_FMA` | `kernel_02_ROUNDING_FMA_CAPTURE_FMA`, `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Column-major update with an FMA-capturable row update. |
+| `C_native_03` | `kernel_03_ROUNDING_FMA_CAPTURE_FMA`, `kernel_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Row-dot FMA-style accumulation.  Raw C also uses `mpfr_fmma` for the final alpha/beta update. |
+| `C_native_04` | `kernel_04`, `kernel_04_PRECISION`, `kernel_04_ROUNDING`, `kernel_04_ROUNDING_PRECISION` | Serial column-major reusable-temporary comparison point. |
+| `C_native_openmp_NN` | `kernel_openmp_NN`, `kernel_openmp_NN_PRECISION`, `kernel_openmp_NN_ROUNDING`, `kernel_openmp_NN_ROUNDING_PRECISION` | Same OpenMP partitioning and non-FMA temporary policy as raw C variant `NN`. |
+| `C_native_openmp_NN_FMA` | `kernel_openmp_NN_ROUNDING_FMA_CAPTURE_FMA`, `kernel_openmp_NN_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Same OpenMP partitioning as raw C variant `NN`, with FMA-capturable wrapper source and FMA-enabled build. |
+
+The closest hot-loop comparison for the best historical OpenMP class is
+`C_native_openmp_07_FMA` against
+`kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA`.
 
 ## Recorded Run
+
+> Note: the committed result tables below are the last repeat-10 data set from
+> the previous executable naming matrix.  The source files, CMake targets, and
+> runner have been normalized to the `ROUNDING` / `ROUNDING_FMA_CAPTURE` /
+> `PRECISION` taxonomy above; run `run_repeat.sh` again before treating the
+> numerical result tables as current for the new target names.
 
 | Field | Value |
 |-------|-------|
@@ -107,6 +145,7 @@ loop, not just on matching numeric suffixes.
 | Raw CSV | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260523_173328/raw_rgemv_mpfr_m4000_n4000_p512_repeat10.csv` |
 | Summary CSV | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260523_173328/summary_rgemv_mpfr_m4000_n4000_p512_repeat10.csv` |
 | Correctness | 490 / 490 runs reported `Result OK`. |
+
 
 ![MPFR Rgemv serial repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p512_repeat10_20260523_173328/rgemv_mpfr_m4000_n4000_p512_repeat10_serial.png)
 
@@ -143,6 +182,7 @@ and repeat count as the 512-bit run, with only the precision changed.
 | Raw CSV | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/raw_rgemv_mpfr_m4000_n4000_p1024_repeat10.csv` |
 | Summary CSV | `benchmarks/mpfr/02_Rgemv/results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/summary_rgemv_mpfr_m4000_n4000_p1024_repeat10.csv` |
 | Correctness | 490 / 490 runs reported `Result OK`. |
+
 
 ![MPFR 02_Rgemv serial 1024-bit repeat-10](results_raw/rgemv_mpfr_m4000_n4000_p1024_repeat10_20260524_065200/rgemv_mpfr_m4000_n4000_p1024_repeat10_serial.png)
 

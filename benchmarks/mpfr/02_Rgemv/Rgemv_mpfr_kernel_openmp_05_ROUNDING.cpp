@@ -27,6 +27,8 @@
 
 #include <omp.h>
 
+#include <vector>
+
 #include "Rgemv_common.hpp"
 
 gmp_randstate_t state;
@@ -37,21 +39,34 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, 
     }
 
     const mpfr_prec_t precision = m > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        y[i] *= beta;
+    const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
+    const mpfrxx::evaluation_context context{precision, rounding};
+    std::vector<mpfr_class> scaled_x;
+    scaled_x.reserve(static_cast<std::size_t>(n));
+    for (int64_t j = 0; j < n; ++j) {
+        scaled_x.emplace_back(0.0, precision);
     }
 
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        mpfr_class temp(0.0, precision);
-        mpfr_class prod(0.0, precision);
+#pragma omp parallel
+    {
+#pragma omp for schedule(static)
         for (int64_t j = 0; j < n; ++j) {
-            prod = A[i + j * lda] * x[j];
-            temp += prod;
+            auto scaled_context = mpfrxx::with_context(scaled_x[j], context);
+            scaled_context = alpha * x[j];
         }
-        temp *= alpha;
-        y[i] += temp;
+
+        mpfr_class templ(0.0, precision);
+        auto templ_context = mpfrxx::with_context(templ, context);
+
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            auto y_context = mpfrxx::with_context(y[i], context);
+            y_context *= beta;
+            for (int64_t j = 0; j < n; ++j) {
+                templ_context = scaled_x[j] * A[i + j * lda];
+                y_context += templ;
+            }
+        }
     }
 }
 

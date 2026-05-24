@@ -25,8 +25,6 @@
  * SUCH DAMAGE.
  */
 
-#include <omp.h>
-
 #include "Rgemv_common.hpp"
 
 gmp_randstate_t state;
@@ -37,21 +35,21 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, 
     }
 
     const mpfr_prec_t precision = m > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        y[i] *= beta;
-    }
+    const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
+    const mpfrxx::evaluation_context context{precision, rounding};
+    mpfr_class temp(0.0, precision);
+    mpfr_class prod(0.0, precision);
+    auto temp_context = mpfrxx::with_context(temp, context);
+    auto prod_context = mpfrxx::with_context(prod, context);
 
-#pragma omp parallel for
     for (int64_t i = 0; i < m; ++i) {
-        mpfr_class temp(0.0, precision);
-        mpfr_class prod(0.0, precision);
+        temp_context = 0.0;
         for (int64_t j = 0; j < n; ++j) {
-            prod = A[i + j * lda] * x[j];
-            temp += prod;
+            prod_context = A[i + j * lda] * x[j];
+            temp_context += prod;
         }
-        temp *= alpha;
-        y[i] += temp;
+        auto y_context = mpfrxx::with_context(y[i], context);
+        y_context = alpha * temp + beta * y[i];
     }
 }
 

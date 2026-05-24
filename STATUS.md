@@ -22299,37 +22299,38 @@ Known issues:
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
 
 
-## Phase: Add MPFR Rgemv OpenMP 04 Fixed-Precision FMA Target
+
+## Phase: Normalize MPFR Rgemv Source and Optimization Matrix
 
 Implemented features:
-- Added `Rgemv_mpfr_kernel_openmp_04_FMA.cpp`, a row-partitioned OpenMP 04 wrapper source that keeps one reusable `temp` per worker and uses `y_context += temp * A[i + j * lda]` so FMA-enabled mkII builds emit `mpfr_fma` for the row update.
-- Added the `Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA` benchmark target in `benchmarks/CMakeLists.txt`.
-- Added the new executable to `benchmarks/mpfr/02_Rgemv/run_repeat.sh` so future repeat sweeps include it.
-- Updated `benchmarks/mpfr/02_Rgemv/README.md` to use the requested OpenMP 04 fixed-precision/FMA target in the build example, C native equivalence table, and hotpath disassembly section.
+- Reworked `benchmarks/mpfr/02_Rgemv` wrapper kernels so the numbered source shape is separated from optimization suffixes.
+- Added ordinary, `ROUNDING`, and `ROUNDING_FMA_CAPTURE` C++ source files for serial variants `01`-`04` and OpenMP variants `01`-`07`.
+- Replaced the MPFR Rgemv CMake target wiring with a source/build modifier matrix:
+  `<base>`, `<base>_PRECISION`, `<base>_ROUNDING`, `<base>_ROUNDING_PRECISION`, `<base>_ROUNDING_FMA_CAPTURE_FMA`, and `<base>_ROUNDING_FMA_CAPTURE_PRECISION_FMA`.
+- Updated `benchmarks/mpfr/02_Rgemv/run_repeat.sh` to construct the same target matrix without the obsolete `mkII` implementation suffix.
+- Updated `benchmarks/mpfr/02_Rgemv/README.md` with the new suffix taxonomy, Kernel Shapes escalation table, generated target family notes, and C native equivalence mapping.
+- Updated `benchmarks/README_TEMPLATE.md` to document `ROUNDING` and `ROUNDING_FMA_CAPTURE` wrapper source variants instead of the older `CONTEXT` naming.
 
 Missing features:
-- The committed repeat-10 result tables were not regenerated in this phase; the new executable is included for future full Rgemv sweeps.
+- Full repeat-10 MPFR Rgemv benchmark data was not regenerated in this phase.  The README result tables are explicitly marked as historical until the normalized target matrix is rerun.
 
 Tests added:
-- No unit tests. This phase adds one benchmark source variant and report wiring.
+- No unit tests. This phase changes benchmark source layout, CMake target wiring, runner enumeration, and benchmark documentation.
 
 Exact commands run:
-- `git push origin main`
 - `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
-- `cmake --build build_bench_release --target Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA -j`
-- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA`
-- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA 64 64 512`
-- `git diff --check`
-- `ctest --test-dir build --output-on-failure`
+- `cmake --build build_bench_release -j`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA 16 16 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07 16 16 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07_FMA 16 16 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA 16 16 128`
+- `ctest --test-dir build_bench_release --output-on-failure`
 
 Pass/fail result:
-- Push before edits: PASS, repository was already up to date.
 - Release benchmark configure: PASS.
-- New OpenMP 04 fixed-precision/FMA target build: PASS.
-- Disassembly check: PASS, hot loop contains `mpfr_mul` for `temp = alpha * x[j]` and `mpfr_fma` for `y[i] += temp * A[i+j*lda]`.
-- Smoke run: PASS, `Result OK` with `m=64`, `n=64`, `precision=512`, `OMP_NUM_THREADS=2`.
-- Diff whitespace check: PASS.
-- Full CTest from `build`: PASS, 178/178 tests passed.
+- Full release benchmark build: PASS, including all normalized MPFR Rgemv targets.
+- MPFR Rgemv representative smoke runs: PASS, all four sampled targets reported `Result OK`.
+- Full CTest from `build_bench_release`: PASS, 178/178 tests passed.
 
 Known issues:
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.

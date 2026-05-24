@@ -27,6 +27,8 @@
 
 #include <omp.h>
 
+#include <vector>
+
 #include "Rgemv_common.hpp"
 
 gmp_randstate_t state;
@@ -37,21 +39,51 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, 
     }
 
     const mpfr_prec_t precision = m > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        y[i] *= beta;
+    const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
+    const mpfrxx::evaluation_context context{precision, rounding};
+    const int64_t num_threads = static_cast<int64_t>(omp_get_max_threads());
+    const int64_t partial_count = num_threads * m;
+    std::vector<mpfr_class> partials;
+    partials.reserve(static_cast<std::size_t>(partial_count));
+    for (int64_t i = 0; i < partial_count; ++i) {
+        partials.emplace_back(0.0, precision);
     }
 
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        mpfr_class temp(0.0, precision);
-        mpfr_class prod(0.0, precision);
-        for (int64_t j = 0; j < n; ++j) {
-            prod = A[i + j * lda] * x[j];
-            temp += prod;
+#pragma omp parallel
+    {
+        const int64_t tid = static_cast<int64_t>(omp_get_thread_num());
+        mpfr_class *local_y = partials.data() + tid * m;
+
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            auto y_context = mpfrxx::with_context(y[i], context);
+            y_context *= beta;
         }
-        temp *= alpha;
-        y[i] += temp;
+
+        for (int64_t i = 0; i < m; ++i) {
+            auto local_context = mpfrxx::with_context(local_y[i], context);
+            local_context = 0.0;
+        }
+
+        mpfr_class temp(0.0, precision);
+        auto temp_context = mpfrxx::with_context(temp, context);
+
+#pragma omp for schedule(static)
+        for (int64_t j = 0; j < n; ++j) {
+            temp_context = alpha * x[j];
+            for (int64_t i = 0; i < m; ++i) {
+                auto local_context = mpfrxx::with_context(local_y[i], context);
+                local_context += temp * A[i + j * lda];
+            }
+        }
+
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            auto y_context = mpfrxx::with_context(y[i], context);
+            for (int64_t t = 0; t < num_threads; ++t) {
+                y_context += partials[t * m + i];
+            }
+        }
     }
 }
 

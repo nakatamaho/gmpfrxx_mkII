@@ -22,6 +22,33 @@ and OpenMP variants.
 |---------|--------------------|---------------------------|---------|
 | `01` | ... | ... | ... |
 
+Keep numbered variants and optimization suffixes separate.  The variant number
+defines the source-level kernel shape and must not change meaning when a
+compile-time fastpath is enabled.  Optimization suffixes such as
+`FIXED_PRECISION_FASTPATH`, `STABLE_ROUNDING`, and `FMA` describe how that same
+source shape is compiled.
+
+For MPFR expression-template kernels, `FMA` should normally be a build suffix,
+not a separate source variant: if the timed source already has an FMA-capturable
+shape such as `lhs += a * b`, the FMA-enabled build may lower it to
+`mpfr_fma`.  Source-level differences that change whether an operation is
+FMA-capturable must remain separate numbered variants.  In particular, a
+non-FMA variant may intentionally use a reusable local temporary, such as
+`temp = a * b; lhs += temp;`, to match a raw C kernel that avoids local
+allocation without using FMA.  Do not force that variant into FMA form; it
+answers a different performance question.
+
+Raw C kernels do not split into wrapper-context variants; raw C has no wrapper
+context layer.  If a wrapper benchmark needs to measure default-rounding lookup
+overhead, split the C++ wrapper source instead.  Use `NN` for the ordinary
+wrapper path, `NN_ROUNDING` for the same algorithm with loop-external rounding
+capture via `with_context`, and `NN_ROUNDING_FMA_CAPTURE` for the captured
+source shape that is also FMA-capturable.  Build suffixes remain separate:
+`PRECISION` means `GMPFRXX_MKII_FAST_FIXED_PREC`, and a final `FMA` suffix means
+`GMPFRXX_MKII_ENABLE_FMA`.  Map these wrapper source variants back to the same
+raw C algorithmic kernel in the C native equivalence table, and state which
+wrapper variant is the closest hot-loop comparison.
+
 ## C Native Equivalent Kernels
 
 Map C++ wrapper kernels to raw C native kernels by timed hot-loop source shape

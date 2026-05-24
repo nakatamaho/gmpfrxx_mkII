@@ -30,25 +30,29 @@
 #include "Rgemv_common.hpp"
 
 gmp_randstate_t state;
-
 void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, int64_t lda, const mpfr_class *x, int64_t incx, const mpfr_class &beta, mpfr_class *y, int64_t incy) {
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;
         std::exit(EXIT_FAILURE);
     }
 
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        y[i] *= beta;
-    }
+    const mpfr_prec_t precision = m > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
+#pragma omp parallel
+    {
+        mpfr_class temp(0.0, precision);
+        mpfr_class prod(0.0, precision);
 
-#pragma omp parallel for
-    for (int64_t i = 0; i < m; ++i) {
-        mpfr_class temp = 0;
-        for (int64_t j = 0; j < n; ++j) {
-            temp += A[i + j * lda] * x[j];
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < m; ++i) {
+            temp = 0.0;
+            for (int64_t j = 0; j < n; ++j) {
+                prod = A[i + j * lda] * x[j];
+                temp += prod;
+            }
+            prod = beta * y[i];
+            temp *= alpha;
+            y[i] = prod + temp;
         }
-        y[i] += alpha * temp;
     }
 }
 

@@ -143,6 +143,41 @@ function(add_mpfr_raxpy_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH)
 endfunction()
 
+function(add_mpfr_rgemv_cpp_target subdir source target)
+    add_executable(${target} "${subdir}/${source}")
+    configure_eager_benchmark(${target} ${subdir})
+    target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
+    if(target MATCHES "PRECISION")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_FAST_FIXED_PREC)
+    endif()
+    if(target MATCHES "_FMA$")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_ENABLE_FMA)
+    endif()
+endfunction()
+
+function(add_mpfr_rgemv_base_variants subdir source base)
+    add_mpfr_rgemv_cpp_target(${subdir} ${source} ${base})
+    add_mpfr_rgemv_cpp_target(${subdir} ${source} ${base}_PRECISION)
+endfunction()
+
+function(add_mpfr_rgemv_rounding_variants subdir source base)
+    add_mpfr_rgemv_cpp_target(${subdir} ${source} ${base}_ROUNDING)
+    add_mpfr_rgemv_cpp_target(${subdir} ${source} ${base}_ROUNDING_PRECISION)
+endfunction()
+
+function(add_mpfr_rgemv_fma_capture_variants subdir source base)
+    add_mpfr_rgemv_cpp_target(${subdir} ${source} ${base}_ROUNDING_FMA_CAPTURE_FMA)
+    add_mpfr_rgemv_cpp_target(${subdir} ${source} ${base}_ROUNDING_FMA_CAPTURE_PRECISION_FMA)
+endfunction()
+
+function(add_mpfr_rgemv_variant_family subdir base)
+    add_mpfr_rgemv_base_variants(${subdir} ${base}.cpp ${base})
+    add_mpfr_rgemv_rounding_variants(${subdir} ${base}_ROUNDING.cpp ${base})
+    add_mpfr_rgemv_fma_capture_variants(${subdir} ${base}_ROUNDING_FMA_CAPTURE.cpp ${base})
+endfunction()
+
 function(add_mpfr_native_benchmark subdir source target)
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
@@ -350,52 +385,12 @@ add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_07.cpp
     Rgemv_mpfr_C_native_openmp_07)
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_openmp_07_FMA.cpp
     Rgemv_mpfr_C_native_openmp_07_FMA)
-add_mpfr_kernel_variants(mpfr/02_Rgemv Rgemv_mpfr_kernel_01.cpp
-    Rgemv_mpfr_kernel_01)
-add_mpfr_kernel_variants(mpfr/02_Rgemv Rgemv_mpfr_kernel_02.cpp
-    Rgemv_mpfr_kernel_02)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_03.cpp
-    Rgemv_mpfr_kernel_03 mkII)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_03.cpp
-    Rgemv_mpfr_kernel_03 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_04.cpp
-    Rgemv_mpfr_kernel_04 mkII)
-add_mpfr_kernel_variants(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_01.cpp
-    Rgemv_mpfr_kernel_openmp_01)
-add_mpfr_kernel_variants(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_02.cpp
-    Rgemv_mpfr_kernel_openmp_02)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_03.cpp
-    Rgemv_mpfr_kernel_openmp_03 mkII)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_03.cpp
-    Rgemv_mpfr_kernel_openmp_03 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_04.cpp
-    Rgemv_mpfr_kernel_openmp_04 mkII)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_04_FMA.cpp
-    Rgemv_mpfr_kernel_openmp_04 mkII_FIXED_PRECISION_FASTPATH_FMA)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_05.cpp
-    Rgemv_mpfr_kernel_openmp_05 mkII)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_05.cpp
-    Rgemv_mpfr_kernel_openmp_05 mkII_FIXED_PRECISION_FASTPATH)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_05_FMA.cpp
-    Rgemv_mpfr_kernel_openmp_05 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_05_FMA.cpp
-    Rgemv_mpfr_kernel_openmp_05 mkII_FIXED_PRECISION_FASTPATH_FMA)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_06.cpp
-    Rgemv_mpfr_kernel_openmp_06 mkII)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_06.cpp
-    Rgemv_mpfr_kernel_openmp_06 mkII_FIXED_PRECISION_FASTPATH)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_06_FMA.cpp
-    Rgemv_mpfr_kernel_openmp_06 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_06_FMA.cpp
-    Rgemv_mpfr_kernel_openmp_06 mkII_FIXED_PRECISION_FASTPATH_FMA)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_07.cpp
-    Rgemv_mpfr_kernel_openmp_07 mkII)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_07.cpp
-    Rgemv_mpfr_kernel_openmp_07 mkII_FIXED_PRECISION_FASTPATH)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_07_FMA.cpp
-    Rgemv_mpfr_kernel_openmp_07 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_07_FMA.cpp
-    Rgemv_mpfr_kernel_openmp_07 mkII_FIXED_PRECISION_FASTPATH_FMA)
+foreach(variant 01 02 03 04)
+    add_mpfr_rgemv_variant_family(mpfr/02_Rgemv Rgemv_mpfr_kernel_${variant})
+endforeach()
+foreach(variant 01 02 03 04 05 06 07)
+    add_mpfr_rgemv_variant_family(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_${variant})
+endforeach()
 
 add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_01.cpp
     Rgemm_mpfr_C_native_01)

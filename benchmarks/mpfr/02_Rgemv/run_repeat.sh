@@ -48,38 +48,27 @@ executables=(
     "Rgemv_mpfr_C_native_openmp_06_FMA"
     "Rgemv_mpfr_C_native_openmp_07"
     "Rgemv_mpfr_C_native_openmp_07_FMA"
-    "Rgemv_mpfr_kernel_01_mkII"
-    "Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
-    "Rgemv_mpfr_kernel_02_mkII"
-    "Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
-    "Rgemv_mpfr_kernel_03_mkII"
-    "Rgemv_mpfr_kernel_03_mkII_FMA"
-    "Rgemv_mpfr_kernel_04_mkII"
-    "Rgemv_mpfr_kernel_openmp_01_mkII"
-    "Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
-    "Rgemv_mpfr_kernel_openmp_02_mkII"
-    "Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
-    "Rgemv_mpfr_kernel_openmp_03_mkII"
-    "Rgemv_mpfr_kernel_openmp_03_mkII_FMA"
-    "Rgemv_mpfr_kernel_openmp_04_mkII"
-    "Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA"
-    "Rgemv_mpfr_kernel_openmp_05_mkII"
-    "Rgemv_mpfr_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_mpfr_kernel_openmp_05_mkII_FMA"
-    "Rgemv_mpfr_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH_FMA"
-    "Rgemv_mpfr_kernel_openmp_06_mkII"
-    "Rgemv_mpfr_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_mpfr_kernel_openmp_06_mkII_FMA"
-    "Rgemv_mpfr_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH_FMA"
-    "Rgemv_mpfr_kernel_openmp_07_mkII"
-    "Rgemv_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_mpfr_kernel_openmp_07_mkII_FMA"
-    "Rgemv_mpfr_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA"
 )
+
+append_cpp_family() {
+    local base="$1"
+    executables+=(
+        "${base}"
+        "${base}_PRECISION"
+        "${base}_ROUNDING"
+        "${base}_ROUNDING_PRECISION"
+        "${base}_ROUNDING_FMA_CAPTURE_FMA"
+        "${base}_ROUNDING_FMA_CAPTURE_PRECISION_FMA"
+    )
+}
+
+for variant in 01 02 03 04; do
+    append_cpp_family "Rgemv_mpfr_kernel_${variant}"
+done
+
+for variant in 01 02 03 04 05 06 07; do
+    append_cpp_family "Rgemv_mpfr_kernel_openmp_${variant}"
+done
 
 run_one() {
     local exe="$1"

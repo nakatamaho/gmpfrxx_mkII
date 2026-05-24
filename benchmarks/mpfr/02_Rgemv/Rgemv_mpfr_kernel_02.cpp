@@ -28,18 +28,20 @@
 #include "Rgemv_common.hpp"
 
 gmp_randstate_t state;
-
 void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, int64_t lda, const mpfr_class *x, int64_t incx, const mpfr_class &beta, mpfr_class *y, int64_t incy) {
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;
         std::exit(EXIT_FAILURE);
     }
 
+    const mpfr_prec_t precision = m > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
+    mpfr_class temp(0.0, precision);
+    mpfr_class templ(0.0, precision);
+
     for (int64_t i = 0; i < m; ++i) {
         y[i] *= beta;
     }
 
-    mpfr_class temp, templ;
     for (int64_t j = 0; j < n; ++j) {
         temp = alpha;
         temp *= x[j];
