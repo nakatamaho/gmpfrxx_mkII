@@ -22416,3 +22416,122 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+## Phase: Split GMP Rgemm Driver from Kernel Sources
+
+Implemented features:
+- Added `benchmarks/gmp/03_Rgemm/Rgemm_common.hpp` with shared native, wrapper, row-block, timing, initialization, reference, and correctness-check runners.
+- Reworked every `benchmarks/gmp/03_Rgemm/*.cpp` source so each executable contains one explicit `_Rgemm` kernel plus a thin dispatcher `main`.
+- Removed OpenMP-source embedded `_Rgemm_wo_openmp` comparison kernels; serial and OpenMP behavior is now selected by filename and target only.
+- Folded the old 06 row-block common headers into explicit serial and OpenMP kernel sources and removed the stale 06-specific common headers.
+- Kept native-to-wrapper reference conversion consistent with existing GMP benchmarks by using explicit `mpf_class(mpf_srcptr)` construction.
+
+Missing features:
+- No benchmark data was regenerated in this phase.
+- GMP Rgemm README data and disassembly were not refreshed; this phase only changes source layout.
+
+Tests added:
+- No unit tests. This phase is a benchmark source-layout refactor.
+
+Exact commands run:
+- `cmake --build build_bench_release --target <all GMP Rgemm native, wrapper, OpenMP, orig, mkII targets> -j 8`
+- `cmake --build build_bench_release --target <all GMP Rgemm mkII_FIXED_PRECISION_FASTPATH targets> -j 8`
+- `build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_01 8 8 8 128`
+- `build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_06 8 8 8 128`
+- `build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_02_mkII 8 8 8 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05_mkII 8 8 8 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 8 8 8 128`
+- `git diff --check -- benchmarks/gmp/03_Rgemm STATUS.md`
+
+Pass/fail result:
+- GMP Rgemm target rebuild: PASS, including native, OpenMP, wrapper, orig, mkII, row-block, and fixed-precision targets.
+- Representative smoke runs: PASS, all sampled targets reported `Check passed.`
+- Whitespace check: PASS.
+
+Known issues:
+- Existing unrelated dirty worktree entries from earlier MPFR benchmark refactors remain untouched.
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+## Phase: Split GMP Raxpy Driver from Kernel Sources
+
+Implemented features:
+- Added `benchmarks/gmp/01_Raxpy/Raxpy_common.hpp` with shared native and wrapper benchmark runners.
+- Moved random-state setup, vector initialization, timing, reference execution, L1 checking, and cleanup out of the GMP Raxpy kernel sources.
+- Reworked every `benchmarks/gmp/01_Raxpy/*.cpp` source so each executable contains one explicit `_Raxpy` kernel plus a thin dispatcher `main`.
+- Kept OpenMP behavior selected by filename/target only; no OpenMP source contains a serial comparison kernel or `_Raxpy_wo_openmp`.
+- Kept native-to-wrapper reference conversion consistent with existing GMP benchmarks by using explicit `mpf_class(mpf_srcptr)` construction.
+
+Missing features:
+- No benchmark data was regenerated in this phase.
+- GMP Raxpy README data and disassembly were not refreshed; this phase only changes source layout.
+
+Tests added:
+- No unit tests. This phase is a benchmark source-layout refactor.
+
+Exact commands run:
+- `cmake --build build_bench_release --target <all GMP Raxpy native, wrapper, OpenMP, orig, mkII, fixed-precision targets> -j 8`
+- `build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 128 128`
+- `build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 128 128`
+- `git diff --check -- benchmarks/gmp/01_Raxpy STATUS.md`
+- `ctest --test-dir build --output-on-failure`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- GMP Raxpy target rebuild: PASS, including native, OpenMP, wrapper, orig, mkII, and fixed-precision targets.
+- Representative smoke runs: PASS, all sampled targets reported `Result OK`.
+- Whitespace check before this STATUS entry: PASS.
+- `ctest --test-dir build --output-on-failure`: FAIL because `build/` does not exist.
+- `ctest --test-dir build_bench_release --output-on-failure`: FAIL because the existing build tree does not contain most example/test executables; the compile-fail tail ran and passed.
+
+Known issues:
+- User requested `gmp/02_Raxpy`, but the repository contains GMP Raxpy under `benchmarks/gmp/01_Raxpy`; this phase updated that directory.
+- Existing unrelated dirty worktree entries from earlier benchmark refactors remain untouched.
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+
+## Phase: Split Remaining GMP BLAS Benchmark Drivers from Kernel Sources
+
+Implemented features:
+- Added `benchmarks/gmp/00_Rdot/Rdot_common.hpp` with shared native and wrapper benchmark runners.
+- Added `benchmarks/gmp/00_Rdot/Rdot_microbench_common.hpp` and split the old macro-selected native microbench into explicit `07_readonly`, `08_addonly`, `09_mulonly`, and `10_muladd` source files.
+- Updated `benchmarks/CMakeLists.txt` so each GMP Rdot microbench target builds from its own source file instead of one shared `GMP_RDOT_MICROBENCH_MODE` source.
+- Added `benchmarks/gmp/02_Rgemv/Rgemv_common.hpp` with shared native and wrapper benchmark runners.
+- Reworked every `benchmarks/gmp/00_Rdot/*.cpp` and `benchmarks/gmp/02_Rgemv/*.cpp` source so each executable contains one explicit timed kernel plus a thin dispatcher `main`.
+- Verified the GMP `00_Rdot`, `01_Raxpy`, `02_Rgemv`, and `03_Rgemm` source trees no longer contain `_wo_openmp`, `wo_openmp`, `C_wo_openmp`, `yy_wo`, or the old Rdot microbench mode macro in benchmark `.cpp`/`.hpp` files.
+
+Missing features:
+- No benchmark data was regenerated in this phase.
+- GMP Rdot and Rgemv README data and disassembly were not refreshed; this phase only changes source layout.
+
+Tests added:
+- No unit tests. This phase is a benchmark source-layout refactor.
+
+Exact commands run:
+- `cmake --build build_bench_release --target <all GMP Rdot native, microbench, wrapper, OpenMP, orig, mkII, fixed-precision targets and all GMP Rgemv native, wrapper, OpenMP, orig, mkII, fixed-precision targets> -j 8`
+- `build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 128 128`
+- `build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_07_readonly 128 128`
+- `build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 128 128`
+- `build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 16 16 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 16 16 128`
+- `build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 16 16 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 16 16 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 8 8 8 128`
+- `rg -n "_wo_openmp|wo_openmp|C_wo_openmp|yy_wo|GMP_RDOT_MICROBENCH_MODE|Rdot_gmp_C_native_microbench" benchmarks/gmp/00_Rdot benchmarks/gmp/01_Raxpy benchmarks/gmp/02_Rgemv benchmarks/gmp/03_Rgemm -g '*.cpp' -g '*.hpp' -g 'CMakeLists.txt'`
+- `rg -n "gmp_randstate_t state;|void init_mpf|void clear_mpf" benchmarks/gmp/00_Rdot benchmarks/gmp/01_Raxpy benchmarks/gmp/02_Rgemv benchmarks/gmp/03_Rgemm -g '*.cpp'`
+- `git diff --check -- benchmarks/CMakeLists.txt benchmarks/gmp/00_Rdot benchmarks/gmp/01_Raxpy benchmarks/gmp/02_Rgemv benchmarks/gmp/03_Rgemm STATUS.md`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- GMP Rdot and Rgemv target rebuild: PASS, including native, OpenMP, wrapper, orig, mkII, fixed-precision, and split native microbench targets.
+- Representative smoke runs: PASS. Rdot samples reported `DIFF: ... OK`; Rgemv and previously split Raxpy/Rgemm samples reported `Result OK` or `Check passed.`
+- Source-layout scans: PASS. The `rg` checks returned no matches.
+- Whitespace check: PASS.
+- `ctest --test-dir build_bench_release --output-on-failure`: FAIL because this benchmark-focused build tree does not contain 160 example/test executables. The compile-fail tail from tests 161-178 ran and passed.
+
+Known issues:
+- Existing unrelated dirty worktree entries from earlier MPFR benchmark refactors remain untouched.
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.

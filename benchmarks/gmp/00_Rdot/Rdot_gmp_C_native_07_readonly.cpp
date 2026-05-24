@@ -23,37 +23,25 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
  */
 
-#include "Rdot_common.hpp"
+#include "Rdot_microbench_common.hpp"
 
-void _Rdot(int64_t n, mpf_t *dx, int64_t incx, mpf_t *dy, int64_t incy, mpf_t *ans) {
-    if (incx != 1 || incy != 1) {
-        std::cerr << "Increments other than 1 are not supported." << std::endl;
-        exit(EXIT_FAILURE);
+void _Rdot_microbench(int64_t n, mpf_t *dx, mpf_t *dy, mpf_t *) {
+    unsigned long long sink = 0;
+    for (int64_t i = 0; i < n; ++i) {
+        const __mpf_struct &x = dx[i][0];
+        const __mpf_struct &y = dy[i][0];
+        sink += static_cast<unsigned long long>(x._mp_size);
+        sink += static_cast<unsigned long long>(y._mp_size);
+        sink += static_cast<unsigned long long>(x._mp_exp);
+        sink += static_cast<unsigned long long>(y._mp_exp);
+        sink ^= static_cast<unsigned long long>(x._mp_d[0]);
+        sink += static_cast<unsigned long long>(y._mp_d[0]);
     }
-
-    mpf_t temp, templ;
-    mp_bitcnt_t precision = mpf_get_prec(*ans);
-
-    mpf_set_d(*ans, 0.0);
-    mpf_init2(temp, precision);
-    mpf_init2(templ, precision);
-    mpf_set_d(temp, 0.0);
-    mpf_set_d(templ, 0.0);
-
-    for (int64_t i = 0; i < n; i++) {
-        mpf_mul(templ, dx[i], dy[i]);
-        mpf_add(temp, temp, templ);
-    }
-
-    mpf_swap(*ans, temp);
-
-    mpf_clear(temp);
-    mpf_clear(templ);
+    rdot_gmp_microbench::read_sink = sink;
 }
 
 int main(int argc, char **argv) {
-    return rdot_gmp_bench::run_native_rdot_benchmark(argc, argv, _Rdot);
+    return rdot_gmp_microbench::run(argc, argv, "07_readonly", rdot_gmp_microbench::OutputMode::ReadSink, _Rdot_microbench);
 }

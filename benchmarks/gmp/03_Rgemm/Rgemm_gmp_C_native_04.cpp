@@ -26,23 +26,7 @@
  *
  */
 
-#include <iostream>
-#include <chrono>
-#include <cstdlib>
-#include <gmp.h>
-
-#if defined USE_ORIGINAL_GMPXX
-#include <gmpxx.h>
-#else
-#include "gmpxx_mkII.h"
-using namespace gmpxx;
-#endif
-
-#include "Rgemm.hpp"
-
-#define MFLOPS 1e+6
-
-gmp_randstate_t state;
+#include "Rgemm_common.hpp"
 
 namespace {
 
@@ -138,18 +122,6 @@ void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, co
 
 } // namespace
 
-// cf. https://netlib.org/lapack/lawnspdf/lawn41.pdf p.120
-double flops_gemm(int k_i, int m_i, int n_i) {
-    double adds, muls, flops;
-    double k, m, n;
-    m = (double)m_i;
-    n = (double)n_i;
-    k = (double)k_i;
-    muls = m * (k + 2) * n;
-    adds = m * k * n;
-    flops = muls + adds;
-    return flops;
-}
 
 // Reference implementation using mpf_t for C = alpha * A * B + beta * C
 void _Rgemm(int64_t m, int64_t k, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda, const mpf_t *B, int64_t ldb, const mpf_t beta, mpf_t *C, int64_t ldc) {
@@ -170,126 +142,6 @@ void _Rgemm(int64_t m, int64_t k, int64_t n, const mpf_t alpha, const mpf_t *A, 
     scratch_clear(scratch);
 }
 
-// Initialize a matrix with random values
-void init_mpf_mat(mpf_t *mat, int64_t rows, int64_t cols, int64_t ld, int prec) {
-    for (int64_t j = 0; j < cols; ++j) {
-        for (int64_t i = 0; i < rows; ++i) {
-            mpf_init2(mat[i + j * ld], prec);
-            mpf_urandomb(mat[i + j * ld], state, prec);
-        }
-    }
-}
-
-// Clear a matrix
-void clear_mpf_mat(mpf_t *mat, int64_t rows, int64_t cols, int64_t ld) {
-    for (int64_t j = 0; j < cols; ++j) {
-        for (int64_t i = 0; i < rows; ++i) {
-            mpf_clear(mat[i + j * ld]);
-        }
-    }
-}
-
 int main(int argc, char **argv) {
-    gmp_randinit_default(state);
-    gmp_randseed_ui(state, 42);
-
-    if (argc != 5) {
-        std::cerr << "Usage: " << argv[0] << " <rows m> <cols k> <cols n> <precision>" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    int64_t m = std::atoll(argv[1]);
-    int64_t k = std::atoll(argv[2]);
-    int64_t n = std::atoll(argv[3]);
-    int prec = std::atoi(argv[4]);
-    mpf_set_default_prec(prec);
-#if !defined(USE_ORIGINAL_GMPXX)
-    gmpxx::set_default_mpf_precision_bits(prec);
-#endif
-
-    int64_t lda = m;
-    int64_t ldb = k;
-    int64_t ldc = m;
-
-    mpf_t *A = new mpf_t[m * k];
-    mpf_t *B = new mpf_t[k * n];
-    mpf_t *C = new mpf_t[m * n];
-
-    mpf_t alpha, beta;
-    mpf_init2(alpha, prec);
-    mpf_urandomb(alpha, state, prec);
-    mpf_init2(beta, prec);
-    mpf_urandomb(beta, state, prec);
-
-    init_mpf_mat(A, m, k, lda, prec);
-    init_mpf_mat(B, k, n, ldb, prec);
-    init_mpf_mat(C, m, n, ldc, prec);
-
-    mpf_class *A_mpf_class = new mpf_class[m * k];
-    mpf_class *B_mpf_class = new mpf_class[k * n];
-    mpf_class *C_mpf_class = new mpf_class[m * n];
-    mpf_class alpha_class = mpf_class(alpha);
-    mpf_class beta_class = mpf_class(beta);
-
-    for (int64_t j = 0; j < k; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            A_mpf_class[i + j * lda] = mpf_class(A[i + j * lda]);
-        }
-    }
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < k; ++i) {
-            B_mpf_class[i + j * ldb] = mpf_class(B[i + j * ldb]);
-        }
-    }
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            C_mpf_class[i + j * ldc] = mpf_class(C[i + j * ldc]);
-        }
-    }
-
-    auto start = std::chrono::high_resolution_clock::now();
-    _Rgemm(m, k, n, alpha, A, lda, B, ldb, beta, C, ldc);
-    auto end = std::chrono::high_resolution_clock::now();
-
-    Rgemm("n", "n", m, n, k, alpha_class, A_mpf_class, lda, B_mpf_class, ldb, beta_class, C_mpf_class, ldc);
-
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    double mflops = flops_gemm(m, n, k) / (elapsed_seconds.count() * MFLOPS);
-
-    std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
-    std::cout << "MFLOPS: " << mflops << std::endl;
-
-    mpf_class l1_norm = 0;
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            mpf_class diff = abs(mpf_class(C[i + j * ldc]) - C_mpf_class[i + j * ldc]);
-            l1_norm += diff;
-        }
-    }
-
-    std::cout << "L1 Norm of difference: ";
-    gmp_printf("%.4Fe\n", l1_norm.get_mpf_t());
-
-    mpf_class threshold = 1e-5;
-    if (l1_norm < threshold) {
-        std::cout << "Result OK" << std::endl;
-    } else {
-        std::cout << "Result NG" << std::endl;
-    }
-
-    clear_mpf_mat(A, m, k, lda);
-    clear_mpf_mat(B, k, n, ldb);
-    clear_mpf_mat(C, m, n, ldc);
-    mpf_clear(alpha);
-    mpf_clear(beta);
-    delete[] A;
-    delete[] B;
-    delete[] C;
-    delete[] A_mpf_class;
-    delete[] B_mpf_class;
-    delete[] C_mpf_class;
-
-    gmp_randclear(state);
-
-    return EXIT_SUCCESS;
+    return rgemm_gmp_bench::run_native_rgemm_benchmark(argc, argv, _Rgemm);
 }

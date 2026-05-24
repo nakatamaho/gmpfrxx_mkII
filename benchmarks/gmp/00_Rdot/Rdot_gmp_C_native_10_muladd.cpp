@@ -23,37 +23,25 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
  */
 
-#include "Rdot_common.hpp"
+#include "Rdot_microbench_common.hpp"
 
-void _Rdot(int64_t n, mpf_t *dx, int64_t incx, mpf_t *dy, int64_t incy, mpf_t *ans) {
-    if (incx != 1 || incy != 1) {
-        std::cerr << "Increments other than 1 are not supported." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    mpf_t temp, templ;
-    mp_bitcnt_t precision = mpf_get_prec(*ans);
-
-    mpf_set_d(*ans, 0.0);
-    mpf_init2(temp, precision);
-    mpf_init2(templ, precision);
-    mpf_set_d(temp, 0.0);
-    mpf_set_d(templ, 0.0);
-
-    for (int64_t i = 0; i < n; i++) {
+void _Rdot_microbench(int64_t n, mpf_t *dx, mpf_t *dy, mpf_t *answer) {
+    mpf_t acc, templ;
+    mpf_init(acc);
+    mpf_init(templ);
+    mpf_set_ui(acc, 0);
+    mpf_set_ui(templ, 0);
+    for (int64_t i = 0; i < n; ++i) {
         mpf_mul(templ, dx[i], dy[i]);
-        mpf_add(temp, temp, templ);
+        mpf_add(acc, acc, templ);
     }
-
-    mpf_swap(*ans, temp);
-
-    mpf_clear(temp);
+    mpf_swap(*answer, acc);
+    mpf_clear(acc);
     mpf_clear(templ);
 }
 
 int main(int argc, char **argv) {
-    return rdot_gmp_bench::run_native_rdot_benchmark(argc, argv, _Rdot);
+    return rdot_gmp_microbench::run(argc, argv, "10_muladd", rdot_gmp_microbench::OutputMode::AnswerAndMflops, _Rdot_microbench);
 }

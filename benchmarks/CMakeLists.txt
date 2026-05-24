@@ -96,11 +96,9 @@ function(add_native_benchmark subdir source target)
     target_link_libraries(${target} PRIVATE gmpxx_mkII::gmpxx_mkII GMP::GMP)
 endfunction()
 
-function(add_rdot_native_microbench target mode)
-    add_executable(${target} "gmp/00_Rdot/Rdot_gmp_C_native_microbench.cpp")
+function(add_rdot_native_microbench source target)
+    add_executable(${target} "gmp/00_Rdot/${source}")
     configure_eager_benchmark(${target} gmp/00_Rdot)
-    target_compile_definitions(${target} PRIVATE
-        GMP_RDOT_MICROBENCH_MODE=${mode})
     target_link_libraries(${target} PRIVATE GMP::GMP)
 endfunction()
 
@@ -237,10 +235,10 @@ add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_05.cpp
     Rdot_gmp_C_native_openmp_05)
 add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_06.cpp
     Rdot_gmp_C_native_openmp_06)
-add_rdot_native_microbench(Rdot_gmp_C_native_07_readonly 7)
-add_rdot_native_microbench(Rdot_gmp_C_native_08_addonly 8)
-add_rdot_native_microbench(Rdot_gmp_C_native_09_mulonly 9)
-add_rdot_native_microbench(Rdot_gmp_C_native_10_muladd 10)
+add_rdot_native_microbench(Rdot_gmp_C_native_07_readonly.cpp Rdot_gmp_C_native_07_readonly)
+add_rdot_native_microbench(Rdot_gmp_C_native_08_addonly.cpp Rdot_gmp_C_native_08_addonly)
+add_rdot_native_microbench(Rdot_gmp_C_native_09_mulonly.cpp Rdot_gmp_C_native_09_mulonly)
+add_rdot_native_microbench(Rdot_gmp_C_native_10_muladd.cpp Rdot_gmp_C_native_10_muladd)
 add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_01.cpp Rdot_gmp_kernel_01)
 add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_02.cpp Rdot_gmp_kernel_02)
 add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_03.cpp Rdot_gmp_kernel_03)
