@@ -63,18 +63,26 @@ append_cpp_fma_family() {
 for variant in 01 02 03 04 05 06; do
     append_cpp_base_family "Rdot_mpfr_kernel_${variant}"
 done
-append_cpp_fma_family "Rdot_mpfr_kernel_01"
-append_cpp_base_family "Rdot_mpfr_kernel_07"
-append_cpp_fma_family "Rdot_mpfr_kernel_07"
-append_cpp_base_family "Rdot_mpfr_kernel_08"
+executables+=(
+    "Rdot_mpfr_kernel_01_ROUNDING"
+    "Rdot_mpfr_kernel_01_ROUNDING_PRECISION"
+    "Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_FMA"
+    "Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA"
+    "Rdot_mpfr_kernel_03_ROUNDING"
+    "Rdot_mpfr_kernel_03_ROUNDING_PRECISION"
+)
 
 for variant in 01 02 03 04 05 06; do
     append_cpp_base_family "Rdot_mpfr_kernel_openmp_${variant}"
 done
-append_cpp_fma_family "Rdot_mpfr_kernel_openmp_01"
-append_cpp_base_family "Rdot_mpfr_kernel_openmp_07"
-append_cpp_fma_family "Rdot_mpfr_kernel_openmp_07"
-append_cpp_base_family "Rdot_mpfr_kernel_openmp_08"
+executables+=(
+    "Rdot_mpfr_kernel_openmp_01_ROUNDING"
+    "Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION"
+    "Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_FMA"
+    "Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA"
+    "Rdot_mpfr_kernel_openmp_03_ROUNDING"
+    "Rdot_mpfr_kernel_openmp_03_ROUNDING_PRECISION"
+)
 
 run_one() {
     local exe="$1"

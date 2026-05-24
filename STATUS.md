@@ -1,4 +1,39 @@
 
+## Phase: MPFR Rdot Rounding Suffix Taxonomy Correction
+
+Implemented features:
+- Corrected the MPFR Rdot benchmark taxonomy so rounding capture is represented
+  by `ROUNDING` and `ROUNDING_FMA_CAPTURE` source suffixes instead of separate
+  numbered variants.
+- Added serial and OpenMP ROUNDING source files for the expression and reusable
+  product comparison points.
+- Updated CMake target generation and MPFR benchmark runners for the new
+  `ROUNDING`, `ROUNDING_PRECISION`, `ROUNDING_FMA_CAPTURE_FMA`, and
+  `ROUNDING_FMA_CAPTURE_PRECISION_FMA` target names.
+- Rewrote the MPFR Rdot README suffix table and variant table to include the
+  `Transition from previous variant` column used by MPFR Rgemv.
+- Updated the MPFR Rdot plot ordering and color classes for the revised suffix
+  taxonomy.
+
+Missing features:
+- Fresh MPFR Rdot and Rgemv repeat-10 benchmark runs are still pending after the
+  target taxonomy correction.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rdot_mpfr_kernel_01_ROUNDING Rdot_mpfr_kernel_01_ROUNDING_PRECISION Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_FMA Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA Rdot_mpfr_kernel_03_ROUNDING Rdot_mpfr_kernel_03_ROUNDING_PRECISION Rdot_mpfr_kernel_openmp_01_ROUNDING Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_FMA Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA Rdot_mpfr_kernel_openmp_03_ROUNDING Rdot_mpfr_kernel_openmp_03_ROUNDING_PRECISION -j`
+
+Pass/fail result:
+- Release configure: PASS.
+- New ROUNDING and ROUNDING_FMA_CAPTURE Rdot targets: PASS.
+
+Known issues:
+- The README result tables still intentionally say fresh data is pending.  They
+  should be regenerated after the requested four full MPFR runs complete.
+
 ## Phase: MPFR Rdot Target Taxonomy Staging
 
 Implemented features:
@@ -22355,7 +22390,7 @@ Implemented features:
 - Replaced the MPFR Rgemv CMake target wiring with a source/build modifier matrix:
   `<base>`, `<base>_PRECISION`, `<base>_ROUNDING`, `<base>_ROUNDING_PRECISION`, `<base>_ROUNDING_FMA_CAPTURE_FMA`, and `<base>_ROUNDING_FMA_CAPTURE_PRECISION_FMA`.
 - Updated `benchmarks/mpfr/02_Rgemv/run_repeat.sh` to construct the same target matrix without the obsolete `mkII` implementation suffix.
-- Updated `benchmarks/mpfr/02_Rgemv/README.md` with the new suffix taxonomy, Kernel Shapes escalation table, generated target family notes, and C native equivalence mapping.
+- Updated `benchmarks/mpfr/02_Rgemv/README.md` with the new suffix taxonomy, Kernel Shapes transition table, generated target family notes, and C native equivalence mapping.
 - Updated `benchmarks/README_TEMPLATE.md` to document `ROUNDING` and `ROUNDING_FMA_CAPTURE` wrapper source variants instead of the older `CONTEXT` naming.
 
 Missing features:

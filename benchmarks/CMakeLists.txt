@@ -155,9 +155,14 @@ function(add_mpfr_rdot_base_variants subdir source base)
     add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_PRECISION)
 endfunction()
 
+function(add_mpfr_rdot_rounding_variants subdir source base)
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_ROUNDING)
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_ROUNDING_PRECISION)
+endfunction()
+
 function(add_mpfr_rdot_fma_capture_variants subdir source base)
-    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_FMA)
-    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_PRECISION_FMA)
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_ROUNDING_FMA_CAPTURE_FMA)
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_ROUNDING_FMA_CAPTURE_PRECISION_FMA)
 endfunction()
 
 function(add_mpfr_raxpy_kernel_variants subdir source base)
@@ -287,26 +292,22 @@ foreach(variant 01 02 03 04 05 06)
     add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_${variant}.cpp
         Rdot_mpfr_kernel_${variant})
 endforeach()
-add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01.cpp
+add_mpfr_rdot_rounding_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01_ROUNDING.cpp
     Rdot_mpfr_kernel_01)
-add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
-    Rdot_mpfr_kernel_07)
-add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_07.cpp
-    Rdot_mpfr_kernel_07)
-add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_08.cpp
-    Rdot_mpfr_kernel_08)
+add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE.cpp
+    Rdot_mpfr_kernel_01)
+add_mpfr_rdot_rounding_variants(mpfr/00_Rdot Rdot_mpfr_kernel_03_ROUNDING.cpp
+    Rdot_mpfr_kernel_03)
 foreach(variant 01 02 03 04 05 06)
     add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_${variant}.cpp
         Rdot_mpfr_kernel_openmp_${variant})
 endforeach()
-add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01.cpp
+add_mpfr_rdot_rounding_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01_ROUNDING.cpp
     Rdot_mpfr_kernel_openmp_01)
-add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
-    Rdot_mpfr_kernel_openmp_07)
-add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_07.cpp
-    Rdot_mpfr_kernel_openmp_07)
-add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_08.cpp
-    Rdot_mpfr_kernel_openmp_08)
+add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE.cpp
+    Rdot_mpfr_kernel_openmp_01)
+add_mpfr_rdot_rounding_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_03_ROUNDING.cpp
+    Rdot_mpfr_kernel_openmp_03)
 
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp
     Raxpy_mpfr_C_native_01)

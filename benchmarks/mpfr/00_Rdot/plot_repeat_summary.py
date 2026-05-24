@@ -30,9 +30,13 @@ def natural_key(name):
     else:
         family = 1
     openmp = 1 if "openmp" in name else 0
-    if "PRECISION" in name and name.endswith("_FMA"):
+    if "ROUNDING_FMA_CAPTURE" in name and "PRECISION" in name and name.endswith("_FMA"):
+        flavor = 5
+    elif "ROUNDING_FMA_CAPTURE" in name and name.endswith("_FMA"):
+        flavor = 4
+    elif "ROUNDING" in name and "PRECISION" in name:
         flavor = 3
-    elif name.endswith("_FMA"):
+    elif "ROUNDING" in name:
         flavor = 2
     elif "PRECISION" in name:
         flavor = 1
@@ -46,12 +50,12 @@ def natural_key(name):
 def variant_color(name):
     if name.startswith("C_native"):
         return "#8c8c8c"
-    if "PRECISION" in name and name.endswith("_FMA"):
+    if "ROUNDING_FMA_CAPTURE" in name and "PRECISION" in name and name.endswith("_FMA"):
         return "#2ca02c"
-    if "PRECISION" in name:
-        return "#d62728"
-    if name.endswith("_FMA"):
+    if "ROUNDING_FMA_CAPTURE" in name and name.endswith("_FMA"):
         return "#9467bd"
+    if "ROUNDING" in name or "PRECISION" in name:
+        return "#d62728"
     return "#4c78a8"
 
 
@@ -207,7 +211,7 @@ def plot_rows(rows, title, output):
         ("C native", "#8c8c8c"),
         ("wrapper", "#4c78a8"),
         ("fixed precision", "#d62728"),
-        ("FMA", "#9467bd"),
+        ("rounding + FMA capture", "#9467bd"),
         ("FMA + fixed precision", "#2ca02c"),
     ]
     handles = [Patch(facecolor=color, label=label) for label, color in legend_items]

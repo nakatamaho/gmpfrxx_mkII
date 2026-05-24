@@ -59,17 +59,16 @@ into `ROUNDING` and non-`ROUNDING` forms.
 ## Kernel Shapes
 
 The timed body is `_Rgemv()`. `A` is stored in column-major order.  The numbered
-variant is written as a one-step escalation: each row says what changed from the
-previous source shape and why that change is measured.  `ROUNDING`,
+variant table names the source-level transition being measured.  Some variants branch from an earlier comparison point, so the transition column names the baseline explicitly.  `ROUNDING`,
 `ROUNDING_FMA_CAPTURE`, `PRECISION`, and final `FMA` suffixes modify the same
 numbered shape without changing the variant number.
 
-| Variant | Escalation from previous step | Timed source shape | Temporary/resource policy | Purpose |
-|---------|-------------------------------|--------------------|---------------------------|---------|
+| Variant | Transition from previous variant | Timed source shape | Temporary/resource policy | Purpose |
+|---------|----------------------------------|--------------------|---------------------------|---------|
 | `01` | Starting point. | Row-dot form: for each row `i`, accumulate `sum_j A[i+j*lda] * x[j]`, then update `y[i]`. | Reusable row accumulator and reusable product object. | Baseline row-owned Rgemv spelling; exposes the cost of strided column-major `A` access. |
 | `02` | `01 -> 02`: change traversal from row-dot to column-major streaming. | Scale `y`, then stream columns of `A` and update all rows for each `j`. | Reusable `temp = alpha * x[j]` and reusable `templ = temp * A[i+j*lda]`. | Separates wrapper overhead from the dominant `A` access pattern and avoids FMA as a confounder. |
-| `03` | `02 -> 03`: switch from reusable product temporaries to an FMA-capturable expression spelling. | Row-dot direct-expression form: `temp += A[i+j*lda] * x[j]`, then `y[i] = alpha * temp + beta * y[i]`. | Reusable accumulator; expression product is FMA-capturable only in the `ROUNDING_FMA_CAPTURE` source. | Tests whether ET fusion can reach the raw C row-dot `mpfr_fma` / `mpfr_fmma` class. |
-| `04` | `03 -> 04`: return to the column-major reusable-temporary shape and make it the serial context/rounding comparison point. | Column-major reusable-temporary form. | Reusable `temp` and `templ`; `ROUNDING` variants route all updates through a loop-external context. | Measures whether explicit rounding capture changes the reusable-temp column-major class. |
+| `03` | `01 -> 03`: keep the row-dot traversal and switch from a reusable product temporary to an FMA-capturable expression spelling. | Row-dot direct-expression form: `temp += A[i+j*lda] * x[j]`, then `y[i] = alpha * temp + beta * y[i]`. | Reusable accumulator; expression product is FMA-capturable only in the `ROUNDING_FMA_CAPTURE` source. | Tests whether ET fusion can reach the raw C row-dot `mpfr_fma` / `mpfr_fmma` class. |
+| `04` | `02 -> 04`: keep the column-major reusable-temporary traversal and add the explicit rounding/context comparison path. | Column-major reusable-temporary form; the base source intentionally remains in the same hot-loop class as `02`. | Reusable `temp` and `templ`; `ROUNDING` variants route all updates through a loop-external context. | Measures whether explicit rounding capture changes the reusable-temp column-major class without mixing in traversal or expression-shape changes. |
 | `05` | `04 -> 05`: add OpenMP row partitioning and precompute `alpha * x`. | OpenMP row partition with precomputed `scaled_x[j] = alpha * x[j]`. | Precomputed scaled vector plus per-thread reusable product. | Removes repeated column-scalar work while each thread owns rows of `y`. |
 | `06` | `05 -> 06`: add fixed 256-row blocking inside the row-owned OpenMP shape. | OpenMP 256-row blocks with column loop and contiguous row loop inside each block. | Per-thread reusable scratch; no shared-y race inside a block. | Trades extra loop structure for better locality in row-owned OpenMP code. |
 | `07` | `06 -> 07`: switch from row ownership to column partitioning with reduction. | OpenMP column partition with per-thread partial `y` vectors and final reduction. | `num_threads * m` partial accumulators plus final reduction outside the hot column loop. | Preserves serial-like column-major `A` streaming without racing on `y`. |
@@ -77,9 +76,9 @@ numbered shape without changing the variant number.
 Serial wrapper executables cover variants `01`-`04`; OpenMP wrapper executables
 cover variants `01`-`07`.
 
-## Source Escalation
+## Source Transitions
 
-The escalation table above is intentionally one-dimensional.  A variant number
+The transition table above is intentionally source-level, but not strictly linear.  A variant number
 changes the source algorithm; suffixes then ask separate questions about
 rounding capture, FMA capture, and fixed precision.
 
