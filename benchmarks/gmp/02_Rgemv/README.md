@@ -463,6 +463,12 @@ Representative snippets were collected with:
 objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/02_Rgemv/<binary>
 ```
 
+The snippets are representative, not exhaustive. They were selected to cover
+the reusable serial raw C baseline, the upstream `orig` wrapper counterpart,
+the mkII wrapper counterpart, and the dominant OpenMP 07 worker class. Because
+this is a GMP report, each mkII snippet used for the performance-class argument
+is paired with the corresponding upstream `gmpxx.h` `orig` hot loop.
+
 ### `C_native_03`
 
 Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03.cpp`.
@@ -485,12 +491,39 @@ matrix element; `__gmpf_clear` is after the loop.
 55f8: call   __gmpf_clear@plt
 ```
 
+### `kernel_03_orig`
+
+Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03.cpp` built against
+upstream `gmpxx.h`. The upstream wrapper emits the same reusable-product inner
+loop class as raw C: one `__gmpf_mul` and one `__gmpf_add` per matrix element,
+with product objects outside the hot loop.
+
+```asm
+3dc0: mov    0x8(%rsp),%rdx
+3dc5: mov    0x20(%rsp),%rsi
+3dca: lea    0x40(%rsp),%rdi
+3dcf: call   __gmpf_mul@plt   # temp_b = alpha * x[j]
+...
+3e00: mov    %r12,%rdx        # A[i + j*lda]
+3e03: lea    0x40(%rsp),%rsi  # temp_b
+3e08: mov    %r13,%rdi        # prod
+3e0b: call   __gmpf_mul@plt
+3e10: mov    %r13,%rdx        # prod
+3e13: mov    %rbx,%rsi        # y[i]
+3e16: mov    %rbx,%rdi        # y[i]
+3e19: call   __gmpf_add@plt
+3e1e: add    $0x1,%rbp
+3e22: add    $0x18,%r12       # A++
+3e26: add    $0x18,%rbx       # y++
+3e2d: jne    3e00
+```
+
 ### `kernel_03_mkII`
 
 Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03.cpp`.
 The mkII reusable-product spelling emits the same arithmetic class as the raw C
-baseline: one `__gmpf_mul` and one `__gmpf_add` per matrix element, with
-clears outside the hot loop.
+baseline and the upstream `kernel_03_orig` path: one `__gmpf_mul` and one
+`__gmpf_add` per matrix element, with clears outside the hot loop.
 
 ```asm
 5600: mov    %r12,%rdx        # A[i + j*lda]
@@ -532,6 +565,29 @@ racing on shared `y`.
 4144: add    $0x18,%rbx       # partial_y++
 414b: jne    4120
 4173: call   GOMP_barrier@plt
+```
+
+### `kernel_openmp_07_orig`
+
+Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07.cpp` built against
+upstream `gmpxx.h`. It has the same worker-loop arithmetic class as the mkII
+OpenMP 07 path: one product multiply and one partial-vector add per matrix
+element, with the final reduction outside this hot loop.
+
+```asm
+3520: mov    %r14,%rdx        # A[i + j*lda]
+3523: mov    %r13,%rsi        # temp
+3526: mov    %rbp,%rdi        # prod
+3529: add    $0x1,%r15
+352d: call   __gmpf_mul@plt
+3532: mov    %rbx,%rsi        # partial_y[i]
+3535: mov    %rbx,%rdi        # partial_y[i]
+3538: mov    %rbp,%rdx        # prod
+353b: call   __gmpf_add@plt
+3540: add    $0x18,%r14       # A++
+3544: add    $0x18,%rbx       # partial_y++
+354b: jne    3520
+3573: call   GOMP_barrier@plt
 ```
 
 The hotpath explains the results: the serial 03 kernels differ mostly in C++

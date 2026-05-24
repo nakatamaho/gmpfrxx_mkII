@@ -336,6 +336,12 @@ objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/01_Raxpy/<bina
 
 The disassembly is precision-independent for these runtime-precision kernels. The 512-bit and 1024-bit runs use the same source-level hot-loop shapes; only the limb work inside the GMP calls changes.
 
+The snippets are representative, not exhaustive. They were selected to cover
+the reusable raw C baseline, the upstream `orig` wrapper, the mkII wrapper, and
+the corresponding OpenMP worker loop. Because this is a GMP report, the mkII
+`kernel_03` snippets are shown next to the corresponding upstream `gmpxx.h`
+`orig` snippets so the wrapper comparison is visible in the emitted loop.
+
 `C_native_01` has one `mpf_t temp` initialized before the loop and cleared after the loop. The hot loop has exactly one `__gmpf_mul` and one `__gmpf_add` per element.
 
 ```asm

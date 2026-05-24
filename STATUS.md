@@ -1,3 +1,38 @@
+Post-phase hotpath selection policy documentation:
+DONE
+
+Implemented features:
+- Added explicit representative-snippet selection criteria to the Hotpath Disassembly sections for GMP/MPFR Rdot, Raxpy, and Rgemv benchmark reports.
+- Updated `benchmarks/README_TEMPLATE.md` so future reports document the selection policy before assembly snippets.
+- Documented that GMP reports must pair mkII hotpath snippets with corresponding upstream `gmpxx.h` `orig` snippets, or explicitly state when no direct counterpart exists.
+- Added `kernel_03_orig` and `kernel_openmp_07_orig` disassembly comparisons to the GMP Rgemv report so the existing mkII snippets have upstream wrapper counterparts.
+
+Tests added:
+- No library tests were added; this phase updates benchmark documentation only.
+
+Tests updated:
+- `benchmarks/README_TEMPLATE.md`
+- `benchmarks/gmp/00_Rdot/README.md`
+- `benchmarks/mpfr/00_Rdot/README.md`
+- `benchmarks/gmp/01_Raxpy/README.md`
+- `benchmarks/mpfr/01_Raxpy/README.md`
+- `benchmarks/gmp/02_Rgemv/README.md`
+- `benchmarks/mpfr/02_Rgemv/README.md`
+- `STATUS.md`
+
+Exact commands run:
+- `rg -n "^## Hotpath Disassembly|Representative snippets|Representative kernels|objdump|kernel_03_orig|kernel_07_orig|kernel_openmp_07_orig|kernel_03_mkII|kernel_openmp_07_mkII" benchmarks/README_TEMPLATE.md benchmarks/gmp/00_Rdot/README.md benchmarks/gmp/01_Raxpy/README.md benchmarks/gmp/02_Rgemv/README.md benchmarks/mpfr/00_Rdot/README.md benchmarks/mpfr/01_Raxpy/README.md benchmarks/mpfr/02_Rgemv/README.md`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig | sed -n '1788,1816p'`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig | sed -n '1314,1338p'`
+- `python3 - <<'PY' ...` to update benchmark README files after `apply_patch` failed with a sandbox `bwrap` error.
+
+Pass/fail result:
+- Documentation update: PASS.
+
+Known issues:
+- Full CTest was not rerun because this phase only changes benchmark documentation.
+- `benchmarks/gmp/02_Rgemv/README.md~` remains an unrelated untracked backup file and was not touched.
+
 Post-phase benchmark plot palette alignment:
 DONE
 

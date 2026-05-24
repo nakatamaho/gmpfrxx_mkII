@@ -490,6 +490,13 @@ objdump -Cd --no-show-raw-insn <binary>
 Addresses are build-specific. The call sequence inside the loop is the relevant
 comparison.
 
+The snippets are representative, not exhaustive. They were selected to cover
+the raw slow path, the raw reusable-product baseline, the upstream `orig`
+wrapper, the mkII wrapper, representative OpenMP workers, and the unrolled
+control kernels that explain the result classes. Because this is a GMP report,
+mkII snippets used for equivalence are paired with the corresponding upstream
+`gmpxx.h` `orig` hot loop where that source shape exists.
+
 ### C Native 01
 
 `C_native_01` initializes and clears the raw product object inside the timed

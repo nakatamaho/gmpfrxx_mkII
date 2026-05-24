@@ -488,6 +488,13 @@ Representative snippets were collected with:
 objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/<binary>
 ```
 
+The snippets are representative, not exhaustive. They were selected to cover
+the best serial raw FMA class, the wrapper serial reusable-context class, the
+dominant raw OpenMP 07 worker, and the closest wrapper OpenMP 07 FMA class. For
+MPFR Rgemv, the selection separates FMA effects from matrix traversal effects:
+serial FMA changes the backend call sequence, while OpenMP 07 mainly changes
+locality, partial-vector ownership, and final reduction structure.
+
 ### `C_native_02_FMA`
 
 Source: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA.cpp`.

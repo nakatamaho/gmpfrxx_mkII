@@ -89,9 +89,21 @@ floating-point model. GMP-only reports should omit this section.
 
 ## Hotpath Disassembly
 
-Include representative disassembly snippets and explain temporary lifetime,
-backend calls, rounding/precision lookups, allocation-like behavior, and how the
-hot loop matches the intended source shape.
+State the snippet selection policy before showing assembly.  The snippets are
+representative, not exhaustive: choose enough kernels to explain the performance
+classes.  Cover the raw/reference slow path when relevant, the raw reusable
+resource baseline, the main wrapper or mkII path, a representative parallel
+worker loop, the best-performing class, and any surprising or suspicious class.
+
+For GMP reports, whenever an mkII snippet is selected to argue equivalence or a
+performance class, include the corresponding upstream `gmpxx.h` `orig` snippet
+or explicitly state why no direct `orig` counterpart exists.  The report should
+make raw C, upstream `orig`, and mkII differences visible from the hot loop, not
+only from the result table.
+
+Explain temporary lifetime, backend calls, rounding/precision lookups,
+allocation-like behavior, and how the hot loop matches the intended source
+shape.
 
 ## Lessons Learned
 

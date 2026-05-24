@@ -606,6 +606,13 @@ compared by hot-loop shape rather than by source syntax alone.
 
 ## Hotpath Disassembly
 
+The snippets are representative, not exhaustive. They were selected to cover
+the raw FMA baseline, the raw reusable-product baseline, generic mkII wrapper
+paths, explicit-context mkII paths, and a representative OpenMP worker. For
+MPFR, the selection also checks whether a source shape reaches `mpfr_fma`,
+whether it stays in the `mpfr_mul` + `mpfr_add` class, and whether rounding is
+passed from a cached register or loaded through TLS.
+
 The disassembly separates three effects that are easy to confuse in source
 form: FMA fusion, product-temporary reuse, and rounding-mode delivery.
 

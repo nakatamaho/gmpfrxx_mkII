@@ -434,6 +434,13 @@ objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/01_Raxpy/<exe
 
 Addresses are build-specific; the relevant evidence is the backend call sequence, where reusable temporaries are initialized and cleared, and whether rounding is cached or read inside the loop. The 512-bit and 1024-bit runs use the same emitted loop structure; precision changes the limb work inside the MPFR calls.
 
+The snippets are representative, not exhaustive. They were selected to cover
+the split raw C baseline, the raw FMA baseline, the reusable-product mkII
+wrapper path, and the matching OpenMP worker. For MPFR Raxpy, the central
+question is whether the source shape becomes one `mpfr_fma` per element or
+remains a split `mpfr_mul` + `mpfr_add` loop, and whether rounding is cached in
+a register or read through TLS.
+
 `Raxpy_mpfr_C_native_01` has one reusable `mpfr_t` product object. It is initialized before the timed loop, the rounding mode is cached once, and the loop body has one `mpfr_mul` plus one `mpfr_add` per element. The temporary is cleared after the loop.
 
 ```asm
