@@ -26,18 +26,7 @@
  *
  */
 
-#include <iostream>
-#include <chrono>
-#include <gmp.h>
-
-#include "mpfrxx_mkII.h"
-using namespace mpfrxx;
-
-#include "Rdot.hpp"
-
-#define MFLOPS 1e+6
-
-gmp_randstate_t state;
+#include "Rdot_common.hpp"
 
 void _Rdot(int64_t n, mpfr_t *dx, int64_t incx, mpfr_t *dy, int64_t incy, mpfr_t *ans) {
     if (incx != 1 || incy != 1) {
@@ -62,77 +51,6 @@ void _Rdot(int64_t n, mpfr_t *dx, int64_t incx, mpfr_t *dy, int64_t incy, mpfr_t
     mpfr_clear(temp);
 }
 
-void init_mpfr_vec(mpfr_t *vec, int n, int prec) {
-    for (int i = 0; i < n; i++) {
-        mpfr_init2(vec[i], prec);
-        mpfr_urandomb(vec[i], state);
-    }
-}
-
-void clear_mpfr_vec(mpfr_t *vec, int n) {
-    for (int i = 0; i < n; i++) {
-        mpfr_clear(vec[i]);
-    }
-}
-
 int main(int argc, char **argv) {
-    gmp_randinit_default(state);
-    gmp_randseed_ui(state, 42);
-
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
-        return 1;
-    }
-
-    int N = std::atoi(argv[1]);
-    int prec = std::atoi(argv[2]);
-    mpfr_set_default_prec(prec);
-    mpfrxx::set_default_precision_bits(prec);
-
-    mpfr_t *vec1 = new mpfr_t[N];
-    mpfr_t *vec2 = new mpfr_t[N];
-    mpfr_t _ans, dot_product;
-
-    mpfr_init2(dot_product, prec);
-    mpfr_init2(_ans, prec);
-    init_mpfr_vec(vec1, N, prec);
-    init_mpfr_vec(vec2, N, prec);
-
-    mpfr_class *vec1_mpfr_class = new mpfr_class[N];
-    mpfr_class *vec2_mpfr_class = new mpfr_class[N];
-    mpfr_class ans;
-
-    for (int i = 0; i < N; i++) {
-        vec1_mpfr_class[i] = mpfr_class(vec1[i]);
-        vec2_mpfr_class[i] = mpfr_class(vec2[i]);
-    }
-    auto start = std::chrono::high_resolution_clock::now();
-    _Rdot(N, vec1, 1, vec2, 1, &_ans);
-    auto end = std::chrono::high_resolution_clock::now();
-
-    ans = Rdot(N, vec1_mpfr_class, 1, vec2_mpfr_class, 1);
-
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
-    std::cout << "MFLOPS: " << (2.0 * double(N) - 1.0) / elapsed_seconds.count() / MFLOPS << std::endl;
-
-    mpfr_class _tmp;
-    _tmp = abs(mpfr_class(_ans) - ans);
-    std::cout << "DIFF: ";
-    mpfr_printf("%.4Rg ", _tmp.get_mpfr_t());
-    if (_tmp < 1e-5)
-        std::cout << "OK" << std::endl;
-    else
-        std::cout << "NG" << std::endl;
-
-    clear_mpfr_vec(vec1, N);
-    clear_mpfr_vec(vec2, N);
-    delete[] vec1_mpfr_class;
-    delete[] vec2_mpfr_class;
-    mpfr_clear(dot_product);
-    mpfr_clear(_ans);
-    delete[] vec1;
-    delete[] vec2;
-
-    return 0;
+    return run_native_rdot_benchmark(argc, argv, _Rdot);
 }

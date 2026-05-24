@@ -38,6 +38,14 @@ The mkII fixed-precision variants use `GMPFRXX_MKII_FAST_FIXED_PREC`;
 executable suffixes keep the historical `FIXED_PRECISION_FASTPATH` label for
 benchmark continuity.
 
+The repeat runner follows the MPFR `00_Rdot` runner shape:
+
+```bash
+benchmarks/gmp/00_Rdot/run_repeat.sh build_bench_release 10000000 512 10
+```
+
+Arguments are `<build dir> <vector size> <precision> <repeat count> [output dir]`.
+
 ## Kernel Shapes
 
 The timed body is `_Rdot()`. The suffix numbers are aligned across raw C,
@@ -130,12 +138,13 @@ label is the average and the small labels mark min and max.
 
 ![GMP Rdot OpenMP repeat-10](results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144/rdot_gmp_n10000000_p512_repeat10_openmp.png)
 
-The images can be regenerated from the committed summary CSV with:
+The images can be regenerated from the committed raw log with:
 
 ```bash
 python3 benchmarks/gmp/00_Rdot/plot_repeat_summary.py \
-    benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144/summary_rdot_gmp_n10000000_p512_repeat10.csv \
-    --output-prefix benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144/rdot_gmp_n10000000_p512_repeat10 \
+    benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144/benchmark_rdot_gmp_n10000000_p512_repeat10.log \
+    --output-dir benchmarks/gmp/00_Rdot/results_raw/rdot_gmp_n10000000_p512_repeat10_20260522_195144 \
+    --output-prefix rdot_gmp_n10000000_p512_repeat10 \
     --title-prefix "GMP Rdot N=10000000 precision=512 repeat=10"
 ```
 

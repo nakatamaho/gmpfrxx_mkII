@@ -96,12 +96,6 @@ function(add_native_benchmark subdir source target)
     target_link_libraries(${target} PRIVATE gmpxx_mkII::gmpxx_mkII GMP::GMP)
 endfunction()
 
-function(add_rdot_native_microbench source target)
-    add_executable(${target} "gmp/00_Rdot/${source}")
-    configure_eager_benchmark(${target} gmp/00_Rdot)
-    target_link_libraries(${target} PRIVATE GMP::GMP)
-endfunction()
-
 function(add_mpfr_mkii_variant subdir source base suffix)
     set(target "${base}_${suffix}")
     add_executable(${target} "${subdir}/${source}")
@@ -125,13 +119,6 @@ function(add_mpfr_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH_FMA)
-endfunction()
-
-function(add_mpfr_rdot_kernel_variants subdir source base)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH)
 endfunction()
 
 function(add_mpfr_rdot_cpp_target subdir source target)
@@ -158,9 +145,13 @@ function(add_mpfr_rdot_rounding_variants subdir source base)
     add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_ROUNDING_PRECISION)
 endfunction()
 
-function(add_mpfr_rdot_fma_capture_variants subdir source base)
-    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_ROUNDING_FMA_CAPTURE_FMA)
-    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_ROUNDING_FMA_CAPTURE_PRECISION_FMA)
+function(add_mpfr_rdot_fma_variants subdir source base)
+    add_mpfr_rdot_cpp_target(${subdir} ${source} ${base}_PRECISION_FMA)
+endfunction()
+
+function(add_mpfr_rdot_variant_family subdir base)
+    add_mpfr_rdot_base_variants(${subdir} ${base}.cpp ${base})
+    add_mpfr_rdot_rounding_variants(${subdir} ${base}_ROUNDING.cpp ${base})
 endfunction()
 
 function(add_mpfr_raxpy_kernel_variants subdir source base)
@@ -235,10 +226,6 @@ add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_05.cpp
     Rdot_gmp_C_native_openmp_05)
 add_native_benchmark(gmp/00_Rdot Rdot_gmp_C_native_openmp_06.cpp
     Rdot_gmp_C_native_openmp_06)
-add_rdot_native_microbench(Rdot_gmp_C_native_07_readonly.cpp Rdot_gmp_C_native_07_readonly)
-add_rdot_native_microbench(Rdot_gmp_C_native_08_addonly.cpp Rdot_gmp_C_native_08_addonly)
-add_rdot_native_microbench(Rdot_gmp_C_native_09_mulonly.cpp Rdot_gmp_C_native_09_mulonly)
-add_rdot_native_microbench(Rdot_gmp_C_native_10_muladd.cpp Rdot_gmp_C_native_10_muladd)
 add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_01.cpp Rdot_gmp_kernel_01)
 add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_02.cpp Rdot_gmp_kernel_02)
 add_rdot_kernel_variants(gmp/00_Rdot Rdot_gmp_kernel_03.cpp Rdot_gmp_kernel_03)
@@ -268,8 +255,12 @@ add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_04.cpp
     Rdot_mpfr_C_native_04)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_05.cpp
     Rdot_mpfr_C_native_05)
+add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_05_FMA.cpp
+    Rdot_mpfr_C_native_05_FMA)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_06.cpp
     Rdot_mpfr_C_native_06)
+add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_06_FMA.cpp
+    Rdot_mpfr_C_native_06_FMA)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_01_FMA.cpp
     Rdot_mpfr_C_native_01_FMA)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_01.cpp
@@ -282,30 +273,32 @@ add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_04.cpp
     Rdot_mpfr_C_native_openmp_04)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_05.cpp
     Rdot_mpfr_C_native_openmp_05)
+add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_05_FMA.cpp
+    Rdot_mpfr_C_native_openmp_05_FMA)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_06.cpp
     Rdot_mpfr_C_native_openmp_06)
+add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_06_FMA.cpp
+    Rdot_mpfr_C_native_openmp_06_FMA)
 add_mpfr_native_benchmark(mpfr/00_Rdot Rdot_mpfr_C_native_openmp_01_FMA.cpp
     Rdot_mpfr_C_native_openmp_01_FMA)
 foreach(variant 01 02 03 04 05 06)
-    add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_${variant}.cpp
+    add_mpfr_rdot_variant_family(mpfr/00_Rdot Rdot_mpfr_kernel_${variant})
+endforeach()
+foreach(variant 01 05 06)
+    add_mpfr_rdot_fma_variants(mpfr/00_Rdot Rdot_mpfr_kernel_${variant}.cpp
         Rdot_mpfr_kernel_${variant})
+    add_mpfr_rdot_fma_variants(mpfr/00_Rdot Rdot_mpfr_kernel_${variant}_ROUNDING.cpp
+        Rdot_mpfr_kernel_${variant}_ROUNDING)
 endforeach()
-add_mpfr_rdot_rounding_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01_ROUNDING.cpp
-    Rdot_mpfr_kernel_01)
-add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE.cpp
-    Rdot_mpfr_kernel_01)
-add_mpfr_rdot_rounding_variants(mpfr/00_Rdot Rdot_mpfr_kernel_03_ROUNDING.cpp
-    Rdot_mpfr_kernel_03)
 foreach(variant 01 02 03 04 05 06)
-    add_mpfr_rdot_base_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_${variant}.cpp
-        Rdot_mpfr_kernel_openmp_${variant})
+    add_mpfr_rdot_variant_family(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_${variant})
 endforeach()
-add_mpfr_rdot_rounding_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01_ROUNDING.cpp
-    Rdot_mpfr_kernel_openmp_01)
-add_mpfr_rdot_fma_capture_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE.cpp
-    Rdot_mpfr_kernel_openmp_01)
-add_mpfr_rdot_rounding_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_03_ROUNDING.cpp
-    Rdot_mpfr_kernel_openmp_03)
+foreach(variant 01 05 06)
+    add_mpfr_rdot_fma_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_${variant}.cpp
+        Rdot_mpfr_kernel_openmp_${variant})
+    add_mpfr_rdot_fma_variants(mpfr/00_Rdot Rdot_mpfr_kernel_openmp_${variant}_ROUNDING.cpp
+        Rdot_mpfr_kernel_openmp_${variant}_ROUNDING)
+endforeach()
 
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp
     Raxpy_mpfr_C_native_01)

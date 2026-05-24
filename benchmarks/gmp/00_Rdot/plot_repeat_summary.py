@@ -3,6 +3,7 @@
 
 import argparse
 import csv
+import re
 from pathlib import Path
 
 import matplotlib
@@ -12,9 +13,34 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 
-def variant_name(raw):
-    prefix = "Rdot_gmp_"
-    return raw[len(prefix):] if raw.startswith(prefix) else raw
+COMMAND_RE = re.compile(r"^COMMAND\s+Rdot\s+(\S+)\s+(\S+)\s+(.+)$")
+RUN_RE = re.compile(r"^RUN\s+(\d+)/(\d+)")
+ELAPSED_RE = re.compile(r"^Elapsed time:\s+([0-9.eE+-]+)\s+s")
+MFLOPS_RE = re.compile(r"^MFLOPS:\s+([0-9.eE+-]+)")
+DIFF_RE = re.compile(r"^DIFF:\s+(.+)\s+(OK|NG)$")
+
+
+def display_name(raw):
+    return raw.removeprefix("Rdot_gmp_")
+
+
+def natural_key(name):
+    if name.startswith("C_native"):
+        family = 0
+    else:
+        family = 1
+    openmp = 1 if "openmp" in name else 0
+    if "orig" in name:
+        flavor = 1
+    elif "FIXED_PRECISION_FASTPATH" in name:
+        flavor = 3
+    elif "mkII" in name:
+        flavor = 2
+    else:
+        flavor = 0
+    numbers = [int(value) for value in re.findall(r"\d+", name)]
+    number = numbers[0] if numbers else 0
+    return (openmp, family, number, flavor, name)
 
 
 def variant_color(name):
@@ -22,56 +48,126 @@ def variant_color(name):
         return "#8c8c8c"
     if "orig" in name:
         return "#2ca02c"
-    if "FIXED_PRECISION_FASTPATH_FMA" in name:
-        return "#2ca02c"
     if "FIXED_PRECISION_FASTPATH" in name:
         return "#d62728"
-    if name.endswith("_FMA"):
-        return "#9467bd"
     return "#4c78a8"
 
 
-def read_summary(path):
+def parse_log(path):
     rows = []
-    with path.open(newline="") as handle:
-        for row in csv.DictReader(handle):
-            name = variant_name(row["variant"])
+    current = None
+    run_index = None
+    run_count = None
+    elapsed = None
+    mflops = None
+
+    for line in path.read_text(encoding="utf-8").splitlines():
+        match = COMMAND_RE.match(line)
+        if match:
+            current = {
+                "variant": display_name(match.group(1)),
+                "command": match.group(2),
+                "args": match.group(3),
+            }
+            run_index = None
+            run_count = None
+            elapsed = None
+            mflops = None
+            continue
+
+        match = RUN_RE.match(line)
+        if match:
+            run_index = int(match.group(1))
+            run_count = int(match.group(2))
+            elapsed = None
+            mflops = None
+            continue
+
+        match = ELAPSED_RE.match(line)
+        if match:
+            elapsed = float(match.group(1))
+            continue
+
+        match = MFLOPS_RE.match(line)
+        if match:
+            mflops = float(match.group(1))
+            continue
+
+        match = DIFF_RE.match(line)
+        if match and current is not None and run_index is not None:
             rows.append(
                 {
-                    "name": name,
-                    "avg": float(row["avg_mflops"]),
-                    "min": float(row["min_mflops"]),
-                    "max": float(row["max_mflops"]),
-                    "ok_runs": int(row["ok_runs"]),
-                    "runs": int(row["runs"]),
+                    "variant": current["variant"],
+                    "run": run_index,
+                    "runs": run_count,
+                    "elapsed_s": elapsed,
+                    "mflops": mflops,
+                    "diff": match.group(1),
+                    "status": match.group(2),
                 }
             )
     return rows
 
 
-def natural_key(name):
-    # Keep the CSV family ordering, but make the plot stable if rows are moved.
-    family = 0 if name.startswith("C_native") else 1
-    if "orig" in name:
-        flavor = 0
-    elif "mkII_FIXED_PRECISION_FASTPATH" in name:
-        flavor = 2
-    elif "mkII" in name:
-        flavor = 1
-    else:
-        flavor = 0
-    digits = "".join(ch if ch.isdigit() else " " for ch in name).split()
-    number = int(digits[0]) if digits else 0
-    return (family, number, flavor, name)
+def summarize(rows):
+    grouped = {}
+    for row in rows:
+        grouped.setdefault(row["variant"], []).append(row)
+
+    summary = []
+    for variant, values in grouped.items():
+        mflops = [row["mflops"] for row in values if row["mflops"] is not None]
+        elapsed = [row["elapsed_s"] for row in values if row["elapsed_s"] is not None]
+        ok_runs = sum(1 for row in values if row["status"] == "OK")
+        summary.append(
+            {
+                "variant": variant,
+                "runs": len(values),
+                "ok_runs": ok_runs,
+                "max_mflops": max(mflops),
+                "avg_mflops": sum(mflops) / len(mflops),
+                "min_mflops": min(mflops),
+                "max_elapsed_s": max(elapsed),
+                "avg_elapsed_s": sum(elapsed) / len(elapsed),
+                "min_elapsed_s": min(elapsed),
+            }
+        )
+    return sorted(summary, key=lambda row: natural_key(row["variant"]))
+
+
+def write_raw_csv(path, rows):
+    fieldnames = ["variant", "run", "runs", "elapsed_s", "mflops", "diff", "status"]
+    with path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def write_summary_csv(path, rows):
+    fieldnames = [
+        "variant",
+        "runs",
+        "ok_runs",
+        "max_mflops",
+        "avg_mflops",
+        "min_mflops",
+        "max_elapsed_s",
+        "avg_elapsed_s",
+        "min_elapsed_s",
+    ]
+    with path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def plot_rows(rows, title, output):
-    rows = sorted(rows, key=lambda row: natural_key(row["name"]))
-    labels = [row["name"] for row in rows]
-    averages = [row["avg"] for row in rows]
-    minimums = [row["min"] for row in rows]
-    maximums = [row["max"] for row in rows]
-    colors = [variant_color(row["name"]) for row in rows]
+    rows = sorted(rows, key=lambda row: natural_key(row["variant"]))
+    labels = [row["variant"] for row in rows]
+    averages = [row["avg_mflops"] for row in rows]
+    minimums = [row["min_mflops"] for row in rows]
+    maximums = [row["max_mflops"] for row in rows]
+    colors = [variant_color(row["variant"]) for row in rows]
     x_positions = list(range(len(rows)))
     max_value = max(maximums)
     label_pad = max_value * 0.012
@@ -103,15 +199,13 @@ def plot_rows(rows, title, output):
     ax.set_title(title, fontsize=14, fontweight="bold")
     ax.grid(axis="y", linestyle=":", alpha=0.45)
     ax.set_axisbelow(True)
-
     ax.set_ylim(0, max_value * 1.22)
 
     legend_items = [
         ("C native", "#8c8c8c"),
         ("orig", "#2ca02c"),
         ("mkII", "#4c78a8"),
-        ("mkII + FMA", "#9467bd"),
-        ("fixed precision", "#d62728"),
+        ("mkII fixed precision", "#d62728"),
     ]
     handles = [Patch(facecolor=color, label=label) for label, color in legend_items]
     ax.legend(
@@ -130,28 +224,38 @@ def plot_rows(rows, title, output):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("summary_csv", type=Path)
-    parser.add_argument("--output-prefix", type=Path, required=True)
-    parser.add_argument("--title-prefix", default="GMP Rdot repeat-10")
+    parser.add_argument("log", type=Path)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--output-prefix", required=True)
+    parser.add_argument("--title-prefix", default="GMP Rdot repeat benchmark")
     args = parser.parse_args()
 
-    rows = read_summary(args.summary_csv)
-    if not rows:
-        raise SystemExit("summary CSV contains no rows")
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    raw_rows = parse_log(args.log)
+    if not raw_rows:
+        raise SystemExit("no benchmark rows found")
+    summary_rows = summarize(raw_rows)
 
-    serial = [row for row in rows if "openmp" not in row["name"]]
-    openmp = [row for row in rows if "openmp" in row["name"]]
+    raw_csv = args.output_dir / f"raw_{args.output_prefix}.csv"
+    summary_csv = args.output_dir / f"summary_{args.output_prefix}.csv"
+    write_raw_csv(raw_csv, raw_rows)
+    write_summary_csv(summary_csv, summary_rows)
 
+    serial = [row for row in summary_rows if "openmp" not in row["variant"]]
+    openmp = [row for row in summary_rows if "openmp" in row["variant"]]
     plot_rows(
         serial,
         f"{args.title_prefix}: serial avg with min/max range",
-        args.output_prefix.with_name(args.output_prefix.name + "_serial.png"),
+        args.output_dir / f"{args.output_prefix}_serial.png",
     )
     plot_rows(
         openmp,
         f"{args.title_prefix}: OpenMP avg with min/max range",
-        args.output_prefix.with_name(args.output_prefix.name + "_openmp.png"),
+        args.output_dir / f"{args.output_prefix}_openmp.png",
     )
+
+    print(raw_csv)
+    print(summary_csv)
 
 
 if __name__ == "__main__":

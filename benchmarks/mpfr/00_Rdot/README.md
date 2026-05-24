@@ -11,8 +11,7 @@ sum_i x_i * y_i
 with raw MPFR C kernels and `mpfrxx::mpfr_class` wrapper kernels.  The benchmark
 is organized like `benchmarks/mpfr/02_Rgemv`: numbered variants describe the
 source-level kernel shape, while suffixes describe source modifiers and build
-modifiers.  The goal is to make temporary lifetime, rounding capture, FMA
-capture, fixed-precision assumptions, and OpenMP worker loops directly visible
+modifiers.  The goal is to make temporary lifetime, rounding capture, FMA build options, fixed-precision assumptions, and OpenMP worker loops directly visible
 from the executable name and the hotpath disassembly.
 
 ## Build
@@ -33,7 +32,7 @@ build_bench_release/benchmarks/mpfr/00_Rdot/
 Each executable takes `<vector size> <precision>`. Example:
 
 ```bash
-build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA 10000000 512
+build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA 10000000 512
 ```
 
 The repeat-10 runner uses the same source/build taxonomy:
@@ -50,7 +49,6 @@ separate source changes from build flags:
 |--------|------|---------|
 | none | source baseline | Ordinary wrapper source for the numbered algorithm. |
 | `ROUNDING` | source modifier | Captures `mpfrxx::evaluation_context` before the loop and uses `with_context` in the timed body.  No compile-time flag is implied. |
-| `ROUNDING_FMA_CAPTURE` | source modifier | Uses the same loop-external rounding context and spells the inner update as an expression that can be captured by the ET FMA path. |
 | `PRECISION` | build modifier | Builds the same source with `GMPFRXX_MKII_FAST_FIXED_PREC`. |
 | final `FMA` | build modifier | Builds the FMA-capturable source with `GMPFRXX_MKII_ENABLE_FMA`. |
 
@@ -82,18 +80,17 @@ OMP_PROC_BIND = spread
 
 The timed body is `_Rdot()`.  The numbered variant is written as a one-step
 transition: each row says what changed from the previous source shape and why
-that change is measured.  `ROUNDING`, `ROUNDING_FMA_CAPTURE`, `PRECISION`, and
-final `FMA` suffixes modify the same numbered shape without changing the
-variant number.
+that change is measured.  `ROUNDING`, `PRECISION`, and final `FMA` suffixes
+modify the same numbered shape without changing the variant number.
 
 | Variant | Transition from previous variant | Timed source shape | Temporary/resource policy | Purpose |
 |---------|----------------------------------|--------------------|---------------------------|---------|
-| `01` | Starting point. | `acc += dx[i] * dy[i]` | Expression product is formed in the compound assignment. | Test the ET spelling.  `ROUNDING_FMA_CAPTURE_FMA` builds can lower this source to one `mpfr_fma` call per element. |
+| `01` | Starting point. | `acc += dx[i] * dy[i]` | Expression product is formed in the compound assignment. | Test the ET spelling.  `FMA` builds can lower this source to one `mpfr_fma` call per element. |
 | `02` | `01 -> 02`: force product materialization inside the loop. | `mpfr_class templ = dx[i] * dy[i]; acc += templ;` | Loop-local product object is constructed and destroyed inside every iteration. | Intentionally expensive control for temporary lifetime. |
-| `03` | `02 -> 03`: move the product object outside the loop. | `templ = dx[i] * dy[i]; acc += templ;` | One product object is initialized before the loop and reused. | Main non-FMA reusable-product wrapper shape.  `ROUNDING` variants use cached context for the split multiply/add path. |
+| `03` | `02 -> 03`: move the product object outside the loop. | `templ = dx[i] * dy[i]; acc += templ;` | One product object is initialized before the loop and reused. | Main reusable-product split multiply/add wrapper shape. |
 | `04` | `03 -> 04`: change product spelling to copy-then-multiply. | `templ = dx[i]; templ *= dy[i]; acc += templ;` | One product object is reused, but each iteration copies `dx[i]` before multiplication. | Separate product-object reuse from copy-then-multiply spelling. |
-| `05` | `04 -> 05`: add accumulator unrolling while keeping one product object. | Four accumulators with one reused product object. | Four accumulators share one product temporary. | Test whether multiple accumulators help MPFR Rdot when the product temporary remains serialized. |
-| `06` | `05 -> 06`: add independent product temporaries. | Four accumulators with four reused product objects. | Four accumulators and four independent product temporaries are reused. | Test whether independent product temporaries change the hot-loop class. |
+| `05` | `04 -> 05`: add accumulator unrolling and remove product materialization. | Four accumulators with direct `accN += dx[i+k] * dy[i+k]` updates. | No product object is materialized in the source. | FMA-capturable four-accumulator source. |
+| `06` | `05 -> 06`: keep the direct-expression unrolled class for the second native FMA comparison point. | Four accumulators with direct `accN += dx[i+k] * dy[i+k]` updates. | No product object is materialized in the source. | Paired with `C_native_06_FMA`; expected to be in the same hot-loop class as `05`. |
 
 Serial and OpenMP wrapper variants use the same numbering.  OpenMP variants use
 per-thread partial accumulators and perform the final reduction outside the
@@ -103,23 +100,32 @@ per-worker hot loop.
 
 The transition table above is intentionally one-dimensional.  A variant number
 changes the source shape; suffixes then ask separate questions about rounding
-capture, FMA capture, and fixed precision.
+capture, FMA enablement, and fixed precision.
 
-For Rdot, the generated wrapper target families are:
+For every numbered wrapper variant `01` through `06`, including the matching
+OpenMP variant, the generated wrapper target family is:
 
 ```text
 <base>
 <base>_PRECISION
 <base>_ROUNDING
 <base>_ROUNDING_PRECISION
-<base>_ROUNDING_FMA_CAPTURE_FMA
-<base>_ROUNDING_FMA_CAPTURE_PRECISION_FMA
 ```
 
-`ROUNDING` is currently built for the reusable comparison points `01` and `03`.
-`ROUNDING_FMA_CAPTURE` is built for `01`, whose source shape is intentionally
-FMA-capturable.  The other numbered variants remain non-FMA temporary-lifetime
-controls.
+`ROUNDING` is a source modifier for the same numbered shape: it captures the
+MPFR precision and rounding mode before the timed loop, then routes the timed
+updates through `with_context`.
+
+`FMA` is a build modifier, not a separate source file.  It is generated only for
+FMA-capturable source variants `01`, `05`, and `06`, always paired with fixed precision:
+
+```text
+<base>_PRECISION_FMA
+<base>_ROUNDING_PRECISION_FMA
+```
+
+Variants `02` through `04` intentionally materialize product temporaries, so an
+FMA target for those source files would not measure the same source-level shape.
 
 ## C Native Equivalent Kernels
 
@@ -130,18 +136,20 @@ directly; wrapper kernels use suffixes to isolate those effects.
 | C native kernel | Equivalent C++ wrapper kernel(s) | Equivalence basis |
 |-----------------|----------------------------------|-------------------|
 | `C_native_01` | closest to `kernel_02` | Legacy raw C loop-local product control.  It is not the exact equivalent of wrapper `01` expression syntax. |
-| `C_native_01_FMA` | `kernel_01_ROUNDING_FMA_CAPTURE_FMA`, `kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | One `mpfr_fma` call per element when ET FMA capture succeeds. |
-| `C_native_02` | `kernel_02`, `kernel_02_PRECISION` | Loop-local product object. |
+| `C_native_01_FMA` | `kernel_01_PRECISION_FMA`, `kernel_01_ROUNDING_PRECISION_FMA` | One `mpfr_fma` call per element when ET FMA capture succeeds. |
+| `C_native_02` | `kernel_02`, `kernel_02_PRECISION`, `kernel_02_ROUNDING`, `kernel_02_ROUNDING_PRECISION` | Loop-local product object. |
 | `C_native_03` | `kernel_03`, `kernel_03_PRECISION`, `kernel_03_ROUNDING`, `kernel_03_ROUNDING_PRECISION` | One reusable product object with split multiply/add. |
-| `C_native_04` | `kernel_04`, `kernel_04_PRECISION` | Copy-then-multiply reusable product. |
-| `C_native_05` | `kernel_05`, `kernel_05_PRECISION` | Four accumulators sharing one reusable product temporary. |
-| `C_native_06` | `kernel_06`, `kernel_06_PRECISION` | Four accumulators with four reusable product temporaries. |
-| `C_native_openmp_01_FMA` | `kernel_openmp_01_ROUNDING_FMA_CAPTURE_FMA`, `kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | OpenMP one-call FMA worker loop. |
-| `C_native_openmp_02` | `kernel_openmp_02`, `kernel_openmp_02_PRECISION` | OpenMP loop-local product object. |
+| `C_native_04` | `kernel_04`, `kernel_04_PRECISION`, `kernel_04_ROUNDING`, `kernel_04_ROUNDING_PRECISION` | Copy-then-multiply reusable product. |
+| `C_native_05` | `kernel_03`, `kernel_04` are the closest non-FMA temporary baselines | Raw C 05 used a four-accumulator reusable temporary; wrapper 05 now deliberately uses direct expression to expose FMA. |
+| `C_native_05_FMA` | `kernel_05_PRECISION_FMA`, `kernel_05_ROUNDING_PRECISION_FMA` | Four accumulators with one direct `mpfr_fma`-class update per lane. |
+| `C_native_06` | `kernel_03`, `kernel_04` are the closest non-FMA temporary baselines | Raw C 06 used four reusable product temporaries; wrapper 06 now deliberately uses direct expression to expose FMA. |
+| `C_native_06_FMA` | `kernel_06_PRECISION_FMA`, `kernel_06_ROUNDING_PRECISION_FMA` | Four accumulators with one direct `mpfr_fma`-class update per lane. |
+| `C_native_openmp_01_FMA` | `kernel_openmp_01_PRECISION_FMA`, `kernel_openmp_01_ROUNDING_PRECISION_FMA` | OpenMP one-call FMA worker loop. |
+| `C_native_openmp_02` | `kernel_openmp_02`, `kernel_openmp_02_PRECISION`, `kernel_openmp_02_ROUNDING`, `kernel_openmp_02_ROUNDING_PRECISION` | OpenMP loop-local product object. |
 | `C_native_openmp_03` | `kernel_openmp_03`, `kernel_openmp_03_PRECISION`, `kernel_openmp_03_ROUNDING`, `kernel_openmp_03_ROUNDING_PRECISION` | OpenMP reusable-product split multiply/add shape. |
-| `C_native_openmp_04` | `kernel_openmp_04`, `kernel_openmp_04_PRECISION` | OpenMP copy-then-multiply shape. |
-| `C_native_openmp_05` | `kernel_openmp_05`, `kernel_openmp_05_PRECISION` | OpenMP four-accumulator, one-product control. |
-| `C_native_openmp_06` | `kernel_openmp_06`, `kernel_openmp_06_PRECISION` | OpenMP four-accumulator, four-product control. |
+| `C_native_openmp_04` | `kernel_openmp_04`, `kernel_openmp_04_PRECISION`, `kernel_openmp_04_ROUNDING`, `kernel_openmp_04_ROUNDING_PRECISION` | OpenMP copy-then-multiply shape. |
+| `C_native_openmp_05_FMA` | `kernel_openmp_05_PRECISION_FMA`, `kernel_openmp_05_ROUNDING_PRECISION_FMA` | OpenMP four-accumulator direct FMA worker loop. |
+| `C_native_openmp_06_FMA` | `kernel_openmp_06_PRECISION_FMA`, `kernel_openmp_06_ROUNDING_PRECISION_FMA` | OpenMP four-accumulator direct FMA worker loop. |
 
 There is no exact raw C source equivalent for the non-FMA wrapper expression
 spelling `acc += dx[i] * dy[i]`; raw C must choose either split `mpfr_mul` plus
@@ -241,8 +249,8 @@ Representative disassembly should be regenerated after the fresh repeat-10 run:
 objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA
 objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02
 objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION_FMA
 ```
 
 The expected checks are:
@@ -253,8 +261,8 @@ The expected checks are:
 | `kernel_02` | `mpfr_init2` / `mpfr_clear` from loop-local product construction may appear in the hot loop. |
 | `kernel_03` | Reusable product object should move product construction outside the loop and leave split multiply/add inside. |
 | `kernel_03_ROUNDING_PRECISION` | Context-bound reusable product path should avoid per-iteration default rounding lookup. |
-| `kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Context-bound expression should avoid per-iteration default rounding lookup and lower to `mpfr_fma`. |
-| `kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Worker loop should match the serial context/FMA class; final reduction should be outside the worker hot loop. |
+| `kernel_05_ROUNDING_PRECISION_FMA` | Context-bound four-accumulator direct expression should avoid per-iteration default rounding lookup and lower each update to `mpfr_fma`. |
+| `kernel_openmp_05_ROUNDING_PRECISION_FMA` | Worker loop should match the serial unrolled context/FMA class; final reduction should be outside the worker hot loop. |
 
 ## Lessons Learned
 
@@ -264,10 +272,8 @@ report.  The important boundary is now explicit in the target names:
 - Numbered variants define source shape and temporary lifetime.
 - `ROUNDING` is a source modifier because cached MPFR rounding/context changes
   the C++ wrapper source path.
-- `ROUNDING_FMA_CAPTURE` is a source modifier because FMA capture requires a
-  source spelling that exposes `lhs += a * b` to the expression-template layer.
 - `PRECISION` is a build modifier and does not create a new source variant.
-- final `FMA` is a build modifier for FMA-capturable source shapes.
+- final `FMA` is a build modifier for FMA-capturable source shapes; those shapes are `01`, `05`, and `06`.
 - Wrapper target names do not carry an unnecessary `mkII` suffix in this
   directory.
 - Future results should be interpreted by hot-loop class: loop-local product,

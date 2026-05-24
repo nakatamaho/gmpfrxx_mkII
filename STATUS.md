@@ -22417,6 +22417,123 @@ Pass/fail result:
 Known issues:
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
 
+## Phase: Split MPFR Rdot Driver from Kernel Sources
+
+Implemented features:
+- Added `benchmarks/mpfr/00_Rdot/Rdot_common.hpp` for shared MPFR Rdot benchmark setup, initialization, timing, correctness checking, and cleanup.
+- Reworked `benchmarks/mpfr/00_Rdot/*.cpp` so each source contains only the explicit `_Rdot` kernel and a thin `main` dispatching to the shared benchmark runner.
+- Removed duplicated random-state setup, vector initialization, timing, reference comparison, and result printing from the individual MPFR Rdot kernel sources.
+
+Missing features:
+- No benchmark data was regenerated in this phase.
+
+Tests added:
+- No unit tests. This phase is a benchmark source-layout refactor.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target <all MPFR Rdot native and wrapper targets> -j`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01 128 128`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01 128 128`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_ROUNDING 128 128`
+
+Pass/fail result:
+- Release configure: PASS.
+- MPFR Rdot target rebuild: PASS, including native, OpenMP, wrapper, rounding, FMA-capture, and precision-suffix targets.
+- Representative smoke runs: PASS, all sampled targets reported `OK`.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+- Existing interrupted MPFR benchmark result directories remain in the worktree and were not modified by this source-layout refactor.
+
+## Phase: Remove Global Benchmark State from MPFR Rgemv Sources
+
+Implemented features:
+- Updated `benchmarks/mpfr/02_Rgemv/Rgemv_common.hpp` so random-state setup, seeding, cleanup, matrix/vector initialization, timing, correctness checking, and cleanup are handled by the shared benchmark runners.
+- Removed `gmp_randstate_t state` definitions from every `benchmarks/mpfr/02_Rgemv/*.cpp` kernel source.
+- Kept each MPFR Rgemv source file focused on the explicit `_Rgemv` kernel plus the thin `main` dispatcher, matching the cleaned MPFR Rdot source layout.
+
+Missing features:
+- The remaining GMP benchmark families and MPFR Raxpy/Rgemm still contain older per-source benchmark-driver code and should be split in separate benchmark-family phases.
+- No benchmark data was regenerated in this phase.
+
+Tests added:
+- No unit tests. This phase is a benchmark source-layout refactor.
+
+Exact commands run:
+- `cmake --build build_bench_release --target <all MPFR Rgemv native and wrapper targets> -j`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01 16 16 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA 16 16 128`
+- `build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA 16 16 128`
+
+Pass/fail result:
+- MPFR Rgemv target rebuild: PASS, including native, OpenMP, wrapper, rounding, FMA-capture, and precision-suffix targets.
+- Representative smoke runs: PASS, all sampled targets reported `Result OK`.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+- Existing interrupted MPFR benchmark result directories remain in the worktree and were not modified by this source-layout refactor.
+
+## Phase: Split MPFR Raxpy Driver from Kernel Sources
+
+Implemented features:
+- Expanded `benchmarks/mpfr/01_Raxpy/Raxpy_common.hpp` with shared native, wrapper, and packed-custom-layout benchmark runners.
+- Moved random-state setup, vector initialization, timing, operation-counter printing, correctness checking, and cleanup out of the MPFR Raxpy kernel sources.
+- Reworked every `benchmarks/mpfr/01_Raxpy/*.cpp` source so it contains only the explicit `_Raxpy` kernel plus a thin `main` dispatcher.
+- Moved the packed custom MPFR vector helper type and packed benchmark setup into `Raxpy_common.hpp`, leaving the packed source focused on the packed hot loop.
+
+Missing features:
+- No benchmark data was regenerated in this phase.
+- GMP benchmark families and MPFR `03_Rgemm` still contain older per-source benchmark-driver code and should be split in separate benchmark-family phases.
+
+Tests added:
+- No unit tests. This phase is a benchmark source-layout refactor.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target <all MPFR Raxpy native and wrapper targets> -j`
+- `build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01 128 128`
+- `build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_mkII 128 128`
+- `build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING_FMA 128 128`
+- `build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA 128 128`
+
+Pass/fail result:
+- Release configure: PASS.
+- MPFR Raxpy target rebuild: PASS, including native, OpenMP, wrapper, stable-rounding, FMA, fixed-precision, and packed-custom-layout targets.
+- Representative smoke runs: PASS, all sampled targets reported `Result OK`.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+- Existing interrupted MPFR benchmark result directories remain in the worktree and were not modified by this source-layout refactor.
+
+## Phase: Remove Global Benchmark State from MPFR Rgemm Sources
+
+Implemented features:
+- Updated `benchmarks/mpfr/03_Rgemm/Rgemm_common.hpp` so random-state setup, seeding, cleanup, matrix initialization, timing, operation-counter printing, correctness checking, and cleanup are handled by the shared benchmark runners.
+- Removed `gmp_randstate_t state` definitions from every `benchmarks/mpfr/03_Rgemm/*.cpp` kernel source.
+- Kept each MPFR Rgemm source file focused on the explicit `_Rgemm` kernel plus the thin `main` dispatcher, matching the cleaned MPFR Rdot, Raxpy, and Rgemv source layouts.
+
+Missing features:
+- No benchmark data was regenerated in this phase.
+- GMP benchmark families still contain older per-source benchmark-driver code and should be split in separate benchmark-family phases.
+
+Tests added:
+- No unit tests. This phase is a benchmark source-layout refactor.
+
+Exact commands run:
+- `cmake --build build_bench_release --target <all MPFR Rgemm native and wrapper targets> -j`
+- `build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_01 8 8 8 128`
+- `build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_02_mkII 8 8 8 128`
+- `build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH_FMA 8 8 8 128`
+
+Pass/fail result:
+- MPFR Rgemm target rebuild: PASS, including native, OpenMP, wrapper, fixed-precision, and FMA-suffix targets.
+- Representative smoke runs: PASS, all sampled targets reported `Result OK`.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+- Existing interrupted MPFR benchmark result directories remain in the worktree and were not modified by this source-layout refactor.
+
 ## Phase: Split GMP Rgemm Driver from Kernel Sources
 
 Implemented features:
@@ -22534,4 +22651,181 @@ Pass/fail result:
 
 Known issues:
 - Existing unrelated dirty worktree entries from earlier MPFR benchmark refactors remain untouched.
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+
+## Phase: Remove GMP Rdot Native Microbench Variants
+
+Implemented features:
+- Removed obsolete GMP Rdot native diagnostic variants `07_readonly`, `08_addonly`, `09_mulonly`, and `10_muladd`.
+- Deleted `benchmarks/gmp/00_Rdot/Rdot_microbench_common.hpp` because no committed benchmark target uses it after removing variants 07-10.
+- Removed the `add_rdot_native_microbench` helper and the four native microbench target definitions from `benchmarks/CMakeLists.txt`.
+
+Missing features:
+- No benchmark data was regenerated in this phase.
+- Historical STATUS entries still describe the earlier diagnostic microbench phase; this entry records their later removal.
+
+Tests added:
+- No unit tests. This phase removes obsolete benchmark diagnostics.
+
+Exact commands run:
+- `rg -n "Rdot_gmp_C_native_0[7-9]|Rdot_gmp_C_native_10|add_rdot_native_microbench|Rdot_microbench_common|07_readonly|08_addonly|09_mulonly|10_muladd|GMP_RDOT_MICROBENCH" benchmarks/CMakeLists.txt benchmarks/gmp/00_Rdot -g '*.cpp' -g '*.hpp' -g 'CMakeLists.txt'`
+- `cmake --build build_bench_release --target Rdot_gmp_C_native_01 Rdot_gmp_C_native_06 Rdot_gmp_kernel_03_mkII Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH -j 8`
+- `build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 128 128`
+- `build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 128 128`
+- `git diff --check -- benchmarks/CMakeLists.txt benchmarks/gmp/00_Rdot STATUS.md`
+
+Pass/fail result:
+- Obsolete reference scan: PASS. The `rg` check returned no matches in CMake or GMP Rdot source files.
+- Representative GMP Rdot target rebuild: PASS.
+- Representative smoke runs: PASS, all sampled targets reported `DIFF: ... OK`.
+- Whitespace check: PASS.
+
+Known issues:
+- Existing unrelated dirty worktree entries from earlier MPFR benchmark refactors remain untouched.
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+
+## Phase: Fold MPFR Rdot Context Variants into ROUNDING Targets
+
+Implemented features:
+- Removed obsolete MPFR Rdot source files `Rdot_mpfr_kernel_07.cpp`, `Rdot_mpfr_kernel_08.cpp`, `Rdot_mpfr_kernel_openmp_07.cpp`, and `Rdot_mpfr_kernel_openmp_08.cpp`.
+- Kept context-bound Rdot coverage under the existing `ROUNDING` target families: historical `07` maps to the context-bound `01` shape, and historical `08` maps to the context-bound `03` shape.
+- Updated `benchmarks/mpfr/00_Rdot/README.md` to document that `07` and `08` are no longer separate numbered variants.
+
+Missing features:
+- No benchmark data was regenerated in this phase.
+
+Tests added:
+- No unit tests. This phase removes obsolete benchmark source variants.
+
+Exact commands run:
+- `rg -n 'Rdot_mpfr_kernel(_openmp)?_0[78]|kernel_0[78]|ROUNDING' benchmarks/CMakeLists.txt benchmarks/mpfr/00_Rdot README.md STATUS.md`
+- `cmake --build build_bench_release --target Rdot_mpfr_kernel_01_ROUNDING Rdot_mpfr_kernel_01_ROUNDING_PRECISION Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_FMA Rdot_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA Rdot_mpfr_kernel_03_ROUNDING Rdot_mpfr_kernel_03_ROUNDING_PRECISION Rdot_mpfr_kernel_openmp_01_ROUNDING Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_FMA Rdot_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA Rdot_mpfr_kernel_openmp_03_ROUNDING Rdot_mpfr_kernel_openmp_03_ROUNDING_PRECISION -j 8`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING 128 128`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_ROUNDING 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_ROUNDING_PRECISION 128 128`
+- `git diff --check -- benchmarks/mpfr/00_Rdot STATUS.md`
+
+Pass/fail result:
+- Obsolete source/reference scan: PASS. Only the README note documenting the folded historical `07`/`08` variants remains.
+- MPFR Rdot ROUNDING and ROUNDING_FMA_CAPTURE target rebuild: PASS.
+- Representative smoke runs: PASS, all sampled targets reported `DIFF: 0 OK`.
+- Whitespace check: PASS.
+
+Known issues:
+- Existing unrelated dirty worktree entries from earlier benchmark refactors remain untouched.
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+
+## Phase: Complete MPFR Rdot ROUNDING Target Matrix
+
+Implemented features:
+- Added missing MPFR Rdot `ROUNDING` source variants for serial `02`, `04`, `05`, and `06`.
+- Added missing MPFR Rdot `ROUNDING` source variants for OpenMP `02`, `04`, `05`, and `06`.
+- Removed the obsolete unused `add_mpfr_rdot_kernel_variants` CMake helper that still used old `mkII_STABLE_ROUNDING` naming.
+- Added `add_mpfr_rdot_variant_family()` so each numbered Rdot source variant automatically builds `<base>`, `<base>_PRECISION`, `<base>_ROUNDING`, and `<base>_ROUNDING_PRECISION`.
+- Updated `benchmarks/mpfr/00_Rdot/run_repeat.sh` to benchmark the same complete Rdot wrapper target matrix.
+- Updated `benchmarks/mpfr/00_Rdot/README.md` to document that `ROUNDING` exists for all `01` through `06`, while `ROUNDING_FMA_CAPTURE` remains limited to the FMA-capturable `01` source shape.
+
+Missing features:
+- No full repeat benchmark was regenerated in this phase.
+- No new disassembly snippets were generated in this phase.
+
+Tests added:
+- No unit tests. This phase adds benchmark target variants.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rdot_mpfr_kernel_02_ROUNDING Rdot_mpfr_kernel_02_ROUNDING_PRECISION Rdot_mpfr_kernel_04_ROUNDING Rdot_mpfr_kernel_04_ROUNDING_PRECISION Rdot_mpfr_kernel_05_ROUNDING Rdot_mpfr_kernel_05_ROUNDING_PRECISION Rdot_mpfr_kernel_06_ROUNDING Rdot_mpfr_kernel_06_ROUNDING_PRECISION Rdot_mpfr_kernel_openmp_02_ROUNDING Rdot_mpfr_kernel_openmp_02_ROUNDING_PRECISION Rdot_mpfr_kernel_openmp_04_ROUNDING Rdot_mpfr_kernel_openmp_04_ROUNDING_PRECISION Rdot_mpfr_kernel_openmp_05_ROUNDING Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION Rdot_mpfr_kernel_openmp_06_ROUNDING Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION -j 8`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02_ROUNDING 128 128`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_ROUNDING_PRECISION 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_ROUNDING 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION 128 128`
+- `git diff --check -- benchmarks/CMakeLists.txt benchmarks/mpfr/00_Rdot`
+
+Pass/fail result:
+- Configure: PASS.
+- New MPFR Rdot ROUNDING target rebuild: PASS.
+- Representative serial and OpenMP smoke runs: PASS, all sampled targets reported `DIFF: ... OK`.
+- Whitespace check: PASS.
+
+Known issues:
+- Existing unrelated dirty worktree entries from earlier benchmark refactors remain untouched.
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+## Phase: Replace MPFR Rdot 07/08 with 05/06 FMA Suffix Targets
+
+Implemented features:
+- Removed the temporary MPFR Rdot C++ wrapper `07` and `08` source variants from the source tree, CMake target matrix, runner, and README.
+- Reworked MPFR Rdot C++ wrapper variants `05` and `06` to use direct expression updates such as `acc += dx[i] * dy[i]` without an intermediate product object.
+- Added FMA build-suffix targets for FMA-capturable wrapper variants `01`, `05`, and `06`, including their `ROUNDING` and `PRECISION` combinations.
+- Added raw C native `05_FMA` and `06_FMA` serial/OpenMP comparison kernels using `mpfr_fma`.
+- Updated `benchmarks/mpfr/00_Rdot/README.md` and `run_repeat.sh` to describe and run the new source-vs-build modifier split.
+
+Missing features:
+- No full repeat benchmark was regenerated in this phase.
+
+Tests added:
+- No unit tests. This phase changes benchmark source variants and target generation.
+
+Exact commands run:
+- `rg -n '07|08|FMA_CAPTURE' benchmarks/mpfr/00_Rdot -g '*.cpp' -g '*.hpp' -g 'README.md' -g 'run_repeat.sh'`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rdot_mpfr_C_native_05_FMA Rdot_mpfr_C_native_06_FMA Rdot_mpfr_C_native_openmp_05_FMA Rdot_mpfr_C_native_openmp_06_FMA Rdot_mpfr_kernel_05 Rdot_mpfr_kernel_05_FMA Rdot_mpfr_kernel_05_PRECISION_FMA Rdot_mpfr_kernel_05_ROUNDING Rdot_mpfr_kernel_05_ROUNDING_FMA Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA Rdot_mpfr_kernel_06 Rdot_mpfr_kernel_06_FMA Rdot_mpfr_kernel_06_PRECISION_FMA Rdot_mpfr_kernel_06_ROUNDING Rdot_mpfr_kernel_06_ROUNDING_FMA Rdot_mpfr_kernel_06_ROUNDING_PRECISION_FMA Rdot_mpfr_kernel_openmp_05_FMA Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION_FMA Rdot_mpfr_kernel_openmp_06_FMA Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION_FMA -j 8`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_05_FMA 128 128`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_06_FMA 128 128`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA 128 128`
+- `build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_06_ROUNDING_PRECISION_FMA 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05_FMA 128 128`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION_FMA 128 128`
+- `objdump -Cd --no-show-raw-insn --start-address=0x2cc0 --stop-address=0x2e45 build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA`
+- `ctest --test-dir build --output-on-failure`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Obsolete MPFR Rdot `07`/`08` and `FMA_CAPTURE` scan: PASS. Only the `2008` copyright text matched the numeric scan.
+- Configure: PASS.
+- New C native FMA and wrapper FMA target rebuild: PASS.
+- Representative serial and OpenMP smoke runs: PASS, all sampled targets reported `DIFF: ... OK`.
+- Focused disassembly check: PASS. The `kernel_05_ROUNDING_PRECISION_FMA` unrolled hot loop calls `mpfr_fma` for each lane and does not contain `mpfr_mul`, `mpfr_add`, `mpfr_init2`, or `mpfr_clear` in the loop body.
+- Default Debug CTest: SKIPPED. The `build` directory does not exist in this workspace.
+- Release CTest: PASS, 178/178 tests passed in `build_bench_release`.
+
+Known issues:
+- No new repeat-10 benchmark data has been collected for the revised matrix yet.
+- Existing unrelated dirty worktree entries from earlier benchmark refactors remain untouched.
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+## Phase: Align GMP Rdot Repeat Runner with MPFR Rdot
+
+Implemented features:
+- Replaced the old GMP `00_Rdot/go.sh` one-shot runner with `benchmarks/gmp/00_Rdot/run_repeat.sh`.
+- Matched the MPFR `00_Rdot/run_repeat.sh` interface: `<build dir> <vector size> <precision> <repeat count> [output dir]`.
+- Added all GMP Rdot serial/OpenMP raw C, `orig`, `mkII`, and `mkII_FIXED_PRECISION_FASTPATH` targets to the runner.
+- Updated the GMP Rdot plot helper to parse runner logs and generate raw CSV, summary CSV, and serial/OpenMP plots from one command.
+- Updated `benchmarks/gmp/00_Rdot/README.md` to document the new runner and log-based plot regeneration command.
+
+Missing features:
+- No new committed repeat-10 benchmark data was regenerated in this phase.
+
+Tests added:
+- No unit tests. This phase changes benchmark runner/reporting scripts.
+
+Exact commands run:
+- `bash -n benchmarks/gmp/00_Rdot/run_repeat.sh`
+- `python3 -m py_compile benchmarks/gmp/00_Rdot/plot_repeat_summary.py`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/gmp/00_Rdot/run_repeat.sh build_bench_release 16 128 1 /tmp/rdot_gmp_run_repeat_smoke`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Runner syntax check: PASS.
+- Plot helper syntax check: PASS.
+- GMP Rdot runner smoke: PASS. All 48 sampled target runs reported `OK`, and the runner generated `raw_*.csv`, `summary_*.csv`, serial plot, and OpenMP plot.
+- Release CTest: PASS, 178/178 tests passed in `build_bench_release`.
+
+Known issues:
+- The smoke output was written to `/tmp/rdot_gmp_run_repeat_smoke` and was not committed.
+- Existing unrelated dirty worktree entries from earlier benchmark refactors remain untouched.
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.

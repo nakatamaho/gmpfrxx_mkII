@@ -10,14 +10,14 @@ build_dir="${1:-${repo_dir}/build_bench_release}"
 n="${2:-10000000}"
 precision="${3:-512}"
 repeat_count="${4:-10}"
-output_dir="${5:-${script_dir}/results_raw/rdot_mpfr_n${n}_p${precision}_repeat${repeat_count}_$(date +%Y%m%d_%H%M%S)}"
+output_dir="${5:-${script_dir}/results_raw/rdot_gmp_n${n}_p${precision}_repeat${repeat_count}_$(date +%Y%m%d_%H%M%S)}"
 
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-32}"
 export OMP_PLACES="${OMP_PLACES:-cores}"
 export OMP_PROC_BIND="${OMP_PROC_BIND:-spread}"
 benchmark_command_prefix="${BENCH_COMMAND_PREFIX:-${BENCH_NUMACTL:-}}"
 
-benchmark_dir="${build_dir}/benchmarks/mpfr/00_Rdot"
+benchmark_dir="${build_dir}/benchmarks/gmp/00_Rdot"
 if [[ ! -d "${benchmark_dir}" ]]; then
     echo "Benchmark directory not found: ${benchmark_dir}" >&2
     echo "Build first: cmake --build ${build_dir} -j" >&2
@@ -25,59 +25,38 @@ if [[ ! -d "${benchmark_dir}" ]]; then
 fi
 
 mkdir -p "${output_dir}"
-log_file="${output_dir}/benchmark_rdot_mpfr_n${n}_p${precision}_repeat${repeat_count}.log"
+log_file="${output_dir}/benchmark_rdot_gmp_n${n}_p${precision}_repeat${repeat_count}.log"
 
 executables=(
-    "Rdot_mpfr_C_native_01"
-    "Rdot_mpfr_C_native_01_FMA"
-    "Rdot_mpfr_C_native_02"
-    "Rdot_mpfr_C_native_03"
-    "Rdot_mpfr_C_native_04"
-    "Rdot_mpfr_C_native_05"
-    "Rdot_mpfr_C_native_05_FMA"
-    "Rdot_mpfr_C_native_06"
-    "Rdot_mpfr_C_native_06_FMA"
-    "Rdot_mpfr_C_native_openmp_01"
-    "Rdot_mpfr_C_native_openmp_01_FMA"
-    "Rdot_mpfr_C_native_openmp_02"
-    "Rdot_mpfr_C_native_openmp_03"
-    "Rdot_mpfr_C_native_openmp_04"
-    "Rdot_mpfr_C_native_openmp_05"
-    "Rdot_mpfr_C_native_openmp_05_FMA"
-    "Rdot_mpfr_C_native_openmp_06"
-    "Rdot_mpfr_C_native_openmp_06_FMA"
+    "Rdot_gmp_C_native_01"
+    "Rdot_gmp_C_native_02"
+    "Rdot_gmp_C_native_03"
+    "Rdot_gmp_C_native_04"
+    "Rdot_gmp_C_native_05"
+    "Rdot_gmp_C_native_06"
+    "Rdot_gmp_C_native_openmp_01"
+    "Rdot_gmp_C_native_openmp_02"
+    "Rdot_gmp_C_native_openmp_03"
+    "Rdot_gmp_C_native_openmp_04"
+    "Rdot_gmp_C_native_openmp_05"
+    "Rdot_gmp_C_native_openmp_06"
 )
 
 append_cpp_variant_family() {
     local base="$1"
     executables+=(
-        "${base}"
-        "${base}_PRECISION"
-        "${base}_ROUNDING"
-        "${base}_ROUNDING_PRECISION"
+        "${base}_orig"
+        "${base}_mkII"
+        "${base}_mkII_FIXED_PRECISION_FASTPATH"
     )
 }
 
 for variant in 01 02 03 04 05 06; do
-    append_cpp_variant_family "Rdot_mpfr_kernel_${variant}"
+    append_cpp_variant_family "Rdot_gmp_kernel_${variant}"
 done
-for variant in 01 05 06; do
-    executables+=(
-        "Rdot_mpfr_kernel_${variant}_PRECISION_FMA"
-        "Rdot_mpfr_kernel_${variant}_ROUNDING_PRECISION_FMA"
-    )
-done
-
 for variant in 01 02 03 04 05 06; do
-    append_cpp_variant_family "Rdot_mpfr_kernel_openmp_${variant}"
+    append_cpp_variant_family "Rdot_gmp_kernel_openmp_${variant}"
 done
-for variant in 01 05 06; do
-    executables+=(
-        "Rdot_mpfr_kernel_openmp_${variant}_PRECISION_FMA"
-        "Rdot_mpfr_kernel_openmp_${variant}_ROUNDING_PRECISION_FMA"
-    )
-done
-
 run_one() {
     local exe="$1"
     local path="${benchmark_dir}/${exe}"
@@ -120,4 +99,4 @@ run_one() {
     done
 } 2>&1 | tee "${log_file}"
 
-python3 "${script_dir}/plot_repeat_summary.py" "${log_file}"     --output-dir "${output_dir}"     --output-prefix "rdot_mpfr_n${n}_p${precision}_repeat${repeat_count}"     --title-prefix "MPFR Rdot N=${n} precision=${precision} repeat=${repeat_count}"
+python3 "${script_dir}/plot_repeat_summary.py" "${log_file}"     --output-dir "${output_dir}"     --output-prefix "rdot_gmp_n${n}_p${precision}_repeat${repeat_count}"     --title-prefix "GMP Rdot N=${n} precision=${precision} repeat=${repeat_count}"
