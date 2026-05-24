@@ -66,6 +66,7 @@ executables=(
     "Rgemv_mpfr_kernel_openmp_03_mkII"
     "Rgemv_mpfr_kernel_openmp_03_mkII_FMA"
     "Rgemv_mpfr_kernel_openmp_04_mkII"
+    "Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA"
     "Rgemv_mpfr_kernel_openmp_05_mkII"
     "Rgemv_mpfr_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH"
     "Rgemv_mpfr_kernel_openmp_05_mkII_FMA"

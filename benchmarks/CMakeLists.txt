@@ -370,6 +370,8 @@ add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_03.cpp
     Rgemv_mpfr_kernel_openmp_03 mkII_FMA)
 add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_04.cpp
     Rgemv_mpfr_kernel_openmp_04 mkII)
+add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_04_FMA.cpp
+    Rgemv_mpfr_kernel_openmp_04 mkII_FIXED_PRECISION_FASTPATH_FMA)
 add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_05.cpp
     Rgemv_mpfr_kernel_openmp_05 mkII)
 add_mpfr_mkii_variant(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_05.cpp

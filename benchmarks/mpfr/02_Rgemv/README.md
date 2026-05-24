@@ -31,7 +31,7 @@ build_bench_release/benchmarks/mpfr/02_Rgemv/
 Each executable takes `<rows m> <cols n> <precision>`. Example:
 
 ```bash
-build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_mkII 4000 4000 512
+build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA 4000 4000 512
 ```
 
 The repeat-10 run used:
@@ -82,6 +82,7 @@ loop, not just on matching numeric suffixes.
 | `C_native_02_FMA` | `kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA` | Closest column-major FMA comparison. Exact generated code differs because the wrapper uses expression assignment paths. |
 | `C_native_03` | `kernel_03_mkII_FMA` | Both test row-dot FMA-style accumulation. Raw C also uses `mpfr_fmma` for the final alpha/beta update. |
 | `C_native_04` | `kernel_04_mkII` | Both are column-major reusable-temp baselines; `kernel_04_mkII` adds explicit `evaluation_context`. |
+| `C_native_openmp_04_FMA` | `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA` | Both partition rows, reuse one thread-local `temp`, compute `temp = alpha * x[j]`, and use `mpfr_fma` for the row update. |
 | `C_native_openmp_05` | `kernel_openmp_05_mkII` | Both precompute scaled `x` and partition rows. |
 | `C_native_openmp_06` | `kernel_openmp_06_mkII` | Both use 256-row blocks and per-thread reusable scratch. |
 | `C_native_openmp_07` | `kernel_openmp_07_mkII` | Both use column partitioning, per-thread partial y vectors, and final reduction. |
@@ -489,11 +490,12 @@ objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/<bin
 ```
 
 The snippets are representative, not exhaustive. They were selected to cover
-the best serial raw FMA class, the wrapper serial reusable-context class, the
-dominant raw OpenMP 07 worker, and the closest wrapper OpenMP 07 FMA class. For
-MPFR Rgemv, the selection separates FMA effects from matrix traversal effects:
-serial FMA changes the backend call sequence, while OpenMP 07 mainly changes
-locality, partial-vector ownership, and final reduction structure.
+the best serial raw FMA class, the requested wrapper OpenMP 04
+fixed-precision/FMA class, the dominant raw OpenMP 07 worker, and the closest
+wrapper OpenMP 07 FMA class. For MPFR Rgemv, the selection separates FMA effects
+from matrix traversal effects: OpenMP 04 shows the row-partition FMA wrapper
+shape, while OpenMP 07 mainly changes locality, partial-vector ownership, and
+final reduction structure.
 
 ### `C_native_02_FMA`
 
@@ -516,28 +518,36 @@ element.
 2cdc: call   mpfr_clear@plt
 ```
 
-### `kernel_04_mkII`
+### `kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA`
 
-Source: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04.cpp`.
-The explicit-context column-major wrapper path keeps the product temporaries
-outside the inner loop. The hot loop is `mpfr_mul` plus `mpfr_add`; rounding is
-cached in a register for the loop body.
+Source: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_FMA.cpp`.
+The requested OpenMP 04 wrapper target keeps one reusable `temp` per worker,
+partitions rows, and uses the expression `y_context += temp * A[i + j * lda]`
+so the fixed-precision/FMA build emits `mpfr_fma` for the row update. The
+`movabs $0x7ffffffffffffefe` checks are the inlined MPFR precision-validity
+bounds from `with_context`; they are safety checks, not arithmetic work.
 
 ```asm
-32a3: call   mpfr_set4@plt    # temp = alpha, context rounding
-32b6: call   mpfr_mul@plt     # temp *= x[j]
-32e0: mov    0x78(%rsp),%ecx  # cached rounding
-32e4: mov    0x8(%rsp),%rsi   # temp
-32ec: mov    %rbp,%rdi        # templ
-3300: call   mpfr_mul@plt     # templ = temp * A[i+j*lda]
-3311: mov    %rbp,%rdx        # templ
-3314: mov    %rbx,%rsi        # y[i]
-3317: mov    %rbx,%rdi        # y[i]
-331a: call   mpfr_add@plt
-3323: add    $0x20,%rbx       # y++
-3327: add    $0x20,%r13       # A++
-332f: jne    32e0
-335a: call   mpfr_clear@plt
+2f38: call   mpfr_init2@plt   # thread-local temp
+3000: movabs $0x7ffffffffffffefe,%rax  # MPFR precision guard
+3013: mov    0x30(%r14),%rdx
+3017: mov    (%rsp),%ecx
+301a: mov    %rbp,%rsi
+301d: mov    %rbp,%rdi
+3020: call   mpfr_mul@plt     # y[i] *= beta before the row loop
+3050: mov    0x10(%r14),%rsi
+3058: mov    %r13,%rdx
+305b: lea    0x60(%rsp),%rdi  # temp
+3068: call   mpfr_mul@plt     # temp = alpha * x[j]
+306d: mov    (%rsp),%r8d      # cached rounding
+3071: mov    %rbx,%rdx        # A[i+j*lda]
+3074: mov    %rbp,%rcx        # y[i] addend
+3077: lea    0x60(%rsp),%rsi  # temp
+307c: mov    %rbp,%rdi        # y[i]
+307f: call   mpfr_fma@plt     # y[i] += temp * A[i+j*lda]
+308e: jne    3050
+30c0: call   GOMP_barrier@plt
+30ca: call   mpfr_clear@plt
 ```
 
 ### `C_native_openmp_07`
@@ -607,6 +617,7 @@ per-element temporary initialization.
   variance.
 - Fixed precision helps wrapper expression paths, but it is not a substitute
   for the right work partitioning.
-- For OpenMP Rgemv, the 07 column-partition class is the main target for future
-  optimization. The generated hot loop should be compared against raw C 07/FMA,
-  not against row-partitioned 01-04 variants.
+- OpenMP 04 now has a fixed-precision/FMA wrapper target for direct
+  row-partition comparison, but it remains a row-owned traversal. The 07
+  column-partition class is still the main target for future optimization, and
+  its generated hot loop should be compared against raw C 07/FMA.

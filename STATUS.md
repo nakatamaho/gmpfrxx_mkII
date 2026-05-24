@@ -22297,3 +22297,39 @@ Pass/fail result:
 
 Known issues:
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+
+## Phase: Add MPFR Rgemv OpenMP 04 Fixed-Precision FMA Target
+
+Implemented features:
+- Added `Rgemv_mpfr_kernel_openmp_04_FMA.cpp`, a row-partitioned OpenMP 04 wrapper source that keeps one reusable `temp` per worker and uses `y_context += temp * A[i + j * lda]` so FMA-enabled mkII builds emit `mpfr_fma` for the row update.
+- Added the `Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA` benchmark target in `benchmarks/CMakeLists.txt`.
+- Added the new executable to `benchmarks/mpfr/02_Rgemv/run_repeat.sh` so future repeat sweeps include it.
+- Updated `benchmarks/mpfr/02_Rgemv/README.md` to use the requested OpenMP 04 fixed-precision/FMA target in the build example, C native equivalence table, and hotpath disassembly section.
+
+Missing features:
+- The committed repeat-10 result tables were not regenerated in this phase; the new executable is included for future full Rgemv sweeps.
+
+Tests added:
+- No unit tests. This phase adds one benchmark source variant and report wiring.
+
+Exact commands run:
+- `git push origin main`
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release --target Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA -j`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA`
+- `OMP_NUM_THREADS=2 OMP_PLACES=cores OMP_PROC_BIND=close build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH_FMA 64 64 512`
+- `git diff --check`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Push before edits: PASS, repository was already up to date.
+- Release benchmark configure: PASS.
+- New OpenMP 04 fixed-precision/FMA target build: PASS.
+- Disassembly check: PASS, hot loop contains `mpfr_mul` for `temp = alpha * x[j]` and `mpfr_fma` for `y[i] += temp * A[i+j*lda]`.
+- Smoke run: PASS, `Result OK` with `m=64`, `n=64`, `precision=512`, `OMP_NUM_THREADS=2`.
+- Diff whitespace check: PASS.
+- Full CTest from `build`: PASS, 178/178 tests passed.
+
+Known issues:
+- Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
