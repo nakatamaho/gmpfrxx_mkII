@@ -12,7 +12,40 @@ operation when useful, for example `sum_i x_i * y_i` or
 Show the repository-root build commands, build type, relevant options,
 executable directory, command-line arguments, and one example invocation.
 
-## Kernel Shapes
+Document the repeat runner when the benchmark has one. New benchmark reports
+should use a `run_repeat.sh` interface matching the existing 00_Rdot runners:
+
+```text
+benchmarks/<backend>/<benchmark>/run_repeat.sh <build-dir> <size-args...> <precision> <repeat-count> [output-dir]
+```
+
+The runner should set `OMP_NUM_THREADS`, `OMP_PLACES`, `OMP_PROC_BIND`, accept
+`BENCH_COMMAND_PREFIX` or `BENCH_NUMACTL`, write raw data under
+`results_raw/<run-id>/`, emit `BENCHMARK_PARAMS`, `OPENMP_AFFINITY`, and
+backend default-precision environment lines, and invoke the plot script from
+the committed raw log.
+
+
+## Benchmark Parameters
+
+Define every command-line parameter and environment-controlled parameter used
+by the run script.
+
+| Parameter | Meaning |
+|-----------|---------|
+| `N` or `m`, `n`, `k` | Problem size. |
+| `precision` | Requested backend precision in bits. |
+| `repeat` | Number of timed process executions per executable. |
+| `OMP_NUM_THREADS` | OpenMP worker count for `openmp` executables. |
+| `OMP_PLACES`, `OMP_PROC_BIND` | OpenMP affinity controls used by the runner. |
+
+For GMP `mpf` benchmarks, the runner must export
+`GMPXX_DEFAULT_MPF_PRECISION_BITS=<precision>` for every timed command. For
+MPFR benchmarks, the runner must export
+`MPFRXX_DEFAULT_PRECISION_BITS=<precision>` for every timed command. This keeps
+explicit constructor precision and wrapper-owned default precision aligned.
+
+## Variant Shapes
 
 Define every numbered source-level variant.  The same number should mean the
 same timed source shape across C native, upstream wrapper, mkII wrapper, serial,
@@ -49,6 +82,16 @@ source shape that is also FMA-capturable.  Build suffixes remain separate:
 raw C algorithmic kernel in the C native equivalence table, and state which
 wrapper variant is the closest hot-loop comparison.
 
+## Source Transitions
+
+Explain the transition from one source-level variant to the next. This section
+must describe the actual source change, for example direct expression to
+loop-local temporary, loop-local temporary to reusable temporary, reusable
+temporary to copy-then-multiply, row traversal to column traversal, row
+partitioning to blocking, or blocking to column partitioning with reduction. If
+the variants branch from different baselines rather than forming a strictly
+linear sequence, say so explicitly.
+
 ## C Native Equivalent Kernels
 
 Map C++ wrapper kernels to raw C native kernels by timed hot-loop source shape
@@ -64,21 +107,22 @@ comparison point.
 State the exact committed run parameters, run environment, raw-data directory,
 log/CSV/plot paths, and correctness result.
 
-## Plot Style
+### 512-bit run
 
-Use the MPFR Rgemv plot palette consistently across benchmark reports:
+State the 512-bit run ID, benchmark command, raw log, raw CSV, summary CSV,
+plots, and correctness result.
 
-| Class | Color | Notes |
-|-------|-------|-------|
-| `C native` | `#8c8c8c` | Raw C baseline. |
-| `mkII` | `#4c78a8` | Default mkII wrapper path. |
-| `mkII + FMA` | `#9467bd` | FMA-enabled mkII or C-native FMA class. |
-| `fixed precision` | `#d62728` | Fixed-precision fastpath, or MPFR stable-rounding/fixed-precision class when no separate color is useful. |
-| `fixed precision + FMA` | `#2ca02c` | Combined fixed-precision/FMA class. |
+### 1024-bit run
 
-For GMP reports that include upstream `orig` / `gmpxx.h` wrapper variants, color
-`orig` as green (`#2ca02c`) so it is visually distinct from mkII blue and C
-native gray.  Keep this mapping explicit in the plot legend.
+State the 1024-bit run ID, benchmark command, raw log, raw CSV, summary CSV,
+plots, and correctness result.
+
+
+## Resource or Bandwidth Estimates
+
+State whether values are model estimates or hardware-counter measurements.
+Document object sizes, limb sizes, precision, byte-count formulas, and what the
+model includes or excludes.
 
 ## Headline Results
 
@@ -86,27 +130,35 @@ Summarize the main performance conclusions from the committed run.
 
 ## Serial Results
 
-Include the main interpretation table, plus folded tables sorted by max and
-average performance.
+### 512-bit serial interpretation
+
+Include the main interpretation table for the 512-bit serial run, plus folded
+tables sorted by max and average performance.
+
+### 1024-bit serial interpretation
+
+Include the main interpretation table for the 1024-bit serial run, plus folded
+tables sorted by max and average performance.
 
 ## OpenMP Results
 
-Include the main interpretation table, plus folded tables sorted by max and
-average performance.  If this benchmark has no OpenMP variants, say so here
-rather than changing the section layout.
+### 512-bit OpenMP interpretation
 
-## Memory Bandwidth Estimates
+Include the main interpretation table for the 512-bit OpenMP run, plus folded
+tables sorted by max and average performance.
 
-State whether values are model estimates or hardware-counter measurements.
-Document object sizes, limb sizes, precision, byte-count formulas, and what the
-model includes or excludes.
+### 1024-bit OpenMP interpretation
+
+Include the main interpretation table for the 1024-bit OpenMP run, plus folded
+tables sorted by max and average performance. If this benchmark has no OpenMP
+variants, say so here rather than changing the section layout.
 
 <!-- BEGIN MPFR GMP COMPARISON TEMPLATE NOTE -->
 
 ## Comparison with GMP version
 
 For MPFR benchmark reports that have a GMP counterpart, include this section
-between `Memory Bandwidth Estimates` and `Hotpath Disassembly`. Compare the
+between `Resource or Bandwidth Estimates` and `Hotpath Disassembly`. Compare the
 same problem size, precision, repeat count, and execution mode against the GMP
 report. State clearly that MPFR and GMP have different numerical semantics:
 MPFR has explicit rounding and range behavior, while GMP `mpf` uses GMP's
