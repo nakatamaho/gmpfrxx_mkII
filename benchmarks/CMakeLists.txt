@@ -322,12 +322,24 @@ endforeach()
 
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01.cpp
     Raxpy_mpfr_C_native_01)
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_02.cpp
+    Raxpy_mpfr_C_native_02)
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_03.cpp
+    Raxpy_mpfr_C_native_03)
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_04.cpp
+    Raxpy_mpfr_C_native_04)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_01_FMA.cpp
     Raxpy_mpfr_C_native_01_FMA)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_packed_custom_layout_FMA.cpp
     Raxpy_mpfr_C_native_packed_custom_layout_FMA)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_01.cpp
     Raxpy_mpfr_C_native_openmp_01)
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_02.cpp
+    Raxpy_mpfr_C_native_openmp_02)
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_03.cpp
+    Raxpy_mpfr_C_native_openmp_03)
+add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_04.cpp
+    Raxpy_mpfr_C_native_openmp_04)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_01_FMA.cpp
     Raxpy_mpfr_C_native_openmp_01_FMA)
 add_mpfr_raxpy_fma_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_01)

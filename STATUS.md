@@ -22873,3 +22873,39 @@ Known issues:
 - `C_native_01` and `C_native_03` intentionally share the same direct reusable-temporary hot-loop class; `03` exists to provide a numbered raw C comparison point for wrapper variant `03`.
 - Old committed `results_raw` directories were removed earlier by request and fresh repeat data has not been regenerated yet.
 - Existing unrelated dirty worktree entries remain untouched.
+
+## Phase: Complete MPFR Raxpy C Native Variant Matrix
+
+Implemented features:
+- Added MPFR Raxpy raw C native serial variants `02`, `03`, and `04`.
+- Added matching OpenMP raw C native variants `openmp_02`, `openmp_03`, and `openmp_04`.
+- Defined `02` as copy-then-multiply with one reusable `mpfr_t` temporary and cached `mpfr_rnd_t`.
+- Defined `03` as the numbered direct reusable-temporary comparison point matching the existing reusable split `mpfr_mul` plus `mpfr_add` baseline.
+- Defined `04` as the loop-local `mpfr_init`/`mpfr_clear` stress case.
+- Kept `01_FMA` and `openmp_01_FMA` as the direct `mpfr_fma` raw C baseline; no `_FMA` suffix was added to copy-then-multiply or loop-local stress shapes because that would change the source-level variant.
+- Registered the new raw C native targets in `benchmarks/CMakeLists.txt`.
+- Added the new targets to `benchmarks/mpfr/01_Raxpy/run_repeat.sh`.
+- Updated `benchmarks/mpfr/01_Raxpy/README.md` with the expanded C native equivalent-kernel mapping.
+
+Missing features:
+- No new repeat-10 benchmark data was regenerated in this phase.
+
+Tests added:
+- No unit tests. This phase adds benchmark kernel variants and runner/reporting coverage.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build_bench_release -j --target Raxpy_mpfr_C_native_01 Raxpy_mpfr_C_native_02 Raxpy_mpfr_C_native_03 Raxpy_mpfr_C_native_04 Raxpy_mpfr_C_native_01_FMA Raxpy_mpfr_C_native_openmp_01 Raxpy_mpfr_C_native_openmp_02 Raxpy_mpfr_C_native_openmp_03 Raxpy_mpfr_C_native_openmp_04 Raxpy_mpfr_C_native_openmp_01_FMA`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/mpfr/01_Raxpy/<target> 128 512` for all ten raw C native serial/OpenMP targets.
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Configure: PASS.
+- Target rebuild: PASS.
+- Raw C native smoke runs: PASS. All ten targets reported `Result OK`.
+- Release CTest: PASS, 178/178 tests passed in `build_bench_release`.
+
+Known issues:
+- `C_native_01` and `C_native_03` intentionally share the same direct reusable-temporary split multiply/add hot-loop class; `03` exists as a numbered raw C comparison point for wrapper variant `03`.
+- FMA remains a distinct MPFR source class represented by `C_native_01_FMA` and `C_native_openmp_01_FMA`.
+- Fresh repeat benchmark data has not been regenerated for the expanded raw C matrix yet.

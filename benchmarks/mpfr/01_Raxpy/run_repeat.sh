@@ -29,9 +29,15 @@ log_file="${output_dir}/benchmark_raxpy_mpfr_n${n}_p${precision}_repeat${repeat_
 
 executables=(
     "Raxpy_mpfr_C_native_01"
+    "Raxpy_mpfr_C_native_02"
+    "Raxpy_mpfr_C_native_03"
+    "Raxpy_mpfr_C_native_04"
     "Raxpy_mpfr_C_native_01_FMA"
     "Raxpy_mpfr_C_native_packed_custom_layout_FMA"
     "Raxpy_mpfr_C_native_openmp_01"
+    "Raxpy_mpfr_C_native_openmp_02"
+    "Raxpy_mpfr_C_native_openmp_03"
+    "Raxpy_mpfr_C_native_openmp_04"
     "Raxpy_mpfr_C_native_openmp_01_FMA"
 )
 
