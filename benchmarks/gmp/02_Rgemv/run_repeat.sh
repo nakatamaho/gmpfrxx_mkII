@@ -40,41 +40,23 @@ executables=(
     "Rgemv_gmp_C_native_openmp_05"
     "Rgemv_gmp_C_native_openmp_06"
     "Rgemv_gmp_C_native_openmp_07"
-    "Rgemv_gmp_kernel_01_orig"
-    "Rgemv_gmp_kernel_01_mkII"
-    "Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_openmp_01_orig"
-    "Rgemv_gmp_kernel_openmp_01_mkII"
-    "Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_02_orig"
-    "Rgemv_gmp_kernel_02_mkII"
-    "Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_03_orig"
-    "Rgemv_gmp_kernel_03_mkII"
-    "Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_04_orig"
-    "Rgemv_gmp_kernel_04_mkII"
-    "Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_openmp_02_orig"
-    "Rgemv_gmp_kernel_openmp_02_mkII"
-    "Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_openmp_03_orig"
-    "Rgemv_gmp_kernel_openmp_03_mkII"
-    "Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_openmp_04_orig"
-    "Rgemv_gmp_kernel_openmp_04_mkII"
-    "Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_openmp_05_orig"
-    "Rgemv_gmp_kernel_openmp_05_mkII"
-    "Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_openmp_06_orig"
-    "Rgemv_gmp_kernel_openmp_06_mkII"
-    "Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH"
-    "Rgemv_gmp_kernel_openmp_07_orig"
-    "Rgemv_gmp_kernel_openmp_07_mkII"
-    "Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH"
 )
 
+append_cpp_variant_family() {
+    local base="$1"
+    executables+=(
+        "${base}_orig"
+        "${base}_mkII"
+        "${base}_mkII_FIXED_PRECISION_FASTPATH"
+    )
+}
+
+for variant in 01 02 03 04; do
+    append_cpp_variant_family "Rgemv_gmp_kernel_${variant}"
+done
+for variant in 01 02 03 04 05 06 07; do
+    append_cpp_variant_family "Rgemv_gmp_kernel_openmp_${variant}"
+done
 run_one() {
     local exe="$1"
     local path="${benchmark_dir}/${exe}"
@@ -90,6 +72,7 @@ run_one() {
             read -r -a prefix <<<"${benchmark_command_prefix}"
             command=("${prefix[@]}" "${command[@]}")
         fi
+        command=(env "GMPXX_DEFAULT_MPF_PRECISION_BITS=${precision}" "${command[@]}")
 
         echo "COMMAND Rgemv ${exe} ${command[*]}"
         echo "RUN ${run}/${repeat_count}"
@@ -107,6 +90,7 @@ run_one() {
     fi
     echo "BENCHMARK_PARAMS precision=${precision} rgemv_m=${m} rgemv_n=${n} repeat=${repeat_count}"
     echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
+    echo "DEFAULT_PRECISION_ENV GMPXX_DEFAULT_MPF_PRECISION_BITS=${precision}"
     if [[ -n "${benchmark_command_prefix}" ]]; then
         echo "BENCH_COMMAND_PREFIX ${benchmark_command_prefix}"
     fi

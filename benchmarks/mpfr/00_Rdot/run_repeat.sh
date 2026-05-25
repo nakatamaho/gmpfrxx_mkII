@@ -93,6 +93,7 @@ run_one() {
             read -r -a prefix <<<"${benchmark_command_prefix}"
             command=("${prefix[@]}" "${command[@]}")
         fi
+        command=(env "MPFRXX_DEFAULT_PRECISION_BITS=${precision}" "${command[@]}")
 
         echo "COMMAND Rdot ${exe} ${command[*]}"
         echo "RUN ${run}/${repeat_count}"
@@ -110,6 +111,7 @@ run_one() {
     fi
     echo "BENCHMARK_PARAMS precision=${precision} rdot_n=${n} repeat=${repeat_count}"
     echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
+    echo "DEFAULT_PRECISION_ENV MPFRXX_DEFAULT_PRECISION_BITS=${precision}"
     if [[ -n "${benchmark_command_prefix}" ]]; then
         echo "BENCH_COMMAND_PREFIX ${benchmark_command_prefix}"
     fi
