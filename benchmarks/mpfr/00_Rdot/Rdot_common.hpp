@@ -67,6 +67,19 @@ inline void print_diff_result(const mpfr_class &diff) {
     }
 }
 
+inline void require_mpfr_precision_at_least(const char *label, mpfr_prec_t actual, mpfr_prec_t requested) {
+    if (actual >= requested) {
+        return;
+    }
+    std::cerr << "Precision check failed for " << label << ": requested at least " << requested
+              << " bits, actual " << actual << " bits" << std::endl;
+    std::exit(EXIT_FAILURE);
+}
+
+inline mpfr_prec_t class_precision_bits(const mpfr_class &value) {
+    return mpfr_get_prec(value.get_mpfr_t());
+}
+
 inline int run_native_rdot_benchmark(int argc, char **argv,
                                      void (*kernel)(int64_t, mpfr_t *, int64_t, mpfr_t *, int64_t, mpfr_t *)) {
     gmp_randstate_t state;
@@ -81,6 +94,12 @@ inline int run_native_rdot_benchmark(int argc, char **argv,
 
     const int64_t n = std::atoll(argv[1]);
     const int prec = std::atoi(argv[2]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        gmp_randclear(state);
+        return EXIT_FAILURE;
+    }
+    const mpfr_prec_t requested_prec = static_cast<mpfr_prec_t>(prec);
     mpfr_set_default_prec(prec);
     mpfrxx::set_default_precision_bits(prec);
 
@@ -99,11 +118,21 @@ inline int run_native_rdot_benchmark(int argc, char **argv,
         vec2_class[i] = mpfr_class(vec2[i]);
     }
 
+    require_mpfr_precision_at_least("raw_answer", mpfr_get_prec(raw_answer), requested_prec);
+    if (n > 0) {
+        require_mpfr_precision_at_least("raw_vec1[0]", mpfr_get_prec(vec1[0]), requested_prec);
+        require_mpfr_precision_at_least("raw_vec2[0]", mpfr_get_prec(vec2[0]), requested_prec);
+        require_mpfr_precision_at_least("class_vec1[0]", class_precision_bits(vec1_class[0]), requested_prec);
+        require_mpfr_precision_at_least("class_vec2[0]", class_precision_bits(vec2_class[0]), requested_prec);
+    }
+
     auto start = std::chrono::high_resolution_clock::now();
     kernel(n, vec1, 1, vec2, 1, &raw_answer);
     auto end = std::chrono::high_resolution_clock::now();
 
     mpfr_class reference = Rdot(n, vec1_class, 1, vec2_class, 1);
+    require_mpfr_precision_at_least("raw_answer_after", mpfr_get_prec(raw_answer), requested_prec);
+    require_mpfr_precision_at_least("class_reference", class_precision_bits(reference), requested_prec);
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
@@ -136,6 +165,12 @@ inline int run_class_rdot_benchmark(int argc, char **argv,
 
     const int64_t n = std::atoll(argv[1]);
     const int prec = std::atoi(argv[2]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        gmp_randclear(state);
+        return EXIT_FAILURE;
+    }
+    const mpfr_prec_t requested_prec = static_cast<mpfr_prec_t>(prec);
     mpfr_set_default_prec(prec);
     mpfrxx::set_default_precision_bits(prec);
 
@@ -152,11 +187,20 @@ inline int run_class_rdot_benchmark(int argc, char **argv,
         vec2[i] = mpfr_class(vec2_raw[i]);
     }
 
+    if (n > 0) {
+        require_mpfr_precision_at_least("raw_vec1[0]", mpfr_get_prec(vec1_raw[0]), requested_prec);
+        require_mpfr_precision_at_least("raw_vec2[0]", mpfr_get_prec(vec2_raw[0]), requested_prec);
+        require_mpfr_precision_at_least("class_vec1[0]", class_precision_bits(vec1[0]), requested_prec);
+        require_mpfr_precision_at_least("class_vec2[0]", class_precision_bits(vec2[0]), requested_prec);
+    }
+
     auto start = std::chrono::high_resolution_clock::now();
     mpfr_class answer = kernel(n, vec1, 1, vec2, 1);
     auto end = std::chrono::high_resolution_clock::now();
 
     mpfr_class reference = Rdot(n, vec1, 1, vec2, 1);
+    require_mpfr_precision_at_least("class_answer", class_precision_bits(answer), requested_prec);
+    require_mpfr_precision_at_least("class_reference", class_precision_bits(reference), requested_prec);
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;

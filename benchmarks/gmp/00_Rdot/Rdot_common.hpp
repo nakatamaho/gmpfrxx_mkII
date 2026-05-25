@@ -60,6 +60,19 @@ inline void configure_mpf_precision(int prec) {
 #endif
 }
 
+inline void require_mpf_precision_at_least(const char *label, mp_bitcnt_t actual, mp_bitcnt_t requested) {
+    if (actual >= requested) {
+        return;
+    }
+    std::cerr << "Precision check failed for " << label << ": requested at least " << requested
+              << " bits, actual " << actual << " bits" << std::endl;
+    std::exit(EXIT_FAILURE);
+}
+
+inline mp_bitcnt_t class_precision_bits(const mpf_class &value) {
+    return mpf_get_prec(value.get_mpf_t());
+}
+
 inline void init_mpf_vec(mpf_t *vec, int64_t n, int prec, gmp_randstate_t state) {
     for (int64_t i = 0; i < n; ++i) {
         mpf_init2(vec[i], prec);
@@ -99,6 +112,12 @@ inline int run_native_rdot_benchmark(int argc, char **argv, NativeRdotKernel ker
 
     const int64_t n = std::atoll(argv[1]);
     const int prec = std::atoi(argv[2]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        gmp_randclear(state);
+        return EXIT_FAILURE;
+    }
+    const mp_bitcnt_t requested_prec = static_cast<mp_bitcnt_t>(prec);
     configure_mpf_precision(prec);
 
     mpf_t *vec1 = new mpf_t[n];
@@ -116,11 +135,21 @@ inline int run_native_rdot_benchmark(int argc, char **argv, NativeRdotKernel ker
         vec2_class[i] = mpf_class(vec2[i]);
     }
 
+    require_mpf_precision_at_least("raw_answer", mpf_get_prec(raw_answer), requested_prec);
+    if (n > 0) {
+        require_mpf_precision_at_least("raw_vec1[0]", mpf_get_prec(vec1[0]), requested_prec);
+        require_mpf_precision_at_least("raw_vec2[0]", mpf_get_prec(vec2[0]), requested_prec);
+        require_mpf_precision_at_least("class_vec1[0]", class_precision_bits(vec1_class[0]), requested_prec);
+        require_mpf_precision_at_least("class_vec2[0]", class_precision_bits(vec2_class[0]), requested_prec);
+    }
+
     const auto start = std::chrono::high_resolution_clock::now();
     kernel(n, vec1, 1, vec2, 1, &raw_answer);
     const auto end = std::chrono::high_resolution_clock::now();
 
     const mpf_class reference = Rdot(n, vec1_class, 1, vec2_class, 1);
+    require_mpf_precision_at_least("raw_answer_after", mpf_get_prec(raw_answer), requested_prec);
+    require_mpf_precision_at_least("class_reference", class_precision_bits(reference), requested_prec);
 
     const std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
@@ -152,6 +181,12 @@ inline int run_class_rdot_benchmark(int argc, char **argv, ClassRdotKernel kerne
 
     const int64_t n = std::atoll(argv[1]);
     const int prec = std::atoi(argv[2]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        gmp_randclear(state);
+        return EXIT_FAILURE;
+    }
+    const mp_bitcnt_t requested_prec = static_cast<mp_bitcnt_t>(prec);
     configure_mpf_precision(prec);
 
     mpf_t *vec1_raw = new mpf_t[n];
@@ -166,11 +201,20 @@ inline int run_class_rdot_benchmark(int argc, char **argv, ClassRdotKernel kerne
         vec2[i] = mpf_class(vec2_raw[i]);
     }
 
+    if (n > 0) {
+        require_mpf_precision_at_least("raw_vec1[0]", mpf_get_prec(vec1_raw[0]), requested_prec);
+        require_mpf_precision_at_least("raw_vec2[0]", mpf_get_prec(vec2_raw[0]), requested_prec);
+        require_mpf_precision_at_least("class_vec1[0]", class_precision_bits(vec1[0]), requested_prec);
+        require_mpf_precision_at_least("class_vec2[0]", class_precision_bits(vec2[0]), requested_prec);
+    }
+
     const auto start = std::chrono::high_resolution_clock::now();
     const mpf_class answer = kernel(n, vec1, 1, vec2, 1);
     const auto end = std::chrono::high_resolution_clock::now();
 
     const mpf_class reference = Rdot(n, vec1, 1, vec2, 1);
+    require_mpf_precision_at_least("class_answer", class_precision_bits(answer), requested_prec);
+    require_mpf_precision_at_least("class_reference", class_precision_bits(reference), requested_prec);
 
     const std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
