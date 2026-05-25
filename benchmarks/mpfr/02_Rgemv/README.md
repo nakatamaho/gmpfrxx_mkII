@@ -56,7 +56,20 @@ separate source changes from build flags:
 The C native targets encode FMA directly in their source, so they do not split
 into `ROUNDING` and non-`ROUNDING` forms.
 
-## Kernel Shapes
+## Benchmark Parameters
+
+| Parameter | Meaning |
+| --- | --- |
+| `m` | Number of matrix rows and length of `y`. |
+| `n` | Number of matrix columns and length of `x`. |
+| `precision` | MPFR precision in bits for matrix/vector/scalar inputs and temporaries. |
+| `repeat` | Number of timed process executions per executable. |
+| `OMP_NUM_THREADS` | OpenMP worker count for `openmp` executables. |
+| `OMP_PLACES`, `OMP_PROC_BIND` | OpenMP affinity controls used by the runner. |
+
+The committed runs use `m=4000`, `n=4000`, `repeat=10`, `precision=512` and `precision=1024`, with `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, and `OMP_PROC_BIND=spread`.
+
+## Variant Shapes
 
 The timed body is `_Rgemv()`. `A` is stored in column-major order.  The numbered
 variant table names the source-level transition being measured.  Some variants branch from an earlier comparison point, so the transition column names the baseline explicitly.  `ROUNDING`,
@@ -126,6 +139,8 @@ The closest hot-loop comparison for the best historical OpenMP class is
 > runner have been normalized to the `ROUNDING` / `ROUNDING_FMA_CAPTURE` /
 > `PRECISION` taxonomy above; run `run_repeat.sh` again before treating the
 > numerical result tables as current for the new target names.
+
+### 512-bit run
 
 | Field | Value |
 |-------|-------|
@@ -199,6 +214,62 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 
 <!-- END 1024-BIT RECORDED RUN -->
 
+
+## Resource or Bandwidth Estimates
+
+These are model estimates derived from MFLOPS, not hardware-counter
+measurements. For 512-bit MPFR values on this platform:
+
+```text
+sizeof(__mpfr_struct) = 32 bytes
+sizeof(mp_limb_t)     = 8 bytes
+active limbs          = 8
+active payload        = 64 bytes
+header + payload      = 96 bytes per value
+```
+
+The table uses two simple traffic models:
+
+| Model | Formula | Includes | Excludes |
+|-------|---------|----------|----------|
+| Active-data GB/s estimate | `Avg MFLOPS * 96 / 1000` | Approximate 512-bit payload movement for `A`, `x`, and `y` per two counted flops. | Cache reuse details, allocator metadata, OpenMP reduction traffic, and MPFR internal control traffic. |
+| Header-inclusive GB/s estimate | `Avg MFLOPS * 192 / 1000` | Conservative doubled model including `mpfr_t` header/pointer movement. | Hardware prefetch effects and actual cache-miss rates. |
+
+| Variant | Avg MFLOPS | Max MFLOPS | Active-data GB/s estimate | Header-inclusive GB/s estimate |
+|---------|-----------:|-----------:|--------------------------:|--------------------------------:|
+| `C_native_openmp_07` | 443.477 | 450.387 | 42.57 | 85.15 |
+| `C_native_openmp_07_FMA` | 434.211 | 446.434 | 41.68 | 83.37 |
+| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 432.347 | 443.717 | 41.51 | 83.01 |
+| `kernel_openmp_07_mkII` | 424.578 | 442.255 | 40.76 | 81.52 |
+| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 422.903 | 435.915 | 40.60 | 81.20 |
+| `C_native_openmp_06_FMA` | 310.560 | 316.450 | 29.81 | 59.63 |
+| `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 304.658 | 311.849 | 29.25 | 58.49 |
+| `kernel_openmp_03_mkII_FMA` | 276.867 | 280.251 | 26.58 | 53.16 |
+| `C_native_02_FMA` | 23.399 | 23.694 | 2.25 | 4.49 |
+| `kernel_04_mkII` | 20.405 | 20.827 | 1.96 | 3.92 |
+
+<!-- BEGIN 1024-BIT MEMORY ESTIMATES -->
+
+### 1024-bit estimates
+
+For 1024-bit MPFR values, the active payload has 16 limbs and one
+`mpfr_t` value is modeled as 160 bytes including its 32-byte header:
+
+```text
+active-data GB/s estimate      = Avg MFLOPS * 0.160
+header-inclusive GB/s estimate = Avg MFLOPS * 0.320
+```
+
+| Variant | Avg MFLOPS | Max MFLOPS | Active-data GB/s estimate | Header-inclusive GB/s estimate |
+|---------|-----------:|-----------:|--------------------------:|--------------------------------:|
+| `C_native_openmp_07_FMA` | 235.044 | 237.861 | 37.607 | 75.214 |
+| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 230.708 | 234.710 | 36.913 | 73.827 |
+| `C_native_02_FMA` | 10.135 | 10.239 | 1.622 | 3.243 |
+
+<!-- END 1024-BIT MEMORY ESTIMATES -->
+
+<!-- BEGIN COMPARISON WITH GMP VERSION -->
+
 ## Headline Results
 
 | Observation | Evidence | Interpretation |
@@ -224,6 +295,8 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 <!-- END 1024-BIT HEADLINE RESULTS -->
 
 ## Serial Results
+
+### 512-bit serial interpretation
 
 <details>
 <summary>Serial results sorted by Max MFLOPS</summary>
@@ -273,7 +346,7 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 
 <!-- BEGIN 1024-BIT SERIAL RESULTS -->
 
-### 1024-bit serial results
+### 1024-bit serial interpretation
 
 <details>
 <summary>1024-bit serial results sorted by Max MFLOPS</summary>
@@ -314,6 +387,8 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 <!-- END 1024-BIT SERIAL RESULTS -->
 
 ## OpenMP Results
+
+### 512-bit OpenMP interpretation
 
 <details>
 <summary>OpenMP results sorted by Max MFLOPS</summary>
@@ -401,7 +476,7 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 
 <!-- BEGIN 1024-BIT OPENMP RESULTS -->
 
-### 1024-bit OpenMP results
+### 1024-bit OpenMP interpretation
 
 <details>
 <summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
@@ -440,61 +515,6 @@ python3 benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py \
 </details>
 
 <!-- END 1024-BIT OPENMP RESULTS -->
-
-## Memory Bandwidth Estimates
-
-These are model estimates derived from MFLOPS, not hardware-counter
-measurements. For 512-bit MPFR values on this platform:
-
-```text
-sizeof(__mpfr_struct) = 32 bytes
-sizeof(mp_limb_t)     = 8 bytes
-active limbs          = 8
-active payload        = 64 bytes
-header + payload      = 96 bytes per value
-```
-
-The table uses two simple traffic models:
-
-| Model | Formula | Includes | Excludes |
-|-------|---------|----------|----------|
-| Active-data GB/s estimate | `Avg MFLOPS * 96 / 1000` | Approximate 512-bit payload movement for `A`, `x`, and `y` per two counted flops. | Cache reuse details, allocator metadata, OpenMP reduction traffic, and MPFR internal control traffic. |
-| Header-inclusive GB/s estimate | `Avg MFLOPS * 192 / 1000` | Conservative doubled model including `mpfr_t` header/pointer movement. | Hardware prefetch effects and actual cache-miss rates. |
-
-| Variant | Avg MFLOPS | Max MFLOPS | Active-data GB/s estimate | Header-inclusive GB/s estimate |
-|---------|-----------:|-----------:|--------------------------:|--------------------------------:|
-| `C_native_openmp_07` | 443.477 | 450.387 | 42.57 | 85.15 |
-| `C_native_openmp_07_FMA` | 434.211 | 446.434 | 41.68 | 83.37 |
-| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 432.347 | 443.717 | 41.51 | 83.01 |
-| `kernel_openmp_07_mkII` | 424.578 | 442.255 | 40.76 | 81.52 |
-| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 422.903 | 435.915 | 40.60 | 81.20 |
-| `C_native_openmp_06_FMA` | 310.560 | 316.450 | 29.81 | 59.63 |
-| `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 304.658 | 311.849 | 29.25 | 58.49 |
-| `kernel_openmp_03_mkII_FMA` | 276.867 | 280.251 | 26.58 | 53.16 |
-| `C_native_02_FMA` | 23.399 | 23.694 | 2.25 | 4.49 |
-| `kernel_04_mkII` | 20.405 | 20.827 | 1.96 | 3.92 |
-
-<!-- BEGIN 1024-BIT MEMORY ESTIMATES -->
-
-### 1024-bit estimates
-
-For 1024-bit MPFR values, the active payload has 16 limbs and one
-`mpfr_t` value is modeled as 160 bytes including its 32-byte header:
-
-```text
-active-data GB/s estimate      = Avg MFLOPS * 0.160
-header-inclusive GB/s estimate = Avg MFLOPS * 0.320
-```
-
-| Variant | Avg MFLOPS | Max MFLOPS | Active-data GB/s estimate | Header-inclusive GB/s estimate |
-|---------|-----------:|-----------:|--------------------------:|--------------------------------:|
-| `C_native_openmp_07_FMA` | 235.044 | 237.861 | 37.607 | 75.214 |
-| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH_FMA` | 230.708 | 234.710 | 36.913 | 73.827 |
-| `C_native_02_FMA` | 10.135 | 10.239 | 1.622 | 3.243 |
-
-<!-- END 1024-BIT MEMORY ESTIMATES -->
-
-<!-- BEGIN COMPARISON WITH GMP VERSION -->
 
 ## Comparison with GMP version
 
