@@ -51,6 +51,24 @@ inline double flops_gemm(int64_t m_i, int64_t n_i, int64_t k_i) {
     return m * (k + 2.0) * n + m * k * n;
 }
 
+inline void configure_mpfr_precision(int prec) {
+    mpfr_set_default_prec(prec);
+    mpfrxx::set_default_precision_bits(prec);
+}
+
+inline void require_mpfr_precision_at_least(const char *label, mpfr_prec_t actual, mpfr_prec_t requested) {
+    if (actual >= requested) {
+        return;
+    }
+    std::cerr << "Precision check failed for " << label << ": requested at least " << requested
+              << " bits, actual " << actual << " bits" << std::endl;
+    std::exit(EXIT_FAILURE);
+}
+
+inline mpfr_prec_t class_precision_bits(const mpfr_class &value) {
+    return mpfr_get_prec(value.get_mpfr_t());
+}
+
 inline void init_mpfr_mat(mpfr_t *mat, int64_t rows, int64_t cols, int64_t ld, int prec, gmp_randstate_t state) {
     for (int64_t j = 0; j < cols; ++j) {
         for (int64_t i = 0; i < rows; ++i) {
@@ -115,8 +133,14 @@ inline int run_native_rgemm_benchmark(int argc, char **argv,
     const int64_t k = std::atoll(argv[2]);
     const int64_t n = std::atoll(argv[3]);
     const int prec = std::atoi(argv[4]);
-    mpfr_set_default_prec(prec);
-    mpfrxx::set_default_precision_bits(prec);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        gmp_randclear(state);
+        return EXIT_FAILURE;
+    }
+    const mpfr_prec_t requested_prec = static_cast<mpfr_prec_t>(prec);
+    configure_mpfr_precision(prec);
+    require_mpfr_precision_at_least("default_mpfr_precision", mpfr_get_default_prec(), requested_prec);
 
     const int64_t lda = m;
     const int64_t ldb = k;
@@ -199,8 +223,14 @@ inline int run_class_rgemm_benchmark(int argc, char **argv,
     const int64_t k = std::atoll(argv[2]);
     const int64_t n = std::atoll(argv[3]);
     const int prec = std::atoi(argv[4]);
-    mpfr_set_default_prec(prec);
-    mpfrxx::set_default_precision_bits(prec);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        gmp_randclear(state);
+        return EXIT_FAILURE;
+    }
+    const mpfr_prec_t requested_prec = static_cast<mpfr_prec_t>(prec);
+    configure_mpfr_precision(prec);
+    require_mpfr_precision_at_least("default_mpfr_precision", mpfr_get_default_prec(), requested_prec);
 
     const int64_t lda = m;
     const int64_t ldb = k;

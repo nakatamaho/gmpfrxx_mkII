@@ -61,6 +61,26 @@ inline int64_t fixed_row_block(int64_t m) {
     return std::min<int64_t>(FixedRowBlockSize, m);
 }
 
+inline void configure_mpf_precision(int prec) {
+    mpf_set_default_prec(prec);
+#if !defined(USE_ORIGINAL_GMPXX)
+    gmpxx::set_default_mpf_precision_bits(prec);
+#endif
+}
+
+inline void require_mpf_precision_at_least(const char *label, mp_bitcnt_t actual, mp_bitcnt_t requested) {
+    if (actual >= requested) {
+        return;
+    }
+    std::cerr << "Precision check failed for " << label << ": requested at least " << requested
+              << " bits, actual " << actual << " bits" << std::endl;
+    std::exit(EXIT_FAILURE);
+}
+
+inline mp_bitcnt_t class_precision_bits(const mpf_class &value) {
+    return mpf_get_prec(value.get_mpf_t());
+}
+
 inline void init_mpf_mat(mpf_t *mat, int64_t rows, int64_t cols, int64_t ld, int prec, gmp_randstate_t state) {
     for (int64_t j = 0; j < cols; ++j) {
         for (int64_t i = 0; i < rows; ++i) {
@@ -126,14 +146,17 @@ inline int run_native_rgemm_benchmark(int argc, char **argv, NativeKernel kernel
     const int64_t k = std::atoll(argv[2]);
     const int64_t n = std::atoll(argv[3]);
     const int prec = std::atoi(argv[4]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        return EXIT_FAILURE;
+    }
+    const mp_bitcnt_t requested_prec = static_cast<mp_bitcnt_t>(prec);
     const int64_t lda = m;
     const int64_t ldb = k;
     const int64_t ldc = m;
 
-    mpf_set_default_prec(prec);
-#if !defined(USE_ORIGINAL_GMPXX)
-    gmpxx::set_default_mpf_precision_bits(prec);
-#endif
+    configure_mpf_precision(prec);
+    require_mpf_precision_at_least("default_mpf_precision", mpf_get_default_prec(), requested_prec);
 
     gmp_randstate_t state;
     gmp_randinit_default(state);
@@ -214,6 +237,11 @@ inline int run_native_rgemm_row_block_benchmark(int argc, char **argv, NativeRow
     const int64_t k = std::atoll(argv[2]);
     const int64_t n = std::atoll(argv[3]);
     const int prec = std::atoi(argv[4]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        return EXIT_FAILURE;
+    }
+    const mp_bitcnt_t requested_prec = static_cast<mp_bitcnt_t>(prec);
     const int64_t row_block = fixed_row_block(m);
     std::cout << "Fixed row block size: " << row_block << std::endl;
 
@@ -221,10 +249,8 @@ inline int run_native_rgemm_row_block_benchmark(int argc, char **argv, NativeRow
     const int64_t ldb = k;
     const int64_t ldc = m;
 
-    mpf_set_default_prec(prec);
-#if !defined(USE_ORIGINAL_GMPXX)
-    gmpxx::set_default_mpf_precision_bits(prec);
-#endif
+    configure_mpf_precision(prec);
+    require_mpf_precision_at_least("default_mpf_precision", mpf_get_default_prec(), requested_prec);
 
     gmp_randstate_t state;
     gmp_randinit_default(state);
@@ -305,14 +331,17 @@ inline int run_class_rgemm_benchmark(int argc, char **argv, ClassKernel kernel) 
     const int64_t k = std::atoll(argv[2]);
     const int64_t n = std::atoll(argv[3]);
     const int prec = std::atoi(argv[4]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        return EXIT_FAILURE;
+    }
+    const mp_bitcnt_t requested_prec = static_cast<mp_bitcnt_t>(prec);
     const int64_t lda = m;
     const int64_t ldb = k;
     const int64_t ldc = m;
 
-    mpf_set_default_prec(prec);
-#if !defined(USE_ORIGINAL_GMPXX)
-    gmpxx::set_default_mpf_precision_bits(prec);
-#endif
+    configure_mpf_precision(prec);
+    require_mpf_precision_at_least("default_mpf_precision", mpf_get_default_prec(), requested_prec);
 
     gmp_randclass random(gmp_randinit_default);
     random.seed(42);
@@ -373,6 +402,11 @@ inline int run_class_rgemm_row_block_benchmark(int argc, char **argv, ClassRowBl
     const int64_t k = std::atoll(argv[2]);
     const int64_t n = std::atoll(argv[3]);
     const int prec = std::atoi(argv[4]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        return EXIT_FAILURE;
+    }
+    const mp_bitcnt_t requested_prec = static_cast<mp_bitcnt_t>(prec);
     const int64_t row_block = fixed_row_block(m);
     std::cout << "Fixed row block size: " << row_block << std::endl;
 
@@ -380,10 +414,8 @@ inline int run_class_rgemm_row_block_benchmark(int argc, char **argv, ClassRowBl
     const int64_t ldb = k;
     const int64_t ldc = m;
 
-    mpf_set_default_prec(prec);
-#if !defined(USE_ORIGINAL_GMPXX)
-    gmpxx::set_default_mpf_precision_bits(prec);
-#endif
+    configure_mpf_precision(prec);
+    require_mpf_precision_at_least("default_mpf_precision", mpf_get_default_prec(), requested_prec);
 
     gmp_randclass random(gmp_randinit_default);
     random.seed(42);

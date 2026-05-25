@@ -6,8 +6,6 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include <omp.h>
-
 #include "Rgemm_common.hpp"
 
 
