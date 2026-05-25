@@ -1,0 +1,3365 @@
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+BENCHMARK_PARAMS precision=1024 rdot_n=10000000 repeat=10
+OPENMP_AFFINITY OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 1/10
+Elapsed time: 1.76426 s
+MFLOPS: 11.3362
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.67
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 2/10
+Elapsed time: 1.78769 s
+MFLOPS: 11.1876
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.86
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 3/10
+Elapsed time: 1.8013 s
+MFLOPS: 11.1031
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.80
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 4/10
+Elapsed time: 1.76925 s
+MFLOPS: 11.3042
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.71
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 5/10
+Elapsed time: 1.78422 s
+MFLOPS: 11.2094
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 6/10
+Elapsed time: 1.78859 s
+MFLOPS: 11.182
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.83
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 7/10
+Elapsed time: 1.78165 s
+MFLOPS: 11.2256
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.76
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 8/10
+Elapsed time: 1.76794 s
+MFLOPS: 11.3126
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.74
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 9/10
+Elapsed time: 1.77909 s
+MFLOPS: 11.2417
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_C_native_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_01 10000000 1024
+RUN 10/10
+Elapsed time: 1.76014 s
+MFLOPS: 11.3628
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.77
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 1/10
+Elapsed time: 1.77198 s
+MFLOPS: 11.2868
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.76
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 2/10
+Elapsed time: 1.78018 s
+MFLOPS: 11.2348
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.75
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 3/10
+Elapsed time: 1.78829 s
+MFLOPS: 11.1838
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.75
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 4/10
+Elapsed time: 1.77408 s
+MFLOPS: 11.2734
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.74
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 5/10
+Elapsed time: 1.79719 s
+MFLOPS: 11.1285
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 6/10
+Elapsed time: 1.7887 s
+MFLOPS: 11.1813
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.74
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 7/10
+Elapsed time: 1.76665 s
+MFLOPS: 11.3209
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.69
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 8/10
+Elapsed time: 1.76803 s
+MFLOPS: 11.312
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.73
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 9/10
+Elapsed time: 1.7703 s
+MFLOPS: 11.2975
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.82
+
+COMMAND Rdot Rdot_gmp_C_native_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_02 10000000 1024
+RUN 10/10
+Elapsed time: 1.79659 s
+MFLOPS: 11.1322
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.76
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 1/10
+Elapsed time: 1.68563 s
+MFLOPS: 11.865
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.68
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 2/10
+Elapsed time: 1.68011 s
+MFLOPS: 11.904
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.65
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 3/10
+Elapsed time: 1.68485 s
+MFLOPS: 11.8705
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.66
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 4/10
+Elapsed time: 1.69921 s
+MFLOPS: 11.7702
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.77
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 5/10
+Elapsed time: 1.68843 s
+MFLOPS: 11.8453
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.68
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 6/10
+Elapsed time: 1.68562 s
+MFLOPS: 11.865
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.67
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 7/10
+Elapsed time: 1.70097 s
+MFLOPS: 11.758
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.87
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 8/10
+Elapsed time: 1.6814 s
+MFLOPS: 11.8948
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.76
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 9/10
+Elapsed time: 1.67741 s
+MFLOPS: 11.9232
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.61
+
+COMMAND Rdot Rdot_gmp_C_native_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03 10000000 1024
+RUN 10/10
+Elapsed time: 1.68347 s
+MFLOPS: 11.8802
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.66
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 1/10
+Elapsed time: 1.74639 s
+MFLOPS: 11.4522
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.78
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 2/10
+Elapsed time: 1.72769 s
+MFLOPS: 11.5762
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.67
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 3/10
+Elapsed time: 1.73996 s
+MFLOPS: 11.4945
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.71
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 4/10
+Elapsed time: 1.74234 s
+MFLOPS: 11.4788
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.75
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 5/10
+Elapsed time: 1.76324 s
+MFLOPS: 11.3428
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.85
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 6/10
+Elapsed time: 1.74233 s
+MFLOPS: 11.4789
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.68
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 7/10
+Elapsed time: 1.75419 s
+MFLOPS: 11.4013
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.80
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 8/10
+Elapsed time: 1.74614 s
+MFLOPS: 11.4538
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.81
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 9/10
+Elapsed time: 1.75545 s
+MFLOPS: 11.3931
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.77
+
+COMMAND Rdot Rdot_gmp_C_native_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_04 10000000 1024
+RUN 10/10
+Elapsed time: 1.74492 s
+MFLOPS: 11.4618
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.81
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 1/10
+Elapsed time: 1.74507 s
+MFLOPS: 11.4608
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.82
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 2/10
+Elapsed time: 1.75743 s
+MFLOPS: 11.3803
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.90
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 3/10
+Elapsed time: 1.73922 s
+MFLOPS: 11.4994
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.83
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 4/10
+Elapsed time: 1.75928 s
+MFLOPS: 11.3683
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.90
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 5/10
+Elapsed time: 1.76073 s
+MFLOPS: 11.3589
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.91
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 6/10
+Elapsed time: 1.75431 s
+MFLOPS: 11.4005
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.93
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 7/10
+Elapsed time: 1.73985 s
+MFLOPS: 11.4953
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.87
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 8/10
+Elapsed time: 1.74889 s
+MFLOPS: 11.4358
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.85
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 9/10
+Elapsed time: 1.7473 s
+MFLOPS: 11.4462
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.83
+
+COMMAND Rdot Rdot_gmp_C_native_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_05 10000000 1024
+RUN 10/10
+Elapsed time: 1.76811 s
+MFLOPS: 11.3115
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.89
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 1/10
+Elapsed time: 1.71288 s
+MFLOPS: 11.6762
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.81
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 2/10
+Elapsed time: 1.71405 s
+MFLOPS: 11.6682
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.81
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 3/10
+Elapsed time: 1.72728 s
+MFLOPS: 11.5789
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.85
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 4/10
+Elapsed time: 1.69199 s
+MFLOPS: 11.8204
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.70
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 5/10
+Elapsed time: 1.70277 s
+MFLOPS: 11.7456
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.70
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 6/10
+Elapsed time: 1.68026 s
+MFLOPS: 11.9029
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.65
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 7/10
+Elapsed time: 1.70118 s
+MFLOPS: 11.7565
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.71
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 8/10
+Elapsed time: 1.69798 s
+MFLOPS: 11.7787
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.73
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 9/10
+Elapsed time: 1.6954 s
+MFLOPS: 11.7966
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.74
+
+COMMAND Rdot Rdot_gmp_C_native_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_06 10000000 1024
+RUN 10/10
+Elapsed time: 1.69737 s
+MFLOPS: 11.783
+DIFF: 1.332e-148 OK
+WALL_SECONDS 8.69
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 1/10
+Elapsed time: 0.0737403 s
+MFLOPS: 271.222
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.09
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 2/10
+Elapsed time: 0.069509 s
+MFLOPS: 287.732
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 3/10
+Elapsed time: 0.0678121 s
+MFLOPS: 294.933
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.10
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 4/10
+Elapsed time: 0.0705648 s
+MFLOPS: 283.427
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.14
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 5/10
+Elapsed time: 0.0690694 s
+MFLOPS: 289.564
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 6/10
+Elapsed time: 0.0696923 s
+MFLOPS: 286.976
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 7/10
+Elapsed time: 0.0689805 s
+MFLOPS: 289.937
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 8/10
+Elapsed time: 0.0696487 s
+MFLOPS: 287.155
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.13
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 9/10
+Elapsed time: 0.0684248 s
+MFLOPS: 292.292
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_01 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01 10000000 1024
+RUN 10/10
+Elapsed time: 0.0677866 s
+MFLOPS: 295.044
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 1/10
+Elapsed time: 0.070283 s
+MFLOPS: 284.564
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.14
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 2/10
+Elapsed time: 0.06868 s
+MFLOPS: 291.206
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.14
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 3/10
+Elapsed time: 0.0730626 s
+MFLOPS: 273.738
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.10
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 4/10
+Elapsed time: 0.0677522 s
+MFLOPS: 295.194
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.09
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 5/10
+Elapsed time: 0.0685732 s
+MFLOPS: 291.659
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.13
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 6/10
+Elapsed time: 0.0679095 s
+MFLOPS: 294.51
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.15
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 7/10
+Elapsed time: 0.0685775 s
+MFLOPS: 291.641
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 8/10
+Elapsed time: 0.0714237 s
+MFLOPS: 280.019
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 9/10
+Elapsed time: 0.067376 s
+MFLOPS: 296.842
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_02 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02 10000000 1024
+RUN 10/10
+Elapsed time: 0.0683301 s
+MFLOPS: 292.697
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.14
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 1/10
+Elapsed time: 0.0623386 s
+MFLOPS: 320.829
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 2/10
+Elapsed time: 0.0626653 s
+MFLOPS: 319.156
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 3/10
+Elapsed time: 0.0786755 s
+MFLOPS: 254.209
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 4/10
+Elapsed time: 0.0621168 s
+MFLOPS: 321.974
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.11
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 5/10
+Elapsed time: 0.0633429 s
+MFLOPS: 315.742
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.14
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 6/10
+Elapsed time: 0.0641082 s
+MFLOPS: 311.972
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.13
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 7/10
+Elapsed time: 0.0619263 s
+MFLOPS: 322.965
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 8/10
+Elapsed time: 0.0624245 s
+MFLOPS: 320.387
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 9/10
+Elapsed time: 0.0630232 s
+MFLOPS: 317.344
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.11
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_03 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03 10000000 1024
+RUN 10/10
+Elapsed time: 0.0659915 s
+MFLOPS: 303.069
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.11
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 1/10
+Elapsed time: 0.0645379 s
+MFLOPS: 309.895
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 2/10
+Elapsed time: 0.0643091 s
+MFLOPS: 310.998
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.15
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 3/10
+Elapsed time: 0.0735238 s
+MFLOPS: 272.021
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 4/10
+Elapsed time: 0.0652064 s
+MFLOPS: 306.718
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.15
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 5/10
+Elapsed time: 0.0647615 s
+MFLOPS: 308.825
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.11
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 6/10
+Elapsed time: 0.0635629 s
+MFLOPS: 314.649
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 7/10
+Elapsed time: 0.0650766 s
+MFLOPS: 307.33
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.13
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 8/10
+Elapsed time: 0.0654292 s
+MFLOPS: 305.674
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.18
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 9/10
+Elapsed time: 0.0629947 s
+MFLOPS: 317.487
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04 10000000 1024
+RUN 10/10
+Elapsed time: 0.0645568 s
+MFLOPS: 309.805
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 1/10
+Elapsed time: 0.0629194 s
+MFLOPS: 317.867
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.15
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 2/10
+Elapsed time: 0.0651618 s
+MFLOPS: 306.928
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 3/10
+Elapsed time: 0.065543 s
+MFLOPS: 305.143
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 4/10
+Elapsed time: 0.0631209 s
+MFLOPS: 316.852
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 5/10
+Elapsed time: 0.0636703 s
+MFLOPS: 314.118
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.11
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 6/10
+Elapsed time: 0.0637237 s
+MFLOPS: 313.855
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 7/10
+Elapsed time: 0.0658561 s
+MFLOPS: 303.693
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 8/10
+Elapsed time: 0.0673041 s
+MFLOPS: 297.159
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 9/10
+Elapsed time: 0.0637183 s
+MFLOPS: 313.882
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05 10000000 1024
+RUN 10/10
+Elapsed time: 0.0681652 s
+MFLOPS: 293.405
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.18
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 1/10
+Elapsed time: 0.0642496 s
+MFLOPS: 311.286
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 2/10
+Elapsed time: 0.0636692 s
+MFLOPS: 314.124
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 3/10
+Elapsed time: 0.0626075 s
+MFLOPS: 319.45
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 4/10
+Elapsed time: 0.0627492 s
+MFLOPS: 318.729
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 5/10
+Elapsed time: 0.0624537 s
+MFLOPS: 320.237
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 6/10
+Elapsed time: 0.0627492 s
+MFLOPS: 318.729
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 7/10
+Elapsed time: 0.064338 s
+MFLOPS: 310.858
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.21
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 8/10
+Elapsed time: 0.0644258 s
+MFLOPS: 310.435
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 9/10
+Elapsed time: 0.0625099 s
+MFLOPS: 319.949
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_gmp_C_native_openmp_06 build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06 10000000 1024
+RUN 10/10
+Elapsed time: 0.0634596 s
+MFLOPS: 315.161
+DIFF: 1.332e-148 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.78743 s
+MFLOPS: 11.1893
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.91
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.81312 s
+MFLOPS: 11.0307
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.01
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.7906 s
+MFLOPS: 11.1695
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.90
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.79086 s
+MFLOPS: 11.1678
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.93
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.79648 s
+MFLOPS: 11.1329
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.93
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.80547 s
+MFLOPS: 11.0774
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.98
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.79504 s
+MFLOPS: 11.1418
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.90
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.78757 s
+MFLOPS: 11.1884
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.89
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.78893 s
+MFLOPS: 11.1799
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.92
+
+COMMAND Rdot Rdot_gmp_kernel_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.75108 s
+MFLOPS: 11.4215
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.75
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.827898 s
+MFLOPS: 24.1576
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.87
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.816333 s
+MFLOPS: 24.4998
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.827439 s
+MFLOPS: 24.171
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.89
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.834032 s
+MFLOPS: 23.9799
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.87
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.835104 s
+MFLOPS: 23.9491
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.78
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.824704 s
+MFLOPS: 24.2511
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.81714 s
+MFLOPS: 24.4756
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.85
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.802175 s
+MFLOPS: 24.9322
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.814564 s
+MFLOPS: 24.553
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.85
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.814349 s
+MFLOPS: 24.5595
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.92
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.730276 s
+MFLOPS: 27.3869
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.39
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.73463 s
+MFLOPS: 27.2246
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.38
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.734662 s
+MFLOPS: 27.2234
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.44
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.735938 s
+MFLOPS: 27.1762
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.58
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.731614 s
+MFLOPS: 27.3368
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.36
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.736517 s
+MFLOPS: 27.1548
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.48
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.735762 s
+MFLOPS: 27.1827
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.42
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.737182 s
+MFLOPS: 27.1303
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.39
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.73561 s
+MFLOPS: 27.1883
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.39
+
+COMMAND Rdot Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.735659 s
+MFLOPS: 27.1865
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.38
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.82311 s
+MFLOPS: 10.9703
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.96
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.83021 s
+MFLOPS: 10.9277
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.04
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.7908 s
+MFLOPS: 11.1682
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.79
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.80479 s
+MFLOPS: 11.0816
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.91
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.81913 s
+MFLOPS: 10.9942
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.00
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.81333 s
+MFLOPS: 11.0294
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.96
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.83813 s
+MFLOPS: 10.8806
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.98
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.82295 s
+MFLOPS: 10.9712
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.99
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.84572 s
+MFLOPS: 10.8359
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.05
+
+COMMAND Rdot Rdot_gmp_kernel_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.83604 s
+MFLOPS: 10.893
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.98
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.865684 s
+MFLOPS: 23.1031
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.89
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.847752 s
+MFLOPS: 23.5918
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.67
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.877621 s
+MFLOPS: 22.7889
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.92
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.877871 s
+MFLOPS: 22.7824
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.88
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.880627 s
+MFLOPS: 22.7111
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.93
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.876562 s
+MFLOPS: 22.8164
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.94
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.869277 s
+MFLOPS: 23.0076
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.89
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.871313 s
+MFLOPS: 22.9539
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.87
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.867381 s
+MFLOPS: 23.0579
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.89
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.865297 s
+MFLOPS: 23.1134
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.86
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 1.81297 s
+MFLOPS: 11.0316
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.43
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 1.8115 s
+MFLOPS: 11.0406
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.54
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 1.82296 s
+MFLOPS: 10.9712
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.63
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 1.81209 s
+MFLOPS: 11.037
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.62
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 1.7974 s
+MFLOPS: 11.1272
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.38
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 1.82797 s
+MFLOPS: 10.9411
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.53
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 1.82428 s
+MFLOPS: 10.9632
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.44
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 1.80609 s
+MFLOPS: 11.0737
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.68
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 1.83408 s
+MFLOPS: 10.9047
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.62
+
+COMMAND Rdot Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 1.79491 s
+MFLOPS: 11.1426
+DIFF: 2.397e-148 OK
+WALL_SECONDS 10.43
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.70124 s
+MFLOPS: 11.7561
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.85
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.69028 s
+MFLOPS: 11.8324
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.91
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.67281 s
+MFLOPS: 11.9559
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.80
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.67823 s
+MFLOPS: 11.9173
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.82
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.70377 s
+MFLOPS: 11.7387
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.94
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.68985 s
+MFLOPS: 11.8354
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.92
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.69519 s
+MFLOPS: 11.7981
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.92
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.67682 s
+MFLOPS: 11.9274
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.85
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.69581 s
+MFLOPS: 11.7938
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.89
+
+COMMAND Rdot Rdot_gmp_kernel_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.69526 s
+MFLOPS: 11.7976
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.94
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.70563 s
+MFLOPS: 28.3435
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.75
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.706494 s
+MFLOPS: 28.3088
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.80
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.703165 s
+MFLOPS: 28.4428
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.69
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.684474 s
+MFLOPS: 29.2195
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.51
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.708212 s
+MFLOPS: 28.2401
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.71
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.706262 s
+MFLOPS: 28.3181
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.77
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.711165 s
+MFLOPS: 28.1229
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.63
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.701258 s
+MFLOPS: 28.5202
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.68
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.704062 s
+MFLOPS: 28.4066
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.67
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.704109 s
+MFLOPS: 28.4047
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.77
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.703883 s
+MFLOPS: 28.4138
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.27
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.70794 s
+MFLOPS: 28.251
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.40
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.703793 s
+MFLOPS: 28.4175
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.32
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.707285 s
+MFLOPS: 28.2771
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.38
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.706816 s
+MFLOPS: 28.2959
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.40
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.702219 s
+MFLOPS: 28.4811
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.709807 s
+MFLOPS: 28.1767
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.38
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.708402 s
+MFLOPS: 28.2325
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.38
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.702689 s
+MFLOPS: 28.4621
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.31
+
+COMMAND Rdot Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.708432 s
+MFLOPS: 28.2314
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.36
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.75515 s
+MFLOPS: 11.395
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.89
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.70306 s
+MFLOPS: 11.7435
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.63
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.73022 s
+MFLOPS: 11.5593
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.90
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.73307 s
+MFLOPS: 11.5402
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.89
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.74064 s
+MFLOPS: 11.49
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.94
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.76027 s
+MFLOPS: 11.3619
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.95
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.74579 s
+MFLOPS: 11.4561
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.91
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.77585 s
+MFLOPS: 11.2622
+DIFF: 1.787e-302 OK
+WALL_SECONDS 11.01
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.73938 s
+MFLOPS: 11.4983
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.90
+
+COMMAND Rdot Rdot_gmp_kernel_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.75884 s
+MFLOPS: 11.3711
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.94
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.738848 s
+MFLOPS: 27.0692
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.733417 s
+MFLOPS: 27.2696
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.70
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.751725 s
+MFLOPS: 26.6055
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.79
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.752791 s
+MFLOPS: 26.5678
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.63
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.746502 s
+MFLOPS: 26.7916
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.79
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.733694 s
+MFLOPS: 27.2593
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.76
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.738178 s
+MFLOPS: 27.0937
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.74
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.742121 s
+MFLOPS: 26.9498
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.71
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.740105 s
+MFLOPS: 27.0232
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.74
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.748797 s
+MFLOPS: 26.7095
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.817426 s
+MFLOPS: 24.467
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.41
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.829237 s
+MFLOPS: 24.1186
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.46
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.827129 s
+MFLOPS: 24.18
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.47
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.825352 s
+MFLOPS: 24.2321
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.45
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.822407 s
+MFLOPS: 24.3189
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.40
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.826683 s
+MFLOPS: 24.1931
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.51
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.822592 s
+MFLOPS: 24.3134
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.38
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.835807 s
+MFLOPS: 23.929
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.44
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.82916 s
+MFLOPS: 24.1208
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.41
+
+COMMAND Rdot Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.828936 s
+MFLOPS: 24.1273
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.44
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.71286 s
+MFLOPS: 11.6764
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.75
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.7284 s
+MFLOPS: 11.5714
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.92
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.7157 s
+MFLOPS: 11.6571
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.83
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.72386 s
+MFLOPS: 11.6019
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.84
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.71775 s
+MFLOPS: 11.6431
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.79
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.71379 s
+MFLOPS: 11.67
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.80
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.72059 s
+MFLOPS: 11.6239
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.84
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.68382 s
+MFLOPS: 11.8778
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.64
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.70449 s
+MFLOPS: 11.7337
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.74
+
+COMMAND Rdot Rdot_gmp_kernel_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.72477 s
+MFLOPS: 11.5958
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.83
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.707111 s
+MFLOPS: 28.2841
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.72
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.706848 s
+MFLOPS: 28.2946
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.75
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.704687 s
+MFLOPS: 28.3814
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.71
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.703088 s
+MFLOPS: 28.4459
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.72
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.702179 s
+MFLOPS: 28.4828
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.69
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.701775 s
+MFLOPS: 28.4992
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.68
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.697992 s
+MFLOPS: 28.6536
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.68
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.706444 s
+MFLOPS: 28.3108
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.75
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.70712 s
+MFLOPS: 28.2837
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.72
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.708602 s
+MFLOPS: 28.2246
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.76
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.708247 s
+MFLOPS: 28.2387
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.40
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.706892 s
+MFLOPS: 28.2929
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.40
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.703782 s
+MFLOPS: 28.4179
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.50
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.703105 s
+MFLOPS: 28.4452
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.41
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.70209 s
+MFLOPS: 28.4864
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.30
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.714692 s
+MFLOPS: 27.9841
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.54
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.704486 s
+MFLOPS: 28.3895
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.34
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.711625 s
+MFLOPS: 28.1047
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.45
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.705656 s
+MFLOPS: 28.3424
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.32
+
+COMMAND Rdot Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.695987 s
+MFLOPS: 28.7362
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.33
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.68427 s
+MFLOPS: 11.8746
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.76
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.69029 s
+MFLOPS: 11.8323
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.74
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.65355 s
+MFLOPS: 12.0952
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.50
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.6822 s
+MFLOPS: 11.8892
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.74
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.68291 s
+MFLOPS: 11.8842
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.74
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.70462 s
+MFLOPS: 11.7328
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.84
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.69816 s
+MFLOPS: 11.7774
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.77
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.69752 s
+MFLOPS: 11.7819
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.84
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.68592 s
+MFLOPS: 11.8629
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.70
+
+COMMAND Rdot Rdot_gmp_kernel_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.67922 s
+MFLOPS: 11.9103
+DIFF: 1.787e-302 OK
+WALL_SECONDS 10.70
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.705566 s
+MFLOPS: 28.346
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.76
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.705757 s
+MFLOPS: 28.3384
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.82
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.707434 s
+MFLOPS: 28.2712
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.82
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.706988 s
+MFLOPS: 28.289
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.706467 s
+MFLOPS: 28.3099
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.704343 s
+MFLOPS: 28.3953
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.705628 s
+MFLOPS: 28.3435
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.81
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.707668 s
+MFLOPS: 28.2618
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.78
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.707302 s
+MFLOPS: 28.2765
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.90
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.699936 s
+MFLOPS: 28.574
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.80
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.707022 s
+MFLOPS: 28.2877
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.47
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.696275 s
+MFLOPS: 28.7243
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.39
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.712271 s
+MFLOPS: 28.0792
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.48
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.708045 s
+MFLOPS: 28.2468
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.38
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.690829 s
+MFLOPS: 28.9507
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.26
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.699583 s
+MFLOPS: 28.5885
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.39
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.714324 s
+MFLOPS: 27.9985
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.48
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.699611 s
+MFLOPS: 28.5873
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.29
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.708346 s
+MFLOPS: 28.2348
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.45
+
+COMMAND Rdot Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.697051 s
+MFLOPS: 28.6923
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.29
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0752935 s
+MFLOPS: 265.627
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.20
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0687098 s
+MFLOPS: 291.079
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0687337 s
+MFLOPS: 290.978
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.27
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0680689 s
+MFLOPS: 293.82
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.29
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0674423 s
+MFLOPS: 296.55
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.28
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0845156 s
+MFLOPS: 236.643
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.33
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.0684575 s
+MFLOPS: 292.152
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0680897 s
+MFLOPS: 293.73
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0767842 s
+MFLOPS: 260.47
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.31
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.068668 s
+MFLOPS: 291.257
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.30
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0432365 s
+MFLOPS: 462.573
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.15
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0381941 s
+MFLOPS: 523.641
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.21
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0379017 s
+MFLOPS: 527.681
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.11
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.042607 s
+MFLOPS: 469.406
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.15
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.0378882 s
+MFLOPS: 527.869
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0364976 s
+MFLOPS: 547.981
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0367602 s
+MFLOPS: 544.067
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.03654 s
+MFLOPS: 547.346
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.0372774 s
+MFLOPS: 536.518
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0379728 s
+MFLOPS: 526.693
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0514464 s
+MFLOPS: 388.754
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.77
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.053518 s
+MFLOPS: 373.706
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.85
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0519892 s
+MFLOPS: 384.695
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.90
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.051872 s
+MFLOPS: 385.565
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.78
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.0529123 s
+MFLOPS: 377.984
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.82
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0517705 s
+MFLOPS: 386.321
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.051055 s
+MFLOPS: 391.734
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.78
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0526955 s
+MFLOPS: 379.539
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.74
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0523847 s
+MFLOPS: 381.791
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.86
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.0516687 s
+MFLOPS: 387.081
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.74
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.069003 s
+MFLOPS: 289.842
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.20
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0728409 s
+MFLOPS: 274.571
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0687802 s
+MFLOPS: 290.781
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.071471 s
+MFLOPS: 279.834
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0676812 s
+MFLOPS: 295.503
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0687163 s
+MFLOPS: 291.052
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.0693981 s
+MFLOPS: 288.192
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.26
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0685149 s
+MFLOPS: 291.907
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.070538 s
+MFLOPS: 283.535
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.0730659 s
+MFLOPS: 273.725
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.25
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0399362 s
+MFLOPS: 500.799
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.12
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0397757 s
+MFLOPS: 502.82
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0377676 s
+MFLOPS: 529.554
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.0380422 s
+MFLOPS: 525.732
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.0373655 s
+MFLOPS: 535.253
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.14
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0375338 s
+MFLOPS: 532.853
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0371519 s
+MFLOPS: 538.331
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.18
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.0379234 s
+MFLOPS: 527.379
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.0399039 s
+MFLOPS: 501.205
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.13
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0381852 s
+MFLOPS: 523.764
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.13
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0654645 s
+MFLOPS: 305.509
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.77
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.0668243 s
+MFLOPS: 299.293
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.83
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0663667 s
+MFLOPS: 301.356
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.067852 s
+MFLOPS: 294.759
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.81
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.0709342 s
+MFLOPS: 281.952
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.83
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0699955 s
+MFLOPS: 285.733
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.82
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.0681613 s
+MFLOPS: 293.422
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.88
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0661624 s
+MFLOPS: 302.286
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.80
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0733992 s
+MFLOPS: 272.483
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.77
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.0688513 s
+MFLOPS: 290.481
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.81
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0653247 s
+MFLOPS: 306.163
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0630251 s
+MFLOPS: 317.334
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.23
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0661706 s
+MFLOPS: 302.249
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0642793 s
+MFLOPS: 311.142
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0637466 s
+MFLOPS: 313.742
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.09
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0626632 s
+MFLOPS: 319.167
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.13
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.062921 s
+MFLOPS: 317.859
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0809022 s
+MFLOPS: 247.212
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.23
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0625106 s
+MFLOPS: 319.946
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.063555 s
+MFLOPS: 314.688
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.21
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0361091 s
+MFLOPS: 553.877
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0355676 s
+MFLOPS: 562.309
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0362592 s
+MFLOPS: 551.584
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.034433 s
+MFLOPS: 580.838
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.0350116 s
+MFLOPS: 571.24
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0362081 s
+MFLOPS: 552.363
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.29
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0354041 s
+MFLOPS: 564.906
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.035276 s
+MFLOPS: 566.958
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.0354931 s
+MFLOPS: 563.489
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.18
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0352132 s
+MFLOPS: 567.968
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.20
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0508702 s
+MFLOPS: 393.157
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.052478 s
+MFLOPS: 381.112
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.75
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0517352 s
+MFLOPS: 386.584
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.77
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.051702 s
+MFLOPS: 386.832
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.72
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.0514008 s
+MFLOPS: 389.099
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.81
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0522533 s
+MFLOPS: 382.751
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.78
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.0510646 s
+MFLOPS: 391.661
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.71
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.052364 s
+MFLOPS: 381.942
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.85
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0503986 s
+MFLOPS: 396.836
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.76
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.0523865 s
+MFLOPS: 381.778
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.75
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0629987 s
+MFLOPS: 317.467
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.20
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0681359 s
+MFLOPS: 293.531
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0644126 s
+MFLOPS: 310.498
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.21
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0643903 s
+MFLOPS: 310.606
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.20
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0648143 s
+MFLOPS: 308.574
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.23
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0663574 s
+MFLOPS: 301.398
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.17
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.0640928 s
+MFLOPS: 312.047
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0653324 s
+MFLOPS: 306.127
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0642908 s
+MFLOPS: 311.086
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.21
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.0657867 s
+MFLOPS: 304.013
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.21
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0368162 s
+MFLOPS: 543.239
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0372137 s
+MFLOPS: 537.437
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0350291 s
+MFLOPS: 570.953
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.035812 s
+MFLOPS: 558.472
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.0395659 s
+MFLOPS: 505.486
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.41
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0367036 s
+MFLOPS: 544.905
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.035727 s
+MFLOPS: 559.801
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.0360227 s
+MFLOPS: 555.205
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.0368053 s
+MFLOPS: 543.4
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.25
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0355398 s
+MFLOPS: 562.749
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0530776 s
+MFLOPS: 376.807
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.70
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.052604 s
+MFLOPS: 380.199
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.76
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0509655 s
+MFLOPS: 392.423
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.80
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.0515606 s
+MFLOPS: 387.893
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.69
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.0534478 s
+MFLOPS: 374.197
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.75
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0510678 s
+MFLOPS: 391.636
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.80
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.0505817 s
+MFLOPS: 395.4
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.77
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0520509 s
+MFLOPS: 384.239
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0589351 s
+MFLOPS: 339.356
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.89
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.0522649 s
+MFLOPS: 382.666
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.86
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0650582 s
+MFLOPS: 307.417
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0650019 s
+MFLOPS: 307.683
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.25
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0699264 s
+MFLOPS: 286.015
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.30
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0641505 s
+MFLOPS: 311.767
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.28
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0656461 s
+MFLOPS: 304.664
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0639006 s
+MFLOPS: 312.986
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.25
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.0663407 s
+MFLOPS: 301.474
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.27
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0649738 s
+MFLOPS: 307.817
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.22
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0670749 s
+MFLOPS: 298.174
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.26
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.0691894 s
+MFLOPS: 289.062
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.29
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0367787 s
+MFLOPS: 543.793
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0359163 s
+MFLOPS: 556.85
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.34
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0363448 s
+MFLOPS: 550.285
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.26
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.0359768 s
+MFLOPS: 555.915
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.30
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.036129 s
+MFLOPS: 553.573
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0364974 s
+MFLOPS: 547.984
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.33
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0372192 s
+MFLOPS: 537.357
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.31
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.0376064 s
+MFLOPS: 531.824
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.28
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.0356389 s
+MFLOPS: 561.185
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.27
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0367314 s
+MFLOPS: 544.493
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.32
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.05453 s
+MFLOPS: 366.771
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.76
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.0510243 s
+MFLOPS: 391.97
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.95
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0523219 s
+MFLOPS: 382.249
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.87
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.0579463 s
+MFLOPS: 345.147
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.88
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.0522494 s
+MFLOPS: 382.78
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0507271 s
+MFLOPS: 394.267
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.84
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.0578398 s
+MFLOPS: 345.783
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.80
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0524812 s
+MFLOPS: 381.089
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.79
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0524073 s
+MFLOPS: 381.626
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.81
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.0508083 s
+MFLOPS: 393.636
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.89
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0697941 s
+MFLOPS: 286.557
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.31
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0656566 s
+MFLOPS: 304.615
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.28
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0667247 s
+MFLOPS: 299.739
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.28
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0757163 s
+MFLOPS: 264.144
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.34
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.064788 s
+MFLOPS: 308.699
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.27
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0640168 s
+MFLOPS: 312.418
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.31
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.0650213 s
+MFLOPS: 307.592
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.27
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0657122 s
+MFLOPS: 304.358
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.30
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0659106 s
+MFLOPS: 303.442
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.27
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_orig build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.0650656 s
+MFLOPS: 307.382
+DIFF: 1.787e-302 OK
+WALL_SECONDS 9.27
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.036443 s
+MFLOPS: 548.802
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.16
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0373744 s
+MFLOPS: 535.125
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0369603 s
+MFLOPS: 541.121
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.035057 s
+MFLOPS: 570.5
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.23
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.035641 s
+MFLOPS: 561.151
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0354058 s
+MFLOPS: 564.88
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.18
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0410686 s
+MFLOPS: 486.99
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.17
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.0357236 s
+MFLOPS: 559.854
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.24
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.036553 s
+MFLOPS: 547.15
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.13
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.034941 s
+MFLOPS: 572.394
+DIFF: 2.397e-148 OK
+WALL_SECONDS 7.19
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0516407 s
+MFLOPS: 387.292
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.90
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.0507911 s
+MFLOPS: 393.77
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.85
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0512998 s
+MFLOPS: 389.865
+DIFF: 2.397e-148 OK
+WALL_SECONDS 9.06
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.0512634 s
+MFLOPS: 390.142
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.91
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.0523986 s
+MFLOPS: 381.69
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.92
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0516927 s
+MFLOPS: 386.902
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.87
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.0503729 s
+MFLOPS: 397.039
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.90
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0507826 s
+MFLOPS: 393.836
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.84
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0556487 s
+MFLOPS: 359.397
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.89
+
+COMMAND Rdot Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.051912 s
+MFLOPS: 385.267
+DIFF: 2.397e-148 OK
+WALL_SECONDS 8.84
+
