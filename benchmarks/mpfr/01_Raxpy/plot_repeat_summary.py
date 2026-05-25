@@ -31,11 +31,15 @@ def natural_key(name):
     else:
         family = 1
     openmp = 1 if "openmp" in name else 0
-    if "FIXED_PRECISION_FASTPATH_FMA" in name:
+    if "ROUNDING_FMA_CAPTURE" in name and "PRECISION" in name and name.endswith("_FMA"):
+        flavor = 5
+    elif "ROUNDING_FMA_CAPTURE" in name and name.endswith("_FMA"):
+        flavor = 4
+    elif "ROUNDING" in name and "PRECISION" in name:
         flavor = 3
-    elif "FIXED_PRECISION_FASTPATH" in name:
+    elif "ROUNDING" in name:
         flavor = 2
-    elif name.endswith("_FMA"):
+    elif "PRECISION" in name:
         flavor = 1
     else:
         flavor = 0

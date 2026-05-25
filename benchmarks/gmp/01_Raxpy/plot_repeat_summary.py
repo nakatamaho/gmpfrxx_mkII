@@ -31,12 +31,12 @@ def natural_key(name):
     else:
         family = 1
     openmp = 1 if "openmp" in name else 0
-    if "FIXED_PRECISION_FASTPATH_FMA" in name:
-        flavor = 3
-    elif "FIXED_PRECISION_FASTPATH" in name:
-        flavor = 2
-    elif name.endswith("_FMA"):
+    if "orig" in name:
         flavor = 1
+    elif "FIXED_PRECISION_FASTPATH" in name:
+        flavor = 3
+    elif "mkII" in name:
+        flavor = 2
     else:
         flavor = 0
     numbers = [int(value) for value in re.findall(r"\d+", name)]
