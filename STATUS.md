@@ -1,3 +1,36 @@
+## Phase: benchmark README refresh from run_all 512-bit results
+
+Implemented features:
+- Analyzed the existing `run_all_p512_repeat10_20260525_224339` raw benchmark
+  results under GMP/MPFR 00_Rdot, 01_Raxpy, and 02_Rgemv.
+- Updated the six benchmark README files to point their 512-bit recorded-run
+  sections at the current run_all raw log, raw CSV, summary CSV, and plots.
+- Regenerated the 512-bit headline, resource/bandwidth model, serial result,
+  and OpenMP result tables from the committed summary CSV schema.
+- Updated MPFR comparison sections against the current GMP 512-bit run_all
+  summaries.
+
+Missing features:
+- No new 1024-bit run_all data was present in `results_raw/`, so existing
+  1024-bit sections remain historical until a 1024-bit run is collected.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `python3 /tmp/update_benchmark_readmes.py`
+- `python3 - <<'PY' ...` to verify the new 512-bit README result targets exist.
+
+Pass/fail result:
+- README regeneration from 512-bit summary CSVs: PASS.
+- Current 512-bit raw/log/summary/plot link existence check: PASS.
+
+Known issues:
+- The new `results_raw/run_all_p512_repeat10_20260525_224339/` directories are
+  still untracked until the benchmark data is explicitly staged.
+- The full 512/1024 dual-precision `run_all.sh` suite was not rerun in this
+  phase.
+
 ## Phase: run_all dual-precision runner
 
 Implemented features:

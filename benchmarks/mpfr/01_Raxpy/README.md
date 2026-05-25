@@ -112,351 +112,229 @@ OMP_PROC_BIND = spread
 all timed runs = Result OK
 ```
 
-The committed numerical runs below predate the `ROUNDING` / `PRECISION` target-name cleanup. The source shapes are still useful as historical data, but the full repeat-10 matrix should be regenerated before comparing the new executable names directly.
-
 ### 512-bit run
 
-| Precision | Raw log | Raw CSV | Summary CSV | Serial plot | OpenMP plot |
-|-----------|---------|---------|-------------|-------------|-------------|
-| 512 | [log](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/benchmark_raxpy_mpfr_n10000000_p512_repeat10.log) | [raw CSV](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raw_raxpy_mpfr_n10000000_p512_repeat10.csv) | [summary CSV](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/summary_raxpy_mpfr_n10000000_p512_repeat10.csv) | [serial PNG](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10_serial.png) | [OpenMP PNG](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10_openmp.png) |
-| 1024 | [log](results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/benchmark_raxpy_mpfr_n10000000_p1024_repeat10.log) | [raw CSV](results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/raw_raxpy_mpfr_n10000000_p1024_repeat10.csv) | [summary CSV](results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/summary_raxpy_mpfr_n10000000_p1024_repeat10.csv) | [serial PNG](results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/raxpy_mpfr_n10000000_p1024_repeat10_serial.png) | [OpenMP PNG](results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/raxpy_mpfr_n10000000_p1024_repeat10_openmp.png) |
+| Field | Value |
+|-------|-------|
+| Run ID | `run_all_p512_repeat10_20260525_224339` |
+| Date | 2026-05-25 |
+| CPU | AMD Ryzen Threadripper 3970X 32-Core Processor |
+| OS | Linux 6.8.0-94-generic x86_64 |
+| Compiler | `c++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0` |
+| Build type | Release |
+| Problem size | `N=10000000` |
+| Precision | 512 bits |
+| Repeat count | 10 |
+| OpenMP | `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, `OMP_PROC_BIND=spread` |
+| Benchmark command | `OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread benchmarks/run_all.sh build_bench_release 512 10 10000000 10000000 4000 4000` |
+| Raw result directory | `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339/` |
+| Raw log | `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339/benchmark_raxpy_mpfr_n10000000_p512_repeat10.log` |
+| Raw CSV | `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339/raw_raxpy_mpfr_n10000000_p512_repeat10.csv` |
+| Summary CSV | `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339/summary_raxpy_mpfr_n10000000_p512_repeat10.csv` |
+| Correctness | 470 / 470 runs reported OK. |
 
-512-bit plots:
+![MPFR Raxpy serial 512-bit repeat-10](results_raw/run_all_p512_repeat10_20260525_224339/raxpy_mpfr_n10000000_p512_repeat10_serial.png)
 
-![MPFR Raxpy 512-bit serial repeat-10](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10_serial.png)
+![MPFR Raxpy OpenMP 512-bit repeat-10](results_raw/run_all_p512_repeat10_20260525_224339/raxpy_mpfr_n10000000_p512_repeat10_openmp.png)
 
-![MPFR Raxpy 512-bit OpenMP repeat-10](results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10_openmp.png)
+Plot regeneration command:
+
+```bash
+python3 benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py \
+    benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339/benchmark_raxpy_mpfr_n10000000_p512_repeat10.log \
+    --output-dir benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339 \
+    --output-prefix raxpy_mpfr_n10000000_p512_repeat10 \
+    --title-prefix "MPFR Raxpy N=10000000, precision=512, repeat=10"
+```
 
 ### 1024-bit run
 
-1024-bit plots:
-
-![MPFR Raxpy 1024-bit serial repeat-10](results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/raxpy_mpfr_n10000000_p1024_repeat10_serial.png)
-
-![MPFR Raxpy 1024-bit OpenMP repeat-10](results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/raxpy_mpfr_n10000000_p1024_repeat10_openmp.png)
-
-Regenerate plots with:
-
-```bash
-python3 benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py \
-    benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/summary_raxpy_mpfr_n10000000_p512_repeat10.csv \
-    --output-prefix benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p512_repeat10_20260522_221824/raxpy_mpfr_n10000000_p512_repeat10 \
-    --title-prefix "MPFR Raxpy N=10000000 p=512 repeat=10"
-```
-
-```bash
-python3 benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py \
-    benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/summary_raxpy_mpfr_n10000000_p1024_repeat10.csv \
-    --output-prefix benchmarks/mpfr/01_Raxpy/results_raw/raxpy_mpfr_n10000000_p1024_repeat10_20260523_083427/raxpy_mpfr_n10000000_p1024_repeat10 \
-    --title-prefix "MPFR Raxpy N=10000000 p=1024 repeat=10"
-```
-
+No current 1024-bit `run_all` result directory is present under this benchmark's `results_raw/` tree. Run `benchmarks/run_all.sh build_bench_release 1024 10 10000000 10000000 4000 4000` or the default dual-precision command to regenerate this section.
 
 ## Resource or Bandwidth Estimates
 
-These are model estimates, not hardware-counter measurements. MPFR stores a 32-byte `mpfr_t` header in the vector and points to limb storage. The timed operation reads `x[i]`, reads `y[i]`, and writes `y[i]`; `alpha` is loop-invariant and excluded.
+The values below are model estimates derived from MFLOPS, not hardware-counter measurements. They use the current 512-bit `run_all` summary and count active limb bytes plus a header-inclusive model. They exclude allocator metadata, cache-line overfetch, instruction fetch, and final OpenMP reduction traffic.
 
-| Precision | Limb bytes/value | Header-inclusive bytes/value | Limb-only bytes/element | Header-inclusive bytes/element |
-|-----------|-----------------:|-----------------------------:|------------------------:|-------------------------------:|
-| 512 | 64 | 96 | 192 | 288 |
-| 1024 | 128 | 160 | 384 | 480 |
+| Case | Representative best-avg variant | Avg MFLOPS | Active bytes/iteration | Header-inclusive bytes/iteration | Active GB/s | Header-inclusive GB/s |
+| --- | --- | --- | --- | --- | --- | --- |
+| 512-bit serial | `C_native_01` | 22.971 | 192 | 288 | 2.205 | 3.308 |
+| 512-bit OpenMP | `kernel_openmp_01_PRECISION_FMA` | 412.596 | 192 | 288 | 39.609 | 59.414 |
 
-Estimated bandwidth for representative average MFLOPS rows:
-
-| Precision | Variant | Mode | Avg MFLOPS | Limb-only GB/s | Header-inclusive GB/s |
-|-----------|---------|------|-----------:|---------------:|----------------------:|
-| 512 | `C_native_01_FMA` | Serial | 22.823 | 2.19 | 3.29 |
-| 512 | `C_native_openmp_01_FMA` | OpenMP | 412.005 | 39.55 | 59.33 |
-| 512 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | OpenMP | 414.601 | 39.80 | 59.70 |
-| 1024 | `C_native_01_FMA` | Serial | 9.304 | 1.79 | 2.23 |
-| 1024 | `C_native_openmp_01_FMA` | OpenMP | 252.101 | 48.40 | 60.50 |
-
-1024-bit MPFR doubles the limb payload from 64 to 128 bytes per value. The best OpenMP FMA class drops from about 415 MFLOPS to about 252 MFLOPS, so the extra precision work is visible, but the throughput does not fall by 2x because the benchmark still contains substantial streaming and call-overhead components.
-
+For matrix-vector benchmarks, the per-iteration byte model is a compact active-data estimate for the arithmetic stream, not a full matrix-footprint or cache-reuse model.
 ## Headline Results
 
+The 512-bit headline rows below are regenerated from `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339/summary_raxpy_mpfr_n10000000_p512_repeat10.csv`. No 1024-bit raw data is present in the current `results_raw/` tree, so 1024-bit result sections are placeholders until a fresh 1024-bit `run_all` result is collected.
+
 | Precision | Class | Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
-|-----------|-------|---------|-----------:|-----------:|----------------|
-| 512 | Best serial max | `kernel_03_mkII_STABLE_ROUNDING` | 23.398 | 22.766 | Peak serial repeat for this precision. |
-| 512 | Best serial average | `C_native_01_FMA` | 22.975 | 22.823 | Best repeat-10 serial average for this precision. |
-| 512 | Best OpenMP max | `C_native_openmp_01_FMA` | 422.647 | 412.005 | Peak OpenMP repeat for this precision. |
-| 512 | Best OpenMP average | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 422.613 | 414.601 | Best repeat-10 OpenMP average for this precision. |
-| 1024 | Best serial max | `C_native_01_FMA` | 9.555 | 9.304 | Peak serial repeat for this precision. |
-| 1024 | Best serial average | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.525 | 9.315 | Best repeat-10 serial average for this precision. |
-| 1024 | Best OpenMP max | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 258.391 | 246.258 | Peak OpenMP repeat for this precision. |
-| 1024 | Best OpenMP average | `C_native_openmp_01_FMA` | 256.361 | 252.101 | Best repeat-10 OpenMP average for this precision. |
-
-Precision scaling by best average:
-
-| Mode | 512-bit best avg | 1024-bit best avg | 1024/512 ratio | Interpretation |
-|------|-----------------:|------------------:|---------------:|----------------|
-| Serial | 22.823 (`C_native_01_FMA`) | 9.315 (`kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH`) | 0.408 | 1024-bit uses twice the limb count, so lower MFLOPS is expected; the OpenMP class remains much closer for streaming-heavy paths. |
-| OpenMP | 414.601 (`kernel_openmp_01_mkII_STABLE_ROUNDING_FMA`) | 252.101 (`C_native_openmp_01_FMA`) | 0.608 | 1024-bit uses twice the limb count, so lower MFLOPS is expected; the OpenMP class remains much closer for streaming-heavy paths. |
-
+| --- | --- | --- | --- | --- | --- |
+| 512 | Best serial max | `C_native_01` | 23.517 | 22.971 | Single fastest serial repeat; compare with Avg MFLOPS for stability. |
+| 512 | Best serial average | `C_native_01` | 23.517 | 22.971 | Raw C reference for the numbered source shape. |
+| 512 | Best OpenMP max | `kernel_openmp_01_PRECISION_FMA` | 419.733 | 412.596 | Single fastest OpenMP repeat; OpenMP rows should be interpreted by performance class. |
+| 512 | Best OpenMP average | `kernel_openmp_01_PRECISION_FMA` | 419.733 | 412.596 | Wrapper fixed-precision build; intended to remove repeated precision checks or scratch setup when the source shape allows it. |
 ## Serial Results
 
 ### 512-bit serial interpretation
 
-<details>
-<summary>512-bit Serial results sorted by Max MFLOPS</summary>
+These rows are derived from `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339/summary_raxpy_mpfr_n10000000_p512_repeat10.csv`.
 
-| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS |
-|------|---------|-----------:|-----------:|-----------:|-----------:|--------------:|
-| 1 | `kernel_03_mkII_STABLE_ROUNDING` | 23.398 | 22.766 | 22.353 | 0.105 | 0.323 |
-| 2 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.392 | 22.735 | 22.338 | 0.119 | 0.345 |
-| 3 | `kernel_03_mkII_STABLE_ROUNDING_FMA` | 23.151 | 22.555 | 22.197 | 0.059 | 0.242 |
-| 4 | `kernel_06_mkII` | 23.149 | 22.756 | 22.493 | 0.031 | 0.175 |
-| 5 | `C_native_01` | 23.139 | 22.533 | 22.091 | 0.071 | 0.267 |
-| 6 | `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.122 | 22.684 | 22.310 | 0.054 | 0.232 |
-| 7 | `C_native_01_FMA` | 22.975 | 22.823 | 22.631 | 0.017 | 0.131 |
-| 8 | `C_native_packed_custom_layout_FMA` | 22.975 | 22.674 | 22.224 | 0.041 | 0.202 |
-| 9 | `kernel_05_mkII_FMA` | 22.967 | 22.727 | 22.472 | 0.027 | 0.164 |
-| 10 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 21.862 | 21.301 | 21.037 | 0.050 | 0.223 |
-| 11 | `kernel_03_mkII` | 21.143 | 20.753 | 20.617 | 0.022 | 0.148 |
-| 12 | `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 20.449 | 19.965 | 19.524 | 0.064 | 0.254 |
-| 13 | `kernel_02_mkII_STABLE_ROUNDING` | 20.041 | 19.826 | 19.604 | 0.015 | 0.122 |
-| 14 | `kernel_02_mkII_STABLE_ROUNDING_FMA` | 19.805 | 19.607 | 19.453 | 0.011 | 0.104 |
-| 15 | `kernel_02_mkII` | 18.595 | 18.256 | 18.043 | 0.026 | 0.161 |
-| 16 | `kernel_04_mkII_STABLE_ROUNDING` | 18.537 | 17.991 | 17.677 | 0.045 | 0.211 |
-| 17 | `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 18.532 | 18.178 | 17.953 | 0.024 | 0.154 |
-| 18 | `kernel_01_mkII_STABLE_ROUNDING` | 18.429 | 18.136 | 17.773 | 0.048 | 0.220 |
-| 19 | `kernel_05_mkII` | 18.422 | 18.227 | 18.033 | 0.016 | 0.127 |
-| 20 | `kernel_01_mkII` | 17.630 | 17.439 | 17.269 | 0.009 | 0.096 |
-| 21 | `kernel_04_mkII_STABLE_ROUNDING_FMA` | 17.208 | 16.835 | 16.620 | 0.039 | 0.198 |
-| 22 | `kernel_04_mkII` | 16.591 | 16.127 | 15.850 | 0.046 | 0.214 |
+| Observation | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
+| --- | --- | --- | --- | --- | --- |
+| Best raw C serial avg | `C_native_01` | 23.517 | 22.971 | 22.561 | Raw C reference for the numbered source shape. |
+| Best mkII serial avg | `kernel_01_ROUNDING_PRECISION_FMA` | 23.079 | 22.911 | 22.736 | Wrapper source with loop-external context plus fixed-precision build assumptions; intended to remove rounding lookup and precision checks from the hot path. |
+| Best serial max | `C_native_01` | 23.517 | 22.971 | 22.561 | Raw C reference for the numbered source shape. |
+
+<details>
+<summary>512-bit serial results sorted by Max MFLOPS</summary>
+
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+| --- | --- | --- | --- | --- |
+| 1 | `C_native_01` | 23.517 | 22.971 | 22.561 |
+| 2 | `C_native_packed_custom_layout_FMA` | 23.194 | 22.860 | 22.470 |
+| 3 | `C_native_01_FMA` | 23.138 | 22.860 | 22.375 |
+| 4 | `C_native_03` | 23.101 | 22.882 | 22.607 |
+| 5 | `kernel_01_ROUNDING_PRECISION_FMA` | 23.079 | 22.911 | 22.736 |
+| 6 | `kernel_03_ROUNDING` | 22.970 | 22.838 | 22.689 |
+| 7 | `kernel_03_ROUNDING_PRECISION` | 22.175 | 21.629 | 21.264 |
+| 8 | `kernel_01_ROUNDING_PRECISION` | 22.137 | 21.525 | 21.317 |
+| 9 | `kernel_01_PRECISION_FMA` | 22.112 | 21.777 | 21.337 |
+| 10 | `kernel_01_PRECISION` | 21.261 | 20.817 | 20.405 |
+| 11 | `C_native_02` | 20.843 | 20.215 | 19.854 |
+| 12 | `kernel_03_PRECISION` | 20.487 | 20.025 | 19.842 |
+| 13 | `kernel_02_ROUNDING` | 20.172 | 20.026 | 19.917 |
+| 14 | `kernel_02_ROUNDING_PRECISION` | 20.003 | 19.875 | 19.674 |
+| 15 | `kernel_03` | 19.962 | 19.529 | 19.180 |
+| 16 | `kernel_02_PRECISION` | 18.310 | 17.918 | 17.743 |
+| 17 | `C_native_04` | 18.013 | 17.805 | 17.430 |
+| 18 | `kernel_02` | 17.837 | 17.711 | 17.578 |
+| 19 | `kernel_01_ROUNDING` | 17.550 | 17.132 | 16.928 |
+| 20 | `kernel_04_ROUNDING` | 17.314 | 16.908 | 16.676 |
+| 21 | `kernel_04` | 17.270 | 16.795 | 16.401 |
+| 22 | `kernel_01` | 16.918 | 16.502 | 16.310 |
+| 23 | `kernel_04_PRECISION` | 16.624 | 16.251 | 16.136 |
+| 24 | `kernel_04_ROUNDING_PRECISION` | 16.353 | 16.037 | 15.807 |
 
 </details>
 
 <details>
-<summary>512-bit Serial results sorted by Avg MFLOPS</summary>
+<summary>512-bit serial results sorted by Avg MFLOPS</summary>
 
-| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS |
-|------|---------|-----------:|-----------:|-----------:|-----------:|--------------:|
-| 1 | `C_native_01_FMA` | 22.975 | 22.823 | 22.631 | 0.017 | 0.131 |
-| 2 | `kernel_03_mkII_STABLE_ROUNDING` | 23.398 | 22.766 | 22.353 | 0.105 | 0.323 |
-| 3 | `kernel_06_mkII` | 23.149 | 22.756 | 22.493 | 0.031 | 0.175 |
-| 4 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.392 | 22.735 | 22.338 | 0.119 | 0.345 |
-| 5 | `kernel_05_mkII_FMA` | 22.967 | 22.727 | 22.472 | 0.027 | 0.164 |
-| 6 | `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 23.122 | 22.684 | 22.310 | 0.054 | 0.232 |
-| 7 | `C_native_packed_custom_layout_FMA` | 22.975 | 22.674 | 22.224 | 0.041 | 0.202 |
-| 8 | `kernel_03_mkII_STABLE_ROUNDING_FMA` | 23.151 | 22.555 | 22.197 | 0.059 | 0.242 |
-| 9 | `C_native_01` | 23.139 | 22.533 | 22.091 | 0.071 | 0.267 |
-| 10 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 21.862 | 21.301 | 21.037 | 0.050 | 0.223 |
-| 11 | `kernel_03_mkII` | 21.143 | 20.753 | 20.617 | 0.022 | 0.148 |
-| 12 | `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 20.449 | 19.965 | 19.524 | 0.064 | 0.254 |
-| 13 | `kernel_02_mkII_STABLE_ROUNDING` | 20.041 | 19.826 | 19.604 | 0.015 | 0.122 |
-| 14 | `kernel_02_mkII_STABLE_ROUNDING_FMA` | 19.805 | 19.607 | 19.453 | 0.011 | 0.104 |
-| 15 | `kernel_02_mkII` | 18.595 | 18.256 | 18.043 | 0.026 | 0.161 |
-| 16 | `kernel_05_mkII` | 18.422 | 18.227 | 18.033 | 0.016 | 0.127 |
-| 17 | `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 18.532 | 18.178 | 17.953 | 0.024 | 0.154 |
-| 18 | `kernel_01_mkII_STABLE_ROUNDING` | 18.429 | 18.136 | 17.773 | 0.048 | 0.220 |
-| 19 | `kernel_04_mkII_STABLE_ROUNDING` | 18.537 | 17.991 | 17.677 | 0.045 | 0.211 |
-| 20 | `kernel_01_mkII` | 17.630 | 17.439 | 17.269 | 0.009 | 0.096 |
-| 21 | `kernel_04_mkII_STABLE_ROUNDING_FMA` | 17.208 | 16.835 | 16.620 | 0.039 | 0.198 |
-| 22 | `kernel_04_mkII` | 16.591 | 16.127 | 15.850 | 0.046 | 0.214 |
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+| --- | --- | --- | --- | --- |
+| 1 | `C_native_01` | 23.517 | 22.971 | 22.561 |
+| 2 | `kernel_01_ROUNDING_PRECISION_FMA` | 23.079 | 22.911 | 22.736 |
+| 3 | `C_native_03` | 23.101 | 22.882 | 22.607 |
+| 4 | `C_native_01_FMA` | 23.138 | 22.860 | 22.375 |
+| 5 | `C_native_packed_custom_layout_FMA` | 23.194 | 22.860 | 22.470 |
+| 6 | `kernel_03_ROUNDING` | 22.970 | 22.838 | 22.689 |
+| 7 | `kernel_01_PRECISION_FMA` | 22.112 | 21.777 | 21.337 |
+| 8 | `kernel_03_ROUNDING_PRECISION` | 22.175 | 21.629 | 21.264 |
+| 9 | `kernel_01_ROUNDING_PRECISION` | 22.137 | 21.525 | 21.317 |
+| 10 | `kernel_01_PRECISION` | 21.261 | 20.817 | 20.405 |
+| 11 | `C_native_02` | 20.843 | 20.215 | 19.854 |
+| 12 | `kernel_02_ROUNDING` | 20.172 | 20.026 | 19.917 |
+| 13 | `kernel_03_PRECISION` | 20.487 | 20.025 | 19.842 |
+| 14 | `kernel_02_ROUNDING_PRECISION` | 20.003 | 19.875 | 19.674 |
+| 15 | `kernel_03` | 19.962 | 19.529 | 19.180 |
+| 16 | `kernel_02_PRECISION` | 18.310 | 17.918 | 17.743 |
+| 17 | `C_native_04` | 18.013 | 17.805 | 17.430 |
+| 18 | `kernel_02` | 17.837 | 17.711 | 17.578 |
+| 19 | `kernel_01_ROUNDING` | 17.550 | 17.132 | 16.928 |
+| 20 | `kernel_04_ROUNDING` | 17.314 | 16.908 | 16.676 |
+| 21 | `kernel_04` | 17.270 | 16.795 | 16.401 |
+| 22 | `kernel_01` | 16.918 | 16.502 | 16.310 |
+| 23 | `kernel_04_PRECISION` | 16.624 | 16.251 | 16.136 |
+| 24 | `kernel_04_ROUNDING_PRECISION` | 16.353 | 16.037 | 15.807 |
 
 </details>
-
 ### 1024-bit serial interpretation
 
-<details>
-<summary>1024-bit Serial results sorted by Max MFLOPS</summary>
-
-| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS |
-|------|---------|-----------:|-----------:|-----------:|-----------:|--------------:|
-| 1 | `C_native_01_FMA` | 9.555 | 9.304 | 9.229 | 0.008 | 0.089 |
-| 2 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.525 | 9.315 | 9.176 | 0.011 | 0.103 |
-| 3 | `kernel_05_mkII_FMA` | 9.420 | 9.270 | 9.175 | 0.006 | 0.076 |
-| 4 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 9.413 | 9.133 | 9.029 | 0.010 | 0.100 |
-| 5 | `C_native_01` | 9.251 | 9.054 | 8.980 | 0.005 | 0.073 |
-| 6 | `kernel_03_mkII_STABLE_ROUNDING` | 9.232 | 9.032 | 8.932 | 0.007 | 0.084 |
-| 7 | `kernel_03_mkII_STABLE_ROUNDING_FMA` | 9.189 | 9.018 | 8.917 | 0.005 | 0.069 |
-| 8 | `kernel_02_mkII_STABLE_ROUNDING` | 9.178 | 8.926 | 8.811 | 0.009 | 0.096 |
-| 9 | `C_native_packed_custom_layout_FMA` | 9.130 | 9.011 | 8.871 | 0.004 | 0.065 |
-| 10 | `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.069 | 9.001 | 8.947 | 0.002 | 0.045 |
-| 11 | `kernel_06_mkII` | 9.049 | 8.978 | 8.912 | 0.002 | 0.046 |
-| 12 | `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.024 | 8.919 | 8.864 | 0.002 | 0.045 |
-| 13 | `kernel_02_mkII_STABLE_ROUNDING_FMA` | 8.972 | 8.871 | 8.796 | 0.003 | 0.053 |
-| 14 | `kernel_03_mkII` | 8.955 | 8.790 | 8.720 | 0.005 | 0.071 |
-| 15 | `kernel_02_mkII` | 8.705 | 8.556 | 8.457 | 0.004 | 0.065 |
-| 16 | `kernel_04_mkII_STABLE_ROUNDING` | 8.415 | 8.234 | 8.147 | 0.008 | 0.092 |
-| 17 | `kernel_04_mkII_STABLE_ROUNDING_FMA` | 8.413 | 8.237 | 8.114 | 0.006 | 0.075 |
-| 18 | `kernel_05_mkII` | 8.381 | 8.246 | 8.179 | 0.004 | 0.060 |
-| 19 | `kernel_01_mkII` | 8.327 | 8.104 | 8.016 | 0.007 | 0.085 |
-| 20 | `kernel_01_mkII_STABLE_ROUNDING` | 8.275 | 8.189 | 8.107 | 0.003 | 0.051 |
-| 21 | `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 8.274 | 8.208 | 8.167 | 0.001 | 0.036 |
-| 22 | `kernel_04_mkII` | 8.161 | 8.027 | 7.949 | 0.003 | 0.053 |
-
-</details>
-
-<details>
-<summary>1024-bit Serial results sorted by Avg MFLOPS</summary>
-
-| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS |
-|------|---------|-----------:|-----------:|-----------:|-----------:|--------------:|
-| 1 | `kernel_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.525 | 9.315 | 9.176 | 0.011 | 0.103 |
-| 2 | `C_native_01_FMA` | 9.555 | 9.304 | 9.229 | 0.008 | 0.089 |
-| 3 | `kernel_05_mkII_FMA` | 9.420 | 9.270 | 9.175 | 0.006 | 0.076 |
-| 4 | `kernel_01_mkII_STABLE_ROUNDING_FMA` | 9.413 | 9.133 | 9.029 | 0.010 | 0.100 |
-| 5 | `C_native_01` | 9.251 | 9.054 | 8.980 | 0.005 | 0.073 |
-| 6 | `kernel_03_mkII_STABLE_ROUNDING` | 9.232 | 9.032 | 8.932 | 0.007 | 0.084 |
-| 7 | `kernel_03_mkII_STABLE_ROUNDING_FMA` | 9.189 | 9.018 | 8.917 | 0.005 | 0.069 |
-| 8 | `C_native_packed_custom_layout_FMA` | 9.130 | 9.011 | 8.871 | 0.004 | 0.065 |
-| 9 | `kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.069 | 9.001 | 8.947 | 0.002 | 0.045 |
-| 10 | `kernel_06_mkII` | 9.049 | 8.978 | 8.912 | 0.002 | 0.046 |
-| 11 | `kernel_02_mkII_STABLE_ROUNDING` | 9.178 | 8.926 | 8.811 | 0.009 | 0.096 |
-| 12 | `kernel_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 9.024 | 8.919 | 8.864 | 0.002 | 0.045 |
-| 13 | `kernel_02_mkII_STABLE_ROUNDING_FMA` | 8.972 | 8.871 | 8.796 | 0.003 | 0.053 |
-| 14 | `kernel_03_mkII` | 8.955 | 8.790 | 8.720 | 0.005 | 0.071 |
-| 15 | `kernel_02_mkII` | 8.705 | 8.556 | 8.457 | 0.004 | 0.065 |
-| 16 | `kernel_05_mkII` | 8.381 | 8.246 | 8.179 | 0.004 | 0.060 |
-| 17 | `kernel_04_mkII_STABLE_ROUNDING_FMA` | 8.413 | 8.237 | 8.114 | 0.006 | 0.075 |
-| 18 | `kernel_04_mkII_STABLE_ROUNDING` | 8.415 | 8.234 | 8.147 | 0.008 | 0.092 |
-| 19 | `kernel_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 8.274 | 8.208 | 8.167 | 0.001 | 0.036 |
-| 20 | `kernel_01_mkII_STABLE_ROUNDING` | 8.275 | 8.189 | 8.107 | 0.003 | 0.051 |
-| 21 | `kernel_01_mkII` | 8.327 | 8.104 | 8.016 | 0.007 | 0.085 |
-| 22 | `kernel_04_mkII` | 8.161 | 8.027 | 7.949 | 0.003 | 0.053 |
-
-</details>
+No current 1024-bit `run_all` summary CSV is present under this benchmark's `results_raw/` tree. The serial table should be regenerated after a fresh 1024-bit run is collected.
 
 ## OpenMP Results
 
 ### 512-bit OpenMP interpretation
 
+These rows are derived from `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_repeat10_20260525_224339/summary_raxpy_mpfr_n10000000_p512_repeat10.csv`.
+
+| Observation | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
+| --- | --- | --- | --- | --- | --- |
+| Best raw C OpenMP avg | `C_native_openmp_02` | 414.892 | 408.621 | 398.907 | Raw C reference for the numbered source shape. |
+| Best mkII OpenMP avg | `kernel_openmp_01_PRECISION_FMA` | 419.733 | 412.596 | 401.664 | Wrapper fixed-precision build; intended to remove repeated precision checks or scratch setup when the source shape allows it. |
+| Best OpenMP max | `kernel_openmp_01_PRECISION_FMA` | 419.733 | 412.596 | 401.664 | Wrapper fixed-precision build; intended to remove repeated precision checks or scratch setup when the source shape allows it. |
+
 <details>
 <summary>512-bit OpenMP results sorted by Max MFLOPS</summary>
 
-| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS |
-|------|---------|-----------:|-----------:|-----------:|-----------:|--------------:|
-| 1 | `C_native_openmp_01_FMA` | 422.647 | 412.005 | 397.239 | 45.560 | 6.750 |
-| 2 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 422.613 | 414.601 | 404.807 | 30.961 | 5.564 |
-| 3 | `kernel_openmp_05_mkII_FMA` | 421.818 | 413.181 | 391.186 | 84.907 | 9.215 |
-| 4 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 420.011 | 412.811 | 396.439 | 58.378 | 7.641 |
-| 5 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 413.187 | 395.771 | 372.361 | 131.640 | 11.473 |
-| 6 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | 412.930 | 404.865 | 391.492 | 43.049 | 6.561 |
-| 7 | `kernel_openmp_06_mkII` | 412.276 | 406.960 | 402.329 | 8.767 | 2.961 |
-| 8 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 410.457 | 404.020 | 395.976 | 24.756 | 4.976 |
-| 9 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 408.120 | 401.023 | 389.165 | 35.026 | 5.918 |
-| 10 | `kernel_openmp_03_mkII` | 405.126 | 395.355 | 372.712 | 99.632 | 9.982 |
-| 11 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 404.445 | 391.459 | 380.405 | 87.876 | 9.374 |
-| 12 | `kernel_openmp_02_mkII_STABLE_ROUNDING` | 404.415 | 387.554 | 331.484 | 461.276 | 21.477 |
-| 13 | `C_native_openmp_01` | 404.358 | 397.921 | 382.053 | 36.185 | 6.015 |
-| 14 | `kernel_openmp_05_mkII` | 404.269 | 391.510 | 368.697 | 105.857 | 10.289 |
-| 15 | `kernel_openmp_02_mkII` | 402.761 | 397.517 | 393.693 | 10.690 | 3.270 |
-| 16 | `kernel_openmp_04_mkII_STABLE_ROUNDING` | 401.977 | 387.049 | 369.021 | 106.410 | 10.316 |
-| 17 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 399.565 | 392.081 | 373.498 | 67.905 | 8.240 |
-| 18 | `kernel_openmp_01_mkII` | 397.552 | 388.010 | 372.971 | 59.407 | 7.708 |
-| 19 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 395.495 | 380.476 | 341.166 | 289.604 | 17.018 |
-| 20 | `kernel_openmp_04_mkII` | 394.886 | 382.610 | 370.230 | 59.005 | 7.681 |
-| 21 | `kernel_openmp_01_mkII_STABLE_ROUNDING` | 388.881 | 382.625 | 374.177 | 24.528 | 4.953 |
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+| --- | --- | --- | --- | --- |
+| 1 | `kernel_openmp_01_PRECISION_FMA` | 419.733 | 412.596 | 401.664 |
+| 2 | `kernel_openmp_01_ROUNDING_PRECISION_FMA` | 419.685 | 408.413 | 377.145 |
+| 3 | `C_native_openmp_01_FMA` | 417.236 | 408.573 | 388.027 |
+| 4 | `C_native_openmp_02` | 414.892 | 408.621 | 398.907 |
+| 5 | `kernel_openmp_03_ROUNDING_PRECISION` | 413.886 | 408.134 | 393.355 |
+| 6 | `kernel_openmp_01_ROUNDING_PRECISION` | 412.112 | 406.426 | 401.691 |
+| 7 | `kernel_openmp_03_ROUNDING` | 410.322 | 406.376 | 395.118 |
+| 8 | `kernel_openmp_03_PRECISION` | 410.209 | 398.361 | 387.120 |
+| 9 | `C_native_openmp_03` | 409.403 | 399.606 | 392.428 |
+| 10 | `kernel_openmp_02_ROUNDING` | 408.695 | 395.370 | 370.260 |
+| 11 | `kernel_openmp_01_PRECISION` | 406.541 | 399.762 | 376.801 |
+| 12 | `kernel_openmp_03` | 406.409 | 394.325 | 367.962 |
+| 13 | `C_native_openmp_01` | 405.033 | 396.789 | 387.875 |
+| 14 | `kernel_openmp_01_ROUNDING` | 404.438 | 385.970 | 363.888 |
+| 15 | `kernel_openmp_02_ROUNDING_PRECISION` | 403.043 | 396.935 | 370.287 |
+| 16 | `kernel_openmp_02` | 401.170 | 383.443 | 348.895 |
+| 17 | `kernel_openmp_04_ROUNDING` | 401.048 | 379.637 | 313.844 |
+| 18 | `kernel_openmp_01` | 398.775 | 380.996 | 334.992 |
+| 19 | `kernel_openmp_02_PRECISION` | 396.785 | 389.304 | 373.605 |
+| 20 | `kernel_openmp_04_ROUNDING_PRECISION` | 396.653 | 375.801 | 313.115 |
+| 21 | `kernel_openmp_04` | 393.311 | 382.954 | 362.084 |
+| 22 | `kernel_openmp_04_PRECISION` | 392.204 | 379.436 | 359.900 |
+| 23 | `C_native_openmp_04` | 387.887 | 370.280 | 323.577 |
 
 </details>
 
 <details>
 <summary>512-bit OpenMP results sorted by Avg MFLOPS</summary>
 
-| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS |
-|------|---------|-----------:|-----------:|-----------:|-----------:|--------------:|
-| 1 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 422.613 | 414.601 | 404.807 | 30.961 | 5.564 |
-| 2 | `kernel_openmp_05_mkII_FMA` | 421.818 | 413.181 | 391.186 | 84.907 | 9.215 |
-| 3 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 420.011 | 412.811 | 396.439 | 58.378 | 7.641 |
-| 4 | `C_native_openmp_01_FMA` | 422.647 | 412.005 | 397.239 | 45.560 | 6.750 |
-| 5 | `kernel_openmp_06_mkII` | 412.276 | 406.960 | 402.329 | 8.767 | 2.961 |
-| 6 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | 412.930 | 404.865 | 391.492 | 43.049 | 6.561 |
-| 7 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 410.457 | 404.020 | 395.976 | 24.756 | 4.976 |
-| 8 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 408.120 | 401.023 | 389.165 | 35.026 | 5.918 |
-| 9 | `C_native_openmp_01` | 404.358 | 397.921 | 382.053 | 36.185 | 6.015 |
-| 10 | `kernel_openmp_02_mkII` | 402.761 | 397.517 | 393.693 | 10.690 | 3.270 |
-| 11 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 413.187 | 395.771 | 372.361 | 131.640 | 11.473 |
-| 12 | `kernel_openmp_03_mkII` | 405.126 | 395.355 | 372.712 | 99.632 | 9.982 |
-| 13 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 399.565 | 392.081 | 373.498 | 67.905 | 8.240 |
-| 14 | `kernel_openmp_05_mkII` | 404.269 | 391.510 | 368.697 | 105.857 | 10.289 |
-| 15 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 404.445 | 391.459 | 380.405 | 87.876 | 9.374 |
-| 16 | `kernel_openmp_01_mkII` | 397.552 | 388.010 | 372.971 | 59.407 | 7.708 |
-| 17 | `kernel_openmp_02_mkII_STABLE_ROUNDING` | 404.415 | 387.554 | 331.484 | 461.276 | 21.477 |
-| 18 | `kernel_openmp_04_mkII_STABLE_ROUNDING` | 401.977 | 387.049 | 369.021 | 106.410 | 10.316 |
-| 19 | `kernel_openmp_01_mkII_STABLE_ROUNDING` | 388.881 | 382.625 | 374.177 | 24.528 | 4.953 |
-| 20 | `kernel_openmp_04_mkII` | 394.886 | 382.610 | 370.230 | 59.005 | 7.681 |
-| 21 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 395.495 | 380.476 | 341.166 | 289.604 | 17.018 |
+| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS |
+| --- | --- | --- | --- | --- |
+| 1 | `kernel_openmp_01_PRECISION_FMA` | 419.733 | 412.596 | 401.664 |
+| 2 | `C_native_openmp_02` | 414.892 | 408.621 | 398.907 |
+| 3 | `C_native_openmp_01_FMA` | 417.236 | 408.573 | 388.027 |
+| 4 | `kernel_openmp_01_ROUNDING_PRECISION_FMA` | 419.685 | 408.413 | 377.145 |
+| 5 | `kernel_openmp_03_ROUNDING_PRECISION` | 413.886 | 408.134 | 393.355 |
+| 6 | `kernel_openmp_01_ROUNDING_PRECISION` | 412.112 | 406.426 | 401.691 |
+| 7 | `kernel_openmp_03_ROUNDING` | 410.322 | 406.376 | 395.118 |
+| 8 | `kernel_openmp_01_PRECISION` | 406.541 | 399.762 | 376.801 |
+| 9 | `C_native_openmp_03` | 409.403 | 399.606 | 392.428 |
+| 10 | `kernel_openmp_03_PRECISION` | 410.209 | 398.361 | 387.120 |
+| 11 | `kernel_openmp_02_ROUNDING_PRECISION` | 403.043 | 396.935 | 370.287 |
+| 12 | `C_native_openmp_01` | 405.033 | 396.789 | 387.875 |
+| 13 | `kernel_openmp_02_ROUNDING` | 408.695 | 395.370 | 370.260 |
+| 14 | `kernel_openmp_03` | 406.409 | 394.325 | 367.962 |
+| 15 | `kernel_openmp_02_PRECISION` | 396.785 | 389.304 | 373.605 |
+| 16 | `kernel_openmp_01_ROUNDING` | 404.438 | 385.970 | 363.888 |
+| 17 | `kernel_openmp_02` | 401.170 | 383.443 | 348.895 |
+| 18 | `kernel_openmp_04` | 393.311 | 382.954 | 362.084 |
+| 19 | `kernel_openmp_01` | 398.775 | 380.996 | 334.992 |
+| 20 | `kernel_openmp_04_ROUNDING` | 401.048 | 379.637 | 313.844 |
+| 21 | `kernel_openmp_04_PRECISION` | 392.204 | 379.436 | 359.900 |
+| 22 | `kernel_openmp_04_ROUNDING_PRECISION` | 396.653 | 375.801 | 313.115 |
+| 23 | `C_native_openmp_04` | 387.887 | 370.280 | 323.577 |
 
 </details>
-
 ### 1024-bit OpenMP interpretation
 
-<details>
-<summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
-
-| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS |
-|------|---------|-----------:|-----------:|-----------:|-----------:|--------------:|
-| 1 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 258.391 | 246.258 | 220.340 | 172.317 | 13.127 |
-| 2 | `kernel_openmp_05_mkII_FMA` | 257.902 | 251.567 | 247.225 | 13.278 | 3.644 |
-| 3 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 257.519 | 251.175 | 242.115 | 23.406 | 4.838 |
-| 4 | `C_native_openmp_01_FMA` | 256.361 | 252.101 | 241.479 | 23.022 | 4.798 |
-| 5 | `kernel_openmp_02_mkII_STABLE_ROUNDING` | 249.422 | 245.761 | 243.830 | 2.450 | 1.565 |
-| 6 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 249.382 | 245.225 | 241.009 | 6.803 | 2.608 |
-| 7 | `kernel_openmp_06_mkII` | 248.596 | 240.716 | 227.820 | 27.710 | 5.264 |
-| 8 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 248.119 | 244.436 | 240.526 | 5.884 | 2.426 |
-| 9 | `C_native_openmp_01` | 247.423 | 244.719 | 242.700 | 2.489 | 1.578 |
-| 10 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 247.078 | 243.982 | 240.779 | 5.342 | 2.311 |
-| 11 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | 246.854 | 243.348 | 237.407 | 7.287 | 2.700 |
-| 12 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 246.658 | 242.667 | 231.067 | 18.904 | 4.348 |
-| 13 | `kernel_openmp_03_mkII` | 243.988 | 239.630 | 234.461 | 7.844 | 2.801 |
-| 14 | `kernel_openmp_02_mkII` | 241.189 | 237.876 | 233.294 | 6.493 | 2.548 |
-| 15 | `kernel_openmp_04_mkII_STABLE_ROUNDING` | 226.014 | 219.683 | 209.480 | 25.508 | 5.051 |
-| 16 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 225.673 | 220.669 | 210.751 | 16.497 | 4.062 |
-| 17 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 224.838 | 219.073 | 206.807 | 36.127 | 6.011 |
-| 18 | `kernel_openmp_01_mkII_STABLE_ROUNDING` | 224.539 | 216.630 | 206.711 | 42.233 | 6.499 |
-| 19 | `kernel_openmp_05_mkII` | 223.985 | 217.284 | 197.772 | 61.560 | 7.846 |
-| 20 | `kernel_openmp_01_mkII` | 222.326 | 216.774 | 206.693 | 23.415 | 4.839 |
-| 21 | `kernel_openmp_04_mkII` | 220.873 | 215.097 | 203.137 | 39.175 | 6.259 |
-
-</details>
-
-<details>
-<summary>1024-bit OpenMP results sorted by Avg MFLOPS</summary>
-
-| Rank | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Var MFLOPS | Stddev MFLOPS |
-|------|---------|-----------:|-----------:|-----------:|-----------:|--------------:|
-| 1 | `C_native_openmp_01_FMA` | 256.361 | 252.101 | 241.479 | 23.022 | 4.798 |
-| 2 | `kernel_openmp_05_mkII_FMA` | 257.902 | 251.567 | 247.225 | 13.278 | 3.644 |
-| 3 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 257.519 | 251.175 | 242.115 | 23.406 | 4.838 |
-| 4 | `kernel_openmp_01_mkII_STABLE_ROUNDING_FMA` | 258.391 | 246.258 | 220.340 | 172.317 | 13.127 |
-| 5 | `kernel_openmp_02_mkII_STABLE_ROUNDING` | 249.422 | 245.761 | 243.830 | 2.450 | 1.565 |
-| 6 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA` | 249.382 | 245.225 | 241.009 | 6.803 | 2.608 |
-| 7 | `C_native_openmp_01` | 247.423 | 244.719 | 242.700 | 2.489 | 1.578 |
-| 8 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 248.119 | 244.436 | 240.526 | 5.884 | 2.426 |
-| 9 | `kernel_openmp_03_mkII_STABLE_ROUNDING_FMA` | 247.078 | 243.982 | 240.779 | 5.342 | 2.311 |
-| 10 | `kernel_openmp_03_mkII_STABLE_ROUNDING` | 246.854 | 243.348 | 237.407 | 7.287 | 2.700 |
-| 11 | `kernel_openmp_02_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 246.658 | 242.667 | 231.067 | 18.904 | 4.348 |
-| 12 | `kernel_openmp_06_mkII` | 248.596 | 240.716 | 227.820 | 27.710 | 5.264 |
-| 13 | `kernel_openmp_03_mkII` | 243.988 | 239.630 | 234.461 | 7.844 | 2.801 |
-| 14 | `kernel_openmp_02_mkII` | 241.189 | 237.876 | 233.294 | 6.493 | 2.548 |
-| 15 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA` | 225.673 | 220.669 | 210.751 | 16.497 | 4.062 |
-| 16 | `kernel_openmp_04_mkII_STABLE_ROUNDING` | 226.014 | 219.683 | 209.480 | 25.508 | 5.051 |
-| 17 | `kernel_openmp_04_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` | 224.838 | 219.073 | 206.807 | 36.127 | 6.011 |
-| 18 | `kernel_openmp_05_mkII` | 223.985 | 217.284 | 197.772 | 61.560 | 7.846 |
-| 19 | `kernel_openmp_01_mkII` | 222.326 | 216.774 | 206.693 | 23.415 | 4.839 |
-| 20 | `kernel_openmp_01_mkII_STABLE_ROUNDING` | 224.539 | 216.630 | 206.711 | 42.233 | 6.499 |
-| 21 | `kernel_openmp_04_mkII` | 220.873 | 215.097 | 203.137 | 39.175 | 6.259 |
-
-</details>
+No current 1024-bit `run_all` summary CSV is present under this benchmark's `results_raw/` tree. The OpenMP table should be regenerated after a fresh 1024-bit run is collected.
 
 ## Comparison with GMP version
 
-The MPFR and GMP Raxpy runs should be compared by source-level class, not only by the fastest headline row. The closest split multiply/add class is `C_native_01` on both sides; MPFR FMA rows are a distinct backend operation with no GMP `mpf_t` equivalent in this benchmark.
+The rows below compare the current 512-bit `run_all` data for `01_Raxpy`. This is a performance-class comparison; GMP `mpf` and MPFR have different precision and rounding semantics.
 
-| Precision | Comparison point | GMP average | MPFR average | Interpretation |
-|-----------|------------------|------------:|-------------:|----------------|
-| 512 | Serial split C native | 33.634 MFLOPS | 22.533 MFLOPS | Closest split-loop comparison; GMP is faster in serial for both precisions. |
-| 512 | OpenMP split C native | 390.629 MFLOPS | 397.921 MFLOPS | Same broad streaming class; 512-bit is close, while 1024-bit favors GMP in this run. |
-| 512 | OpenMP fused C native | none | 412.005 MFLOPS | MPFR-only FMA class; not directly comparable to GMP split Raxpy. |
-| 512 | Best OpenMP wrapper | 393.019 MFLOPS (`kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH`) | 414.601 MFLOPS (`kernel_openmp_01_mkII_STABLE_ROUNDING_FMA`) | Best-wrapper comparison mixes available backend operations, so interpret through the hotpath class. |
-| 1024 | Serial split C native | 11.954 MFLOPS | 9.054 MFLOPS | Closest split-loop comparison; GMP is faster in serial for both precisions. |
-| 1024 | OpenMP split C native | 248.587 MFLOPS | 244.719 MFLOPS | Same broad streaming class; 512-bit is close, while 1024-bit favors GMP in this run. |
-| 1024 | OpenMP fused C native | none | 252.101 MFLOPS | MPFR-only FMA class; not directly comparable to GMP split Raxpy. |
-| 1024 | Best OpenMP wrapper | 389.155 MFLOPS (`kernel_openmp_03_mkII`) | 252.101 MFLOPS (`C_native_openmp_01_FMA`) | Best-wrapper comparison mixes available backend operations, so interpret through the hotpath class. |
-
-At 512 bits, MPFR OpenMP FMA paths can edge past the GMP OpenMP split class because `mpfr_fma` removes the explicit product temporary. At 1024 bits, GMP OpenMP reusable-product paths stay around 389 MFLOPS average, while the best MPFR OpenMP FMA average is about 252 MFLOPS. The extra MPFR limb work and rounding-aware backend path are therefore visible at 1024 bits even though the source-level wrapper overhead remains outside the timed loop.
+| Class | GMP best-avg variant | GMP Avg MFLOPS | MPFR best-avg variant | MPFR Avg MFLOPS | MPFR/GMP |
+| --- | --- | --- | --- | --- | --- |
+| Best serial average | `C_native_03` | 33.780 | `C_native_01` | 22.971 | 0.680x |
+| Best OpenMP average | `kernel_openmp_03_orig` | 394.012 | `kernel_openmp_01_PRECISION_FMA` | 412.596 | 1.047x |
 
 ## Hotpath Disassembly
 
