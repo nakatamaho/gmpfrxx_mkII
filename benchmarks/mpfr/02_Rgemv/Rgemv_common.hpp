@@ -43,9 +43,7 @@ using namespace mpfrxx;
 
 #define MFLOPS 1e+6
 
-extern gmp_randstate_t state;
-
-inline void init_mpfr_mat(mpfr_t *mat, int64_t m, int64_t n, int64_t lda, int prec) {
+inline void init_mpfr_mat(mpfr_t *mat, int64_t m, int64_t n, int64_t lda, int prec, gmp_randstate_t state) {
     for (int64_t j = 0; j < n; ++j) {
         for (int64_t i = 0; i < m; ++i) {
             mpfr_init2(mat[i + j * lda], prec);
@@ -62,7 +60,7 @@ inline void clear_mpfr_mat(mpfr_t *mat, int64_t m, int64_t n, int64_t lda) {
     }
 }
 
-inline void init_mpfr_vec(mpfr_t *vec, int64_t n, int prec) {
+inline void init_mpfr_vec(mpfr_t *vec, int64_t n, int prec, gmp_randstate_t state) {
     for (int64_t i = 0; i < n; ++i) {
         mpfr_init2(vec[i], prec);
         mpfr_urandomb(vec[i], state);
@@ -104,11 +102,13 @@ inline void print_l1_result(const mpfr_class &l1_norm) {
 
 inline int run_native_rgemv_benchmark(int argc, char **argv,
                                       void (*kernel)(int64_t, int64_t, const mpfr_t, const mpfr_t *, int64_t, const mpfr_t *, int64_t, const mpfr_t, mpfr_t *, int64_t)) {
+    gmp_randstate_t state;
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
     if (argc != 4) {
         std::cerr << "Usage: " << argv[0] << " <rows m> <cols n> <precision>" << std::endl;
+        gmp_randclear(state);
         return EXIT_FAILURE;
     }
 
@@ -129,9 +129,9 @@ inline int run_native_rgemv_benchmark(int argc, char **argv,
     mpfr_init2(beta, prec);
     mpfr_urandomb(beta, state);
 
-    init_mpfr_mat(A, m, n, lda, prec);
-    init_mpfr_vec(x, n, prec);
-    init_mpfr_vec(y, m, prec);
+    init_mpfr_mat(A, m, n, lda, prec, state);
+    init_mpfr_vec(x, n, prec, state);
+    init_mpfr_vec(y, m, prec, state);
 
     mpfr_class *A_class = new mpfr_class[m * n];
     mpfr_class *x_class = new mpfr_class[n];
@@ -177,17 +177,20 @@ inline int run_native_rgemv_benchmark(int argc, char **argv,
     delete[] A_class;
     delete[] x_class;
     delete[] y_class;
+    gmp_randclear(state);
 
     return EXIT_SUCCESS;
 }
 
 inline int run_class_rgemv_benchmark(int argc, char **argv,
                                      void (*kernel)(int64_t, int64_t, const mpfr_class &, const mpfr_class *, int64_t, const mpfr_class *, int64_t, const mpfr_class &, mpfr_class *, int64_t)) {
+    gmp_randstate_t state;
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
     if (argc != 4) {
         std::cerr << "Usage: " << argv[0] << " <rows> <cols> <precision>" << std::endl;
+        gmp_randclear(state);
         return EXIT_FAILURE;
     }
 
@@ -206,9 +209,9 @@ inline int run_class_rgemv_benchmark(int argc, char **argv,
     mpfr_urandomb(alpha_raw, state);
     mpfr_init2(beta_raw, prec);
     mpfr_urandomb(beta_raw, state);
-    init_mpfr_mat(A_raw, m, n, lda, prec);
-    init_mpfr_vec(x_raw, n, prec);
-    init_mpfr_vec(y_raw, m, prec);
+    init_mpfr_mat(A_raw, m, n, lda, prec, state);
+    init_mpfr_vec(x_raw, n, prec, state);
+    init_mpfr_vec(y_raw, m, prec, state);
 
     mpfr_class *A = new mpfr_class[m * n];
     mpfr_class *x = new mpfr_class[n];
@@ -257,6 +260,7 @@ inline int run_class_rgemv_benchmark(int argc, char **argv,
     delete[] x;
     delete[] y;
     delete[] yy;
+    gmp_randclear(state);
 
     return EXIT_SUCCESS;
 }

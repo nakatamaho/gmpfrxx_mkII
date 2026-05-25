@@ -31,7 +31,6 @@
 
 #include "Rgemv_common.hpp"
 
-gmp_randstate_t state;
 void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, int64_t lda, const mpfr_class *x, int64_t incx, const mpfr_class &beta, mpfr_class *y, int64_t incy) {
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;

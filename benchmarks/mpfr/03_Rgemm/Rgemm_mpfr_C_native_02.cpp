@@ -8,7 +8,6 @@
 
 #include "Rgemm_common.hpp"
 
-gmp_randstate_t state;
 
 void _Rgemm(int64_t m, int64_t k, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, const mpfr_t beta, mpfr_t *C, int64_t ldc) {
     if (lda < m || ldb < k || ldc < m) {

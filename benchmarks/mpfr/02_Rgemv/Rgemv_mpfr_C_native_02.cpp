@@ -27,7 +27,6 @@
 
 #include "Rgemv_common.hpp"
 
-gmp_randstate_t state;
 
 void _Rgemv(int64_t m, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *x, int64_t incx, const mpfr_t beta, mpfr_t *y, int64_t incy) {
     if (incx != 1 || incy != 1) {
