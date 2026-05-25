@@ -117,6 +117,38 @@ plots, and correctness result.
 State the 1024-bit run ID, benchmark command, raw log, raw CSV, summary CSV,
 plots, and correctness result.
 
+## Plot Regeneration
+
+Document the exact command used to regenerate plots from the committed raw log
+or summary CSV.
+
+Use the backend-standard color palette so plots remain visually comparable
+across benchmark families.
+
+GMP plot palette:
+
+| Class | Color |
+|-------|-------|
+| C native | `#8c8c8c` |
+| upstream `orig` | `#2ca02c` |
+| mkII baseline | `#4c78a8` |
+| fixed precision fastpath | `#d62728` |
+
+MPFR plot palette:
+
+| Class | Color |
+|-------|-------|
+| C native | `#8c8c8c` |
+| mkII baseline | `#4c78a8` |
+| `STABLE_ROUNDING` or `ROUNDING` | `#ff7f0e` |
+| `FMA` | `#9467bd` |
+| `FIXED_PRECISION_FASTPATH` or `PRECISION` | `#d62728` |
+| combined precision + FMA path | `#2ca02c` |
+
+When a benchmark-specific plot script uses semantic classes instead of exact
+target suffixes, keep those semantic classes mapped to the same colors above.
+Do not introduce per-benchmark palettes unless the README explains why the
+standard palette does not apply.
 
 ## Resource or Bandwidth Estimates
 
