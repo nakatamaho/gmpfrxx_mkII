@@ -29,7 +29,13 @@ log_file="${output_dir}/benchmark_raxpy_gmp_n${n}_p${precision}_repeat${repeat_c
 
 executables=(
     "Raxpy_gmp_C_native_01"
+    "Raxpy_gmp_C_native_02"
+    "Raxpy_gmp_C_native_03"
+    "Raxpy_gmp_C_native_04"
     "Raxpy_gmp_C_native_openmp_01"
+    "Raxpy_gmp_C_native_openmp_02"
+    "Raxpy_gmp_C_native_openmp_03"
+    "Raxpy_gmp_C_native_openmp_04"
 )
 
 append_cpp_variant_family() {

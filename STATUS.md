@@ -22829,3 +22829,47 @@ Known issues:
 - The smoke output was written to `/tmp/rdot_gmp_run_repeat_smoke` and was not committed.
 - Existing unrelated dirty worktree entries from earlier benchmark refactors remain untouched.
 - Existing untracked backup file `benchmarks/gmp/02_Rgemv/README.md~` remains untouched.
+
+## Phase: Complete GMP Raxpy C Native Variant Matrix
+
+Implemented features:
+- Added GMP Raxpy raw C native serial variants `02`, `03`, and `04`.
+- Added matching OpenMP raw C native variants `openmp_02`, `openmp_03`, and `openmp_04`.
+- Defined `02` as copy-then-multiply with one reusable `mpf_t` temporary.
+- Defined `03` as the numbered direct reusable-temporary comparison point matching the current reusable direct-multiply baseline.
+- Defined `04` as the loop-local `mpf_init`/`mpf_clear` stress case.
+- Registered all new raw C native targets in `benchmarks/CMakeLists.txt`.
+- Added the new targets to `benchmarks/gmp/01_Raxpy/run_repeat.sh`.
+- Updated `benchmarks/gmp/01_Raxpy/README.md` with the expanded C native equivalent-kernel mapping.
+
+Missing features:
+- No new repeat-10 benchmark data was regenerated in this phase.
+
+Tests added:
+- No unit tests. This phase adds benchmark kernel variants and runner/reporting coverage.
+
+Exact commands run:
+- `sed -n "1,140p" benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01.cpp`
+- `sed -n "1,140p" benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02.cpp`
+- `sed -n "1,140p" benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03.cpp`
+- `sed -n "1,140p" benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04.cpp`
+- `sed -n "1,150p" benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01.cpp`
+- `sed -n "1,160p" benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02.cpp`
+- `sed -n "1,160p" benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03.cpp`
+- `sed -n "1,160p" benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04.cpp`
+- `rg -n "Raxpy_gmp_C_native_(openmp_)?0[1-4]|C Native Equivalent|Variant Shapes|Transition" benchmarks/CMakeLists.txt benchmarks/gmp/01_Raxpy/run_repeat.sh benchmarks/gmp/01_Raxpy/README.md`
+- `cmake --build build_bench_release -j --target Raxpy_gmp_C_native_01 Raxpy_gmp_C_native_02 Raxpy_gmp_C_native_03 Raxpy_gmp_C_native_04 Raxpy_gmp_C_native_openmp_01 Raxpy_gmp_C_native_openmp_02 Raxpy_gmp_C_native_openmp_03 Raxpy_gmp_C_native_openmp_04`
+- `OMP_NUM_THREADS=2 build_bench_release/benchmarks/gmp/01_Raxpy/<target> 128 512` for all eight raw C native serial/OpenMP targets.
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Target rebuild: PASS.
+- Raw C native smoke runs: PASS. All eight targets reported `Result OK`.
+- Whitespace check: PASS.
+- Release CTest: PASS, 178/178 tests passed in `build_bench_release`.
+
+Known issues:
+- `C_native_01` and `C_native_03` intentionally share the same direct reusable-temporary hot-loop class; `03` exists to provide a numbered raw C comparison point for wrapper variant `03`.
+- Old committed `results_raw` directories were removed earlier by request and fresh repeat data has not been regenerated yet.
+- Existing unrelated dirty worktree entries remain untouched.
