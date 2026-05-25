@@ -7,14 +7,37 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_dir="$(cd "${script_dir}/.." && pwd)"
 
 build_dir="${1:-${repo_dir}/build_bench_release}"
-precision="${2:-512}"
+precision_arg="${2:-512,1024}"
 repeat_count="${3:-10}"
 rdot_n="${4:-10000000}"
 raxpy_n="${5:-${rdot_n}}"
 rgemv_m="${6:-4000}"
 rgemv_n="${7:-4000}"
 output_root="${8:-}"
-run_id="${RUN_ALL_ID:-run_all_p${precision}_repeat${repeat_count}_$(date +%Y%m%d_%H%M%S)}"
+run_stamp="${RUN_ALL_STAMP:-$(date +%Y%m%d_%H%M%S)}"
+
+precisions=()
+case "${precision_arg}" in
+    all | both)
+        precision_list="512 1024"
+        ;;
+    *)
+        precision_list="${precision_arg//,/ }"
+        ;;
+esac
+
+for precision in ${precision_list}; do
+    if [[ ! "${precision}" =~ ^[0-9]+$ ]]; then
+        echo "Invalid precision '${precision}' in '${precision_arg}'" >&2
+        exit 1
+    fi
+    precisions+=("${precision}")
+done
+
+if [[ "${#precisions[@]}" -eq 0 ]]; then
+    echo "No precision values requested" >&2
+    exit 1
+fi
 
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-32}"
 export OMP_PLACES="${OMP_PLACES:-cores}"
@@ -44,21 +67,81 @@ run_subdir() {
     "${runner}" "$@" "${out_dir}"
 }
 
+run_id_for_precision() {
+    local precision="$1"
+
+    if [[ -n "${RUN_ALL_ID:-}" ]]; then
+        if [[ "${#precisions[@]}" -gt 1 ]]; then
+            printf "%s_p%s\n" "${RUN_ALL_ID}" "${precision}"
+        else
+            printf "%s\n" "${RUN_ALL_ID}"
+        fi
+    else
+        printf "run_all_p%s_repeat%s_%s\n" "${precision}" "${repeat_count}" "${run_stamp}"
+    fi
+}
+
 output_dir_for() {
     local rel_dir="$1"
+    local run_id="$2"
     local flat_label="${rel_dir//\//_}"
 
     if [[ -n "${output_root}" ]]; then
-        printf "%s/%s\n" "${output_root}" "${flat_label}"
+        if [[ "${#precisions[@]}" -gt 1 ]]; then
+            printf "%s/%s/%s\n" "${output_root}" "${flat_label}" "${run_id}"
+        else
+            printf "%s/%s\n" "${output_root}" "${flat_label}"
+        fi
     else
         printf "%s/%s/results_raw/%s\n" "${script_dir}" "${rel_dir}" "${run_id}"
     fi
 }
 
+run_precision_suite() {
+    local precision="$1"
+    local run_id
+    run_id="$(run_id_for_precision "${precision}")"
 
-echo "RUN_ALL build_dir=${build_dir} precision=${precision} repeat=${repeat_count}"
+    echo "RUN_ALL_PRECISION_BEGIN precision=${precision} run_id=${run_id}"
+
+    run_subdir "gmp/00_Rdot" \
+        "${script_dir}/gmp/00_Rdot/run_repeat.sh" \
+        "$(output_dir_for "gmp/00_Rdot" "${run_id}")" \
+        "${build_dir}" "${rdot_n}" "${precision}" "${repeat_count}"
+
+    run_subdir "gmp/01_Raxpy" \
+        "${script_dir}/gmp/01_Raxpy/run_repeat.sh" \
+        "$(output_dir_for "gmp/01_Raxpy" "${run_id}")" \
+        "${build_dir}" "${raxpy_n}" "${precision}" "${repeat_count}"
+
+    run_subdir "gmp/02_Rgemv" \
+        "${script_dir}/gmp/02_Rgemv/run_repeat.sh" \
+        "$(output_dir_for "gmp/02_Rgemv" "${run_id}")" \
+        "${build_dir}" "${rgemv_m}" "${rgemv_n}" "${precision}" "${repeat_count}"
+
+    run_subdir "mpfr/00_Rdot" \
+        "${script_dir}/mpfr/00_Rdot/run_repeat.sh" \
+        "$(output_dir_for "mpfr/00_Rdot" "${run_id}")" \
+        "${build_dir}" "${rdot_n}" "${precision}" "${repeat_count}"
+
+    run_subdir "mpfr/01_Raxpy" \
+        "${script_dir}/mpfr/01_Raxpy/run_repeat.sh" \
+        "$(output_dir_for "mpfr/01_Raxpy" "${run_id}")" \
+        "${build_dir}" "${raxpy_n}" "${precision}" "${repeat_count}"
+
+    run_subdir "mpfr/02_Rgemv" \
+        "${script_dir}/mpfr/02_Rgemv/run_repeat.sh" \
+        "$(output_dir_for "mpfr/02_Rgemv" "${run_id}")" \
+        "${build_dir}" "${rgemv_m}" "${rgemv_n}" "${precision}" "${repeat_count}"
+
+    echo "RUN_ALL_PRECISION_DONE precision=${precision} run_id=${run_id}"
+    echo
+}
+
+
+echo "RUN_ALL build_dir=${build_dir} precisions=${precisions[*]} repeat=${repeat_count}"
 echo "RUN_ALL rdot_n=${rdot_n} raxpy_n=${raxpy_n} rgemv_m=${rgemv_m} rgemv_n=${rgemv_n}"
-echo "RUN_ALL run_id=${run_id}"
+echo "RUN_ALL run_stamp=${run_stamp}"
 if [[ -n "${output_root}" ]]; then
     echo "RUN_ALL output_root=${output_root}"
 else
@@ -71,34 +154,8 @@ fi
 echo "SKIP gemm benchmarks: gmp/03_Rgemm mpfr/03_Rgemm"
 echo
 
-run_subdir "gmp/00_Rdot" \
-    "${script_dir}/gmp/00_Rdot/run_repeat.sh" \
-    "$(output_dir_for "gmp/00_Rdot")" \
-    "${build_dir}" "${rdot_n}" "${precision}" "${repeat_count}"
+for precision in "${precisions[@]}"; do
+    run_precision_suite "${precision}"
+done
 
-run_subdir "gmp/01_Raxpy" \
-    "${script_dir}/gmp/01_Raxpy/run_repeat.sh" \
-    "$(output_dir_for "gmp/01_Raxpy")" \
-    "${build_dir}" "${raxpy_n}" "${precision}" "${repeat_count}"
-
-run_subdir "gmp/02_Rgemv" \
-    "${script_dir}/gmp/02_Rgemv/run_repeat.sh" \
-    "$(output_dir_for "gmp/02_Rgemv")" \
-    "${build_dir}" "${rgemv_m}" "${rgemv_n}" "${precision}" "${repeat_count}"
-
-run_subdir "mpfr/00_Rdot" \
-    "${script_dir}/mpfr/00_Rdot/run_repeat.sh" \
-    "$(output_dir_for "mpfr/00_Rdot")" \
-    "${build_dir}" "${rdot_n}" "${precision}" "${repeat_count}"
-
-run_subdir "mpfr/01_Raxpy" \
-    "${script_dir}/mpfr/01_Raxpy/run_repeat.sh" \
-    "$(output_dir_for "mpfr/01_Raxpy")" \
-    "${build_dir}" "${raxpy_n}" "${precision}" "${repeat_count}"
-
-run_subdir "mpfr/02_Rgemv" \
-    "${script_dir}/mpfr/02_Rgemv/run_repeat.sh" \
-    "$(output_dir_for "mpfr/02_Rgemv")" \
-    "${build_dir}" "${rgemv_m}" "${rgemv_n}" "${precision}" "${repeat_count}"
-
-echo "RUN_ALL_DONE run_id=${run_id}"
+echo "RUN_ALL_DONE precisions=${precisions[*]} run_stamp=${run_stamp}"

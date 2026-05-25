@@ -44,6 +44,15 @@ The mkII fixed-precision variants use `GMPFRXX_MKII_FAST_FIXED_PREC`;
 executable suffixes keep the historical `FIXED_PRECISION_FASTPATH` label for
 benchmark continuity.
 
+The cross-benchmark runner can execute the GMP and MPFR `00_Rdot`, `01_Raxpy`, and `02_Rgemv` suites for both standard precisions with one command:
+
+```bash
+OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
+    benchmarks/run_all.sh build_bench_release 512,1024 10 10000000 10000000 4000 4000
+```
+
+The second argument is a precision list. `both` and `all` are aliases for `512,1024`; a single value such as `512` still runs only that precision. Per-benchmark results are written to `results_raw/run_all_p512_repeat10_<timestamp>/` and `results_raw/run_all_p1024_repeat10_<timestamp>/` under each benchmark directory.
+
 ## Benchmark Parameters
 
 | Parameter | Meaning |

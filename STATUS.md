@@ -1,3 +1,41 @@
+## Phase: run_all dual-precision runner
+
+Implemented features:
+- Updated `benchmarks/run_all.sh` so one invocation can run multiple requested
+  precisions sequentially.
+- Changed the default precision argument from a single `512` run to the list
+  `512,1024`.
+- Added support for comma-separated precision lists and `all` / `both` aliases.
+- Kept single-precision compatibility: passing `512` or `1024` still runs only
+  that precision.
+- Split per-precision output directories by run ID, including custom
+  `RUN_ALL_ID` runs, so 512-bit and 1024-bit results cannot trip the
+  `SKIP_EXISTING` check for each other.
+- Updated the GMP/MPFR 00_Rdot, 01_Raxpy, and 02_Rgemv benchmark README files
+  to document the one-command 512/1024 runner.
+- Updated `benchmarks/README_TEMPLATE.md` so future benchmark reports document
+  the repository-level precision-list runner consistently.
+
+Missing features:
+- None for the runner change.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `bash -n benchmarks/run_all.sh`
+- `RUN_ALL_ID=smoke benchmarks/run_all.sh build_bench_release 512,1024 10 1 1 1 1 /tmp/gmpfrxx_run_all_smoke_20260526`
+
+Pass/fail result:
+- Shell syntax check: PASS.
+- Smoke run with pre-created summary files: PASS.  The runner entered both
+  `precision=512` and `precision=1024` suites and skipped the expected existing
+  per-precision output directories.
+
+Known issues:
+- The full benchmark suite was not rerun for this scripting/documentation
+  change.
+
 
 ## Phase: MPFR Rdot Rounding Suffix Taxonomy Correction
 

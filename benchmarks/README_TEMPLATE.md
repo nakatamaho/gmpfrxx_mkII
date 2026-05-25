@@ -25,6 +25,19 @@ The runner should set `OMP_NUM_THREADS`, `OMP_PLACES`, `OMP_PROC_BIND`, accept
 backend default-precision environment lines, and invoke the plot script from
 the committed raw log.
 
+When documenting the repository-level runner for the 00_Rdot, 01_Raxpy, and
+02_Rgemv benchmark families, use the current precision-list interface:
+
+```bash
+benchmarks/run_all.sh build_bench_release 512,1024 10 10000000 10000000 4000 4000
+```
+
+The default precision list is `512,1024`.  `both` and `all` are aliases for
+that list, and a single value such as `512` still runs only that precision.
+The repository-level runner writes per-precision output directories such as
+`results_raw/run_all_p512_repeat10_<timestamp>/` and
+`results_raw/run_all_p1024_repeat10_<timestamp>/` under each benchmark.
+
 
 ## Benchmark Parameters
 
