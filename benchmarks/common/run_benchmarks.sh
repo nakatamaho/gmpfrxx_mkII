@@ -78,6 +78,7 @@ run_one() {
             read -r -a prefix <<<"${benchmark_command_prefix}"
             command=("${prefix[@]}" "${command[@]}")
         fi
+        command=(env "GMPXX_DEFAULT_MPF_PRECISION_BITS=${precision}" "${command[@]}")
 
         echo "COMMAND ${label} ${command[*]}"
         echo "RUN ${run}/${repeat_count}"
@@ -171,6 +172,9 @@ run_variants() {
             "Raxpy_gmp_kernel_openmp_03_orig"
             "Raxpy_gmp_kernel_openmp_03_mkII"
             "Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH"
+            "Raxpy_gmp_kernel_openmp_04_orig"
+            "Raxpy_gmp_kernel_openmp_04_mkII"
+            "Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH"
         )
         ;;
     Rgemv)
@@ -257,6 +261,7 @@ run_variants() {
     fi
     echo "BENCHMARK_PARAMS precision=${precision} rdot_n=${rdot_n} raxpy_n=${raxpy_n} rgemv_m=${rgemv_m} rgemv_n=${rgemv_n} rgemm_m=${rgemm_m} rgemm_k=${rgemm_k} rgemm_n=${rgemm_n} repeat=${repeat_count}"
     echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
+    echo "DEFAULT_PRECISION_ENV GMPXX_DEFAULT_MPF_PRECISION_BITS=${precision}"
     if [[ -n "${benchmark_command_prefix}" ]]; then
         echo "BENCH_COMMAND_PREFIX ${benchmark_command_prefix}"
     fi

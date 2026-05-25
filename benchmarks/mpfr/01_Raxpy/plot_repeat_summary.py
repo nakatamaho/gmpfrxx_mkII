@@ -23,16 +23,18 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def natural_key(name: str) -> tuple[int, int, int, str]:
+def natural_key(name: str) -> tuple[int, int, int, int, str]:
     family = 0 if name.startswith("C_native") else 1
     openmp = 1 if "openmp" in name else 0
-    if "STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH" in name:
-        flavor = 4
-    elif "STABLE_ROUNDING_FMA" in name:
-        flavor = 3
-    elif "STABLE_ROUNDING" in name:
+    if "ROUNDING_PRECISION_FMA" in name:
+        flavor = 5
+    elif "PRECISION_FMA" in name or name.endswith("_FMA"):
         flavor = 2
-    elif name.endswith("_FMA"):
+    elif "ROUNDING_PRECISION" in name:
+        flavor = 4
+    elif "ROUNDING" in name:
+        flavor = 3
+    elif "PRECISION" in name:
         flavor = 1
     else:
         flavor = 0
@@ -44,16 +46,12 @@ def natural_key(name: str) -> tuple[int, int, int, str]:
 def variant_color(name: str) -> str:
     if name.startswith("C_native"):
         return "#8c8c8c"
-    if "STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH" in name:
+    if "ROUNDING_PRECISION_FMA" in name or "PRECISION_FMA" in name:
         return "#2ca02c"
-    if "FIXED_PRECISION_FASTPATH_FMA" in name:
-        return "#2ca02c"
-    if "FIXED_PRECISION_FASTPATH" in name:
+    if "ROUNDING_PRECISION" in name or "PRECISION" in name:
         return "#d62728"
-    if "STABLE_ROUNDING" in name:
-        if "FMA" in name:
-            return "#9467bd"
-        return "#d62728"
+    if "ROUNDING" in name:
+        return "#ff7f0e"
     if name.endswith("_FMA"):
         return "#9467bd"
     return "#4c78a8"
@@ -102,10 +100,10 @@ def plot_mode(rows: list[dict[str, str]], mode: str, output: Path, title_prefix:
 
     legend_items = [
         ("C native", "#8c8c8c"),
-        ("mkII", "#4c78a8"),
-        ("stable rounding / fixed precision", "#d62728"),
-        ("FMA", "#9467bd"),
-        ("FMA + fixed precision", "#2ca02c"),
+        ("baseline wrapper", "#4c78a8"),
+        ("precision", "#d62728"),
+        ("rounding", "#ff7f0e"),
+        ("precision + FMA", "#2ca02c"),
     ]
     handles = [Patch(facecolor=color, label=label) for label, color in legend_items]
     ax.legend(

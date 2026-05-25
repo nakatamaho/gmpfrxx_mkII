@@ -154,11 +154,31 @@ function(add_mpfr_rdot_variant_family subdir base)
     add_mpfr_rdot_rounding_variants(${subdir} ${base}_ROUNDING.cpp ${base})
 endfunction()
 
-function(add_mpfr_raxpy_kernel_variants subdir source base)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH)
+function(add_mpfr_raxpy_cpp_target subdir source target)
+    add_executable(${target} "${subdir}/${source}")
+    configure_eager_benchmark(${target} ${subdir})
+    target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
+    if(target MATCHES "PRECISION")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_FAST_FIXED_PREC)
+    endif()
+    if(target MATCHES "_FMA$")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_ENABLE_FMA)
+    endif()
+endfunction()
+
+function(add_mpfr_raxpy_variant_family subdir base)
+    add_mpfr_raxpy_cpp_target(${subdir} ${base}.cpp ${base})
+    add_mpfr_raxpy_cpp_target(${subdir} ${base}.cpp ${base}_PRECISION)
+    add_mpfr_raxpy_cpp_target(${subdir} ${base}_ROUNDING.cpp ${base}_ROUNDING)
+    add_mpfr_raxpy_cpp_target(${subdir} ${base}_ROUNDING.cpp ${base}_ROUNDING_PRECISION)
+endfunction()
+
+function(add_mpfr_raxpy_fma_variant_family subdir base)
+    add_mpfr_raxpy_variant_family(${subdir} ${base})
+    add_mpfr_raxpy_cpp_target(${subdir} ${base}.cpp ${base}_PRECISION_FMA)
+    add_mpfr_raxpy_cpp_target(${subdir} ${base}_ROUNDING.cpp ${base}_ROUNDING_PRECISION_FMA)
 endfunction()
 
 function(add_mpfr_rgemv_cpp_target subdir source target)
@@ -310,34 +330,14 @@ add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_01.cpp
     Raxpy_mpfr_C_native_openmp_01)
 add_mpfr_native_benchmark(mpfr/01_Raxpy Raxpy_mpfr_C_native_openmp_01_FMA.cpp
     Raxpy_mpfr_C_native_openmp_01_FMA)
-add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_01.cpp
-    Raxpy_mpfr_kernel_01)
-add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_02.cpp
-    Raxpy_mpfr_kernel_02)
-add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_03.cpp
-    Raxpy_mpfr_kernel_03)
-add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_04.cpp
-    Raxpy_mpfr_kernel_04)
-add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_05.cpp
-    Raxpy_mpfr_kernel_05 mkII)
-add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_05.cpp
-    Raxpy_mpfr_kernel_05 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_06.cpp
-    Raxpy_mpfr_kernel_06 mkII)
-add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_01.cpp
-    Raxpy_mpfr_kernel_openmp_01)
-add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_02.cpp
-    Raxpy_mpfr_kernel_openmp_02)
-add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_03.cpp
-    Raxpy_mpfr_kernel_openmp_03)
-add_mpfr_raxpy_kernel_variants(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_04.cpp
-    Raxpy_mpfr_kernel_openmp_04)
-add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_05.cpp
-    Raxpy_mpfr_kernel_openmp_05 mkII)
-add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_05.cpp
-    Raxpy_mpfr_kernel_openmp_05 mkII_FMA)
-add_mpfr_mkii_variant(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_06.cpp
-    Raxpy_mpfr_kernel_openmp_06 mkII)
+add_mpfr_raxpy_fma_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_01)
+add_mpfr_raxpy_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_02)
+add_mpfr_raxpy_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_03)
+add_mpfr_raxpy_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_04)
+add_mpfr_raxpy_fma_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_01)
+add_mpfr_raxpy_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_02)
+add_mpfr_raxpy_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_03)
+add_mpfr_raxpy_variant_family(mpfr/01_Raxpy Raxpy_mpfr_kernel_openmp_04)
 
 add_mpfr_native_benchmark(mpfr/02_Rgemv Rgemv_mpfr_C_native_01.cpp
     Rgemv_mpfr_C_native_01)
@@ -419,6 +419,8 @@ add_kernel_variants(gmp/01_Raxpy Raxpy_gmp_kernel_openmp_02.cpp
     Raxpy_gmp_kernel_openmp_02)
 add_kernel_variants(gmp/01_Raxpy Raxpy_gmp_kernel_openmp_03.cpp
     Raxpy_gmp_kernel_openmp_03)
+add_kernel_variants(gmp/01_Raxpy Raxpy_gmp_kernel_openmp_04.cpp
+    Raxpy_gmp_kernel_openmp_04)
 
 add_native_benchmark(gmp/02_Rgemv Rgemv_gmp_C_native_01.cpp
     Rgemv_gmp_C_native_01)

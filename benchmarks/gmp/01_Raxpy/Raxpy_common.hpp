@@ -93,6 +93,19 @@ inline void configure_mpf_precision(int prec) {
 #endif
 }
 
+inline void require_mpf_precision_at_least(const char *label, mp_bitcnt_t actual, mp_bitcnt_t requested) {
+    if (actual >= requested) {
+        return;
+    }
+    std::cerr << "Precision check failed for " << label << ": requested at least " << requested
+              << " bits, actual " << actual << " bits" << std::endl;
+    std::exit(EXIT_FAILURE);
+}
+
+inline mp_bitcnt_t class_precision_bits(const mpf_class &value) {
+    return mpf_get_prec(value.get_mpf_t());
+}
+
 using NativeRaxpyKernel = void (*)(int64_t, const mpf_t, mpf_t *, int64_t, mpf_t *, int64_t);
 using ClassRaxpyKernel = void (*)(int64_t, const mpf_class &, mpf_class *, int64_t, mpf_class *, int64_t);
 
@@ -109,6 +122,12 @@ inline int run_native_raxpy_benchmark(int argc, char **argv, NativeRaxpyKernel k
 
     const int64_t n = std::atoll(argv[1]);
     const int prec = std::atoi(argv[2]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        gmp_randclear(state);
+        return EXIT_FAILURE;
+    }
+    const mp_bitcnt_t requested_prec = static_cast<mp_bitcnt_t>(prec);
     configure_mpf_precision(prec);
 
     mpf_t alpha;
@@ -128,11 +147,24 @@ inline int run_native_raxpy_benchmark(int argc, char **argv, NativeRaxpyKernel k
         y_class[i] = mpf_class(y[i]);
     }
 
+    require_mpf_precision_at_least("raw_alpha", mpf_get_prec(alpha), requested_prec);
+    require_mpf_precision_at_least("class_alpha", class_precision_bits(alpha_class), requested_prec);
+    if (n > 0) {
+        require_mpf_precision_at_least("raw_x[0]", mpf_get_prec(x[0]), requested_prec);
+        require_mpf_precision_at_least("raw_y[0]", mpf_get_prec(y[0]), requested_prec);
+        require_mpf_precision_at_least("class_x[0]", class_precision_bits(x_class[0]), requested_prec);
+        require_mpf_precision_at_least("class_y[0]", class_precision_bits(y_class[0]), requested_prec);
+    }
+
     auto start = std::chrono::high_resolution_clock::now();
     kernel(n, alpha, x, 1, y, 1);
     auto end = std::chrono::high_resolution_clock::now();
 
     Raxpy(n, alpha_class, x_class, 1, y_class, 1);
+    if (n > 0) {
+        require_mpf_precision_at_least("raw_y_after[0]", mpf_get_prec(y[0]), requested_prec);
+        require_mpf_precision_at_least("class_y_reference[0]", class_precision_bits(y_class[0]), requested_prec);
+    }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     const double mflops = (2.0 * double(n)) / (elapsed_seconds.count() * MFLOPS);
@@ -166,6 +198,12 @@ inline int run_class_raxpy_benchmark(int argc, char **argv, ClassRaxpyKernel ker
 
     const int64_t n = std::atoll(argv[1]);
     const int prec = std::atoi(argv[2]);
+    if (prec <= 0) {
+        std::cerr << "Precision must be positive: " << prec << std::endl;
+        gmp_randclear(state);
+        return EXIT_FAILURE;
+    }
+    const mp_bitcnt_t requested_prec = static_cast<mp_bitcnt_t>(prec);
     configure_mpf_precision(prec);
 
     mpf_t alpha_raw;
@@ -187,11 +225,25 @@ inline int run_class_raxpy_benchmark(int argc, char **argv, ClassRaxpyKernel ker
         yy[i] = y[i];
     }
 
+    require_mpf_precision_at_least("raw_alpha", mpf_get_prec(alpha_raw), requested_prec);
+    require_mpf_precision_at_least("class_alpha", class_precision_bits(alpha), requested_prec);
+    if (n > 0) {
+        require_mpf_precision_at_least("raw_x[0]", mpf_get_prec(x_raw[0]), requested_prec);
+        require_mpf_precision_at_least("raw_y[0]", mpf_get_prec(y_raw[0]), requested_prec);
+        require_mpf_precision_at_least("class_x[0]", class_precision_bits(x[0]), requested_prec);
+        require_mpf_precision_at_least("class_y[0]", class_precision_bits(y[0]), requested_prec);
+        require_mpf_precision_at_least("class_yy[0]", class_precision_bits(yy[0]), requested_prec);
+    }
+
     auto start = std::chrono::high_resolution_clock::now();
     kernel(n, alpha, x, 1, y, 1);
     auto end = std::chrono::high_resolution_clock::now();
 
     Raxpy(n, alpha, x, 1, yy, 1);
+    if (n > 0) {
+        require_mpf_precision_at_least("class_y_after[0]", class_precision_bits(y[0]), requested_prec);
+        require_mpf_precision_at_least("class_yy_reference[0]", class_precision_bits(yy[0]), requested_prec);
+    }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     const double mflops = (2.0 * double(n)) / (elapsed_seconds.count() * MFLOPS);

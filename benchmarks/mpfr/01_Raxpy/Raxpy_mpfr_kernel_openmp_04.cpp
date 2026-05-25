@@ -29,8 +29,6 @@
 
 #include "Raxpy_common.hpp"
 
-gmp_randstate_t state;
-
 void _Raxpy(int64_t n, const mpfr_class &alpha, mpfr_class *x, int64_t incx, mpfr_class *y, int64_t incy) {
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;
@@ -45,62 +43,5 @@ void _Raxpy(int64_t n, const mpfr_class &alpha, mpfr_class *x, int64_t incx, mpf
 }
 
 int main(int argc, char **argv) {
-    gmp_randinit_default(state);
-    gmp_randseed_ui(state, 42);
-
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    const int64_t N = std::atoll(argv[1]);
-    const int prec = std::atoi(argv[2]);
-    mpfr_set_default_prec(prec);
-    mpfrxx::set_default_precision_bits(prec);
-
-    mpfr_t alpha_raw;
-    mpfr_init2(alpha_raw, prec);
-    mpfr_urandomb(alpha_raw, state);
-
-    mpfr_t *x_raw = new mpfr_t[N];
-    mpfr_t *y_raw = new mpfr_t[N];
-    init_mpfr_vec(x_raw, N, prec);
-    init_mpfr_vec(y_raw, N, prec);
-
-    mpfr_class *x = new mpfr_class[N];
-    mpfr_class *y = new mpfr_class[N];
-    mpfr_class *yy = new mpfr_class[N];
-    mpfr_class alpha = mpfr_class(alpha_raw);
-
-    for (int64_t i = 0; i < N; ++i) {
-        x[i] = mpfr_class(x_raw[i]);
-        y[i] = mpfr_class(y_raw[i]);
-        yy[i] = y[i];
-    }
-
-    benchmark_mpfr_operation_counter::begin_kernel();
-    auto start = std::chrono::high_resolution_clock::now();
-    _Raxpy(N, alpha, x, 1, y, 1);
-    auto end = std::chrono::high_resolution_clock::now();
-    benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
-
-    Raxpy(N, alpha, x, 1, yy, 1);
-
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    const double mflops = (2.0 * double(N)) / (elapsed_seconds.count() * MFLOPS);
-
-    std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
-    std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, yy, N));
-
-    clear_mpfr_vec(x_raw, N);
-    clear_mpfr_vec(y_raw, N);
-    mpfr_clear(alpha_raw);
-    delete[] x_raw;
-    delete[] y_raw;
-    delete[] x;
-    delete[] y;
-    delete[] yy;
-
-    return EXIT_SUCCESS;
+    return run_class_raxpy_benchmark(argc, argv, _Raxpy);
 }

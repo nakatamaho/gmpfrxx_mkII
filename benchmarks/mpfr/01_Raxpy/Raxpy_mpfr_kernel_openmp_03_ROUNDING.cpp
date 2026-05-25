@@ -25,6 +25,8 @@
  * SUCH DAMAGE.
  */
 
+#include <omp.h>
+
 #include "Raxpy_common.hpp"
 
 void _Raxpy(int64_t n, const mpfr_class &alpha, mpfr_class *x, int64_t incx, mpfr_class *y, int64_t incy) {
@@ -33,10 +35,21 @@ void _Raxpy(int64_t n, const mpfr_class &alpha, mpfr_class *x, int64_t incx, mpf
         exit(EXIT_FAILURE);
     }
 
-    mpfr_class temp;
-    for (int64_t i = 0; i < n; ++i) {
-        temp = alpha * x[i];
-        y[i] += temp;
+    const mpfr_prec_t precision = n > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
+    const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
+    const mpfrxx::evaluation_context context{precision, rounding};
+
+#pragma omp parallel
+    {
+        mpfr_class temp(0.0, precision);
+        auto temp_context = mpfrxx::with_context(temp, context);
+
+#pragma omp for schedule(static)
+        for (int64_t i = 0; i < n; ++i) {
+            temp_context = alpha * x[i];
+            auto y_context = mpfrxx::with_context(y[i], context);
+            y_context += temp;
+        }
     }
 }
 

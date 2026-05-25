@@ -23,19 +23,20 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
  */
 
 #include "Raxpy_common.hpp"
 
-void _Raxpy(int64_t n, const mpfr_class &alpha, mpfr_class *x, int64_t incx, mpfr_class *y, int64_t incy) {
+void _Raxpy(int64_t n, const mpf_class &alpha, mpf_class *x, int64_t incx, mpf_class *y, int64_t incy) {
     if (incx != 1 || incy != 1) {
         std::cerr << "Increments other than 1 are not supported." << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    mpfr_class temp;
+#pragma omp parallel for schedule(static)
     for (int64_t i = 0; i < n; ++i) {
-        temp = alpha * x[i];
+        mpf_class temp = alpha * x[i];
         y[i] += temp;
     }
 }
