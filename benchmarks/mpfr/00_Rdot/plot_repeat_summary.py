@@ -50,12 +50,14 @@ def natural_key(name):
 def variant_color(name):
     if name.startswith("C_native"):
         return "#8c8c8c"
-    if "ROUNDING_FMA_CAPTURE" in name and "PRECISION" in name and name.endswith("_FMA"):
+    if "ROUNDING_PRECISION_FMA" in name or "PRECISION_FMA" in name:
         return "#2ca02c"
-    if "ROUNDING_FMA_CAPTURE" in name and name.endswith("_FMA"):
-        return "#9467bd"
-    if "ROUNDING" in name or "PRECISION" in name:
+    if "ROUNDING_PRECISION" in name or "PRECISION" in name:
         return "#d62728"
+    if "ROUNDING" in name:
+        return "#ff7f0e"
+    if name.endswith("_FMA"):
+        return "#9467bd"
     return "#4c78a8"
 
 
@@ -209,10 +211,11 @@ def plot_rows(rows, title, output):
 
     legend_items = [
         ("C native", "#8c8c8c"),
-        ("wrapper", "#4c78a8"),
+        ("mkII", "#4c78a8"),
+        ("rounding", "#ff7f0e"),
+        ("mkII + FMA", "#9467bd"),
         ("fixed precision", "#d62728"),
-        ("rounding + FMA capture", "#9467bd"),
-        ("FMA + fixed precision", "#2ca02c"),
+        ("fixed precision + FMA", "#2ca02c"),
     ]
     handles = [Patch(facecolor=color, label=label) for label, color in legend_items]
     ax.legend(

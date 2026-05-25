@@ -70,13 +70,13 @@ Variant names:
 - `*_mkII_FIXED_PRECISION_FASTPATH`: this header with `GMPFRXX_MKII_ASSUME_FIXED_PRECISION_FASTPATH`.
 - `*_openmp_*`: OpenMP variant where the eager benchmark provided one.
 
-## Recorded go.sh Sample
+## Recorded Sample Run
 
 ![Rgemm serial benchmark](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_serial_Rgemm.png)
 
 ![Rgemm OpenMP benchmark](../results_raw/Linux_Ryzen_3970X_32-Core/benchmark_20260430_081331_Linux_Ryzen_3970X_32-Core_openmp_Rgemm.png)
 
-The committed sample run uses the original `go.sh` dimensions:
+The committed sample run uses the legacy sample dimensions:
 
 ```text
 M = 500, K = 500, N = 500, precision = 512

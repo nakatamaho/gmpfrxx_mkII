@@ -47,10 +47,12 @@ def natural_key(name):
 def variant_color(name):
     if name.startswith("C_native"):
         return "#8c8c8c"
-    if "FIXED_PRECISION_FASTPATH_FMA" in name:
+    if "ROUNDING_PRECISION_FMA" in name or "PRECISION_FMA" in name:
         return "#2ca02c"
-    if "FIXED_PRECISION_FASTPATH" in name:
+    if "ROUNDING_PRECISION" in name or "PRECISION" in name:
         return "#d62728"
+    if "ROUNDING" in name:
+        return "#ff7f0e"
     if name.endswith("_FMA"):
         return "#9467bd"
     return "#4c78a8"
@@ -205,6 +207,7 @@ def plot_rows(rows, title, output):
     legend_items = [
         ("C native", "#8c8c8c"),
         ("mkII", "#4c78a8"),
+        ("rounding", "#ff7f0e"),
         ("mkII + FMA", "#9467bd"),
         ("fixed precision", "#d62728"),
         ("fixed precision + FMA", "#2ca02c"),

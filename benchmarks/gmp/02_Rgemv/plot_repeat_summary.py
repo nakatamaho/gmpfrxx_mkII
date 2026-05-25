@@ -49,12 +49,8 @@ def variant_color(name):
         return "#8c8c8c"
     if "orig" in name:
         return "#2ca02c"
-    if "FIXED_PRECISION_FASTPATH_FMA" in name:
-        return "#2ca02c"
     if "FIXED_PRECISION_FASTPATH" in name:
         return "#d62728"
-    if name.endswith("_FMA"):
-        return "#9467bd"
     return "#4c78a8"
 
 
@@ -208,8 +204,7 @@ def plot_rows(rows, title, output):
         ("C native", "#8c8c8c"),
         ("orig", "#2ca02c"),
         ("mkII", "#4c78a8"),
-        ("mkII + FMA", "#9467bd"),
-        ("fixed precision", "#d62728"),
+        ("mkII fixed precision", "#d62728"),
     ]
     handles = [Patch(facecolor=color, label=label) for label, color in legend_items]
     ax.legend(handles=handles, loc="lower right", bbox_to_anchor=(1.0, 1.01), ncol=3, frameon=False, fontsize=9)

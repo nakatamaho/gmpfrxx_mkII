@@ -69,7 +69,7 @@ Expected wall time on the Ryzen Threadripper 3970X benchmark host:
 | `scaled-full` | GMP + MPFR | about 1 hour 23 minutes | measured as 4995.09 seconds when the two backend suites are run sequentially |
 | `full` | GMP or MPFR | long-running | intended for publication-style runs, not routine validation |
 
-Run the full sample dimensions inherited from `go.sh`:
+Run the historical full sample dimensions through the shared runner:
 
 ```bash
 benchmarks/common/run_benchmarks.sh build_bench_release 512 \
