@@ -18,7 +18,7 @@ cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release
 cmake --build build_bench_release -j --target Raxpy_gmp_C_native_01 Raxpy_gmp_C_native_openmp_01 Raxpy_gmp_kernel_03_mkII
 ```
 
-The full run used all GMP Raxpy targets under:
+The GMP Raxpy target set is built under:
 
 ```text
 build_bench_release/benchmarks/gmp/01_Raxpy/
@@ -43,17 +43,34 @@ OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
     build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
 ```
 
-## Kernel Shapes
+## Benchmark Parameters
 
-| Variant | Timed source shape | Temporary/resource policy | Purpose |
-|---------|--------------------|---------------------------|---------|
-| `01` | `y[i] += alpha * x[i]` | Product is expressed as an ET expression. | Test expression materialization and fixed-precision scratch behavior. |
-| `02` | `temp = alpha; temp *= x[i]; y[i] += temp` | One reusable product object outside the loop. | Test explicit copy-then-multiply source shape. |
-| `03` | `temp = alpha * x[i]; y[i] += temp` | One reusable product object outside the loop. | Test the closest C++ wrapper spelling to the raw C reusable-temp baseline. |
-| `04` | `mpf_class temp = alpha * x[i]; y[i] += temp` | Product object lifetime is inside the loop. | Stress per-iteration construction. |
-| `openmp_01` | Parallel `01` | OpenMP static partition; per-worker resources where applicable. | Compare expression spelling under parallel memory traffic. |
-| `openmp_02` | Parallel `02` | One reusable product object per worker. | Compare explicit copy-then-multiply under OpenMP. |
-| `openmp_03` | Parallel `03` | One reusable product object per worker. | Compare reusable-product wrapper source with raw C OpenMP. |
+| Parameter | Meaning |
+| --- | --- |
+| `N` | Number of vector elements. |
+| `precision` | Requested GMP `mpf` precision in bits for `alpha`, `x`, and `y`. |
+| `repeat` | Number of timed process executions per executable. |
+| `OMP_NUM_THREADS` | OpenMP worker count for `openmp` executables. |
+| `OMP_PLACES`, `OMP_PROC_BIND` | OpenMP affinity controls used by the runner. |
+
+The committed runs use `N=10000000`, `repeat=10`, `precision=512` and `precision=1024`, with `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, and `OMP_PROC_BIND=spread`.
+
+## Variant Shapes
+
+The timed body is `_Raxpy()`. The same numeric suffix is used for serial and OpenMP kernels; an `openmp` executable name means the same source-level shape is run over a static worker partition with per-worker temporaries where the source shape needs them.
+
+| Variant | Transition from previous variant | Timed source shape | Temporary/resource policy | Purpose |
+| --- | --- | --- | --- | --- |
+| `01` | Baseline expression-update form. | `y[i] += alpha * x[i]` | Product is expressed as an ET expression in the update. | Test expression materialization and mkII fixed-precision scratch behavior. |
+| `02` | `01 -> 02`: introduce a reusable product object and copy-then-multiply source. | `temp = alpha; temp *= x[i]; y[i] += temp` | One product object is initialized before the loop and reused. | Test explicit copy-then-multiply source shape. |
+| `03` | `02 -> 03`: keep reusable product lifetime but assign from the product expression. | `temp = alpha * x[i]; y[i] += temp` | One product object is initialized before the loop and assigned from the product expression. | Main reusable-product wrapper spelling; closest to the raw C reusable-temporary baseline. |
+| `04` | `03 -> 04`: move product object lifetime into the timed loop. | `mpf_class temp = alpha * x[i]; y[i] += temp` | Product object lifetime is inside the loop. | Stress per-iteration construction. |
+
+Wrapper targets append `_orig`, `_mkII`, and `_mkII_FIXED_PRECISION_FASTPATH`. Raw C currently provides `C_native_01` and `C_native_openmp_01`, which correspond to the reusable-product class rather than every numbered wrapper shape.
+
+## Source Transitions
+
+`01 -> 02` replaces the expression update with an explicit reusable product object and copy-then-multiply source. `02 -> 03` keeps the reusable product lifetime but assigns it from the product expression, matching the raw reusable-product hot-loop class. `03 -> 04` moves product construction into the timed loop as an allocation/lifetime stress case. OpenMP variants keep the same numeric source shape and add static partitioning; `03` is the OpenMP comparison point for `C_native_openmp_01`.
 
 ## C Native Equivalent Kernels
 
@@ -63,7 +80,7 @@ OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread \
 | `C_native_openmp_01` | `kernel_openmp_03_orig`, `kernel_openmp_03_mkII`, `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | Same per-worker class: each worker owns one product temporary and updates a contiguous slice of `y`. |
 | none | `kernel_01_*` | Expression-template spelling has no exact raw C source equivalent; the fixed-precision mkII build can still lower into the reusable-temp performance class. |
 | none | `kernel_02_*` | Copy-then-multiply source shape is intentionally different from the raw C multiply-into-temp baseline. |
-| none | `kernel_04_*` | Loop-local construction stress case; the raw C matrix does not include an init/clear-inside-loop equivalent. |
+| none | `kernel_04_*`, `kernel_openmp_04_*` | Loop-local construction stress case; the raw C matrix does not include an init/clear-inside-loop equivalent. |
 
 ## Recorded Run
 
@@ -81,6 +98,10 @@ OMP_PROC_BIND = spread
 all timed runs = Result OK
 ```
 
+The committed numerical runs below predate the addition of `kernel_openmp_04_*`. Re-run the repeat matrix before using `openmp_04` in result comparisons.
+
+### 512-bit run
+
 | Precision | Raw log | Raw CSV | Summary CSV | Serial plot | OpenMP plot |
 |-----------|---------|---------|-------------|-------------|-------------|
 | 512 | [log](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/benchmark_raxpy_gmp_n10000000_p512_repeat10.log) | [raw CSV](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raw_raxpy_gmp_n10000000_p512_repeat10.csv) | [summary CSV](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/summary_raxpy_gmp_n10000000_p512_repeat10.csv) | [serial PNG](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_serial.png) | [OpenMP PNG](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_openmp.png) |
@@ -91,6 +112,8 @@ all timed runs = Result OK
 ![GMP Raxpy 512-bit serial repeat-10](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_serial.png)
 
 ![GMP Raxpy 512-bit OpenMP repeat-10](results_raw/raxpy_gmp_n10000000_p512_repeat10_20260522_214039/raxpy_gmp_n10000000_p512_repeat10_openmp.png)
+
+### 1024-bit run
 
 1024-bit plots:
 
@@ -114,6 +137,31 @@ python3 benchmarks/gmp/01_Raxpy/plot_repeat_summary.py \
     --title-prefix "GMP Raxpy N=10000000 p=1024 repeat=10"
 ```
 
+
+## Resource or Bandwidth Estimates
+
+These are model estimates, not hardware-counter measurements. GMP `mpf_t` stores a 24-byte header in the vector and points to separately allocated limb storage. The active-limb model counts only requested precision limbs; the capacity model adds GMP mpf's extra precision limb on this build. The timed operation reads `x[i]`, reads `y[i]`, and writes `y[i]`; `alpha` is loop-invariant and excluded.
+
+| Precision | Limb bytes/value | Active header bytes/value | Capacity bytes/value | Limb-only bytes/element | Active header-inclusive bytes/element | Capacity bytes/element |
+|-----------|-----------------:|--------------------------:|---------------------:|------------------------:|--------------------------------------:|-----------------------:|
+| 512 | 64 | 88 | 96 | 192 | 264 | 288 |
+| 1024 | 128 | 152 | 160 | 384 | 456 | 480 |
+
+Estimated bandwidth for representative average MFLOPS rows:
+
+| Precision | Variant | Mode | Avg MFLOPS | Limb-only GB/s | Active header GB/s | Capacity GB/s |
+|-----------|---------|------|-----------:|---------------:|-------------------:|--------------:|
+| 512 | `C_native_01` | Serial | 33.634 | 3.23 | 4.44 | 4.84 |
+| 512 | `kernel_03_orig` | Serial | 33.908 | 3.26 | 4.48 | 4.88 |
+| 512 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | OpenMP | 393.019 | 37.73 | 51.88 | 56.59 |
+| 512 | `C_native_openmp_01` | OpenMP | 390.629 | 37.50 | 51.56 | 56.25 |
+| 1024 | `C_native_01` | Serial | 11.954 | 2.30 | 2.73 | 2.87 |
+| 1024 | `kernel_03_mkII` | Serial | 29.033 | 5.57 | 6.62 | 6.97 |
+| 1024 | `kernel_openmp_03_mkII` | OpenMP | 389.155 | 74.72 | 88.73 | 93.40 |
+| 1024 | `C_native_openmp_01` | OpenMP | 248.587 | 47.73 | 56.68 | 59.66 |
+
+At 1024 bits the limb payload doubles, but the best OpenMP average stays close to the 512-bit value. That points to a mixed boundary: the hot loop still streams scattered limb storage, while the extra limb work is not yet enough to halve OpenMP MFLOPS for the best reusable-resource paths.
+
 ## Headline Results
 
 | Precision | Class | Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
@@ -136,7 +184,7 @@ Precision scaling by best average:
 
 ## Serial Results
 
-### 512-bit Serial Results
+### 512-bit serial interpretation
 
 <details>
 <summary>512-bit Serial results sorted by Max MFLOPS</summary>
@@ -180,7 +228,7 @@ Precision scaling by best average:
 
 </details>
 
-### 1024-bit Serial Results
+### 1024-bit serial interpretation
 
 <details>
 <summary>1024-bit Serial results sorted by Max MFLOPS</summary>
@@ -226,7 +274,7 @@ Precision scaling by best average:
 
 ## OpenMP Results
 
-### 512-bit OpenMP Results
+### 512-bit OpenMP interpretation
 
 <details>
 <summary>512-bit OpenMP results sorted by Max MFLOPS</summary>
@@ -264,7 +312,7 @@ Precision scaling by best average:
 
 </details>
 
-### 1024-bit OpenMP Results
+### 1024-bit OpenMP interpretation
 
 <details>
 <summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
@@ -301,30 +349,6 @@ Precision scaling by best average:
 | 10 | `kernel_openmp_01_orig` | 249.890 | 237.823 | 228.122 | 48.304 | 6.950 |
 
 </details>
-
-## Memory Bandwidth Estimates
-
-These are model estimates, not hardware-counter measurements. GMP `mpf_t` stores a 24-byte header in the vector and points to separately allocated limb storage. The active-limb model counts only requested precision limbs; the capacity model adds GMP mpf's extra precision limb on this build. The timed operation reads `x[i]`, reads `y[i]`, and writes `y[i]`; `alpha` is loop-invariant and excluded.
-
-| Precision | Limb bytes/value | Active header bytes/value | Capacity bytes/value | Limb-only bytes/element | Active header-inclusive bytes/element | Capacity bytes/element |
-|-----------|-----------------:|--------------------------:|---------------------:|------------------------:|--------------------------------------:|-----------------------:|
-| 512 | 64 | 88 | 96 | 192 | 264 | 288 |
-| 1024 | 128 | 152 | 160 | 384 | 456 | 480 |
-
-Estimated bandwidth for representative average MFLOPS rows:
-
-| Precision | Variant | Mode | Avg MFLOPS | Limb-only GB/s | Active header GB/s | Capacity GB/s |
-|-----------|---------|------|-----------:|---------------:|-------------------:|--------------:|
-| 512 | `C_native_01` | Serial | 33.634 | 3.23 | 4.44 | 4.84 |
-| 512 | `kernel_03_orig` | Serial | 33.908 | 3.26 | 4.48 | 4.88 |
-| 512 | `kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | OpenMP | 393.019 | 37.73 | 51.88 | 56.59 |
-| 512 | `C_native_openmp_01` | OpenMP | 390.629 | 37.50 | 51.56 | 56.25 |
-| 1024 | `C_native_01` | Serial | 11.954 | 2.30 | 2.73 | 2.87 |
-| 1024 | `kernel_03_mkII` | Serial | 29.033 | 5.57 | 6.62 | 6.97 |
-| 1024 | `kernel_openmp_03_mkII` | OpenMP | 389.155 | 74.72 | 88.73 | 93.40 |
-| 1024 | `C_native_openmp_01` | OpenMP | 248.587 | 47.73 | 56.68 | 59.66 |
-
-At 1024 bits the limb payload doubles, but the best OpenMP average stays close to the 512-bit value. That points to a mixed boundary: the hot loop still streams scattered limb storage, while the extra limb work is not yet enough to halve OpenMP MFLOPS for the best reusable-resource paths.
 
 ## Hotpath Disassembly
 

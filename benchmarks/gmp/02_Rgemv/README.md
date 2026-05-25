@@ -44,26 +44,36 @@ The mkII fixed-precision variants use `GMPFRXX_MKII_FAST_FIXED_PREC`;
 executable suffixes keep the historical `FIXED_PRECISION_FASTPATH` label for
 benchmark continuity.
 
-## Kernel Shapes
+## Benchmark Parameters
 
-The timed body is `_Rgemv()`. `A` is stored in column-major order. Serial
-variants scale `y`, then sweep columns of `A`. OpenMP variants use row
-partitioning, row blocking, or column partitioning to avoid concurrent writes to
-`y`.
+| Parameter | Meaning |
+| --- | --- |
+| `m` | Number of matrix rows and length of `y`. |
+| `n` | Number of matrix columns and length of `x`. |
+| `precision` | Requested GMP `mpf` precision in bits for matrix/vector/scalar inputs and temporaries. |
+| `repeat` | Number of timed process executions per executable. |
+| `OMP_NUM_THREADS` | OpenMP worker count for `openmp` executables. |
+| `OMP_PLACES`, `OMP_PROC_BIND` | OpenMP affinity controls used by the runner. |
 
-| Variant | Timed source shape | Temporary/resource policy | Purpose |
-|---------|--------------------|---------------------------|---------|
-| `01` | `y[i] += (alpha * x[j]) * A[i + j*lda]` | Product materializes inside the inner loop. Raw C initializes and clears a product `mpf_t` per matrix element. | Direct nested-expression stress case. |
-| `02` | `temp = alpha; temp *= x[j]; templ = temp; templ *= A[i + j*lda]; y[i] += templ` | `temp` and `templ` are initialized before the loops and reused. | Copy-then-multiply reusable-temporary path. |
-| `03` | `temp = alpha * x[j]; templ = temp * A[i + j*lda]; y[i] += templ` | `temp` and `templ` are initialized before the loops and assigned from product expressions. | Main optimized serial wrapper baseline. |
-| `04` | Loop-local `temp = alpha * x[j]`; loop-local `templ = temp * A[i + j*lda]`; `y[i] += templ` | Product objects are constructed inside the loop nest. | Lifetime/allocation stress case. |
-| `openmp_01` | Row-partitioned direct expression. | Per-thread inner-loop product materialization. | Race-free OpenMP version of `01`. |
-| `openmp_02` | Row-partitioned copy-then-multiply. | Per-thread reusable `temp` and `templ`. | Race-free OpenMP version of `02`. |
-| `openmp_03` | Row-partitioned expression assignment. | Per-thread reusable `temp` and `templ`. | Main row-partitioned OpenMP baseline. |
-| `openmp_04` | Row-partitioned loop-local product objects. | Product objects are constructed in the row/column loop. | OpenMP lifetime/allocation stress case. |
-| `openmp_05` | Precompute `scaled_x[j] = alpha * x[j]`, then row-partitioned update. | Shared read-only `scaled_x`, per-thread reusable product object. | Remove repeated `alpha * x[j]` from row-partitioned OpenMP. |
-| `openmp_06` | 256-row blocks, then column loop and contiguous row loop inside each block. | Per-thread reusable `temp` and `prod`. | Restore contiguous `A` access inside each row block. |
-| `openmp_07` | Column partitioning with thread-local partial `y` vectors and final reduction. | `num_threads * m` partial accumulators plus final reduction. | Keep serial-like column-major `A` streaming without racing on `y`. |
+The committed runs use `m=4000`, `n=4000`, `repeat=10`, `precision=512` and `precision=1024`, with `OMP_NUM_THREADS=32`, `OMP_PLACES=cores`, and `OMP_PROC_BIND=spread`.
+
+## Variant Shapes
+
+The timed body is `_Rgemv()`. `A` is stored in column-major order. The same numeric suffix has the same source-level meaning for raw C, upstream C++, mkII, serial, and OpenMP targets when that execution mode implements it. Serial targets cover `01`-`04`; OpenMP targets cover `01`-`07`.
+
+| Variant | Transition from previous variant | Timed source shape | Temporary/resource policy | Purpose |
+| --- | --- | --- | --- | --- |
+| `01` | Baseline nested-expression shape for serial and OpenMP. | `y[i] += (alpha * x[j]) * A[i + j*lda]` | Product materializes inside the inner loop. Raw C initializes and clears a product `mpf_t` per matrix element. | Direct nested-expression stress case. |
+| `02` | `01 -> 02`: introduce reusable copy-then-multiply temporaries. | `temp = alpha; temp *= x[j]; templ = temp; templ *= A[i + j*lda]; y[i] += templ` | `temp` and `templ` are initialized before the loops and reused. | Copy-then-multiply reusable-temporary path. |
+| `03` | `02 -> 03`: keep reusable storage but assign temporaries from product expressions. | `temp = alpha * x[j]; templ = temp * A[i + j*lda]; y[i] += templ` | `temp` and `templ` are initialized before the loops and assigned from product expressions. | Main optimized serial wrapper baseline. |
+| `04` | `03 -> 04`: move product object lifetime into the loop nest. | Loop-local `temp = alpha * x[j]`; loop-local `templ = temp * A[i + j*lda]`; `y[i] += templ` | Product objects are constructed inside the loop nest. | Lifetime/allocation stress case. |
+| `05` | OpenMP branch from row-partitioned `03`: precompute `alpha * x[j]`. | Precompute `scaled_x[j] = alpha * x[j]`, then row-partitioned update. | Shared read-only `scaled_x`, per-thread reusable product object. | Remove repeated `alpha * x[j]` from row-partitioned OpenMP. |
+| `06` | `05 -> 06`: add fixed 256-row blocking. | 256-row blocks, then column loop and contiguous row loop inside each block. | Per-thread reusable `temp` and `prod`. | Restore contiguous `A` access inside each row block. |
+| `07` | `06 -> 07`: switch ownership to column partitioning with final reduction. | Column partitioning with thread-local partial `y` vectors and final reduction. | `num_threads * m` partial accumulators plus final reduction. | Keep serial-like column-major `A` streaming without racing on `y`. |
+
+## Source Transitions
+
+`01 -> 02` replaces direct nested products with reusable copy-then-multiply temporaries while keeping the column-major update structure. `02 -> 03` keeps reusable storage but assigns temporaries from product expressions, which is the main serial optimized comparison point. `03 -> 04` moves product object lifetime into the loop nest as a construction stress case. OpenMP `05` branches from the row-partitioned reusable class by precomputing `alpha * x`; `05 -> 06` adds fixed 256-row blocking; `06 -> 07` changes ownership from rows to columns and uses thread-local partial `y` vectors plus final reduction.
 
 ## C Native Equivalent Kernels
 
@@ -88,6 +98,8 @@ matching numeric suffixes.
 confirmed by disassembly rather than by the suffix alone.
 
 ## Recorded Run
+
+### 512-bit run
 
 | Field | Value |
 |-------|-------|
@@ -159,6 +171,72 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 
 <!-- END 1024-BIT RECORDED RUN -->
 
+
+## Resource or Bandwidth Estimates
+
+These are model estimates derived from MFLOPS, not hardware-counter
+measurements. On this LP64 machine:
+
+```text
+sizeof(__mpf_struct) = 24 bytes
+sizeof(mp_limb_t)    = 8 bytes
+mpf_get_prec(x)      = 512 bits
+used limbs           = 8
+allocated limbs      = 9
+```
+
+For one matrix element at 512-bit precision:
+
+```text
+active mpf value bytes    = 24-byte header + 8 active limbs * 8 = 88 bytes
+allocated mpf footprint   = 24-byte header + 9 allocated limbs * 8 = 96 bytes
+A-only active stream GB/s = Avg MFLOPS * 0.044
+A+y active logical GB/s   = Avg MFLOPS * 0.132
+A+x+y active logical GB/s = Avg MFLOPS * 0.176
+```
+
+`A-only` is the minimum matrix stream implied by the reported MFLOPS. `A+y`
+counts one logical read and one logical write of `y` per matrix element.
+`A+x+y` additionally counts `x` per matrix element, which is an upper logical
+model because `x` can be reused from cache. Using allocated footprint instead
+of active limbs scales these estimates by `96 / 88 = 1.091`.
+
+| Variant | Avg MFLOPS | Max MFLOPS | A-only avg GB/s | A+y avg GB/s | A+x+y avg GB/s |
+|---------|-----------:|-----------:|----------------:|-------------:|---------------:|
+| `kernel_openmp_07_mkII` | 538.770 | 556.607 | 23.71 | 71.12 | 94.82 |
+| `C_native_openmp_07` | 531.855 | 550.694 | 23.40 | 70.20 | 93.61 |
+| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 521.517 | 546.513 | 22.95 | 68.84 | 91.79 |
+| `kernel_openmp_07_orig` | 519.596 | 559.378 | 22.86 | 68.59 | 91.45 |
+| `C_native_openmp_06` | 399.521 | 405.261 | 17.58 | 52.74 | 70.32 |
+| `kernel_openmp_06_mkII` | 397.721 | 409.055 | 17.50 | 52.50 | 70.00 |
+| `kernel_openmp_05_orig` | 289.431 | 292.736 | 12.73 | 38.20 | 50.94 |
+| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 242.913 | 244.805 | 10.69 | 32.06 | 42.75 |
+| `kernel_03_mkII` | 31.493 | 32.097 | 1.39 | 4.16 | 5.54 |
+| `C_native_03` | 31.488 | 32.115 | 1.39 | 4.16 | 5.54 |
+
+<!-- BEGIN 1024-BIT MEMORY ESTIMATES -->
+
+### 1024-bit estimates
+
+For 1024-bit GMP Rgemv, one active value is modeled as a 24-byte header
+plus 16 active limbs, or 152 bytes. The logical traffic coefficients are:
+
+```text
+A-only active stream GB/s = Avg MFLOPS * 0.076
+A+y active logical GB/s   = Avg MFLOPS * 0.228
+A+x+y active logical GB/s = Avg MFLOPS * 0.304
+```
+
+| Variant | Avg MFLOPS | Max MFLOPS | A-only avg GB/s | A+y avg GB/s | A+x+y avg GB/s |
+|---------|-----------:|-----------:|----------------:|-------------:|---------------:|
+| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 508.233 | 520.109 | 38.626 | 115.877 | 154.503 |
+| `C_native_openmp_07` | 254.075 | 262.723 | 19.310 | 57.929 | 77.239 |
+| `kernel_openmp_07_orig` | 257.288 | 265.025 | 19.554 | 58.662 | 78.215 |
+| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 29.030 | 29.410 | 2.206 | 6.619 | 8.825 |
+| `C_native_03` | 11.256 | 11.304 | 0.855 | 2.566 | 3.422 |
+
+<!-- END 1024-BIT MEMORY ESTIMATES -->
+
 ## Headline Results
 
 | Observation | Evidence | Interpretation |
@@ -183,6 +261,8 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 <!-- END 1024-BIT HEADLINE RESULTS -->
 
 ## Serial Results
+
+### 512-bit serial interpretation
 
 <details>
 <summary>Serial results sorted by Max MFLOPS</summary>
@@ -234,7 +314,7 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 
 <!-- BEGIN 1024-BIT SERIAL RESULTS -->
 
-### 1024-bit serial results
+### 1024-bit serial interpretation
 
 <details>
 <summary>1024-bit serial results sorted by Max MFLOPS</summary>
@@ -275,6 +355,8 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 <!-- END 1024-BIT SERIAL RESULTS -->
 
 ## OpenMP Results
+
+### 512-bit OpenMP interpretation
 
 <details>
 <summary>OpenMP results sorted by Max MFLOPS</summary>
@@ -350,7 +432,7 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 
 <!-- BEGIN 1024-BIT OPENMP RESULTS -->
 
-### 1024-bit OpenMP results
+### 1024-bit OpenMP interpretation
 
 <details>
 <summary>1024-bit OpenMP results sorted by Max MFLOPS</summary>
@@ -389,71 +471,6 @@ python3 benchmarks/gmp/02_Rgemv/plot_repeat_summary.py \
 </details>
 
 <!-- END 1024-BIT OPENMP RESULTS -->
-
-## Memory Bandwidth Estimates
-
-These are model estimates derived from MFLOPS, not hardware-counter
-measurements. On this LP64 machine:
-
-```text
-sizeof(__mpf_struct) = 24 bytes
-sizeof(mp_limb_t)    = 8 bytes
-mpf_get_prec(x)      = 512 bits
-used limbs           = 8
-allocated limbs      = 9
-```
-
-For one matrix element at 512-bit precision:
-
-```text
-active mpf value bytes    = 24-byte header + 8 active limbs * 8 = 88 bytes
-allocated mpf footprint   = 24-byte header + 9 allocated limbs * 8 = 96 bytes
-A-only active stream GB/s = Avg MFLOPS * 0.044
-A+y active logical GB/s   = Avg MFLOPS * 0.132
-A+x+y active logical GB/s = Avg MFLOPS * 0.176
-```
-
-`A-only` is the minimum matrix stream implied by the reported MFLOPS. `A+y`
-counts one logical read and one logical write of `y` per matrix element.
-`A+x+y` additionally counts `x` per matrix element, which is an upper logical
-model because `x` can be reused from cache. Using allocated footprint instead
-of active limbs scales these estimates by `96 / 88 = 1.091`.
-
-| Variant | Avg MFLOPS | Max MFLOPS | A-only avg GB/s | A+y avg GB/s | A+x+y avg GB/s |
-|---------|-----------:|-----------:|----------------:|-------------:|---------------:|
-| `kernel_openmp_07_mkII` | 538.770 | 556.607 | 23.71 | 71.12 | 94.82 |
-| `C_native_openmp_07` | 531.855 | 550.694 | 23.40 | 70.20 | 93.61 |
-| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 521.517 | 546.513 | 22.95 | 68.84 | 91.79 |
-| `kernel_openmp_07_orig` | 519.596 | 559.378 | 22.86 | 68.59 | 91.45 |
-| `C_native_openmp_06` | 399.521 | 405.261 | 17.58 | 52.74 | 70.32 |
-| `kernel_openmp_06_mkII` | 397.721 | 409.055 | 17.50 | 52.50 | 70.00 |
-| `kernel_openmp_05_orig` | 289.431 | 292.736 | 12.73 | 38.20 | 50.94 |
-| `kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH` | 242.913 | 244.805 | 10.69 | 32.06 | 42.75 |
-| `kernel_03_mkII` | 31.493 | 32.097 | 1.39 | 4.16 | 5.54 |
-| `C_native_03` | 31.488 | 32.115 | 1.39 | 4.16 | 5.54 |
-
-<!-- BEGIN 1024-BIT MEMORY ESTIMATES -->
-
-### 1024-bit estimates
-
-For 1024-bit GMP Rgemv, one active value is modeled as a 24-byte header
-plus 16 active limbs, or 152 bytes. The logical traffic coefficients are:
-
-```text
-A-only active stream GB/s = Avg MFLOPS * 0.076
-A+y active logical GB/s   = Avg MFLOPS * 0.228
-A+x+y active logical GB/s = Avg MFLOPS * 0.304
-```
-
-| Variant | Avg MFLOPS | Max MFLOPS | A-only avg GB/s | A+y avg GB/s | A+x+y avg GB/s |
-|---------|-----------:|-----------:|----------------:|-------------:|---------------:|
-| `kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH` | 508.233 | 520.109 | 38.626 | 115.877 | 154.503 |
-| `C_native_openmp_07` | 254.075 | 262.723 | 19.310 | 57.929 | 77.239 |
-| `kernel_openmp_07_orig` | 257.288 | 265.025 | 19.554 | 58.662 | 78.215 |
-| `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 29.030 | 29.410 | 2.206 | 6.619 | 8.825 |
-| `C_native_03` | 11.256 | 11.304 | 0.855 | 2.566 | 3.422 |
-
-<!-- END 1024-BIT MEMORY ESTIMATES -->
 
 ## Hotpath Disassembly
 

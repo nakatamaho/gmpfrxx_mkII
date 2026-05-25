@@ -51,9 +51,9 @@ Define every numbered source-level variant.  The same number should mean the
 same timed source shape across C native, upstream wrapper, mkII wrapper, serial,
 and OpenMP variants.
 
-| Variant | Timed source shape | Temporary/resource policy | Purpose |
-|---------|--------------------|---------------------------|---------|
-| `01` | ... | ... | ... |
+| Variant | Transition from previous variant | Timed source shape | Temporary/resource policy | Purpose |
+|---------|----------------------------------|--------------------|---------------------------|---------|
+| `01` | Baseline source shape. | ... | ... | ... |
 
 Keep numbered variants and optimization suffixes separate.  The variant number
 defines the source-level kernel shape and must not change meaning when a
