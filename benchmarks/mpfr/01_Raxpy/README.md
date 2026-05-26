@@ -596,6 +596,7 @@ hot path.
 |--------|--------------------------|----------------------|---------|
 | `kernel_03_PRECISION` | `ROUNDING` | The element loop calls `mpfr_get_default_rounding_mode` before `mpfr_mul` and again before `mpfr_add`. | The rounding mode is not cached by fixed precision. |
 | `kernel_03_ROUNDING` | `PRECISION` | The loop uses cached rounding, but it still guards temporary and destination precision before the fast arithmetic path. | The compiler cannot assume the reusable temp and `y[i]` precision are invariant. |
+| `kernel_03` | `ROUNDING` and `PRECISION` | The element loop calls `mpfr_get_default_rounding_mode` before both arithmetic calls, and the setup/fallback path is the non-fastpath precision path. | This is the fully uncached baseline for the same reusable-product source shape. |
 
 ```asm
 # Raxpy_mpfr_kernel_03_PRECISION::_Raxpy
@@ -615,6 +616,26 @@ hot path.
 2c9f: mov    %eax,%ecx          # uncached rounding
 2ca1: call   mpfr_add@plt
 2cb5: jne    2c20 <_Raxpy+0xb0>
+```
+
+```asm
+# Raxpy_mpfr_kernel_03::_Raxpy
+2c50: cmpb   $0x0,%fs:0xfffffffffffffff8
+2c73: call   mpfr_get_default_rounding_mode@plt
+2c80: call   mpfr_get_default_rounding_mode@plt
+2c85: mov    %rbp,%rdx          # x[i]
+2c88: mov    %r15,%rsi          # alpha
+2c8b: mov    %r13,%rdi          # reusable product temp
+2c8e: mov    %eax,%ecx          # uncached rounding
+2c90: call   mpfr_mul@plt
+2cb4: call   mpfr_get_default_rounding_mode@plt
+2cc1: call   mpfr_get_default_rounding_mode@plt
+2cc6: mov    %r13,%rdx          # product temp
+2cc9: mov    %rbx,%rsi          # y[i]
+2ccc: mov    %rbx,%rdi          # y[i] destination
+2ccf: mov    %eax,%ecx          # uncached rounding
+2cd1: call   mpfr_add@plt
+2ce5: jne    2c50 <_Raxpy+0xb0>
 ```
 
 ```asm

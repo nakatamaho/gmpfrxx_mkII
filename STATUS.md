@@ -23086,3 +23086,27 @@ Pass/fail result:
 Known issues:
 - Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
 - The excerpts are representative hot-loop fragments, not complete function listings.
+
+## Phase: Add Fully Uncached MPFR Hotpath Baselines
+
+Implemented features:
+- Added no-suffix MPFR `kernel_03` counterexamples to `00_Rdot` and `01_Raxpy` hotpath disassembly sections.
+- Added no-suffix MPFR `kernel_02` counterexample to `02_Rgemv` hotpath disassembly section.
+- Documented that removing both `ROUNDING` and `PRECISION` combines loop rounding lookups with the non-fastpath precision/setup/fallback path for the same source-shape family.
+
+Missing features:
+- No new benchmark run was performed.
+
+Tests added:
+- No unit tests. This is a documentation/reporting update.
+
+Exact commands run:
+- Reviewed current MPFR `00_Rdot`, `01_Raxpy`, and `02_Rgemv` hotpath README sections with `sed`.
+- Reused representative no-suffix disassembly excerpts from current `build_bench_release` binaries.
+
+Pass/fail result:
+- Whitespace check: PASS.
+
+Known issues:
+- Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
+- The excerpts are representative hot-loop fragments, not complete function listings.

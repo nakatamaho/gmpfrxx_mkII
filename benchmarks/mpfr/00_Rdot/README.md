@@ -750,6 +750,7 @@ reference. Removing either suffix reintroduces the corresponding dynamic work.
 |--------|--------------------------|----------------------|---------|
 | `kernel_03_PRECISION` | `ROUNDING` | The element loop calls `mpfr_get_default_rounding_mode` before both `mpfr_mul` and `mpfr_add`. | Fixed precision alone does not cache rounding. |
 | `kernel_03_ROUNDING` | `PRECISION` | The fast path must compare destination and temporary precision before taking the loop; fallback paths remain live. | Cached rounding alone does not prove fixed precision. |
+| `kernel_03` | `ROUNDING` and `PRECISION` | The element loop calls `mpfr_get_default_rounding_mode` before both arithmetic calls, and the surrounding code uses the non-fastpath precision setup/fallback path. | This is the fully uncached baseline for the same reusable-product source shape. |
 
 ```asm
 # Rdot_mpfr_kernel_03_PRECISION::_Rdot
@@ -769,6 +770,26 @@ reference. Removing either suffix reintroduces the corresponding dynamic work.
 340f: mov    %eax,%ecx          # uncached rounding
 3411: call   mpfr_add@plt
 3425: jne    3390 <_Rdot+0x130>
+```
+
+```asm
+# Rdot_mpfr_kernel_03::_Rdot
+2e90: cmpb   $0x0,%fs:0xfffffffffffffff8
+2eb3: call   mpfr_get_default_rounding_mode@plt
+2ec0: call   mpfr_get_default_rounding_mode@plt
+2ec5: mov    %rbx,%rdx          # dy[i]
+2ec8: mov    %rbp,%rsi          # dx[i]
+2ecb: mov    %r14,%rdi          # reusable product temp
+2ece: mov    %eax,%ecx          # uncached rounding
+2ed0: call   mpfr_mul@plt
+2ef4: call   mpfr_get_default_rounding_mode@plt
+2f01: call   mpfr_get_default_rounding_mode@plt
+2f06: mov    %r14,%rdx          # product temp
+2f09: mov    %r13,%rsi          # accumulator
+2f0c: mov    %r13,%rdi          # accumulator destination
+2f0f: mov    %eax,%ecx          # uncached rounding
+2f11: call   mpfr_add@plt
+2f25: jne    2e90 <_Rdot+0x130>
 ```
 
 ```asm

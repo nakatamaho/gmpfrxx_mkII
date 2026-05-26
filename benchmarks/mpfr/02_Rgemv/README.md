@@ -822,6 +822,7 @@ modifier, so removing `ROUNDING` also removes the source form that reaches
 |--------|--------------------------|----------------------|---------|
 | `kernel_02_ROUNDING_FMA_CAPTURE_FMA` | `PRECISION` | The loop still emits `mpfr_fma`, but precision guards remain in the row and matrix loops. | FMA plus cached rounding is not enough to make the wrapper loop match the fixed-precision C loop. |
 | `kernel_02_PRECISION` | `ROUNDING` and FMA-capture source | The hot path repeatedly calls `mpfr_get_default_rounding_mode`, uses `mpfr_set4`, and falls back to split `mpfr_mul` plus `mpfr_add`. | Fixed precision alone cannot cache rounding or recover the FMA-capture source shape. |
+| `kernel_02` | `ROUNDING`, `PRECISION`, and FMA-capture source | The hot path repeatedly calls `mpfr_get_default_rounding_mode`, uses `mpfr_set4`, and emits split `mpfr_mul` plus `mpfr_add`. | This is the fully uncached column-major wrapper baseline for the same numbered source family. |
 
 ```asm
 # Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_FMA::_Rgemv
@@ -859,6 +860,29 @@ modifier, so removing `ROUNDING` also removes the source form that reaches
 2f8d: mov    %eax,%ecx          # uncached rounding
 2f8f: call   mpfr_add@plt
 2fa5: jne    2ec0 <_Rgemv+0x270>
+```
+
+```asm
+# Rgemv_mpfr_kernel_02::_Rgemv
+2ee0: cmpb   $0x0,%fs:0xfffffffffffffff8
+2f03: call   mpfr_get_default_rounding_mode@plt
+2f10: call   mpfr_get_default_rounding_mode@plt
+2f15: mov    0x88(%rsp),%ecx
+2f20: mov    %rbp,%rdi          # temporary destination
+2f25: call   mpfr_set4@plt
+2f5a: call   mpfr_get_default_rounding_mode@plt
+2f5f: mov    %r12,%rdx          # A[i,j]
+2f62: mov    %rbp,%rsi          # temp
+2f65: mov    %rbp,%rdi          # product temp destination
+2f68: mov    %eax,%ecx          # uncached rounding
+2f6a: call   mpfr_mul@plt
+2f9f: call   mpfr_get_default_rounding_mode@plt
+2fa4: mov    %rbp,%rdx          # product temp
+2fa7: mov    %rbx,%rsi          # y[i]
+2faa: mov    %rbx,%rdi          # y[i] destination
+2fad: mov    %eax,%ecx          # uncached rounding
+2faf: call   mpfr_add@plt
+2fc5: jne    2ee0 <_Rgemv+0x270>
 ```
 
 The wrapper FMA-capture paths reach the same `mpfr_mul` plus `mpfr_fma`
