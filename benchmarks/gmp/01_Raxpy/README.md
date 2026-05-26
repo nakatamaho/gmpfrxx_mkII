@@ -518,6 +518,43 @@ Representative excerpts from the current binaries:
 2920: call   __gmpf_clear@plt
 ```
 
+Counterexample without `FIXED_PRECISION_FASTPATH`: for this reusable-product
+`03` source shape, the GMP precision fastpath is not what makes the mkII loop
+C-equivalent. Removing it leaves the same inner arithmetic body: one reusable
+product object, one `__gmpf_mul`, and one `__gmpf_add` per element.
+
+```asm
+# Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH::_Raxpy
+29c0: mov    %rbp,%rdx        # x[i]
+29c3: mov    %r14,%rsi        # alpha
+29c6: mov    %rsp,%rdi        # reusable product temp
+29c9: call   __gmpf_mul@plt
+29ce: mov    %rsp,%rdx        # product temp
+29d1: mov    %rbx,%rsi        # y[i]
+29d4: mov    %rbx,%rdi        # y[i] destination
+29d7: call   __gmpf_add@plt
+29dc: add    $0x1,%r15
+29e0: add    $0x18,%rbp
+29e4: add    $0x18,%rbx
+29eb: jne    29c0 <_Raxpy+0x80>
+```
+
+```asm
+# Raxpy_gmp_kernel_03_mkII::_Raxpy
+28f0: mov    %rbp,%rdx        # x[i]
+28f3: mov    %r14,%rsi        # alpha
+28f6: mov    %rsp,%rdi        # reusable product temp
+28f9: call   __gmpf_mul@plt
+28fe: mov    %rsp,%rdx        # product temp
+2901: mov    %rbx,%rsi        # y[i]
+2904: mov    %rbx,%rdi        # y[i] destination
+2907: call   __gmpf_add@plt
+290c: add    $0x1,%r15
+2910: add    $0x18,%rbp
+2914: add    $0x18,%rbx
+291b: jne    28f0 <_Raxpy+0x80>
+```
+
 The three excerpts differ in setup details, but the timed arithmetic loop is the
 same: reusable product temp, one `__gmpf_mul`, one `__gmpf_add`, then pointer
 increments and loop branch.

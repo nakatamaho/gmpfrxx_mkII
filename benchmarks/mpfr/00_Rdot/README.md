@@ -742,31 +742,52 @@ Representative excerpts from the current binaries:
 3327: call   mpfr_clear@plt
 ```
 
-Counterexample without `ROUNDING`/`PRECISION`: the plain wrapper expression
-target does not match the raw C FMA loop. The element loop still obtains the
-default rounding mode, initializes a temporary, executes split multiply/add,
-and clears the temporary per iteration.
+Suffix-removal check for the same `03` source shape: the quoted
+`Rdot_mpfr_kernel_03_ROUNDING_PRECISION::_Rdot` loop above is the cached
+reference. Removing either suffix reintroduces the corresponding dynamic work.
+
+| Target | Removed cache assumption | Disassembly evidence | Meaning |
+|--------|--------------------------|----------------------|---------|
+| `kernel_03_PRECISION` | `ROUNDING` | The element loop calls `mpfr_get_default_rounding_mode` before both `mpfr_mul` and `mpfr_add`. | Fixed precision alone does not cache rounding. |
+| `kernel_03_ROUNDING` | `PRECISION` | The fast path must compare destination and temporary precision before taking the loop; fallback paths remain live. | Cached rounding alone does not prove fixed precision. |
 
 ```asm
-# Rdot_mpfr_kernel_01::_Rdot
-2e30: mov    0x0(%rbp),%r15
-2e34: cmpb   $0x0,%fs:0xfffffffffffffff8
-2e3d: jne    2e64 <_Rdot+0x104>
-2e48: call   mpfr_get_default_prec@plt
-2e57: call   mpfr_get_default_rounding_mode@plt
-2e5c: mov    %eax,%fs:0xfffffffffffffffc
-2e64: call   mpfr_get_default_rounding_mode@plt
-2e86: lea    0x40(%rsp),%rdi
-2e8b: call   mpfr_init2@plt
-2e9a: lea    0x40(%rsp),%rdi
-2e9f: mov    %r15d,%ecx
-2ea2: call   mpfr_mul@plt
-2eaa: lea    0x40(%rsp),%rdx
-2eb2: mov    %rbp,%rdi
-2eb5: call   mpfr_add@plt
-2eba: lea    0x40(%rsp),%rdi
-2ecb: call   mpfr_clear@plt
-2ed5: jne    2e30 <_Rdot+0xd0>
+# Rdot_mpfr_kernel_03_PRECISION::_Rdot
+3390: cmpb   $0x0,%fs:0xfffffffffffffff8
+33b3: call   mpfr_get_default_rounding_mode@plt
+33c0: call   mpfr_get_default_rounding_mode@plt
+33c5: mov    %rbx,%rdx          # dy[i]
+33c8: mov    %rbp,%rsi          # dx[i]
+33cb: mov    %r14,%rdi          # reusable product temp
+33ce: mov    %eax,%ecx          # uncached rounding
+33d0: call   mpfr_mul@plt
+33f4: call   mpfr_get_default_rounding_mode@plt
+3401: call   mpfr_get_default_rounding_mode@plt
+3406: mov    %r14,%rdx          # product temp
+3409: mov    %r13,%rsi          # accumulator
+340c: mov    %r13,%rdi          # accumulator destination
+340f: mov    %eax,%ecx          # uncached rounding
+3411: call   mpfr_add@plt
+3425: jne    3390 <_Rdot+0x130>
+```
+
+```asm
+# Rdot_mpfr_kernel_03_ROUNDING::_Rdot
+2e85: cmp    0x0(%r13),%rbp     # accumulator precision guard
+2e89: jne    37e7 <_Rdot+0xa47> # fallback if precision differs
+2e8f: cmp    0x50(%rsp),%rbp    # reusable temp precision guard
+2e94: jne    2903 <_Rdot.cold+0x11e>
+2eb0: mov    %r15d,%ecx         # cached rounding
+2eb3: mov    %rbp,%rdx          # dy[i]
+2eb6: mov    %rbx,%rsi          # dx[i]
+2eb9: mov    %r14,%rdi          # reusable product temp
+2ebc: call   mpfr_mul@plt
+2ec1: mov    %r15d,%ecx         # cached rounding
+2ec4: mov    %r14,%rdx          # product temp
+2ec7: mov    %r13,%rsi          # accumulator
+2eca: mov    %r13,%rdi          # accumulator destination
+2ecd: call   mpfr_add@plt
+2ee3: jne    2eb0 <_Rdot+0x110>
 ```
 
 The FMA wrapper reaches the same arithmetic call class as C native FMA. The

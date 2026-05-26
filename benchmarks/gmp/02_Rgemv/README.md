@@ -606,6 +606,48 @@ Representative excerpts from the current binaries:
 2f63: call   GOMP_barrier@plt   # after worker hot loop
 ```
 
+Counterexample without `FIXED_PRECISION_FASTPATH`: for serial `03`, removing
+the GMP precision fastpath still leaves the same column-major inner loop. The
+wrapper can already keep `temp` and `prod` outside the matrix-element loop, so
+unprecisioning this source shape does not reintroduce per-element construction
+or extra backend calls.
+
+```asm
+# Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH::_Rgemv
+2a70: mov    0x8(%rsp),%rdx
+2a75: mov    0x20(%rsp),%rsi
+2a7a: lea    0x40(%rsp),%rdi
+2a7f: call   __gmpf_mul@plt     # temp = alpha * x[j]
+2ab0: mov    %r12,%rdx          # A[i,j]
+2ab3: lea    0x40(%rsp),%rsi    # temp
+2ab8: mov    %r13,%rdi          # product temp
+2abb: call   __gmpf_mul@plt
+2ac0: mov    %r13,%rdx          # product temp
+2ac3: mov    %rbx,%rsi          # y[i]
+2ac6: mov    %rbx,%rdi          # y[i] destination
+2ac9: call   __gmpf_add@plt
+2add: jne    2ab0 <_Rgemv+0x160>
+2afd: jne    2a70 <_Rgemv+0x120>
+```
+
+```asm
+# Rgemv_gmp_kernel_03_mkII::_Rgemv
+29d0: mov    0x8(%rsp),%rdx
+29d5: mov    0x20(%rsp),%rsi
+29da: lea    0x40(%rsp),%rdi
+29df: call   __gmpf_mul@plt     # temp = alpha * x[j]
+2a10: mov    %r12,%rdx          # A[i,j]
+2a13: lea    0x40(%rsp),%rsi    # temp
+2a18: mov    %r13,%rdi          # product temp
+2a1b: call   __gmpf_mul@plt
+2a20: mov    %r13,%rdx          # product temp
+2a23: mov    %rbx,%rsi          # y[i]
+2a26: mov    %rbx,%rdi          # y[i] destination
+2a29: call   __gmpf_add@plt
+2a3d: jne    2a10 <_Rgemv+0x160>
+2a5d: jne    29d0 <_Rgemv+0x120>
+```
+
 The serial C native, orig, and mkII excerpts all use the same column-major
 arithmetic sequence. The OpenMP `07` excerpt keeps that arithmetic inside the
 worker loop and moves synchronization outside the innermost multiply-add loop.

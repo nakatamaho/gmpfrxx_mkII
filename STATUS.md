@@ -23037,3 +23037,52 @@ Pass/fail result:
 Known issues:
 - Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
 - The counterexample excerpts are representative hot-loop fragments, not full function listings.
+
+## Phase: Refine MPFR Suffix-Removal Disassembly Comparison
+
+Implemented features:
+- Replaced broad MPFR non-fastpath counterexamples with suffix-removal comparisons for the same source-level kernel shapes.
+- Documented `ROUNDING_PRECISION` as the cached reference and compared it against `PRECISION`-only and `ROUNDING`-only targets.
+- Clarified that `PRECISION` alone leaves loop rounding lookups, while `ROUNDING` alone leaves precision guards and fallback paths.
+- Clarified that MPFR Rgemv FMA capture is tied to the `ROUNDING` source modifier, so removing `ROUNDING` also removes that source shape.
+
+Missing features:
+- No new benchmark run was performed.
+
+Tests added:
+- No unit tests. This is a documentation/reporting update.
+
+Exact commands run:
+- `objdump -Cd --no-show-raw-insn <MPFR suffix variant>` for current `00_Rdot`, `01_Raxpy`, and `02_Rgemv` binaries.
+- Focused Python extraction from `/tmp/gmpfrxx_mpfr_suffix/*.S` for non-cold hotpath snippets.
+
+Pass/fail result:
+- Whitespace check: PASS.
+
+Known issues:
+- Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
+- The excerpts are representative hot-loop fragments, not complete function listings.
+
+## Phase: Document GMP Precision Fastpath Counterexamples
+
+Implemented features:
+- Added GMP `00_Rdot`, `01_Raxpy`, and `02_Rgemv` hotpath disassembly comparisons for `kernel_03_mkII_FIXED_PRECISION_FASTPATH` versus the same `kernel_03_mkII` source shape without the precision fastpath.
+- Documented that these reusable-temporary GMP kernels keep the same inner `__gmpf_mul` plus `__gmpf_add` arithmetic loop after removing `FIXED_PRECISION_FASTPATH`.
+- Clarified that the GMP precision fastpath affects setup/fallback classes for these representative kernels, not the already reusable hot multiply-add loop.
+
+Missing features:
+- No new benchmark run was performed.
+
+Tests added:
+- No unit tests. This is a documentation/reporting update.
+
+Exact commands run:
+- `objdump -Cd --no-show-raw-insn <GMP kernel_03_mkII[_FIXED_PRECISION_FASTPATH] benchmark binary>` for current `00_Rdot`, `01_Raxpy`, and `02_Rgemv` binaries.
+- Focused Python extraction from `/tmp/gmpfrxx_gmp_precision/*.S` for non-cold hotpath snippets.
+
+Pass/fail result:
+- Whitespace check: PASS.
+
+Known issues:
+- Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
+- The excerpts are representative hot-loop fragments, not complete function listings.

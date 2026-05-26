@@ -812,36 +812,53 @@ Representative excerpts from the current binaries:
 354b: call   GOMP_barrier@plt
 ```
 
-Counterexample without `ROUNDING`/`PRECISION`: the plain wrapper column-major
-target does not match the raw C FMA kernel. The loop repeatedly enters default
-rounding paths and uses split `mpfr_mul`/`mpfr_add` plus value-copy helper
-calls instead of the direct `mpfr_mul` plus `mpfr_fma` sequence.
+Suffix-removal check for the serial `02` FMA-capture source shape: the quoted
+`Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA::_Rgemv` loop above is
+the cached reference. In this benchmark, `FMA_CAPTURE` is a `ROUNDING` source
+modifier, so removing `ROUNDING` also removes the source form that reaches
+`mpfr_fma`.
+
+| Target | Removed cache assumption | Disassembly evidence | Meaning |
+|--------|--------------------------|----------------------|---------|
+| `kernel_02_ROUNDING_FMA_CAPTURE_FMA` | `PRECISION` | The loop still emits `mpfr_fma`, but precision guards remain in the row and matrix loops. | FMA plus cached rounding is not enough to make the wrapper loop match the fixed-precision C loop. |
+| `kernel_02_PRECISION` | `ROUNDING` and FMA-capture source | The hot path repeatedly calls `mpfr_get_default_rounding_mode`, uses `mpfr_set4`, and falls back to split `mpfr_mul` plus `mpfr_add`. | Fixed precision alone cannot cache rounding or recover the FMA-capture source shape. |
 
 ```asm
-# Rgemv_mpfr_kernel_02::_Rgemv
-2dd0: call   mpfr_get_default_rounding_mode@plt
-2dd5: mov    %r15,%rdx
-2dd8: mov    %rbx,%rsi
-2ddb: mov    %rbx,%rdi
-2dde: mov    %eax,%ecx
-2de0: call   mpfr_mul@plt
-2e43: call   mpfr_get_default_rounding_mode@plt
-2e50: call   mpfr_get_default_rounding_mode@plt
-2e55: mov    0x40(%rsp),%rsi
-2e5a: mov    (%rsp),%rdi
-2e63: call   mpfr_set4@plt
-2e98: call   mpfr_get_default_rounding_mode@plt
-2eab: call   mpfr_mul@plt
-2f03: call   mpfr_get_default_rounding_mode@plt
-2f10: call   mpfr_get_default_rounding_mode@plt
-2f25: call   mpfr_set4@plt
-2f5a: call   mpfr_get_default_rounding_mode@plt
-2f6a: call   mpfr_mul@plt
-2f9f: call   mpfr_get_default_rounding_mode@plt
-2faf: call   mpfr_add@plt
-2fc5: jne    2ee0 <_Rgemv+0x270>
-2ff4: call   mpfr_clear@plt
-2ffd: call   mpfr_clear@plt
+# Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_FMA::_Rgemv
+3030: cmp    0x0(%r13),%r12     # scaled x[j] precision guard
+3034: jne    2985 <_Rgemv.cold+0x160>
+303a: mov    %ebp,%ecx          # cached rounding
+3045: call   mpfr_mul@plt
+30c0: cmp    (%r15),%r12        # y[i] precision guard
+30c3: jne    286e <_Rgemv.cold+0x49>
+30c9: mov    0x8(%rsp),%rsi     # temp
+30ce: mov    %ebp,%r8d          # cached rounding
+30d1: mov    %r15,%rcx          # y[i]
+30d4: mov    %r14,%rdx          # A[i,j]
+30d7: mov    %r15,%rdi          # y[i] destination
+30da: call   mpfr_fma@plt
+30ee: jne    30c0 <_Rgemv+0x1a0>
+```
+
+```asm
+# Rgemv_mpfr_kernel_02_PRECISION::_Rgemv
+2ec0: cmpb   $0x0,%fs:0xfffffffffffffff8
+2ee3: call   mpfr_get_default_rounding_mode@plt
+2ef0: call   mpfr_get_default_rounding_mode@plt
+2f05: call   mpfr_set4@plt
+2f3a: call   mpfr_get_default_rounding_mode@plt
+2f3f: mov    %r12,%rdx          # A[i,j]
+2f42: mov    %rbp,%rsi          # temp
+2f45: mov    %rbp,%rdi          # temp destination
+2f48: mov    %eax,%ecx          # uncached rounding
+2f4a: call   mpfr_mul@plt
+2f7f: call   mpfr_get_default_rounding_mode@plt
+2f84: mov    %rbp,%rdx          # product temp
+2f87: mov    %rbx,%rsi          # y[i]
+2f8a: mov    %rbx,%rdi          # y[i] destination
+2f8d: mov    %eax,%ecx          # uncached rounding
+2f8f: call   mpfr_add@plt
+2fa5: jne    2ec0 <_Rgemv+0x270>
 ```
 
 The wrapper FMA-capture paths reach the same `mpfr_mul` plus `mpfr_fma`

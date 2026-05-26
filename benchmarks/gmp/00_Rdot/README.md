@@ -592,6 +592,45 @@ Representative excerpts from the current binaries:
 28a0: call   __gmpf_clear@plt
 ```
 
+Counterexample without `FIXED_PRECISION_FASTPATH`: for this reusable-product
+`03` source shape, removing the GMP precision fastpath does not change the
+inner arithmetic loop. The fixed and unprecisioned mkII targets both keep the
+product object outside the loop and both emit one `__gmpf_mul` plus one
+`__gmpf_add` per element. The difference is in setup/fallback code around the
+loop, not in the hot multiply-add body.
+
+```asm
+# Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH::_Rdot
+2900: mov    %rbx,%rdx        # dy[i]
+2903: mov    %rbp,%rsi        # dx[i]
+2906: mov    %r13,%rdi        # reusable product temp
+2909: call   __gmpf_mul@plt
+290e: mov    %r13,%rdx        # product temp
+2911: mov    %r12,%rsi        # accumulator
+2914: mov    %r12,%rdi        # accumulator destination
+2917: call   __gmpf_add@plt
+291c: add    $0x1,%r15
+2920: add    $0x18,%rbp
+2924: add    $0x18,%rbx
+292b: jne    2900 <_Rdot+0xb0>
+```
+
+```asm
+# Rdot_gmp_kernel_03_mkII::_Rdot
+2870: mov    %rbx,%rdx        # dy[i]
+2873: mov    %rbp,%rsi        # dx[i]
+2876: mov    %r13,%rdi        # reusable product temp
+2879: call   __gmpf_mul@plt
+287e: mov    %r13,%rdx        # product temp
+2881: mov    %r12,%rsi        # accumulator
+2884: mov    %r12,%rdi        # accumulator destination
+2887: call   __gmpf_add@plt
+288c: add    $0x1,%r15
+2890: add    $0x18,%rbp
+2894: add    $0x18,%rbx
+289b: jne    2870 <_Rdot+0xb0>
+```
+
 These excerpts show the same hot arithmetic class for C native, orig, and mkII:
 one `__gmpf_mul` and one `__gmpf_add` per element, with the reusable product
 cleared after the loop.
