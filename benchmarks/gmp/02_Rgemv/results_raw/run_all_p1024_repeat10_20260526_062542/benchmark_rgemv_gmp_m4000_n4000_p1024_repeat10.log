@@ -1,0 +1,3525 @@
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+BENCHMARK_PARAMS precision=1024 rgemv_m=4000 rgemv_n=4000 repeat=10
+OPENMP_AFFINITY OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread
+DEFAULT_PRECISION_ENV GMPXX_DEFAULT_MPF_PRECISION_BITS=1024
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 1/10
+Elapsed time: 5.40196 s
+MFLOPS: 5.92378
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 14.00
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 2/10
+Elapsed time: 5.34749 s
+MFLOPS: 5.98411
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.87
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 3/10
+Elapsed time: 5.40264 s
+MFLOPS: 5.92303
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.96
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 4/10
+Elapsed time: 5.42448 s
+MFLOPS: 5.89919
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 14.04
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 5/10
+Elapsed time: 5.3986 s
+MFLOPS: 5.92746
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.95
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 6/10
+Elapsed time: 5.34971 s
+MFLOPS: 5.98163
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.87
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 7/10
+Elapsed time: 5.39426 s
+MFLOPS: 5.93223
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.97
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 8/10
+Elapsed time: 5.34084 s
+MFLOPS: 5.99157
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.85
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 9/10
+Elapsed time: 5.40167 s
+MFLOPS: 5.92409
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.95
+
+COMMAND Rgemv Rgemv_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_01 4000 4000 1024
+RUN 10/10
+Elapsed time: 5.39383 s
+MFLOPS: 5.93271
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.97
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.9395 s
+MFLOPS: 10.8862
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.58
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.93706 s
+MFLOPS: 10.8953
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.64
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.95338 s
+MFLOPS: 10.835
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.68
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.92745 s
+MFLOPS: 10.931
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.55
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.90852 s
+MFLOPS: 11.0022
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.51
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.92521 s
+MFLOPS: 10.9394
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.62
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.93874 s
+MFLOPS: 10.889
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.60
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.91942 s
+MFLOPS: 10.9611
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.56
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 9/10
+Elapsed time: 2.90557 s
+MFLOPS: 11.0133
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.51
+
+COMMAND Rgemv Rgemv_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_02 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.92038 s
+MFLOPS: 10.9575
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.60
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.85826 s
+MFLOPS: 11.1956
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.45
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.87257 s
+MFLOPS: 11.1399
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.50
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.83537 s
+MFLOPS: 11.286
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.34
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.85147 s
+MFLOPS: 11.2223
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.37
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.83294 s
+MFLOPS: 11.2957
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.37
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.86078 s
+MFLOPS: 11.1858
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.48
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.84125 s
+MFLOPS: 11.2626
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.42
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.84619 s
+MFLOPS: 11.2431
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.34
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 9/10
+Elapsed time: 2.82801 s
+MFLOPS: 11.3154
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.38
+
+COMMAND Rgemv Rgemv_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.83328 s
+MFLOPS: 11.2943
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.38
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.92033 s
+MFLOPS: 10.9577
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.32
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 2/10
+Elapsed time: 3.01509 s
+MFLOPS: 10.6133
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.56
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.98469 s
+MFLOPS: 10.7214
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.55
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.99773 s
+MFLOPS: 10.6747
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.60
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.98263 s
+MFLOPS: 10.7288
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.54
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.96875 s
+MFLOPS: 10.779
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.55
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.90696 s
+MFLOPS: 11.0081
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.28
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.98576 s
+MFLOPS: 10.7176
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.53
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 9/10
+Elapsed time: 3.03107 s
+MFLOPS: 10.5573
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.67
+
+COMMAND Rgemv Rgemv_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_04 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.91884 s
+MFLOPS: 10.9633
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.40
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.263303 s
+MFLOPS: 121.533
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.08
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.266549 s
+MFLOPS: 120.053
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.02
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.271725 s
+MFLOPS: 117.766
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.03
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.269581 s
+MFLOPS: 118.703
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.10
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.264403 s
+MFLOPS: 121.027
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.06
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.260478 s
+MFLOPS: 122.851
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.05
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.267649 s
+MFLOPS: 119.56
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.13
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.270594 s
+MFLOPS: 118.258
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.13
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.268483 s
+MFLOPS: 119.188
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.11
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.259527 s
+MFLOPS: 123.301
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.15
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.270807 s
+MFLOPS: 118.165
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.01
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.273613 s
+MFLOPS: 116.953
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.04
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.272247 s
+MFLOPS: 117.54
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.03
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.270088 s
+MFLOPS: 118.48
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.270358 s
+MFLOPS: 118.361
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.02
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.266306 s
+MFLOPS: 120.162
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.03
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.260322 s
+MFLOPS: 122.925
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.270649 s
+MFLOPS: 118.234
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.94
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.249179 s
+MFLOPS: 128.422
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.250468 s
+MFLOPS: 127.761
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.246996 s
+MFLOPS: 129.557
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.91
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.245137 s
+MFLOPS: 130.539
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.246754 s
+MFLOPS: 129.684
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.246044 s
+MFLOPS: 130.058
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.245005 s
+MFLOPS: 130.61
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.86
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.251988 s
+MFLOPS: 126.99
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.243958 s
+MFLOPS: 131.17
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.257412 s
+MFLOPS: 124.314
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.86
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.242995 s
+MFLOPS: 131.69
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.86
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.246008 s
+MFLOPS: 130.077
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.86
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.253237 s
+MFLOPS: 126.364
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.254643 s
+MFLOPS: 125.666
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.253113 s
+MFLOPS: 126.426
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.92
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.254722 s
+MFLOPS: 125.627
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.257567 s
+MFLOPS: 124.239
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.250571 s
+MFLOPS: 127.708
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.251371 s
+MFLOPS: 127.302
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.86
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.256441 s
+MFLOPS: 124.785
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.252214 s
+MFLOPS: 126.877
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.252362 s
+MFLOPS: 126.802
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.167758 s
+MFLOPS: 190.751
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.167381 s
+MFLOPS: 191.18
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.166868 s
+MFLOPS: 191.768
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.166867 s
+MFLOPS: 191.769
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.169669 s
+MFLOPS: 188.602
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.168781 s
+MFLOPS: 189.594
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.82
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.169219 s
+MFLOPS: 189.104
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.168061 s
+MFLOPS: 190.407
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.172609 s
+MFLOPS: 185.391
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_05 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.171888 s
+MFLOPS: 186.168
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.205085 s
+MFLOPS: 156.033
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.200196 s
+MFLOPS: 159.843
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.203294 s
+MFLOPS: 157.408
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.202226 s
+MFLOPS: 158.239
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.20313 s
+MFLOPS: 157.535
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.200621 s
+MFLOPS: 159.505
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.204742 s
+MFLOPS: 156.294
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.198646 s
+MFLOPS: 161.091
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.200553 s
+MFLOPS: 159.559
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.82
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_06 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.203947 s
+MFLOPS: 156.904
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.12221 s
+MFLOPS: 261.845
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.97
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.122074 s
+MFLOPS: 262.137
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.123603 s
+MFLOPS: 258.894
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 9.08
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.123556 s
+MFLOPS: 258.992
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 9.02
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.121949 s
+MFLOPS: 262.404
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 9.02
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.120768 s
+MFLOPS: 264.972
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 9.02
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.121844 s
+MFLOPS: 262.632
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 9.03
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.124858 s
+MFLOPS: 256.292
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 9.03
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.128991 s
+MFLOPS: 248.08
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 9.00
+
+COMMAND Rgemv Rgemv_gmp_C_native_openmp_07 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.120806 s
+MFLOPS: 264.887
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 9.00
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 5.47645 s
+MFLOPS: 5.8432
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.93
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 5.46115 s
+MFLOPS: 5.85958
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.89
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 5.4975 s
+MFLOPS: 5.82083
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.95
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 5.45281 s
+MFLOPS: 5.86853
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 5.45169 s
+MFLOPS: 5.86974
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.84
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 5.45283 s
+MFLOPS: 5.86852
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 5.34388 s
+MFLOPS: 5.98816
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.60
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 5.56918 s
+MFLOPS: 5.74591
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 14.09
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 5.47344 s
+MFLOPS: 5.84642
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.95
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 5.48305 s
+MFLOPS: 5.83616
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.93
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 5.42767 s
+MFLOPS: 5.89572
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.98
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 5.30157 s
+MFLOPS: 6.03595
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.66
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 5.3864 s
+MFLOPS: 5.94089
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.87
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 5.47306 s
+MFLOPS: 5.84682
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 14.02
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 5.399 s
+MFLOPS: 5.92703
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.93
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 5.39527 s
+MFLOPS: 5.93112
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.90
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 5.44577 s
+MFLOPS: 5.87612
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 14.03
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 5.42724 s
+MFLOPS: 5.89619
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.89
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 5.39894 s
+MFLOPS: 5.92709
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.91
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 5.44516 s
+MFLOPS: 5.87678
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 14.05
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 5.43077 s
+MFLOPS: 5.89235
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.83
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 5.37887 s
+MFLOPS: 5.94921
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 5.42324 s
+MFLOPS: 5.90053
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.82
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 5.43262 s
+MFLOPS: 5.89035
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.86
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 5.37687 s
+MFLOPS: 5.95142
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.73
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 5.28262 s
+MFLOPS: 6.0576
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.55
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 5.40941 s
+MFLOPS: 5.91562
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.85
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 5.28306 s
+MFLOPS: 6.05709
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.54
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 5.45582 s
+MFLOPS: 5.8653
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.91
+
+COMMAND Rgemv Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 5.38188 s
+MFLOPS: 5.94588
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 13.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.90721 s
+MFLOPS: 11.0071
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.30
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.95323 s
+MFLOPS: 10.8356
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.48
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.9414 s
+MFLOPS: 10.8792
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.45
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.93424 s
+MFLOPS: 10.9057
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.42
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.90448 s
+MFLOPS: 11.0175
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.29
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.90264 s
+MFLOPS: 11.0244
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.36
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.94326 s
+MFLOPS: 10.8723
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.44
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.83951 s
+MFLOPS: 11.2696
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.11
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 2.9412 s
+MFLOPS: 10.8799
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.44
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.89847 s
+MFLOPS: 11.0403
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.35
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.91512 s
+MFLOPS: 10.9773
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.52
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.91818 s
+MFLOPS: 10.9657
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.50
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.93641 s
+MFLOPS: 10.8977
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.60
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.91817 s
+MFLOPS: 10.9658
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.52
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.9348 s
+MFLOPS: 10.9036
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.53
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.93892 s
+MFLOPS: 10.8884
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.54
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.93413 s
+MFLOPS: 10.9061
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.57
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.91027 s
+MFLOPS: 10.9955
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.55
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 2.94155 s
+MFLOPS: 10.8786
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.57
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.89981 s
+MFLOPS: 11.0352
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.52
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.90709 s
+MFLOPS: 11.0076
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.34
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.9301 s
+MFLOPS: 10.9211
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.35
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.9314 s
+MFLOPS: 10.9163
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.32
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.91476 s
+MFLOPS: 10.9786
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.31
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.93416 s
+MFLOPS: 10.906
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.40
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.93419 s
+MFLOPS: 10.9059
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.42
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.93817 s
+MFLOPS: 10.8911
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.42
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.91652 s
+MFLOPS: 10.972
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.36
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 2.92797 s
+MFLOPS: 10.9291
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.37
+
+COMMAND Rgemv Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.94985 s
+MFLOPS: 10.848
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.40
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.83773 s
+MFLOPS: 11.2766
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.32
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.86543 s
+MFLOPS: 11.1676
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.33
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.83498 s
+MFLOPS: 11.2876
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.27
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.84478 s
+MFLOPS: 11.2487
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.26
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.84472 s
+MFLOPS: 11.2489
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.35
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.84551 s
+MFLOPS: 11.2458
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.33
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.8405 s
+MFLOPS: 11.2656
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.27
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.83965 s
+MFLOPS: 11.269
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.33
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 2.84133 s
+MFLOPS: 11.2623
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.32
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.86693 s
+MFLOPS: 11.1618
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.43
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.82879 s
+MFLOPS: 11.3123
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.40
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.86419 s
+MFLOPS: 11.1724
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.54
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.85042 s
+MFLOPS: 11.2264
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.47
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.82793 s
+MFLOPS: 11.3157
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.38
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.82555 s
+MFLOPS: 11.3252
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.43
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.86605 s
+MFLOPS: 11.1652
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.49
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.85893 s
+MFLOPS: 11.193
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.48
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.85787 s
+MFLOPS: 11.1972
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.51
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 2.83117 s
+MFLOPS: 11.3028
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.40
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.84075 s
+MFLOPS: 11.2647
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.46
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 2.84176 s
+MFLOPS: 11.2606
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.23
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.86499 s
+MFLOPS: 11.1693
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.32
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 2.79474 s
+MFLOPS: 11.4501
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.08
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 2.84096 s
+MFLOPS: 11.2638
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.24
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 2.85201 s
+MFLOPS: 11.2202
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.26
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 2.90023 s
+MFLOPS: 11.0336
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.37
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.83221 s
+MFLOPS: 11.2986
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.21
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 2.84348 s
+MFLOPS: 11.2538
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.27
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 2.84164 s
+MFLOPS: 11.2611
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.20
+
+COMMAND Rgemv Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 2.85965 s
+MFLOPS: 11.1902
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.35
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 3.03998 s
+MFLOPS: 10.5264
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.63
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 3.03654 s
+MFLOPS: 10.5383
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.67
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 3.02175 s
+MFLOPS: 10.5899
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.60
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 3.01449 s
+MFLOPS: 10.6154
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.56
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 3.02031 s
+MFLOPS: 10.5949
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.56
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 3.04947 s
+MFLOPS: 10.4936
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.71
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 3.00091 s
+MFLOPS: 10.6634
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.54
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 3.03377 s
+MFLOPS: 10.5479
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.62
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 3.04594 s
+MFLOPS: 10.5058
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.63
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 3.05181 s
+MFLOPS: 10.4856
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.63
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 3.10086 s
+MFLOPS: 10.3197
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 2.95279 s
+MFLOPS: 10.8372
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.46
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 3.03071 s
+MFLOPS: 10.5586
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.71
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 3.00744 s
+MFLOPS: 10.6403
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.62
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 3.02694 s
+MFLOPS: 10.5717
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.66
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 3.05874 s
+MFLOPS: 10.4618
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.68
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 3.02502 s
+MFLOPS: 10.5784
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.66
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 3.05509 s
+MFLOPS: 10.4743
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 3.04554 s
+MFLOPS: 10.5072
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.67
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 3.00425 s
+MFLOPS: 10.6516
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.63
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 3.00546 s
+MFLOPS: 10.6473
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.36
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 3.00896 s
+MFLOPS: 10.6349
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.41
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 3.03235 s
+MFLOPS: 10.5529
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.48
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 3.04839 s
+MFLOPS: 10.4973
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.54
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 3.0063 s
+MFLOPS: 10.6443
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.43
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 3.00824 s
+MFLOPS: 10.6374
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.42
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 2.9662 s
+MFLOPS: 10.7882
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.21
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 3.01491 s
+MFLOPS: 10.6139
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.43
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 3.03415 s
+MFLOPS: 10.5466
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.45
+
+COMMAND Rgemv Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 3.0138 s
+MFLOPS: 10.6178
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.44
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.252123 s
+MFLOPS: 126.922
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.252085 s
+MFLOPS: 126.941
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.250754 s
+MFLOPS: 127.615
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.256747 s
+MFLOPS: 124.636
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.252268 s
+MFLOPS: 126.849
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.256767 s
+MFLOPS: 124.627
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.252065 s
+MFLOPS: 126.952
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.252961 s
+MFLOPS: 126.501
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.253436 s
+MFLOPS: 126.264
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.25575 s
+MFLOPS: 125.122
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.25253 s
+MFLOPS: 126.718
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.86
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.290896 s
+MFLOPS: 110.005
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.251959 s
+MFLOPS: 127.005
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.82
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.25618 s
+MFLOPS: 124.912
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.91
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.250779 s
+MFLOPS: 127.602
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.93
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.257206 s
+MFLOPS: 124.414
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.86
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.251748 s
+MFLOPS: 127.111
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.93
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.249795 s
+MFLOPS: 128.105
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.248676 s
+MFLOPS: 128.682
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.249693 s
+MFLOPS: 128.158
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.258533 s
+MFLOPS: 123.775
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.254032 s
+MFLOPS: 125.968
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.255324 s
+MFLOPS: 125.331
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.255589 s
+MFLOPS: 125.201
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.256989 s
+MFLOPS: 124.519
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.75
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.25525 s
+MFLOPS: 125.367
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.82
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.257058 s
+MFLOPS: 124.485
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.263623 s
+MFLOPS: 121.386
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.25408 s
+MFLOPS: 125.945
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.75
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.255383 s
+MFLOPS: 125.302
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.27829 s
+MFLOPS: 114.988
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.288994 s
+MFLOPS: 110.729
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.94
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.305584 s
+MFLOPS: 104.717
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.90
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.257609 s
+MFLOPS: 124.219
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.251996 s
+MFLOPS: 126.986
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.2552 s
+MFLOPS: 125.392
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.252218 s
+MFLOPS: 126.874
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.254332 s
+MFLOPS: 125.82
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.256426 s
+MFLOPS: 124.792
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.252862 s
+MFLOPS: 126.551
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.250517 s
+MFLOPS: 127.736
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.250029 s
+MFLOPS: 127.985
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.251968 s
+MFLOPS: 127
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.250976 s
+MFLOPS: 127.502
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.254699 s
+MFLOPS: 125.638
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.253661 s
+MFLOPS: 126.153
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.90
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.25143 s
+MFLOPS: 127.272
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.253321 s
+MFLOPS: 126.322
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.90
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.251144 s
+MFLOPS: 127.417
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.252843 s
+MFLOPS: 126.561
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.251529 s
+MFLOPS: 127.222
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.252578 s
+MFLOPS: 126.694
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.25141 s
+MFLOPS: 127.282
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.251792 s
+MFLOPS: 127.089
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.254591 s
+MFLOPS: 125.692
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.249337 s
+MFLOPS: 128.341
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.71
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.249426 s
+MFLOPS: 128.295
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.250118 s
+MFLOPS: 127.939
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.249948 s
+MFLOPS: 128.027
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.253528 s
+MFLOPS: 126.219
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.73
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.24374 s
+MFLOPS: 131.287
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.244544 s
+MFLOPS: 130.856
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.244355 s
+MFLOPS: 130.957
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.24722 s
+MFLOPS: 129.439
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.246442 s
+MFLOPS: 129.848
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.246497 s
+MFLOPS: 129.819
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.243954 s
+MFLOPS: 131.172
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.265865 s
+MFLOPS: 120.362
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.244856 s
+MFLOPS: 130.689
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.255153 s
+MFLOPS: 125.415
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.245276 s
+MFLOPS: 130.465
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.252437 s
+MFLOPS: 126.764
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.244117 s
+MFLOPS: 131.085
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.244659 s
+MFLOPS: 130.794
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.245237 s
+MFLOPS: 130.486
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.245828 s
+MFLOPS: 130.172
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.243243 s
+MFLOPS: 131.556
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.247296 s
+MFLOPS: 129.399
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.90
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.250539 s
+MFLOPS: 127.725
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.24474 s
+MFLOPS: 130.751
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.248394 s
+MFLOPS: 128.827
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.244991 s
+MFLOPS: 130.617
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.245189 s
+MFLOPS: 130.511
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.75
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.248392 s
+MFLOPS: 128.829
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.75
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.257137 s
+MFLOPS: 124.448
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.246617 s
+MFLOPS: 129.756
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.246001 s
+MFLOPS: 130.081
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.247473 s
+MFLOPS: 129.307
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.250303 s
+MFLOPS: 127.845
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.246998 s
+MFLOPS: 129.556
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.258176 s
+MFLOPS: 123.947
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.254704 s
+MFLOPS: 125.636
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.261702 s
+MFLOPS: 122.276
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.261155 s
+MFLOPS: 122.532
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.255321 s
+MFLOPS: 125.332
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.254778 s
+MFLOPS: 125.599
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.254069 s
+MFLOPS: 125.95
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.304597 s
+MFLOPS: 105.057
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.255406 s
+MFLOPS: 125.291
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.253775 s
+MFLOPS: 126.096
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.80
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.254071 s
+MFLOPS: 125.949
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.255401 s
+MFLOPS: 125.293
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.91
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.25647 s
+MFLOPS: 124.771
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.255777 s
+MFLOPS: 125.109
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.94
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.259761 s
+MFLOPS: 123.19
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.257694 s
+MFLOPS: 124.178
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.255978 s
+MFLOPS: 125.011
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.94
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.259528 s
+MFLOPS: 123.301
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.89
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.253984 s
+MFLOPS: 125.992
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.87
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.255221 s
+MFLOPS: 125.381
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.88
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.259282 s
+MFLOPS: 123.418
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.262086 s
+MFLOPS: 122.097
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.259839 s
+MFLOPS: 123.153
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.265907 s
+MFLOPS: 120.343
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.76
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.25902 s
+MFLOPS: 123.543
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.83
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.269763 s
+MFLOPS: 118.622
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.261308 s
+MFLOPS: 122.461
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.261846 s
+MFLOPS: 122.209
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.82
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.263001 s
+MFLOPS: 121.673
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.26743 s
+MFLOPS: 119.657
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.167216 s
+MFLOPS: 191.37
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.68
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.167915 s
+MFLOPS: 190.572
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.169333 s
+MFLOPS: 188.977
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.181134 s
+MFLOPS: 176.665
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.169019 s
+MFLOPS: 189.328
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.67
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.167876 s
+MFLOPS: 190.617
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.174996 s
+MFLOPS: 182.861
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.169813 s
+MFLOPS: 188.442
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.168707 s
+MFLOPS: 189.678
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.168684 s
+MFLOPS: 189.703
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.168702 s
+MFLOPS: 189.683
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.190807 s
+MFLOPS: 167.709
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.01
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.167908 s
+MFLOPS: 190.581
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.93
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.17399 s
+MFLOPS: 183.918
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.00
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.171842 s
+MFLOPS: 186.217
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.1734 s
+MFLOPS: 184.545
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.168105 s
+MFLOPS: 190.357
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.97
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.171242 s
+MFLOPS: 186.87
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.04
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.170246 s
+MFLOPS: 187.964
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.171523 s
+MFLOPS: 186.564
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.01
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.166465 s
+MFLOPS: 192.233
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.167922 s
+MFLOPS: 190.565
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.63
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.168514 s
+MFLOPS: 189.896
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.171181 s
+MFLOPS: 186.937
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.168786 s
+MFLOPS: 189.589
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.171786 s
+MFLOPS: 186.278
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.66
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.175948 s
+MFLOPS: 181.872
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.71
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.171555 s
+MFLOPS: 186.529
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.65
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.169798 s
+MFLOPS: 188.46
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.66
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.170859 s
+MFLOPS: 187.289
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.203168 s
+MFLOPS: 157.505
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.199977 s
+MFLOPS: 160.019
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.85
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.199408 s
+MFLOPS: 160.475
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.71
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.202946 s
+MFLOPS: 157.677
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.68
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.200309 s
+MFLOPS: 159.753
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.68
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.202661 s
+MFLOPS: 157.899
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.73
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.202764 s
+MFLOPS: 157.819
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.68
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.200934 s
+MFLOPS: 159.256
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.20059 s
+MFLOPS: 159.529
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.199428 s
+MFLOPS: 160.459
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.201419 s
+MFLOPS: 158.873
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.202122 s
+MFLOPS: 158.321
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.98
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.201059 s
+MFLOPS: 159.158
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.199855 s
+MFLOPS: 160.116
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.98
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.201115 s
+MFLOPS: 159.113
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.00
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.198831 s
+MFLOPS: 160.941
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.04
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.19988 s
+MFLOPS: 160.096
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.94
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.200348 s
+MFLOPS: 159.722
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.99
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.20254 s
+MFLOPS: 157.994
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.96
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.200847 s
+MFLOPS: 159.326
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.95
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.201105 s
+MFLOPS: 159.121
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.64
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.200617 s
+MFLOPS: 159.508
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.20081 s
+MFLOPS: 159.354
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.200027 s
+MFLOPS: 159.978
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.202818 s
+MFLOPS: 157.777
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.73
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.200705 s
+MFLOPS: 159.438
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.72
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.199803 s
+MFLOPS: 160.158
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.71
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.199483 s
+MFLOPS: 160.414
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.19874 s
+MFLOPS: 161.015
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.68
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.199593 s
+MFLOPS: 160.326
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.122182 s
+MFLOPS: 261.904
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.58
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.124236 s
+MFLOPS: 257.575
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.122153 s
+MFLOPS: 261.968
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.65
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.121245 s
+MFLOPS: 263.929
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.61
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.122418 s
+MFLOPS: 261.398
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.67
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.123407 s
+MFLOPS: 259.305
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.59
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.128234 s
+MFLOPS: 249.543
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.64
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.137345 s
+MFLOPS: 232.99
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.66
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.127041 s
+MFLOPS: 251.888
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.63
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_orig 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.126595 s
+MFLOPS: 252.775
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.66
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.127418 s
+MFLOPS: 251.142
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.77
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.122417 s
+MFLOPS: 261.402
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.122769 s
+MFLOPS: 260.653
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.73
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.127029 s
+MFLOPS: 251.911
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.122094 s
+MFLOPS: 262.093
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.75
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.124139 s
+MFLOPS: 257.777
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.73
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.127911 s
+MFLOPS: 250.174
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.73
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.127268 s
+MFLOPS: 251.438
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.78
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.121984 s
+MFLOPS: 262.329
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.81
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.129996 s
+MFLOPS: 246.161
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.79
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 1/10
+Elapsed time: 0.122754 s
+MFLOPS: 260.684
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 2/10
+Elapsed time: 0.121996 s
+MFLOPS: 262.303
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.74
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 3/10
+Elapsed time: 0.121661 s
+MFLOPS: 263.026
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 4/10
+Elapsed time: 0.129271 s
+MFLOPS: 247.542
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.70
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 5/10
+Elapsed time: 0.127082 s
+MFLOPS: 251.806
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.67
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 6/10
+Elapsed time: 0.122195 s
+MFLOPS: 261.875
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.84
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 7/10
+Elapsed time: 0.124975 s
+MFLOPS: 256.052
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.64
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 8/10
+Elapsed time: 0.134863 s
+MFLOPS: 237.278
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.75
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 9/10
+Elapsed time: 0.125645 s
+MFLOPS: 254.686
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.69
+
+COMMAND Rgemv Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH 4000 4000 1024
+RUN 10/10
+Elapsed time: 0.121926 s
+MFLOPS: 262.455
+L1 Norm of difference: 4.435e-303
+Result OK
+WALL_SECONDS 8.68
