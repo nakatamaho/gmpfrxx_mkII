@@ -824,6 +824,13 @@ modifier, so removing `ROUNDING` also removes the source form that reaches
 | `kernel_02_ROUNDING_FMA_CAPTURE_FMA` | `PRECISION` | The loop still emits `mpfr_fma`, but precision guards remain in the row and matrix loops. | FMA plus cached rounding is not enough to make the wrapper loop match the fixed-precision C loop. |
 | `kernel_02` | `ROUNDING`, `PRECISION`, and FMA-capture source | The hot path repeatedly calls `mpfr_get_default_rounding_mode`, uses `mpfr_set4`, and emits split `mpfr_mul` plus `mpfr_add`. | This is the fully uncached column-major wrapper baseline for the same numbered source family. |
 
+The `cmpb $0x0,%fs:...` instruction is the generated check for the
+DSO-local `static thread_local bool initialized` used by
+`initialize_mpfr_defaults_for_current_thread()`. On Linux x86-64, `%fs` is the
+TLS base and the displayed displacement is a build/link-specific TLS offset,
+not a meaningful absolute address. This guard is not MPFR arithmetic and is not
+the rounding value passed to an MPFR operation.
+
 In the `PRECISION` and vanilla excerpts, the first `mpfr_get_default_rounding_mode`
 call following the TLS initialization-flag check belongs to the first-use
 MPFR-default initialization/refresh path. Once that per-thread flag is set, the

@@ -23134,3 +23134,25 @@ Pass/fail result:
 Known issues:
 - Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
 - The excerpts are representative hot-loop fragments, not complete function listings.
+
+## Phase: Document MPFR TLS Guard Disassembly
+
+Implemented features:
+- Added MPFR `00_Rdot`, `01_Raxpy`, and `02_Rgemv` README explanations for the `cmpb $0x0,%fs:...` TLS guard in non-`ROUNDING` disassembly excerpts.
+- Clarified that the instruction checks the DSO-local `static thread_local bool initialized` flag used by `initialize_mpfr_defaults_for_current_thread()`.
+- Clarified that `%fs` is the Linux x86-64 TLS base and the displayed displacement is a build/link-specific TLS offset, not a meaningful absolute address.
+
+Missing features:
+- No new benchmark run was performed.
+
+Tests added:
+- No unit tests. This is a documentation/reporting update.
+
+Exact commands run:
+- Updated MPFR `00_Rdot`, `01_Raxpy`, and `02_Rgemv` README hotpath descriptions.
+
+Pass/fail result:
+- Whitespace check: PASS.
+
+Known issues:
+- Disassembly addresses and TLS offsets are build-specific and are included only as local context for the current `build_bench_release` binaries.

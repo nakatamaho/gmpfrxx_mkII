@@ -752,6 +752,13 @@ reference. Removing either suffix reintroduces the corresponding dynamic work.
 | `kernel_03_ROUNDING` | `PRECISION` | The fast path must compare destination and temporary precision before taking the loop; fallback paths remain live. | Cached rounding alone does not prove fixed precision. |
 | `kernel_03` | `ROUNDING` and `PRECISION` | The element loop calls `mpfr_get_default_rounding_mode` before both arithmetic calls, and the surrounding code uses the non-fastpath precision setup/fallback path. | This is the fully uncached baseline for the same reusable-product source shape. |
 
+The `cmpb $0x0,%fs:...` instruction is the generated check for the
+DSO-local `static thread_local bool initialized` used by
+`initialize_mpfr_defaults_for_current_thread()`. On Linux x86-64, `%fs` is the
+TLS base and the displayed displacement is a build/link-specific TLS offset,
+not a meaningful absolute address. This guard is not MPFR arithmetic and is not
+the rounding value passed to an MPFR operation.
+
 In the `PRECISION` and vanilla excerpts, the first `mpfr_get_default_rounding_mode`
 call following the TLS initialization-flag check belongs to the first-use
 MPFR-default initialization/refresh path. Once that per-thread flag is set, the
