@@ -506,29 +506,52 @@ These rows are derived from `benchmarks/gmp/00_Rdot/results_raw/run_all_p1024_re
 
 ## Hotpath Disassembly
 
-The representative disassembly checks are unchanged by this result refresh because the kernel sources did not change during the repeat-10 run. Regenerate snippets with:
+Representative command:
 
 ```bash
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_C_native_03
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_orig
 objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_03_mkII
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
 ```
 
-| Kernel class | Expected hot-loop check |
-| --- | --- |
-| Loop-local temporary | `mpf_init2` / `mpf_clear` or equivalent object construction appears in the timed loop. |
-| Reusable product | One `mpf_mul` and one `mpf_add` per element; product object lifetime is outside the timed loop. |
-| Unrolled reusable product | Four independent accumulators do not remove the backend multiply/add cost; they mainly change dependency shape. |
-| mkII fixed precision | Expression-form scratch reuse should remove repeated precision setup when the destination precision is fixed. |
-| OpenMP worker loop | Per-thread accumulation happens inside the worker loop; final reduction is outside the worker hot path. |
+The refreshed representative disassembly was compared by backend call sequence,
+not by absolute addresses.
 
-The 1024-bit run adds a precision-audit requirement: raw C and upstream wrappers form the expected lower-throughput 1024-bit class, while mkII results remain close to the 512-bit class. Disassembly alone is not enough to validate those mkII numbers; inspect the precision of generated input objects, expression materialization, and accumulator temporaries before using them as performance evidence.
+| Representative | Hotpath observation | Comparison point |
+|----------------|---------------------|------------------|
+| `C_native_03` | One reusable `mpf_t` product object; the timed loop has one `__gmpf_mul` and one `__gmpf_add` per element. `mpf_init2` and `mpf_clear` are outside the loop. | Raw baseline. |
+| `kernel_03_orig` | Same one-`__gmpf_mul` plus one-`__gmpf_add` loop class as `C_native_03`; wrapper object setup is outside the loop. | Equivalent hot loop to C native for the reusable-product source shape. |
+| `kernel_03_mkII` | Same backend arithmetic sequence as `C_native_03`; mkII precision setup and guards are not in the inner multiply-add loop. | Equivalent arithmetic hot loop to C native, with wrapper control outside the timed loop. |
+| `kernel_06_mkII_FIXED_PRECISION_FASTPATH` | Four accumulator lanes still emit the same backend multiply/add operations, only distributed across four accumulators and reusable products. | Same performance class as the reusable-product baseline at this precision. |
+| `kernel_openmp_03_*` / `kernel_openmp_06_*` | Worker loops keep per-thread accumulator/product objects outside the hot loop. The final reduction is outside the per-thread element loop. | Same arithmetic class as the serial reusable-product loop, with OpenMP scheduling and reduction overhead. |
+
+Representative loop class:
+
+```asm
+# C_native_03 / kernel_03_orig / kernel_03_mkII reusable-product class
+call   __gmpf_mul@plt
+call   __gmpf_add@plt
+jne    <element loop>
+```
 
 ## Lessons Learned
 
-- At 512 bits, the best serial average is `kernel_06_mkII_FIXED_PRECISION_FASTPATH` at 32.851 MFLOPS; the best OpenMP average is `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` at 578.143 MFLOPS.
-- At 1024 bits, the best serial average is `kernel_03_mkII_FIXED_PRECISION_FASTPATH` at 11.908 MFLOPS; the best OpenMP average is `C_native_openmp_03` at 316.496 MFLOPS.
-- For GMP `mpf`, source-level temporary lifetime remains the main performance boundary; reusable temporaries and fixed-precision builds define the top wrapper classes.
-- OpenMP results should be interpreted by performance class and average MFLOPS because several variants have single-repeat spikes or drops.
-- The 1024-bit run is now recorded from the same dual-precision runner as the 512-bit run, so README conclusions should compare both precision classes from the same run stamp.
+The main boundary is still temporary lifetime. When the product object and
+accumulators are outside the timed loop, C native, upstream `gmpxx`, and mkII
+all reduce to the same one-`__gmpf_mul` plus one-`__gmpf_add` class.
+
+For 512-bit serial runs, the max winner (`kernel_03_orig`) and average winner
+(`kernel_06_mkII_FIXED_PRECISION_FASTPATH`) differ by about 0.2% in average
+MFLOPS. That is not evidence for a distinct source-level advantage; both are
+inside the reusable-temporary performance class.
+
+For 1024-bit OpenMP runs, the max winner (`C_native_openmp_06`) and average
+winner (`C_native_openmp_03`) are also effectively tied. The difference is
+OpenMP run-to-run variance over the same backend arithmetic loop, not a durable
+benefit from four accumulators.
+
+The fixed-precision fastpath helps expression-form scratch handling, but it
+does not change the backend arithmetic loop once the source already reuses
+explicit temporaries.
+
+The implementation target remains simple: one backend multiply and one backend
+add per element, with initialization, cleanup, and reduction outside the hot
+loop.

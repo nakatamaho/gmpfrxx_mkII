@@ -496,141 +496,69 @@ These rows are derived from `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p1024_
 
 ## Comparison with GMP version
 
-The rows below compare the current 512-bit and 1024-bit `run_all` data for the same benchmark. This is a performance-class comparison; GMP `mpf` and MPFR have different precision, rounding, and range semantics.
+| Precision | Mode | Best MPFR Avg MFLOPS | Best GMP Avg MFLOPS | MPFR/GMP | Interpretation |
+|-----------|------|----------------------|---------------------|----------|----------------|
+| 512 | Serial | 22.981 | 33.650 | 0.683x | MPFR serial Raxpy still pays rounding and MPFR object semantics relative to GMP. |
+| 512 | OpenMP | 414.911 | 393.434 | 1.055x | The MPFR FMA-captured OpenMP path slightly exceeds this GMP run; treat this as run/source-class variance, not a general backend claim. |
+| 1024 | Serial | 9.341 | 11.967 | 0.781x | Higher precision narrows the gap but MPFR remains slower in serial. |
+| 1024 | OpenMP | 254.585 | 252.368 | 1.009x | The OpenMP results are effectively tied across backends for this data set. |
 
-| Precision | Class | GMP best-avg variant | GMP Avg MFLOPS | MPFR best-avg variant | MPFR Avg MFLOPS | MPFR/GMP |
-| --- | --- | --- | --- | --- | --- | --- |
-| 512 | Best serial average | `C_native_03` | 33.650 | `kernel_01_ROUNDING_PRECISION_FMA` | 22.981 | 0.683x |
-| 512 | Best OpenMP average | `kernel_openmp_03_orig` | 393.434 | `kernel_openmp_01_ROUNDING_PRECISION_FMA` | 414.911 | 1.055x |
-| 1024 | Best serial average | `C_native_03` | 11.967 | `C_native_01_FMA` | 9.341 | 0.781x |
-| 1024 | Best OpenMP average | `kernel_openmp_03_orig` | 252.368 | `kernel_openmp_01_ROUNDING_PRECISION_FMA` | 254.585 | 1.009x |
+The MPFR/GMP ratios mix backend semantics and source-shape differences. The
+OpenMP ratios should not be read as MPFR being intrinsically faster than GMP.
 
 ## Hotpath Disassembly
 
-Representative command shape:
+Representative commands:
 
 ```bash
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/01_Raxpy/<executable>
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_ROUNDING_PRECISION_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_ROUNDING_PRECISION
 ```
 
-Addresses are build-specific; the relevant evidence is the backend call sequence, where reusable temporaries are initialized and cleared, and whether rounding is cached or read inside the loop. The 512-bit and 1024-bit runs use the same emitted loop structure; precision changes the limb work inside the MPFR calls.
+The representative disassembly now uses the current target names. The wrapper
+FMA variants match the raw C arithmetic call class, but still carry wrapper
+control paths outside or around the fast path.
 
-The snippets are representative, not exhaustive. They were selected to cover
-the split raw C baseline, the raw FMA baseline, the reusable-product mkII
-wrapper path, and the matching OpenMP worker. For MPFR Raxpy, the central
-question is whether the source shape becomes one `mpfr_fma` per element or
-remains a split `mpfr_mul` + `mpfr_add` loop, and whether rounding is cached in
-a register or read through TLS.
+| Representative | Hotpath observation | Comparison point |
+|----------------|---------------------|------------------|
+| `C_native_01_FMA` | Caches rounding before the loop and calls one `mpfr_fma` per element for `y[i] = alpha * x[i] + y[i]`. | Raw FMA baseline. |
+| `kernel_01_ROUNDING_PRECISION_FMA` | The timed arithmetic path calls `mpfr_fma`; the binary also contains wrapper default-state/precision guard paths. | Closest mkII FMA equivalent, same arithmetic class as C native. |
+| `C_native_03` | Reusable product object with one `mpfr_mul` and one `mpfr_add` per element. | Raw split multiply/add baseline. |
+| `kernel_03_ROUNDING_PRECISION` | Same split `mpfr_mul` plus `mpfr_add` arithmetic class as `C_native_03`; the reusable temporary is outside the element loop. | Closest mkII reusable-temp equivalent. |
+| `kernel_openmp_01_ROUNDING_PRECISION_FMA` | Worker loop keeps the one-`mpfr_fma` arithmetic class; OpenMP scheduling and final synchronization are outside the backend call itself. | Best OpenMP wrapper class in both precision runs. |
 
-`Raxpy_mpfr_C_native_01` has one reusable `mpfr_t` product object. It is initialized before the timed loop, the rounding mode is cached once, and the loop body has one `mpfr_mul` plus one `mpfr_add` per element. The temporary is cleared after the loop.
+Representative loop classes:
 
 ```asm
-49db: lea    0x10(%rsp),%rdi   # reusable temp
-49e9: call   mpfr_init@plt
-49ee: call   mpfr_get_default_rounding_mode@plt
-49f3: mov    %eax,%r13d        # cached rounding
+# C_native_01_FMA and kernel_01_ROUNDING_PRECISION_FMA arithmetic class
+call   mpfr_fma@plt
+jne    <element loop>
 
-4a10: mov    %rbp,%rdx         # x[i]
-4a13: mov    %r13d,%ecx        # cached rounding
-4a16: mov    %r15,%rsi         # alpha
-4a1d: lea    0x10(%rsp),%rdi   # temp
-4a22: add    $0x20,%rbp        # x++
-4a26: call   mpfr_mul@plt
-4a2b: mov    %rbx,%rsi         # y[i]
-4a2e: mov    %rbx,%rdi         # y[i]
-4a31: mov    %r13d,%ecx        # cached rounding
-4a34: lea    0x10(%rsp),%rdx   # temp
-4a39: add    $0x20,%rbx        # y++
-4a3d: call   mpfr_add@plt
-4a47: jne    4a10
-
-4a49: lea    0x10(%rsp),%rdi   # reusable temp
-4a4e: call   mpfr_clear@plt
+# C_native_03 and kernel_03_ROUNDING_PRECISION reusable-temp class
+call   mpfr_mul@plt
+call   mpfr_add@plt
+jne    <element loop>
 ```
-
-`Raxpy_mpfr_C_native_01_FMA` is the raw FMA baseline. There is no reusable product temporary in this source shape, so no `mpfr_init`/`mpfr_clear` appears around the hot loop; the loop has one `mpfr_fma` per element and uses the cached rounding register.
-
-```asm
-49ca: call   mpfr_get_default_rounding_mode@plt
-49cf: mov    %eax,%r14d        # cached rounding
-
-49e0: mov    %rbx,%rcx         # y[i] addend
-49e3: mov    %rbp,%rdx         # x[i]
-49e6: mov    %rbx,%rdi         # y[i] destination
-49e9: mov    %r14d,%r8d        # cached rounding
-49ec: mov    %r13,%rsi         # alpha
-49f3: add    $0x20,%rbx        # y++
-49f7: add    $0x20,%rbp        # x++
-49fb: call   mpfr_fma@plt
-4a03: jne    49e0
-```
-
-`Raxpy_mpfr_kernel_03_mkII_STABLE_ROUNDING_FMA_FIXED_PRECISION_FASTPATH` stays in the split multiply/add class even in an FMA-enabled build, because source variant `03` explicitly materializes `temp = alpha * x[i]` before adding it to `y[i]`. The wrapper initializes one reusable `mpfr_class` product object before the loop and clears it after the loop. Compared with C native split mode, the loop still has one `mpfr_mul` and one `mpfr_add`, but it also carries stable-rounding TLS loads and first-use initialization checks.
-
-```asm
-60f5: mov    %r13,%rdi         # reusable temp
-60f8: call   mpfr_init2@plt
-610c: mov    %fs:0xfffffffffffffffc,%edx
-6116: mov    %r13,%rdi         # temp
-6119: call   mpfr_set_ui@plt
-
-6130: mov    %fs:0xfffffffffffffffc,%ecx  # stable rounding TLS load
-6138: mov    %rbp,%rdx                    # x[i]
-613b: mov    %r15,%rsi                    # alpha
-613e: mov    %r13,%rdi                    # temp
-6141: call   mpfr_mul@plt
-6146: cmpb   $0x0,%fs:0xfffffffffffffff8  # defaults-initialized check
-6151: mov    %fs:0xfffffffffffffffc,%ecx  # stable rounding TLS load
-6159: mov    %r13,%rdx                    # temp
-615c: mov    %rbx,%rsi                    # y[i]
-615f: mov    %rbx,%rdi                    # y[i]
-6162: call   mpfr_add@plt
-616b: add    $0x20,%rbx                   # y++
-616f: add    $0x20,%rbp                   # x++
-6176: je     61e0
-6178: cmpb   $0x0,%fs:0xfffffffffffffff8
-6181: jne    6130
-
-61e0: mov    %r13,%rdi                    # reusable temp
-61e3: call   mpfr_clear@plt
-```
-
-`Raxpy_mpfr_kernel_openmp_03_mkII_STABLE_ROUNDING` uses an OpenMP outlined worker. Each worker initializes one reusable product object before its slice, runs the same split multiply/add loop, then reaches `GOMP_barrier` and clears the worker local temporary after the hot loop.
-
-```asm
-5644: mov    %r13,%rdi         # worker-local temp
-5647: call   mpfr_init2@plt
-565b: mov    %fs:0xfffffffffffffffc,%edx
-5665: mov    %r13,%rdi         # temp
-5668: call   mpfr_set_ui@plt
-
-56c8: mov    %fs:0xfffffffffffffffc,%ecx  # stable rounding TLS load
-56d0: mov    %r12,%rdx                    # x[i]
-56d3: mov    %r14,%rsi                    # alpha
-56d6: mov    %r13,%rdi                    # temp
-56d9: call   mpfr_mul@plt
-56de: cmpb   $0x0,%fs:0xfffffffffffffff8  # defaults-initialized check
-56e9: mov    %fs:0xfffffffffffffffc,%ecx  # stable rounding TLS load
-56f1: mov    %rbp,%rsi                    # y[i]
-56f4: mov    %rbp,%rdi                    # y[i]
-56f7: mov    %r13,%rdx                    # temp
-56fe: call   mpfr_add@plt
-5703: add    $0x20,%rbp                   # y++
-5707: add    $0x20,%r12                   # x++
-5710: je     5780
-571f: jne    56c8
-
-5780: call   GOMP_barrier@plt
-5785: mov    %r13,%rdi                    # worker-local temp
-5788: call   mpfr_clear@plt
-```
-
-The important comparison with the GMP Raxpy disassembly is structural: the split MPFR variants mirror the GMP reusable-temporary pattern, but MPFR carries rounding-mode operands and, in wrapper paths, default-state TLS checks. Direct FMA variants are a different source-level class: they remove the product temporary entirely and therefore do not show init/clear around the hot loop.
 
 ## Lessons Learned
 
-- At 512 bits, the best serial average is `kernel_01_ROUNDING_PRECISION_FMA` at 22.981 MFLOPS; the best OpenMP average is `kernel_openmp_01_ROUNDING_PRECISION_FMA` at 414.911 MFLOPS.
-- At 1024 bits, the best serial average is `C_native_01_FMA` at 9.341 MFLOPS; the best OpenMP average is `kernel_openmp_01_ROUNDING_PRECISION_FMA` at 254.585 MFLOPS.
-- For MPFR, loop-external rounding/context and FMA-capturable source forms are the changes that most often alter the hot-loop class.
-- Fixed-precision builds help only when the source shape allows precision checks or scratch setup to be removed from the timed path; they do not automatically dominate every variant.
-- OpenMP FMA effects are source-shape dependent: some fused forms improve the class, while others expose a different parallel bottleneck and should be checked against disassembly.
+FMA capture is the meaningful MPFR Raxpy boundary. It changes the arithmetic
+loop from split `mpfr_mul` plus `mpfr_add` to one `mpfr_fma` call per element.
+
+For 512-bit serial runs, `kernel_03_ROUNDING` has the highest max, but
+`kernel_01_ROUNDING_PRECISION_FMA` has the best average. The average difference
+is small, and the FMA path is the more important source-level interpretation.
+
+For 1024-bit serial runs, `C_native_01_FMA` leads both max and average. The raw
+C FMA path has the cleanest control flow: cached rounding and one backend FMA
+call per element.
+
+For OpenMP, `kernel_openmp_01_ROUNDING_PRECISION_FMA` leads both 512-bit and
+1024-bit runs. The emitted arithmetic class matches C native FMA, but the
+wrapper binary is not control-flow identical because default-state and
+precision guard paths remain visible.
+
+Compared with GMP, MPFR serial performance is lower, while OpenMP performance
+is effectively tied in this run. The OpenMP tie should be treated as a
+measurement/source-shape result, not a backend-wide conclusion.

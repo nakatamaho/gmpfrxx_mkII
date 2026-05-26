@@ -498,147 +498,60 @@ These rows are derived from `benchmarks/gmp/02_Rgemv/results_raw/run_all_p1024_r
 
 ## Hotpath Disassembly
 
-Representative snippets were collected with:
+Representative commands:
 
 ```bash
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/02_Rgemv/<binary>
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII
 ```
 
-The snippets are representative, not exhaustive. They were selected to cover
-the reusable serial raw C baseline, the upstream `orig` wrapper counterpart,
-the mkII wrapper counterpart, and the dominant OpenMP 07 worker class. Because
-this is a GMP report, each mkII snippet used for the performance-class argument
-is paired with the corresponding upstream `gmpxx.h` `orig` hot loop.
+The current representative hotpaths were compared against the C native,
+upstream wrapper, and mkII variants.
 
-### `C_native_03`
+| Representative | Hotpath observation | Comparison point |
+|----------------|---------------------|------------------|
+| `C_native_03` | Column-major reusable-product loop. Each column forms `temp = alpha * x[j]`; the inner row loop has one `__gmpf_mul` and one `__gmpf_add` per matrix element. Temporary init/clear is outside the inner loop. | Raw serial comparison point for wrapper `03`. |
+| `kernel_03_orig` | Same column-major reusable-product backend call sequence as `C_native_03`. | Equivalent arithmetic hot loop to C native. |
+| `kernel_03_mkII` | Same inner-loop multiply/add sequence as `C_native_03`; mkII setup and precision handling are outside the matrix-element loop. | Equivalent arithmetic hot loop to C native, with wrapper setup outside the hot path. |
+| `C_native_openmp_07` | Column partitioning with thread-local partial `y` vectors. The worker loop keeps the serial-like column-major stream and reduces partial vectors after the parallel work. | Raw OpenMP baseline for variant `07`. |
+| `kernel_openmp_07_orig` / `kernel_openmp_07_mkII` | Same algorithmic structure as `C_native_openmp_07`: per-thread partial outputs, reusable temporaries, and final reduction outside the worker hot loop. | Equivalent arithmetic class to C native OpenMP `07`. |
 
-Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_C_native_03.cpp`.
-The serial optimized C baseline initializes the product temporaries before the
-loop. The inner matrix loop has one `__gmpf_mul` and one `__gmpf_add` per
-matrix element; `__gmpf_clear` is after the loop.
+Representative loop classes:
 
 ```asm
-55a0: mov    %r14,%rdx        # A[i + j*lda]
-55a3: lea    0x40(%rsp),%rsi  # temp_b = alpha * x[j]
-55a8: mov    %rbp,%rdi        # prod
-55af: call   __gmpf_mul@plt
-55b4: mov    %rbx,%rsi        # y[i]
-55b7: mov    %rbx,%rdi        # y[i]
-55ba: mov    %rbp,%rdx        # prod
-55bd: call   __gmpf_add@plt
-55c2: add    $0x18,%r14       # A++
-55c6: add    $0x18,%rbx       # y++
-55cd: jne    55a0
-55f8: call   __gmpf_clear@plt
+# Serial 03 inner row loop
+call   __gmpf_mul@plt     # product = A[i,j] * temp
+call   __gmpf_add@plt     # y[i] += product
+jne    <row loop>
+
+# OpenMP 07 worker loop has the same arithmetic class; reduction is outside it.
+call   __gmpf_mul@plt
+call   __gmpf_add@plt
+jne    <worker row loop>
 ```
-
-### `kernel_03_orig`
-
-Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03.cpp` built against
-upstream `gmpxx.h`. The upstream wrapper emits the same reusable-product inner
-loop class as raw C: one `__gmpf_mul` and one `__gmpf_add` per matrix element,
-with product objects outside the hot loop.
-
-```asm
-3dc0: mov    0x8(%rsp),%rdx
-3dc5: mov    0x20(%rsp),%rsi
-3dca: lea    0x40(%rsp),%rdi
-3dcf: call   __gmpf_mul@plt   # temp_b = alpha * x[j]
-...
-3e00: mov    %r12,%rdx        # A[i + j*lda]
-3e03: lea    0x40(%rsp),%rsi  # temp_b
-3e08: mov    %r13,%rdi        # prod
-3e0b: call   __gmpf_mul@plt
-3e10: mov    %r13,%rdx        # prod
-3e13: mov    %rbx,%rsi        # y[i]
-3e16: mov    %rbx,%rdi        # y[i]
-3e19: call   __gmpf_add@plt
-3e1e: add    $0x1,%rbp
-3e22: add    $0x18,%r12       # A++
-3e26: add    $0x18,%rbx       # y++
-3e2d: jne    3e00
-```
-
-### `kernel_03_mkII`
-
-Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_03.cpp`.
-The mkII reusable-product spelling emits the same arithmetic class as the raw C
-baseline and the upstream `kernel_03_orig` path: one `__gmpf_mul` and one
-`__gmpf_add` per matrix element, with clears outside the hot loop.
-
-```asm
-5600: mov    %r12,%rdx        # A[i + j*lda]
-5603: lea    0x40(%rsp),%rsi  # temp_b
-5608: mov    %r13,%rdi        # prod
-560b: call   __gmpf_mul@plt
-5610: mov    %r13,%rdx        # prod
-5613: mov    %rbx,%rsi        # y[i]
-5616: mov    %rbx,%rdi        # y[i]
-5619: call   __gmpf_add@plt
-561e: add    $0x1,%rbp
-5622: add    $0x18,%r12       # A++
-5626: add    $0x18,%rbx       # y++
-562d: jne    5600
-5656: call   __gmpf_clear@plt
-```
-
-### `kernel_openmp_07_mkII`
-
-Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07.cpp`.
-OpenMP 07 computes column partitions into per-thread partial `y` vectors. The
-worker hot loop still has one `__gmpf_mul` and one `__gmpf_add` per matrix
-element, but the matrix traversal preserves the column-major stream and avoids
-racing on shared `y`.
-
-```asm
-40e0: mov    0x30(%rsp),%rax
-40ed: mov    0x10(%rax),%rsi  # x[j]
-40f1: call   __gmpf_mul@plt   # temp = alpha * x[j]
-4120: mov    %r13,%rdx        # A[i + j*lda]
-4123: mov    %r12,%rsi        # temp
-4126: mov    %rbp,%rdi        # prod
-412d: call   __gmpf_mul@plt
-4132: mov    %rbx,%rsi        # partial_y[i]
-4135: mov    %rbx,%rdi        # partial_y[i]
-4138: mov    %rbp,%rdx        # prod
-413b: call   __gmpf_add@plt
-4140: add    $0x18,%r13       # A++
-4144: add    $0x18,%rbx       # partial_y++
-414b: jne    4120
-4173: call   GOMP_barrier@plt
-```
-
-### `kernel_openmp_07_orig`
-
-Source: `benchmarks/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07.cpp` built against
-upstream `gmpxx.h`. It has the same worker-loop arithmetic class as the mkII
-OpenMP 07 path: one product multiply and one partial-vector add per matrix
-element, with the final reduction outside this hot loop.
-
-```asm
-3520: mov    %r14,%rdx        # A[i + j*lda]
-3523: mov    %r13,%rsi        # temp
-3526: mov    %rbp,%rdi        # prod
-3529: add    $0x1,%r15
-352d: call   __gmpf_mul@plt
-3532: mov    %rbx,%rsi        # partial_y[i]
-3535: mov    %rbx,%rdi        # partial_y[i]
-3538: mov    %rbp,%rdx        # prod
-353b: call   __gmpf_add@plt
-3540: add    $0x18,%r14       # A++
-3544: add    $0x18,%rbx       # partial_y++
-354b: jne    3520
-3573: call   GOMP_barrier@plt
-```
-
-The hotpath explains the results: the serial 03 kernels differ mostly in C++
-setup outside the timed inner loop, while OpenMP 07 changes the data traversal
-and reduction structure.
 
 ## Lessons Learned
 
-- At 512 bits, the best serial average is `kernel_03_mkII` at 31.521 MFLOPS; the best OpenMP average is `kernel_openmp_07_mkII` at 537.954 MFLOPS.
-- At 1024 bits, the best serial average is `kernel_03_mkII` at 11.247 MFLOPS; the best OpenMP average is `C_native_openmp_07` at 260.114 MFLOPS.
-- For GMP `mpf`, source-level temporary lifetime remains the main performance boundary; reusable temporaries and fixed-precision builds define the top wrapper classes.
-- OpenMP results should be interpreted by performance class and average MFLOPS because several variants have single-repeat spikes or drops.
-- The 1024-bit run is now recorded from the same dual-precision runner as the 512-bit run, so README conclusions should compare both precision classes from the same run stamp.
+Serial Rgemv is still dominated by the reusable column-major product shape.
+For 512-bit serial runs, `kernel_03_mkII` is the winner, but the C native,
+orig, and mkII `03` variants all disassemble to the same backend arithmetic
+class.
+
+For 1024-bit serial runs, the max winner
+(`kernel_03_mkII_FIXED_PRECISION_FASTPATH`) and average winner (`kernel_03_mkII`)
+are separated by less than 0.1% in average MFLOPS. That is not enough to claim
+a durable fixed-precision win for the already reusable-temporary source.
+
+The OpenMP `07` algorithm is a real source-level change: column partitioning
+with thread-local partial `y` vectors avoids racing on `y` while preserving the
+column-major stream. At 512-bit, `kernel_openmp_07_orig` has the highest max
+but `kernel_openmp_07_mkII` has the highest average; the lower minimum on the
+orig run indicates OpenMP variance rather than a stable orig-only advantage.
+
+At 1024-bit OpenMP, `C_native_openmp_07` leads both max and average. The wrapper
+variants remain in the same algorithmic class, but the raw C path has the
+least surrounding control overhead.
+
+The useful implementation lesson is algorithmic rather than syntactic: variant
+`07` changes the parallel dataflow, while serial wrapper spelling mostly
+collapses to the same GMP multiply/add hot loop.

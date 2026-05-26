@@ -693,143 +693,72 @@ These rows are derived from `benchmarks/mpfr/02_Rgemv/results_raw/run_all_p1024_
 
 ## Comparison with GMP version
 
-The rows below compare the current 512-bit and 1024-bit `run_all` data for the same benchmark. This is a performance-class comparison; GMP `mpf` and MPFR have different precision, rounding, and range semantics.
+| Precision | Mode | Best MPFR Avg MFLOPS | Best GMP Avg MFLOPS | MPFR/GMP | Interpretation |
+|-----------|------|----------------------|---------------------|----------|----------------|
+| 512 | Serial | 23.484 | 31.521 | 0.745x | FMA capture narrows the gap, but MPFR rounding semantics remain visible in serial Rgemv. |
+| 512 | OpenMP | 438.252 | 537.954 | 0.815x | The GMP column-partitioned OpenMP path is still materially ahead for this matrix size. |
+| 1024 | Serial | 10.176 | 11.247 | 0.905x | Higher precision makes backend arithmetic dominate and narrows the MPFR/GMP gap. |
+| 1024 | OpenMP | 234.392 | 260.114 | 0.901x | MPFR remains close but still behind the GMP OpenMP `07` class. |
 
-| Precision | Class | GMP best-avg variant | GMP Avg MFLOPS | MPFR best-avg variant | MPFR Avg MFLOPS | MPFR/GMP |
-| --- | --- | --- | --- | --- | --- | --- |
-| 512 | Best serial average | `kernel_03_mkII` | 31.521 | `C_native_02_FMA` | 23.484 | 0.745x |
-| 512 | Best OpenMP average | `kernel_openmp_07_mkII` | 537.954 | `C_native_openmp_07` | 438.252 | 0.815x |
-| 1024 | Best serial average | `kernel_03_mkII` | 11.247 | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.176 | 0.905x |
-| 1024 | Best OpenMP average | `C_native_openmp_07` | 260.114 | `C_native_openmp_07_FMA` | 234.392 | 0.901x |
+The ratios compare the best committed averages for the same run id. They are
+model-free benchmark ratios, not hardware-counter bandwidth measurements.
 
 ## Hotpath Disassembly
 
-Representative snippets were collected with:
+Representative commands:
 
 ```bash
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/<binary>
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA
 ```
 
-The snippets are representative, not exhaustive. They were selected to cover
-the best serial raw FMA class, the requested wrapper OpenMP 04
-fixed-precision/FMA class, the dominant raw OpenMP 07 worker, and the closest
-wrapper OpenMP 07 FMA class. For MPFR Rgemv, the selection separates FMA effects
-from matrix traversal effects: OpenMP 04 shows the row-partition FMA wrapper
-shape, while OpenMP 07 mainly changes locality, partial-vector ownership, and
-final reduction structure.
+The refreshed representative disassembly shows that the wrapper FMA-capture
+variants reach the same MPFR arithmetic class as the raw C FMA kernels. They
+are not control-flow identical: the wrapper binaries still contain default
+state, precision, and expression-evaluation guard paths around the fast path.
 
-### `C_native_02_FMA`
+| Representative | Hotpath observation | Comparison point |
+|----------------|---------------------|------------------|
+| `C_native_02_FMA` | Caches rounding, computes `temp = alpha * x[j]` with `mpfr_mul`, then uses one `mpfr_fma` per matrix element for `y[i] += temp * A[i,j]`. | Raw serial FMA-capture baseline. |
+| `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Emits the same `mpfr_mul` plus `mpfr_fma` arithmetic class as `C_native_02_FMA`; wrapper guards and fallback paths remain outside or around the intended hot loop. | Closest mkII serial FMA equivalent. |
+| `C_native_openmp_07_FMA` | Column partitioning with thread-local partial `y`; worker loop has `mpfr_mul` for the column scalar and `mpfr_fma` for matrix elements. Barriers/reduction are outside the innermost arithmetic loop. | Raw OpenMP FMA baseline. |
+| `kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Same OpenMP algorithmic class and same MPFR arithmetic calls as `C_native_openmp_07_FMA`; extra wrapper control paths remain visible in the binary. | Closest mkII OpenMP FMA equivalent. |
 
-Source: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA.cpp`.
-The serial raw C FMA baseline caches the default rounding mode before the loop,
-uses `mpfr_mul` for `temp = alpha * x[j]`, and uses one `mpfr_fma` per matrix
-element.
+Representative loop classes:
 
 ```asm
-2bc8: call   mpfr_get_default_rounding_mode@plt
-2bd5: call   mpfr_init2@plt
-2c90: mov    %r15,%rcx        # y[i] addend
-2c93: mov    %r13,%rdx        # A[i + j*lda]
-2c96: mov    %r15,%rdi        # y[i]
-2c99: mov    %ebp,%r8d        # cached rounding
-2c9c: mov    %rbx,%rsi        # temp = alpha * x[j]
-2cab: call   mpfr_fma@plt
-2cb3: jne    2c90
-2cd9: mov    %rbx,%rdi
-2cdc: call   mpfr_clear@plt
+# Serial/OpenMP 07 FMA-capture class
+call   mpfr_mul@plt       # temp = alpha * x[j]
+call   mpfr_fma@plt       # y[i] += temp * A[i,j]
+jne    <row loop>
+
+# Barriers and partial-y reduction are outside the innermost mpfr_fma loop.
+call   GOMP_barrier@plt
 ```
-
-### `kernel_openmp_04_ROUNDING_FMA_CAPTURE_PRECISION_FMA`
-
-Source: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE.cpp`.
-The requested OpenMP 04 wrapper target keeps one reusable `temp` per worker,
-partitions rows, and uses the expression `y_context += temp * A[i + j * lda]`
-so the fixed-precision/FMA build emits `mpfr_fma` for the row update. The
-`movabs $0x7ffffffffffffefe` checks are the inlined MPFR precision-validity
-bounds from `with_context`; they are safety checks, not arithmetic work.
-
-```asm
-2f38: call   mpfr_init2@plt   # thread-local temp
-3000: movabs $0x7ffffffffffffefe,%rax  # MPFR precision guard
-3013: mov    0x30(%r14),%rdx
-3017: mov    (%rsp),%ecx
-301a: mov    %rbp,%rsi
-301d: mov    %rbp,%rdi
-3020: call   mpfr_mul@plt     # y[i] *= beta before the row loop
-3050: mov    0x10(%r14),%rsi
-3058: mov    %r13,%rdx
-305b: lea    0x60(%rsp),%rdi  # temp
-3068: call   mpfr_mul@plt     # temp = alpha * x[j]
-306d: mov    (%rsp),%r8d      # cached rounding
-3071: mov    %rbx,%rdx        # A[i+j*lda]
-3074: mov    %rbp,%rcx        # y[i] addend
-3077: lea    0x60(%rsp),%rsi  # temp
-307c: mov    %rbp,%rdi        # y[i]
-307f: call   mpfr_fma@plt     # y[i] += temp * A[i+j*lda]
-308e: jne    3050
-30c0: call   GOMP_barrier@plt
-30ca: call   mpfr_clear@plt
-```
-
-### `C_native_openmp_07`
-
-Source: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07.cpp`.
-The non-FMA raw C 07 worker uses two reusable MPFR temporaries. Its row update
-has one `mpfr_mul` and one `mpfr_add` per matrix element, plus barriers around
-partial-vector phases and final reduction.
-
-```asm
-2d69: call   mpfr_init2@plt
-2d74: call   mpfr_init2@plt
-2de0: mov    0x20(%rsp),%rdx  # x[j]
-2dea: mov    %ebp,%ecx        # cached rounding
-2def: call   mpfr_mul@plt     # temp = alpha * x[j]
-2e20: mov    %r12,%rdx        # A[i+j*lda]
-2e25: mov    %r14,%rsi        # temp
-2e28: mov    %r13,%rdi        # prod
-2e2b: call   mpfr_mul@plt
-2e33: mov    %rbx,%rdi        # partial_y[i]
-2e38: mov    %r13,%rdx        # prod
-2e47: call   mpfr_add@plt
-2e51: jne    2e20
-2e7e: call   GOMP_barrier@plt
-```
-
-### `kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA`
-
-Source: `benchmarks/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE.cpp`.
-The fixed-precision FMA wrapper 07 path uses one `mpfr_mul` per column and one
-`mpfr_fma` per matrix element in the worker hot loop. The remaining precision
-checks are visible in the pre-loop/control path, not as `mpfr_init2`/`clear` per
-matrix element.
-
-```asm
-3470: mov    0x10(%r14),%rsi  # x[j]
-3474: mov    (%rsp),%ecx      # cached rounding
-3477: mov    %r12,%rdi        # temp
-347a: mov    0x18(%rsp),%rdx  # alpha
-347f: call   mpfr_mul@plt
-34b0: movabs $0x7ffffffffffffefe,%rcx
-34ce: mov    (%rsp),%r8d      # cached rounding
-34d2: mov    %rbx,%rcx        # partial_y[i]
-34d5: mov    %r14,%rdx        # A[i+j*lda]
-34d8: mov    %rbx,%rdi        # partial_y[i]
-34db: mov    %r12,%rsi        # temp
-34ea: call   mpfr_fma@plt
-34f2: jne    34b0
-3523: call   GOMP_barrier@plt
-3566: call   mpfr_clear@plt
-```
-
-The hotpath explains the ranking: serial FMA helps the raw C column-major path,
-but in OpenMP the 07 data partition dominates. Wrapper 07 variants are close to
-raw C 07 when their inner loop has the same backend call sequence and no
-per-element temporary initialization.
 
 ## Lessons Learned
 
-- At 512 bits, the best serial average is `C_native_02_FMA` at 23.484 MFLOPS; the best OpenMP average is `C_native_openmp_07` at 438.252 MFLOPS.
-- At 1024 bits, the best serial average is `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` at 10.176 MFLOPS; the best OpenMP average is `C_native_openmp_07_FMA` at 234.392 MFLOPS.
-- For MPFR, loop-external rounding/context and FMA-capturable source forms are the changes that most often alter the hot-loop class.
-- Fixed-precision builds help only when the source shape allows precision checks or scratch setup to be removed from the timed path; they do not automatically dominate every variant.
-- OpenMP FMA effects are source-shape dependent: some fused forms improve the class, while others expose a different parallel bottleneck and should be checked against disassembly.
+The clean Rgemv split is now visible: serial and OpenMP FMA-capture variants
+change the arithmetic loop from split multiply/add to `mpfr_mul` plus
+`mpfr_fma`.
+
+For 512-bit serial runs, the max winner
+(`kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA`) and average winner
+(`C_native_02_FMA`) differ by about 0.1% in average MFLOPS. Both are the same
+FMA-capture arithmetic class.
+
+For 512-bit OpenMP runs, `C_native_openmp_07` leads both max and average. The
+non-FMA C path wins this run despite the existence of FMA variants, so the
+parallel dataflow and wrapper/control overhead matter more than simply adding
+`mpfr_fma`.
+
+For 1024-bit OpenMP runs, `C_native_openmp_07_FMA` leads both max and average.
+The higher precision makes the FMA arithmetic path more valuable, and the raw
+C path has the least surrounding control overhead.
+
+Compared with GMP, MPFR narrows the serial gap at 1024 bits but remains behind
+for OpenMP Rgemv. The likely boundary is the combination of MPFR rounding
+semantics and wrapper/control paths around the hot arithmetic calls, not a
+failure to emit `mpfr_fma` in the representative FMA-capture variants.

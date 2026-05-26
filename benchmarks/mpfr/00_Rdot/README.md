@@ -647,42 +647,73 @@ These rows are derived from `benchmarks/mpfr/00_Rdot/results_raw/run_all_p1024_r
 
 ## Comparison with GMP version
 
-The rows below compare the current 512-bit and 1024-bit `run_all` data for the same benchmark. This is a performance-class comparison; GMP `mpf` and MPFR have different precision, rounding, and range semantics.
+| Precision | Mode | Best MPFR Avg MFLOPS | Best GMP Avg MFLOPS | MPFR/GMP | Interpretation |
+|-----------|------|----------------------|---------------------|----------|----------------|
+| 512 | Serial | 23.718 | 32.851 | 0.722x | MPFR still pays rounding/exponent semantics even when the source uses reusable temporaries. |
+| 512 | OpenMP | 554.889 | 578.143 | 0.960x | Parallelism hides much of the per-element wrapper difference; both are in a backend-call limited streaming class. |
+| 1024 | Serial | 10.185 | 11.908 | 0.855x | Higher precision raises GMP arithmetic cost too, so the MPFR/GMP gap narrows. |
+| 1024 | OpenMP | 290.313 | 316.496 | 0.917x | MPFR remains close but does not overtake the simpler GMP OpenMP class in this run. |
 
-| Precision | Class | GMP best-avg variant | GMP Avg MFLOPS | MPFR best-avg variant | MPFR Avg MFLOPS | MPFR/GMP |
-| --- | --- | --- | --- | --- | --- | --- |
-| 512 | Best serial average | `kernel_06_mkII_FIXED_PRECISION_FASTPATH` | 32.851 | `C_native_06` | 23.718 | 0.722x |
-| 512 | Best OpenMP average | `kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH` | 578.143 | `C_native_openmp_05` | 554.889 | 0.960x |
-| 1024 | Best serial average | `kernel_03_mkII_FIXED_PRECISION_FASTPATH` | 11.908 | `kernel_05_ROUNDING_PRECISION_FMA` | 10.185 | 0.855x |
-| 1024 | Best OpenMP average | `C_native_openmp_03` | 316.496 | `C_native_openmp_01_FMA` | 290.313 | 0.917x |
+The comparison is based on the committed summary CSVs for the same run id. The
+OpenMP ratios should be read as performance classes, not single-run rankings.
 
 ## Hotpath Disassembly
 
-The representative disassembly checks are unchanged by this result refresh because the kernel sources did not change during the repeat-10 run. Regenerate snippets with:
+Representative commands:
 
 ```bash
 objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_02
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_PRECISION_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING_PRECISION_FMA
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/00_Rdot/Rdot_mpfr_kernel_03_ROUNDING_PRECISION
 ```
 
-| Kernel class | Expected hot-loop check |
-| --- | --- |
-| `C_native_01_FMA` | One `mpfr_fma` call per element with rounding captured outside the loop. |
-| `kernel_02` | Loop-local product object can leave `mpfr_init2` / `mpfr_clear` in the hot loop. |
-| `kernel_03` | Reusable product object should leave split `mpfr_mul` plus `mpfr_add` in the loop with construction outside. |
-| `kernel_03_ROUNDING_PRECISION` | Context-bound reusable product path should avoid per-iteration default rounding lookup. |
-| `kernel_05_ROUNDING_PRECISION_FMA` / `kernel_06_ROUNDING_PRECISION_FMA` | Context-bound unrolled expression should lower lane updates to `mpfr_fma` when FMA capture succeeds. |
-| OpenMP FMA worker loop | Per-thread accumulation remains in the worker hot loop; final reduction is outside the worker hot path. |
+The refreshed disassembly confirms the arithmetic class, but it does not make
+the wrapper binaries byte-for-byte equivalent to raw C. The important check is
+whether the hot arithmetic loop is one `mpfr_fma` call or split
+`mpfr_mul`/`mpfr_add`, and whether init/clear is in the element loop.
 
-The 512-bit and 1024-bit data both show the same broad call-sequence boundary: FMA-capable sources form the top serial MPFR class, while OpenMP results are dominated by worker-loop shape and run-to-run variance.
+| Representative | Hotpath observation | Comparison point |
+|----------------|---------------------|------------------|
+| `C_native_01_FMA` | Rounding is cached before the loop; the element loop has one `mpfr_fma` per element. Accumulator init/clear is outside the loop. | Raw FMA baseline. |
+| `kernel_01_ROUNDING_PRECISION_FMA` | The arithmetic hot loop reaches `mpfr_fma`. The wrapper binary still contains default-state and precision guard/fallback calls outside or around the fast path, so it is the same arithmetic class as C native, not identical control flow. | Closest mkII FMA equivalent. |
+| `C_native_03` | Reusable product object with one `mpfr_mul` followed by one `mpfr_add` per element. | Raw split multiply/add baseline. |
+| `kernel_03_ROUNDING_PRECISION` | Same split arithmetic class as `C_native_03`; no per-element `mpfr_init2`/`mpfr_clear` in the intended reusable-temporary loop. | Closest mkII reusable-temp equivalent. |
+| `kernel_openmp_03_ROUNDING_PRECISION` | Worker loop uses the reusable split multiply/add class. Final reduction is outside the per-thread element loop. | Best max OpenMP wrapper class in the 512-bit run. |
+
+Representative loop classes:
+
+```asm
+# C_native_01_FMA and kernel_01_ROUNDING_PRECISION_FMA arithmetic class
+call   mpfr_fma@plt
+jne    <element loop>
+
+# C_native_03 and kernel_03_ROUNDING_PRECISION reusable-temp class
+call   mpfr_mul@plt
+call   mpfr_add@plt
+jne    <element loop>
+```
 
 ## Lessons Learned
 
-- At 512 bits, the best serial average is `C_native_06` at 23.718 MFLOPS; the best OpenMP average is `C_native_openmp_05` at 554.889 MFLOPS.
-- At 1024 bits, the best serial average is `kernel_05_ROUNDING_PRECISION_FMA` at 10.185 MFLOPS; the best OpenMP average is `C_native_openmp_01_FMA` at 290.313 MFLOPS.
-- For MPFR, loop-external rounding/context and FMA-capturable source forms are the changes that most often alter the hot-loop class.
-- Fixed-precision builds help only when the source shape allows precision checks or scratch setup to be removed from the timed path; they do not automatically dominate every variant.
-- OpenMP FMA effects are source-shape dependent: some fused forms improve the class, while others expose a different parallel bottleneck and should be checked against disassembly.
+The source-level boundary is whether the timed loop is FMA-captured or split
+multiply/add, and whether the product object is reusable. MPFR rounding/context
+handling matters, but the generated backend call sequence still controls the
+main performance class.
+
+For 512-bit serial runs, the max winner (`C_native_03`) and average winner
+(`C_native_06`) are separated by about 0.5% in average MFLOPS. That is not a
+strong unrolling result; both are reusable split multiply/add classes.
+
+For 512-bit OpenMP runs, the max winner (`kernel_openmp_03_ROUNDING_PRECISION`)
+and average winner (`C_native_openmp_05`) differ by about 0.1% in average
+MFLOPS. Treat them as the same OpenMP performance class.
+
+For 1024-bit serial runs, the FMA-captured wrapper variants win. The max winner
+(`kernel_01_ROUNDING_PRECISION_FMA`) and average winner
+(`kernel_05_ROUNDING_PRECISION_FMA`) differ by less than 0.2% in average MFLOPS,
+so the lesson is FMA capture, not a durable four-accumulator advantage.
+
+Compared with GMP, MPFR is still slower in serial mode because every arithmetic
+operation carries MPFR precision and rounding semantics. The gap narrows at
+1024 bits and under OpenMP because backend arithmetic dominates more of the
+runtime.

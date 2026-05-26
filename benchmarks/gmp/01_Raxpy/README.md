@@ -435,112 +435,51 @@ These rows are derived from `benchmarks/gmp/01_Raxpy/results_raw/run_all_p1024_r
 
 ## Hotpath Disassembly
 
-Representative command shape:
+Representative command:
 
 ```bash
-objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/01_Raxpy/<binary>
+objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII
 ```
 
-The disassembly is precision-independent for these runtime-precision kernels. The 512-bit and 1024-bit runs use the same source-level hot-loop shapes; only the limb work inside the GMP calls changes.
+The current representative hotpaths were rechecked against the C native,
+upstream wrapper, and mkII binaries.
 
-The snippets are representative, not exhaustive. They were selected to cover
-the reusable raw C baseline, the upstream `orig` wrapper, the mkII wrapper, and
-the corresponding OpenMP worker loop. Because this is a GMP report, the mkII
-`kernel_03` snippets are shown next to the corresponding upstream `gmpxx.h`
-`orig` snippets so the wrapper comparison is visible in the emitted loop.
+| Representative | Hotpath observation | Comparison point |
+|----------------|---------------------|------------------|
+| `C_native_03` | Reusable product object. The loop computes `temp = alpha * x[i]` with one `__gmpf_mul`, then updates `y[i]` with one `__gmpf_add`. No `mpf_init2` or `mpf_clear` appears in the element loop. | Raw reusable-product baseline. |
+| `kernel_03_orig` | Same backend call sequence as `C_native_03`; upstream wrapper object lifetime is outside the timed loop. | Equivalent arithmetic hot loop to C native. |
+| `kernel_03_mkII` | Same one-multiply plus one-add loop class as `C_native_03`; mkII precision work is outside the timed element loop. | Equivalent arithmetic hot loop to C native, with wrapper setup outside the loop. |
+| `kernel_openmp_03_orig` / `kernel_openmp_03_mkII` | The OpenMP worker body keeps the same `__gmpf_mul` plus `__gmpf_add` sequence. Thread scheduling and barriers are outside the per-element arithmetic sequence. | Same arithmetic class as the serial reusable-product baseline. |
 
-`C_native_01` has one `mpf_t temp` initialized before the loop and cleared after the loop. The hot loop has exactly one `__gmpf_mul` and one `__gmpf_add` per element.
-
-```asm
-3c0d: call   __gmpf_init@plt
-3c20: mov    %rbp,%rdx        # x[i]
-3c23: mov    %r14,%rsi        # alpha
-3c26: mov    %rsp,%rdi        # temp
-3c2d: call   __gmpf_mul@plt
-3c32: mov    %rbx,%rsi        # y[i]
-3c35: mov    %rbx,%rdi        # y[i]
-3c38: mov    %rsp,%rdx        # temp
-3c3b: call   __gmpf_add@plt
-3c40: add    $0x18,%rbp       # x++
-3c44: add    $0x18,%rbx       # y++
-3c4b: jne    3c20
-3c50: call   __gmpf_clear@plt
-```
-
-`kernel_03_orig` lowers to the same hot-loop class as C native: reusable temporary outside the loop and one multiply/add pair inside the loop.
+Representative loop class:
 
 ```asm
-328d: call   __gmpf_init@plt
-32a0: mov    %rbp,%rdx        # x[i]
-32a3: mov    %r14,%rsi        # alpha
-32a6: mov    %rsp,%rdi        # temp
-32a9: call   __gmpf_mul@plt
-32ae: mov    %rsp,%rdx        # temp
-32b1: mov    %rbx,%rsi        # y[i]
-32b4: mov    %rbx,%rdi        # y[i]
-32b7: call   __gmpf_add@plt
-32c0: add    $0x18,%rbp
-32c4: add    $0x18,%rbx
-32cb: jne    32a0
-32d0: call   __gmpf_clear@plt
-```
-
-`kernel_03_mkII` also reaches the same arithmetic loop. The wrapper-owned default precision guard and `mpf_init2` occur before the loop; the loop body still has one backend multiply and one backend add per element.
-
-```asm
-5076: movzbl default_mpf_precision_guard,%eax
-5089: test   %al,%al
-509e: call   __gmpf_init2@plt
-50c0: mov    %rbp,%rdx        # x[i]
-50c3: mov    %r14,%rsi        # alpha
-50c6: mov    %rsp,%rdi        # temp
-50c9: call   __gmpf_mul@plt
-50ce: mov    %rsp,%rdx        # temp
-50d1: mov    %rbx,%rsi        # y[i]
-50d4: mov    %rbx,%rdi        # y[i]
-50d7: call   __gmpf_add@plt
-50e0: add    $0x18,%rbp
-50e4: add    $0x18,%rbx
-50eb: jne    50c0
-50f0: call   __gmpf_clear@plt
-```
-
-`kernel_openmp_03_orig` and `kernel_openmp_03_mkII` both use an OpenMP outlined worker. The hot worker loop is still one `mpf_mul` plus one `mpf_add`; the `GOMP_barrier` and `mpf_clear` are after the per-worker loop.
-
-```asm
-# kernel_openmp_03_orig worker
-2f60: mov    0x8(%r15),%rsi   # alpha
-2f64: mov    %r12,%rdx        # x[i]
-2f67: lea    0x10(%rsp),%rdi  # temp
-2f74: call   __gmpf_mul@plt
-2f79: mov    %rbp,%rsi        # y[i]
-2f7c: mov    %rbp,%rdi        # y[i]
-2f7f: lea    0x10(%rsp),%rdx  # temp
-2f84: call   __gmpf_add@plt
-2f89: add    $0x18,%rbp
-2f90: jne    2f60
-2f92: call   GOMP_barrier@plt
-2f9c: call   __gmpf_clear@plt
-
-# kernel_openmp_03_mkII worker
-4c70: mov    0x8(%r15),%rsi   # alpha
-4c74: mov    %r13,%rdx        # x[i]
-4c77: lea    0x10(%rsp),%rdi  # temp
-4c84: call   __gmpf_mul@plt
-4c89: mov    %rbp,%rsi        # y[i]
-4c8c: mov    %rbp,%rdi        # y[i]
-4c8f: lea    0x10(%rsp),%rdx  # temp
-4c94: call   __gmpf_add@plt
-4c99: add    $0x18,%rbp
-4ca0: jne    4c70
-4ca2: call   GOMP_barrier@plt
-4cac: call   __gmpf_clear@plt
+# C_native_03 / kernel_03_orig / kernel_03_mkII reusable-product class
+call   __gmpf_mul@plt     # temp = alpha * x[i]
+call   __gmpf_add@plt     # y[i] += temp
+jne    <element loop>
 ```
 
 ## Lessons Learned
 
-- At 512 bits, the best serial average is `C_native_03` at 33.650 MFLOPS; the best OpenMP average is `kernel_openmp_03_orig` at 393.434 MFLOPS.
-- At 1024 bits, the best serial average is `C_native_03` at 11.967 MFLOPS; the best OpenMP average is `kernel_openmp_03_orig` at 252.368 MFLOPS.
-- For GMP `mpf`, source-level temporary lifetime remains the main performance boundary; reusable temporaries and fixed-precision builds define the top wrapper classes.
-- OpenMP results should be interpreted by performance class and average MFLOPS because several variants have single-repeat spikes or drops.
-- The 1024-bit run is now recorded from the same dual-precision runner as the 512-bit run, so README conclusions should compare both precision classes from the same run stamp.
+The reusable product object is the practical Raxpy baseline. C native,
+upstream `gmpxx`, and mkII all reach the same backend call sequence once the
+source avoids loop-local temporary construction.
+
+For 512-bit serial runs, the max winner (`kernel_03_orig`) and average winner
+(`C_native_03`) differ by only about 0.2% in average MFLOPS. This is a run
+variance result inside the same reusable-product class, not a different
+optimization boundary.
+
+The 1024-bit serial and OpenMP runs both choose the reusable-product class as
+the winner. Higher precision increases backend arithmetic cost, so wrapper
+syntax differences become even less visible when object lifetime is already
+outside the loop.
+
+OpenMP performance should be read by class. `kernel_openmp_03_orig` wins this
+run, but the C native and mkII representatives have the same hot arithmetic
+shape; small ordering changes across repeats are expected.
+
+The next meaningful optimization would need to change data layout or backend
+traffic. Rewriting wrapper syntax without changing the emitted
+`__gmpf_mul`/`__gmpf_add` loop is unlikely to create a new performance class.
