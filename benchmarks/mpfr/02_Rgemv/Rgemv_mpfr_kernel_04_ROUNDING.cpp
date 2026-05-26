@@ -35,25 +35,24 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, 
 
     const mpfr_prec_t precision = m > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    const mpfrxx::evaluation_context context{precision, rounding};
     for (int64_t i = 0; i < m; ++i) {
-        auto y_context = mpfrxx::with_context(y[i], context);
-        y_context *= beta;
+        auto y_rounding = mpfrxx::with_rounding(y[i], rounding);
+        y_rounding *= beta;
     }
 
     mpfr_class temp(0.0, precision);
     mpfr_class templ(0.0, precision);
-    auto temp_context = mpfrxx::with_context(temp, context);
-    auto templ_context = mpfrxx::with_context(templ, context);
+    auto temp_rounding = mpfrxx::with_rounding(temp, rounding);
+    auto templ_rounding = mpfrxx::with_rounding(templ, rounding);
 
     for (int64_t j = 0; j < n; ++j) {
-        temp_context = alpha;
-        temp_context *= x[j];
+        temp_rounding = alpha;
+        temp_rounding *= x[j];
         for (int64_t i = 0; i < m; ++i) {
-            templ_context = temp;
-            templ_context *= A[i + j * lda];
-            auto y_context = mpfrxx::with_context(y[i], context);
-            y_context += templ;
+            templ_rounding = temp;
+            templ_rounding *= A[i + j * lda];
+            auto y_rounding = mpfrxx::with_rounding(y[i], rounding);
+            y_rounding += templ;
         }
     }
 }

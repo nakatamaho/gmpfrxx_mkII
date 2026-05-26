@@ -37,12 +37,11 @@ void _Raxpy(int64_t n, const mpfr_class &alpha, mpfr_class *x, int64_t incx, mpf
 
     const mpfr_prec_t precision = n > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    const mpfrxx::evaluation_context context{precision, rounding};
 
 #pragma omp parallel for schedule(static)
     for (int64_t i = 0; i < n; ++i) {
-        auto y_context = mpfrxx::with_context(y[i], context);
-        y_context += alpha * x[i];
+        auto y_rounding = mpfrxx::with_rounding(y[i], rounding);
+        y_rounding += alpha * x[i];
     }
 }
 

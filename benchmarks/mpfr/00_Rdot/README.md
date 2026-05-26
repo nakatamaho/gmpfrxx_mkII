@@ -43,7 +43,7 @@ MPFR Rdot wrapper targets omit a separate `mkII` implementation suffix because t
 | Suffix | Kind | Meaning |
 | --- | --- | --- |
 | none | source baseline | Ordinary wrapper source for the numbered algorithm. |
-| `ROUNDING` | source modifier | Captures `mpfrxx::evaluation_context` before the loop and uses `with_context` in the timed body. No compile-time flag is implied. |
+| `ROUNDING` | source modifier | Captures an explicit `mpfr_rnd_t` before the loop and uses `with_rounding` in the timed body. No compile-time flag is implied. |
 | `PRECISION` | build modifier | Builds the same source with `GMPFRXX_MKII_FAST_FIXED_PREC`. |
 | final `FMA` | build modifier | Builds the FMA-capturable source with `GMPFRXX_MKII_ENABLE_FMA`. |
 
@@ -218,7 +218,7 @@ The headline rows below are regenerated from the committed 512-bit and 1024-bit 
 | --- | --- | --- | --- | --- | --- |
 | 512 | Best serial max | `C_native_03` | 24.256 | 23.606 | Raw C reference for the numbered source shape. |
 | 512 | Best serial average | `C_native_06` | 23.939 | 23.718 | Raw C reference for the numbered source shape. |
-| 512 | Best OpenMP max | `kernel_openmp_03_ROUNDING_PRECISION` | 581.890 | 554.157 | Wrapper source with loop-external rounding/context plus fixed-precision build assumptions. |
+| 512 | Best OpenMP max | `kernel_openmp_03_ROUNDING_PRECISION` | 581.890 | 554.157 | Wrapper source with loop-external rounding plus fixed-precision build assumptions. |
 | 512 | Best OpenMP average | `C_native_openmp_05` | 571.017 | 554.889 | Raw C OpenMP reference for the numbered source shape. |
 | 1024 | Best serial max | `kernel_01_ROUNDING_PRECISION_FMA` | 10.409 | 10.166 | Wrapper source with loop-external rounding and fixed-precision FMA build. |
 | 1024 | Best serial average | `kernel_05_ROUNDING_PRECISION_FMA` | 10.396 | 10.185 | Wrapper source with loop-external rounding and fixed-precision FMA build. |
@@ -234,7 +234,7 @@ These rows are derived from `benchmarks/mpfr/00_Rdot/results_raw/run_all_p512_re
 | Observation | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 | --- | --- | --- | --- | --- | --- |
 | Best raw C serial avg | `C_native_06` | 23.939 | 23.718 | 23.490 | Raw C reference for the numbered source shape. |
-| Best wrapper serial avg | `kernel_03_ROUNDING` | 24.229 | 23.457 | 22.958 | Wrapper source captures rounding/context outside the loop to avoid default-rounding lookup in the timed body. |
+| Best wrapper serial avg | `kernel_03_ROUNDING` | 24.229 | 23.457 | 22.958 | Wrapper source captures rounding outside the loop to avoid default-rounding lookup in the timed body. |
 | Best serial max | `C_native_03` | 24.256 | 23.606 | 23.191 | Raw C reference for the numbered source shape. |
 
 <details>
@@ -444,8 +444,8 @@ These rows are derived from `benchmarks/mpfr/00_Rdot/results_raw/run_all_p512_re
 | Observation | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 | --- | --- | --- | --- | --- | --- |
 | Best raw C OpenMP avg | `C_native_openmp_05` | 571.017 | 554.889 | 518.692 | Raw C OpenMP reference for the numbered source shape. |
-| Best wrapper OpenMP avg | `kernel_openmp_03_ROUNDING_PRECISION` | 581.890 | 554.157 | 528.044 | Wrapper source with loop-external rounding/context plus fixed-precision build assumptions. |
-| Best OpenMP max | `kernel_openmp_03_ROUNDING_PRECISION` | 581.890 | 554.157 | 528.044 | Wrapper source with loop-external rounding/context plus fixed-precision build assumptions. |
+| Best wrapper OpenMP avg | `kernel_openmp_03_ROUNDING_PRECISION` | 581.890 | 554.157 | 528.044 | Wrapper source with loop-external rounding plus fixed-precision build assumptions. |
+| Best OpenMP max | `kernel_openmp_03_ROUNDING_PRECISION` | 581.890 | 554.157 | 528.044 | Wrapper source with loop-external rounding plus fixed-precision build assumptions. |
 
 <details>
 <summary>512-bit OpenMP results sorted by Max MFLOPS</summary>
@@ -706,7 +706,7 @@ Representative excerpts from the current binaries:
 # Rdot_mpfr_kernel_01_ROUNDING_PRECISION_FMA::_Rdot
 2d03: test   %r12,%r12
 2d06: jle    2d35 <_Rdot+0xe5>
-2d10: mov    %r13d,%r8d         # context rounding
+2d10: mov    %r13d,%r8d         # cached rounding
 2d13: mov    %rbp,%rcx          # accumulator addend
 2d16: mov    %r14,%rdx          # dy[i]
 2d19: mov    %rbx,%rsi          # dx[i]
@@ -725,12 +725,12 @@ Representative excerpts from the current binaries:
 32e5: xor    %r12d,%r12d
 32e8: cmpq   $0x0,(%rsp)
 32ed: jle    3324 <_Rdot+0x124>
-32f0: mov    %r15d,%ecx         # context rounding
+32f0: mov    %r15d,%ecx         # cached rounding
 32f3: mov    %rbp,%rdx          # dy[i]
 32f6: mov    %rbx,%rsi          # dx[i]
 32f9: mov    %r14,%rdi          # reusable product temp
 32fc: call   mpfr_mul@plt
-3301: mov    %r15d,%ecx         # context rounding
+3301: mov    %r15d,%ecx         # cached rounding
 3304: mov    %r14,%rdx          # product temp
 3307: mov    %r13,%rsi          # accumulator
 330a: mov    %r13,%rdi          # accumulator destination
@@ -833,7 +833,7 @@ wrapper guard/fallback paths are outside these quoted fast-loop excerpts.
 ## Lessons Learned
 
 The source-level boundary is whether the timed loop is FMA-captured or split
-multiply/add, and whether the product object is reusable. MPFR rounding/context
+multiply/add, and whether the product object is reusable. MPFR rounding
 handling matters, but the generated backend call sequence still controls the
 main performance class.
 

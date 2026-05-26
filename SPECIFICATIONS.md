@@ -324,9 +324,9 @@ supported.
 Eager MPFR math functions, such as `sin`, `cos`, `exp`, `log`, and constants
 such as `const_pi`, use the calling thread's current MPFR default rounding mode.
 They therefore observe `mpfrxx::rounding_mode_scope` and the stable-rounding
-cache, but they are not affected by `mpfrxx::with_context(...)`. Use a
-rounding-mode scope or explicit future math overloads when a math function
-itself needs a non-default rounding mode.
+cache, but they are not affected by target-bound `mpfrxx::with_rounding(...)`
+handles. Use a rounding-mode scope or explicit future math overloads when a
+math function itself needs a non-default rounding mode.
 
 Some MPFR math functions are version-dependent backend features. Wrappers for
 functions such as `powr`, unit-based trigonometric functions, `rootn_si`,
@@ -630,38 +630,39 @@ Applications that want consistent runtime defaults across worker threads must
 call the setter or reload API inside each worker thread, or pass explicit
 precision and rounding context to their own numeric kernels.
 
-### Explicit Evaluation Contexts
+### Explicit Rounding and Evaluation Contexts
 
-`mpfrxx::with_context(value, context)` returns a lightweight non-owning handle
-to `value` plus an explicit evaluation context.  The handle must not outlive the
-referenced `mpfrxx::mpfr_class`, and must not be stored, returned, or used after
-that object is destroyed or moved from.
+`mpfrxx::with_rounding(value, rounding_mode)` returns a lightweight non-owning
+handle to `value` plus an explicit MPFR rounding mode. The handle must not
+outlive the referenced `mpfrxx::mpfr_class`, and must not be stored, returned,
+or used after that object is destroyed or moved from.
 
-Normal builds check that the context precision matches the target object where
-that check is needed. Builds that enable fixed-precision fastpaths may treat
-precision mismatch as a caller contract violation in hot paths and omit the
-check. Such builds are intended only for kernels where all participating
-objects are known to have the same fixed precision.
+The MPFR rounding handle is target-bound. It applies to assignment and compound
+assignment through that handle, carries no public precision field, and lets the
+destination `mpfr_class` determine the result precision exactly as direct
+`mpfr_mul`, `mpfr_add`, or `mpfr_fma` calls do. It does not create a dynamic
+rounding scope and does not affect independently materialized eager math
+functions such as `sin(x)`, `exp(x)`, or `const_pi(precision)`.
 
-The MPFR context handle is target-bound. It applies to assignment and compound
-assignment through that handle; it does not create a dynamic rounding scope and
-does not affect independently materialized eager math functions such as
-`sin(x)`, `exp(x)`, or `const_pi(precision)`.
+No public MPFR precision context is provided. Builds that enable fixed-precision
+fastpaths may still treat fixed precision as an internal caller contract in hot
+expression paths, but that is controlled by build options rather than by a
+public MPFR precision-context object.
 
-MPC provides the parallel target-bound API.
-`mpfrxx::mpc_evaluation_context` stores real precision, imaginary precision, and
-an `mpc_rnd_t`; `mpfrxx::with_context(mpc_value, context)` returns a
-non-owning handle to an `mpfrxx::mpc_class`. Assignment and compound assignment
-through that handle evaluate with the cached `mpc_rnd_t` and target component
-precisions, avoiding per-operation default MPC rounding lookup in fixed-context
-loops. The handle may also be constructed from separate real and imaginary MPFR
-rounding modes, which are packed with `MPC_RND(real, imag)`.
+MPC keeps the target-bound precision-and-rounding context API because MPC needs
+separate real and imaginary component precision. `mpfrxx::mpc_evaluation_context`
+stores real precision, imaginary precision, and an `mpc_rnd_t`;
+`mpfrxx::with_context(mpc_value, context)` returns a non-owning handle to an
+`mpfrxx::mpc_class`. Assignment and compound assignment through that handle
+evaluate with the cached `mpc_rnd_t` and target component precisions, avoiding
+per-operation default MPC rounding lookup in fixed-context loops. The handle may
+also be constructed from separate real and imaginary MPFR rounding modes, which
+are packed with `MPC_RND(real, imag)`.
 
-The MPC context handle follows the same lifetime and precision-contract rules as
-the MPFR handle: it must not outlive the referenced object, normal builds check
-that the context precision matches the target, and fixed-precision fastpath
-builds may treat a mismatch as caller contract violation. It is not a dynamic
-MPC math-function scope and does not change MPC or MPFR defaults.
+The MPC context handle must not outlive the referenced object. Normal builds
+check that the context precision matches the target, and fixed-precision
+fastpath builds may treat a mismatch as caller contract violation. It is not a
+dynamic MPC math-function scope and does not change MPC or MPFR defaults.
 
 ### MPFR Comparisons
 

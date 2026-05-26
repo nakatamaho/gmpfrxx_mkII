@@ -232,9 +232,10 @@ applying the initial-default policy from hot evaluation-context paths.
 `mpfrxx::rounding_mode_scope` changes the calling thread's MPFR default rounding
 mode and updates the stable-rounding cache for the scope lifetime. Eager MPFR
 math functions and constants such as `sin`, `exp`, and `const_pi` use the
-calling thread's current MPFR default rounding mode. `mpfrxx::with_context(...)`
-is a target-bound assignment and compound-assignment handle; it is not a dynamic
-math-function rounding scope.
+calling thread's current MPFR default rounding mode. `mpfrxx::with_rounding(value, rnd)`
+is a target-bound assignment and compound-assignment handle that carries only an
+explicit rounding mode and uses the destination object's current precision; it
+is not a dynamic math-function rounding scope.
 
 MPFR version-dependent math wrappers are exposed only when the included
 `<mpfr.h>` provides the backend function. Older MPFR headers may omit wrappers
@@ -271,12 +272,13 @@ or rounding variables install MPC-specific overrides. Invalid values are ignored
 with a diagnostic on `stderr`, and missing categories continue to inherit the
 current MPFR default.
 
-MPC also has the same target-bound explicit context pattern as MPFR.
+MPC keeps a target-bound explicit precision-and-rounding context API.
 `mpfrxx::mpc_evaluation_context` stores real precision, imaginary precision, and
 an `mpc_rnd_t`; `mpfrxx::with_context(z, ctx)` returns a non-owning handle for
 assignment and compound assignment through `z`. This is intended for fixed-context
-loops that want the rounding mode captured outside the loop without changing the
-thread default state. It is not a dynamic scope for eager MPC math functions.
+loops that want the component precisions and rounding mode captured outside the
+loop without changing the thread default state. It is not a dynamic scope for
+eager MPC math functions.
 
 ## Environment
 

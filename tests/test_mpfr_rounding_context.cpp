@@ -29,12 +29,10 @@
 #include <mpfrxx_mkII.h>
 
 #include <cassert>
-#include <stdexcept>
-#include <string>
 
 namespace {
 
-void check_context_rounding_overrides_default_rounding()
+void check_rounding_overrides_default_rounding()
 {
     mpfrxx::set_default_rounding_mode(MPFR_RNDN);
 
@@ -60,16 +58,11 @@ void check_context_rounding_overrides_default_rounding()
     assert(mpfr_cmp(expected_up, expected_down) != 0);
 
     mpfrxx::set_default_rounding_mode(MPFR_RNDD);
-    const mpfrxx::evaluation_context context{
-        acc.precision(),
-        MPFR_RNDU,
-    };
-    auto acc_context = mpfrxx::with_context(acc, context);
-    acc_context += x * y;
+    auto acc_rounding = mpfrxx::with_rounding(acc, MPFR_RNDU);
+    acc_rounding += x * y;
 
-    assert(&acc_context.value() == &acc);
-    assert(acc_context.context().precision == acc.precision());
-    assert(acc_context.context().rounding_mode == MPFR_RNDU);
+    assert(&acc_rounding.value() == &acc);
+    assert(acc_rounding.rounding_mode() == MPFR_RNDU);
     assert(mpfr_cmp(acc.mpfr_data(), expected_up) == 0);
     assert(mpfr_cmp(acc.mpfr_data(), expected_down) != 0);
 
@@ -80,33 +73,7 @@ void check_context_rounding_overrides_default_rounding()
     mpfrxx::set_default_rounding_mode(MPFR_RNDN);
 }
 
-void check_context_precision_must_match_target()
-{
-#if !defined(GMPFRXX_MKII_FAST_FIXED_PREC)
-    mpfrxx::mpfr_class acc("1", 8);
-    bool threw = false;
-    try {
-        (void)mpfrxx::with_context(acc, mpfrxx::evaluation_context{16, MPFR_RNDN});
-    } catch (const std::invalid_argument&) {
-        threw = true;
-    }
-    assert(threw);
-#endif
-}
-
-void check_context_precision_must_be_valid()
-{
-    mpfrxx::mpfr_class acc("1", 8);
-    bool threw_invalid_precision = false;
-    try {
-        (void)mpfrxx::with_context(acc, mpfrxx::evaluation_context{0, MPFR_RNDN});
-    } catch (const std::invalid_argument& exception) {
-        threw_invalid_precision = std::string(exception.what()) == "invalid MPFR precision";
-    }
-    assert(threw_invalid_precision);
-}
-
-void check_context_assignment_uses_context_rounding()
+void check_rounding_assignment_uses_target_precision()
 {
     mpfrxx::set_default_rounding_mode(MPFR_RNDN);
 
@@ -124,14 +91,10 @@ void check_context_assignment_uses_context_rounding()
     assert(mpfr_cmp(expected_up, expected_down) != 0);
 
     mpfrxx::set_default_rounding_mode(MPFR_RNDD);
-    auto product_context = mpfrxx::with_context(
-        product,
-        mpfrxx::evaluation_context{
-            product.precision(),
-            MPFR_RNDU,
-        });
-    product_context = x * y;
+    auto product_rounding = mpfrxx::with_rounding(product, MPFR_RNDU);
+    product_rounding = x * y;
 
+    assert(product_rounding.rounding_mode() == MPFR_RNDU);
     assert(mpfr_cmp(product.mpfr_data(), expected_up) == 0);
     assert(mpfr_cmp(product.mpfr_data(), expected_down) != 0);
 
@@ -145,9 +108,7 @@ void check_context_assignment_uses_context_rounding()
 
 int main()
 {
-    check_context_rounding_overrides_default_rounding();
-    check_context_precision_must_match_target();
-    check_context_precision_must_be_valid();
-    check_context_assignment_uses_context_rounding();
+    check_rounding_overrides_default_rounding();
+    check_rounding_assignment_uses_target_precision();
     return 0;
 }

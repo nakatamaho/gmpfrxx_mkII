@@ -41,19 +41,19 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
     {
         mpfr_class partial(0.0, precision);
         mpfr_class templ(0.0, precision);
-        auto partial_context = mpfrxx::with_context(partial, precision, rounding);
-        auto templ_context = mpfrxx::with_context(templ, precision, rounding);
+        auto partial_rounding = mpfrxx::with_rounding(partial, rounding);
+        auto templ_rounding = mpfrxx::with_rounding(templ, rounding);
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < n; ++i) {
-            templ_context = dx[i] * dy[i];
-            partial_context += templ;
+            templ_rounding = dx[i] * dy[i];
+            partial_rounding += templ;
         }
 
 #pragma omp critical
         {
-            auto result_context = mpfrxx::with_context(result, precision, rounding);
-            result_context += partial;
+            auto result_rounding = mpfrxx::with_rounding(result, rounding);
+            result_rounding += partial;
         }
     }
 

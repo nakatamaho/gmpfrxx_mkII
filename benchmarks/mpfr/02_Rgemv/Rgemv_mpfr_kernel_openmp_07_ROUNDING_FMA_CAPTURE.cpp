@@ -39,7 +39,6 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, 
 
     const mpfr_prec_t precision = m > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    const mpfrxx::evaluation_context context{precision, rounding};
     const int64_t num_threads = static_cast<int64_t>(omp_get_max_threads());
     const int64_t partial_count = num_threads * m;
     std::vector<mpfr_class> partials;
@@ -55,32 +54,32 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, 
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < m; ++i) {
-            auto y_context = mpfrxx::with_context(y[i], context);
-            y_context *= beta;
+            auto y_rounding = mpfrxx::with_rounding(y[i], rounding);
+            y_rounding *= beta;
         }
 
         for (int64_t i = 0; i < m; ++i) {
-            auto local_context = mpfrxx::with_context(local_y[i], context);
-            local_context = 0.0;
+            auto local_rounding = mpfrxx::with_rounding(local_y[i], rounding);
+            local_rounding = 0.0;
         }
 
         mpfr_class temp(0.0, precision);
-        auto temp_context = mpfrxx::with_context(temp, context);
+        auto temp_rounding = mpfrxx::with_rounding(temp, rounding);
 
 #pragma omp for schedule(static)
         for (int64_t j = 0; j < n; ++j) {
-            temp_context = alpha * x[j];
+            temp_rounding = alpha * x[j];
             for (int64_t i = 0; i < m; ++i) {
-                auto local_context = mpfrxx::with_context(local_y[i], context);
-                local_context += temp * A[i + j * lda];
+                auto local_rounding = mpfrxx::with_rounding(local_y[i], rounding);
+                local_rounding += temp * A[i + j * lda];
             }
         }
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < m; ++i) {
-            auto y_context = mpfrxx::with_context(y[i], context);
+            auto y_rounding = mpfrxx::with_rounding(y[i], rounding);
             for (int64_t t = 0; t < num_threads; ++t) {
-                y_context += partials[t * m + i];
+                y_rounding += partials[t * m + i];
             }
         }
     }

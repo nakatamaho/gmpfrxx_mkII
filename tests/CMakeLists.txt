@@ -64,15 +64,15 @@ add_phase0_test(test_mpfr_compound_assign mpfrxx_mkII)
 target_compile_definitions(test_mpfr_compound_assign PRIVATE
     GMPFRXX_MKII_ENABLE_FMA
 )
-add_phase0_test(test_mpfr_evaluation_context mpfrxx_mkII)
-add_executable(test_mpfr_evaluation_context_fixed_precision test_mpfr_evaluation_context.cpp)
-target_link_libraries(test_mpfr_evaluation_context_fixed_precision PRIVATE mpfrxx_mkII)
-target_compile_definitions(test_mpfr_evaluation_context_fixed_precision PRIVATE
+add_phase0_test(test_mpfr_rounding_context mpfrxx_mkII)
+add_executable(test_mpfr_rounding_context_fixed_precision test_mpfr_rounding_context.cpp)
+target_link_libraries(test_mpfr_rounding_context_fixed_precision PRIVATE mpfrxx_mkII)
+target_compile_definitions(test_mpfr_rounding_context_fixed_precision PRIVATE
     GMPFRXX_MKII_FAST_FIXED_PREC
 )
 add_test(
-    NAME test_mpfr_evaluation_context_fixed_precision
-    COMMAND test_mpfr_evaluation_context_fixed_precision
+    NAME test_mpfr_rounding_context_fixed_precision
+    COMMAND test_mpfr_rounding_context_fixed_precision
 )
 add_phase0_test(test_mpfr_rounding_scope mpfrxx_mkII)
 add_executable(test_mpfr_rounding_scope_stable test_mpfr_rounding_scope.cpp)

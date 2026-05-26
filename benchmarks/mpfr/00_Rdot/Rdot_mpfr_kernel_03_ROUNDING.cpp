@@ -38,12 +38,12 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
     mpfr_class temp(0.0, precision);
     mpfr_class templ(0.0, precision);
-    auto temp_context = mpfrxx::with_context(temp, precision, rounding);
-    auto templ_context = mpfrxx::with_context(templ, precision, rounding);
+    auto temp_rounding = mpfrxx::with_rounding(temp, rounding);
+    auto templ_rounding = mpfrxx::with_rounding(templ, rounding);
 
     for (int64_t i = 0; i < n; i++) {
-        templ_context = dx[i] * dy[i];
-        temp_context += templ;
+        templ_rounding = dx[i] * dy[i];
+        temp_rounding += templ;
     }
     return temp;
 }

@@ -150,11 +150,6 @@ private:
 
 namespace mpfrxx {
 
-struct evaluation_context {
-    mpfr_prec_t precision;
-    mpfr_rnd_t rounding_mode;
-};
-
 class mpfr_class {
 public:
     mpfr_class() : mpfr_class(precision_tag{}, default_precision()) {}
@@ -682,7 +677,7 @@ inline void swap(mpfr_class& lhs, mpfr_class& rhs) noexcept
     lhs.swap(rhs);
 }
 
-class mpfr_context_ref;
+class mpfr_rounding_ref;
 
 } // namespace mpfrxx
 
@@ -2567,6 +2562,60 @@ void mpfr_compound_assign(mpfrxx::mpfr_class& lhs, Rhs&& rhs)
     mpfr_compound_assign_with_context<Op>(lhs, std::forward<Rhs>(rhs), context);
 }
 
+template <typename Op, typename Rhs>
+void mpfr_compound_assign_with_rounding(
+    mpfrxx::mpfr_class& lhs,
+    Rhs&& rhs,
+    mpfr_rnd_t rounding_mode)
+{
+    auto operand = make_mpfr_operand(std::forward<Rhs>(rhs));
+    using operand_type = std::decay_t<decltype(operand)>;
+
+    if constexpr (is_mpfr_object_leaf_v<operand_type>) {
+        mpfr_apply_binary<Op>(
+            lhs.mpfr_data(),
+            lhs.mpfr_data(),
+            operand.get().mpfr_data(),
+            rounding_mode);
+    } else if constexpr (
+        is_mpfr_mul_direct_expr_v<operand_type> &&
+        (std::is_same_v<Op, add_op> || std::is_same_v<Op, sub_op>)) {
+        if constexpr (build_options::enable_fma) {
+            if constexpr (std::is_same_v<Op, add_op>) {
+                mpfr_compound_fma_apply(
+                    lhs.mpfr_data(),
+                    operand,
+                    rounding_mode);
+            } else {
+                mpfr_compound_submul_fma_apply(
+                    lhs.mpfr_data(),
+                    operand,
+                    rounding_mode);
+            }
+        } else {
+            const mpfr_prec_t precision = mpfr_get_prec(lhs.mpfr_data());
+            if constexpr (std::is_same_v<Op, add_op>) {
+                mpfr_compound_mul_apply(
+                    lhs.mpfr_data(),
+                    operand,
+                    precision,
+                    rounding_mode);
+            } else {
+                mpfr_compound_submul_apply(
+                    lhs.mpfr_data(),
+                    operand,
+                    precision,
+                    rounding_mode);
+            }
+        }
+    } else {
+        const mpfr_prec_t precision = mpfr_get_prec(lhs.mpfr_data());
+        scoped_mpfr_temporary value(precision);
+        mpfr_evaluate(value.get(), operand, precision, rounding_mode);
+        mpfr_apply_binary<Op>(lhs.mpfr_data(), lhs.mpfr_data(), value.get(), rounding_mode);
+    }
+}
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -2613,58 +2662,33 @@ mpfr_class& mpfr_class::operator=(const Expr& expr)
     return *this;
 }
 
-class mpfr_context_ref {
+class mpfr_rounding_ref {
 public:
-    mpfr_context_ref(mpfr_class& value, evaluation_context context)
+    mpfr_rounding_ref(mpfr_class& value, mpfr_rnd_t rounding_mode) noexcept
         : value_(&value),
-          context_(context),
-          precision_(context.precision),
-          rounding_mode_(context.rounding_mode)
-    {
-        gmpfrxx_mkII::detail::require_valid_mpfr_precision(context.precision);
-        check_precision();
-    }
-
-    mpfr_context_ref(mpfr_class& value, mpfr_prec_t precision, mpfr_rnd_t rounding_mode)
-        : value_(&value),
-          context_{precision, rounding_mode},
-          precision_(precision),
           rounding_mode_(rounding_mode)
     {
-        gmpfrxx_mkII::detail::require_valid_mpfr_precision(precision);
-        check_precision();
     }
 
-private:
-    void check_precision() const
-    {
-        if constexpr (!gmpfrxx_mkII::detail::build_options::fast_fixed_precision) {
-            if (precision_ != value_->precision()) {
-                throw std::invalid_argument("mpfr evaluation context precision must match target precision");
-            }
-        }
-    }
-
-public:
-    mpfr_context_ref(const mpfr_context_ref&) = default;
-    mpfr_context_ref& operator=(const mpfr_context_ref&) = default;
+    mpfr_rounding_ref(const mpfr_rounding_ref&) = default;
+    mpfr_rounding_ref& operator=(const mpfr_rounding_ref&) = default;
 
     template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
-    mpfr_context_ref& operator=(Rhs&& rhs)
+    mpfr_rounding_ref& operator=(Rhs&& rhs)
     {
         auto operand = gmpfrxx_mkII::detail::make_mpfr_operand(std::forward<Rhs>(rhs));
-        const auto context = detail_context();
         if (gmpfrxx_mkII::detail::mpfr_try_assign_direct_leaf_binary(
                 value_->mpfr_data(),
                 operand,
-                context.rounding_mode)) {
+                rounding_mode_)) {
             return *this;
         }
+        const mpfr_prec_t precision = value_->precision();
         gmpfrxx_mkII::detail::mpfr_evaluate(
             value_->mpfr_data(),
             operand,
-            context.precision_bits,
-            context.rounding_mode);
+            precision,
+            rounding_mode_);
         return *this;
     }
 
@@ -2673,74 +2697,59 @@ public:
         return *value_;
     }
 
-    const evaluation_context& context() const noexcept
+    mpfr_rnd_t rounding_mode() const noexcept
     {
-        return context_;
+        return rounding_mode_;
     }
 
     template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
-    mpfr_context_ref& operator+=(Rhs&& rhs)
+    mpfr_rounding_ref& operator+=(Rhs&& rhs)
     {
-        gmpfrxx_mkII::detail::mpfr_compound_assign_with_context<gmpfrxx_mkII::detail::add_op>(
+        gmpfrxx_mkII::detail::mpfr_compound_assign_with_rounding<gmpfrxx_mkII::detail::add_op>(
             *value_,
             std::forward<Rhs>(rhs),
-            detail_context());
+            rounding_mode_);
         return *this;
     }
 
     template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
-    mpfr_context_ref& operator-=(Rhs&& rhs)
+    mpfr_rounding_ref& operator-=(Rhs&& rhs)
     {
-        gmpfrxx_mkII::detail::mpfr_compound_assign_with_context<gmpfrxx_mkII::detail::sub_op>(
+        gmpfrxx_mkII::detail::mpfr_compound_assign_with_rounding<gmpfrxx_mkII::detail::sub_op>(
             *value_,
             std::forward<Rhs>(rhs),
-            detail_context());
+            rounding_mode_);
         return *this;
     }
 
     template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
-    mpfr_context_ref& operator*=(Rhs&& rhs)
+    mpfr_rounding_ref& operator*=(Rhs&& rhs)
     {
-        gmpfrxx_mkII::detail::mpfr_compound_assign_with_context<gmpfrxx_mkII::detail::mul_op>(
+        gmpfrxx_mkII::detail::mpfr_compound_assign_with_rounding<gmpfrxx_mkII::detail::mul_op>(
             *value_,
             std::forward<Rhs>(rhs),
-            detail_context());
+            rounding_mode_);
         return *this;
     }
 
     template <typename Rhs, std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Rhs>, int> = 0>
-    mpfr_context_ref& operator/=(Rhs&& rhs)
+    mpfr_rounding_ref& operator/=(Rhs&& rhs)
     {
-        gmpfrxx_mkII::detail::mpfr_compound_assign_with_context<gmpfrxx_mkII::detail::div_op>(
+        gmpfrxx_mkII::detail::mpfr_compound_assign_with_rounding<gmpfrxx_mkII::detail::div_op>(
             *value_,
             std::forward<Rhs>(rhs),
-            detail_context());
+            rounding_mode_);
         return *this;
     }
 
 private:
-    gmpfrxx_mkII::detail::eval_context detail_context() const noexcept
-    {
-        return gmpfrxx_mkII::detail::eval_context{
-            precision_,
-            rounding_mode_,
-        };
-    }
-
     mpfr_class* value_;
-    evaluation_context context_;
-    mpfr_prec_t precision_;
     mpfr_rnd_t rounding_mode_;
 };
 
-inline mpfr_context_ref with_context(mpfr_class& value, evaluation_context context)
+inline mpfr_rounding_ref with_rounding(mpfr_class& value, mpfr_rnd_t rounding_mode) noexcept
 {
-    return mpfr_context_ref(value, context);
-}
-
-inline mpfr_context_ref with_context(mpfr_class& value, mpfr_prec_t precision, mpfr_rnd_t rounding_mode)
-{
-    return mpfr_context_ref(value, precision, rounding_mode);
+    return mpfr_rounding_ref(value, rounding_mode);
 }
 
 using ::gmpfrxx_mkII::detail::operator+;

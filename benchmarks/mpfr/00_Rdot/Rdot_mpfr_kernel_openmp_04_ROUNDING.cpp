@@ -10,27 +10,26 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
 
     const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    const mpfrxx::evaluation_context context{precision, rounding};
     mpfr_class result(0.0, precision);
 
 #pragma omp parallel
     {
         mpfr_class partial(0.0, precision);
         mpfr_class templ(0.0, precision);
-        auto partial_context = mpfrxx::with_context(partial, context);
-        auto templ_context = mpfrxx::with_context(templ, context);
+        auto partial_rounding = mpfrxx::with_rounding(partial, rounding);
+        auto templ_rounding = mpfrxx::with_rounding(templ, rounding);
 
 #pragma omp for schedule(static)
         for (int64_t i = 0; i < n; ++i) {
-            templ_context = dx[i];
-            templ_context *= dy[i];
-            partial_context += templ;
+            templ_rounding = dx[i];
+            templ_rounding *= dy[i];
+            partial_rounding += templ;
         }
 
 #pragma omp critical
         {
-            auto result_context = mpfrxx::with_context(result, context);
-            result_context += partial;
+            auto result_rounding = mpfrxx::with_rounding(result, rounding);
+            result_rounding += partial;
         }
     }
 

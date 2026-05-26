@@ -10,30 +10,29 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
 
     const mpfr_prec_t precision = n > 0 ? dx[0].precision() : mpfrxx::default_precision_bits();
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    const mpfrxx::evaluation_context context{precision, rounding};
     mpfr_class acc0(0.0, precision);
     mpfr_class acc1(0.0, precision);
     mpfr_class acc2(0.0, precision);
     mpfr_class acc3(0.0, precision);
-    auto acc0_context = mpfrxx::with_context(acc0, context);
-    auto acc1_context = mpfrxx::with_context(acc1, context);
-    auto acc2_context = mpfrxx::with_context(acc2, context);
-    auto acc3_context = mpfrxx::with_context(acc3, context);
+    auto acc0_rounding = mpfrxx::with_rounding(acc0, rounding);
+    auto acc1_rounding = mpfrxx::with_rounding(acc1, rounding);
+    auto acc2_rounding = mpfrxx::with_rounding(acc2, rounding);
+    auto acc3_rounding = mpfrxx::with_rounding(acc3, rounding);
 
     int64_t i = 0;
     for (; i + 3 < n; i += 4) {
-        acc0_context += dx[i] * dy[i];
-        acc1_context += dx[i + 1] * dy[i + 1];
-        acc2_context += dx[i + 2] * dy[i + 2];
-        acc3_context += dx[i + 3] * dy[i + 3];
+        acc0_rounding += dx[i] * dy[i];
+        acc1_rounding += dx[i + 1] * dy[i + 1];
+        acc2_rounding += dx[i + 2] * dy[i + 2];
+        acc3_rounding += dx[i + 3] * dy[i + 3];
     }
     for (; i < n; ++i) {
-        acc0_context += dx[i] * dy[i];
+        acc0_rounding += dx[i] * dy[i];
     }
 
-    acc0_context += acc1;
-    acc2_context += acc3;
-    acc0_context += acc2;
+    acc0_rounding += acc1;
+    acc2_rounding += acc3;
+    acc0_rounding += acc2;
     return acc0;
 }
 

@@ -48,8 +48,8 @@ separate source changes from build flags:
 | Suffix | Kind | Meaning |
 |--------|------|---------|
 | none | source baseline | Ordinary wrapper source for the numbered algorithm. |
-| `ROUNDING` | source modifier | Captures `mpfrxx::evaluation_context` before the loop and uses `with_context` in the timed body.  No compile-time flag is implied. |
-| `ROUNDING_FMA_CAPTURE` | source modifier | Uses the same loop-external rounding context and spells the inner update as an expression that can be captured by the ET FMA path. |
+| `ROUNDING` | source modifier | Captures an explicit `mpfr_rnd_t` before the loop and uses `with_rounding` in the timed body.  No compile-time flag is implied. |
+| `ROUNDING_FMA_CAPTURE` | source modifier | Uses the same loop-external rounding and spells the inner update as an expression that can be captured by the ET FMA path. |
 | `PRECISION` | build modifier | Builds the same source with `GMPFRXX_MKII_FAST_FIXED_PREC`. |
 | final `FMA` | build modifier | Builds the FMA-capturable source with `GMPFRXX_MKII_ENABLE_FMA`. |
 
@@ -90,7 +90,7 @@ numbered shape without changing the variant number.
 | `01` | Starting point. | Row-dot form: for each row `i`, accumulate `sum_j A[i+j*lda] * x[j]`, then update `y[i]`. | Reusable row accumulator and reusable product object. | Baseline row-owned Rgemv spelling; exposes the cost of strided column-major `A` access. |
 | `02` | `01 -> 02`: change traversal from row-dot to column-major streaming. | Scale `y`, then stream columns of `A` and update all rows for each `j`. | Reusable `temp = alpha * x[j]` and reusable `templ = temp * A[i+j*lda]`. | Separates wrapper overhead from the dominant `A` access pattern and avoids FMA as a confounder. |
 | `03` | `01 -> 03`: keep the row-dot traversal and switch from a reusable product temporary to an FMA-capturable expression spelling. | Row-dot direct-expression form: `temp += A[i+j*lda] * x[j]`, then `y[i] = alpha * temp + beta * y[i]`. | Reusable accumulator; expression product is FMA-capturable only in the `ROUNDING_FMA_CAPTURE` source. | Tests whether ET fusion can reach the raw C row-dot `mpfr_fma` / `mpfr_fmma` class. |
-| `04` | `02 -> 04`: keep the column-major reusable-temporary traversal and add the explicit rounding/context comparison path. | Column-major reusable-temporary form; the base source intentionally remains in the same hot-loop class as `02`. | Reusable `temp` and `templ`; `ROUNDING` variants route all updates through a loop-external context. | Measures whether explicit rounding capture changes the reusable-temp column-major class without mixing in traversal or expression-shape changes. |
+| `04` | `02 -> 04`: keep the column-major reusable-temporary traversal and add the explicit rounding comparison path. | Column-major reusable-temporary form; the base source intentionally remains in the same hot-loop class as `02`. | Reusable `temp` and `templ`; `ROUNDING` variants route all updates through a loop-external rounding. | Measures whether explicit rounding capture changes the reusable-temp column-major class without mixing in traversal or expression-shape changes. |
 | `05` | `04 -> 05`: add OpenMP row partitioning and precompute `alpha * x`. | OpenMP row partition with precomputed `scaled_x[j] = alpha * x[j]`. | Precomputed scaled vector plus per-thread reusable product. | Removes repeated column-scalar work while each thread owns rows of `y`. |
 | `06` | `05 -> 06`: add fixed 256-row blocking inside the row-owned OpenMP shape. | OpenMP 256-row blocks with column loop and contiguous row loop inside each block. | Per-thread reusable scratch; no shared-y race inside a block. | Trades extra loop structure for better locality in row-owned OpenMP code. |
 | `07` | `06 -> 07`: switch from row ownership to column partitioning with reduction. | OpenMP column partition with per-thread partial `y` vectors and final reduction. | `num_threads * m` partial accumulators plus final reduction outside the hot column loop. | Preserves serial-like column-major `A` streaming without racing on `y`. |
@@ -129,7 +129,7 @@ FMA directly; wrapper kernels use suffixes to isolate those effects.
 | C native kernel | Equivalent C++ wrapper kernel(s) | Equivalence basis |
 |-----------------|----------------------------------|-------------------|
 | `C_native_01` | `kernel_01`, `kernel_01_PRECISION` | Row-dot source with reusable row accumulator and product temporary. |
-| `C_native_01_FMA` | `kernel_01_ROUNDING_FMA_CAPTURE_FMA`, `kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Same row-dot algorithm, but the wrapper source uses context capture and an FMA-capturable expression. |
+| `C_native_01_FMA` | `kernel_01_ROUNDING_FMA_CAPTURE_FMA`, `kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Same row-dot algorithm, but the wrapper source uses rounding capture and an FMA-capturable expression. |
 | `C_native_02` | `kernel_02`, `kernel_02_PRECISION`, `kernel_02_ROUNDING`, `kernel_02_ROUNDING_PRECISION` | Column-major reusable `temp`/`templ` source, intentionally non-FMA. |
 | `C_native_02_FMA` | `kernel_02_ROUNDING_FMA_CAPTURE_FMA`, `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Column-major update with an FMA-capturable row update. |
 | `C_native_03` | `kernel_03_ROUNDING_FMA_CAPTURE_FMA`, `kernel_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Row-dot FMA-style accumulation.  Raw C also uses `mpfr_fmma` for the final alpha/beta update. |
@@ -234,12 +234,12 @@ The headline rows below are regenerated from the committed 512-bit and 1024-bit 
 
 | Precision | Class | Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
 | --- | --- | --- | --- | --- | --- |
-| 512 | Best serial max | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 24.124 | 23.454 | Wrapper context-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
+| 512 | Best serial max | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 24.124 | 23.454 | Wrapper rounding-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
 | 512 | Best serial average | `C_native_02_FMA` | 23.631 | 23.484 | Raw C FMA reference; the hot loop uses the fused backend operation where the source shape permits it. |
 | 512 | Best OpenMP max | `C_native_openmp_07` | 456.671 | 438.252 | Raw C OpenMP column-partitioned class with per-thread partial vectors and final reduction outside the hot loop. |
 | 512 | Best OpenMP average | `C_native_openmp_07` | 456.671 | 438.252 | Raw C OpenMP column-partitioned class with per-thread partial vectors and final reduction outside the hot loop. |
-| 1024 | Best serial max | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.366 | 10.176 | Wrapper context-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
-| 1024 | Best serial average | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.366 | 10.176 | Wrapper context-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
+| 1024 | Best serial max | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.366 | 10.176 | Wrapper rounding-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
+| 1024 | Best serial average | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.366 | 10.176 | Wrapper rounding-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
 | 1024 | Best OpenMP max | `C_native_openmp_07_FMA` | 238.981 | 234.392 | Raw C OpenMP column-partitioned class with per-thread partial vectors and final reduction outside the hot loop. |
 | 1024 | Best OpenMP average | `C_native_openmp_07_FMA` | 238.981 | 234.392 | Raw C OpenMP column-partitioned class with per-thread partial vectors and final reduction outside the hot loop. |
 
@@ -252,8 +252,8 @@ These rows are derived from `benchmarks/mpfr/02_Rgemv/results_raw/run_all_p512_r
 | Observation | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 | --- | --- | --- | --- | --- | --- |
 | Best raw C serial avg | `C_native_02_FMA` | 23.631 | 23.484 | 23.372 | Raw C FMA reference; the hot loop uses the fused backend operation where the source shape permits it. |
-| Best wrapper serial avg | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 24.124 | 23.454 | 23.162 | Wrapper context-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
-| Best serial max | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 24.124 | 23.454 | 23.162 | Wrapper context-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
+| Best wrapper serial avg | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 24.124 | 23.454 | 23.162 | Wrapper rounding-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
+| Best serial max | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 24.124 | 23.454 | 23.162 | Wrapper rounding-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
 
 <details>
 <summary>512-bit serial results sorted by Max MFLOPS</summary>
@@ -338,8 +338,8 @@ These rows are derived from `benchmarks/mpfr/02_Rgemv/results_raw/run_all_p1024_
 | Observation | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 | --- | --- | --- | --- | --- | --- |
 | Best raw C serial avg | `C_native_02_FMA` | 10.216 | 10.117 | 9.975 | Raw C FMA reference; the hot loop uses the fused backend operation where the source shape permits it. |
-| Best wrapper serial avg | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.366 | 10.176 | 10.070 | Wrapper context-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
-| Best serial max | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.366 | 10.176 | 10.070 | Wrapper context-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
+| Best wrapper serial avg | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.366 | 10.176 | 10.070 | Wrapper rounding-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
+| Best serial max | `kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | 10.366 | 10.176 | 10.070 | Wrapper rounding-captured FMA source built with fixed-precision assumptions; checks the closest fused hot-loop class. |
 
 <details>
 <summary>1024-bit serial results sorted by Max MFLOPS</summary>
@@ -426,7 +426,7 @@ These rows are derived from `benchmarks/mpfr/02_Rgemv/results_raw/run_all_p512_r
 | Observation | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 | --- | --- | --- | --- | --- | --- |
 | Best raw C OpenMP avg | `C_native_openmp_07` | 456.671 | 438.252 | 417.973 | Raw C OpenMP column-partitioned class with per-thread partial vectors and final reduction outside the hot loop. |
-| Best wrapper OpenMP avg | `kernel_openmp_07_ROUNDING_PRECISION` | 449.744 | 436.822 | 401.564 | Wrapper source with loop-external rounding/context plus fixed-precision build assumptions. |
+| Best wrapper OpenMP avg | `kernel_openmp_07_ROUNDING_PRECISION` | 449.744 | 436.822 | 401.564 | Wrapper source with loop-external rounding plus fixed-precision build assumptions. |
 | Best OpenMP max | `C_native_openmp_07` | 456.671 | 438.252 | 417.973 | Raw C OpenMP column-partitioned class with per-thread partial vectors and final reduction outside the hot loop. |
 
 <details>
@@ -562,7 +562,7 @@ These rows are derived from `benchmarks/mpfr/02_Rgemv/results_raw/run_all_p1024_
 | Observation | Variant | Max MFLOPS | Avg MFLOPS | Min MFLOPS | Interpretation |
 | --- | --- | --- | --- | --- | --- |
 | Best raw C OpenMP avg | `C_native_openmp_07_FMA` | 238.981 | 234.392 | 224.132 | Raw C OpenMP column-partitioned class with per-thread partial vectors and final reduction outside the hot loop. |
-| Best wrapper OpenMP avg | `kernel_openmp_07_ROUNDING_FMA_CAPTURE_FMA` | 233.633 | 230.890 | 222.031 | Wrapper context-captured FMA source; checks whether expression spelling reaches the fused backend class. |
+| Best wrapper OpenMP avg | `kernel_openmp_07_ROUNDING_FMA_CAPTURE_FMA` | 233.633 | 230.890 | 222.031 | Wrapper rounding-captured FMA source; checks whether expression spelling reaches the fused backend class. |
 | Best OpenMP max | `C_native_openmp_07_FMA` | 238.981 | 234.392 | 224.132 | Raw C OpenMP column-partitioned class with per-thread partial vectors and final reduction outside the hot loop. |
 
 <details>
@@ -753,11 +753,11 @@ Representative excerpts from the current binaries:
 # Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA::_Rgemv
 2f30: mov    0x8(%rsp),%rdx
 2f35: mov    0x28(%rsp),%rsi
-2f3a: mov    %ebp,%ecx          # context rounding
+2f3a: mov    %ebp,%ecx          # cached rounding
 2f3c: mov    %r12,%rdi          # reusable temp
 2f3f: call   mpfr_mul@plt       # temp = alpha * x[j]
 2f44: test   %rbx,%rbx
-2f70: mov    %ebp,%r8d          # context rounding
+2f70: mov    %ebp,%r8d          # cached rounding
 2f73: mov    %r14,%rcx          # y[i] addend
 2f76: mov    %r15,%rdx          # A[i,j]
 2f79: mov    %r12,%rsi          # temp
@@ -793,7 +793,7 @@ Representative excerpts from the current binaries:
 ```asm
 # Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA::_Rgemv._omp_fn
 34a0: mov    0x10(%r15),%rsi
-34a4: mov    0x38(%rsp),%ecx    # context rounding
+34a4: mov    0x38(%rsp),%ecx    # cached rounding
 34a8: mov    %rbp,%rdi          # reusable temp
 34ab: mov    0x18(%rsp),%rdx
 34b0: call   mpfr_mul@plt       # temp = alpha * x[j]

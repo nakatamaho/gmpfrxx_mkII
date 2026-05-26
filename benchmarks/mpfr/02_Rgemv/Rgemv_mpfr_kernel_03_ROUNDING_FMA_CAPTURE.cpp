@@ -35,17 +35,16 @@ void _Rgemv(int64_t m, int64_t n, const mpfr_class &alpha, const mpfr_class *A, 
 
     const mpfr_prec_t precision = m > 0 ? y[0].precision() : mpfrxx::default_precision_bits();
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    const mpfrxx::evaluation_context context{precision, rounding};
     mpfr_class temp(0.0, precision);
-    auto temp_context = mpfrxx::with_context(temp, context);
+    auto temp_rounding = mpfrxx::with_rounding(temp, rounding);
 
     for (int64_t i = 0; i < m; ++i) {
-        temp_context = 0.0;
+        temp_rounding = 0.0;
         for (int64_t j = 0; j < n; ++j) {
-            temp_context += A[i + j * lda] * x[j];
+            temp_rounding += A[i + j * lda] * x[j];
         }
-        auto y_context = mpfrxx::with_context(y[i], context);
-        y_context = alpha * temp + beta * y[i];
+        auto y_rounding = mpfrxx::with_rounding(y[i], rounding);
+        y_rounding = alpha * temp + beta * y[i];
     }
 }
 

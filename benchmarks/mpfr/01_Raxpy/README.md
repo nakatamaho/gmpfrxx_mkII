@@ -8,7 +8,7 @@ This directory benchmarks the MPFR real AXPY operation
 y_i = y_i + alpha * x_i
 ```
 
-for fixed-precision `mpfr_t` and `mpfrxx::mpfr_class` vectors. The benchmark compares raw C MPFR kernels, expression-template wrapper kernels, explicit rounding/context source variants, FMA-capable builds, fixed-precision builds, and OpenMP worker loops at 512-bit and 1024-bit precision.
+for fixed-precision `mpfr_t` and `mpfrxx::mpfr_class` vectors. The benchmark compares raw C MPFR kernels, expression-template wrapper kernels, explicit rounding source variants, FMA-capable builds, fixed-precision builds, and OpenMP worker loops at 512-bit and 1024-bit precision.
 
 ## Build
 
@@ -75,7 +75,7 @@ Wrapper suffixes separate source changes from build flags:
 | --- | --- | --- |
 | none | none | Baseline wrapper source for the numbered algorithm. |
 | `PRECISION` | `GMPFRXX_MKII_FAST_FIXED_PREC` | Builds the same source with fixed-precision assumptions. |
-| `ROUNDING` | none | Uses an explicit `mpfrxx::evaluation_context` source file and avoids default-rounding lookup in the timed loop. |
+| `ROUNDING` | none | Uses an explicit `mpfr_rnd_t` source file with `with_rounding` and avoids default-rounding lookup in the timed loop. |
 | `ROUNDING_PRECISION` | `GMPFRXX_MKII_FAST_FIXED_PREC` | Builds the explicit-context source with fixed-precision assumptions. |
 | final `FMA` | `GMPFRXX_MKII_ENABLE_FMA` | Builds an FMA-capturable source shape with FMA enabled. |
 
@@ -83,7 +83,7 @@ FMA targets are generated only for direct-expression variant `01`, where the sou
 
 ## Source Transitions
 
-`01` is the FMA-capturable wrapper source in this benchmark because the product remains in the update expression. `01 -> 02` introduces an explicit reusable product object and copy-then-multiply source. `02 -> 03` keeps reusable storage but assigns it from `alpha * x[i]`, matching the raw split multiply/add reusable-product class. `03 -> 04` moves product construction into the loop as a lifetime stress case. `ROUNDING` variants are separate source files that capture `mpfrxx::evaluation_context` before the loop; `PRECISION` and final `FMA` are build modifiers, not new variant numbers.
+`01` is the FMA-capturable wrapper source in this benchmark because the product remains in the update expression. `01 -> 02` introduces an explicit reusable product object and copy-then-multiply source. `02 -> 03` keeps reusable storage but assigns it from `alpha * x[i]`, matching the raw split multiply/add reusable-product class. `03 -> 04` moves product construction into the loop as a lifetime stress case. `ROUNDING` variants are separate source files that capture explicit `mpfr_rnd_t` before the loop; `PRECISION` and final `FMA` are build modifiers, not new variant numbers.
 
 ## C Native Equivalent Kernels
 
@@ -189,7 +189,7 @@ The headline rows below are regenerated from the committed 512-bit and 1024-bit 
 
 | Precision | Class | Variant | Max MFLOPS | Avg MFLOPS | Interpretation |
 | --- | --- | --- | --- | --- | --- |
-| 512 | Best serial max | `kernel_03_ROUNDING` | 23.402 | 22.875 | Wrapper source captures rounding/context outside the loop to avoid default-rounding lookup in the timed body. |
+| 512 | Best serial max | `kernel_03_ROUNDING` | 23.402 | 22.875 | Wrapper source captures rounding outside the loop to avoid default-rounding lookup in the timed body. |
 | 512 | Best serial average | `kernel_01_ROUNDING_PRECISION_FMA` | 23.147 | 22.981 | Wrapper source with loop-external rounding and fixed-precision FMA build. |
 | 512 | Best OpenMP max | `kernel_openmp_01_ROUNDING_PRECISION_FMA` | 422.132 | 414.911 | Wrapper source with loop-external rounding and fixed-precision FMA build. |
 | 512 | Best OpenMP average | `kernel_openmp_01_ROUNDING_PRECISION_FMA` | 422.132 | 414.911 | Wrapper source with loop-external rounding and fixed-precision FMA build. |
@@ -208,7 +208,7 @@ These rows are derived from `benchmarks/mpfr/01_Raxpy/results_raw/run_all_p512_r
 | --- | --- | --- | --- | --- | --- |
 | Best raw C serial avg | `C_native_01_FMA` | 23.184 | 22.930 | 22.661 | Raw C FMA reference; the hot loop uses the fused backend operation where the source shape permits it. |
 | Best wrapper serial avg | `kernel_01_ROUNDING_PRECISION_FMA` | 23.147 | 22.981 | 22.812 | Wrapper source with loop-external rounding and fixed-precision FMA build. |
-| Best serial max | `kernel_03_ROUNDING` | 23.402 | 22.875 | 22.396 | Wrapper source captures rounding/context outside the loop to avoid default-rounding lookup in the timed body. |
+| Best serial max | `kernel_03_ROUNDING` | 23.402 | 22.875 | 22.396 | Wrapper source captures rounding outside the loop to avoid default-rounding lookup in the timed body. |
 
 <details>
 <summary>512-bit serial results sorted by Max MFLOPS</summary>
@@ -556,7 +556,7 @@ Representative excerpts from the current binaries:
 2b60: mov    %rbx,%rcx          # y[i] addend
 2b63: mov    %rbp,%rdx          # x[i]
 2b66: mov    %rbx,%rdi          # y[i] destination
-2b69: mov    %r15d,%r8d         # context rounding
+2b69: mov    %r15d,%r8d         # cached rounding
 2b6c: mov    %r13,%rsi          # alpha
 2b6f: add    $0x1,%r14
 2b73: add    $0x20,%rbx
@@ -571,11 +571,11 @@ Representative excerpts from the current binaries:
 2c49: test   %r15,%r15
 2c4c: jle    2c84 <_Raxpy+0xf4>
 2c50: mov    (%rsp),%rsi        # alpha
-2c54: mov    %r14d,%ecx         # context rounding
+2c54: mov    %r14d,%ecx         # cached rounding
 2c57: mov    %rbp,%rdx          # x[i]
 2c5a: mov    %r13,%rdi          # reusable product temp
 2c5d: call   mpfr_mul@plt
-2c62: mov    %r14d,%ecx         # context rounding
+2c62: mov    %r14d,%ecx         # cached rounding
 2c65: mov    %r13,%rdx          # product temp
 2c68: mov    %rbx,%rsi          # y[i]
 2c6b: mov    %rbx,%rdi          # y[i] destination

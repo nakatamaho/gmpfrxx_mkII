@@ -44,19 +44,19 @@ mpfr_class _Rdot(int64_t n, mpfr_class *dx, int64_t incx, mpfr_class *dy, int64_
 #endif
     {
         mpfr_class templ(0.0, precision);
-        auto templ_context = mpfrxx::with_context(templ, precision, rounding);
+        auto templ_rounding = mpfrxx::with_rounding(templ, rounding);
 #ifdef _OPENMP
 #pragma omp for
 #endif
         for (int64_t i = 0; i < n; i++) {
-            templ_context += dx[i] * dy[i];
+            templ_rounding += dx[i] * dy[i];
         }
 #ifdef _OPENMP
 #pragma omp critical
 #endif
         {
-            auto temp_context = mpfrxx::with_context(temp, precision, rounding);
-            temp_context += templ;
+            auto temp_rounding = mpfrxx::with_rounding(temp, rounding);
+            temp_rounding += templ;
         }
     }
     return temp;

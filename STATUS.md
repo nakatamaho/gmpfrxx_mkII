@@ -1,3 +1,41 @@
+## Phase: MPFR rounding-only reference API
+
+Implemented features:
+- Removed the public MPFR `mpfrxx::evaluation_context` precision-carrying API and the public MPFR `mpfrxx::with_context` overloads.
+- Added `mpfrxx::with_rounding(mpfr_class&, mpfr_rnd_t)` and `mpfrxx::mpfr_rounding_ref`, which carry only the explicit rounding mode and let the destination MPFR object determine precision.
+- Added an internal rounding-only compound-assignment path so object-leaf and FMA-direct MPFR operations do not need the old public precision context.
+- Renamed the MPFR public context test to `test_mpfr_rounding_context` and updated it to verify explicit rounding and destination-precision assignment.
+- Rewrote MPFR 00_Rdot, 01_Raxpy, and 02_Rgemv ROUNDING benchmark sources to use `with_rounding` and rounding-ref terminology.
+- Updated top-level README and SPECIFICATIONS API text so MPFR documents `with_rounding` while MPC keeps `with_context`.
+- Kept MPC `mpc_evaluation_context` / `with_context` unchanged.
+
+Missing features:
+- Benchmark README disassembly snippets still reflect the previously collected binaries; they should be regenerated with fresh benchmark/disassembly data before drawing performance conclusions from the new rounding-only API.
+
+Tests added:
+- Replaced `test_mpfr_evaluation_context` with `test_mpfr_rounding_context`.
+- Replaced `test_mpfr_evaluation_context_fixed_precision` with `test_mpfr_rounding_context_fixed_precision`.
+
+Exact commands run:
+- `rg -n "mpfrxx::evaluation_context|mpfrxx::with_context|with_context\(|\.context\(|mpfr_context_ref|class mpfr_context_ref|evaluation context" include/gmpfrxx_mkII/detail/mpfr_impl.hpp tests/test_mpfr_rounding_context.cpp benchmarks/mpfr/00_Rdot benchmarks/mpfr/01_Raxpy benchmarks/mpfr/02_Rgemv --glob '!**/results_raw/**'`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Old public MPFR context API scan: PASS.  Only the internal MPFR default-evaluation helper name and MPC context tests remain.
+- Debug configure: PASS.
+- Full Debug build including benchmarks: PASS.
+- CTest: PASS, 178/178 tests passed.
+- Rebuild after benchmark variable rename: PASS.
+- CTest after final edits: PASS, 178/178 tests passed.
+
+Known issues:
+- `apply_patch` failed in this sandbox with `bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted`, so edits were applied with mechanical `perl`/`python3` commands instead.
+- MPFR benchmark result tables were not rerun in this phase; the source/API update is validated by compilation and tests only.
+
 ## Phase: benchmark README refresh from run_all 512-bit results
 
 Implemented features:
