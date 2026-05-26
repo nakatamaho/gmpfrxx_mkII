@@ -587,6 +587,33 @@ Representative excerpts from the current binaries:
 2c87: call   mpfr_clear@plt
 ```
 
+Counterexample without `ROUNDING`/`PRECISION`: the plain expression target is
+not the raw C FMA kernel. It reads the default rounding mode in the element
+path, constructs a scratch MPFR object, performs `mpfr_mul` plus `mpfr_add`,
+and clears the scratch object before the next element.
+
+```asm
+# Raxpy_mpfr_kernel_01::_Raxpy
+2b60: mov    (%rbx),%r15
+2b63: cmpb   $0x0,%fs:0xfffffffffffffff8
+2b6c: jne    2b93 <_Raxpy+0x93>
+2b77: call   mpfr_get_default_prec@plt
+2b86: call   mpfr_get_default_rounding_mode@plt
+2b8b: mov    %eax,%fs:0xfffffffffffffffc
+2b93: call   mpfr_get_default_rounding_mode@plt
+2bb7: mov    %r15,%rsi
+2bba: mov    %rbp,%rdi
+2bbd: call   mpfr_init2@plt
+2bc7: mov    %r14d,%ecx
+2bca: mov    %r12,%rdx
+2bcd: mov    %rbp,%rdi
+2bd0: call   mpfr_mul@plt
+2bd5: mov    %r14d,%ecx
+2bd8: mov    %rbp,%rdx
+2bde: mov    %rbx,%rdi
+2be1: call   mpfr_add@plt
+```
+
 The C native and wrapper FMA excerpts both have one `mpfr_fma` per element.
 The reusable-temp wrapper excerpt has the expected split `mpfr_mul` plus
 `mpfr_add` sequence with the temporary cleared after the loop.

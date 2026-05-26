@@ -23011,3 +23011,29 @@ Known issues:
 - Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
 - The README excerpts are representative hot-loop excerpts, not complete function listings.
 - No CTest or benchmark rerun was performed for this documentation-only phase.
+
+## Phase: Document MPFR Non-Fastpath Hotpath Mismatch
+
+Implemented features:
+- Added MPFR `00_Rdot`, `01_Raxpy`, and `02_Rgemv` hotpath disassembly counterexamples for wrapper targets without `ROUNDING`/`PRECISION`.
+- Documented that the plain wrapper targets do not match the raw C FMA kernels: they still contain default-rounding paths, scratch temporary setup/cleanup, split `mpfr_mul`/`mpfr_add`, or copy-helper calls.
+- Kept the update as an additive README clarification; no benchmark data was regenerated.
+
+Missing features:
+- No new benchmark run was performed.
+
+Tests added:
+- No unit tests. This is a documentation/reporting update.
+
+Exact commands run:
+- `objdump -Cd --no-show-raw-insn <representative MPFR non-fastpath benchmark binary>` for current `00_Rdot`, `01_Raxpy`, and `02_Rgemv` binaries.
+- `sed -n <range> /tmp/gmpfrxx_mpfr_noctx/<binary>.S` for selected counterexample excerpts.
+- `rg -n "^## Hotpath Disassembly|The FMA wrapper reaches|## Lessons Learned|Representative excerpts|Counterexample|Raxpy_mpfr_C_native|Rgemv_mpfr_C_native" benchmarks/mpfr/00_Rdot/README.md benchmarks/mpfr/01_Raxpy/README.md benchmarks/mpfr/02_Rgemv/README.md`
+- `git diff --check`
+
+Pass/fail result:
+- Whitespace check: PASS.
+
+Known issues:
+- Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
+- The counterexample excerpts are representative hot-loop fragments, not full function listings.

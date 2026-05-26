@@ -812,6 +812,38 @@ Representative excerpts from the current binaries:
 354b: call   GOMP_barrier@plt
 ```
 
+Counterexample without `ROUNDING`/`PRECISION`: the plain wrapper column-major
+target does not match the raw C FMA kernel. The loop repeatedly enters default
+rounding paths and uses split `mpfr_mul`/`mpfr_add` plus value-copy helper
+calls instead of the direct `mpfr_mul` plus `mpfr_fma` sequence.
+
+```asm
+# Rgemv_mpfr_kernel_02::_Rgemv
+2dd0: call   mpfr_get_default_rounding_mode@plt
+2dd5: mov    %r15,%rdx
+2dd8: mov    %rbx,%rsi
+2ddb: mov    %rbx,%rdi
+2dde: mov    %eax,%ecx
+2de0: call   mpfr_mul@plt
+2e43: call   mpfr_get_default_rounding_mode@plt
+2e50: call   mpfr_get_default_rounding_mode@plt
+2e55: mov    0x40(%rsp),%rsi
+2e5a: mov    (%rsp),%rdi
+2e63: call   mpfr_set4@plt
+2e98: call   mpfr_get_default_rounding_mode@plt
+2eab: call   mpfr_mul@plt
+2f03: call   mpfr_get_default_rounding_mode@plt
+2f10: call   mpfr_get_default_rounding_mode@plt
+2f25: call   mpfr_set4@plt
+2f5a: call   mpfr_get_default_rounding_mode@plt
+2f6a: call   mpfr_mul@plt
+2f9f: call   mpfr_get_default_rounding_mode@plt
+2faf: call   mpfr_add@plt
+2fc5: jne    2ee0 <_Rgemv+0x270>
+2ff4: call   mpfr_clear@plt
+2ffd: call   mpfr_clear@plt
+```
+
 The wrapper FMA-capture paths reach the same `mpfr_mul` plus `mpfr_fma`
 arithmetic class as the raw C FMA paths. The OpenMP wrapper excerpt also shows
 why it is not control-flow identical: wrapper precision metadata checks remain
