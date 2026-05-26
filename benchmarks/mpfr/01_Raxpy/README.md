@@ -598,44 +598,32 @@ hot path.
 | `kernel_03_ROUNDING` | `PRECISION` | The loop uses cached rounding, but it still guards temporary and destination precision before the fast arithmetic path. | The compiler cannot assume the reusable temp and `y[i]` precision are invariant. |
 | `kernel_03` | `ROUNDING` and `PRECISION` | The element loop calls `mpfr_get_default_rounding_mode` before both arithmetic calls, and the setup/fallback path is the non-fastpath precision path. | This is the fully uncached baseline for the same reusable-product source shape. |
 
+In the `PRECISION` and vanilla excerpts, the first `mpfr_get_default_rounding_mode`
+call following the TLS initialization-flag check belongs to the first-use
+MPFR-default initialization/refresh path. Once that per-thread flag is set, the
+branch skips that guarded refresh call. The later `mpfr_get_default_rounding_mode`
+call is the actual rounding value passed to the MPFR operation. Because this
+source shape is split `mpfr_mul` plus `mpfr_add`, removing `ROUNDING` leaves one
+steady-state rounding lookup for each arithmetic operation in the element loop.
+
 ```asm
 # Raxpy_mpfr_kernel_03_PRECISION::_Raxpy
 2c20: cmpb   $0x0,%fs:0xfffffffffffffff8
-2c43: call   mpfr_get_default_rounding_mode@plt
-2c50: call   mpfr_get_default_rounding_mode@plt
+2c43: call   mpfr_get_default_rounding_mode@plt  # first-use default refresh path
+2c50: call   mpfr_get_default_rounding_mode@plt  # rounding for mpfr_mul
 2c55: mov    %rbp,%rdx          # x[i]
 2c58: mov    %r15,%rsi          # alpha
 2c5b: mov    %r13,%rdi          # reusable product temp
 2c5e: mov    %eax,%ecx          # uncached rounding
 2c60: call   mpfr_mul@plt
-2c84: call   mpfr_get_default_rounding_mode@plt
-2c91: call   mpfr_get_default_rounding_mode@plt
+2c84: call   mpfr_get_default_rounding_mode@plt  # first-use default refresh path
+2c91: call   mpfr_get_default_rounding_mode@plt  # rounding for mpfr_add
 2c96: mov    %r13,%rdx          # product temp
 2c99: mov    %rbx,%rsi          # y[i]
 2c9c: mov    %rbx,%rdi          # y[i] destination
 2c9f: mov    %eax,%ecx          # uncached rounding
 2ca1: call   mpfr_add@plt
 2cb5: jne    2c20 <_Raxpy+0xb0>
-```
-
-```asm
-# Raxpy_mpfr_kernel_03::_Raxpy
-2c50: cmpb   $0x0,%fs:0xfffffffffffffff8
-2c73: call   mpfr_get_default_rounding_mode@plt
-2c80: call   mpfr_get_default_rounding_mode@plt
-2c85: mov    %rbp,%rdx          # x[i]
-2c88: mov    %r15,%rsi          # alpha
-2c8b: mov    %r13,%rdi          # reusable product temp
-2c8e: mov    %eax,%ecx          # uncached rounding
-2c90: call   mpfr_mul@plt
-2cb4: call   mpfr_get_default_rounding_mode@plt
-2cc1: call   mpfr_get_default_rounding_mode@plt
-2cc6: mov    %r13,%rdx          # product temp
-2cc9: mov    %rbx,%rsi          # y[i]
-2ccc: mov    %rbx,%rdi          # y[i] destination
-2ccf: mov    %eax,%ecx          # uncached rounding
-2cd1: call   mpfr_add@plt
-2ce5: jne    2c50 <_Raxpy+0xb0>
 ```
 
 ```asm
@@ -655,6 +643,26 @@ hot path.
 2e45: mov    %r15,%rdi          # y[i] destination
 2e48: call   mpfr_add@plt
 2e5e: jne    2e20 <_Raxpy+0xd0>
+```
+
+```asm
+# Raxpy_mpfr_kernel_03::_Raxpy
+2c50: cmpb   $0x0,%fs:0xfffffffffffffff8
+2c73: call   mpfr_get_default_rounding_mode@plt  # first-use default refresh path
+2c80: call   mpfr_get_default_rounding_mode@plt  # rounding for mpfr_mul
+2c85: mov    %rbp,%rdx          # x[i]
+2c88: mov    %r15,%rsi          # alpha
+2c8b: mov    %r13,%rdi          # reusable product temp
+2c8e: mov    %eax,%ecx          # uncached rounding
+2c90: call   mpfr_mul@plt
+2cb4: call   mpfr_get_default_rounding_mode@plt  # first-use default refresh path
+2cc1: call   mpfr_get_default_rounding_mode@plt  # rounding for mpfr_add
+2cc6: mov    %r13,%rdx          # product temp
+2cc9: mov    %rbx,%rsi          # y[i]
+2ccc: mov    %rbx,%rdi          # y[i] destination
+2ccf: mov    %eax,%ecx          # uncached rounding
+2cd1: call   mpfr_add@plt
+2ce5: jne    2c50 <_Raxpy+0xb0>
 ```
 
 The C native and wrapper FMA excerpts both have one `mpfr_fma` per element.

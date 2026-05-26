@@ -23110,3 +23110,27 @@ Pass/fail result:
 Known issues:
 - Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
 - The excerpts are representative hot-loop fragments, not complete function listings.
+
+## Phase: Explain MPFR Rounding Lookup Disassembly
+
+Implemented features:
+- Added MPFR `00_Rdot`, `01_Raxpy`, and `02_Rgemv` README explanations for paired `mpfr_get_default_rounding_mode` calls in non-`ROUNDING` hotpath excerpts.
+- Distinguished the first-use TLS/default-state refresh path from the steady-state rounding value passed to MPFR arithmetic calls.
+- Reordered MPFR suffix-removal disassembly excerpts to show `PRECISION`, then `ROUNDING`, then vanilla baselines.
+
+Missing features:
+- No new benchmark run was performed.
+
+Tests added:
+- No unit tests. This is a documentation/reporting update.
+
+Exact commands run:
+- Reviewed current MPFR `00_Rdot`, `01_Raxpy`, and `02_Rgemv` hotpath README sections with `sed`.
+- Updated README hotpath descriptions and representative disassembly ordering.
+
+Pass/fail result:
+- Whitespace check: PASS.
+
+Known issues:
+- Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
+- The excerpts are representative hot-loop fragments, not complete function listings.

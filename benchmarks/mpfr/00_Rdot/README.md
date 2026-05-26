@@ -752,44 +752,32 @@ reference. Removing either suffix reintroduces the corresponding dynamic work.
 | `kernel_03_ROUNDING` | `PRECISION` | The fast path must compare destination and temporary precision before taking the loop; fallback paths remain live. | Cached rounding alone does not prove fixed precision. |
 | `kernel_03` | `ROUNDING` and `PRECISION` | The element loop calls `mpfr_get_default_rounding_mode` before both arithmetic calls, and the surrounding code uses the non-fastpath precision setup/fallback path. | This is the fully uncached baseline for the same reusable-product source shape. |
 
+In the `PRECISION` and vanilla excerpts, the first `mpfr_get_default_rounding_mode`
+call following the TLS initialization-flag check belongs to the first-use
+MPFR-default initialization/refresh path. Once that per-thread flag is set, the
+branch skips that guarded refresh call. The later `mpfr_get_default_rounding_mode`
+call is the actual rounding value passed to the MPFR operation. Because this
+source shape is split `mpfr_mul` plus `mpfr_add`, removing `ROUNDING` leaves one
+steady-state rounding lookup for each arithmetic operation in the element loop.
+
 ```asm
 # Rdot_mpfr_kernel_03_PRECISION::_Rdot
 3390: cmpb   $0x0,%fs:0xfffffffffffffff8
-33b3: call   mpfr_get_default_rounding_mode@plt
-33c0: call   mpfr_get_default_rounding_mode@plt
+33b3: call   mpfr_get_default_rounding_mode@plt  # first-use default refresh path
+33c0: call   mpfr_get_default_rounding_mode@plt  # rounding for mpfr_mul
 33c5: mov    %rbx,%rdx          # dy[i]
 33c8: mov    %rbp,%rsi          # dx[i]
 33cb: mov    %r14,%rdi          # reusable product temp
 33ce: mov    %eax,%ecx          # uncached rounding
 33d0: call   mpfr_mul@plt
-33f4: call   mpfr_get_default_rounding_mode@plt
-3401: call   mpfr_get_default_rounding_mode@plt
+33f4: call   mpfr_get_default_rounding_mode@plt  # first-use default refresh path
+3401: call   mpfr_get_default_rounding_mode@plt  # rounding for mpfr_add
 3406: mov    %r14,%rdx          # product temp
 3409: mov    %r13,%rsi          # accumulator
 340c: mov    %r13,%rdi          # accumulator destination
 340f: mov    %eax,%ecx          # uncached rounding
 3411: call   mpfr_add@plt
 3425: jne    3390 <_Rdot+0x130>
-```
-
-```asm
-# Rdot_mpfr_kernel_03::_Rdot
-2e90: cmpb   $0x0,%fs:0xfffffffffffffff8
-2eb3: call   mpfr_get_default_rounding_mode@plt
-2ec0: call   mpfr_get_default_rounding_mode@plt
-2ec5: mov    %rbx,%rdx          # dy[i]
-2ec8: mov    %rbp,%rsi          # dx[i]
-2ecb: mov    %r14,%rdi          # reusable product temp
-2ece: mov    %eax,%ecx          # uncached rounding
-2ed0: call   mpfr_mul@plt
-2ef4: call   mpfr_get_default_rounding_mode@plt
-2f01: call   mpfr_get_default_rounding_mode@plt
-2f06: mov    %r14,%rdx          # product temp
-2f09: mov    %r13,%rsi          # accumulator
-2f0c: mov    %r13,%rdi          # accumulator destination
-2f0f: mov    %eax,%ecx          # uncached rounding
-2f11: call   mpfr_add@plt
-2f25: jne    2e90 <_Rdot+0x130>
 ```
 
 ```asm
@@ -809,6 +797,26 @@ reference. Removing either suffix reintroduces the corresponding dynamic work.
 2eca: mov    %r13,%rdi          # accumulator destination
 2ecd: call   mpfr_add@plt
 2ee3: jne    2eb0 <_Rdot+0x110>
+```
+
+```asm
+# Rdot_mpfr_kernel_03::_Rdot
+2e90: cmpb   $0x0,%fs:0xfffffffffffffff8
+2eb3: call   mpfr_get_default_rounding_mode@plt  # first-use default refresh path
+2ec0: call   mpfr_get_default_rounding_mode@plt  # rounding for mpfr_mul
+2ec5: mov    %rbx,%rdx          # dy[i]
+2ec8: mov    %rbp,%rsi          # dx[i]
+2ecb: mov    %r14,%rdi          # reusable product temp
+2ece: mov    %eax,%ecx          # uncached rounding
+2ed0: call   mpfr_mul@plt
+2ef4: call   mpfr_get_default_rounding_mode@plt  # first-use default refresh path
+2f01: call   mpfr_get_default_rounding_mode@plt  # rounding for mpfr_add
+2f06: mov    %r14,%rdx          # product temp
+2f09: mov    %r13,%rsi          # accumulator
+2f0c: mov    %r13,%rdi          # accumulator destination
+2f0f: mov    %eax,%ecx          # uncached rounding
+2f11: call   mpfr_add@plt
+2f25: jne    2e90 <_Rdot+0x130>
 ```
 
 The FMA wrapper reaches the same arithmetic call class as C native FMA. The
