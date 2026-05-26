@@ -451,14 +451,76 @@ upstream wrapper, and mkII binaries.
 | `kernel_03_mkII` | Same one-multiply plus one-add loop class as `C_native_03`; mkII precision work is outside the timed element loop. | Equivalent arithmetic hot loop to C native, with wrapper setup outside the loop. |
 | `kernel_openmp_03_orig` / `kernel_openmp_03_mkII` | The OpenMP worker body keeps the same `__gmpf_mul` plus `__gmpf_add` sequence. Thread scheduling and barriers are outside the per-element arithmetic sequence. | Same arithmetic class as the serial reusable-product baseline. |
 
-Representative loop class:
+Representative excerpts from the current binaries:
 
 ```asm
-# C_native_03 / kernel_03_orig / kernel_03_mkII reusable-product class
-call   __gmpf_mul@plt     # temp = alpha * x[i]
-call   __gmpf_add@plt     # y[i] += temp
-jne    <element loop>
+# Raxpy_gmp_C_native_03::_Raxpy
+28ad: call   __gmpf_init@plt
+28b2: test   %r13,%r13
+28b5: jle    28ed <_Raxpy+0x7d>
+28c0: mov    %rbp,%rdx        # x[i]
+28c3: mov    %r14,%rsi        # alpha
+28c6: mov    %rsp,%rdi        # reusable product temp
+28cd: call   __gmpf_mul@plt
+28d2: mov    %rbx,%rsi        # y[i]
+28d5: mov    %rbx,%rdi        # y[i] destination
+28d8: mov    %rsp,%rdx        # product temp
+28db: call   __gmpf_add@plt
+28e0: add    $0x18,%rbp
+28e4: add    $0x18,%rbx
+28e8: cmp    %r15,%r13
+28eb: jne    28c0 <_Raxpy+0x50>
+28ed: mov    %rsp,%rdi
+28f0: call   __gmpf_clear@plt
 ```
+
+```asm
+# Raxpy_gmp_kernel_03_orig::_Raxpy
+272d: call   __gmpf_init@plt
+2732: test   %r13,%r13
+2735: jle    276d <_Raxpy+0x7d>
+2740: mov    %rbp,%rdx        # x[i]
+2743: mov    %r14,%rsi        # alpha
+2746: mov    %rsp,%rdi        # reusable product temp
+2749: call   __gmpf_mul@plt
+274e: mov    %rsp,%rdx        # product temp
+2751: mov    %rbx,%rsi        # y[i]
+2754: mov    %rbx,%rdi        # y[i] destination
+2757: call   __gmpf_add@plt
+275c: add    $0x1,%r15
+2760: add    $0x18,%rbp
+2764: add    $0x18,%rbx
+2768: cmp    %r15,%r13
+276b: jne    2740 <_Raxpy+0x50>
+276d: mov    %rsp,%rdi
+2770: call   __gmpf_clear@plt
+```
+
+```asm
+# Raxpy_gmp_kernel_03_mkII::_Raxpy
+28d8: call   __gmpf_set_ui@plt
+28dd: test   %r13,%r13
+28e0: jle    291d <_Raxpy+0xad>
+28f0: mov    %rbp,%rdx        # x[i]
+28f3: mov    %r14,%rsi        # alpha
+28f6: mov    %rsp,%rdi        # reusable product temp
+28f9: call   __gmpf_mul@plt
+28fe: mov    %rsp,%rdx        # product temp
+2901: mov    %rbx,%rsi        # y[i]
+2904: mov    %rbx,%rdi        # y[i] destination
+2907: call   __gmpf_add@plt
+290c: add    $0x1,%r15
+2910: add    $0x18,%rbp
+2914: add    $0x18,%rbx
+2918: cmp    %r15,%r13
+291b: jne    28f0 <_Raxpy+0x80>
+291d: mov    %rsp,%rdi
+2920: call   __gmpf_clear@plt
+```
+
+The three excerpts differ in setup details, but the timed arithmetic loop is the
+same: reusable product temp, one `__gmpf_mul`, one `__gmpf_add`, then pointer
+increments and loop branch.
 
 ## Lessons Learned
 

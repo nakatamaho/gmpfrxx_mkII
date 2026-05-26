@@ -528,18 +528,68 @@ control paths outside or around the fast path.
 | `kernel_03_ROUNDING_PRECISION` | Same split `mpfr_mul` plus `mpfr_add` arithmetic class as `C_native_03`; the reusable temporary is outside the element loop. | Closest mkII reusable-temp equivalent. |
 | `kernel_openmp_01_ROUNDING_PRECISION_FMA` | Worker loop keeps the one-`mpfr_fma` arithmetic class; OpenMP scheduling and final synchronization are outside the backend call itself. | Best OpenMP wrapper class in both precision runs. |
 
-Representative loop classes:
+Representative excerpts from the current binaries:
 
 ```asm
-# C_native_01_FMA and kernel_01_ROUNDING_PRECISION_FMA arithmetic class
-call   mpfr_fma@plt
-jne    <element loop>
-
-# C_native_03 and kernel_03_ROUNDING_PRECISION reusable-temp class
-call   mpfr_mul@plt
-call   mpfr_add@plt
-jne    <element loop>
+# Raxpy_mpfr_C_native_01_FMA::_Raxpy
+29ca: call   mpfr_get_default_rounding_mode@plt
+29cf: mov    %eax,%r14d         # cached rounding mode
+29d2: test   %r12,%r12
+29d5: jle    2a05 <_Raxpy+0x65>
+29e0: mov    %rbx,%rcx          # y[i] addend
+29e3: mov    %rbp,%rdx          # x[i]
+29e6: mov    %rbx,%rdi          # y[i] destination
+29e9: mov    %r14d,%r8d         # cached rounding
+29ec: mov    %r13,%rsi          # alpha
+29ef: add    $0x1,%r15
+29f3: add    $0x20,%rbx
+29f7: add    $0x20,%rbp
+29fb: call   mpfr_fma@plt
+2a00: cmp    %r15,%r12
+2a03: jne    29e0 <_Raxpy+0x40>
 ```
+
+```asm
+# Raxpy_mpfr_kernel_01_ROUNDING_PRECISION_FMA::_Raxpy
+2b51: cmp    %r14,%rax
+2b5a: xor    %r14d,%r14d
+2b60: mov    %rbx,%rcx          # y[i] addend
+2b63: mov    %rbp,%rdx          # x[i]
+2b66: mov    %rbx,%rdi          # y[i] destination
+2b69: mov    %r15d,%r8d         # context rounding
+2b6c: mov    %r13,%rsi          # alpha
+2b6f: add    $0x1,%r14
+2b73: add    $0x20,%rbx
+2b77: add    $0x20,%rbp
+2b7b: call   mpfr_fma@plt
+2b80: cmp    %r14,%r12
+2b83: jg     2b60 <_Raxpy+0x80>
+```
+
+```asm
+# Raxpy_mpfr_kernel_03_ROUNDING_PRECISION::_Raxpy
+2c49: test   %r15,%r15
+2c4c: jle    2c84 <_Raxpy+0xf4>
+2c50: mov    (%rsp),%rsi        # alpha
+2c54: mov    %r14d,%ecx         # context rounding
+2c57: mov    %rbp,%rdx          # x[i]
+2c5a: mov    %r13,%rdi          # reusable product temp
+2c5d: call   mpfr_mul@plt
+2c62: mov    %r14d,%ecx         # context rounding
+2c65: mov    %r13,%rdx          # product temp
+2c68: mov    %rbx,%rsi          # y[i]
+2c6b: mov    %rbx,%rdi          # y[i] destination
+2c6e: call   mpfr_add@plt
+2c73: add    $0x1,%r12
+2c77: add    $0x20,%rbp
+2c7b: add    $0x20,%rbx
+2c82: jne    2c50 <_Raxpy+0xc0>
+2c87: call   mpfr_clear@plt
+```
+
+The C native and wrapper FMA excerpts both have one `mpfr_fma` per element.
+The reusable-temp wrapper excerpt has the expected split `mpfr_mul` plus
+`mpfr_add` sequence with the temporary cleared after the loop.
 
 ## Lessons Learned
 

@@ -726,17 +726,96 @@ state, precision, and expression-evaluation guard paths around the fast path.
 | `C_native_openmp_07_FMA` | Column partitioning with thread-local partial `y`; worker loop has `mpfr_mul` for the column scalar and `mpfr_fma` for matrix elements. Barriers/reduction are outside the innermost arithmetic loop. | Raw OpenMP FMA baseline. |
 | `kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA` | Same OpenMP algorithmic class and same MPFR arithmetic calls as `C_native_openmp_07_FMA`; extra wrapper control paths remain visible in the binary. | Closest mkII OpenMP FMA equivalent. |
 
-Representative loop classes:
+Representative excerpts from the current binaries:
 
 ```asm
-# Serial/OpenMP 07 FMA-capture class
-call   mpfr_mul@plt       # temp = alpha * x[j]
-call   mpfr_fma@plt       # y[i] += temp * A[i,j]
-jne    <row loop>
-
-# Barriers and partial-y reduction are outside the innermost mpfr_fma loop.
-call   GOMP_barrier@plt
+# Rgemv_mpfr_C_native_02_FMA::_Rgemv
+2be8: call   mpfr_get_default_rounding_mode@plt
+2bf3: mov    %eax,%ebp          # cached rounding mode
+2c10: mov    %r15,%rdx
+2c16: mov    %ebp,%ecx
+2c18: mov    %r13,%rsi
+2c1b: call   mpfr_mul@plt       # temp = alpha * x[j]
+2c60: mov    0x20(%rsp),%rsi
+2c7f: call   mpfr_mul@plt       # temp for this column
+2cb0: mov    %r15,%rcx          # y[i] addend/destination
+2cb3: mov    %r13,%rdx          # A[i,j]
+2cb6: mov    %r15,%rdi          # y[i] destination
+2cb9: mov    %ebp,%r8d          # cached rounding
+2cbc: mov    %rbx,%rsi          # temp
+2ccb: call   mpfr_fma@plt       # y[i] += temp * A[i,j]
+2cd0: cmp    %r14,%r12
+2cd3: jne    2cb0 <_Rgemv+0x140>
+2cf3: jne    2c60 <_Rgemv+0xf0>
 ```
+
+```asm
+# Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA::_Rgemv
+2f30: mov    0x8(%rsp),%rdx
+2f35: mov    0x28(%rsp),%rsi
+2f3a: mov    %ebp,%ecx          # context rounding
+2f3c: mov    %r12,%rdi          # reusable temp
+2f3f: call   mpfr_mul@plt       # temp = alpha * x[j]
+2f44: test   %rbx,%rbx
+2f70: mov    %ebp,%r8d          # context rounding
+2f73: mov    %r14,%rcx          # y[i] addend
+2f76: mov    %r15,%rdx          # A[i,j]
+2f79: mov    %r12,%rsi          # temp
+2f7c: mov    %r14,%rdi          # y[i] destination
+2f7f: call   mpfr_fma@plt
+2f84: add    $0x1,%r13
+2f88: add    $0x20,%r14
+2f8c: add    $0x20,%r15
+2f93: jne    2f70 <_Rgemv+0x190>
+2fb3: jne    2f30 <_Rgemv+0x150>
+2fbc: call   mpfr_clear@plt
+```
+
+```asm
+# Rgemv_mpfr_C_native_openmp_07_FMA::_Rgemv._omp_fn
+2e00: mov    0x10(%rsp),%rdx
+2e05: mov    0x38(%rsp),%rsi
+2e0a: mov    %ebp,%ecx          # cached rounding
+2e0c: mov    %r12,%rdi          # reusable temp
+2e0f: call   mpfr_mul@plt       # temp = alpha * x[j]
+2e40: mov    %r13,%rcx          # partial_y[i]
+2e43: mov    %r15,%rdx          # A[i,j]
+2e46: mov    %r13,%rdi          # partial_y[i] destination
+2e49: mov    %ebp,%r8d          # cached rounding
+2e4c: mov    %r12,%rsi          # temp
+2e5b: call   mpfr_fma@plt
+2e60: cmp    %r14,%rbx
+2e63: jne    2e40 <_Rgemv._omp_fn+0x210>
+2e85: jne    2e00 <_Rgemv._omp_fn+0x1d0>
+2e8b: call   GOMP_barrier@plt
+```
+
+```asm
+# Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA::_Rgemv._omp_fn
+34a0: mov    0x10(%r15),%rsi
+34a4: mov    0x38(%rsp),%ecx    # context rounding
+34a8: mov    %rbp,%rdi          # reusable temp
+34ab: mov    0x18(%rsp),%rdx
+34b0: call   mpfr_mul@plt       # temp = alpha * x[j]
+34b5: cmpq   $0x0,(%rsp)
+34e0: mov    0x48(%r13),%rax    # wrapper precision metadata check
+34f8: mov    %rbx,%rcx          # partial_y[i]
+34fb: mov    %r15,%rdx          # A[i,j]
+34fe: mov    %rbx,%rdi          # partial_y[i] destination
+3501: mov    %rbp,%rsi          # temp
+3504: call   mpfr_fma@plt
+3509: add    $0x1,%r14
+350d: add    $0x20,%rbx
+3511: add    $0x20,%r15
+3519: jne    34e0 <_Rgemv._omp_fn+0x2c0>
+353e: jne    34a0 <_Rgemv._omp_fn+0x280>
+354b: call   GOMP_barrier@plt
+```
+
+The wrapper FMA-capture paths reach the same `mpfr_mul` plus `mpfr_fma`
+arithmetic class as the raw C FMA paths. The OpenMP wrapper excerpt also shows
+why it is not control-flow identical: wrapper precision metadata checks remain
+inside the worker loop around the fast arithmetic path.
 
 ## Lessons Learned
 

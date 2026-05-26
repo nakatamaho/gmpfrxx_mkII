@@ -516,19 +516,99 @@ upstream wrapper, and mkII variants.
 | `C_native_openmp_07` | Column partitioning with thread-local partial `y` vectors. The worker loop keeps the serial-like column-major stream and reduces partial vectors after the parallel work. | Raw OpenMP baseline for variant `07`. |
 | `kernel_openmp_07_orig` / `kernel_openmp_07_mkII` | Same algorithmic structure as `C_native_openmp_07`: per-thread partial outputs, reusable temporaries, and final reduction outside the worker hot loop. | Equivalent arithmetic class to C native OpenMP `07`. |
 
-Representative loop classes:
+Representative excerpts from the current binaries:
 
 ```asm
-# Serial 03 inner row loop
-call   __gmpf_mul@plt     # product = A[i,j] * temp
-call   __gmpf_add@plt     # y[i] += product
-jne    <row loop>
-
-# OpenMP 07 worker loop has the same arithmetic class; reduction is outside it.
-call   __gmpf_mul@plt
-call   __gmpf_add@plt
-jne    <worker row loop>
+# Rgemv_gmp_C_native_03::_Rgemv, serial column-major inner loop
+2930: mov    %r15,%rdx
+2933: mov    %r15,%rdi
+2936: mov    %rbx,%rsi
+293d: call   __gmpf_mul@plt     # temp = alpha * x[j]
+2942: add    $0x18,%r15
+2949: jne    2930 <_Rgemv+0xb0>
+2980: mov    0x8(%rsp),%rdx
+2985: mov    0x20(%rsp),%rsi
+298a: lea    0x40(%rsp),%rdi
+298f: call   __gmpf_mul@plt     # product setup for column
+2994: test   %r12,%r12
+29c0: mov    %r14,%rdx          # A[i,j]
+29c3: lea    0x40(%rsp),%rsi    # temp
+29c8: mov    %rbp,%rdi          # product temp
+29cf: call   __gmpf_mul@plt
+29d4: mov    %rbx,%rsi          # y[i]
+29d7: mov    %rbx,%rdi          # y[i] destination
+29da: mov    %rbp,%rdx          # product temp
+29dd: call   __gmpf_add@plt
+29e2: add    $0x18,%r14
+29e6: add    $0x18,%rbx
+29ed: jne    29c0 <_Rgemv+0x140>
 ```
+
+```asm
+# Rgemv_gmp_kernel_03_orig::_Rgemv, serial column-major inner loop
+2790: mov    0x8(%rsp),%rdx
+2795: mov    0x20(%rsp),%rsi
+279a: lea    0x40(%rsp),%rdi
+279f: call   __gmpf_mul@plt     # temp = alpha * x[j]
+27a4: test   %r14,%r14
+27d0: mov    %r12,%rdx          # A[i,j]
+27d3: lea    0x40(%rsp),%rsi    # temp
+27d8: mov    %r13,%rdi          # product temp
+27db: call   __gmpf_mul@plt
+27e0: mov    %r13,%rdx          # product temp
+27e3: mov    %rbx,%rsi          # y[i]
+27e6: mov    %rbx,%rdi          # y[i] destination
+27e9: call   __gmpf_add@plt
+27ee: add    $0x1,%rbp
+27f2: add    $0x18,%r12
+27f6: add    $0x18,%rbx
+27fd: jne    27d0 <_Rgemv+0x120>
+```
+
+```asm
+# Rgemv_gmp_kernel_03_mkII::_Rgemv, serial column-major inner loop
+29d0: mov    0x8(%rsp),%rdx
+29d5: mov    0x20(%rsp),%rsi
+29da: lea    0x40(%rsp),%rdi
+29df: call   __gmpf_mul@plt     # temp = alpha * x[j]
+29e4: test   %r14,%r14
+2a10: mov    %r12,%rdx          # A[i,j]
+2a13: lea    0x40(%rsp),%rsi    # temp
+2a18: mov    %r13,%rdi          # product temp
+2a1b: call   __gmpf_mul@plt
+2a20: mov    %r13,%rdx          # product temp
+2a23: mov    %rbx,%rsi          # y[i]
+2a26: mov    %rbx,%rdi          # y[i] destination
+2a29: call   __gmpf_add@plt
+2a2e: add    $0x1,%rbp
+2a32: add    $0x18,%r12
+2a36: add    $0x18,%rbx
+2a3d: jne    2a10 <_Rgemv+0x160>
+```
+
+```asm
+# Rgemv_gmp_kernel_openmp_07_mkII::_Rgemv._omp_fn, worker loop
+2ed0: mov    0x30(%rsp),%rax
+2edd: mov    0x10(%rax),%rsi
+2ee1: call   __gmpf_mul@plt     # temp = alpha * x[j]
+2ee6: test   %r15,%r15
+2f10: mov    %r13,%rdx          # A[i,j]
+2f13: mov    %r12,%rsi          # temp
+2f16: mov    %rbp,%rdi          # product temp
+2f1d: call   __gmpf_mul@plt
+2f22: mov    %rbx,%rsi          # partial_y[i]
+2f25: mov    %rbx,%rdi          # partial_y[i] destination
+2f28: mov    %rbp,%rdx          # product temp
+2f2b: call   __gmpf_add@plt
+2f30: add    $0x18,%r13
+2f34: add    $0x18,%rbx
+2f3b: jne    2f10 <_Rgemv._omp_fn+0x240>
+2f63: call   GOMP_barrier@plt   # after worker hot loop
+```
+
+The serial C native, orig, and mkII excerpts all use the same column-major
+arithmetic sequence. The OpenMP `07` excerpt keeps that arithmetic inside the
+worker loop and moves synchronization outside the innermost multiply-add loop.
 
 ## Lessons Learned
 

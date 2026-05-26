@@ -680,18 +680,71 @@ whether the hot arithmetic loop is one `mpfr_fma` call or split
 | `kernel_03_ROUNDING_PRECISION` | Same split arithmetic class as `C_native_03`; no per-element `mpfr_init2`/`mpfr_clear` in the intended reusable-temporary loop. | Closest mkII reusable-temp equivalent. |
 | `kernel_openmp_03_ROUNDING_PRECISION` | Worker loop uses the reusable split multiply/add class. Final reduction is outside the per-thread element loop. | Best max OpenMP wrapper class in the 512-bit run. |
 
-Representative loop classes:
+Representative excerpts from the current binaries:
 
 ```asm
-# C_native_01_FMA and kernel_01_ROUNDING_PRECISION_FMA arithmetic class
-call   mpfr_fma@plt
-jne    <element loop>
-
-# C_native_03 and kernel_03_ROUNDING_PRECISION reusable-temp class
-call   mpfr_mul@plt
-call   mpfr_add@plt
-jne    <element loop>
+# Rdot_mpfr_C_native_01_FMA::_Rdot
+2b99: call   mpfr_get_default_rounding_mode@plt
+2ba9: mov    %eax,%r12d         # cached rounding mode
+2bc8: test   %r13,%r13
+2bcb: jle    2bf5 <_Rdot+0xa5>
+2bd0: mov    %rbx,%rdx          # x/y operand
+2bd3: mov    %r15,%rsi          # x/y operand
+2bd6: mov    %r12d,%r8d         # cached rounding
+2bd9: mov    %rbp,%rcx          # accumulator addend
+2bdc: mov    %rbp,%rdi          # accumulator destination
+2bdf: add    $0x1,%r14
+2be3: add    $0x20,%r15
+2be7: add    $0x20,%rbx
+2beb: call   mpfr_fma@plt
+2bf0: cmp    %r14,%r13
+2bf3: jne    2bd0 <_Rdot+0x80>
+2c05: call   mpfr_clear@plt
 ```
+
+```asm
+# Rdot_mpfr_kernel_01_ROUNDING_PRECISION_FMA::_Rdot
+2d03: test   %r12,%r12
+2d06: jle    2d35 <_Rdot+0xe5>
+2d10: mov    %r13d,%r8d         # context rounding
+2d13: mov    %rbp,%rcx          # accumulator addend
+2d16: mov    %r14,%rdx          # dy[i]
+2d19: mov    %rbx,%rsi          # dx[i]
+2d1c: mov    %rbp,%rdi          # accumulator destination
+2d1f: call   mpfr_fma@plt
+2d24: add    $0x1,%r15
+2d28: add    $0x20,%rbx
+2d2c: add    $0x20,%r14
+2d30: cmp    %r15,%r12
+2d33: jne    2d10 <_Rdot+0xc0>
+2d49: add    $0x58,%rsp
+```
+
+```asm
+# Rdot_mpfr_kernel_03_ROUNDING_PRECISION::_Rdot
+32e5: xor    %r12d,%r12d
+32e8: cmpq   $0x0,(%rsp)
+32ed: jle    3324 <_Rdot+0x124>
+32f0: mov    %r15d,%ecx         # context rounding
+32f3: mov    %rbp,%rdx          # dy[i]
+32f6: mov    %rbx,%rsi          # dx[i]
+32f9: mov    %r14,%rdi          # reusable product temp
+32fc: call   mpfr_mul@plt
+3301: mov    %r15d,%ecx         # context rounding
+3304: mov    %r14,%rdx          # product temp
+3307: mov    %r13,%rsi          # accumulator
+330a: mov    %r13,%rdi          # accumulator destination
+330d: call   mpfr_add@plt
+3312: add    $0x1,%r12
+3316: add    $0x20,%rbx
+331a: add    $0x20,%rbp
+3322: jne    32f0 <_Rdot+0xf0>
+3327: call   mpfr_clear@plt
+```
+
+The FMA wrapper reaches the same arithmetic call class as C native FMA. The
+reusable-temp wrapper reaches the split `mpfr_mul` plus `mpfr_add` class. Extra
+wrapper guard/fallback paths are outside these quoted fast-loop excerpts.
 
 ## Lessons Learned
 

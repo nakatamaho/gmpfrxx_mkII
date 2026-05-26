@@ -523,14 +523,78 @@ not by absolute addresses.
 | `kernel_06_mkII_FIXED_PRECISION_FASTPATH` | Four accumulator lanes still emit the same backend multiply/add operations, only distributed across four accumulators and reusable products. | Same performance class as the reusable-product baseline at this precision. |
 | `kernel_openmp_03_*` / `kernel_openmp_06_*` | Worker loops keep per-thread accumulator/product objects outside the hot loop. The final reduction is outside the per-thread element loop. | Same arithmetic class as the serial reusable-product loop, with OpenMP scheduling and reduction overhead. |
 
-Representative loop class:
+Representative excerpts from the current binaries:
 
 ```asm
-# C_native_03 / kernel_03_orig / kernel_03_mkII reusable-product class
-call   __gmpf_mul@plt
-call   __gmpf_add@plt
-jne    <element loop>
+# Rdot_gmp_C_native_03::_Rdot
+2817: pxor   %xmm0,%xmm0
+281b: lea    0x30(%rsp),%rdi
+2820: call   __gmpf_set_d@plt
+2825: test   %r13,%r13
+2828: jle    2861 <_Rdot+0xd1>
+2830: mov    %r15,%rdx        # y/input pointer for product
+2833: mov    %rbx,%rsi        # x/input pointer for product
+2836: lea    0x30(%rsp),%rdi  # reusable product temp
+283f: call   __gmpf_mul@plt
+2844: lea    0x30(%rsp),%rdx  # product temp
+2849: mov    %rbp,%rsi        # accumulator
+284c: mov    %rbp,%rdi        # accumulator destination
+284f: call   __gmpf_add@plt
+2854: add    $0x18,%rbx
+2858: add    $0x18,%r15
+285c: cmp    %r14,%r13
+285f: jne    2830 <_Rdot+0xa0>
+2861: mov    0x8(%rsp),%rdi
+2869: call   __gmpf_swap@plt
+2871: call   __gmpf_clear@plt
 ```
+
+```asm
+# Rdot_gmp_kernel_03_orig::_Rdot
+272b: test   %r14,%r14
+272e: jle    276d <_Rdot+0x9d>
+2730: xor    %r15d,%r15d
+2740: mov    %rbx,%rdx        # dy[i]
+2743: mov    %rbp,%rsi        # dx[i]
+2746: mov    %rsp,%rdi        # reusable product temp
+2749: call   __gmpf_mul@plt
+274e: mov    %rsp,%rdx        # product temp
+2751: mov    %r12,%rsi        # accumulator
+2754: mov    %r12,%rdi        # accumulator destination
+2757: call   __gmpf_add@plt
+275c: add    $0x1,%r15
+2760: add    $0x18,%rbp
+2764: add    $0x18,%rbx
+2768: cmp    %r15,%r14
+276b: jne    2740 <_Rdot+0x70>
+276d: mov    %rsp,%rdi
+2770: call   __gmpf_clear@plt
+```
+
+```asm
+# Rdot_gmp_kernel_03_mkII::_Rdot
+2864: test   %r14,%r14
+2867: jle    289d <_Rdot+0xdd>
+2870: mov    %rbx,%rdx        # dy[i]
+2873: mov    %rbp,%rsi        # dx[i]
+2876: mov    %r13,%rdi        # reusable product temp
+2879: call   __gmpf_mul@plt
+287e: mov    %r13,%rdx        # product temp
+2881: mov    %r12,%rsi        # accumulator
+2884: mov    %r12,%rdi        # accumulator destination
+2887: call   __gmpf_add@plt
+288c: add    $0x1,%r15
+2890: add    $0x18,%rbp
+2894: add    $0x18,%rbx
+2898: cmp    %r15,%r14
+289b: jne    2870 <_Rdot+0xb0>
+289d: mov    %r13,%rdi
+28a0: call   __gmpf_clear@plt
+```
+
+These excerpts show the same hot arithmetic class for C native, orig, and mkII:
+one `__gmpf_mul` and one `__gmpf_add` per element, with the reusable product
+cleared after the loop.
 
 ## Lessons Learned
 

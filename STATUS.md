@@ -22980,3 +22980,34 @@ Known issues:
 - `C_native_01` and `C_native_03` intentionally share the same direct reusable-temporary split multiply/add hot-loop class; `03` exists as a numbered raw C comparison point for wrapper variant `03`.
 - FMA remains a distinct MPFR source class represented by `C_native_01_FMA` and `C_native_openmp_01_FMA`.
 - Fresh repeat benchmark data has not been regenerated for the expanded raw C matrix yet.
+
+
+## Phase: Expand Benchmark Hotpath Disassembly Excerpts
+
+Implemented features:
+- Expanded `Hotpath Disassembly` excerpts in the GMP and MPFR `00_Rdot`, `01_Raxpy`, and `02_Rgemv` benchmark READMEs.
+- Replaced short call-only snippets with longer representative excerpts from the current `build_bench_release` binaries.
+- Documented explicit C native, upstream wrapper, and mkII GMP hot-loop comparisons.
+- Documented explicit MPFR C native and wrapper rounding/precision/FMA hot-loop comparisons.
+
+Missing features:
+- No benchmark rerun was performed; this phase only updates report text and disassembly excerpts.
+
+Tests added:
+- No unit tests. This is a documentation/reporting update.
+
+Exact commands run:
+- `objdump -Cd --no-show-raw-insn <representative benchmark binary>` for current GMP and MPFR 00/01/02 representative C native, orig, mkII, rounding, precision, and FMA binaries.
+- `sed -n <range> /tmp/gmpfrxx_hotpath_full/<binary>.S` for selected hotpath excerpts.
+- `rg -n "^## Hotpath Disassembly" benchmarks -g README.md`
+- `rg -n "Representative loop class|Representative excerpts|# Rdot_|# Raxpy_|# Rgemv_" benchmarks/gmp/00_Rdot/README.md benchmarks/gmp/01_Raxpy/README.md benchmarks/gmp/02_Rgemv/README.md benchmarks/mpfr/00_Rdot/README.md benchmarks/mpfr/01_Raxpy/README.md benchmarks/mpfr/02_Rgemv/README.md`
+- `git diff --check`
+
+Pass/fail result:
+- Hotpath README scan: PASS. The only benchmark READMEs with `Hotpath Disassembly` are the updated GMP/MPFR 00/01/02 reports.
+- Whitespace check: PASS.
+
+Known issues:
+- Disassembly addresses are build-specific and are included only as local context for the current `build_bench_release` binaries.
+- The README excerpts are representative hot-loop excerpts, not complete function listings.
+- No CTest or benchmark rerun was performed for this documentation-only phase.
