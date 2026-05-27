@@ -1,3 +1,32 @@
+## Phase: PRECISION thread-local scope clarification
+
+Implemented features:
+- Updated `PRECISION.md` to emphasize that thread-local scratch storage is part
+  of selected `GMPFRXX_MKII_FAST_FIXED_PREC` paths, not every build or every
+  expression path.
+- Added an `if constexpr` control-flow sketch showing that normal builds use
+  scoped temporaries instead of borrowing from the thread-local scratch pool.
+- Documented that even precision-fastpath builds can fall back to ordinary
+  materialization for unsupported expression shapes, huge precision, or
+  exhausted scratch slots.
+
+Missing features:
+- None for this documentation clarification.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `sed -n "68,130p" PRECISION.md`
+- `git diff --check`
+
+Pass/fail result:
+- Documentation whitespace check: PASS.
+
+Known issues:
+- No build or benchmark run was performed because this phase only clarifies
+  documentation.
+
 ## Phase: PRECISION loop-label documentation
 
 Implemented features:

@@ -79,6 +79,39 @@ Scratch initialization, precision growth, and fallback code may still exist in
 the binary.  The relevant question in disassembly is whether those calls are on
 the steady element loop.
 
+## When Thread-local Scratch Exists
+
+Thread-local scratch storage is part of the precision fast path implementation,
+but it is not part of every build or every expression path.
+
+The intended control flow is:
+
+```cpp
+if constexpr (build_options::fast_fixed_precision) {
+    mpf_thread_scratch product(precision);   // or mpfr_thread_scratch
+    // borrow from the thread-local scratch pool
+} else {
+    scoped_mpf_temporary product(precision); // or scoped_mpfr_temporary
+    // construct and clear a local temporary
+}
+```
+
+In a normal build without `GMPFRXX_MKII_FAST_FIXED_PREC`, the selected branch is
+the scoped temporary path.  The thread-local scratch pool may still be defined
+in the header, but the normal expression hot path does not borrow from it.
+
+Even in a precision-fastpath build, thread-local scratch is used only by the
+selected direct product compound paths.  Other expression shapes may still use
+the ordinary materialization path, and very large precisions or exhausted
+scratch slots fall back to a local temporary.
+
+So the correct reading is:
+
+```text
+thread-local scratch is available in the implementation,
+but it is used only by selected GMPFRXX_MKII_FAST_FIXED_PREC paths.
+```
+
 ## What It Does Not Remove
 
 `PRECISION` alone does not cache MPFR rounding mode.
