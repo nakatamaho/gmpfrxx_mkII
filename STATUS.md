@@ -1,3 +1,34 @@
+## Phase: PRECISION-only fastpath documentation
+
+Implemented features:
+- Added top-level `PRECISION.md` documenting what the GMP/MPFR precision-only
+  fast path means in benchmark suffixes and build options.
+- Explained that `GMPFRXX_MKII_FAST_FIXED_PREC` removes steady product
+  temporary init/clear for selected direct product compound paths, but does not
+  cache MPFR rounding mode or enable FMA.
+- Documented the GMP and MPFR Rdot `kernel_01` disassembly signatures that
+  distinguish baseline expression materialization from precision-only scratch
+  reuse.
+
+Missing features:
+- None for this documentation update.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `rg "FIXED_PRECISION|PRECISION|fixed precision|scratch" README.md SPECIFICATIONS.md benchmarks/gmp/00_Rdot/README.md benchmarks/mpfr/00_Rdot/README.md -n`
+- `sed -n "2090,2265p" include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `sed -n "2300,2585p" include/gmpfrxx_mkII/detail/mpfr_impl.hpp`
+- `git diff --check`
+
+Pass/fail result:
+- Documentation whitespace check: PASS.
+
+Known issues:
+- No build or benchmark run was performed because this phase only adds
+  explanatory documentation.
+
 ## Phase: MPFR rounding-only reference API
 
 Implemented features:
