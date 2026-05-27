@@ -1,3 +1,31 @@
+## Phase: PRECISION loop-label documentation
+
+Implemented features:
+- Updated `PRECISION.md` disassembly snippets to label element-loop entry points
+  and branch targets explicitly.
+- Clarified that GMP precision-only steady scratch work is a subpath inside the
+  outer element loop, and that the final `jne` returns to the element-loop
+  entry rather than to the middle of the scratch path.
+- Clarified that MPFR precision-only uses an outer caller loop plus a helper
+  steady-scratch subpath.
+
+Missing features:
+- None for this documentation clarification.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `sed -n "110,230p" PRECISION.md`
+- `git diff --check`
+
+Pass/fail result:
+- Documentation whitespace check: PASS.
+
+Known issues:
+- No build or benchmark run was performed because this phase only clarifies
+  existing disassembly documentation.
+
 ## Phase: PRECISION-only fastpath documentation
 
 Implemented features:

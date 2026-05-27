@@ -116,26 +116,43 @@ cleanup in the element loop:
 
 ```asm
 # Rdot_gmp_kernel_01_mkII
-call   __gmpf_get_prec@plt
-call   __gmpf_init2@plt
-call   __gmpf_mul@plt
-call   __gmpf_add@plt
-call   __gmpf_clear@plt
-jne    <element loop>
+.L_gmp_baseline_element:
+    call   __gmpf_get_prec@plt
+    call   __gmpf_init2@plt
+    call   __gmpf_mul@plt
+    call   __gmpf_add@plt
+    call   __gmpf_clear@plt
+    cmp    <i>,<n>
+    jne    .L_gmp_baseline_element
 ```
+
+Here the element loop runs from `.L_gmp_baseline_element` through the branch
+back to `.L_gmp_baseline_element`.  The branch target is the next iteration
+precision read and product-temporary construction.
 
 The precision-only target changes the steady path to a thread-local scratch
 temporary:
 
 ```asm
 # Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
-call   __gmpf_get_prec@plt
-cmpb   $0x0,%fs:<tls scratch active flag>
-call   __gmpf_mul@plt
-call   __gmpf_add@plt
-cmp    <scratch precision>,<lhs precision>
-je     <steady scratch path>
+.L_gmp_precision_element:
+    call   __gmpf_get_prec@plt
+    cmpb   $0x0,%fs:<tls scratch active flag>
+    jne    .L_gmp_precision_fallback
+    cmp    <scratch precision>,<lhs precision>
+    jne    .L_gmp_precision_resize_or_fallback
+.L_gmp_precision_steady_scratch:
+    call   __gmpf_mul@plt
+    call   __gmpf_add@plt
+    movb   $0x0,%fs:<tls scratch active flag>
+    cmp    <i>,<n>
+    jne    .L_gmp_precision_element
 ```
+
+Here `.L_gmp_precision_element` is the outer element loop.  The steady scratch
+subpath starts at `.L_gmp_precision_steady_scratch` after the active-slot and
+precision checks.  The final `jne` jumps back to
+`.L_gmp_precision_element`, not to the middle of the scratch path.
 
 The important change is that `__gmpf_init2` and `__gmpf_clear` are no longer on
 the steady product-temporary path.  The loop still reads the destination
@@ -177,33 +194,47 @@ temporary initialization/cleanup in the element loop:
 
 ```asm
 # Rdot_mpfr_kernel_01
-call   mpfr_get_default_rounding_mode@plt
-call   mpfr_init2@plt
-call   mpfr_mul@plt
-call   mpfr_add@plt
-call   mpfr_clear@plt
-jne    <element loop>
+.L_mpfr_baseline_element:
+    call   mpfr_get_default_rounding_mode@plt
+    call   mpfr_init2@plt
+    call   mpfr_mul@plt
+    call   mpfr_add@plt
+    call   mpfr_clear@plt
+    cmp    <i>,<n>
+    jne    .L_mpfr_baseline_element
 ```
+
+Here the `jne` returns to `.L_mpfr_baseline_element`, so both the default
+rounding lookup and product temporary construction are repeated for the next
+element.
 
 The precision-only caller loop still obtains the rounding mode, but delegates
 the product materialization to the fixed-precision helper:
 
 ```asm
 # Rdot_mpfr_kernel_01_PRECISION
-call   mpfr_get_default_rounding_mode@plt
-mov    <lhs precision>,%rdx
-call   mpfr_compound_assign_with_context...
-jne    <element loop>
+.L_mpfr_precision_element:
+    call   mpfr_get_default_rounding_mode@plt
+    mov    <lhs precision>,%rdx
+    call   mpfr_compound_assign_with_context...
+    cmp    <i>,<n>
+    jne    .L_mpfr_precision_element
 ```
+
+Here the element loop is the caller loop from `.L_mpfr_precision_element` to the
+branch back to `.L_mpfr_precision_element`.  The helper has its own scratch
+subpath; returning from the helper resumes the caller loop at the induction
+update and branch.
 
 The helper steady path performs split multiply-add through thread-local scratch:
 
 ```asm
 # fixed-precision helper steady path
-call   mpfr_mul@plt
-call   mpfr_add@plt
-movb   $0x0,<tls scratch active flag>
-ret
+.L_mpfr_precision_helper_steady_scratch:
+    call   mpfr_mul@plt
+    call   mpfr_add@plt
+    movb   $0x0,<tls scratch active flag>
+    ret
 ```
 
 The important change is that `mpfr_init2` and `mpfr_clear` are no longer on the
