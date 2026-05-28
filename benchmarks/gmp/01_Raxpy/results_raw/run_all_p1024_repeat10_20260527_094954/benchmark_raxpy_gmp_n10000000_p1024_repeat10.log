@@ -1,0 +1,2565 @@
+Linux 7c430536ccee 6.8.0-94-generic #96-Ubuntu SMP PREEMPT_DYNAMIC Fri Jan  9 20:36:55 UTC 2026 x86_64 GNU/Linux
+model name	: AMD Ryzen Threadripper 3970X 32-Core Processor
+BENCHMARK_PARAMS precision=1024 raxpy_n=10000000 repeat=10
+OPENMP_AFFINITY OMP_NUM_THREADS=32 OMP_PLACES=cores OMP_PROC_BIND=spread
+DEFAULT_PRECISION_ENV GMPXX_DEFAULT_MPF_PRECISION_BITS=1024
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 1/10
+Elapsed time: 1.66474 s
+MFLOPS: 12.0139
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.34
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 2/10
+Elapsed time: 1.67437 s
+MFLOPS: 11.9448
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.46
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 3/10
+Elapsed time: 1.66299 s
+MFLOPS: 12.0265
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.27
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 4/10
+Elapsed time: 1.66498 s
+MFLOPS: 12.0121
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.30
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 5/10
+Elapsed time: 1.68079 s
+MFLOPS: 11.8992
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.42
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 6/10
+Elapsed time: 1.6869 s
+MFLOPS: 11.8561
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.45
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 7/10
+Elapsed time: 1.6609 s
+MFLOPS: 12.0417
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.25
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 8/10
+Elapsed time: 1.66856 s
+MFLOPS: 11.9864
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.22
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 9/10
+Elapsed time: 1.67005 s
+MFLOPS: 11.9757
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.17
+
+COMMAND Raxpy Raxpy_gmp_C_native_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_01 10000000 1024
+RUN 10/10
+Elapsed time: 1.67412 s
+MFLOPS: 11.9466
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.32
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 1/10
+Elapsed time: 1.77798 s
+MFLOPS: 11.2487
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.52
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 2/10
+Elapsed time: 1.77306 s
+MFLOPS: 11.2799
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.43
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 3/10
+Elapsed time: 1.77719 s
+MFLOPS: 11.2537
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.51
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 4/10
+Elapsed time: 1.7757 s
+MFLOPS: 11.2631
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.40
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 5/10
+Elapsed time: 1.76076 s
+MFLOPS: 11.3587
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.42
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 6/10
+Elapsed time: 1.76246 s
+MFLOPS: 11.3477
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.36
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 7/10
+Elapsed time: 1.78489 s
+MFLOPS: 11.2052
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.49
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 8/10
+Elapsed time: 1.76289 s
+MFLOPS: 11.345
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.45
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 9/10
+Elapsed time: 1.76874 s
+MFLOPS: 11.3075
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.38
+
+COMMAND Raxpy Raxpy_gmp_C_native_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_02 10000000 1024
+RUN 10/10
+Elapsed time: 1.78322 s
+MFLOPS: 11.2156
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.46
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 1/10
+Elapsed time: 1.68509 s
+MFLOPS: 11.8688
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.29
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 2/10
+Elapsed time: 1.67633 s
+MFLOPS: 11.9308
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.32
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 3/10
+Elapsed time: 1.6655 s
+MFLOPS: 12.0084
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.25
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 4/10
+Elapsed time: 1.6829 s
+MFLOPS: 11.8842
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.34
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 5/10
+Elapsed time: 1.687 s
+MFLOPS: 11.8554
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.40
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 6/10
+Elapsed time: 1.66541 s
+MFLOPS: 12.009
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.23
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 7/10
+Elapsed time: 1.67338 s
+MFLOPS: 11.9518
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.29
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 8/10
+Elapsed time: 1.67612 s
+MFLOPS: 11.9323
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.32
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 9/10
+Elapsed time: 1.69102 s
+MFLOPS: 11.8272
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.35
+
+COMMAND Raxpy Raxpy_gmp_C_native_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_03 10000000 1024
+RUN 10/10
+Elapsed time: 1.67449 s
+MFLOPS: 11.944
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.28
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 1/10
+Elapsed time: 1.81654 s
+MFLOPS: 11.0099
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.44
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 2/10
+Elapsed time: 1.80362 s
+MFLOPS: 11.0888
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.44
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 3/10
+Elapsed time: 1.82164 s
+MFLOPS: 10.9791
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.48
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 4/10
+Elapsed time: 1.79984 s
+MFLOPS: 11.1121
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.42
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 5/10
+Elapsed time: 1.81472 s
+MFLOPS: 11.021
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.44
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 6/10
+Elapsed time: 1.80205 s
+MFLOPS: 11.0985
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.41
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 7/10
+Elapsed time: 1.81967 s
+MFLOPS: 10.991
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.51
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 8/10
+Elapsed time: 1.79227 s
+MFLOPS: 11.159
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.37
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 9/10
+Elapsed time: 1.80475 s
+MFLOPS: 11.0818
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.36
+
+COMMAND Raxpy Raxpy_gmp_C_native_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_04 10000000 1024
+RUN 10/10
+Elapsed time: 1.8029 s
+MFLOPS: 11.0933
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.44
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 1/10
+Elapsed time: 0.0792061 s
+MFLOPS: 252.506
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.67
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 2/10
+Elapsed time: 0.0822547 s
+MFLOPS: 243.147
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.70
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 3/10
+Elapsed time: 0.0792721 s
+MFLOPS: 252.296
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.72
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 4/10
+Elapsed time: 0.0799229 s
+MFLOPS: 250.241
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.74
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 5/10
+Elapsed time: 0.0786519 s
+MFLOPS: 254.285
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.72
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 6/10
+Elapsed time: 0.0810928 s
+MFLOPS: 246.631
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.83
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 7/10
+Elapsed time: 0.0793525 s
+MFLOPS: 252.04
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.80
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 8/10
+Elapsed time: 0.0786465 s
+MFLOPS: 254.303
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.78
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 9/10
+Elapsed time: 0.0797831 s
+MFLOPS: 250.68
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.74
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_01 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01 10000000 1024
+RUN 10/10
+Elapsed time: 0.0788941 s
+MFLOPS: 253.504
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.78
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 1/10
+Elapsed time: 0.083933 s
+MFLOPS: 238.285
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.90
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 2/10
+Elapsed time: 0.0790001 s
+MFLOPS: 253.164
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.87
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 3/10
+Elapsed time: 0.0787665 s
+MFLOPS: 253.915
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.86
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 4/10
+Elapsed time: 0.0791962 s
+MFLOPS: 252.537
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.81
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 5/10
+Elapsed time: 0.0798575 s
+MFLOPS: 250.446
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.84
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 6/10
+Elapsed time: 0.0806941 s
+MFLOPS: 247.85
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.88
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 7/10
+Elapsed time: 0.0797161 s
+MFLOPS: 250.89
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.86
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 8/10
+Elapsed time: 0.0795492 s
+MFLOPS: 251.417
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.80
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 9/10
+Elapsed time: 0.0792593 s
+MFLOPS: 252.336
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.85
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_02 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02 10000000 1024
+RUN 10/10
+Elapsed time: 0.0789547 s
+MFLOPS: 253.31
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.85
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 1/10
+Elapsed time: 0.0795566 s
+MFLOPS: 251.393
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.69
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 2/10
+Elapsed time: 0.0793908 s
+MFLOPS: 251.918
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.79
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 3/10
+Elapsed time: 0.080119 s
+MFLOPS: 249.629
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.73
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 4/10
+Elapsed time: 0.0796589 s
+MFLOPS: 251.071
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.76
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 5/10
+Elapsed time: 0.0801911 s
+MFLOPS: 249.404
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.80
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 6/10
+Elapsed time: 0.0802043 s
+MFLOPS: 249.363
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.73
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 7/10
+Elapsed time: 0.0797056 s
+MFLOPS: 250.924
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.84
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 8/10
+Elapsed time: 0.0795572 s
+MFLOPS: 251.391
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.73
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 9/10
+Elapsed time: 0.0823663 s
+MFLOPS: 242.818
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.82
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_03 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03 10000000 1024
+RUN 10/10
+Elapsed time: 0.0785435 s
+MFLOPS: 254.636
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.82
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 1/10
+Elapsed time: 0.0803093 s
+MFLOPS: 249.037
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.91
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 2/10
+Elapsed time: 0.0798262 s
+MFLOPS: 250.544
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.75
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 3/10
+Elapsed time: 0.0810347 s
+MFLOPS: 246.808
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.77
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 4/10
+Elapsed time: 0.0860426 s
+MFLOPS: 232.443
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.82
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 5/10
+Elapsed time: 0.0816985 s
+MFLOPS: 244.803
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.74
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 6/10
+Elapsed time: 0.0796588 s
+MFLOPS: 251.071
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.78
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 7/10
+Elapsed time: 0.0796932 s
+MFLOPS: 250.962
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.93
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 8/10
+Elapsed time: 0.0791371 s
+MFLOPS: 252.726
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.77
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 9/10
+Elapsed time: 0.080621 s
+MFLOPS: 248.074
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.81
+
+COMMAND Raxpy Raxpy_gmp_C_native_openmp_04 env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04 10000000 1024
+RUN 10/10
+Elapsed time: 0.0800537 s
+MFLOPS: 249.832
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 9.71
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.83038 s
+MFLOPS: 10.9267
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.86
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.79351 s
+MFLOPS: 11.1513
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.61
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.83866 s
+MFLOPS: 10.8775
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.85
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.84233 s
+MFLOPS: 10.8558
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.85
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.79996 s
+MFLOPS: 11.1114
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.63
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.82088 s
+MFLOPS: 10.9837
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.76
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.84917 s
+MFLOPS: 10.8156
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.86
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.83825 s
+MFLOPS: 10.8799
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.84
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.83077 s
+MFLOPS: 10.9244
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.79
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.82257 s
+MFLOPS: 10.9735
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.73
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 1.83042 s
+MFLOPS: 10.9264
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.24
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 1.83747 s
+MFLOPS: 10.8845
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.22
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 1.85262 s
+MFLOPS: 10.7955
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.22
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 1.858 s
+MFLOPS: 10.7643
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.29
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 1.84692 s
+MFLOPS: 10.8289
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.19
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 1.83165 s
+MFLOPS: 10.9191
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.25
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 1.83239 s
+MFLOPS: 10.9147
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.24
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 1.83267 s
+MFLOPS: 10.913
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 1.86453 s
+MFLOPS: 10.7266
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.40
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 1.83917 s
+MFLOPS: 10.8745
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.28
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 1.69785 s
+MFLOPS: 11.7796
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.99
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 1.70577 s
+MFLOPS: 11.7249
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.00
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 1.70859 s
+MFLOPS: 11.7056
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.99
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 1.70909 s
+MFLOPS: 11.7021
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.10
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 1.70105 s
+MFLOPS: 11.7575
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.93
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 1.71411 s
+MFLOPS: 11.6679
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.00
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 1.68929 s
+MFLOPS: 11.8393
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.86
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 1.69621 s
+MFLOPS: 11.791
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.97
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 1.70937 s
+MFLOPS: 11.7002
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.03
+
+COMMAND Raxpy Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 1.66727 s
+MFLOPS: 11.9956
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.78
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.71674 s
+MFLOPS: 11.65
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.66
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.72421 s
+MFLOPS: 11.5995
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.69
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.69612 s
+MFLOPS: 11.7916
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.49
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.73187 s
+MFLOPS: 11.5482
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.68
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.71912 s
+MFLOPS: 11.6338
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.66
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.72777 s
+MFLOPS: 11.5756
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.69
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.72569 s
+MFLOPS: 11.5896
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.68
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.73719 s
+MFLOPS: 11.5128
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.72
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.7188 s
+MFLOPS: 11.636
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.67
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.74011 s
+MFLOPS: 11.4935
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.77
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 1.77004 s
+MFLOPS: 11.2992
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.21
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 1.719 s
+MFLOPS: 11.6347
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.19
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 1.72077 s
+MFLOPS: 11.6227
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.16
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 1.72053 s
+MFLOPS: 11.6243
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.18
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 1.72325 s
+MFLOPS: 11.606
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.22
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 1.73589 s
+MFLOPS: 11.5215
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.26
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 1.72059 s
+MFLOPS: 11.6239
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.12
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 1.68531 s
+MFLOPS: 11.8673
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.94
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 1.73498 s
+MFLOPS: 11.5275
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.37
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 1.71526 s
+MFLOPS: 11.66
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 1.74035 s
+MFLOPS: 11.4919
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.06
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 1.72275 s
+MFLOPS: 11.6094
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.99
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 1.72963 s
+MFLOPS: 11.5632
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.03
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 1.74903 s
+MFLOPS: 11.4349
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.07
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 1.74786 s
+MFLOPS: 11.4426
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.16
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 1.74289 s
+MFLOPS: 11.4752
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.10
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 1.74864 s
+MFLOPS: 11.4374
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.09
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 1.7266 s
+MFLOPS: 11.5834
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.93
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 1.74233 s
+MFLOPS: 11.4789
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.97
+
+COMMAND Raxpy Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 1.73066 s
+MFLOPS: 11.5563
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.94
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.6619 s
+MFLOPS: 12.0344
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.58
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.64302 s
+MFLOPS: 12.1727
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.41
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.67824 s
+MFLOPS: 11.9173
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.65
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.67778 s
+MFLOPS: 11.9205
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.62
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.68012 s
+MFLOPS: 11.9039
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.68
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.67393 s
+MFLOPS: 11.9479
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.65
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.68339 s
+MFLOPS: 11.8808
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.74
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.66951 s
+MFLOPS: 11.9796
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.66
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.66318 s
+MFLOPS: 12.0252
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.64
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.69806 s
+MFLOPS: 11.7781
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.76
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 1.6809 s
+MFLOPS: 11.8984
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.14
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 1.67407 s
+MFLOPS: 11.9469
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 1.66152 s
+MFLOPS: 12.0372
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.11
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 1.67783 s
+MFLOPS: 11.9202
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.18
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 1.69122 s
+MFLOPS: 11.8258
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.19
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 1.66656 s
+MFLOPS: 12.0008
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.04
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 1.68015 s
+MFLOPS: 11.9037
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.06
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 1.67259 s
+MFLOPS: 11.9575
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.14
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 1.67056 s
+MFLOPS: 11.972
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.14
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 1.67167 s
+MFLOPS: 11.9641
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.14
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 1.6829 s
+MFLOPS: 11.8842
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.11
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 1.6758 s
+MFLOPS: 11.9346
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.97
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 1.70231 s
+MFLOPS: 11.7487
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.08
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 1.67234 s
+MFLOPS: 11.9593
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.02
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 1.68194 s
+MFLOPS: 11.891
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.04
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 1.67391 s
+MFLOPS: 11.9481
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.97
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 1.68166 s
+MFLOPS: 11.893
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.01
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 1.67009 s
+MFLOPS: 11.9754
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.06
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 1.66995 s
+MFLOPS: 11.9764
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.94
+
+COMMAND Raxpy Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 1.66375 s
+MFLOPS: 12.0211
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.01
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 1/10
+Elapsed time: 1.83647 s
+MFLOPS: 10.8905
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.90
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 2/10
+Elapsed time: 1.82957 s
+MFLOPS: 10.9316
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.82
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 3/10
+Elapsed time: 1.83004 s
+MFLOPS: 10.9287
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.78
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 4/10
+Elapsed time: 1.82873 s
+MFLOPS: 10.9366
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.77
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 5/10
+Elapsed time: 1.84068 s
+MFLOPS: 10.8655
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.83
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 6/10
+Elapsed time: 1.83807 s
+MFLOPS: 10.881
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.83
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 7/10
+Elapsed time: 1.82833 s
+MFLOPS: 10.9389
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.77
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 8/10
+Elapsed time: 1.81345 s
+MFLOPS: 11.0287
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.76
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 9/10
+Elapsed time: 1.82772 s
+MFLOPS: 10.9426
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.78
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_orig 10000000 1024
+RUN 10/10
+Elapsed time: 1.83564 s
+MFLOPS: 10.8954
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.91
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 1.80565 s
+MFLOPS: 11.0763
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.19
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 1.80766 s
+MFLOPS: 11.064
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.26
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 1.80906 s
+MFLOPS: 11.0555
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.26
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 1.81697 s
+MFLOPS: 11.0073
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.23
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 1.80497 s
+MFLOPS: 11.0805
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.19
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 1.81534 s
+MFLOPS: 11.0172
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.28
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 1.81828 s
+MFLOPS: 10.9994
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.29
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 1.81818 s
+MFLOPS: 11
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.28
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 1.81082 s
+MFLOPS: 11.0447
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.19
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 1.81175 s
+MFLOPS: 11.0391
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.20
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 1.81423 s
+MFLOPS: 11.024
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.15
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 1.76417 s
+MFLOPS: 11.3368
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.88
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 1.78252 s
+MFLOPS: 11.2201
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.05
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 1.77617 s
+MFLOPS: 11.2602
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.98
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 1.74394 s
+MFLOPS: 11.4683
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.77
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 1.7966 s
+MFLOPS: 11.1321
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.11
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 1.80824 s
+MFLOPS: 11.0605
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.16
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 1.7864 s
+MFLOPS: 11.1957
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 11.96
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 1.7946 s
+MFLOPS: 11.1445
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.12
+
+COMMAND Raxpy Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 1.79123 s
+MFLOPS: 11.1655
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 12.06
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0792793 s
+MFLOPS: 252.273
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.11
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0790441 s
+MFLOPS: 253.023
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.15
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0825969 s
+MFLOPS: 242.14
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.22
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0791091 s
+MFLOPS: 252.815
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.18
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0795453 s
+MFLOPS: 251.429
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.16
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.079293 s
+MFLOPS: 252.229
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.20
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.0801248 s
+MFLOPS: 249.611
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.14
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0797822 s
+MFLOPS: 250.682
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.09
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0776317 s
+MFLOPS: 257.627
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.09
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.0797257 s
+MFLOPS: 250.86
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.15
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0782256 s
+MFLOPS: 255.671
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.64
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0788238 s
+MFLOPS: 253.73
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.55
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0795691 s
+MFLOPS: 251.354
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.59
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.0785272 s
+MFLOPS: 254.689
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.0791856 s
+MFLOPS: 252.571
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0783535 s
+MFLOPS: 255.253
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.60
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0804845 s
+MFLOPS: 248.495
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.57
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.0788465 s
+MFLOPS: 253.657
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.48
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.08612 s
+MFLOPS: 232.234
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.61
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0888813 s
+MFLOPS: 225.019
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.65
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0778587 s
+MFLOPS: 256.876
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.40
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.0856138 s
+MFLOPS: 233.607
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.52
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0777902 s
+MFLOPS: 257.102
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.0847996 s
+MFLOPS: 235.85
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.46
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.07879 s
+MFLOPS: 253.839
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.38
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0848335 s
+MFLOPS: 235.756
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.42
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.0797648 s
+MFLOPS: 250.737
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0783311 s
+MFLOPS: 255.326
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0793794 s
+MFLOPS: 251.955
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.44
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.082214 s
+MFLOPS: 243.268
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.53
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0797283 s
+MFLOPS: 250.852
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.19
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0781479 s
+MFLOPS: 255.925
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.13
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0783574 s
+MFLOPS: 255.241
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.15
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0806685 s
+MFLOPS: 247.928
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.15
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0781499 s
+MFLOPS: 255.918
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.15
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0800622 s
+MFLOPS: 249.806
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.13
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.0805458 s
+MFLOPS: 248.306
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.078653 s
+MFLOPS: 254.281
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.12
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0789154 s
+MFLOPS: 253.436
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.0791916 s
+MFLOPS: 252.552
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.15
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0787414 s
+MFLOPS: 253.996
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.50
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0783531 s
+MFLOPS: 255.255
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.61
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0789815 s
+MFLOPS: 253.224
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.55
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.0821455 s
+MFLOPS: 243.47
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.65
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.079339 s
+MFLOPS: 252.083
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0786055 s
+MFLOPS: 254.435
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.55
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0842109 s
+MFLOPS: 237.499
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.59
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.0819946 s
+MFLOPS: 243.918
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.53
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.0800744 s
+MFLOPS: 249.768
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0788338 s
+MFLOPS: 253.698
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.59
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0790439 s
+MFLOPS: 253.024
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.53
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.0786287 s
+MFLOPS: 254.36
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.57
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0780023 s
+MFLOPS: 256.403
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.0813957 s
+MFLOPS: 245.713
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.48
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.0905086 s
+MFLOPS: 220.973
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.70
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0785855 s
+MFLOPS: 254.5
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.52
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.079826 s
+MFLOPS: 250.545
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.56
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0809528 s
+MFLOPS: 247.058
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.56
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0803774 s
+MFLOPS: 248.826
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.57
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.0793104 s
+MFLOPS: 252.174
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.47
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0790852 s
+MFLOPS: 252.892
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.11
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.0844649 s
+MFLOPS: 236.785
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.23
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0789868 s
+MFLOPS: 253.207
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.11
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0825461 s
+MFLOPS: 242.289
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.24
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0783591 s
+MFLOPS: 255.235
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.13
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0781198 s
+MFLOPS: 256.017
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.0787693 s
+MFLOPS: 253.906
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0783692 s
+MFLOPS: 255.202
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0785017 s
+MFLOPS: 254.772
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.12
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.0780388 s
+MFLOPS: 256.283
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0777792 s
+MFLOPS: 257.138
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.62
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0783914 s
+MFLOPS: 255.13
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.59
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0851464 s
+MFLOPS: 234.889
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.50
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.0778539 s
+MFLOPS: 256.891
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.0799085 s
+MFLOPS: 250.286
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0784225 s
+MFLOPS: 255.029
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0780857 s
+MFLOPS: 256.129
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.0790364 s
+MFLOPS: 253.048
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.52
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.0788611 s
+MFLOPS: 253.61
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.49
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0812109 s
+MFLOPS: 246.272
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.67
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0789183 s
+MFLOPS: 253.426
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.0780567 s
+MFLOPS: 256.224
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.41
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.0790644 s
+MFLOPS: 252.958
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.43
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.0781119 s
+MFLOPS: 256.043
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.41
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.0774378 s
+MFLOPS: 258.272
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.34
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0792383 s
+MFLOPS: 252.403
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.42
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.0853768 s
+MFLOPS: 234.256
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.42
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0788678 s
+MFLOPS: 253.589
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.47
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.0805327 s
+MFLOPS: 248.346
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.0788038 s
+MFLOPS: 253.795
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 1/10
+Elapsed time: 0.0812109 s
+MFLOPS: 246.272
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 2/10
+Elapsed time: 0.087517 s
+MFLOPS: 228.527
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.15
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 3/10
+Elapsed time: 0.0844914 s
+MFLOPS: 236.711
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 4/10
+Elapsed time: 0.0852769 s
+MFLOPS: 234.53
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 5/10
+Elapsed time: 0.0793064 s
+MFLOPS: 252.187
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.07
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 6/10
+Elapsed time: 0.0802034 s
+MFLOPS: 249.366
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.12
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 7/10
+Elapsed time: 0.07925 s
+MFLOPS: 252.366
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.16
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 8/10
+Elapsed time: 0.0797824 s
+MFLOPS: 250.682
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.18
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 9/10
+Elapsed time: 0.0783247 s
+MFLOPS: 255.347
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.17
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_orig env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_orig 10000000 1024
+RUN 10/10
+Elapsed time: 0.0801261 s
+MFLOPS: 249.607
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.21
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 1/10
+Elapsed time: 0.0821138 s
+MFLOPS: 243.564
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 2/10
+Elapsed time: 0.0842503 s
+MFLOPS: 237.388
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 3/10
+Elapsed time: 0.0801011 s
+MFLOPS: 249.684
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.56
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 4/10
+Elapsed time: 0.079346 s
+MFLOPS: 252.061
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.47
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 5/10
+Elapsed time: 0.0842364 s
+MFLOPS: 237.427
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 6/10
+Elapsed time: 0.0789146 s
+MFLOPS: 253.438
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.48
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 7/10
+Elapsed time: 0.0792541 s
+MFLOPS: 252.353
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.58
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 8/10
+Elapsed time: 0.0790315 s
+MFLOPS: 253.064
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.55
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 9/10
+Elapsed time: 0.0783051 s
+MFLOPS: 255.411
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.50
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII 10000000 1024
+RUN 10/10
+Elapsed time: 0.0786745 s
+MFLOPS: 254.212
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.53
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 1/10
+Elapsed time: 0.0792077 s
+MFLOPS: 252.501
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.43
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 2/10
+Elapsed time: 0.0794726 s
+MFLOPS: 251.659
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.52
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 3/10
+Elapsed time: 0.081142 s
+MFLOPS: 246.482
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.50
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 4/10
+Elapsed time: 0.0800853 s
+MFLOPS: 249.734
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.48
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 5/10
+Elapsed time: 0.079717 s
+MFLOPS: 250.887
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.48
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 6/10
+Elapsed time: 0.0787879 s
+MFLOPS: 253.846
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.54
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 7/10
+Elapsed time: 0.0880589 s
+MFLOPS: 227.121
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.48
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 8/10
+Elapsed time: 0.0793483 s
+MFLOPS: 252.053
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.53
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 9/10
+Elapsed time: 0.078378 s
+MFLOPS: 255.174
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.45
+
+COMMAND Raxpy Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH env GMPXX_DEFAULT_MPF_PRECISION_BITS=1024 build_bench_release/benchmarks/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH 10000000 1024
+RUN 10/10
+Elapsed time: 0.0786982 s
+MFLOPS: 254.135
+L1 Norm of difference: 0
+Result OK
+WALL_SECONDS 10.51
