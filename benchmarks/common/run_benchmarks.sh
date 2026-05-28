@@ -199,11 +199,13 @@ run_variants() {
         executables=(
             "Rgemm_gmp_C_native_01"
             "Rgemm_gmp_C_native_02"
+            "Rgemm_gmp_C_native_03"
             "Rgemm_gmp_C_native_04"
             "Rgemm_gmp_C_native_05"
             "Rgemm_gmp_C_native_06"
             "Rgemm_gmp_C_native_openmp_01"
             "Rgemm_gmp_C_native_openmp_02"
+            "Rgemm_gmp_C_native_openmp_03"
             "Rgemm_gmp_C_native_openmp_04"
             "Rgemm_gmp_C_native_openmp_05"
             "Rgemm_gmp_C_native_openmp_06"

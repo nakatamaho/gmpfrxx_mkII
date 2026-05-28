@@ -28,25 +28,45 @@
 
 #include "Rgemm_common.hpp"
 
-void _Rgemm(int64_t m, int64_t k, int64_t n, const mpf_class &alpha, const mpf_class *A, int64_t lda, const mpf_class *B, int64_t ldb, const mpf_class &beta, mpf_class *C, int64_t ldc) {
-    // Scale C by beta: C = beta * C
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            C[i + j * ldc] = beta * C[i + j * ldc];
-        }
+void _Rgemm(int64_t m, int64_t k, int64_t n, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, const mpfr_t beta, mpfr_t *C, int64_t ldc) {
+
+    if (lda < m || ldb < k || ldc < m) {
+        std::cerr << "Leading dimensions are too small." << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    // Compute alpha * A * B and add to C: C += alpha * A * B
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t l = 0; l < k; ++l) {
-            mpf_class temp = alpha * B[l + j * ldb];
+    const mpfr_rnd_t rnd = mpfr_get_default_rounding_mode();
+#pragma omp parallel
+    {
+        mpfr_t temp, templ;
+        mpfr_init(temp);
+        mpfr_init(templ);
+
+#pragma omp for collapse(2) schedule(static)
+        for (int64_t j = 0; j < n; ++j) {
             for (int64_t i = 0; i < m; ++i) {
-                C[i + j * ldc] += temp * A[i + l * lda];
+                mpfr_mul(C[i + j * ldc], C[i + j * ldc], beta, rnd);
             }
         }
+
+#pragma omp for schedule(static)
+        for (int64_t j = 0; j < n; ++j) {
+            for (int64_t l = 0; l < k; ++l) {
+                mpfr_set(temp, alpha, rnd);
+                mpfr_mul(temp, temp, B[l + j * ldb], rnd);
+                for (int64_t i = 0; i < m; ++i) {
+                    mpfr_set(templ, temp, rnd);
+                    mpfr_mul(templ, templ, A[i + l * lda], rnd);
+                    mpfr_add(C[i + j * ldc], C[i + j * ldc], templ, rnd);
+                }
+            }
+        }
+
+        mpfr_clear(templ);
+        mpfr_clear(temp);
     }
 }
 
 int main(int argc, char **argv) {
-    return rgemm_gmp_bench::run_class_rgemm_benchmark(argc, argv, _Rgemm);
+    return run_native_rgemm_benchmark(argc, argv, _Rgemm);
 }

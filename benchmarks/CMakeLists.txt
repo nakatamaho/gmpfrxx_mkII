@@ -117,8 +117,10 @@ endfunction()
 
 function(add_mpfr_kernel_variants subdir source base)
     add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH)
-    add_mpfr_mkii_variant(${subdir} ${source} ${base} mkII_FIXED_PRECISION_FASTPATH_FMA)
+    string(REPLACE ".cpp" "_ROUNDING.cpp" rounding_source "${source}")
+    add_mpfr_mkii_variant(${subdir} ${rounding_source} ${base} mkII_ROUNDING)
+    add_mpfr_mkii_variant(${subdir} ${rounding_source} ${base} mkII_ROUNDING_FIXED_PRECISION_FASTPATH)
+    add_mpfr_mkii_variant(${subdir} ${rounding_source} ${base} mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA)
 endfunction()
 
 function(add_mpfr_rdot_cpp_target subdir source target)
@@ -396,26 +398,16 @@ foreach(variant 01 02 03 04 05 06 07)
     add_mpfr_rgemv_variant_family(mpfr/02_Rgemv Rgemv_mpfr_kernel_openmp_${variant})
 endforeach()
 
-add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_01.cpp
-    Rgemm_mpfr_C_native_01)
-add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_02.cpp
-    Rgemm_mpfr_C_native_02)
-add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_openmp_01.cpp
-    Rgemm_mpfr_C_native_openmp_01)
-add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_openmp_02.cpp
-    Rgemm_mpfr_C_native_openmp_02)
-add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_01.cpp
-    Rgemm_mpfr_kernel_01)
-add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_02.cpp
-    Rgemm_mpfr_kernel_02)
-add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_03.cpp
-    Rgemm_mpfr_kernel_03)
-add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_openmp_01.cpp
-    Rgemm_mpfr_kernel_openmp_01)
-add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_openmp_02.cpp
-    Rgemm_mpfr_kernel_openmp_02)
-add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_openmp_03.cpp
-    Rgemm_mpfr_kernel_openmp_03)
+foreach(variant 01 02 03 04 05 06)
+    add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_${variant}.cpp
+        Rgemm_mpfr_C_native_${variant})
+    add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_openmp_${variant}.cpp
+        Rgemm_mpfr_C_native_openmp_${variant})
+    add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_${variant}.cpp
+        Rgemm_mpfr_kernel_${variant})
+    add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_openmp_${variant}.cpp
+        Rgemm_mpfr_kernel_openmp_${variant})
+endforeach()
 
 add_native_benchmark(gmp/01_Raxpy Raxpy_gmp_C_native_01.cpp
     Raxpy_gmp_C_native_01)
@@ -491,6 +483,8 @@ add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_01.cpp
     Rgemm_gmp_C_native_01)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_02.cpp
     Rgemm_gmp_C_native_02)
+add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_03.cpp
+    Rgemm_gmp_C_native_03)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_04.cpp
     Rgemm_gmp_C_native_04)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_05.cpp
@@ -501,6 +495,8 @@ add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_01.cpp
     Rgemm_gmp_C_native_openmp_01)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_02.cpp
     Rgemm_gmp_C_native_openmp_02)
+add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_03.cpp
+    Rgemm_gmp_C_native_openmp_03)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_04.cpp
     Rgemm_gmp_C_native_openmp_04)
 add_native_benchmark(gmp/03_Rgemm Rgemm_gmp_C_native_openmp_05.cpp

@@ -28,25 +28,39 @@
 
 #include "Rgemm_common.hpp"
 
-void _Rgemm(int64_t m, int64_t k, int64_t n, const mpf_class &alpha, const mpf_class *A, int64_t lda, const mpf_class *B, int64_t ldb, const mpf_class &beta, mpf_class *C, int64_t ldc) {
-    // Scale C by beta: C = beta * C
+void _Rgemm(int64_t m, int64_t k, int64_t n, const mpf_t alpha, const mpf_t *A, int64_t lda, const mpf_t *B, int64_t ldb, const mpf_t beta, mpf_t *C, int64_t ldc) {
+
+    if (lda < m || ldb < k || ldc < m) {
+        std::cerr << "Leading dimensions are too small." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    mpf_t temp, templ;
+    mpf_init(temp);
+    mpf_init(templ);
+
     for (int64_t j = 0; j < n; ++j) {
         for (int64_t i = 0; i < m; ++i) {
-            C[i + j * ldc] = beta * C[i + j * ldc];
+            mpf_mul(C[i + j * ldc], C[i + j * ldc], beta);
         }
     }
 
-    // Compute alpha * A * B and add to C: C += alpha * A * B
     for (int64_t j = 0; j < n; ++j) {
         for (int64_t l = 0; l < k; ++l) {
-            mpf_class temp = alpha * B[l + j * ldb];
+            mpf_set(temp, alpha);
+            mpf_mul(temp, temp, B[l + j * ldb]);
             for (int64_t i = 0; i < m; ++i) {
-                C[i + j * ldc] += temp * A[i + l * lda];
+                mpf_set(templ, temp);
+                mpf_mul(templ, templ, A[i + l * lda]);
+                mpf_add(C[i + j * ldc], C[i + j * ldc], templ);
             }
         }
     }
+
+    mpf_clear(templ);
+    mpf_clear(temp);
 }
 
 int main(int argc, char **argv) {
-    return rgemm_gmp_bench::run_class_rgemm_benchmark(argc, argv, _Rgemm);
+    return rgemm_gmp_bench::run_native_rgemm_benchmark(argc, argv, _Rgemm);
 }

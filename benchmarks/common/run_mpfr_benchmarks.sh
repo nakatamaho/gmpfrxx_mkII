@@ -213,30 +213,21 @@ run_variants() {
         )
         ;;
     Rgemm)
-        executables=(
-            "Rgemm_mpfr_C_native_01"
-            "Rgemm_mpfr_C_native_02"
-            "Rgemm_mpfr_C_native_openmp_01"
-            "Rgemm_mpfr_C_native_openmp_02"
-            "Rgemm_mpfr_kernel_01_mkII"
-            "Rgemm_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH"
-            "Rgemm_mpfr_kernel_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
-            "Rgemm_mpfr_kernel_02_mkII"
-            "Rgemm_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH"
-            "Rgemm_mpfr_kernel_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
-            "Rgemm_mpfr_kernel_03_mkII"
-            "Rgemm_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH"
-            "Rgemm_mpfr_kernel_03_mkII_FIXED_PRECISION_FASTPATH_FMA"
-            "Rgemm_mpfr_kernel_openmp_01_mkII"
-            "Rgemm_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH"
-            "Rgemm_mpfr_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH_FMA"
-            "Rgemm_mpfr_kernel_openmp_02_mkII"
-            "Rgemm_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH"
-            "Rgemm_mpfr_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH_FMA"
-            "Rgemm_mpfr_kernel_openmp_03_mkII"
-            "Rgemm_mpfr_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH"
-            "Rgemm_mpfr_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH_FMA"
-        )
+        executables=()
+        for variant in 01 02 03 04 05 06; do
+            executables+=(
+                "Rgemm_mpfr_C_native_${variant}"
+                "Rgemm_mpfr_C_native_openmp_${variant}"
+                "Rgemm_mpfr_kernel_${variant}_mkII"
+                "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING"
+                "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING_FIXED_PRECISION_FASTPATH"
+                "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA"
+                "Rgemm_mpfr_kernel_openmp_${variant}_mkII"
+                "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING"
+                "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING_FIXED_PRECISION_FASTPATH"
+                "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA"
+            )
+        done
         ;;
     esac
 
