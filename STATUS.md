@@ -23282,3 +23282,62 @@ Pass/fail result:
 
 Known issues:
 - Disassembly addresses and TLS offsets are build-specific and are included only as local context for the current `build_bench_release` binaries.
+
+## Phase: Document Rgemm Hotpath Disassembly
+
+Implemented features:
+- Added current GMP `03_Rgemm` variant-shape and C native equivalence tables.
+- Added GMP `03_Rgemm` hotpath disassembly comparisons for C native `03`, mkII `03`, mkII fixed-precision `03`, and OpenMP mkII fixed-precision `06`.
+- Added a new MPFR `03_Rgemm` README with purpose, build parameters, variant shapes, C native equivalence, and representative hotpath disassembly.
+- Documented that MPFR `ROUNDING_FIXED_PRECISION_FASTPATH` is needed to make reusable-temporary wrapper `03` match the cached-rounding C native `03` hot-loop class.
+- Documented that the Rgemm `FMA` suffix does not force `mpfr_fma` for reusable-temp/panel source shapes.
+
+Missing features:
+- No new full Rgemm benchmark timing sweep was performed.
+
+Tests added:
+- No unit tests. This is a documentation/reporting update.
+
+Exact commands run:
+- `cmake --build build_bench_release -j --target Rgemm_gmp_C_native_03 Rgemm_gmp_kernel_03_mkII Rgemm_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH Rgemm_mpfr_C_native_03 Rgemm_mpfr_kernel_03_mkII Rgemm_mpfr_kernel_03_mkII_ROUNDING Rgemm_mpfr_kernel_03_mkII_ROUNDING_FIXED_PRECISION_FASTPATH Rgemm_mpfr_kernel_03_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA`
+- `objdump -Cd --no-show-raw-insn <representative GMP/MPFR Rgemm benchmark binary>`
+- Reviewed current Rgemm source and CMake target definitions.
+
+Pass/fail result:
+- Representative build targets: PASS.
+
+Known issues:
+- Disassembly addresses and TLS offsets are build-specific and are included only as local context for the current `build_bench_release` binaries.
+- The new MPFR `03_Rgemm` README records disassembly comparisons only; it does not yet include a committed full timing sweep.
+
+## Phase: Replace SPDX Short Headers
+
+Implemented features:
+- Replaced `short BSD SPDX header` short headers under `benchmarks/` and `tests/` with the full BSD-2-Clause copyright text.
+- Used C-style block comments for C/C++ files, hash comments for shell/Python files, and hidden HTML comments for Markdown files so executable/document formats remain valid.
+- Preserved the active Rgemm README hotpath documentation updates.
+
+Missing features:
+- No missing items for this documentation/header normalization phase.
+
+Tests added:
+- No unit tests. This is a comment/header normalization change.
+
+Exact commands run:
+- `rg -n "short BSD SPDX header" .`
+- `bash -n benchmarks/run_all.sh`
+- `bash -n benchmarks/gmp/00_Rdot/run_repeat.sh`
+- `bash -n benchmarks/gmp/01_Raxpy/run_repeat.sh`
+- `bash -n benchmarks/gmp/02_Rgemv/run_repeat.sh`
+- `bash -n benchmarks/mpfr/00_Rdot/run_repeat.sh`
+- `bash -n benchmarks/mpfr/01_Raxpy/run_repeat.sh`
+- `bash -n benchmarks/mpfr/02_Rgemv/run_repeat.sh`
+- `cmake --build build_bench_release -j --target Rdot_mpfr_kernel_05_ROUNDING Rgemm_mpfr_kernel_03_mkII`
+
+Pass/fail result:
+- SPDX scan: PASS, no remaining matches.
+- Shell syntax checks: PASS.
+- Representative benchmark target build: PASS.
+
+Known issues:
+- Python files were not byte-compiled because the changed content is comment-only and the local sandbox rejected arbitrary Python execution earlier in the turn.
