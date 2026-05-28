@@ -23341,3 +23341,38 @@ Pass/fail result:
 
 Known issues:
 - Python files were not byte-compiled because the changed content is comment-only and the local sandbox rejected arbitrary Python execution earlier in the turn.
+
+## Phase: Add MPFR Rgemm FMA Source Variants
+
+Implemented features:
+- Added MPFR Rgemm `*_ROUNDING_FMA.cpp` wrapper sources for variants `03` through `06`, including OpenMP variants.
+- Added matching raw C native `*_FMA.cpp` sources for variants `03` through `06`, including OpenMP variants.
+- Updated MPFR Rgemm CMake target generation so `ROUNDING_FMA` sources produce `ROUNDING_FMA` and `ROUNDING_PRECISION_FMA` targets.
+- Updated the MPFR benchmark runner target matrix so Rgemm variants `03` through `06` include the new C native FMA and wrapper FMA targets.
+- Updated `benchmarks/mpfr/03_Rgemm/README.md` with the new suffix taxonomy, C native equivalence table, and current objdump hotpath excerpts showing `mpfr_fma`.
+- Left GMP Rgemm README unchanged because this phase only changes MPFR FMA source shapes and GMP `mpf_t` has no fused multiply-add API counterpart.
+
+Missing features:
+- No full MPFR Rgemm timing sweep was collected for the new FMA target matrix.
+
+Tests added:
+- No unit tests. This phase adds benchmark variants and benchmark documentation.
+
+Exact commands run:
+- `cmake --build build_bench_release -j --target Rgemm_mpfr_C_native_03_FMA Rgemm_mpfr_C_native_06_FMA Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA`
+- `bash -n benchmarks/common/run_mpfr_benchmarks.sh`
+- `build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_03_FMA 8 8 8 512`
+- `build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA 8 8 8 512`
+- `build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA 8 8 8 512`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/03_Rgemm/<representative binary>`
+- `git diff --check`
+
+Pass/fail result:
+- MPFR Rgemm representative target build: PASS.
+- MPFR benchmark runner shell syntax check: PASS.
+- MPFR Rgemm FMA smoke runs: PASS, all checked variants reported `Result OK`.
+- Whitespace check: PASS.
+
+Known issues:
+- Disassembly addresses and TLS offsets are build-specific and are included only as local context for the current `build_bench_release` binaries.
+- The untracked partial `benchmarks/gmp/03_Rgemm/results_raw/` directory is unrelated to this phase and was not staged.

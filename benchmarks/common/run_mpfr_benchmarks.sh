@@ -219,14 +219,26 @@ run_variants() {
                 "Rgemm_mpfr_C_native_${variant}"
                 "Rgemm_mpfr_C_native_openmp_${variant}"
                 "Rgemm_mpfr_kernel_${variant}_mkII"
+                "Rgemm_mpfr_kernel_${variant}_mkII_PRECISION"
                 "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING"
-                "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING_FIXED_PRECISION_FASTPATH"
-                "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA"
+                "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING_PRECISION"
                 "Rgemm_mpfr_kernel_openmp_${variant}_mkII"
+                "Rgemm_mpfr_kernel_openmp_${variant}_mkII_PRECISION"
                 "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING"
-                "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING_FIXED_PRECISION_FASTPATH"
-                "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA"
+                "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING_PRECISION"
             )
+            case "${variant}" in
+                03 | 04 | 05 | 06)
+                    executables+=(
+                        "Rgemm_mpfr_C_native_${variant}_FMA"
+                        "Rgemm_mpfr_C_native_openmp_${variant}_FMA"
+                        "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING_FMA"
+                        "Rgemm_mpfr_kernel_${variant}_mkII_ROUNDING_PRECISION_FMA"
+                        "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING_FMA"
+                        "Rgemm_mpfr_kernel_openmp_${variant}_mkII_ROUNDING_PRECISION_FMA"
+                    )
+                    ;;
+            esac
         done
         ;;
     esac

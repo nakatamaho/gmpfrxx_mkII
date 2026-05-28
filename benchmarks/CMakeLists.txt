@@ -218,6 +218,45 @@ function(add_mpfr_rgemv_variant_family subdir base)
     add_mpfr_rgemv_fma_capture_variants(${subdir} ${base}_ROUNDING_FMA_CAPTURE.cpp ${base})
 endfunction()
 
+function(add_mpfr_rgemm_cpp_target subdir source target)
+    add_executable(${target} "${subdir}/${source}")
+    configure_eager_benchmark(${target} ${subdir})
+    target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
+    if(target MATCHES "PRECISION")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_FAST_FIXED_PREC)
+    endif()
+    if(target MATCHES "_FMA$")
+        target_compile_definitions(${target} PRIVATE
+            GMPFRXX_MKII_ENABLE_FMA)
+    endif()
+endfunction()
+
+function(add_mpfr_rgemm_base_variants subdir source base)
+    add_mpfr_rgemm_cpp_target(${subdir} ${source} ${base}_mkII)
+    add_mpfr_rgemm_cpp_target(${subdir} ${source} ${base}_mkII_PRECISION)
+endfunction()
+
+function(add_mpfr_rgemm_rounding_variants subdir source base)
+    add_mpfr_rgemm_cpp_target(${subdir} ${source} ${base}_mkII_ROUNDING)
+    add_mpfr_rgemm_cpp_target(${subdir} ${source} ${base}_mkII_ROUNDING_PRECISION)
+endfunction()
+
+function(add_mpfr_rgemm_fma_variants subdir source base)
+    add_mpfr_rgemm_cpp_target(${subdir} ${source} ${base}_mkII_ROUNDING_FMA)
+    add_mpfr_rgemm_cpp_target(${subdir} ${source} ${base}_mkII_ROUNDING_PRECISION_FMA)
+endfunction()
+
+function(add_mpfr_rgemm_variant_family subdir base)
+    add_mpfr_rgemm_base_variants(${subdir} ${base}.cpp ${base})
+    add_mpfr_rgemm_rounding_variants(${subdir} ${base}_ROUNDING.cpp ${base})
+endfunction()
+
+function(add_mpfr_rgemm_fma_variant_family subdir base)
+    add_mpfr_rgemm_variant_family(${subdir} ${base})
+    add_mpfr_rgemm_fma_variants(${subdir} ${base}_ROUNDING_FMA.cpp ${base})
+endfunction()
+
 function(add_mpfr_native_benchmark subdir source target)
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
@@ -403,10 +442,23 @@ foreach(variant 01 02 03 04 05 06)
         Rgemm_mpfr_C_native_${variant})
     add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_openmp_${variant}.cpp
         Rgemm_mpfr_C_native_openmp_${variant})
-    add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_${variant}.cpp
-        Rgemm_mpfr_kernel_${variant})
-    add_mpfr_kernel_variants(mpfr/03_Rgemm Rgemm_mpfr_kernel_openmp_${variant}.cpp
-        Rgemm_mpfr_kernel_openmp_${variant})
+endforeach()
+
+foreach(variant 03 04 05 06)
+    add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_${variant}_FMA.cpp
+        Rgemm_mpfr_C_native_${variant}_FMA)
+    add_mpfr_native_benchmark(mpfr/03_Rgemm Rgemm_mpfr_C_native_openmp_${variant}_FMA.cpp
+        Rgemm_mpfr_C_native_openmp_${variant}_FMA)
+endforeach()
+
+foreach(variant 01 02)
+    add_mpfr_rgemm_variant_family(mpfr/03_Rgemm Rgemm_mpfr_kernel_${variant})
+    add_mpfr_rgemm_variant_family(mpfr/03_Rgemm Rgemm_mpfr_kernel_openmp_${variant})
+endforeach()
+
+foreach(variant 03 04 05 06)
+    add_mpfr_rgemm_fma_variant_family(mpfr/03_Rgemm Rgemm_mpfr_kernel_${variant})
+    add_mpfr_rgemm_fma_variant_family(mpfr/03_Rgemm Rgemm_mpfr_kernel_openmp_${variant})
 endforeach()
 
 add_native_benchmark(gmp/01_Raxpy Raxpy_gmp_C_native_01.cpp

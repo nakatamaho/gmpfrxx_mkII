@@ -50,7 +50,9 @@ From the repository root:
 ```bash
 cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release
 cmake --build build_bench_release -j --target Rgemm_mpfr_C_native_03
-cmake --build build_bench_release -j --target Rgemm_mpfr_kernel_03_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA
+cmake --build build_bench_release -j --target Rgemm_mpfr_C_native_03_FMA
+cmake --build build_bench_release -j --target Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA
+cmake --build build_bench_release -j --target Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA
 ```
 
 Executables are written under:
@@ -68,7 +70,7 @@ Individual executables take:
 Example:
 
 ```bash
-build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA 128 128 128 512
+build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA 128 128 128 512
 ```
 
 ## Benchmark Parameters
@@ -104,9 +106,11 @@ Wrapper optimization suffixes are generated for every numbered source shape:
 | Suffix | Kind | Meaning |
 |--------|------|---------|
 | `mkII` | baseline | Ordinary wrapper source with default wrapper rounding lookup behavior. |
+| `mkII_PRECISION` | build modifier on baseline source | Builds the ordinary wrapper source with `GMPFRXX_MKII_FAST_FIXED_PREC`. |
 | `mkII_ROUNDING` | source modifier | Uses `mpfrxx::with_rounding(..., rounding)` after capturing rounding outside the loop. |
-| `mkII_ROUNDING_FIXED_PRECISION_FASTPATH` | build modifier on `ROUNDING` source | Adds `GMPFRXX_MKII_FAST_FIXED_PREC` to the cached-rounding source. |
-| `mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA` | build modifier on `ROUNDING` source | Adds fixed precision and `GMPFRXX_MKII_ENABLE_FMA`; this only emits `mpfr_fma` when the source expression shape is FMA-capturable. |
+| `mkII_ROUNDING_PRECISION` | build modifier on `ROUNDING` source | Adds `GMPFRXX_MKII_FAST_FIXED_PREC` to the cached-rounding split multiply/add source. |
+| `mkII_ROUNDING_FMA` | source + build modifier | Uses a `*_ROUNDING_FMA.cpp` source that spells the update as `C += scaled * A`, built with `GMPFRXX_MKII_ENABLE_FMA`. |
+| `mkII_ROUNDING_PRECISION_FMA` | source + build modifier | Adds fixed precision to the FMA-capturable rounding source. |
 
 ## C Native Equivalent Kernels
 
@@ -117,15 +121,19 @@ based on source shape and emitted MPFR calls.
 |-----------------|--------------------|-------|
 | `Rgemm_mpfr_C_native_01` | `Rgemm_mpfr_kernel_01_mkII*` | Same row-dot source shape; wrapper expression handling can still affect temporary construction and rounding lookup. |
 | `Rgemm_mpfr_C_native_02` | `Rgemm_mpfr_kernel_02_mkII*` | Same rank-1 traversal. |
-| `Rgemm_mpfr_C_native_03` | `Rgemm_mpfr_kernel_03_mkII_ROUNDING_FIXED_PRECISION_FASTPATH*` | Closest exact hot-loop match: reusable `temp`/`templ`, cached rounding, and split `mpfr_mul` + `mpfr_add`. |
-| `Rgemm_mpfr_C_native_04` | `Rgemm_mpfr_kernel_04_mkII*` | Same 4x4 accumulator shape. |
-| `Rgemm_mpfr_C_native_05` | `Rgemm_mpfr_kernel_05_mkII*` | Same 4-column panel shape. |
-| `Rgemm_mpfr_C_native_06` | `Rgemm_mpfr_kernel_06_mkII*` | Same row-blocked 4-column panel shape. |
+| `Rgemm_mpfr_C_native_03` | `Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION` | Reusable `temp`/`templ`, cached rounding, and split `mpfr_mul` + `mpfr_add`. |
+| `Rgemm_mpfr_C_native_03_FMA` | `Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA` | Reusable `temp`, direct `C += temp * A` source, and `mpfr_fma` in the hot loop. |
+| `Rgemm_mpfr_C_native_04` | `Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION` | Same 4x4 accumulator shape with split multiply/add. |
+| `Rgemm_mpfr_C_native_04_FMA` | `Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION_FMA` | Same 4x4 accumulator shape with direct accumulator FMA. |
+| `Rgemm_mpfr_C_native_05` | `Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION` | Same 4-column panel shape with split multiply/add. |
+| `Rgemm_mpfr_C_native_05_FMA` | `Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION_FMA` | Same 4-column panel shape with direct `C += scaled_b * A` FMA. |
+| `Rgemm_mpfr_C_native_06` | `Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION` | Same row-blocked 4-column panel shape with split multiply/add. |
+| `Rgemm_mpfr_C_native_06_FMA` | `Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION_FMA` | Same row-blocked 4-column panel shape with direct `C += scaled_b * A` FMA. |
 
-The `FMA` suffix is not enough by itself to guarantee `mpfr_fma`. Variant `03`
-spells the update as reusable `templ *= A; C += templ`, so the FMA-enabled
-target remains a split multiply/add hot loop. A source shape must expose
-`a += b * c` for the expression-template FMA path to capture it.
+The `FMA` suffix is only attached to `*_ROUNDING_FMA.cpp` sources. Those
+sources intentionally expose `C += scaled * A` or `acc += scaled * A`, so the
+`GMPFRXX_MKII_ENABLE_FMA` build can lower the wrapper expression to `mpfr_fma`.
+The ordinary `*_ROUNDING.cpp` sources remain split multiply/add baselines.
 
 ## Recorded Run
 
@@ -154,8 +162,12 @@ call sequence inside the loops.
 |--------|-------------------------------|-----------------------------------------------|----------------|
 | `Rgemm_mpfr_C_native_03` | `mpfr_set4`, `mpfr_mul`, `mpfr_add` | No; `mpfr_get_default_rounding_mode` is outside the loop. | Raw reusable-object baseline. |
 | `Rgemm_mpfr_kernel_03_mkII` | `mpfr_get_default_rounding_mode`, TLS guard, `mpfr_set4`, `mpfr_mul`, `mpfr_add` | Yes | Baseline wrapper does not match the cached-rounding C native hot loop. |
-| `Rgemm_mpfr_kernel_03_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA` | `mpfr_set4`, `mpfr_mul`, `mpfr_add` | No inner-loop rounding lookup | Closest wrapper match for C native `03`; `FMA` suffix does not change this reusable-temp source shape into `mpfr_fma`. |
-| `Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA` | panel `mpfr_set4` / `mpfr_mul`, row update `mpfr_set4` / `mpfr_mul` / `mpfr_add` | No inner-loop rounding lookup | OpenMP outlined panel loop carries cached rounding through the worker function. |
+| `Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION` | `mpfr_set4`, `mpfr_mul`, `mpfr_add` | No inner-loop rounding lookup | Closest split multiply/add wrapper match for C native `03`. |
+| `Rgemm_mpfr_C_native_03_FMA` | `mpfr_fma` | No; `mpfr_get_default_rounding_mode` is outside the loop. | Raw FMA baseline for variant `03`. |
+| `Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA` | `mpfr_fma` | No inner-loop rounding lookup | FMA source variant for C native `03_FMA`; verified to call `mpfr_fma`. |
+| `Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION` | panel `mpfr_set4` / `mpfr_mul`, row update `mpfr_set4` / `mpfr_mul` / `mpfr_add` | No inner-loop rounding lookup | OpenMP outlined panel loop carries cached rounding through the worker function. |
+| `Rgemm_mpfr_C_native_06_FMA` | row update `mpfr_fma` | No; `mpfr_get_default_rounding_mode` is outside the loop. | Raw FMA baseline for the row-blocked 4-column panel. |
+| `Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA` | row update `mpfr_fma` | No inner-loop rounding lookup | OpenMP FMA panel loop; verified to call `mpfr_fma`. |
 
 ### `Rgemm_mpfr_C_native_03`
 
@@ -200,6 +212,30 @@ before the matrix loops and passes the cached `mpfr_rnd_t` to each MPFR call.
 
 This is the C native target that wrapper `03` should be compared against:
 cached rounding plus reusable `temp`/`templ` objects.
+
+### `Rgemm_mpfr_C_native_03_FMA`
+
+The raw C native FMA variant keeps the same reusable `temp = alpha * B`
+precompute, but updates `C` with one explicit `mpfr_fma` call.
+
+```asm
+2eb8: mov    0x30(%rsp),%r14
+2ebd: shl    $0x5,%rdx
+2ec1: lea    (%rax,%rdx,1),%r12
+2ed0: mov    %r14,%rcx
+2ed3: mov    %r12,%rdx
+2ed6: mov    %r14,%rdi
+2ed9: mov    %r15d,%r8d
+2edc: mov    %rbx,%rsi
+2edf: add    $0x1,%r13
+2ee3: add    $0x20,%r14
+2ee7: add    $0x20,%r12
+2eeb: call   mpfr_fma@plt
+2ef0: cmp    %r13,%rbp
+2ef3: jne    2ed0 <_Rgemm+0x1d0>
+```
+
+This is the raw FMA reference for `Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA`.
 
 ### `Rgemm_mpfr_kernel_03_mkII`
 
@@ -246,9 +282,9 @@ the wrapper per-thread MPFR default-state initialization flag. The offset is
 DSO/build specific. Its presence in this excerpt means the vanilla target is
 not the same hot-loop class as the C native cached-rounding baseline.
 
-### `Rgemm_mpfr_kernel_03_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA`
+### `Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION`
 
-The rounded/fixed/FMA build captures rounding before the matrix loops.
+The rounded/fixed split baseline captures rounding before the matrix loops.
 
 ```asm
 3126: cmpb   $0x0,%fs:0xfffffffffffffff8
@@ -261,72 +297,130 @@ The arithmetic loop then uses the cached `%r12d` rounding value and no longer
 calls `mpfr_get_default_rounding_mode` inside the element update.
 
 ```asm
-32e0: mov    0x30(%rsp),%rsi
-32e5: mov    0x8(%rsp),%rbx
-32ea: mov    %r12d,%edx
-32ed: mov    0x8(%rsi),%ecx
-32f0: mov    %rbx,%rdi
-32f3: call   mpfr_set4@plt
-32f8: mov    0x18(%rsp),%rdx
-32fd: mov    %r12d,%ecx
-3300: mov    %rbx,%rsi
-3303: mov    %rbx,%rdi
-3306: call   mpfr_mul@plt
+32f0: mov    0x30(%rsp),%rsi
+32f5: mov    0x8(%rsp),%rbx
+32fa: mov    %r12d,%edx
+32fd: mov    0x8(%rsi),%ecx
+3300: mov    %rbx,%rdi
+3303: call   mpfr_set4@plt
+3308: mov    0x18(%rsp),%rdx
+330d: mov    %r12d,%ecx
+3310: mov    %rbx,%rsi
+3313: mov    %rbx,%rdi
+3316: call   mpfr_mul@plt
 ...
-3330: mov    0xa8(%rsp),%ecx
-3337: mov    0x8(%rsp),%rsi
-333c: mov    %r12d,%edx
-333f: mov    %rbp,%rdi
-3342: call   mpfr_set4@plt
-3347: mov    %r12d,%ecx
-334a: mov    %r13,%rdx
-334d: mov    %rbp,%rsi
-3350: mov    %rbp,%rdi
-3353: call   mpfr_mul@plt
-3358: mov    %r12d,%ecx
-335b: mov    %rbp,%rdx
-335e: mov    %rbx,%rsi
-3361: mov    %rbx,%rdi
-3364: call   mpfr_add@plt
-3369: add    $0x1,%r14
-336d: add    $0x20,%rbx
-3371: add    $0x20,%r13
-3375: cmp    %r14,%r15
-3378: jne    3330 <_Rgemm+0x270>
+3340: mov    0xa8(%rsp),%ecx
+3347: mov    0x8(%rsp),%rsi
+334c: mov    %r12d,%edx
+334f: mov    %rbp,%rdi
+3352: call   mpfr_set4@plt
+3357: mov    %r12d,%ecx
+335a: mov    %r13,%rdx
+335d: mov    %rbp,%rsi
+3360: mov    %rbp,%rdi
+3363: call   mpfr_mul@plt
+3368: mov    %r12d,%ecx
+336b: mov    %rbp,%rdx
+336e: mov    %rbx,%rsi
+3371: mov    %rbx,%rdi
+3374: call   mpfr_add@plt
+3379: add    $0x1,%r14
+337d: add    $0x20,%rbx
+3381: add    $0x20,%r13
+3385: cmp    %r14,%r15
+3388: jne    3340 <_Rgemm+0x270>
 ```
 
 This is the closest wrapper hot-loop match to `Rgemm_mpfr_C_native_03`.
-Although the target has an `FMA` suffix, variant `03` is a split reusable-temp
-source shape, so the emitted arithmetic remains `mpfr_mul` plus `mpfr_add`.
+The source keeps an explicit `templ` object, so the emitted arithmetic is
+`mpfr_set4`, `mpfr_mul`, and `mpfr_add`.
 
-### `Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_FIXED_PRECISION_FASTPATH_FMA`
+### `Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA`
 
-The OpenMP row-blocked panel variant passes cached rounding into the worker
-function. The panel scaling loop below uses that value directly.
+The `ROUNDING_FMA` source removes the product temporary from the `C` update and
+spells the hot update as:
+
+```cpp
+c_rounding += temp * A[i + l * lda];
+```
+
+Built with `GMPFRXX_MKII_ENABLE_FMA`, that source lowers to `mpfr_fma` in the
+element update loop.
 
 ```asm
-3abf: mov    %r12,%rdi
-3ac2: mov    0x8(%r15),%ecx
-3ac6: mov    %r13d,%edx
-3ac9: mov    %r15,%rsi
-3acc: shl    $0x5,%rdi
-3ad0: add    $0x1,%r12
-3ad4: lea    (%r14,%rdi,1),%rbp
-3ad8: mov    %rbp,%rdi
-3adb: call   mpfr_set4@plt
-3ae0: mov    %rbx,%rdx
-3ae3: mov    %r13d,%ecx
-3ae6: mov    %rbp,%rsi
-3ae9: mov    %rbp,%rdi
-3aec: call   mpfr_mul@plt
-3af1: add    0x8(%rsp),%rbx
-3af6: cmp    %r12,(%rsp)
-3afa: jg     3abf <...+0x59f>
+322b: shl    $0x5,%rdx
+322f: lea    (%rax,%rdx,1),%r15
+3240: mov    %ebp,%r8d
+3243: mov    %r14,%rcx
+3246: mov    %r15,%rdx
+3249: mov    %rbx,%rsi
+324c: mov    %r14,%rdi
+324f: call   mpfr_fma@plt
+3254: add    $0x1,%r13
+3258: add    $0x20,%r14
+325c: add    $0x20,%r15
+3260: cmp    %r13,%r12
+3263: jne    3240 <_Rgemm+0x210>
+```
+
+This is the wrapper FMA counterpart of `Rgemm_mpfr_C_native_03_FMA`.
+
+### `Rgemm_mpfr_C_native_06_FMA`
+
+The raw row-blocked 4-column panel FMA kernel calls `mpfr_fma` directly for
+the row update:
+
+```cpp
+mpfr_fma(C[i + (j0 + jj) * ldc], scratch.scaled_b[jj],
+         a, C[i + (j0 + jj) * ldc], rnd);
+```
+
+The emitted hot loop is one MPFR fused multiply-add call per `C` element update.
+
+```asm
+3020: mov    0x28(%rsp),%r14
+3025: xor    %ebx,%ebx
+3027: mov    %rbx,%rsi
+302a: mov    0xc(%rsp),%r8d
+302f: mov    %r14,%rcx
+3032: mov    %r14,%rdi
+3035: shl    $0x5,%rsi
+3039: mov    %r15,%rdx
+303c: add    $0x1,%rbx
+3040: add    %r12,%rsi
+3043: call   mpfr_fma@plt
+3048: add    0x30(%rsp),%r14
+304d: cmp    %r13,%rbx
+3050: jl     3027 <_Rgemm+0x347>
+```
+
+### `Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA`
+
+The OpenMP row-blocked panel variant passes cached rounding into the worker
+function. The `ROUNDING_FMA` source spells the row update as:
+
+```cpp
+c_rounding += scratch.scaled_b[jj] * a;
+```
+
+The outlined OpenMP worker lowers that row update to `mpfr_fma`.
+
+```asm
+3a18: mov    0x10(%rsp),%r8d
+3a1d: mov    %r14,%rcx
+3a20: mov    %r14,%rdi
+3a23: shl    $0x5,%rsi
+3a27: mov    %rbx,%rdx
+3a2a: add    $0x1,%rbp
+3a2e: add    %r15,%rsi
+3a31: call   mpfr_fma@plt
+3a36: add    0x18(%rsp),%r14
+3a3b: cmp    %rbp,0x8(%rsp)
+3a40: jg     3a15 <...+0x575>
 ```
 
 The representative OpenMP hot loop has no `mpfr_get_default_rounding_mode`
-call. As with serial variant `03`, the `FMA` suffix does not force FMA for this
-panel source shape.
+call and now matches the raw C native FMA row-update class.
 
 ## Lessons Learned
 
@@ -334,11 +428,11 @@ For MPFR Rgemm, C native equivalence requires both source-shape alignment and
 rounding-policy alignment. Variant `03` demonstrates the distinction clearly:
 the vanilla wrapper has the same reusable temporary source shape, but its
 disassembly still contains loop-visible rounding/default-state work. The
-`ROUNDING_FIXED_PRECISION_FASTPATH` target removes that work and reaches the
+`ROUNDING_PRECISION` target removes that work and reaches the
 same split `mpfr_mul` / `mpfr_add` call class as the raw C native baseline.
 
-The `FMA` suffix is a build capability, not a promise that every source shape
-will emit `mpfr_fma`. Rgemm variants `03` and `06` use explicit reusable
-temporaries, so they remain split multiply/add loops even in the FMA-enabled
-build. FMA needs a source expression that exposes the multiply-add as one
-capturable expression.
+The FMA path is source-shape dependent. The ordinary `ROUNDING` sources remain
+split multiply/add baselines, while the added `ROUNDING_FMA` sources expose the
+update as one multiply-add expression and the `ROUNDING_PRECISION_FMA` targets
+emit `mpfr_fma`. GMP Rgemm has no corresponding update in this phase because
+GMP `mpf_t` does not provide an `mpfr_fma`-style fused operation.
