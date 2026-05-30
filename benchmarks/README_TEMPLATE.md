@@ -160,6 +160,23 @@ plots, and correctness result.
 Document the exact command used to regenerate plots from the committed raw log
 or summary CSV.
 
+For matrix-size or vector-size sweeps, use line plots unless the benchmark has
+a documented reason to do otherwise. The horizontal axis should be the problem
+size, for example `N` or `N = M = K`, and the vertical axis should be the
+primary performance metric, for example `MFLOPS`. For Rgemm-style reports,
+plot each kernel target as a separate line with:
+
+```text
+x-axis: N = M = K
+y-axis: Max MFLOPS
+```
+
+Generate separate plots for serial and OpenMP target sets, with separate
+legends for each plot. Do not combine serial and OpenMP targets into one legend
+for Rgemm-style kernel comparison plots. Do not use a heatmap for ordinary
+Rgemm kernel comparison plots; it hides the scaling curve that the benchmark is
+intended to show.
+
 Use the backend-standard color palette so plots remain visually comparable
 across benchmark families.
 
