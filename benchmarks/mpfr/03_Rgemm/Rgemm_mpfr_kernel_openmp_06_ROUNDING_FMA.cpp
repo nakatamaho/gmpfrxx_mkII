@@ -60,11 +60,7 @@ void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_b
         for (int64_t jj = 0; jj < jb; ++jj) {
             {
             auto scaled_b_rounding = mpfrxx::with_rounding(scratch.scaled_b[jj], rounding);
-            scaled_b_rounding = alpha;
-        }
-            {
-            auto scaled_b_rounding = mpfrxx::with_rounding(scratch.scaled_b[jj], rounding);
-            scaled_b_rounding *= B[l + (j0 + jj) * ldb];
+            scaled_b_rounding = alpha * B[l + (j0 + jj) * ldb];
         }
         }
 
