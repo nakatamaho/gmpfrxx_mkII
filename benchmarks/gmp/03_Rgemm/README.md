@@ -261,6 +261,18 @@ Artifacts:
 - GMP raw CSV rows: `3937` including header.
 - MPFR raw CSV rows: `6889` including header.
 
+![GMP/MPFR Rgemm backend comparison, 512-bit precision](results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_gmp_mpfr_backend_comparison_p512.png)
+
+Regenerate the plot with:
+
+```bash
+benchmarks/plot_rgemm_backend_comparison.py \
+    --gmp-summary benchmarks/gmp/03_Rgemm/results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/summary_rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433.csv \
+    --mpfr-summary benchmarks/mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/summary_rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433.csv \
+    --output benchmarks/gmp/03_Rgemm/results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_gmp_mpfr_backend_comparison_p512.png \
+    --title "GMP vs MPFR Rgemm, 512-bit precision"
+```
+
 The important result is that GMP and MPFR remain different performance classes
 even after aligning source shapes. The gap is visible in serial C native
 kernels and remains visible in the best OpenMP kernels.
