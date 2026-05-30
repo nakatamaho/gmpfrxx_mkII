@@ -261,8 +261,8 @@ Artifacts:
 - GMP raw CSV rows: `3937` including header.
 - MPFR raw CSV rows: `6889` including header.
 
-The following heatmaps compare all GMP Rgemm targets within this backend.
-Each cell is the max MFLOPS for one target at one matrix size.
+The following line plots compare all GMP Rgemm targets within this backend.
+The horizontal axis is the square matrix size `N = M = K`, and the vertical axis is max MFLOPS.
 
 ![GMP Rgemm serial kernel comparison, 512-bit precision](results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_gmp_kernel_comparison_p512_serial.png)
 

@@ -99,32 +99,82 @@ def plot_mode(rows, backend, mode, output, title):
     sizes = sorted({row["size"] for row in selected})
     variants = sorted({row["variant"] for row in selected}, key=variant_sort_key)
     values = {(row["variant"], row["size"]): row["max_mflops"] for row in selected}
-    matrix = [[values[(variant, size)] for size in sizes] for variant in variants]
 
-    fig_height = max(8.0, 0.27 * len(variants) + 2.7)
-    fig_width = max(15.0, 0.34 * len(sizes) + 6.5)
+    fig_height = 10.0 if len(variants) <= 28 else 12.0
+    fig_width = 18.0
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
-    image = ax.imshow(matrix, aspect="auto", interpolation="nearest", cmap="viridis")
+    markers = ["o", "s", "^", "D", "v", "P", "X", "*"]
+
+    for variant in variants:
+        points = [(size, values[(variant, size)]) for size in sizes]
+        xs = [point[0] for point in points]
+        ys = [point[1] for point in points]
+        ax.plot(
+            xs,
+            ys,
+            label=display_name(variant, backend),
+            color=variant_color(variant),
+            linestyle=variant_linestyle(variant),
+            marker=markers[variant_sort_key(variant)[0] % len(markers)],
+            markersize=3.0,
+            markevery=3,
+            linewidth=1.25,
+            alpha=0.84,
+        )
 
     ax.set_title(title, fontsize=14, fontweight="bold")
     ax.set_xlabel("Square matrix size N = M = K")
-    ax.set_ylabel(f"{backend.upper()} {mode} target")
-    ax.set_xticks(range(len(sizes)))
-    ax.set_xticklabels([str(size) for size in sizes], rotation=60, ha="right", fontsize=8)
-    ax.set_yticks(range(len(variants)))
-    ax.set_yticklabels([display_name(variant, backend) for variant in variants], fontsize=8)
+    ax.set_ylabel("Max MFLOPS")
+    ax.set_xlim(0, max(sizes) * 1.02)
+    ax.set_ylim(0, max(values.values()) * 1.08)
+    ax.grid(axis="y", linestyle=":", alpha=0.45)
+    ax.grid(axis="x", linestyle=":", alpha=0.18)
 
     for size in [128, 256, 512, 1024]:
         if size in sizes:
-            x = sizes.index(size)
-            ax.axvline(x, color="white", linewidth=0.8, alpha=0.8)
+            ax.axvline(size, color="#bbbbbb", linewidth=0.8, alpha=0.85, zorder=0)
 
-    colorbar = fig.colorbar(image, ax=ax, pad=0.01)
-    colorbar.set_label("Max MFLOPS", rotation=90)
+    legend_fontsize = 6.4 if len(variants) > 30 else 7.2
+    ax.legend(
+        loc="upper left",
+        bbox_to_anchor=(1.01, 1.0),
+        borderaxespad=0.0,
+        frameon=False,
+        fontsize=legend_fontsize,
+        ncol=1,
+    )
 
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 0.72, 1.0))
     fig.savefig(output, dpi=180)
     plt.close(fig)
+
+
+def variant_color(variant):
+    if "C_native" in variant:
+        return "#555555" if "_FMA" not in variant else "#111111"
+    if "_orig" in variant:
+        return "#2ca02c"
+    if "ROUNDING_PRECISION_FMA" in variant:
+        return "#17becf"
+    if "ROUNDING_FMA" in variant:
+        return "#9467bd"
+    if "ROUNDING_PRECISION" in variant:
+        return "#8c564b"
+    if "ROUNDING" in variant:
+        return "#ff7f0e"
+    if "FIXED_PRECISION_FASTPATH" in variant or "PRECISION" in variant:
+        return "#d62728"
+    return "#4c78a8"
+
+
+def variant_linestyle(variant):
+    if "C_native" in variant and "_FMA" in variant:
+        return "--"
+    if "ROUNDING" in variant:
+        return "-"
+    if "FIXED_PRECISION_FASTPATH" in variant or "PRECISION" in variant:
+        return "-."
+    return "-"
 
 
 def main():
