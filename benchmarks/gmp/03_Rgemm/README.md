@@ -235,6 +235,67 @@ register. The `05` and `06` panel forms are better than `04`, but at 1024-bit
 they mostly settle in the 400-460 MFLOPS range for `gmpxx_mkII`, well below the
 roughly 700-730 MFLOPS plateau reached by `kernel_openmp_02_mkII`.
 
+## Recorded Clean GMP/MPFR Pow2/37 Sweep, 512-bit Precision
+
+A clean cross-backend Rgemm sweep was collected with the current target matrix:
+
+```bash
+benchmarks/run_rgemm_pow2_37.sh build_bench_release 512 1024 128 5 1 both
+```
+
+The size set combines powers of two and multiples of 37 up to 1024:
+
+```text
+1, 2, 4, 8, 16, 32, 37, 64, 74, 111, 128, 148, 185, 222,
+256, 259, 296, 333, 370, 407, 444, 481, 512, 518, 555, 592,
+629, 666, 703, 740, 777, 814, 851, 888, 925, 962, 999, 1024
+```
+
+Sizes `N <= 128` use `repeat=5`; larger sizes use `repeat=1`. All recorded
+GMP and MPFR samples report `Result OK`.
+
+Artifacts:
+
+- GMP raw data: [results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/](results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/)
+- MPFR raw data: [../../mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/](../../mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/)
+- GMP raw CSV rows: `3937` including header.
+- MPFR raw CSV rows: `6889` including header.
+
+The important result is that GMP and MPFR remain different performance classes
+even after aligning source shapes. The gap is visible in serial C native
+kernels and remains visible in the best OpenMP kernels.
+
+| Size | Metric | GMP best MFLOPS | MPFR best MFLOPS | GMP/MPFR | GMP winner | MPFR winner |
+|------|--------|----------------:|-----------------:|---------:|------------|-------------|
+| `128` | serial best | `31.330` | `24.025` | `1.30x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `128` | OpenMP best | `462.965` | `397.297` | `1.17x` | `Rgemm_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | `Rgemm_mpfr_C_native_openmp_02` |
+| `256` | serial best | `30.961` | `23.785` | `1.30x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `256` | OpenMP best | `765.795` | `682.765` | `1.12x` | `Rgemm_gmp_C_native_openmp_06` | `Rgemm_mpfr_C_native_openmp_02` |
+| `512` | serial best | `31.047` | `24.015` | `1.29x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `512` | OpenMP best | `871.075` | `698.144` | `1.25x` | `Rgemm_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | `Rgemm_mpfr_C_native_openmp_02` |
+| `1024` | serial best | `31.187` | `24.058` | `1.30x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `1024` | OpenMP best | `872.742` | `692.430` | `1.26x` | `Rgemm_gmp_C_native_openmp_05` | `Rgemm_mpfr_C_native_openmp_02` |
+
+At `N=1024`, the implementation-specific winners are:
+
+| Backend | C native best | Upstream wrapper best | mkII wrapper best |
+|---------|---------------|-----------------------|-------------------|
+| GMP | `Rgemm_gmp_C_native_openmp_05`, `872.742` MFLOPS | `Rgemm_gmp_kernel_openmp_03_orig`, `850.865` MFLOPS | `Rgemm_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH`, `847.307` MFLOPS |
+| MPFR | `Rgemm_mpfr_C_native_openmp_02`, `692.430` MFLOPS | not applicable | `Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_PRECISION_FMA`, `672.452` MFLOPS |
+
+The `N=1024` wrapper comparison is close within each backend: GMP mkII reaches
+about `97.1%` of the best GMP C native result, and MPFR mkII reaches about
+`97.1%` of the best MPFR C native result. The cross-backend difference is
+therefore not primarily a wrapper issue in this run. It is already present in
+the best serial C native kernels (`31.187` versus `24.058` MFLOPS) and then
+persists after OpenMP scaling.
+
+The winning source shapes also differ. GMP large-size winners are panel or
+rank-1 variants (`05`, `02`, and `03` depending on implementation), while MPFR
+raw C native is dominated by `02`, the rank-1 column-major update. MPFR
+`ROUNDING`/`FMA` wrapper variants can match the corresponding C native hot-loop
+class, but they do not remove MPFR's backend cost relative to GMP `mpf_t`.
+
 ## Current Variant Shapes
 
 The current GMP Rgemm source matrix has raw C native, upstream `gmpxx.h`
