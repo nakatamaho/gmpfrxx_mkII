@@ -162,16 +162,21 @@ Artifacts:
 - MPFR raw CSV rows: `6889` including header.
 - GMP raw CSV rows: `3937` including header.
 
-![GMP/MPFR Rgemm backend comparison, 512-bit precision](results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_gmp_mpfr_backend_comparison_p512.png)
+The following heatmaps compare all MPFR Rgemm targets within this backend.
+Each cell is the max MFLOPS for one target at one matrix size.
 
-Regenerate the plot with:
+![MPFR Rgemm serial kernel comparison, 512-bit precision](results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_mpfr_kernel_comparison_p512_serial.png)
+
+![MPFR Rgemm OpenMP kernel comparison, 512-bit precision](results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_mpfr_kernel_comparison_p512_openmp.png)
+
+Regenerate the MPFR kernel-comparison plots with:
 
 ```bash
-benchmarks/plot_rgemm_backend_comparison.py \
-    --gmp-summary benchmarks/gmp/03_Rgemm/results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/summary_rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433.csv \
-    --mpfr-summary benchmarks/mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/summary_rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433.csv \
-    --output benchmarks/mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_gmp_mpfr_backend_comparison_p512.png \
-    --title "GMP vs MPFR Rgemm, 512-bit precision"
+benchmarks/plot_rgemm_kernel_comparison.py \
+    --summary benchmarks/mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/summary_rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433.csv \
+    --backend mpfr \
+    --output-prefix benchmarks/mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_mpfr_kernel_comparison_p512 \
+    --title-prefix "MPFR Rgemm 512-bit pow2/37 sweep"
 ```
 
 ## Comparison with GMP Rgemm
