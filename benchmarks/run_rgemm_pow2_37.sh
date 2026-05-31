@@ -42,6 +42,10 @@ export OMP_NUM_THREADS="${OMP_NUM_THREADS:-32}"
 export OMP_PLACES="${OMP_PLACES:-cores}"
 export OMP_PROC_BIND="${OMP_PROC_BIND:-spread}"
 benchmark_command_prefix="${BENCH_COMMAND_PREFIX:-${BENCH_NUMACTL:-}}"
+smoke_enabled="${BENCH_SMOKE:-1}"
+smoke_check_enabled="${BENCH_SMOKE_CHECK:-1}"
+smoke_nocheck_enabled="${BENCH_SMOKE_NOCHECK:-1}"
+smoke_n="${BENCH_SMOKE_N:-13}"
 
 benchmark_dir="${build_dir}/benchmarks"
 if [[ ! -d "${benchmark_dir}" ]]; then
@@ -190,6 +194,60 @@ with open(summary_csv, "w", newline="") as f:
 PY
 }
 
+run_smoke_command() {
+    local mode="$1"
+    local backend="$2"
+    local target="$3"
+    local env_name="$4"
+    shift 4
+    local command=("$@")
+
+    if [[ -n "${benchmark_command_prefix}" ]]; then
+        local prefix=()
+        read -r -a prefix <<<"${benchmark_command_prefix}"
+        command=("${prefix[@]}" "${command[@]}")
+    fi
+    command=(env "${env_name}=${precision}" "${command[@]}")
+
+    echo "SMOKE_${mode} Rgemm ${backend} ${target} ${command[*]}"
+    if "${command[@]}" >/dev/null; then
+        echo "SMOKE_${mode}_OK Rgemm ${backend} ${target}"
+    else
+        echo "SMOKE_${mode}_FAILED Rgemm ${backend} ${target}" >&2
+        return 1
+    fi
+}
+
+run_smoke_backend() {
+    local backend="$1"
+    local subdir="$2"
+    local env_name="$3"
+    shift 3
+    local targets=("$@")
+
+    if [[ "${smoke_enabled}" == "0" ]]; then
+        echo "SMOKE_SKIP Rgemm backend=${backend} BENCH_SMOKE=0"
+        return
+    fi
+
+    echo "SMOKE_BEGIN Rgemm backend=${backend} n=${smoke_n} precision=${precision} targets=${#targets[@]}"
+    for target in "${targets[@]}"; do
+        local exe="${benchmark_dir}/${subdir}/${target}"
+        if [[ ! -x "${exe}" ]]; then
+            echo "Executable not found: ${exe}" >&2
+            exit 1
+        fi
+
+        if [[ "${smoke_nocheck_enabled}" != "0" ]]; then
+            run_smoke_command NOCHECK "${backend}" "${target}" "${env_name}" "${exe}" "${smoke_n}" "${smoke_n}" "${smoke_n}" "${precision}" -nocheck
+        fi
+        if [[ "${smoke_check_enabled}" != "0" ]]; then
+            run_smoke_command CHECK "${backend}" "${target}" "${env_name}" "${exe}" "${smoke_n}" "${smoke_n}" "${smoke_n}" "${precision}"
+        fi
+    done
+    echo "SMOKE_DONE Rgemm backend=${backend}"
+}
+
 run_backend() {
     local backend="$1"
     local subdir="$2"
@@ -217,9 +275,13 @@ run_backend() {
         echo "TARGET_COUNT ${#targets[@]}"
         echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
         echo "DEFAULT_PRECISION_ENV ${env_name}=${precision}"
+        echo "SMOKE_TESTS enabled=${smoke_enabled} check=${smoke_check_enabled} nocheck=${smoke_nocheck_enabled} n=${smoke_n}"
         if [[ -n "${benchmark_command_prefix}" ]]; then
             echo "BENCH_COMMAND_PREFIX ${benchmark_command_prefix}"
         fi
+        echo
+
+        run_smoke_backend "${backend}" "${subdir}" "${env_name}" "${targets[@]}"
         echo
 
         for size in "${sizes[@]}"; do

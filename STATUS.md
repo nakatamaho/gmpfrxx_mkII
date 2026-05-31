@@ -23413,3 +23413,69 @@ Pass/fail result:
 Known issues:
 - Local benchmark executables and objdump on those binaries failed under the sandbox with `bwrap: loopback: Failed RTM_NEWADDR`; representative smoke and objdump commands were rerun outside the sandbox.
 - Some now-unused `scale_c` helper definitions remain in the touched benchmark sources. They are harmless but can be removed in a separate cleanup if desired.
+
+
+## Phase: Add benchmark no-check option
+
+Implemented features:
+- Added optional `-nocheck`, `--nocheck`, and `--no-check` command-line handling to GMP and MPFR benchmark common drivers for 00_Rdot, 01_Raxpy, 02_Rgemv, and 03_Rgemm.
+- Kept default benchmark behavior unchanged when the option is omitted.
+- When no-check mode is enabled, the timed kernel still runs normally and the reference computation, difference norm, and check comparison are skipped.
+- In no-check mode, benchmark executables print `Check skipped.` after the timing result.
+
+Missing features:
+- Benchmark runner scripts still run checked benchmarks by default; this phase only adds executable-level command-line support.
+
+Tests added:
+- No unit tests. This phase changes benchmark driver argument handling.
+
+Exact commands run:
+- `cmake --build build_bench_release -j`
+- `ctest --test-dir build_bench_release --output-on-failure`
+- `git diff --check`
+- Representative no-check smoke runs for GMP/MPFR 00_Rdot, 01_Raxpy, 02_Rgemv, and 03_Rgemm.
+- Representative checked smoke runs for GMP/MPFR 00_Rdot and 03_Rgemm.
+
+Pass/fail result:
+- Full build: PASS.
+- CTest: PASS, 178/178 tests passed.
+- Whitespace check: PASS.
+- Representative no-check smoke runs: PASS; all printed `Check skipped.`.
+- Representative checked smoke runs: PASS.
+
+Known issues:
+- `apply_patch` failed in this environment with a sandbox loopback error, so the mechanical cleanup was applied with `perl -0pi`.
+
+
+## Phase: Add benchmark runner smoke preflight
+
+Implemented features:
+- Added default smoke preflight execution to GMP and MPFR `run_repeat.sh` runners for 00_Rdot, 01_Raxpy, and 02_Rgemv.
+- Added the same smoke preflight to `benchmarks/run_rgemm_pow2_37.sh` for GMP/MPFR 03_Rgemm sweep runs.
+- Each target now runs a small `-nocheck` smoke first and a small checked smoke second before the timed repeat loop.
+- Smoke output uses `SMOKE_*` log lines instead of `COMMAND`/`RUN`, so existing plot parsers do not count smoke runs as benchmark samples.
+- Added environment controls: `BENCH_SMOKE=0`, `BENCH_SMOKE_CHECK=0`, `BENCH_SMOKE_NOCHECK=0`, `BENCH_SMOKE_N`, and `BENCH_SMOKE_M` for matrix runners.
+
+Missing features:
+- The normal timed repeat loops still run checked benchmarks. If committed timing sweeps should use `-nocheck`, the plot parsers need a separate status model for skipped checks.
+
+Tests added:
+- No unit tests. This phase changes benchmark runner shell scripts.
+
+Exact commands run:
+- `bash -n benchmarks/gmp/00_Rdot/run_repeat.sh benchmarks/gmp/01_Raxpy/run_repeat.sh benchmarks/gmp/02_Rgemv/run_repeat.sh benchmarks/mpfr/00_Rdot/run_repeat.sh benchmarks/mpfr/01_Raxpy/run_repeat.sh benchmarks/mpfr/02_Rgemv/run_repeat.sh benchmarks/run_rgemm_pow2_37.sh benchmarks/run_all.sh`
+- `BENCH_SMOKE_N=2 OMP_NUM_THREADS=2 benchmarks/gmp/00_Rdot/run_repeat.sh build_bench_release 2 64 1 /tmp/gmp_rdot_smoke_runner_test`
+- `BENCH_SMOKE_M=2 BENCH_SMOKE_N=2 OMP_NUM_THREADS=2 benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 2 2 64 1 /tmp/mpfr_rgemv_smoke_runner_test`
+- `BENCH_SMOKE_N=1 OMP_NUM_THREADS=2 benchmarks/run_rgemm_pow2_37.sh build_bench_release 64 1 1 1 1 gmp`
+- `git diff --check`
+
+Pass/fail result:
+- Shell syntax checks: PASS.
+- GMP Rdot runner smoke and summary generation: PASS.
+- MPFR Rgemv runner smoke and summary generation: PASS.
+- GMP Rgemm sweep runner smoke and raw/summary CSV generation: PASS.
+- Whitespace check: PASS.
+
+Known issues:
+- Some local runner executions required escalation because the sandbox failed with `bwrap: loopback: Failed RTM_NEWADDR`.
+- Test output under `/tmp` was left outside the repository. The temporary Rgemm `results_raw` directory created in the repository was removed after validation.

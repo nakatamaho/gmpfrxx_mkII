@@ -40,6 +40,11 @@ export OMP_NUM_THREADS="${OMP_NUM_THREADS:-32}"
 export OMP_PLACES="${OMP_PLACES:-cores}"
 export OMP_PROC_BIND="${OMP_PROC_BIND:-spread}"
 benchmark_command_prefix="${BENCH_COMMAND_PREFIX:-${BENCH_NUMACTL:-}}"
+smoke_enabled="${BENCH_SMOKE:-1}"
+smoke_check_enabled="${BENCH_SMOKE_CHECK:-1}"
+smoke_nocheck_enabled="${BENCH_SMOKE_NOCHECK:-1}"
+smoke_m="${BENCH_SMOKE_M:-13}"
+smoke_n="${BENCH_SMOKE_N:-13}"
 
 benchmark_dir="${build_dir}/benchmarks/gmp/02_Rgemv"
 if [[ ! -d "${benchmark_dir}" ]]; then
@@ -80,6 +85,57 @@ done
 for variant in 01 02 03 04 05 06 07; do
     append_cpp_variant_family "Rgemv_gmp_kernel_openmp_${variant}"
 done
+run_smoke_command() {
+    local mode="$1"
+    local exe="$2"
+    shift 2
+    local command=("$@")
+
+    if [[ -n "${benchmark_command_prefix}" ]]; then
+        local prefix=()
+        read -r -a prefix <<<"${benchmark_command_prefix}"
+        command=("${prefix[@]}" "${command[@]}")
+    fi
+    command=(env "GMPXX_DEFAULT_MPF_PRECISION_BITS=${precision}" "${command[@]}")
+
+    echo "SMOKE_${mode} Rgemv ${exe} ${command[*]}"
+    if "${command[@]}" >/dev/null; then
+        echo "SMOKE_${mode}_OK Rgemv ${exe}"
+    else
+        echo "SMOKE_${mode}_FAILED Rgemv ${exe}" >&2
+        return 1
+    fi
+}
+
+run_smoke_one() {
+    local exe="$1"
+    local path="${benchmark_dir}/${exe}"
+    if [[ ! -x "${path}" ]]; then
+        echo "Executable not found: ${path}" >&2
+        exit 1
+    fi
+
+    if [[ "${smoke_nocheck_enabled}" != "0" ]]; then
+        run_smoke_command NOCHECK "${exe}" "${path}" "${smoke_m}" "${smoke_n}" "${precision}" -nocheck
+    fi
+    if [[ "${smoke_check_enabled}" != "0" ]]; then
+        run_smoke_command CHECK "${exe}" "${path}" "${smoke_m}" "${smoke_n}" "${precision}"
+    fi
+}
+
+run_smoke_tests() {
+    if [[ "${smoke_enabled}" == "0" ]]; then
+        echo "SMOKE_SKIP Rgemv BENCH_SMOKE=0"
+        return
+    fi
+
+    echo "SMOKE_BEGIN Rgemv m=${smoke_m} n=${smoke_n} precision=${precision}"
+    for exe in "${executables[@]}"; do
+        run_smoke_one "${exe}"
+    done
+    echo "SMOKE_DONE Rgemv"
+}
+
 run_one() {
     local exe="$1"
     local path="${benchmark_dir}/${exe}"
@@ -114,9 +170,13 @@ run_one() {
     echo "BENCHMARK_PARAMS precision=${precision} rgemv_m=${m} rgemv_n=${n} repeat=${repeat_count}"
     echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
     echo "DEFAULT_PRECISION_ENV GMPXX_DEFAULT_MPF_PRECISION_BITS=${precision}"
+    echo "SMOKE_TESTS enabled=${smoke_enabled} check=${smoke_check_enabled} nocheck=${smoke_nocheck_enabled} m=${smoke_m} n=${smoke_n}"
     if [[ -n "${benchmark_command_prefix}" ]]; then
         echo "BENCH_COMMAND_PREFIX ${benchmark_command_prefix}"
     fi
+    echo
+
+    run_smoke_tests
     echo
 
     for exe in "${executables[@]}"; do
