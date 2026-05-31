@@ -31,6 +31,7 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include <gmp.h>
@@ -106,6 +107,26 @@ inline mp_bitcnt_t class_precision_bits(const mpf_class &value) {
     return mpf_get_prec(value.get_mpf_t());
 }
 
+inline bool is_nocheck_option(const char *arg) noexcept {
+    return std::strcmp(arg, "-nocheck") == 0 || std::strcmp(arg, "--nocheck") == 0 || std::strcmp(arg, "--no-check") == 0;
+}
+
+inline bool parse_nocheck_option(int argc, char **argv, int expected_argc, bool &skip_check) {
+    skip_check = false;
+    if (argc == expected_argc) {
+        return true;
+    }
+    if (argc == expected_argc + 1 && is_nocheck_option(argv[expected_argc])) {
+        skip_check = true;
+        return true;
+    }
+    return false;
+}
+
+inline void print_nocheck_usage(const char *program, const char *args) {
+    std::cerr << "Usage: " << program << " " << args << " [-nocheck]" << std::endl;
+}
+
 using NativeRaxpyKernel = void (*)(int64_t, const mpf_t, mpf_t *, int64_t, mpf_t *, int64_t);
 using ClassRaxpyKernel = void (*)(int64_t, const mpf_class &, mpf_class *, int64_t, mpf_class *, int64_t);
 
@@ -114,8 +135,9 @@ inline int run_native_raxpy_benchmark(int argc, char **argv, NativeRaxpyKernel k
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 3, skip_check)) {
+        print_nocheck_usage(argv[0], "<vector size> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -160,10 +182,14 @@ inline int run_native_raxpy_benchmark(int argc, char **argv, NativeRaxpyKernel k
     kernel(n, alpha, x, 1, y, 1);
     auto end = std::chrono::high_resolution_clock::now();
 
-    Raxpy(n, alpha_class, x_class, 1, y_class, 1);
+    if (!skip_check) {
+        Raxpy(n, alpha_class, x_class, 1, y_class, 1);
+        if (n > 0) {
+            require_mpf_precision_at_least("class_y_reference[0]", class_precision_bits(y_class[0]), requested_prec);
+        }
+    }
     if (n > 0) {
         require_mpf_precision_at_least("raw_y_after[0]", mpf_get_prec(y[0]), requested_prec);
-        require_mpf_precision_at_least("class_y_reference[0]", class_precision_bits(y_class[0]), requested_prec);
     }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
@@ -171,7 +197,11 @@ inline int run_native_raxpy_benchmark(int argc, char **argv, NativeRaxpyKernel k
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, y_class, n));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(y, y_class, n));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpf_vec(x, n);
     clear_mpf_vec(y, n);
@@ -190,8 +220,9 @@ inline int run_class_raxpy_benchmark(int argc, char **argv, ClassRaxpyKernel ker
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 3, skip_check)) {
+        print_nocheck_usage(argv[0], "<vector size> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -239,10 +270,14 @@ inline int run_class_raxpy_benchmark(int argc, char **argv, ClassRaxpyKernel ker
     kernel(n, alpha, x, 1, y, 1);
     auto end = std::chrono::high_resolution_clock::now();
 
-    Raxpy(n, alpha, x, 1, yy, 1);
+    if (!skip_check) {
+        Raxpy(n, alpha, x, 1, yy, 1);
+        if (n > 0) {
+            require_mpf_precision_at_least("class_yy_reference[0]", class_precision_bits(yy[0]), requested_prec);
+        }
+    }
     if (n > 0) {
         require_mpf_precision_at_least("class_y_after[0]", class_precision_bits(y[0]), requested_prec);
-        require_mpf_precision_at_least("class_yy_reference[0]", class_precision_bits(yy[0]), requested_prec);
     }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
@@ -250,7 +285,11 @@ inline int run_class_raxpy_benchmark(int argc, char **argv, ClassRaxpyKernel ker
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, yy, n));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(y, yy, n));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpf_vec(x_raw, n);
     clear_mpf_vec(y_raw, n);

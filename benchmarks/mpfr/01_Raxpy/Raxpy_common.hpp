@@ -32,6 +32,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <new>
 
@@ -97,6 +98,26 @@ inline void require_mpfr_precision_at_least(const char *label, mpfr_prec_t actua
 
 inline mpfr_prec_t class_precision_bits(const mpfr_class &value) {
     return mpfr_get_prec(value.get_mpfr_t());
+}
+
+inline bool is_nocheck_option(const char *arg) noexcept {
+    return std::strcmp(arg, "-nocheck") == 0 || std::strcmp(arg, "--nocheck") == 0 || std::strcmp(arg, "--no-check") == 0;
+}
+
+inline bool parse_nocheck_option(int argc, char **argv, int expected_argc, bool &skip_check) {
+    skip_check = false;
+    if (argc == expected_argc) {
+        return true;
+    }
+    if (argc == expected_argc + 1 && is_nocheck_option(argv[expected_argc])) {
+        skip_check = true;
+        return true;
+    }
+    return false;
+}
+
+inline void print_nocheck_usage(const char *program, const char *args) {
+    std::cerr << "Usage: " << program << " " << args << " [-nocheck]" << std::endl;
 }
 
 class packed_mpfr_vec {
@@ -185,8 +206,9 @@ inline int run_native_raxpy_benchmark(int argc, char **argv,
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 3, skip_check)) {
+        print_nocheck_usage(argv[0], "<vector size> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -235,10 +257,14 @@ inline int run_native_raxpy_benchmark(int argc, char **argv,
     auto end = std::chrono::high_resolution_clock::now();
     benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
-    Raxpy(n, alpha_class, x_class, 1, y_class, 1);
+    if (!skip_check) {
+        Raxpy(n, alpha_class, x_class, 1, y_class, 1);
+        if (n > 0) {
+            require_mpfr_precision_at_least("class_y_reference[0]", class_precision_bits(y_class[0]), requested_prec);
+        }
+    }
     if (n > 0) {
         require_mpfr_precision_at_least("raw_y_after[0]", mpfr_get_prec(y[0]), requested_prec);
-        require_mpfr_precision_at_least("class_y_reference[0]", class_precision_bits(y_class[0]), requested_prec);
     }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
@@ -246,7 +272,11 @@ inline int run_native_raxpy_benchmark(int argc, char **argv,
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, y_class, n));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(y, y_class, n));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpfr_vec(x, n);
     clear_mpfr_vec(y, n);
@@ -266,8 +296,9 @@ inline int run_class_raxpy_benchmark(int argc, char **argv,
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 3, skip_check)) {
+        print_nocheck_usage(argv[0], "<vector size> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -319,10 +350,14 @@ inline int run_class_raxpy_benchmark(int argc, char **argv,
     auto end = std::chrono::high_resolution_clock::now();
     benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
-    Raxpy(n, alpha, x, 1, yy, 1);
+    if (!skip_check) {
+        Raxpy(n, alpha, x, 1, yy, 1);
+        if (n > 0) {
+            require_mpfr_precision_at_least("class_yy_reference[0]", class_precision_bits(yy[0]), requested_prec);
+        }
+    }
     if (n > 0) {
         require_mpfr_precision_at_least("class_y_after[0]", class_precision_bits(y[0]), requested_prec);
-        require_mpfr_precision_at_least("class_yy_reference[0]", class_precision_bits(yy[0]), requested_prec);
     }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
@@ -330,7 +365,11 @@ inline int run_class_raxpy_benchmark(int argc, char **argv,
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, yy, n));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(y, yy, n));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpfr_vec(x_raw, n);
     clear_mpfr_vec(y_raw, n);
@@ -351,8 +390,9 @@ inline int run_packed_native_raxpy_benchmark(int argc, char **argv,
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 3, skip_check)) {
+        print_nocheck_usage(argv[0], "<vector size> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -403,16 +443,22 @@ inline int run_packed_native_raxpy_benchmark(int argc, char **argv,
     auto end = std::chrono::high_resolution_clock::now();
     benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
-    Raxpy(n, alpha_class, x_class, 1, y_class, 1);
+    if (!skip_check) {
+        Raxpy(n, alpha_class, x_class, 1, y_class, 1);
+        require_mpfr_precision_at_least("class_y_reference[0]", class_precision_bits(y_class[0]), requested_prec);
+    }
     require_mpfr_precision_at_least("packed_y_after[0]", mpfr_get_prec(y.at(0)), requested_prec);
-    require_mpfr_precision_at_least("class_y_reference[0]", class_precision_bits(y_class[0]), requested_prec);
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     const double mflops = (2.0 * double(n)) / (elapsed_seconds.count() * MFLOPS);
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, y_class));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(y, y_class));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     mpfr_clear(alpha);
     delete[] x_class;

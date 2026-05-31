@@ -32,6 +32,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include <gmp.h>
@@ -80,14 +81,35 @@ inline mpfr_prec_t class_precision_bits(const mpfr_class &value) {
     return mpfr_get_prec(value.get_mpfr_t());
 }
 
+inline bool is_nocheck_option(const char *arg) noexcept {
+    return std::strcmp(arg, "-nocheck") == 0 || std::strcmp(arg, "--nocheck") == 0 || std::strcmp(arg, "--no-check") == 0;
+}
+
+inline bool parse_nocheck_option(int argc, char **argv, int expected_argc, bool &skip_check) {
+    skip_check = false;
+    if (argc == expected_argc) {
+        return true;
+    }
+    if (argc == expected_argc + 1 && is_nocheck_option(argv[expected_argc])) {
+        skip_check = true;
+        return true;
+    }
+    return false;
+}
+
+inline void print_nocheck_usage(const char *program, const char *args) {
+    std::cerr << "Usage: " << program << " " << args << " [-nocheck]" << std::endl;
+}
+
 inline int run_native_rdot_benchmark(int argc, char **argv,
                                      void (*kernel)(int64_t, mpfr_t *, int64_t, mpfr_t *, int64_t, mpfr_t *)) {
     gmp_randstate_t state;
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 3, skip_check)) {
+        print_nocheck_usage(argv[0], "<vector size> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -130,14 +152,21 @@ inline int run_native_rdot_benchmark(int argc, char **argv,
     kernel(n, vec1, 1, vec2, 1, &raw_answer);
     auto end = std::chrono::high_resolution_clock::now();
 
-    mpfr_class reference = Rdot(n, vec1_class, 1, vec2_class, 1);
+    mpfr_class reference;
+    if (!skip_check) {
+        reference = Rdot(n, vec1_class, 1, vec2_class, 1);
+        require_mpfr_precision_at_least("class_reference", class_precision_bits(reference), requested_prec);
+    }
     require_mpfr_precision_at_least("raw_answer_after", mpfr_get_prec(raw_answer), requested_prec);
-    require_mpfr_precision_at_least("class_reference", class_precision_bits(reference), requested_prec);
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << (2.0 * double(n) - 1.0) / elapsed_seconds.count() / MFLOPS << std::endl;
-    print_diff_result(abs(mpfr_class(raw_answer) - reference));
+    if (!skip_check) {
+        print_diff_result(abs(mpfr_class(raw_answer) - reference));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpfr_vec(vec1, n);
     clear_mpfr_vec(vec2, n);
@@ -157,8 +186,9 @@ inline int run_class_rdot_benchmark(int argc, char **argv,
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <vector size> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 3, skip_check)) {
+        print_nocheck_usage(argv[0], "<vector size> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -198,14 +228,21 @@ inline int run_class_rdot_benchmark(int argc, char **argv,
     mpfr_class answer = kernel(n, vec1, 1, vec2, 1);
     auto end = std::chrono::high_resolution_clock::now();
 
-    mpfr_class reference = Rdot(n, vec1, 1, vec2, 1);
+    mpfr_class reference;
+    if (!skip_check) {
+        reference = Rdot(n, vec1, 1, vec2, 1);
+        require_mpfr_precision_at_least("class_reference", class_precision_bits(reference), requested_prec);
+    }
     require_mpfr_precision_at_least("class_answer", class_precision_bits(answer), requested_prec);
-    require_mpfr_precision_at_least("class_reference", class_precision_bits(reference), requested_prec);
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << (2.0 * double(n) - 1.0) / elapsed_seconds.count() / MFLOPS << std::endl;
-    print_diff_result(abs(answer - reference));
+    if (!skip_check) {
+        print_diff_result(abs(answer - reference));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpfr_vec(vec1_raw, n);
     clear_mpfr_vec(vec2_raw, n);

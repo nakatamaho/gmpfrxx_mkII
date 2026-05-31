@@ -31,6 +31,7 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <gmp.h>
 
@@ -89,6 +90,26 @@ inline mpfr_class l1_norm_difference(const mpfr_class *lhs, const mpfr_class *rh
     return l1_norm;
 }
 
+inline bool is_nocheck_option(const char *arg) noexcept {
+    return std::strcmp(arg, "-nocheck") == 0 || std::strcmp(arg, "--nocheck") == 0 || std::strcmp(arg, "--no-check") == 0;
+}
+
+inline bool parse_nocheck_option(int argc, char **argv, int expected_argc, bool &skip_check) {
+    skip_check = false;
+    if (argc == expected_argc) {
+        return true;
+    }
+    if (argc == expected_argc + 1 && is_nocheck_option(argv[expected_argc])) {
+        skip_check = true;
+        return true;
+    }
+    return false;
+}
+
+inline void print_nocheck_usage(const char *program, const char *args) {
+    std::cerr << "Usage: " << program << " " << args << " [-nocheck]" << std::endl;
+}
+
 inline void print_l1_result(const mpfr_class &l1_norm) {
     std::cout << "L1 Norm of difference: ";
     mpfr_printf("%.4Rg\n", l1_norm.get_mpfr_t());
@@ -106,8 +127,9 @@ inline int run_native_rgemv_benchmark(int argc, char **argv,
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <rows m> <cols n> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 4, skip_check)) {
+        print_nocheck_usage(argv[0], "<rows m> <cols n> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -157,14 +179,20 @@ inline int run_native_rgemv_benchmark(int argc, char **argv,
     auto end = std::chrono::high_resolution_clock::now();
     benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
-    Rgemv("n", m, n, alpha_class, A_class, lda, x_class, 1, beta_class, y_class, 1);
+    if (!skip_check) {
+        Rgemv("n", m, n, alpha_class, A_class, lda, x_class, 1, beta_class, y_class, 1);
+    }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     const double mflops = (2.0 * double(m) * double(n)) / (elapsed_seconds.count() * MFLOPS);
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, y_class, m));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(y, y_class, m));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpfr_mat(A, m, n, lda);
     clear_mpfr_vec(x, n);
@@ -188,8 +216,9 @@ inline int run_class_rgemv_benchmark(int argc, char **argv,
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <rows> <cols> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 4, skip_check)) {
+        print_nocheck_usage(argv[0], "<rows> <cols> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -239,14 +268,20 @@ inline int run_class_rgemv_benchmark(int argc, char **argv,
     auto end = std::chrono::high_resolution_clock::now();
     benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
-    Rgemv("n", m, n, alpha, A, lda, x, 1, beta, yy, 1);
+    if (!skip_check) {
+        Rgemv("n", m, n, alpha, A, lda, x, 1, beta, yy, 1);
+    }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     const double mflops = (2.0 * double(m) * double(n)) / (elapsed_seconds.count() * MFLOPS);
 
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(y, yy, m));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(y, yy, m));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpfr_mat(A_raw, m, n, lda);
     clear_mpfr_vec(x_raw, n);

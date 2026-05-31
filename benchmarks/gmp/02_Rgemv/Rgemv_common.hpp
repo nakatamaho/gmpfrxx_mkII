@@ -31,6 +31,7 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include <gmp.h>
@@ -105,6 +106,26 @@ inline mpf_class l1_norm_difference(const mpf_class *lhs, const mpf_class *rhs, 
     return l1_norm;
 }
 
+inline bool is_nocheck_option(const char *arg) noexcept {
+    return std::strcmp(arg, "-nocheck") == 0 || std::strcmp(arg, "--nocheck") == 0 || std::strcmp(arg, "--no-check") == 0;
+}
+
+inline bool parse_nocheck_option(int argc, char **argv, int expected_argc, bool &skip_check) {
+    skip_check = false;
+    if (argc == expected_argc) {
+        return true;
+    }
+    if (argc == expected_argc + 1 && is_nocheck_option(argv[expected_argc])) {
+        skip_check = true;
+        return true;
+    }
+    return false;
+}
+
+inline void print_nocheck_usage(const char *program, const char *args) {
+    std::cerr << "Usage: " << program << " " << args << " [-nocheck]" << std::endl;
+}
+
 inline int print_l1_result(const mpf_class &l1_norm) {
     std::cout << "L1 Norm of difference: ";
     gmp_printf("%.4Fg\n", l1_norm.get_mpf_t());
@@ -126,8 +147,9 @@ inline int run_native_rgemv_benchmark(int argc, char **argv, NativeRgemvKernel k
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <rows m> <cols n> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 4, skip_check)) {
+        print_nocheck_usage(argv[0], "<rows m> <cols n> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -172,14 +194,21 @@ inline int run_native_rgemv_benchmark(int argc, char **argv, NativeRgemvKernel k
     kernel(m, n, alpha, A, lda, x, 1, beta, y, 1);
     const auto end = std::chrono::high_resolution_clock::now();
 
-    Rgemv("n", m, n, alpha_ref, A_ref, lda, x_ref, 1, beta_ref, y_ref, 1);
+    if (!skip_check) {
+        Rgemv("n", m, n, alpha_ref, A_ref, lda, x_ref, 1, beta_ref, y_ref, 1);
+    }
 
     const std::chrono::duration<double> elapsed = end - start;
     const double mflops = (2.0 * double(m) * double(n)) / (elapsed.count() * MflopsScale);
 
     std::cout << "Elapsed time: " << elapsed.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    const int result = print_l1_result(l1_norm_difference(y, y_ref, m));
+    int result = EXIT_SUCCESS;
+    if (!skip_check) {
+        result = print_l1_result(l1_norm_difference(y, y_ref, m));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpf_mat(A, m, n, lda);
     clear_mpf_vec(x, n);
@@ -202,8 +231,9 @@ inline int run_class_rgemv_benchmark(int argc, char **argv, ClassRgemvKernel ker
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <rows m> <cols n> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, 4, skip_check)) {
+        print_nocheck_usage(argv[0], "<rows m> <cols n> <precision>");
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -250,14 +280,21 @@ inline int run_class_rgemv_benchmark(int argc, char **argv, ClassRgemvKernel ker
     kernel(m, n, alpha, A, lda, x, 1, beta, y, 1);
     const auto end = std::chrono::high_resolution_clock::now();
 
-    Rgemv("n", m, n, alpha, A, lda, x, 1, beta, reference_y, 1);
+    if (!skip_check) {
+        Rgemv("n", m, n, alpha, A, lda, x, 1, beta, reference_y, 1);
+    }
 
     const std::chrono::duration<double> elapsed = end - start;
     const double mflops = (2.0 * double(m) * double(n)) / (elapsed.count() * MflopsScale);
 
     std::cout << "Elapsed time: " << elapsed.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    const int result = print_l1_result(l1_norm_difference(y, reference_y, m));
+    int result = EXIT_SUCCESS;
+    if (!skip_check) {
+        result = print_l1_result(l1_norm_difference(y, reference_y, m));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpf_mat(A_raw, m, n, lda);
     clear_mpf_vec(x_raw, n);

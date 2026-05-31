@@ -31,6 +31,7 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <gmp.h>
 
@@ -67,6 +68,26 @@ inline void require_mpfr_precision_at_least(const char *label, mpfr_prec_t actua
 
 inline mpfr_prec_t class_precision_bits(const mpfr_class &value) {
     return mpfr_get_prec(value.get_mpfr_t());
+}
+
+inline bool is_nocheck_option(const char *arg) noexcept {
+    return std::strcmp(arg, "-nocheck") == 0 || std::strcmp(arg, "--nocheck") == 0 || std::strcmp(arg, "--no-check") == 0;
+}
+
+inline bool parse_nocheck_option(int argc, char **argv, bool &skip_check) {
+    skip_check = false;
+    if (argc == 5) {
+        return true;
+    }
+    if (argc == 6 && is_nocheck_option(argv[5])) {
+        skip_check = true;
+        return true;
+    }
+    return false;
+}
+
+inline void print_rgemm_usage(const char *program) {
+    std::cerr << "Usage: " << program << " <rows m> <cols k> <cols n> <precision> [-nocheck]" << std::endl;
 }
 
 inline void init_mpfr_mat(mpfr_t *mat, int64_t rows, int64_t cols, int64_t ld, int prec, gmp_randstate_t state) {
@@ -123,8 +144,9 @@ inline int run_native_rgemm_benchmark(int argc, char **argv,
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 5) {
-        std::cerr << "Usage: " << argv[0] << " <rows m> <cols k> <cols n> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, skip_check)) {
+        print_rgemm_usage(argv[0]);
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -157,24 +179,31 @@ inline int run_native_rgemm_benchmark(int argc, char **argv,
     init_mpfr_mat(B, k, n, ldb, prec, state);
     init_mpfr_mat(C, m, n, ldc, prec, state);
 
-    mpfr_class *A_class = new mpfr_class[m * k];
-    mpfr_class *B_class = new mpfr_class[k * n];
-    mpfr_class *C_class = new mpfr_class[m * n];
-    mpfr_class alpha_class = mpfr_class(alpha);
-    mpfr_class beta_class = mpfr_class(beta);
-    for (int64_t j = 0; j < k; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            A_class[i + j * lda] = mpfr_class(A[i + j * lda]);
+    mpfr_class *A_class = nullptr;
+    mpfr_class *B_class = nullptr;
+    mpfr_class *C_class = nullptr;
+    mpfr_class alpha_class;
+    mpfr_class beta_class;
+    if (!skip_check) {
+        A_class = new mpfr_class[m * k];
+        B_class = new mpfr_class[k * n];
+        C_class = new mpfr_class[m * n];
+        alpha_class = mpfr_class(alpha);
+        beta_class = mpfr_class(beta);
+        for (int64_t j = 0; j < k; ++j) {
+            for (int64_t i = 0; i < m; ++i) {
+                A_class[i + j * lda] = mpfr_class(A[i + j * lda]);
+            }
         }
-    }
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < k; ++i) {
-            B_class[i + j * ldb] = mpfr_class(B[i + j * ldb]);
+        for (int64_t j = 0; j < n; ++j) {
+            for (int64_t i = 0; i < k; ++i) {
+                B_class[i + j * ldb] = mpfr_class(B[i + j * ldb]);
+            }
         }
-    }
-    for (int64_t j = 0; j < n; ++j) {
-        for (int64_t i = 0; i < m; ++i) {
-            C_class[i + j * ldc] = mpfr_class(C[i + j * ldc]);
+        for (int64_t j = 0; j < n; ++j) {
+            for (int64_t i = 0; i < m; ++i) {
+                C_class[i + j * ldc] = mpfr_class(C[i + j * ldc]);
+            }
         }
     }
 
@@ -184,13 +213,19 @@ inline int run_native_rgemm_benchmark(int argc, char **argv,
     auto end = std::chrono::high_resolution_clock::now();
     benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
-    Rgemm("n", "n", m, n, k, alpha_class, A_class, lda, B_class, ldb, beta_class, C_class, ldc);
+    if (!skip_check) {
+        Rgemm("n", "n", m, n, k, alpha_class, A_class, lda, B_class, ldb, beta_class, C_class, ldc);
+    }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     const double mflops = flops_gemm(m, n, k) / (elapsed_seconds.count() * MFLOPS);
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(C, C_class, m, n, ldc));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(C, C_class, m, n, ldc));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpfr_mat(A, m, k, lda);
     clear_mpfr_mat(B, k, n, ldb);
@@ -213,8 +248,9 @@ inline int run_class_rgemm_benchmark(int argc, char **argv,
     gmp_randinit_default(state);
     gmp_randseed_ui(state, 42);
 
-    if (argc != 5) {
-        std::cerr << "Usage: " << argv[0] << " <rows m> <cols k> <cols n> <precision>" << std::endl;
+    bool skip_check = false;
+    if (!parse_nocheck_option(argc, argv, skip_check)) {
+        print_rgemm_usage(argv[0]);
         gmp_randclear(state);
         return EXIT_FAILURE;
     }
@@ -250,7 +286,7 @@ inline int run_class_rgemm_benchmark(int argc, char **argv,
     mpfr_class *A = new mpfr_class[m * k];
     mpfr_class *B = new mpfr_class[k * n];
     mpfr_class *C = new mpfr_class[m * n];
-    mpfr_class *C_ref = new mpfr_class[m * n];
+    mpfr_class *C_ref = skip_check ? nullptr : new mpfr_class[m * n];
     mpfr_class alpha = mpfr_class(alpha_raw);
     mpfr_class beta = mpfr_class(beta_raw);
     for (int64_t j = 0; j < k; ++j) {
@@ -266,7 +302,9 @@ inline int run_class_rgemm_benchmark(int argc, char **argv,
     for (int64_t j = 0; j < n; ++j) {
         for (int64_t i = 0; i < m; ++i) {
             C[i + j * ldc] = mpfr_class(C_raw[i + j * ldc]);
-            C_ref[i + j * ldc] = C[i + j * ldc];
+            if (!skip_check) {
+                C_ref[i + j * ldc] = C[i + j * ldc];
+            }
         }
     }
 
@@ -276,13 +314,19 @@ inline int run_class_rgemm_benchmark(int argc, char **argv,
     auto end = std::chrono::high_resolution_clock::now();
     benchmark_mpfr_operation_counter::print_kernel("timed_kernel");
 
-    Rgemm("n", "n", m, n, k, alpha, A, lda, B, ldb, beta, C_ref, ldc);
+    if (!skip_check) {
+        Rgemm("n", "n", m, n, k, alpha, A, lda, B, ldb, beta, C_ref, ldc);
+    }
 
     std::chrono::duration<double> elapsed_seconds = end - start;
     const double mflops = flops_gemm(m, n, k) / (elapsed_seconds.count() * MFLOPS);
     std::cout << "Elapsed time: " << elapsed_seconds.count() << " s" << std::endl;
     std::cout << "MFLOPS: " << mflops << std::endl;
-    print_l1_result(l1_norm_difference(C, C_ref, m, n, ldc));
+    if (!skip_check) {
+        print_l1_result(l1_norm_difference(C, C_ref, m, n, ldc));
+    } else {
+        std::cout << "Check skipped." << std::endl;
+    }
 
     clear_mpfr_mat(A_raw, m, k, lda);
     clear_mpfr_mat(B_raw, k, n, ldb);
