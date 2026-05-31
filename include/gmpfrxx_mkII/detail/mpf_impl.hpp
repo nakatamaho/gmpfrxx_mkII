@@ -239,9 +239,7 @@ public:
 
     mpf_class& operator=(const mpf_class& other)
     {
-        if (this != &other) {
-            mpf_set(value_, other.value_);
-        }
+        mpf_set(value_, other.value_);
         return *this;
     }
 
@@ -557,7 +555,6 @@ private:
     mpf_class(precision_tag, mp_bitcnt_t precision)
     {
         mpf_init2(value_, precision);
-        mpf_set_ui(value_, 0);
     }
 
     template <typename T>

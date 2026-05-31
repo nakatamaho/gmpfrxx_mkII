@@ -37,11 +37,15 @@ void _Rgemm(int64_t m, int64_t k, int64_t n, const mpf_class &alpha, const mpf_c
         }
     }
 
+    const mp_bitcnt_t scratch_precision = alpha.get_prec();
+    // In mkII, default construction uses the wrapper-owned MPF default precision
+    // policy instead of GMP's process-global default precision.
+
 // Compute alpha * A * B and add to C: C += alpha * A * B
 #pragma omp parallel for collapse(2) schedule(dynamic)
     for (int64_t i = 0; i < m; ++i) {
         for (int64_t j = 0; j < n; ++j) {
-            mpf_class temp = 0;
+            mpf_class temp(0, scratch_precision);
             for (int64_t l = 0; l < k; ++l) {
                 temp += A[i + l * lda] * B[l + j * ldb];
             }

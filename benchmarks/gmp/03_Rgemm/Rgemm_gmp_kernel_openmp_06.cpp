@@ -32,18 +32,13 @@ namespace {
 
 constexpr int RgemmPanelSize = 4;
 
-void set_scratch_precision_zero(mpf_class &value, mp_bitcnt_t precision) {
-    mpf_set_prec(value.get_mpf_t(), precision);
-    value = 0;
-}
-
 struct RgemmPanelScratch {
-    explicit RgemmPanelScratch(mp_bitcnt_t precision) {
-        set_scratch_precision_zero(prod, precision);
-        for (int i = 0; i < RgemmPanelSize; ++i) {
-            set_scratch_precision_zero(scaled_b[i], precision);
-        }
-    }
+    explicit RgemmPanelScratch(mp_bitcnt_t precision)
+        // In mkII, default construction uses the wrapper-owned MPF default precision
+        // policy instead of GMP's process-global default precision.
+        : scaled_b{mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision)},
+          prod(0, precision)
+    {}
 
     mpf_class scaled_b[RgemmPanelSize];
     mpf_class prod;

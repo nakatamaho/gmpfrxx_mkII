@@ -79,8 +79,11 @@ void Rgemm(const char *transa, const char *transb, long const m, long const n, l
     //
     //     Quick return if possible.
     //
-    const mpf_class zero = 0.0;
-    const mpf_class one = 1.0;
+    const mp_bitcnt_t scratch_precision = alpha.get_prec();
+    // In mkII, default construction uses the wrapper-owned MPF default precision
+    // policy instead of GMP's process-global default precision.
+    const mpf_class zero(0, scratch_precision);
+    const mpf_class one(1, scratch_precision);
     if ((m == 0) || (n == 0) || (((alpha == zero) || (k == 0)) && (beta == one))) {
         return;
     }
@@ -109,7 +112,7 @@ void Rgemm(const char *transa, const char *transb, long const m, long const n, l
     //     Start the operations.
     //
     long l = 0;
-    mpf_class temp = 0.0;
+    mpf_class temp(0, scratch_precision);
     if (notb) {
         if (nota) {
             //

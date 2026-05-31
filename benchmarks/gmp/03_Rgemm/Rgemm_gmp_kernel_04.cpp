@@ -32,23 +32,22 @@ namespace {
 
 constexpr int RgemmBlockSize = 4;
 
-void set_scratch_precision_zero(mpf_class &value, mp_bitcnt_t precision) {
-    mpf_set_prec(value.get_mpf_t(), precision);
-    value = 0;
-}
-
 struct Rgemm4x4Scratch {
-    explicit Rgemm4x4Scratch(mp_bitcnt_t precision) {
-        set_scratch_precision_zero(zero, precision);
-        set_scratch_precision_zero(prod, precision);
-        for (int i = 0; i < RgemmBlockSize * RgemmBlockSize; ++i) {
-            set_scratch_precision_zero(sink[i], precision);
-            set_scratch_precision_zero(acc[i], precision);
-        }
-        for (int i = 0; i < RgemmBlockSize; ++i) {
-            set_scratch_precision_zero(scaled_b[i], precision);
-        }
-    }
+    explicit Rgemm4x4Scratch(mp_bitcnt_t precision)
+        // In mkII, default construction uses the wrapper-owned MPF default precision
+        // policy instead of GMP's process-global default precision.
+        : zero(0, precision),
+          sink{mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision),
+               mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision),
+               mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision),
+               mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision)},
+          acc{mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision),
+              mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision),
+              mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision),
+              mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision)},
+          scaled_b{mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision), mpf_class(0, precision)},
+          prod(0, precision)
+    {}
 
     mpf_class zero;
     mpf_class sink[RgemmBlockSize * RgemmBlockSize];

@@ -56,5 +56,12 @@ int main()
     x = x / x;
     require_close(x.to_double(), 1.0);
 
+    const auto precision = x.precision();
+    x = x;
+    require_close(x.to_double(), 1.0);
+    if (x.precision() != precision) {
+        std::abort();
+    }
+
     return 0;
 }

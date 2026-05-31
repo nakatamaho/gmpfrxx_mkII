@@ -504,6 +504,166 @@ The representative arithmetic loop still uses the intended panel source shape.
 `GOMP_barrier` is visible in the outlined function, but it is part of the
 OpenMP worksharing structure, not the multiply/add element loop.
 
+
+## Orig vs mkII Wrapper Hotpath Comparison
+
+The GMP `orig` and `mkII` wrapper kernels are closest when the source already
+uses explicit reusable temporaries. In that case, both wrappers lower the
+arithmetic element loop to the same GMP C API call class. The remaining differences are explicit scratch initialization outside the
+element loop, wrapper ABI/prologue details, and address-level code layout.
+
+| Variant | `orig` hot-loop class | `mkII` hot-loop class | Difference |
+|---------|-----------------------|-----------------------|------------|
+| `03` | `mpf_set`, `mpf_mul`, `mpf_add` | `mpf_set`, `mpf_mul`, `mpf_add` | Arithmetic loop is the same call class. mkII now uses explicit scratch precision setup outside the element loop. |
+| `05` | panel `mpf_set`, `mpf_mul`; row update `mpf_set`, `mpf_mul`, `mpf_add` | panel `mpf_set`, `mpf_mul`; row update `mpf_set`, `mpf_mul`, `mpf_add` | The copy-assignment self-check has been removed, so the row-update call class now matches `orig`. |
+| `06` | same as `05`, with row blocking | same as `05`, with row blocking | The row-blocked panel traversal matches; the mkII differences are the same as `05`. |
+
+### `Rgemm_gmp_kernel_03_orig`
+
+The upstream `gmpxx.h` reusable-temporary kernel initializes `temp` and `templ`
+outside the arithmetic loop, then reuses them. The hot loop has no per-element
+`mpf_init` or `mpf_clear`.
+
+```asm
+# temp = alpha; temp *= B
+2800: mov    0x20(%rsp),%rsi
+2805: mov    %r14,%rdi
+2808: call   __gmpf_set@plt
+280d: mov    0x8(%rsp),%rdx
+2812: mov    %r14,%rsi
+2815: mov    %r14,%rdi
+2818: call   __gmpf_mul@plt
+
+# templ = temp; templ *= A; C += templ
+2840: mov    %r14,%rsi
+2843: mov    %rbp,%rdi
+2846: call   __gmpf_set@plt
+284b: mov    %r13,%rdx
+284e: mov    %rbp,%rsi
+2851: mov    %rbp,%rdi
+2854: call   __gmpf_mul@plt
+2859: mov    %rbp,%rdx
+285c: mov    %rbx,%rsi
+285f: mov    %rbx,%rdi
+2862: call   __gmpf_add@plt
+2867: add    $0x1,%r12
+2876: jne    2840 <_Rgemm+0x190>
+```
+
+### `Rgemm_gmp_kernel_03_mkII`
+
+The mkII wrapper emits the same arithmetic loop class for variant `03`.
+
+```asm
+# temp = alpha; temp *= B
+2ae0: mov    0x20(%rsp),%rsi
+2ae5: mov    %r14,%rdi
+2ae8: call   __gmpf_set@plt
+2aed: mov    0x8(%rsp),%rdx
+2af2: mov    %r14,%rsi
+2af5: mov    %r14,%rdi
+2af8: call   __gmpf_mul@plt
+
+# templ = temp; templ *= A; C += templ
+2b20: mov    %r14,%rsi
+2b23: mov    %rbp,%rdi
+2b26: call   __gmpf_set@plt
+2b2b: mov    %r13,%rdx
+2b2e: mov    %rbp,%rsi
+2b31: mov    %rbp,%rdi
+2b34: call   __gmpf_mul@plt
+2b39: mov    %rbp,%rdx
+2b3c: mov    %rbx,%rsi
+2b3f: mov    %rbx,%rdi
+2b42: call   __gmpf_add@plt
+2b47: add    $0x1,%r12
+2b56: jne    2b20 <_Rgemm+0x1d0>
+```
+
+The difference is outside this arithmetic loop: mkII now constructs scratch
+objects from `alpha.get_prec()` instead of using default construction. This
+avoids the wrapper-owned default-precision guard in the timed kernel setup.
+
+```asm
+2a1e: mov    0x20(%rsp),%rdi       # alpha
+2a28: call   __gmpf_get_prec@plt
+2a30: mov    %rax,%rsi             # explicit scratch precision
+2a36: call   __gmpf_init2@plt      # temp
+2a40: call   __gmpf_set_si@plt     # temp = 0
+...
+2a4d: mov    %rbx,%rsi             # same explicit precision
+2a53: call   __gmpf_init2@plt      # templ
+2a5d: call   __gmpf_set_si@plt     # templ = 0
+```
+
+This setup is part of the timed function, but it is not repeated in the
+matrix-element arithmetic loop. It can matter for small matrices; it should be
+amortized by the `O(m*n*k)` multiply/add work at large sizes.
+
+### `Rgemm_gmp_kernel_05_orig`
+
+The upstream panel kernel computes each scaled `B` value once and reuses one
+product object in the row update.
+
+```asm
+# scaled_b[jj] = alpha; scaled_b[jj] *= B
+29fa: mov    0x20(%rsp),%rsi
+29ff: mov    %rbp,%rdi
+2a02: call   __gmpf_set@plt
+2a07: mov    %rbx,%rdx
+2a0a: mov    %rbp,%rsi
+2a0d: mov    %rbp,%rdi
+2a10: call   __gmpf_mul@plt
+
+# prod = scaled_b[jj]; prod *= A; C += prod
+2a58: mov    %rbx,%rsi
+2a5b: mov    %r12,%rdi
+2a5e: call   __gmpf_set@plt
+2a63: mov    %r13,%rdx
+2a66: mov    %r12,%rsi
+2a69: mov    %r12,%rdi
+2a6c: call   __gmpf_mul@plt
+2a71: mov    %r12,%rdx
+2a74: mov    %rbp,%rsi
+2a77: mov    %rbp,%rdi
+2a7a: call   __gmpf_add@plt
+2a8c: jne    2a58 <_Rgemm+0x2c8>
+```
+
+### `Rgemm_gmp_kernel_05_mkII`
+
+The mkII panel kernel now has the same backend arithmetic calls for the row
+update. The previous copy-assignment self-check is gone.
+
+```asm
+# scaled_b[jj] = alpha; scaled_b[jj] *= B
+2caa: mov    0x20(%rsp),%rsi
+2caf: mov    %rbp,%rdi
+2cb2: call   __gmpf_set@plt
+2cb7: mov    %rbx,%rdx
+2cba: mov    %rbp,%rsi
+2cbd: mov    %rbp,%rdi
+2cc0: call   __gmpf_mul@plt
+
+# prod = scaled_b[jj]; prod *= A; C += prod
+2d08: mov    %rbx,%rsi
+2d0b: mov    %r12,%rdi
+2d0e: call   __gmpf_set@plt
+2d13: mov    %r13,%rdx
+2d16: mov    %r12,%rsi
+2d19: mov    %r12,%rdi
+2d1c: call   __gmpf_mul@plt
+2d21: mov    %r12,%rdx
+2d24: mov    %rbp,%rsi
+2d27: mov    %rbp,%rdi
+2d2a: call   __gmpf_add@plt
+2d3c: jne    2d08 <_Rgemm+0x2f8>
+```
+
+The row-update path now has no mkII-specific alias branch. The remaining
+differences from `orig` are address allocation, ABI names, and surrounding
+loop-control code, not the backend arithmetic call sequence.
+
 ## Lessons Learned From Hotpath Comparison
 
 The Rgemm wrapper/C native gap must be judged by source shape. Variant `03`
