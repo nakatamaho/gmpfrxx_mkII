@@ -240,8 +240,10 @@ roughly 700-730 MFLOPS plateau reached by `kernel_openmp_02_mkII`.
 A clean cross-backend Rgemm sweep was collected with the current target matrix:
 
 ```bash
-benchmarks/run_rgemm_pow2_37.sh build_bench_release 512 1024 128 5 1 both
+benchmarks/run_rgemm_all.sh build_bench_release 512 1024 128 5 1 both 37
 ```
+
+The recorded run passes step `37` explicitly. New runs default to step `23` when the final argument is omitted.
 
 The size set combines powers of two and multiples of 37 up to 1024:
 

@@ -40,6 +40,7 @@ COMMAND_RE = re.compile(r"^COMMAND\s+Raxpy\s+(\S+)\s+(\S+)\s+(.+)$")
 RUN_RE = re.compile(r"^RUN\s+(\d+)/(\d+)")
 ELAPSED_RE = re.compile(r"^Elapsed time:\s+([0-9.eE+-]+)\s+s")
 MFLOPS_RE = re.compile(r"^MFLOPS:\s+([0-9.eE+-]+)")
+SKIP_RE = re.compile(r"^Check skipped\.$")
 DIFF_RE = re.compile(r"^L1 Norm of difference:\s+(.+)$")
 STATUS_RE = re.compile(r"^Result\s+(OK|NG)$")
 
@@ -120,6 +121,21 @@ def parse_log(path):
             mflops = float(match.group(1))
             continue
 
+        match = SKIP_RE.match(line)
+        if match and current is not None and run_index is not None:
+            rows.append(
+                {
+                    "variant": current["variant"],
+                    "run": run_index,
+                    "runs": run_count,
+                    "elapsed_s": elapsed,
+                    "mflops": mflops,
+                    "diff": "skipped",
+                    "status": "SKIPPED",
+                }
+            )
+            continue
+
         match = DIFF_RE.match(line)
         if match:
             diff = match.group(1)
@@ -150,7 +166,7 @@ def summarize(rows):
     for variant, values in grouped.items():
         mflops = [row["mflops"] for row in values if row["mflops"] is not None]
         elapsed = [row["elapsed_s"] for row in values if row["elapsed_s"] is not None]
-        ok_runs = sum(1 for row in values if row["status"] == "OK")
+        ok_runs = sum(1 for row in values if row["status"] in {"OK", "SKIPPED"})
         summary.append(
             {
                 "variant": variant,

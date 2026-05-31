@@ -40,6 +40,7 @@ export OMP_NUM_THREADS="${OMP_NUM_THREADS:-32}"
 export OMP_PLACES="${OMP_PLACES:-cores}"
 export OMP_PROC_BIND="${OMP_PROC_BIND:-spread}"
 benchmark_command_prefix="${BENCH_COMMAND_PREFIX:-${BENCH_NUMACTL:-}}"
+benchmark_nocheck="${BENCH_NOCHECK:-1}"
 smoke_enabled="${BENCH_SMOKE:-1}"
 smoke_check_enabled="${BENCH_SMOKE_CHECK:-1}"
 smoke_nocheck_enabled="${BENCH_SMOKE_NOCHECK:-1}"
@@ -159,6 +160,9 @@ run_one() {
 
     for ((run = 1; run <= repeat_count; ++run)); do
         local command=("${path}" "${m}" "${n}" "${precision}")
+        if [[ "${benchmark_nocheck}" != "0" ]]; then
+            command+=("-nocheck")
+        fi
         if [[ -n "${benchmark_command_prefix}" ]]; then
             local prefix=()
             read -r -a prefix <<<"${benchmark_command_prefix}"
@@ -183,6 +187,7 @@ run_one() {
     echo "BENCHMARK_PARAMS precision=${precision} rgemv_m=${m} rgemv_n=${n} repeat=${repeat_count}"
     echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
     echo "DEFAULT_PRECISION_ENV MPFRXX_DEFAULT_PRECISION_BITS=${precision}"
+    echo "TIMED_NOCHECK enabled=${benchmark_nocheck}"
     echo "SMOKE_TESTS enabled=${smoke_enabled} check=${smoke_check_enabled} nocheck=${smoke_nocheck_enabled} m=${smoke_m} n=${smoke_n}"
     if [[ -n "${benchmark_command_prefix}" ]]; then
         echo "BENCH_COMMAND_PREFIX ${benchmark_command_prefix}"

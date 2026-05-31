@@ -23451,7 +23451,7 @@ Known issues:
 
 Implemented features:
 - Added default smoke preflight execution to GMP and MPFR `run_repeat.sh` runners for 00_Rdot, 01_Raxpy, and 02_Rgemv.
-- Added the same smoke preflight to `benchmarks/run_rgemm_pow2_37.sh` for GMP/MPFR 03_Rgemm sweep runs.
+- Added the same smoke preflight to `benchmarks/run_rgemm_all.sh` for GMP/MPFR 03_Rgemm sweep runs.
 - Each target now runs a small `-nocheck` smoke first and a small checked smoke second before the timed repeat loop.
 - Smoke output uses `SMOKE_*` log lines instead of `COMMAND`/`RUN`, so existing plot parsers do not count smoke runs as benchmark samples.
 - Added environment controls: `BENCH_SMOKE=0`, `BENCH_SMOKE_CHECK=0`, `BENCH_SMOKE_NOCHECK=0`, `BENCH_SMOKE_N`, and `BENCH_SMOKE_M` for matrix runners.
@@ -23463,10 +23463,10 @@ Tests added:
 - No unit tests. This phase changes benchmark runner shell scripts.
 
 Exact commands run:
-- `bash -n benchmarks/gmp/00_Rdot/run_repeat.sh benchmarks/gmp/01_Raxpy/run_repeat.sh benchmarks/gmp/02_Rgemv/run_repeat.sh benchmarks/mpfr/00_Rdot/run_repeat.sh benchmarks/mpfr/01_Raxpy/run_repeat.sh benchmarks/mpfr/02_Rgemv/run_repeat.sh benchmarks/run_rgemm_pow2_37.sh benchmarks/run_all.sh`
+- `bash -n benchmarks/gmp/00_Rdot/run_repeat.sh benchmarks/gmp/01_Raxpy/run_repeat.sh benchmarks/gmp/02_Rgemv/run_repeat.sh benchmarks/mpfr/00_Rdot/run_repeat.sh benchmarks/mpfr/01_Raxpy/run_repeat.sh benchmarks/mpfr/02_Rgemv/run_repeat.sh benchmarks/run_rgemm_all.sh benchmarks/run_all.sh`
 - `BENCH_SMOKE_N=2 OMP_NUM_THREADS=2 benchmarks/gmp/00_Rdot/run_repeat.sh build_bench_release 2 64 1 /tmp/gmp_rdot_smoke_runner_test`
 - `BENCH_SMOKE_M=2 BENCH_SMOKE_N=2 OMP_NUM_THREADS=2 benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 2 2 64 1 /tmp/mpfr_rgemv_smoke_runner_test`
-- `BENCH_SMOKE_N=1 OMP_NUM_THREADS=2 benchmarks/run_rgemm_pow2_37.sh build_bench_release 64 1 1 1 1 gmp`
+- `BENCH_SMOKE_N=1 OMP_NUM_THREADS=2 benchmarks/run_rgemm_all.sh build_bench_release 64 1 1 1 1 gmp`
 - `git diff --check`
 
 Pass/fail result:
@@ -23479,3 +23479,73 @@ Pass/fail result:
 Known issues:
 - Some local runner executions required escalation because the sandbox failed with `bwrap: loopback: Failed RTM_NEWADDR`.
 - Test output under `/tmp` was left outside the repository. The temporary Rgemm `results_raw` directory created in the repository was removed after validation.
+
+## Phase: Use no-check mode for timed benchmark runs
+
+Implemented features:
+- Made GMP and MPFR 00_Rdot, 01_Raxpy, and 02_Rgemv `run_repeat.sh` timed loops pass `-nocheck` by default.
+- Made `benchmarks/run_rgemm_all.sh` timed Rgemm sweeps pass `-nocheck` by default for GMP and MPFR targets.
+- Added `BENCH_NOCHECK=0` as an opt-out to keep checked timed benchmark loops when needed.
+- Kept the smoke preflight unchanged: a no-check smoke and a checked smoke still run before timed measurements by default.
+- Updated repeat-summary parsers to treat `Check skipped.` as a `SKIPPED` sample and count it as a successful timed run.
+- Updated the Rgemm sweep summarizer to count `OK` and `SKIPPED` samples as valid while still failing on `NG`.
+
+Missing features:
+- No README benchmark tables were regenerated because this phase changes runner behavior and parser status handling only.
+
+Tests added:
+- No unit tests. This phase changes benchmark runner shell scripts and log parsers.
+
+Exact commands run:
+- `bash -n benchmarks/gmp/00_Rdot/run_repeat.sh benchmarks/gmp/01_Raxpy/run_repeat.sh benchmarks/gmp/02_Rgemv/run_repeat.sh benchmarks/mpfr/00_Rdot/run_repeat.sh benchmarks/mpfr/01_Raxpy/run_repeat.sh benchmarks/mpfr/02_Rgemv/run_repeat.sh benchmarks/run_rgemm_all.sh benchmarks/run_all.sh`
+- `python3 -B -m py_compile benchmarks/gmp/00_Rdot/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/02_Rgemv/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py`
+- `BENCH_SMOKE_N=2 OMP_NUM_THREADS=2 benchmarks/gmp/00_Rdot/run_repeat.sh build_bench_release 2 64 1 /tmp/gmp_rdot_nocheck_runner_test`
+- `BENCH_SMOKE_M=2 BENCH_SMOKE_N=2 OMP_NUM_THREADS=2 benchmarks/mpfr/02_Rgemv/run_repeat.sh build_bench_release 2 2 64 1 /tmp/mpfr_rgemv_nocheck_runner_test`
+- `BENCH_SMOKE_N=1 OMP_NUM_THREADS=2 benchmarks/run_rgemm_all.sh build_bench_release 64 1 1 1 1 gmp`
+
+Pass/fail result:
+- Shell syntax checks: PASS.
+- Python parser bytecode checks: PASS.
+- GMP Rdot runner: PASS; timed commands used `-nocheck`, raw rows used `status=SKIPPED`, and summary `ok_runs` counted skipped samples.
+- MPFR Rgemv runner: PASS; timed commands used `-nocheck` after checked smoke preflight and generated raw/summary CSV files.
+- GMP Rgemm sweep runner: PASS; timed commands used `-nocheck`, raw rows used `status=SKIPPED`, and summary `ok_samples` counted skipped samples.
+
+Known issues:
+- Local runner executions may require escalation because the sandbox can fail with `bwrap: loopback: Failed RTM_NEWADDR`.
+- The default timed benchmark policy now trusts the checked smoke gate. Use `BENCH_NOCHECK=0` for diagnostic runs that need full correctness checks on every timed sample.
+
+## Phase: Make Rgemm sweep step configurable
+
+Implemented features:
+- Renamed the Rgemm sweep runner to `benchmarks/run_rgemm_all.sh` and added an optional positive integer step argument.
+- Changed the default step to `23`; pass the 8th argument or set `RGEMM_STEP` to override it.
+- Added `RGEMM_STEP` as an environment fallback when the 8th positional argument is omitted.
+- Changed the non-power-of-two size sweep from hard-coded multiples of 37 to multiples of the configured step.
+- Added `step=<value>` to the benchmark log parameters.
+- Included the configured step in the Rgemm run-id, for example `rgemm_gmp_all_pow2_23_...`.
+
+Missing features:
+- None.
+
+Tests added:
+- No unit tests. This phase changes a benchmark runner shell script.
+
+Exact commands run:
+- `bash -n benchmarks/run_rgemm_all.sh benchmarks/run_all.sh benchmarks/gmp/00_Rdot/run_repeat.sh benchmarks/gmp/01_Raxpy/run_repeat.sh benchmarks/gmp/02_Rgemv/run_repeat.sh benchmarks/mpfr/00_Rdot/run_repeat.sh benchmarks/mpfr/01_Raxpy/run_repeat.sh benchmarks/mpfr/02_Rgemv/run_repeat.sh`
+- `python3 -B -m py_compile benchmarks/gmp/00_Rdot/plot_repeat_summary.py benchmarks/gmp/01_Raxpy/plot_repeat_summary.py benchmarks/gmp/02_Rgemv/plot_repeat_summary.py benchmarks/mpfr/00_Rdot/plot_repeat_summary.py benchmarks/mpfr/01_Raxpy/plot_repeat_summary.py benchmarks/mpfr/02_Rgemv/plot_repeat_summary.py`
+- `BENCH_SMOKE=0 OMP_NUM_THREADS=2 benchmarks/run_rgemm_all.sh build_bench_release 64 1 1 1 1 gmp 23`
+- `benchmarks/run_rgemm_all.sh build_bench_release 64 1 1 1 1 gmp 0`
+- `git diff --check`
+- `ctest --test-dir build_bench_release --output-on-failure`
+
+Pass/fail result:
+- Shell syntax checks: PASS.
+- Python parser bytecode checks: PASS.
+- Configurable step smoke run: PASS; the log reported `step=23`, `SIZE_SET 1`, and the output directory used `rgemm_gmp_all_pow2_23_...`.
+- Invalid step validation: PASS; `0` was rejected with `Invalid positive integer step size: 0`.
+- Whitespace check: PASS.
+- Full CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- The representative runner execution required escalation because the sandbox failed with `bwrap: loopback: Failed RTM_NEWADDR`.
+- The temporary `step=23` raw result directory created during validation was removed after inspection.

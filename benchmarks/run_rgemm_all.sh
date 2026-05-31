@@ -37,11 +37,18 @@ small_threshold="${4:-128}"
 small_repeat="${5:-5}"
 large_repeat="${6:-1}"
 backend_filter="${7:-both}"
+step_size="${8:-${RGEMM_STEP:-23}}"
+
+if ! [[ "${step_size}" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Invalid positive integer step size: ${step_size}" >&2
+    exit 1
+fi
 
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-32}"
 export OMP_PLACES="${OMP_PLACES:-cores}"
 export OMP_PROC_BIND="${OMP_PROC_BIND:-spread}"
 benchmark_command_prefix="${BENCH_COMMAND_PREFIX:-${BENCH_NUMACTL:-}}"
+benchmark_nocheck="${BENCH_NOCHECK:-1}"
 smoke_enabled="${BENCH_SMOKE:-1}"
 smoke_check_enabled="${BENCH_SMOKE_CHECK:-1}"
 smoke_nocheck_enabled="${BENCH_SMOKE_NOCHECK:-1}"
@@ -70,10 +77,10 @@ while (( n <= max_n )); do
     n=$((n * 2))
 done
 
-n=37
+n="${step_size}"
 while (( n <= max_n )); do
     add_size "${n}"
-    n=$((n + 37))
+    n=$((n + step_size))
 done
 
 mapfile -t sizes < <(printf "%s\n" "${sizes[@]}" | sort -n -u)
@@ -178,7 +185,7 @@ with open(summary_csv, "w", newline="") as f:
     for (size, variant), rows in sorted(groups.items(), key=lambda item: (int(item[0][0]), item[0][1])):
         elapsed = [float(row["elapsed_s"]) for row in rows]
         mflops = [float(row["mflops"]) for row in rows]
-        ok_samples = sum(1 for row in rows if row["status"] == "OK")
+        ok_samples = sum(1 for row in rows if row["status"] in {"OK", "SKIPPED"})
         writer.writerow({
             "size": size,
             "variant": variant,
@@ -254,7 +261,7 @@ run_backend() {
     local env_name="$3"
     shift 3
     local targets=("$@")
-    local run_id="rgemm_${backend}_all_pow2_37_p${precision}_repeat${large_repeat}_small${small_repeat}_${timestamp}"
+    local run_id="rgemm_${backend}_all_pow2_${step_size}_p${precision}_repeat${large_repeat}_small${small_repeat}_${timestamp}"
     local out_dir="${script_dir}/${backend}/03_Rgemm/results_raw/${run_id}"
     local raw_csv="${out_dir}/raw_${run_id}.csv"
     local summary_csv="${out_dir}/summary_${run_id}.csv"
@@ -270,11 +277,12 @@ run_backend() {
         else
             uname -m
         fi
-        echo "BENCHMARK_PARAMS backend=${backend} precision=${precision} max_n=${max_n} small_threshold=${small_threshold} small_repeat=${small_repeat} large_repeat=${large_repeat}"
+        echo "BENCHMARK_PARAMS backend=${backend} precision=${precision} max_n=${max_n} step=${step_size} small_threshold=${small_threshold} small_repeat=${small_repeat} large_repeat=${large_repeat}"
         echo "SIZE_SET ${sizes[*]}"
         echo "TARGET_COUNT ${#targets[@]}"
         echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
         echo "DEFAULT_PRECISION_ENV ${env_name}=${precision}"
+        echo "TIMED_NOCHECK enabled=${benchmark_nocheck}"
         echo "SMOKE_TESTS enabled=${smoke_enabled} check=${smoke_check_enabled} nocheck=${smoke_nocheck_enabled} n=${smoke_n}"
         if [[ -n "${benchmark_command_prefix}" ]]; then
             echo "BENCH_COMMAND_PREFIX ${benchmark_command_prefix}"
@@ -296,6 +304,9 @@ run_backend() {
                 fi
                 for ((run = 1; run <= repeats; ++run)); do
                     local command=("${exe}" "${size}" "${size}" "${size}" "${precision}")
+                    if [[ "${benchmark_nocheck}" != "0" ]]; then
+                        command+=("-nocheck")
+                    fi
                     if [[ -n "${benchmark_command_prefix}" ]]; then
                         local prefix=()
                         read -r -a prefix <<<"${benchmark_command_prefix}"
@@ -316,12 +327,14 @@ run_backend() {
                     status="NG"
                     if printf "%s\n" "${output}" | grep -q 'Result OK\|Check passed'; then
                         status="OK"
+                    elif printf "%s\n" "${output}" | grep -q 'Check skipped\.'; then
+                        status="SKIPPED"
                     fi
                     printf "%s,%s,%s,%s,%s,%s,%s\n" \
                         "${size}" "${target}" "${run}" "${repeats}" \
                         "${elapsed}" "${mflops}" "${status}" >> "${raw_csv}"
                     echo
-                    if [[ "${status}" != "OK" ]]; then
+                    if [[ "${status}" == "NG" ]]; then
                         echo "Benchmark failed: backend=${backend} n=${size} target=${target} run=${run}" >&2
                         exit 1
                     fi
