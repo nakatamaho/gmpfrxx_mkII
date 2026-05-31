@@ -54,9 +54,16 @@ int64_t panel_width(int64_t n, int64_t j0) {
     return remaining < RgemmPanelSize ? remaining : RgemmPanelSize;
 }
 
-void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_block, int64_t j0, const mpfr_class &alpha, const mpfr_class *A, int64_t lda, const mpfr_class *B, int64_t ldb, mpfr_class *C, int64_t ldc, RgemmPanelScratch &scratch, mpfr_rnd_t rounding) {
+void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_block, int64_t j0, const mpfr_class &alpha, const mpfr_class *A, int64_t lda, const mpfr_class *B, int64_t ldb, const mpfr_class &beta, mpfr_class *C, int64_t ldc, RgemmPanelScratch &scratch, mpfr_rnd_t rounding) {
     const int64_t jb = panel_width(n, j0);
     const int64_t i_end = (i0 + row_block < m) ? (i0 + row_block) : m;
+
+    for (int64_t i = i0; i < i_end; ++i) {
+        for (int64_t jj = 0; jj < jb; ++jj) {
+            auto c_rounding = mpfrxx::with_rounding(C[i + (j0 + jj) * ldc], rounding);
+            c_rounding *= beta;
+        }
+    }
 
     for (int64_t l = 0; l < k; ++l) {
         for (int64_t jj = 0; jj < jb; ++jj) {
@@ -97,16 +104,6 @@ void rgemm_compute(int64_t m, int64_t k, int64_t n, int64_t row_block, const mpf
     {
         RgemmPanelScratch scratch(scratch_precision);
 
-#pragma omp for collapse(2) schedule(static)
-        for (int64_t j = 0; j < n; ++j) {
-            for (int64_t i = 0; i < m; ++i) {
-                {
-            auto c_rounding = mpfrxx::with_rounding(C[i + j * ldc], rounding);
-            c_rounding *= beta;
-        }
-            }
-        }
-
         const int64_t panel_count = (n + RgemmPanelSize - 1) / RgemmPanelSize;
         const int64_t row_block_count = (m + row_block - 1) / row_block;
 #pragma omp for collapse(2) schedule(static)
@@ -114,7 +111,7 @@ void rgemm_compute(int64_t m, int64_t k, int64_t n, int64_t row_block, const mpf
             for (int64_t row_block_index = 0; row_block_index < row_block_count; ++row_block_index) {
                 const int64_t j0 = panel_index * RgemmPanelSize;
                 const int64_t i0 = row_block_index * row_block;
-                rgemm_panel_rows(m, k, n, i0, row_block, j0, alpha, A, lda, B, ldb, C, ldc, scratch, rounding);
+                rgemm_panel_rows(m, k, n, i0, row_block, j0, alpha, A, lda, B, ldb, beta, C, ldc, scratch, rounding);
             }
         }
     }

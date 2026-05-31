@@ -57,9 +57,15 @@ void scale_c(int64_t m, int64_t n, const mpf_class &beta, mpf_class *C, int64_t 
     }
 }
 
-void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_block, int64_t j0, const mpf_class &alpha, const mpf_class *A, int64_t lda, const mpf_class *B, int64_t ldb, mpf_class *C, int64_t ldc, RgemmPanelScratch &scratch) {
+void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_block, int64_t j0, const mpf_class &alpha, const mpf_class *A, int64_t lda, const mpf_class *B, int64_t ldb, const mpf_class &beta, mpf_class *C, int64_t ldc, RgemmPanelScratch &scratch) {
     const int64_t jb = panel_width(n, j0);
     const int64_t i_end = std::min(i0 + row_block, m);
+
+    for (int64_t i = i0; i < i_end; ++i) {
+        for (int64_t jj = 0; jj < jb; ++jj) {
+            C[i + (j0 + jj) * ldc] *= beta;
+        }
+    }
 
     for (int64_t l = 0; l < k; ++l) {
         for (int64_t jj = 0; jj < jb; ++jj) {
@@ -81,12 +87,10 @@ void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_b
 void rgemm_compute(int64_t m, int64_t k, int64_t n, int64_t row_block, const mpf_class &alpha, const mpf_class *A, int64_t lda, const mpf_class *B, int64_t ldb, const mpf_class &beta, mpf_class *C, int64_t ldc) {
     const mp_bitcnt_t scratch_precision = alpha.get_prec();
 
-    scale_c(m, n, beta, C, ldc);
-
     RgemmPanelScratch scratch(scratch_precision);
     for (int64_t j = 0; j < n; j += RgemmPanelSize) {
         for (int64_t i = 0; i < m; i += row_block) {
-            rgemm_panel_rows(m, k, n, i, row_block, j, alpha, A, lda, B, ldb, C, ldc, scratch);
+            rgemm_panel_rows(m, k, n, i, row_block, j, alpha, A, lda, B, ldb, beta, C, ldc, scratch);
         }
     }
 }

@@ -57,8 +57,14 @@ void scale_c(int64_t m, int64_t n, const mpf_class &beta, mpf_class *C, int64_t 
     }
 }
 
-void rgemm_panel(int64_t m, int64_t k, int64_t n, int64_t j0, const mpf_class &alpha, const mpf_class *A, int64_t lda, const mpf_class *B, int64_t ldb, mpf_class *C, int64_t ldc, RgemmPanelScratch &scratch) {
+void rgemm_panel(int64_t m, int64_t k, int64_t n, int64_t j0, const mpf_class &alpha, const mpf_class *A, int64_t lda, const mpf_class *B, int64_t ldb, const mpf_class &beta, mpf_class *C, int64_t ldc, RgemmPanelScratch &scratch) {
     const int64_t jb = panel_width(n, j0);
+
+    for (int64_t i = 0; i < m; ++i) {
+        for (int64_t jj = 0; jj < jb; ++jj) {
+            C[i + (j0 + jj) * ldc] *= beta;
+        }
+    }
 
     for (int64_t l = 0; l < k; ++l) {
         for (int64_t jj = 0; jj < jb; ++jj) {
@@ -80,11 +86,9 @@ void rgemm_panel(int64_t m, int64_t k, int64_t n, int64_t j0, const mpf_class &a
 } // namespace
 
 void _Rgemm(int64_t m, int64_t k, int64_t n, const mpf_class &alpha, const mpf_class *A, int64_t lda, const mpf_class *B, int64_t ldb, const mpf_class &beta, mpf_class *C, int64_t ldc) {
-    scale_c(m, n, beta, C, ldc);
-
     RgemmPanelScratch scratch(alpha.get_prec());
     for (int64_t j = 0; j < n; j += RgemmPanelSize) {
-        rgemm_panel(m, k, n, j, alpha, A, lda, B, ldb, C, ldc, scratch);
+        rgemm_panel(m, k, n, j, alpha, A, lda, B, ldb, beta, C, ldc, scratch);
     }
 }
 

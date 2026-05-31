@@ -23376,3 +23376,40 @@ Pass/fail result:
 Known issues:
 - Disassembly addresses and TLS offsets are build-specific and are included only as local context for the current `build_bench_release` binaries.
 - The untracked partial `benchmarks/gmp/03_Rgemm/results_raw/` directory is unrelated to this phase and was not staged.
+
+## Phase: Fuse beta scaling into Rgemm panel kernels
+
+Implemented features:
+- Moved GMP and MPFR Rgemm `04`, `05`, and `06` beta scaling from a separate full-C prepass into the block or panel kernels.
+- For `04`, initialized the 4x4 accumulator from `beta * C` and stored the final accumulator back to `C` instead of scaling `C` first and adding the accumulator later.
+- For `05` and `06`, scaled only the current panel or row-block panel before the `alpha * B` and row update loops.
+- Applied the same source-level shape to GMP C native, GMP wrapper orig/mkII, MPFR C native, MPFR C native FMA, MPFR wrapper baseline, MPFR wrapper `ROUNDING`, and MPFR wrapper `ROUNDING_FMA` serial/OpenMP variants.
+- Kept `alpha == 0` and `beta == 0` special cases out of this phase as requested.
+
+Missing features:
+- No new full timing sweep was collected for the fused beta kernels.
+- README benchmark tables were not regenerated because this phase changes kernels but does not add fresh benchmark data.
+
+Tests added:
+- No unit tests. This phase changes benchmark kernels and uses benchmark correctness checks.
+
+Exact commands run:
+- `cmake --build build_bench_release -j --target Rgemm_gmp_C_native_04 Rgemm_gmp_C_native_05 Rgemm_gmp_C_native_06 Rgemm_gmp_C_native_openmp_04 Rgemm_gmp_C_native_openmp_05 Rgemm_gmp_C_native_openmp_06 Rgemm_gmp_kernel_04_orig Rgemm_gmp_kernel_04_mkII Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_05_orig Rgemm_gmp_kernel_05_mkII Rgemm_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_06_orig Rgemm_gmp_kernel_06_mkII Rgemm_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_04_orig Rgemm_gmp_kernel_openmp_04_mkII Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_05_orig Rgemm_gmp_kernel_openmp_05_mkII Rgemm_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH Rgemm_gmp_kernel_openmp_06_orig Rgemm_gmp_kernel_openmp_06_mkII Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH Rgemm_mpfr_C_native_04 Rgemm_mpfr_C_native_04_FMA Rgemm_mpfr_C_native_05 Rgemm_mpfr_C_native_05_FMA Rgemm_mpfr_C_native_06 Rgemm_mpfr_C_native_06_FMA Rgemm_mpfr_C_native_openmp_04 Rgemm_mpfr_C_native_openmp_04_FMA Rgemm_mpfr_C_native_openmp_05 Rgemm_mpfr_C_native_openmp_05_FMA Rgemm_mpfr_C_native_openmp_06 Rgemm_mpfr_C_native_openmp_06_FMA Rgemm_mpfr_kernel_04_mkII Rgemm_mpfr_kernel_04_mkII_ROUNDING Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_04_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION_FMA Rgemm_mpfr_kernel_05_mkII Rgemm_mpfr_kernel_05_mkII_ROUNDING Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_05_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION_FMA Rgemm_mpfr_kernel_06_mkII Rgemm_mpfr_kernel_06_mkII_ROUNDING Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_06_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION_FMA Rgemm_mpfr_kernel_openmp_04_mkII Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION_FMA Rgemm_mpfr_kernel_openmp_05_mkII Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION_FMA Rgemm_mpfr_kernel_openmp_06_mkII Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA`
+- `cmake --build build_bench_release -j --target Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION_FMA Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION_FMA Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_FMA Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA`
+- `build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_04 13 13 13 512`
+- `bash -lc 'set -e; for exe in build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_04_mkII build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_05_mkII build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_06_mkII build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05_mkII build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_05_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_06_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION_FMA; do echo "== $exe"; "$exe" 13 13 13 512 | tail -n 2; done'`
+- `bash -lc 'set -e; for exe in build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA; do echo "== $exe"; "$exe" 13 13 13 512 | tail -n 2; done'`
+- `bash -lc 'set -e; for exe in build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_04 build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_05 build_bench_release/benchmarks/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_06 build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_04_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_05_FMA build_bench_release/benchmarks/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_06_FMA; do echo "== $exe"; "$exe" 13 13 13 512 | tail -n 2; done'`
+- `objdump -Cd --no-show-raw-insn build_bench_release/benchmarks/mpfr/03_Rgemm/<representative FMA binary>`
+- `git diff --check`
+
+Pass/fail result:
+- GMP/MPFR Rgemm changed target build: PASS.
+- GMP Rgemm 13x13x13 serial/OpenMP smoke checks: PASS.
+- MPFR Rgemm 13x13x13 serial/OpenMP smoke checks: PASS after removing the stale OpenMP wrapper beta prepass.
+- Representative MPFR FMA objdump check: PASS; C native and wrapper `ROUNDING_PRECISION_FMA` hot loops both use one `mpfr_fma` per inner update.
+- Whitespace check: PASS.
+
+Known issues:
+- Local benchmark executables and objdump on those binaries failed under the sandbox with `bwrap: loopback: Failed RTM_NEWADDR`; representative smoke and objdump commands were rerun outside the sandbox.
+- Some now-unused `scale_c` helper definitions remain in the touched benchmark sources. They are harmless but can be removed in a separate cleanup if desired.

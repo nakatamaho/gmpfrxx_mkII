@@ -53,8 +53,14 @@ int64_t panel_width(int64_t n, int64_t j0) {
     return remaining < RgemmPanelSize ? remaining : RgemmPanelSize;
 }
 
-void rgemm_panel(int64_t m, int64_t k, int64_t n, int64_t j0, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, mpfr_t *C, int64_t ldc, RgemmPanelScratch &scratch, mpfr_rnd_t rnd) {
+void rgemm_panel(int64_t m, int64_t k, int64_t n, int64_t j0, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, const mpfr_t beta, mpfr_t *C, int64_t ldc, RgemmPanelScratch &scratch, mpfr_rnd_t rnd) {
     const int64_t jb = panel_width(n, j0);
+
+    for (int64_t i = 0; i < m; ++i) {
+        for (int64_t jj = 0; jj < jb; ++jj) {
+            mpfr_mul(C[i + (j0 + jj) * ldc], beta, C[i + (j0 + jj) * ldc], rnd);
+        }
+    }
 
     for (int64_t l = 0; l < k; ++l) {
         for (int64_t jj = 0; jj < jb; ++jj) {
@@ -86,16 +92,9 @@ void _Rgemm(int64_t m, int64_t k, int64_t n, const mpfr_t alpha, const mpfr_t *A
         RgemmPanelScratch scratch;
         scratch_init(scratch, scratch_precision, rnd);
 
-#pragma omp for collapse(2) schedule(static)
-        for (int64_t j = 0; j < n; ++j) {
-            for (int64_t i = 0; i < m; ++i) {
-                mpfr_mul(C[i + j * ldc], beta, C[i + j * ldc], rnd);
-            }
-        }
-
 #pragma omp for schedule(static)
         for (int64_t j = 0; j < n; j += RgemmPanelSize) {
-            rgemm_panel(m, k, n, j, alpha, A, lda, B, ldb, C, ldc, scratch, rnd);
+            rgemm_panel(m, k, n, j, alpha, A, lda, B, ldb, beta, C, ldc, scratch, rnd);
         }
 
         scratch_clear(scratch);

@@ -61,9 +61,15 @@ void scale_c(int64_t m, int64_t n, const mpfr_t beta, mpfr_t *C, int64_t ldc, mp
     }
 }
 
-void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_block, int64_t j0, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, mpfr_t *C, int64_t ldc, RgemmPanelScratch &scratch, mpfr_rnd_t rnd) {
+void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_block, int64_t j0, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, const mpfr_t beta, mpfr_t *C, int64_t ldc, RgemmPanelScratch &scratch, mpfr_rnd_t rnd) {
     const int64_t jb = panel_width(n, j0);
     const int64_t i_end = (i0 + row_block < m) ? (i0 + row_block) : m;
+
+    for (int64_t i = i0; i < i_end; ++i) {
+        for (int64_t jj = 0; jj < jb; ++jj) {
+            mpfr_mul(C[i + (j0 + jj) * ldc], beta, C[i + (j0 + jj) * ldc], rnd);
+        }
+    }
 
     for (int64_t l = 0; l < k; ++l) {
         for (int64_t jj = 0; jj < jb; ++jj) {
@@ -82,13 +88,11 @@ void rgemm_panel_rows(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t row_b
 void rgemm_compute(int64_t m, int64_t k, int64_t n, int64_t row_block, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, const mpfr_t beta, mpfr_t *C, int64_t ldc, mpfr_rnd_t rnd) {
     const mpfr_prec_t scratch_precision = mpfr_get_prec(alpha);
 
-    scale_c(m, n, beta, C, ldc, rnd);
-
     RgemmPanelScratch scratch;
     scratch_init(scratch, scratch_precision, rnd);
     for (int64_t j = 0; j < n; j += RgemmPanelSize) {
         for (int64_t i = 0; i < m; i += row_block) {
-            rgemm_panel_rows(m, k, n, i, row_block, j, alpha, A, lda, B, ldb, C, ldc, scratch, rnd);
+            rgemm_panel_rows(m, k, n, i, row_block, j, alpha, A, lda, B, ldb, beta, C, ldc, scratch, rnd);
         }
     }
     scratch_clear(scratch);

@@ -62,7 +62,7 @@ void scratch_clear(Rgemm4x4Scratch &scratch) {
     }
 }
 
-void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, mpfr_t *C, int64_t ldc, Rgemm4x4Scratch &scratch, mpfr_rnd_t rnd) {
+void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, const mpfr_t alpha, const mpfr_t *A, int64_t lda, const mpfr_t *B, int64_t ldb, const mpfr_t beta, mpfr_t *C, int64_t ldc, Rgemm4x4Scratch &scratch, mpfr_rnd_t rnd) {
     mpfr_ptr c_ptr[RgemmBlockSize * RgemmBlockSize];
     mpfr_srcptr a_ptr[RgemmBlockSize];
     mpfr_srcptr b_ptr[RgemmBlockSize];
@@ -75,11 +75,12 @@ void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, co
             const int idx = ii + jj * RgemmBlockSize;
             if (i < m && valid_col) {
                 c_ptr[idx] = C[i + j * ldc];
+                mpfr_mul(scratch.acc[idx], beta, c_ptr[idx], rnd);
             } else {
                 mpfr_set_ui(scratch.sink[idx], 0, rnd);
                 c_ptr[idx] = scratch.sink[idx];
+                mpfr_set_ui(scratch.acc[idx], 0, rnd);
             }
-            mpfr_set_ui(scratch.acc[idx], 0, rnd);
         }
     }
 
@@ -104,7 +105,7 @@ void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, co
     }
 
     for (int idx = 0; idx < RgemmBlockSize * RgemmBlockSize; ++idx) {
-        mpfr_add(c_ptr[idx], c_ptr[idx], scratch.acc[idx], rnd);
+        mpfr_set(c_ptr[idx], scratch.acc[idx], rnd);
     }
 }
 
@@ -126,16 +127,9 @@ void _Rgemm(int64_t m, int64_t k, int64_t n, const mpfr_t alpha, const mpfr_t *A
         scratch_init(scratch, scratch_precision, rnd);
 
 #pragma omp for collapse(2) schedule(static)
-        for (int64_t j = 0; j < n; ++j) {
-            for (int64_t i = 0; i < m; ++i) {
-                mpfr_mul(C[i + j * ldc], beta, C[i + j * ldc], rnd);
-            }
-        }
-
-#pragma omp for collapse(2) schedule(static)
         for (int64_t j = 0; j < n; j += RgemmBlockSize) {
             for (int64_t i = 0; i < m; i += RgemmBlockSize) {
-                rgemm_4x4_block(m, k, n, i, j, alpha, A, lda, B, ldb, C, ldc, scratch, rnd);
+                rgemm_4x4_block(m, k, n, i, j, alpha, A, lda, B, ldb, beta, C, ldc, scratch, rnd);
             }
         }
 

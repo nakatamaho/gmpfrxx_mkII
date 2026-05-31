@@ -63,8 +63,15 @@ void scale_c(int64_t m, int64_t n, const mpfr_class &beta, mpfr_class *C, int64_
     }
 }
 
-void rgemm_panel(int64_t m, int64_t k, int64_t n, int64_t j0, const mpfr_class &alpha, const mpfr_class *A, int64_t lda, const mpfr_class *B, int64_t ldb, mpfr_class *C, int64_t ldc, RgemmPanelScratch &scratch, mpfr_rnd_t rounding) {
+void rgemm_panel(int64_t m, int64_t k, int64_t n, int64_t j0, const mpfr_class &alpha, const mpfr_class *A, int64_t lda, const mpfr_class *B, int64_t ldb, const mpfr_class &beta, mpfr_class *C, int64_t ldc, RgemmPanelScratch &scratch, mpfr_rnd_t rounding) {
     const int64_t jb = panel_width(n, j0);
+
+    for (int64_t i = 0; i < m; ++i) {
+        for (int64_t jj = 0; jj < jb; ++jj) {
+            auto c_rounding = mpfrxx::with_rounding(C[i + (j0 + jj) * ldc], rounding);
+            c_rounding *= beta;
+        }
+    }
 
     for (int64_t l = 0; l < k; ++l) {
         for (int64_t jj = 0; jj < jb; ++jj) {
@@ -90,11 +97,9 @@ void rgemm_panel(int64_t m, int64_t k, int64_t n, int64_t j0, const mpfr_class &
 
 void _Rgemm(int64_t m, int64_t k, int64_t n, const mpfr_class &alpha, const mpfr_class *A, int64_t lda, const mpfr_class *B, int64_t ldb, const mpfr_class &beta, mpfr_class *C, int64_t ldc) {
     const mpfr_rnd_t rounding = mpfrxx::default_rounding_mode();
-    scale_c(m, n, beta, C, ldc, rounding);
-
     RgemmPanelScratch scratch(alpha.get_prec());
     for (int64_t j = 0; j < n; j += RgemmPanelSize) {
-        rgemm_panel(m, k, n, j, alpha, A, lda, B, ldb, C, ldc, scratch, rounding);
+        rgemm_panel(m, k, n, j, alpha, A, lda, B, ldb, beta, C, ldc, scratch, rounding);
     }
 }
 

@@ -65,7 +65,7 @@ void scratch_clear(Rgemm4x4Scratch &scratch) {
     }
 }
 
-void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, const mpf_t alpha, const mpf_t *A, int64_t lda, const mpf_t *B, int64_t ldb, mpf_t *C, int64_t ldc, Rgemm4x4Scratch &scratch) {
+void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, const mpf_t alpha, const mpf_t *A, int64_t lda, const mpf_t *B, int64_t ldb, const mpf_t beta, mpf_t *C, int64_t ldc, Rgemm4x4Scratch &scratch) {
     mpf_ptr c_ptr[RgemmBlockSize * RgemmBlockSize];
     mpf_srcptr a_ptr[RgemmBlockSize];
     mpf_srcptr b_ptr[RgemmBlockSize];
@@ -78,11 +78,12 @@ void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, co
             const int idx = ii + jj * RgemmBlockSize;
             if (i < m && valid_col) {
                 c_ptr[idx] = C[i + j * ldc];
+                mpf_mul(scratch.acc[idx], beta, c_ptr[idx]);
             } else {
                 mpf_set_ui(scratch.sink[idx], 0);
                 c_ptr[idx] = scratch.sink[idx];
+                mpf_set_ui(scratch.acc[idx], 0);
             }
-            mpf_set_ui(scratch.acc[idx], 0);
         }
     }
 
@@ -108,7 +109,7 @@ void rgemm_4x4_block(int64_t m, int64_t k, int64_t n, int64_t i0, int64_t j0, co
     }
 
     for (int idx = 0; idx < RgemmBlockSize * RgemmBlockSize; ++idx) {
-        mpf_add(c_ptr[idx], c_ptr[idx], scratch.acc[idx]);
+        mpf_set(c_ptr[idx], scratch.acc[idx]);
     }
 }
 
@@ -129,16 +130,9 @@ void _Rgemm(int64_t m, int64_t k, int64_t n, const mpf_t alpha, const mpf_t *A, 
         scratch_init(scratch, scratch_precision);
 
 #pragma omp for collapse(2) schedule(static)
-        for (int64_t j = 0; j < n; ++j) {
-            for (int64_t i = 0; i < m; ++i) {
-                mpf_mul(C[i + j * ldc], beta, C[i + j * ldc]);
-            }
-        }
-
-#pragma omp for collapse(2) schedule(static)
         for (int64_t j = 0; j < n; j += RgemmBlockSize) {
             for (int64_t i = 0; i < m; i += RgemmBlockSize) {
-                rgemm_4x4_block(m, k, n, i, j, alpha, A, lda, B, ldb, C, ldc, scratch);
+                rgemm_4x4_block(m, k, n, i, j, alpha, A, lda, B, ldb, beta, C, ldc, scratch);
             }
         }
 
