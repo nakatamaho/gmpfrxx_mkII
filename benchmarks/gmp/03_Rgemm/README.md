@@ -235,49 +235,49 @@ register. The `05` and `06` panel forms are better than `04`, but at 1024-bit
 they mostly settle in the 400-460 MFLOPS range for `gmpxx_mkII`, well below the
 roughly 700-730 MFLOPS plateau reached by `kernel_openmp_02_mkII`.
 
-## Recorded Clean GMP/MPFR Pow2/37 Sweep, 512-bit Precision
+## Recorded Clean GMP/MPFR Pow2/64n Sweep, 512-bit Precision
 
 A clean cross-backend Rgemm sweep was collected with the current target matrix:
 
 ```bash
-benchmarks/run_rgemm_all.sh build_bench_release 512 1024 128 5 1 both 37
+benchmarks/run_rgemm_all.sh build_bench_release 512 1500 128 5 1 both
 ```
 
-The recorded run passes step `37` explicitly. New runs default to step `23` when the final argument is omitted.
-
-The size set combines powers of two and multiples of 37 up to 1024:
+The recorded run uses the runner default multiple size `64`. The size set
+combines powers of two and multiples of 64 up to 1500:
 
 ```text
-1, 2, 4, 8, 16, 32, 37, 64, 74, 111, 128, 148, 185, 222,
-256, 259, 296, 333, 370, 407, 444, 481, 512, 518, 555, 592,
-629, 666, 703, 740, 777, 814, 851, 888, 925, 962, 999, 1024
+1, 2, 4, 8, 16, 32, 64, 128, 192, 256, 320, 384, 448, 512,
+576, 640, 704, 768, 832, 896, 960, 1024, 1088, 1152, 1216,
+1280, 1344, 1408, 1472
 ```
 
-Sizes `N <= 128` use `repeat=5`; larger sizes use `repeat=1`. All recorded
-GMP and MPFR samples report `Result OK`.
+Sizes `N <= 128` use `repeat=5`; larger sizes use `repeat=1`. Timed runs use
+`-nocheck` after the runner smoke tests. All recorded GMP and MPFR timed
+samples report `Check skipped`.
 
 Artifacts:
 
-- GMP raw data: [results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/](results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/)
-- MPFR raw data: [../../mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/](../../mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_37_p512_repeat1_small5_20260528_141433/)
-- GMP raw CSV rows: `3937` including header.
-- MPFR raw CSV rows: `6889` including header.
+- GMP raw data: [results_raw/rgemm_gmp_all_pow2_64n_p512_repeat1_small5_20260531_170547/](results_raw/rgemm_gmp_all_pow2_64n_p512_repeat1_small5_20260531_170547/)
+- MPFR raw data: [../../mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_64n_p512_repeat1_small5_20260531_170547/](../../mpfr/03_Rgemm/results_raw/rgemm_mpfr_all_pow2_64n_p512_repeat1_small5_20260531_170547/)
+- GMP raw CSV rows: `1393` including header.
+- MPFR raw CSV rows: `2437` including header.
 
 The following line plots compare all GMP Rgemm targets within this backend.
 The horizontal axis is the square matrix size `N = M = K`, and the vertical axis is max MFLOPS.
 
-![GMP Rgemm serial kernel comparison, 512-bit precision](results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_gmp_kernel_comparison_p512_serial.png)
+![GMP Rgemm serial kernel comparison, 512-bit precision](results_raw/rgemm_gmp_all_pow2_64n_p512_repeat1_small5_20260531_170547/rgemm_gmp_kernel_comparison_p512_serial.png)
 
-![GMP Rgemm OpenMP kernel comparison, 512-bit precision](results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_gmp_kernel_comparison_p512_openmp.png)
+![GMP Rgemm OpenMP kernel comparison, 512-bit precision](results_raw/rgemm_gmp_all_pow2_64n_p512_repeat1_small5_20260531_170547/rgemm_gmp_kernel_comparison_p512_openmp.png)
 
 Regenerate the GMP kernel-comparison plots with:
 
 ```bash
 benchmarks/plot_rgemm_kernel_comparison.py \
-    --summary benchmarks/gmp/03_Rgemm/results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/summary_rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433.csv \
+    --summary benchmarks/gmp/03_Rgemm/results_raw/rgemm_gmp_all_pow2_64n_p512_repeat1_small5_20260531_170547/summary_rgemm_gmp_all_pow2_64n_p512_repeat1_small5_20260531_170547.csv \
     --backend gmp \
-    --output-prefix benchmarks/gmp/03_Rgemm/results_raw/rgemm_gmp_all_pow2_37_p512_repeat1_small5_20260528_141433/rgemm_gmp_kernel_comparison_p512 \
-    --title-prefix "GMP Rgemm 512-bit pow2/37 sweep"
+    --output-prefix benchmarks/gmp/03_Rgemm/results_raw/rgemm_gmp_all_pow2_64n_p512_repeat1_small5_20260531_170547/rgemm_gmp_kernel_comparison_p512 \
+    --title-prefix "GMP Rgemm 512-bit pow2/64n sweep"
 ```
 
 The important result is that GMP and MPFR remain different performance classes
@@ -286,31 +286,33 @@ kernels and remains visible in the best OpenMP kernels.
 
 | Size | Metric | GMP best MFLOPS | MPFR best MFLOPS | GMP/MPFR | GMP winner | MPFR winner |
 |------|--------|----------------:|-----------------:|---------:|------------|-------------|
-| `128` | serial best | `31.330` | `24.025` | `1.30x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
-| `128` | OpenMP best | `462.965` | `397.297` | `1.17x` | `Rgemm_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | `Rgemm_mpfr_C_native_openmp_02` |
-| `256` | serial best | `30.961` | `23.785` | `1.30x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
-| `256` | OpenMP best | `765.795` | `682.765` | `1.12x` | `Rgemm_gmp_C_native_openmp_06` | `Rgemm_mpfr_C_native_openmp_02` |
-| `512` | serial best | `31.047` | `24.015` | `1.29x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
-| `512` | OpenMP best | `871.075` | `698.144` | `1.25x` | `Rgemm_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH` | `Rgemm_mpfr_C_native_openmp_02` |
-| `1024` | serial best | `31.187` | `24.058` | `1.30x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
-| `1024` | OpenMP best | `872.742` | `692.430` | `1.26x` | `Rgemm_gmp_C_native_openmp_05` | `Rgemm_mpfr_C_native_openmp_02` |
+| `128` | serial best | `31.227` | `23.343` | `1.34x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `128` | OpenMP best | `465.942` | `387.972` | `1.20x` | `Rgemm_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH` | `Rgemm_mpfr_C_native_openmp_02` |
+| `256` | serial best | `30.978` | `23.722` | `1.31x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `256` | OpenMP best | `766.179` | `686.616` | `1.12x` | `Rgemm_gmp_kernel_openmp_03_mkII` | `Rgemm_mpfr_C_native_openmp_02` |
+| `512` | serial best | `31.246` | `23.743` | `1.32x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `512` | OpenMP best | `865.246` | `697.644` | `1.24x` | `Rgemm_gmp_C_native_openmp_06` | `Rgemm_mpfr_C_native_openmp_02` |
+| `1024` | serial best | `30.948` | `24.013` | `1.29x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `1024` | OpenMP best | `848.648` | `700.338` | `1.21x` | `Rgemm_gmp_C_native_openmp_03` | `Rgemm_mpfr_C_native_openmp_02` |
+| `1472` | serial best | `31.346` | `24.069` | `1.30x` | `Rgemm_gmp_C_native_02` | `Rgemm_mpfr_C_native_02` |
+| `1472` | OpenMP best | `871.995` | `686.758` | `1.27x` | `Rgemm_gmp_C_native_openmp_06` | `Rgemm_mpfr_C_native_openmp_02` |
 
-At `N=1024`, the implementation-specific winners are:
+At `N=1472`, the implementation-specific winners are:
 
 | Backend | C native best | Upstream wrapper best | mkII wrapper best |
 |---------|---------------|-----------------------|-------------------|
-| GMP | `Rgemm_gmp_C_native_openmp_05`, `872.742` MFLOPS | `Rgemm_gmp_kernel_openmp_03_orig`, `850.865` MFLOPS | `Rgemm_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH`, `847.307` MFLOPS |
-| MPFR | `Rgemm_mpfr_C_native_openmp_02`, `692.430` MFLOPS | not applicable | `Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_PRECISION_FMA`, `672.452` MFLOPS |
+| GMP | `Rgemm_gmp_C_native_openmp_06`, `871.995` MFLOPS | `Rgemm_gmp_kernel_openmp_03_orig`, `831.697` MFLOPS | `Rgemm_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH`, `833.164` MFLOPS |
+| MPFR | `Rgemm_mpfr_C_native_openmp_02`, `686.758` MFLOPS | not applicable | `Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_FMA`, `658.488` MFLOPS |
 
-The `N=1024` wrapper comparison is close within each backend: GMP mkII reaches
-about `97.1%` of the best GMP C native result, and MPFR mkII reaches about
-`97.1%` of the best MPFR C native result. The cross-backend difference is
+The `N=1472` wrapper comparison is still close within each backend: GMP mkII
+reaches about `95.5%` of the best GMP C native result, and MPFR mkII reaches
+about `95.9%` of the best MPFR C native result. The cross-backend difference is
 therefore not primarily a wrapper issue in this run. It is already present in
-the best serial C native kernels (`31.187` versus `24.058` MFLOPS) and then
+the best serial C native kernels (`31.346` versus `24.069` MFLOPS) and then
 persists after OpenMP scaling.
 
 The winning source shapes also differ. GMP large-size winners are panel or
-rank-1 variants (`05`, `02`, and `03` depending on implementation), while MPFR
+rank-1 variants (`06`, `03`, and `02` depending on implementation), while MPFR
 raw C native is dominated by `02`, the rank-1 column-major update. MPFR
 `ROUNDING`/`FMA` wrapper variants can match the corresponding C native hot-loop
 class, but they do not remove MPFR's backend cost relative to GMP `mpf_t`.

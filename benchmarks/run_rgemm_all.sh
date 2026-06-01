@@ -37,10 +37,10 @@ small_threshold="${4:-128}"
 small_repeat="${5:-5}"
 large_repeat="${6:-1}"
 backend_filter="${7:-both}"
-step_size="${8:-${RGEMM_STEP:-23}}"
+multiple_size="${8:-${RGEMM_MULTIPLE:-64}}"
 
-if ! [[ "${step_size}" =~ ^[1-9][0-9]*$ ]]; then
-    echo "Invalid positive integer step size: ${step_size}" >&2
+if ! [[ "${multiple_size}" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Invalid positive integer multiple size: ${multiple_size}" >&2
     exit 1
 fi
 
@@ -77,10 +77,10 @@ while (( n <= max_n )); do
     n=$((n * 2))
 done
 
-n="${step_size}"
+n="${multiple_size}"
 while (( n <= max_n )); do
     add_size "${n}"
-    n=$((n + step_size))
+    n=$((n + multiple_size))
 done
 
 mapfile -t sizes < <(printf "%s\n" "${sizes[@]}" | sort -n -u)
@@ -261,7 +261,7 @@ run_backend() {
     local env_name="$3"
     shift 3
     local targets=("$@")
-    local run_id="rgemm_${backend}_all_pow2_${step_size}_p${precision}_repeat${large_repeat}_small${small_repeat}_${timestamp}"
+    local run_id="rgemm_${backend}_all_pow2_${multiple_size}n_p${precision}_repeat${large_repeat}_small${small_repeat}_${timestamp}"
     local out_dir="${script_dir}/${backend}/03_Rgemm/results_raw/${run_id}"
     local raw_csv="${out_dir}/raw_${run_id}.csv"
     local summary_csv="${out_dir}/summary_${run_id}.csv"
@@ -277,7 +277,7 @@ run_backend() {
         else
             uname -m
         fi
-        echo "BENCHMARK_PARAMS backend=${backend} precision=${precision} max_n=${max_n} step=${step_size} small_threshold=${small_threshold} small_repeat=${small_repeat} large_repeat=${large_repeat}"
+        echo "BENCHMARK_PARAMS backend=${backend} precision=${precision} max_n=${max_n} multiple=${multiple_size} small_threshold=${small_threshold} small_repeat=${small_repeat} large_repeat=${large_repeat}"
         echo "SIZE_SET ${sizes[*]}"
         echo "TARGET_COUNT ${#targets[@]}"
         echo "OPENMP_AFFINITY OMP_NUM_THREADS=${OMP_NUM_THREADS} OMP_PLACES=${OMP_PLACES} OMP_PROC_BIND=${OMP_PROC_BIND}"
