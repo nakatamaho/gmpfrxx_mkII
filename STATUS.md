@@ -1,3 +1,39 @@
+## Phase: 1.0.0 release metadata
+
+Implemented features:
+- Bumped the CMake project version to `1.0.0`.
+- Updated the generated-header fallback version and version-info test expectation to `1.0.0`.
+- Added top-level `LICENSE` and `CHANGELOG.md` files for the release archive.
+
+Missing features:
+- None for repository release metadata. The release tag is created after this commit is verified.
+
+Tests added:
+- None; updated `test_version_info` to match the release version.
+
+Exact commands run:
+- `perl -0pi -e 's/project\(gmpfrxx_mkII VERSION 0\.0\.1 LANGUAGES CXX\)/project(gmpfrxx_mkII VERSION 1.0.0 LANGUAGES CXX)/' CMakeLists.txt`
+- `perl -0pi -e 's/#define GMPFRXX_MKII_VERSION "0\.0\.1"/#define GMPFRXX_MKII_VERSION "1.0.0"/' include/gmpfrxx_mkII/detail/config.hpp`
+- `perl -0pi -e 's/std::strcmp\(gmp_version, "0\.0\.1"\)/std::strcmp(gmp_version, "1.0.0")/' tests/test_version_info.cpp`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build --target test_version_info dist -j`
+- `ctest --test-dir build -R test_version_info --output-on-failure`
+- `ls -lh build/gmpfrxx_mkII-1.0.0.tar.xz`
+- `sed -n '28,42p' build/generated/gmpfrxx_mkII/detail/version.hpp`
+
+Pass/fail result:
+- Debug configure: PASS.
+- Full Debug build including examples, benchmarks, and tests: PASS.
+- CTest: PASS, 178/178 tests passed.
+- Version-info focused CTest: PASS.
+- Dist archive generation: PASS, `build/gmpfrxx_mkII-1.0.0.tar.xz`.
+
+Known issues:
+- GitHub release publication is outside repository metadata and is not represented by a tracked file.
+
 ## Phase: PRECISION thread-local scope clarification
 
 Implemented features:
