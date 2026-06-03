@@ -862,6 +862,101 @@ mode. It is a compatibility path, not a separate complex-division semantics;
 last-bit differences from a direct \code{mpc_div} are possible. Non-Windows
 builds call \code{mpc_div} directly.
 
+
+% ======================================================================
+\section{Benchmark results}\label{sec:benchmarks}
+
+The repository contains reproducible benchmark reports under
+\code{benchmarks/gmp/*/README.md} and \code{benchmarks/mpfr/*/README.md}. Those
+reports are the authoritative source for raw logs, CSV files, plots, hotpath
+disassembly, exact command lines, and per-variant interpretation. This section
+records representative headline results from the committed benchmark data used
+for the 1.0.0 release-candidate documentation.
+
+The 00/01/02 vector and matrix-vector rows use the repeat-10 runs recorded by
+\code{benchmarks/run_all.sh}. The Rgemm rows use the clean 512-bit pow2/64n sweep
+recorded by \code{benchmarks/run_rgemm_all.sh}. MFLOPS values are elapsed-time
+metrics, not hardware-counter measurements. In the table below, entries of the
+form ``Max / Avg'' report maximum and average MFLOPS over repeats. Rgemm rows
+show the representative large-size maximum at \code{N = 1472}, where most sizes
+were measured with \code{repeat=1}.
+
+\begingroup
+\scriptsize
+\begin{longtable}{@{}p{0.08\textwidth}p{0.11\textwidth}p{0.13\textwidth}p{0.30\textwidth}p{0.30\textwidth}@{}}
+\toprule
+Backend & Benchmark & Case & Best serial representative & Best OpenMP representative \\
+\midrule
+\endhead
+GMP & Rdot & 512-bit &
+\code{mkII_06_FIXED}, 33.796 / 32.961 &
+\code{omp_mkII_03}, 578.634 / 573.121 \\
+GMP & Rdot & 1024-bit &
+\code{mkII_06_FIXED}, 12.151 / 11.897 &
+\code{omp_mkII_03}, 323.366 / 315.184 \\
+GMP & Raxpy & 512-bit &
+\code{C_native_03}, 34.040 / 33.727 &
+\code{omp_orig_02}, 398.110 / 393.715 \\
+GMP & Raxpy & 1024-bit &
+\code{C_native_01}, 12.042 / 11.970 &
+\code{omp_orig_02}, 255.925 / 252.424 \\
+GMP & Rgemv & 512-bit &
+\code{mkII_03}, 31.991 / 31.449 &
+\code{C_omp_07}, 552.697 / 540.759 \\
+GMP & Rgemv & 1024-bit &
+\code{mkII_03_FIXED}, 11.586 / 11.268 &
+\code{C_omp_07}, 264.362 / 262.194 \\
+GMP & Rgemm & 512-bit, \code{N=1472} &
+\code{C_native_02}, 31.346 &
+\code{C_omp_06}, 871.995 \\
+\midrule
+MPFR & Rdot & 512-bit &
+\code{C_native_06}, 23.936 / 23.688 &
+\code{C_omp_01_FMA}, 600.518 / 560.417 \\
+MPFR & Rdot & 1024-bit &
+\code{mkII_05_RPF}, 10.425 / 10.183 &
+\code{C_omp_01_FMA}, 293.591 / 286.659 \\
+MPFR & Raxpy & 512-bit &
+\code{mkII_01_RPF}, 23.209 / 22.963 &
+\code{C_omp_01_FMA}, 422.804 / 415.811 \\
+MPFR & Raxpy & 1024-bit &
+\code{C_native_01_FMA}, 9.393 / 9.351 &
+\code{omp_mkII_01_RPF}, 256.399 / 252.310 \\
+MPFR & Rgemv & 512-bit &
+\code{mkII_02_ROUNDING_FMA}, 23.959 / 23.408 &
+\code{omp_mkII_07_RP}, 455.524 / 443.905 \\
+MPFR & Rgemv & 1024-bit &
+\code{mkII_04_RPF}, 10.434 / 10.152 &
+\code{C_omp_07_FMA}, 239.287 / 233.270 \\
+MPFR & Rgemm & 512-bit, \code{N=1472} &
+\code{C_native_02}, 24.069 &
+\code{C_omp_02}, 686.758 \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+Table entries are shortened for page fit. Prefix \code{omp_} denotes an OpenMP target, and \code{C_} denotes a raw C native target. The shortened suffix \code{FIXED} denotes the fixed-precision fastpath build
+(\code{FIXED_PRECISION_FASTPATH}). The shortened MPFR suffix \code{RPF} denotes
+the \code{ROUNDING_PRECISION_FMA} class. Full executable names, sorted tables,
+raw-data paths, plots, and disassembly snippets are intentionally kept in the
+benchmark README files rather than duplicated here.
+
+\paragraph{Interpretation.}
+The committed data show three stable boundaries. First, reusable temporaries and
+fixed-precision scratch paths control most GMP wrapper overhead in expression
+benchmarks. Second, MPFR wrappers need loop-external rounding plus an
+FMA-capable source shape before their hot loop reaches the raw C FMA call class.
+Third, Rgemm is not primarily a wrapper problem in the current sweep: at
+\code{N=1472}, the best GMP and MPFR wrappers are close to their raw C backend
+class, while GMP remains about 1.3 times faster than MPFR in the best serial C
+native kernels.
+
+The benchmark reports should be consulted before drawing narrower conclusions.
+They include static sorted tables, line plots, and representative disassembly
+showing whether \code{mpf_init2}/\code{mpfr_init2}, rounding-mode lookup,
+temporary construction, \code{mpfr_fma}, and OpenMP final reductions appear in
+or outside the timed hot loop.
+
 % ======================================================================
 \section{Version information}
 
