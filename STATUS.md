@@ -1,3 +1,35 @@
+## Phase: 1.0.0-rc1 distribution archive naming
+
+Implemented features:
+- Kept the public library version at `1.0.0`.
+- Changed only the git-archive distribution basename to `gmpfrxx_mkII.1.0.0-rc1`.
+- Added a README News entry for the `1.0.0-rc1` source archive.
+- Added `.gitattributes` rules so Markdown documentation/report files are excluded from git-archive source distributions.
+- Added `--worktree-attributes` to the `dist` target so the archive exclusion rule is honored before the attributes file is committed.
+
+Missing features:
+- None for the RC distribution archive naming change.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build --target test_version_info dist -j`
+- `ctest --test-dir build -R test_version_info --output-on-failure`
+- `ls -lh build/gmpfrxx_mkII.1.0.0-rc1.tar.xz`
+- `python3 -c "import tarfile; ..."`
+
+Pass/fail result:
+- Debug configure: PASS.
+- Version-info target build: PASS.
+- Dist archive generation: PASS, `build/gmpfrxx_mkII.1.0.0-rc1.tar.xz`.
+- Version-info focused CTest: PASS.
+- Archive Markdown exclusion check: PASS, `markdown_count=0`.
+
+Known issues:
+- The dist archive name carries the `rc1` marker; the public runtime version remains `1.0.0`.
+
 ## Phase: 1.0.0 release metadata
 
 Implemented features:

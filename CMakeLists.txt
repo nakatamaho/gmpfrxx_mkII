@@ -99,7 +99,7 @@ if(NOT GMPFRXX_MKII_MPFR_BUILDOPT_TLS)
     )
 endif()
 
-set(GMPFRXX_MKII_DIST_BASENAME "${PROJECT_NAME}-${PROJECT_VERSION}")
+set(GMPFRXX_MKII_DIST_BASENAME "${PROJECT_NAME}.${PROJECT_VERSION}-rc1")
 set(GMPFRXX_MKII_DIST_TAR "${CMAKE_CURRENT_BINARY_DIR}/${GMPFRXX_MKII_DIST_BASENAME}.tar")
 set(GMPFRXX_MKII_DIST_ARCHIVE "${GMPFRXX_MKII_DIST_TAR}.xz")
 
@@ -107,6 +107,7 @@ if(Git_FOUND AND XZ_EXECUTABLE)
     add_custom_target(dist
         COMMAND "${CMAKE_COMMAND}" -E rm -f "${GMPFRXX_MKII_DIST_TAR}" "${GMPFRXX_MKII_DIST_ARCHIVE}"
         COMMAND "${GIT_EXECUTABLE}" archive
+                --worktree-attributes
                 --format=tar
                 "--prefix=${GMPFRXX_MKII_DIST_BASENAME}/"
                 HEAD
