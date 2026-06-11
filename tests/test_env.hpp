@@ -26,26 +26,34 @@
  *
  */
 
-#include "test_env.hpp"
-
-#include <mpfrxx_mkII.h>
+#ifndef GMPFRXX_MKII_TEST_ENV_HPP
+#define GMPFRXX_MKII_TEST_ENV_HPP
 
 #include <cstdlib>
 
-int main()
+
+namespace gmpfrxx_mkII_tests {
+
+inline void set_environment_variable(const char *name, const char *value, int overwrite)
 {
-    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "384", 1);
-
-    mpfr_set_default_prec(200);
-    const auto defaults = mpfrxx::default_options();
-    if (defaults.precision_bits != 200) {
-        std::abort();
+#if defined(_WIN32)
+    if (overwrite || std::getenv(name) == nullptr) {
+        _putenv_s(name, value);
     }
-
-    mpfrxx::mpfr_class value;
-    if (value.precision() != 200) {
-        std::abort();
-    }
-
-    return 0;
+#else
+    setenv(name, value, overwrite);
+#endif
 }
+
+inline void unset_environment_variable(const char *name)
+{
+#if defined(_WIN32)
+    _putenv_s(name, "");
+#else
+    unsetenv(name);
+#endif
+}
+
+} // namespace gmpfrxx_mkII_tests
+
+#endif // GMPFRXX_MKII_TEST_ENV_HPP

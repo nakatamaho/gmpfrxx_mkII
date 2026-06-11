@@ -23617,3 +23617,45 @@ Pass/fail result:
 Known issues:
 - The representative runner execution required escalation because the sandbox failed with `bwrap: loopback: Failed RTM_NEWADDR`.
 - The temporary `step=23` raw result directory created during validation was removed after inspection.
+
+
+## Phase: Add MinGW-w64 Wine cross-test runner
+
+Implemented features:
+- Added `cmake/toolchains/mingw64-wine.cmake` for Linux-hosted `x86_64-w64-mingw32` builds with Wine as `CMAKE_CROSSCOMPILING_EMULATOR`.
+- Added `scripts/test_mingw64_wine.sh` to configure, build, and run CTest against MinGW GMP/MPFR/MPC installs under `/home/docker/mplapack/external/i` by default.
+- The runner validates GMP/MPFR/MPC headers, import libraries, and DLLs before configure.
+- The runner exports `WINEPATH` for GMP/MPFR/MPC DLL directories and the build directory, so generated project DLLs such as `libgmpxx_mkII_default_context_provider.dll` are found by Wine.
+- Fixed the CMake MPFR TLS probe so cross builds compile and link the probe with both MPFR and GMP include/library paths.
+- Added `tests/test_env.hpp` for portable test environment variable updates; Windows uses `_putenv_s` so MinGW CRT `getenv()` sees the changes.
+- Replaced POSIX-only `setenv()` / `unsetenv()` use in environment-related tests with the portable test helper.
+- Disabled `test_mpf_scalar_alloc_count` and `test_mpfr_scalar_alloc_count` on Windows because exact scalar allocation counts differ by MinGW CRT/GMP/MPFR linkage and are diagnostic rather than correctness tests.
+
+Missing features:
+- MPC in the tested MinGW install does not provide `mpc_buildopt_tls_p()`. This is logged by CMake but is not fatal because the current MPC API lacks that probe on this install.
+- The MinGW runner assumes GMP/MPFR/MPC DLL names `libgmp-10.dll`, `libmpfr-6.dll`, and `libmpc-3.dll`.
+
+Tests added:
+- No new product unit tests.
+- Added a reusable test helper for portable environment-variable mutation on POSIX and Windows.
+- Added a MinGW/Wine cross-test runner script.
+
+Exact commands run:
+- `GMPFRXX_MKII_MINGW_BUILD_TARGET=test_version_info scripts/test_mingw64_wine.sh build-mingw64-wine-smoke3 test_version_info`
+- `scripts/test_mingw64_wine.sh build-mingw64-wine`
+- `bash -n scripts/test_mingw64_wine.sh`
+- `ctest --test-dir build-mingw64-wine --output-on-failure -V -R 'example16_mpf_thread_context|test_mpf_external_provider|test_mpf_scalar_alloc_count|test_mpfr_scalar_alloc_count'`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- MinGW smoke configure/build/CTest: PASS; `test_version_info` passed under Wine.
+- Full MinGW/Wine CTest: PASS; 176 tests passed, 0 failed, and 2 Windows-disabled exact allocation-count tests did not run.
+- Native Debug configure: PASS.
+- Native Debug build: PASS.
+- Native Debug CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- The first MinGW run against the earlier MPFR rebuild failed because `mpfr_buildopt_tls_p()` returned false. The rebuilt MPFR install now reports `tls=1` and passes the project TLS requirement.
+- Some local commands required escalation because the sandbox can fail with `bwrap: loopback: Failed RTM_NEWADDR`.

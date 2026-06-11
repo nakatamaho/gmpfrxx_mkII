@@ -26,6 +26,8 @@
  *
  */
 
+#include "test_env.hpp"
+
 #include <mpfrxx_mkII.h>
 
 #include <cstdlib>
@@ -36,10 +38,10 @@ namespace {
 
 void clear_mpfr_environment()
 {
-    unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_DEFAULT_EMIN");
-    unsetenv("MPFRXX_DEFAULT_EMAX");
-    unsetenv("MPFRXX_DEFAULT_ROUNDING_MODE");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_EMIN");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_EMAX");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE");
     mpfrxx::reload_mpfr_defaults_from_environment();
 }
 
@@ -71,10 +73,10 @@ int main()
         std::abort();
     }
 
-    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "384", 1);
-    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "MPFR_RNDA", 1);
-    setenv("MPFRXX_DEFAULT_EMIN", "-30", 1);
-    setenv("MPFRXX_DEFAULT_EMAX", "30", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "384", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE", "MPFR_RNDA", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "-30", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "30", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
     if (mpfrxx::default_precision_bits() != 384 ||
         mpfrxx::default_prec() != 384 ||
@@ -84,10 +86,10 @@ int main()
         std::abort();
     }
 
-    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "0", 1);
-    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "invalid-rounding", 1);
-    setenv("MPFRXX_DEFAULT_EMIN", "40", 1);
-    setenv("MPFRXX_DEFAULT_EMAX", "-40", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "0", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE", "invalid-rounding", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "40", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "-40", 1);
     const auto before_invalid_environment = mpfrxx::default_options();
     mpfrxx::reload_mpfr_defaults_from_environment();
     if (mpfrxx::default_precision_bits() != 512 ||

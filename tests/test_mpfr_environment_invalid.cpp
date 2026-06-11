@@ -26,6 +26,8 @@
  *
  */
 
+#include "test_env.hpp"
+
 #include <mpfrxx_mkII.h>
 
 #include <cstdlib>
@@ -41,10 +43,10 @@ int main()
     const mpfr_exp_t initial_emin = mpfr_get_emin();
     const mpfr_exp_t initial_emax = mpfr_get_emax();
 
-    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "0", 1);
-    setenv("MPFRXX_DEFAULT_EMIN", "100", 1);
-    setenv("MPFRXX_DEFAULT_EMAX", "-100", 1);
-    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "SIDEWAYS", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "0", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "100", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "-100", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE", "SIDEWAYS", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
 
     const auto invalid_defaults = mpfrxx::default_options();
@@ -58,10 +60,10 @@ int main()
         std::abort();
     }
 
-    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "96", 1);
-    setenv("MPFRXX_DEFAULT_EMIN", "-200", 1);
-    setenv("MPFRXX_DEFAULT_EMAX", "200", 1);
-    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "MPFR_RNDD", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "96", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "-200", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "200", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE", "MPFR_RNDD", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
 
     const auto valid_defaults = mpfrxx::default_options();
@@ -75,10 +77,10 @@ int main()
     if (MPFR_PREC_MAX < std::numeric_limits<mpfr_prec_t>::max()) {
         const std::string too_large_precision =
             std::to_string(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
-        setenv("MPFRXX_DEFAULT_PRECISION_BITS", too_large_precision.c_str(), 1);
-        unsetenv("MPFRXX_DEFAULT_EMIN");
-        unsetenv("MPFRXX_DEFAULT_EMAX");
-        unsetenv("MPFRXX_DEFAULT_ROUNDING_MODE");
+        gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", too_large_precision.c_str(), 1);
+        gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_EMIN");
+        gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_EMAX");
+        gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE");
         mpfrxx::reload_mpfr_defaults_from_environment();
 
         const auto oversized_defaults = mpfrxx::default_options();
@@ -88,15 +90,15 @@ int main()
     }
 
     mpfrxx::set_default_exponent_range(initial_emin, initial_emax);
-    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "96", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "96", 1);
     if (MPFR_EMIN_MIN > std::numeric_limits<mpfr_exp_t>::min()) {
         const std::string too_small_emin =
             std::to_string(static_cast<long long>(MPFR_EMIN_MIN) - 1ll);
-        setenv("MPFRXX_DEFAULT_EMIN", too_small_emin.c_str(), 1);
+        gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", too_small_emin.c_str(), 1);
     } else {
-        setenv("MPFRXX_DEFAULT_EMIN", "100", 1);
+        gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "100", 1);
     }
-    setenv("MPFRXX_DEFAULT_EMAX", "200", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "200", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
     const auto invalid_emin_defaults = mpfrxx::default_options();
     if (invalid_emin_defaults.emin != initial_emin ||
@@ -104,13 +106,13 @@ int main()
         std::abort();
     }
 
-    setenv("MPFRXX_DEFAULT_EMIN", "-200", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "-200", 1);
     if (MPFR_EMAX_MAX < std::numeric_limits<mpfr_exp_t>::max()) {
         const std::string too_large_emax =
             std::to_string(static_cast<long long>(MPFR_EMAX_MAX) + 1ll);
-        setenv("MPFRXX_DEFAULT_EMAX", too_large_emax.c_str(), 1);
+        gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", too_large_emax.c_str(), 1);
     } else {
-        setenv("MPFRXX_DEFAULT_EMAX", "-100", 1);
+        gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "-100", 1);
     }
     mpfrxx::reload_mpfr_defaults_from_environment();
     const auto invalid_emax_defaults = mpfrxx::default_options();

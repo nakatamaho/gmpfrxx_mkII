@@ -26,6 +26,8 @@
  *
  */
 
+#include "test_env.hpp"
+
 #include <gmpfrxx_mkII.h>
 
 #include <cstdlib>
@@ -33,11 +35,11 @@
 
 int main()
 {
-    unsetenv("GMPXX_DEFAULT_MPF_PRECISION_BITS");
-    unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_DEFAULT_EMIN");
-    unsetenv("MPFRXX_DEFAULT_EMAX");
-    unsetenv("MPFRXX_DEFAULT_ROUNDING_MODE");
+    gmpfrxx_mkII_tests::unset_environment_variable("GMPXX_DEFAULT_MPF_PRECISION_BITS");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_EMIN");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_EMAX");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE");
 
     static_assert(std::is_default_constructible_v<gmpxx::mpz_class>);
     static_assert(std::is_default_constructible_v<gmpxx::mpq_class>);

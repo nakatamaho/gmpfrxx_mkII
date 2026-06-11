@@ -26,6 +26,8 @@
  *
  */
 
+#include "test_env.hpp"
+
 #include <mpfrxx_mkII.h>
 #include <mpcxx_mkII.h>
 
@@ -38,12 +40,12 @@ int main()
     mpfrxx::set_default_precision_bits(128);
     mpfrxx::set_default_rounding_mode(MPFR_RNDA);
 
-    setenv("MPCXX_DEFAULT_PRECISION_BITS", "0", 1);
-    setenv("MPCXX_DEFAULT_REAL_PRECISION_BITS", "not-a-number", 1);
-    setenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS", "0", 1);
-    setenv("MPCXX_DEFAULT_ROUNDING_MODE", "SIDEWAYS", 1);
-    setenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE", "NOPE", 1);
-    setenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE", "", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_PRECISION_BITS", "0", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_REAL_PRECISION_BITS", "not-a-number", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_IMAG_PRECISION_BITS", "0", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_ROUNDING_MODE", "SIDEWAYS", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_REAL_ROUNDING_MODE", "NOPE", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_IMAG_ROUNDING_MODE", "", 1);
     mpfrxx::reload_mpc_defaults_from_environment();
 
     const auto defaults = mpfrxx::default_mpc_options();
@@ -57,12 +59,12 @@ int main()
     if (MPFR_PREC_MAX < std::numeric_limits<mpfr_prec_t>::max()) {
         const std::string too_large_precision =
             std::to_string(static_cast<unsigned long long>(MPFR_PREC_MAX) + 1ull);
-        setenv("MPCXX_DEFAULT_PRECISION_BITS", too_large_precision.c_str(), 1);
-        setenv("MPCXX_DEFAULT_REAL_PRECISION_BITS", too_large_precision.c_str(), 1);
-        setenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS", too_large_precision.c_str(), 1);
-        unsetenv("MPCXX_DEFAULT_ROUNDING_MODE");
-        unsetenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
-        unsetenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
+        gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_PRECISION_BITS", too_large_precision.c_str(), 1);
+        gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_REAL_PRECISION_BITS", too_large_precision.c_str(), 1);
+        gmpfrxx_mkII_tests::set_environment_variable("MPCXX_DEFAULT_IMAG_PRECISION_BITS", too_large_precision.c_str(), 1);
+        gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_ROUNDING_MODE");
+        gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
+        gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
         mpfrxx::reload_mpc_defaults_from_environment();
 
         const auto oversized_defaults = mpfrxx::default_mpc_options();

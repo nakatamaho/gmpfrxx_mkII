@@ -24,6 +24,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "test_env.hpp"
+
 #include <gmpfrxx_mkII/detail/eval_context.hpp>
 #include <mpfrxx_mkII.h>
 
@@ -34,18 +36,18 @@ namespace {
 
 void configure_environment()
 {
-    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "160", 1);
-    setenv("MPFRXX_DEFAULT_EMIN", "-64", 1);
-    setenv("MPFRXX_DEFAULT_EMAX", "64", 1);
-    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDU", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "160", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "-64", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "64", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDU", 1);
 }
 
 void clear_environment()
 {
-    unsetenv("MPFRXX_DEFAULT_PRECISION_BITS");
-    unsetenv("MPFRXX_DEFAULT_EMIN");
-    unsetenv("MPFRXX_DEFAULT_EMAX");
-    unsetenv("MPFRXX_DEFAULT_ROUNDING_MODE");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_EMIN");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_EMAX");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE");
 }
 
 void require_environment_applied()

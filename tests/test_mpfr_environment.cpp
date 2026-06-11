@@ -26,16 +26,18 @@
  *
  */
 
+#include "test_env.hpp"
+
 #include <mpfrxx_mkII.h>
 
 #include <cstdlib>
 
 int main()
 {
-    setenv("MPFRXX_DEFAULT_PRECISION_BITS", "160", 1);
-    setenv("MPFRXX_DEFAULT_EMIN", "-64", 1);
-    setenv("MPFRXX_DEFAULT_EMAX", "64", 1);
-    setenv("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDU", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "160", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "-64", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "64", 1);
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_ROUNDING_MODE", "RNDU", 1);
     mpfrxx::reload_mpfr_defaults_from_environment();
 
     const auto defaults = mpfrxx::default_options();

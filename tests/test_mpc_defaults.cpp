@@ -26,6 +26,8 @@
  *
  */
 
+#include "test_env.hpp"
+
 #include <mpfrxx_mkII.h>
 #include <mpcxx_mkII.h>
 
@@ -37,12 +39,12 @@ namespace {
 
 void clear_mpc_environment()
 {
-    unsetenv("MPCXX_DEFAULT_PRECISION_BITS");
-    unsetenv("MPCXX_DEFAULT_REAL_PRECISION_BITS");
-    unsetenv("MPCXX_DEFAULT_IMAG_PRECISION_BITS");
-    unsetenv("MPCXX_DEFAULT_ROUNDING_MODE");
-    unsetenv("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
-    unsetenv("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_PRECISION_BITS");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_REAL_PRECISION_BITS");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_IMAG_PRECISION_BITS");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_ROUNDING_MODE");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_REAL_ROUNDING_MODE");
+    gmpfrxx_mkII_tests::unset_environment_variable("MPCXX_DEFAULT_IMAG_ROUNDING_MODE");
 }
 
 } // namespace
