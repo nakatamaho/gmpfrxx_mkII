@@ -13,9 +13,8 @@ include(CheckCXXSourceCompiles)
 
 find_package(Git QUIET)
 find_program(XZ_EXECUTABLE xz)
-find_package(GMP REQUIRED)
-find_package(MPFR REQUIRED)
-find_package(MPC REQUIRED)
+include(AutoDependencies)
+gmpfrxx_mkii_find_or_build_dependencies()
 
 set(GMPFRXX_MKII_MPFR_HAS_BUILDOPT_TLS_P 0)
 set(GMPFRXX_MKII_MPFR_BUILDOPT_TLS 0)

@@ -23659,3 +23659,53 @@ Pass/fail result:
 Known issues:
 - The first MinGW run against the earlier MPFR rebuild failed because `mpfr_buildopt_tls_p()` returned false. The rebuilt MPFR install now reports `tls=1` and passes the project TLS requirement.
 - Some local commands required escalation because the sandbox can fail with `bwrap: loopback: Failed RTM_NEWADDR`.
+
+## Phase: CMake GMP/MPFR/MPC auto-dependency fallback
+
+Implemented features:
+- Added `cmake/AutoDependencies.cmake` so configure first searches for installed GMP, MPFR, and MPC and only falls back to private Autotools builds when a package is absent.
+- Added default fallback archives for GMP 6.3.0, MPFR 4.2.2, and GNU MPC 1.4.1, with SHA256 verification.
+- Configured fallback builds as static libraries under `${CMAKE_BINARY_DIR}/_deps/gmpfrxx_mkii`.
+- Configured MPFR fallback with `--enable-thread-safe` so the existing MPFR TLS requirement is preserved.
+- Added `GMPFRXX_MKII_DEPS_AUTO_FETCH`, prefix/download/source/build directory cache variables, URL/SHA overrides, `GMPFRXX_MKII_DEPS_HOST`, and Autotools C flag overrides.
+- Added `CFLAGS=-std=gnu17` as the fallback default so GMP 6.3.0 configure remains compatible with GCC 15's newer default C dialect.
+- Updated `FindMPFR.cmake` and `FindMPC.cmake` imported targets to carry static-library transitive link dependencies.
+- Updated the MinGW/Wine toolchain so prebuilt dependency cache variables are set only when the expected headers and import libraries exist; otherwise the same auto-build path can run with the MinGW `--host` triple.
+- Updated `scripts/test_mingw64_wine.sh` so it still uses prebuilt DLL/import-library dependencies when present, but no longer blocks CMake auto-fetch when they are absent.
+- Documented the fallback behavior in `README.md`.
+
+Missing features:
+- No install/export package config was added for the private fallback prefix; it is a configure/build-tree fallback only.
+- The fallback does not run GMP/MPFR/MPC upstream `make check`; it validates the library integration through this project's CMake tests.
+
+Tests added:
+- No product unit tests were added.
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `cmake -S . -B build_auto_deps_smoke -DCMAKE_BUILD_TYPE=Debug -DCMAKE_FIND_ROOT_PATH=/tmp/gmpfrxx-empty-root -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER -DGMPFRXX_MKII_DEPS_GMP_URL=file:///home/docker/mplapack/external/gmp/download/gmp-6.3.0.tar.xz -DGMPFRXX_MKII_DEPS_MPFR_URL=file:///home/docker/mplapack/external/mpfr/download/mpfr-4.2.2.tar.bz2 -DGMPFRXX_MKII_DEPS_MPC_URL=file:///home/docker/mplapack/external/mpc/download/mpc-1.4.1.tar.xz`
+- `cmake --build build_auto_deps_smoke --target test_version_info -j`
+- `ctest --test-dir build_auto_deps_smoke -R test_version_info --output-on-failure`
+- `cmake --build build_auto_deps_smoke --target test_library_tls_detection test_gmp_header_smoke test_mpfr_header_smoke test_mpc_header_smoke -j`
+- `ctest --test-dir build_auto_deps_smoke -R 'test_library_tls_detection|test_gmp_header_smoke|test_mpfr_header_smoke|test_mpc_header_smoke|test_version_info' --output-on-failure`
+- `bash -n scripts/test_mingw64_wine.sh`
+- `GMPFRXX_MKII_MINGW_BUILD_TARGET=test_version_info scripts/test_mingw64_wine.sh build-mingw64-wine-autodeps-runner-smoke test_version_info`
+
+Pass/fail result:
+- Installed-dependency Debug configure: PASS.
+- Installed-dependency Debug build: PASS.
+- Installed-dependency CTest: PASS, 178/178 tests passed.
+- Local-file fallback configure: PASS; GMP 6.3.0, MPFR 4.2.2, and MPC 1.4.1 were built and installed under the private build-tree prefix.
+- Fallback MPFR TLS probe: PASS, `mpfr_buildopt_tls_p()` reported TLS enabled.
+- Fallback representative target builds: PASS.
+- Fallback representative CTest subset: PASS, 5/5 tests passed.
+- MinGW/Wine runner syntax check: PASS.
+- MinGW/Wine prebuilt-dependency smoke path: PASS, `test_version_info` passed under Wine with `HAVE_PREBUILT_DEPS=1`.
+
+Known issues:
+- The auto-fetch path needs a POSIX shell, make, and an Autotools-capable C compiler.
+- Network fetching was not exercised because the validation used local `file://` tarballs to avoid relying on external network access.
+- MinGW auto-fetch with absent prebuilt dependencies was made reachable but not fully exercised in this phase because the local MinGW prebuilt dependency tree is present.
+- MPC 1.4.1 in this build does not expose `mpc_buildopt_tls_p()`, matching the previous local MPC behavior; this remains informational rather than fatal.

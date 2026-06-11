@@ -385,6 +385,16 @@ cmake --build build -j
 ctest --test-dir build --output-on-failure
 ```
 
+CMake first searches for installed GMP, MPFR, and MPC with the project
+`Find*.cmake` modules. If one is missing and
+`GMPFRXX_MKII_DEPS_AUTO_FETCH=ON` is left at its default, CMake downloads and
+builds private static fallback libraries under
+`${CMAKE_BINARY_DIR}/_deps/gmpfrxx_mkii`. The default fallback versions are GMP
+6.3.0, MPFR 4.2.2 configured with `--enable-thread-safe`, and GNU MPC 1.4.1.
+Use `-DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF` for package-manager-only builds.
+Fallback source URLs, SHA256 values, install prefix, Autotools `--host`, and C
+compiler flags can be overridden with the `GMPFRXX_MKII_DEPS_*` cache variables.
+
 CMake interface targets:
 
 ```text

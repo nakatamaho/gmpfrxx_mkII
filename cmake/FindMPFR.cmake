@@ -12,6 +12,11 @@ if(MPFR_FOUND AND NOT TARGET MPFR::MPFR)
         IMPORTED_LOCATION "${MPFR_LIBRARY}"
         INTERFACE_INCLUDE_DIRECTORIES "${MPFR_INCLUDE_DIR}"
     )
+    if(TARGET GMP::GMP)
+        set_target_properties(MPFR::MPFR PROPERTIES
+            INTERFACE_LINK_LIBRARIES GMP::GMP
+        )
+    endif()
 endif()
 
 mark_as_advanced(MPFR_INCLUDE_DIR MPFR_LIBRARY)
