@@ -23709,3 +23709,33 @@ Known issues:
 - Network fetching was not exercised because the validation used local `file://` tarballs to avoid relying on external network access.
 - MinGW auto-fetch with absent prebuilt dependencies was made reachable but not fully exercised in this phase because the local MinGW prebuilt dependency tree is present.
 - MPC 1.4.1 in this build does not expose `mpc_buildopt_tls_p()`, matching the previous local MPC behavior; this remains informational rather than fatal.
+
+## Phase: MinGW auto-fetch cross-build verification
+
+Implemented features:
+- No product code changes in this phase.
+- Verified that the MinGW/Wine runner reaches the CMake auto-fetch fallback when the prebuilt GMP, MPFR, and MPC prefixes are absent.
+- Verified that the fallback cross-build installs static GMP 6.3.0, MPFR 4.2.2, and MPC 1.4.1 under the MinGW build tree.
+
+Missing features:
+- None for this verification phase.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `ls /home/docker/mplapack/external/i/GMP /home/docker/mplapack/external/i/MPFR /home/docker/mplapack/external/i/MPC`
+- `ls /home/docker/mplapack/external/gmp/download /home/docker/mplapack/external/mpfr/download /home/docker/mplapack/external/mpc/download`
+- `GMPFRXX_MKII_MINGW_BUILD_TARGET=test_version_info GMPFRXX_MKII_DEPS_GMP_URL=file:///home/docker/mplapack/external/gmp/download/gmp-6.3.0.tar.xz GMPFRXX_MKII_DEPS_MPFR_URL=file:///home/docker/mplapack/external/mpfr/download/mpfr-4.2.2.tar.bz2 GMPFRXX_MKII_DEPS_MPC_URL=file:///home/docker/mplapack/external/mpc/download/mpc-1.4.1.tar.xz scripts/test_mingw64_wine.sh build-mingw64-wine-autofetch test_version_info`
+- `GMPFRXX_MKII_DEPS_GMP_URL=file:///home/docker/mplapack/external/gmp/download/gmp-6.3.0.tar.xz GMPFRXX_MKII_DEPS_MPFR_URL=file:///home/docker/mplapack/external/mpfr/download/mpfr-4.2.2.tar.bz2 GMPFRXX_MKII_DEPS_MPC_URL=file:///home/docker/mplapack/external/mpc/download/mpc-1.4.1.tar.xz scripts/test_mingw64_wine.sh build-mingw64-wine-autofetch`
+
+Pass/fail result:
+- Prebuilt-prefix absence check: PASS; `GMP`, `MPFR`, and `MPC` under `/home/docker/mplapack/external/i` were absent.
+- Local tarball availability check: PASS for GMP 6.3.0, MPFR 4.2.2, and MPC 1.4.1.
+- MinGW auto-fetch smoke configure/build/CTest: PASS; `test_version_info` passed under Wine.
+- MinGW auto-fetch full build/CTest: PASS; 176 tests passed, 0 failed, and 2 Windows-disabled exact allocation-count tests did not run.
+
+Known issues:
+- The validation used local `file://` tarballs rather than network downloads.
+- MPC 1.4.1 still does not expose `mpc_buildopt_tls_p()` in this configuration; CMake reports this as informational and does not fail.
+- The test runner commands required escalation because sandboxed execution fails with `bwrap: loopback: Failed RTM_NEWADDR`.
