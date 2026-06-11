@@ -45,9 +45,10 @@
 #include <iomanip>
 #include <iostream>
 
+using namespace mpfrxx;
+
 int main()
 {
-    using namespace mpfrxx;
     mpfr_class two("2.0");
     mpfr_class result = sqrt(two);
 

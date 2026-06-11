@@ -23,7 +23,53 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-find_package(OpenMP)
+option(GMPFRXX_MKII_ENABLE_OPENMP_BENCHMARKS
+    "Build benchmark targets whose sources include omp.h"
+    ON)
+
+if(GMPFRXX_MKII_ENABLE_OPENMP_BENCHMARKS)
+    find_path(GMPFRXX_MKII_OPENMP_INCLUDE_DIR
+        NAMES omp.h
+        HINTS
+            /opt/local/include/libomp
+            /opt/local/include
+            /opt/homebrew/opt/libomp/include
+            /usr/local/opt/libomp/include
+    )
+    find_library(GMPFRXX_MKII_OPENMP_LIBRARY
+        NAMES omp gomp
+        HINTS
+            /opt/local/lib/libomp
+            /opt/local/lib/libgcc
+            /opt/homebrew/opt/libomp/lib
+            /usr/local/opt/libomp/lib
+    )
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|Clang"
+            AND GMPFRXX_MKII_OPENMP_INCLUDE_DIR
+            AND GMPFRXX_MKII_OPENMP_LIBRARY)
+        set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp -I${GMPFRXX_MKII_OPENMP_INCLUDE_DIR}" CACHE STRING
+            "OpenMP flags for C++" FORCE)
+        set(OpenMP_CXX_INCLUDE_DIR "${GMPFRXX_MKII_OPENMP_INCLUDE_DIR}" CACHE PATH
+            "OpenMP include directory for C++" FORCE)
+        set(OpenMP_CXX_LIB_NAMES "omp" CACHE STRING
+            "OpenMP library names for C++" FORCE)
+        set(OpenMP_omp_LIBRARY "${GMPFRXX_MKII_OPENMP_LIBRARY}" CACHE FILEPATH
+            "OpenMP runtime library" FORCE)
+        set(OpenMP_libomp_LIBRARY "${GMPFRXX_MKII_OPENMP_LIBRARY}" CACHE FILEPATH
+            "OpenMP runtime library" FORCE)
+    endif()
+
+    find_package(OpenMP)
+else()
+    set(OpenMP_CXX_FOUND OFF)
+endif()
+
+if(OpenMP_CXX_FOUND)
+    message(STATUS "OpenMP benchmark targets enabled")
+else()
+    message(STATUS "OpenMP benchmark targets disabled; OpenMP_CXX was not found")
+endif()
 find_library(BENCHMARK_GMPXX_LIBRARY NAMES gmpxx)
 
 option(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS
@@ -36,6 +82,14 @@ option(GMPFRXX_MKII_BENCHMARK_COUNT_MPFR_OPERATIONS
 if(NOT BENCHMARK_GMPXX_LIBRARY)
     message(WARNING "libgmpxx was not found; upstream gmpxx.h orig benchmark variants will not be built")
 endif()
+
+function(skip_openmp_benchmark_if_needed target)
+    if(target MATCHES "openmp" AND NOT OpenMP_CXX_FOUND)
+        set(GMPFRXX_MKII_SKIP_OPENMP_TARGET TRUE PARENT_SCOPE)
+        return()
+    endif()
+    set(GMPFRXX_MKII_SKIP_OPENMP_TARGET FALSE PARENT_SCOPE)
+endfunction()
 
 function(configure_eager_benchmark target subdir)
     target_include_directories(${target} PRIVATE
@@ -58,6 +112,10 @@ endfunction()
 
 function(add_mkii_variant subdir source base suffix)
     set(target "${base}_${suffix}")
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE gmpxx_mkII::gmpxx_mkII)
@@ -72,6 +130,10 @@ function(add_gmpxx_variant subdir source base)
         return()
     endif()
     set(target "${base}_orig")
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_compile_definitions(${target} PRIVATE USE_ORIGINAL_GMPXX)
@@ -91,6 +153,10 @@ function(add_rdot_kernel_variants subdir source base)
 endfunction()
 
 function(add_native_benchmark subdir source target)
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE gmpxx_mkII::gmpxx_mkII GMP::GMP)
@@ -98,6 +164,10 @@ endfunction()
 
 function(add_mpfr_mkii_variant subdir source base suffix)
     set(target "${base}_${suffix}")
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
@@ -124,6 +194,10 @@ function(add_mpfr_kernel_variants subdir source base)
 endfunction()
 
 function(add_mpfr_rdot_cpp_target subdir source target)
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
@@ -157,6 +231,10 @@ function(add_mpfr_rdot_variant_family subdir base)
 endfunction()
 
 function(add_mpfr_raxpy_cpp_target subdir source target)
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
@@ -184,6 +262,10 @@ function(add_mpfr_raxpy_fma_variant_family subdir base)
 endfunction()
 
 function(add_mpfr_rgemv_cpp_target subdir source target)
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
@@ -219,6 +301,10 @@ function(add_mpfr_rgemv_variant_family subdir base)
 endfunction()
 
 function(add_mpfr_rgemm_cpp_target subdir source target)
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)
@@ -258,6 +344,10 @@ function(add_mpfr_rgemm_fma_variant_family subdir base)
 endfunction()
 
 function(add_mpfr_native_benchmark subdir source target)
+    skip_openmp_benchmark_if_needed(${target})
+    if(GMPFRXX_MKII_SKIP_OPENMP_TARGET)
+        return()
+    endif()
     add_executable(${target} "${subdir}/${source}")
     configure_eager_benchmark(${target} ${subdir})
     target_link_libraries(${target} PRIVATE mpfrxx_mkII::mpfrxx_mkII)

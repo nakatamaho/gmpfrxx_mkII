@@ -62,9 +62,10 @@ int decimal_digits_for_bits(mpfr_prec_t bits)
 
 } // namespace
 
+using namespace mpfrxx;
+
 int main()
 {
-    using namespace mpfrxx;
     const int decimal_digits =
         decimal_digits_for_bits(default_precision_bits());
 

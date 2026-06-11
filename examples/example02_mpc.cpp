@@ -31,9 +31,10 @@
 
 #include <iostream>
 
+using namespace mpfrxx;
+
 int main()
 {
-    using namespace mpfrxx;
     const mpfr_class real(1.25);
     const mpq_class offset("3/4");
     const mpc_class complex(mpfr_class(1.0), mpfr_class(2.0));

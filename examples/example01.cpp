@@ -30,9 +30,10 @@
 
 #include <iostream>
 
+using namespace gmpxx;
+
 int main()
 {
-    using namespace gmpxx;
     mpf_class lhs("1.5", static_cast<mp_bitcnt_t>(128));
     mpf_class rhs("2.5", static_cast<mp_bitcnt_t>(128));
 

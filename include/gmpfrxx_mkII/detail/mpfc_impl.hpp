@@ -52,7 +52,7 @@ class mpfc_class;
 namespace gmpfrxx_mkII {
 namespace detail {
 
-template <typename Scalar, typename>
+template <typename Scalar, std::enable_if_t<is_supported_mpf_scalar_v<Scalar>, int> = 0>
 void mpfc_assign_scalar(gmpxx::mpf_class& dest, Scalar value);
 gmpxx::mpf_class& mpfc_real_ref(gmpxx::mpfc_class& value) noexcept;
 gmpxx::mpf_class& mpfc_imag_ref(gmpxx::mpfc_class& value) noexcept;
@@ -383,7 +383,7 @@ inline gmpxx::mpf_class& mpfc_imag_ref(gmpxx::mpfc_class& value) noexcept
     return value.imag_;
 }
 
-template <typename Scalar, typename = std::enable_if_t<is_supported_mpf_scalar_v<Scalar>>>
+template <typename Scalar, std::enable_if_t<is_supported_mpf_scalar_v<Scalar>, int>>
 void mpfc_assign_scalar(gmpxx::mpf_class& dest, Scalar value)
 {
     auto leaf = make_mpf_operand(value);

@@ -45,9 +45,10 @@
 #include <iomanip>
 #include <iostream>
 
+using namespace gmpxx;
+
 int main()
 {
-    using namespace gmpxx;
     mpf_class two("2.0");
     mpf_class result = sqrt(two);
 

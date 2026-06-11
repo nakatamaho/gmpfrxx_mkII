@@ -30,9 +30,10 @@
 
 #include <iostream>
 
+using namespace gmpxx;
+
 int main()
 {
-    using namespace gmpxx;
     const mpfc_class z(1.0, 1.0);
 
     const mpfc_class squared = z * z;

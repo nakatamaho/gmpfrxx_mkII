@@ -50,9 +50,10 @@
 #include <iomanip>
 #include <iostream>
 
+using namespace gmpxx;
+
 int main()
 {
-    using namespace gmpxx;
     constexpr int decimal_digits = 50;
 
     mpf_class x("1.0");

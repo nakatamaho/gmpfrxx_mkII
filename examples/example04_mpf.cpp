@@ -62,9 +62,10 @@ int decimal_digits_for_bits(mp_bitcnt_t bits)
 
 } // namespace
 
+using namespace gmpxx;
+
 int main()
 {
-    using namespace gmpxx;
     const int decimal_digits =
         decimal_digits_for_bits(default_mpf_precision_bits());
 

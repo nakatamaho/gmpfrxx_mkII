@@ -1,3 +1,79 @@
+## Phase: mpfc scalar helper declaration and example namespace cleanup
+
+Implemented features:
+- Made the `mpfc_assign_scalar` forward declaration match its definition by
+  using the same C++17 SFINAE template parameter shape.
+- Fixed Clang template deduction for scalar `mpfc_class` construction and
+  scalar assignment.
+- Moved `using namespace gmpxx;` and `using namespace mpfrxx;` out of `main`
+  in `examples/example01.cpp` through `examples/example04_*.cpp` where it had
+  been local to `main`.
+
+Missing features:
+- None for this fix.
+
+Tests added:
+- None; existing examples and tests cover the affected paths.
+
+Exact commands run:
+- `cmake --build build --target example03_mpfc -j1`
+- `cmake --build build --target test_mpfc_basic -j1`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `grep -R "^[[:space:]]\\+using namespace" -n examples/*.cpp`
+
+Pass/fail result:
+- Focused `example03_mpfc` build: PASS.
+- Focused `test_mpfc_basic` build: PASS.
+- Full Debug build: PASS.
+- CTest: PASS, 178/178 tests passed.
+- Example namespace scan: PASS, no indented `using namespace` directives remain
+  in `examples/*.cpp`.
+
+Known issues:
+- Several user-defined literal declarations still trigger AppleClang
+  `-Wdeprecated-literal-operator` warnings.
+
+## Phase: OpenMP benchmark CMake detection
+
+Implemented features:
+- Added MacPorts/Homebrew-style OpenMP runtime discovery for benchmark targets.
+- Seeded CMake's `FindOpenMP` cache variables for AppleClang/Clang when `omp.h`
+  and `libomp` are found outside the compiler's default search path.
+- Added `GMPFRXX_MKII_ENABLE_OPENMP_BENCHMARKS` to allow disabling OpenMP
+  benchmark targets explicitly.
+- Added OpenMP-target registration guards so `openmp` benchmark sources are not
+  compiled when `OpenMP_CXX` is unavailable.
+
+Missing features:
+- None for OpenMP benchmark detection.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `find /opt/local /usr/local /opt/homebrew -name omp.h -o -name libomp.dylib -o -name libgomp.dylib`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build build --target Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA -j1`
+- `cmake --build build -j`
+
+Pass/fail result:
+- OpenMP runtime probe: PASS, found `/opt/local/include/libomp/omp.h` and
+  `/opt/local/lib/libomp/libomp.dylib`.
+- Debug configure: PASS, `OpenMP_CXX` found with OpenMP 5.1 and OpenMP
+  benchmark targets enabled.
+- Focused OpenMP benchmark target build: PASS.
+- Full Debug build: FAIL due to existing `mpfc_assign_scalar` template
+  deduction errors in `include/gmpfrxx_mkII/detail/mpfc_impl.hpp`; the previous
+  `omp.h` failure was not reproduced.
+- CTest: NOT RUN because the full build did not complete.
+
+Known issues:
+- `mpfc_class` scalar construction and assignment currently fail to compile
+  because `mpfc_assign_scalar` cannot be deduced from calls in `mpfc_impl.hpp`.
+- Several user-defined literal declarations still trigger AppleClang
+  `-Wdeprecated-literal-operator` warnings.
+
 ## Phase: 1.0.0-rc1 distribution archive naming
 
 Implemented features:

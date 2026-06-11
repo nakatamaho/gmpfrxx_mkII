@@ -50,9 +50,10 @@
 #include <iomanip>
 #include <iostream>
 
+using namespace mpfrxx;
+
 int main()
 {
-    using namespace mpfrxx;
     constexpr int decimal_digits = 50;
 
     mpfr_class x("1.0");
