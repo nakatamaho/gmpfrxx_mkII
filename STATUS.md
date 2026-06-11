@@ -23815,3 +23815,30 @@ Known issues:
 - The validation used local `file://` tarballs rather than network downloads.
 - MPC 1.4.1 still does not expose `mpc_buildopt_tls_p()` in this configuration; CMake reports this as informational and does not fail.
 - The test runner commands required escalation because sandboxed execution fails with `bwrap: loopback: Failed RTM_NEWADDR`.
+
+## Phase: GCC 15 Release build verification
+
+Implemented features:
+- No product code changes in this phase.
+- Verified the Release build with MacPorts GCC 15.
+- Verified the full CTest suite with parallel test execution.
+
+Missing features:
+- None for this verification phase.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `cmake -S . -B build_gcc15_release -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/opt/local/bin/gcc-mp-15 -DCMAKE_CXX_COMPILER=/opt/local/bin/g++-mp-15`
+- `cmake --build build_gcc15_release -j10`
+- `ctest --test-dir build_gcc15_release --output-on-failure -j10`
+
+Pass/fail result:
+- GCC 15 Release configure: PASS, using GNU C++ 15.2.0 from `/opt/local/bin/g++-mp-15`.
+- OpenMP detection: PASS, CMake found OpenMP for CXX with `-fopenmp`.
+- GCC 15 Release build: PASS.
+- GCC 15 Release CTest: PASS, 178/178 tests passed.
+
+Known issues:
+- CMake reported that `CMAKE_C_COMPILER` was manually specified but unused by this C++-only project.
