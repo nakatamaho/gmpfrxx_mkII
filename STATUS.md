@@ -24048,3 +24048,32 @@ Pass/fail result:
 
 Known issues:
 - None for this review phase.
+
+
+## Phase: MPFR submul FMA signed-zero regression expansion
+
+Implemented features:
+- Confirmed that MPF and MPFR string parsing defaults are documented in README.md and SPECIFICATIONS.md.
+- Confirmed that the broad `std::common_type` partial-specialization surface is recorded as a follow-up design issue in STATUS.md.
+- Extended `test_mpfr_compound_assign` so fused submul signed-zero behavior is asserted for `+0 - (+0) * 1` and `1 - 1 * 1` across MPFR rounding modes RNDN, RNDZ, RNDU, RNDD, RNDA, and RNDF.
+
+Missing features:
+- The `std::common_type` specialization surface remains a follow-up design issue; this phase only confirmed the tracking record.
+
+Tests added:
+- Extended existing `test_mpfr_compound_assign` signed-zero coverage across all MPFR rounding modes available in this build.
+
+Exact commands run:
+- `rg -n "String parsing defaults|base 0|base 10|0x1p|mpf_class\(const char\*\)|mpfr_class\(const char\*\)" README.md SPECIFICATIONS.md`
+- `rg -n "common_type|partial-specialization|open-ended|whitelist|follow-up design" STATUS.md`
+- MPFR C API probe for `mpfr_fma(-lhs, rhs, dest, rnd)` exact-zero signs under RNDN/RNDZ/RNDU/RNDD/RNDA/RNDF.
+- `cmake --build build_issue_followup_smoke --target test_mpfr_compound_assign -j`
+- `ctest --test-dir build_issue_followup_smoke --output-on-failure -R test_mpfr_compound_assign`
+
+Pass/fail result:
+- Documentation/status checks: PASS; Issue 6 docs and Issue 5 tracking are present.
+- MPFR exact-zero sign probe: PASS; RNDD produces negative zero and the other checked modes produce positive zero for the target cases.
+- Focused MPFR compound assignment CTest: PASS; 1/1 test passed.
+
+Known issues:
+- None for this phase.

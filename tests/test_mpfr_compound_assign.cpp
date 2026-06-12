@@ -230,36 +230,54 @@ void check_compound_assignment_mul_expr_uses_fused_rounding(mpfr_rnd_t rnd)
 void check_compound_submul_fma_preserves_signed_zero()
 {
     const mpfr_rnd_t old_rnd = mpfrxx::default_rounding_mode();
-    mpfrxx::set_default_rounding_mode(MPFR_RNDN);
-
     const mpfr_prec_t precision = 128;
 
-    {
-        mpfrxx::mpfr_class a = mpfrxx::mpfr_class::with_precision(precision);
-        mpfrxx::mpfr_class b = mpfrxx::mpfr_class::with_precision(precision);
-        mpfrxx::mpfr_class c("1", precision);
-        mpfr_set_zero(a.mpfr_data(), 1);
-        mpfr_set_zero(b.mpfr_data(), 1);
+    struct rounding_case {
+        mpfr_rnd_t mode;
+        bool negative_zero;
+    };
 
-        mpfr_t ref;
-        mpfr_init2(ref, precision);
-        apply_fused_submul_ref(ref, a, b, c, MPFR_RNDN);
-        a -= b * c;
-        assert_same_signed_zero(a, ref);
-        mpfr_clear(ref);
-    }
+    const rounding_case roundings[] = {
+        {MPFR_RNDN, false},
+        {MPFR_RNDZ, false},
+        {MPFR_RNDU, false},
+        {MPFR_RNDD, true},
+        {MPFR_RNDA, false},
+        {MPFR_RNDF, false},
+    };
 
-    {
-        mpfrxx::mpfr_class a("1", precision);
-        const mpfrxx::mpfr_class b("1", precision);
-        const mpfrxx::mpfr_class c("1", precision);
+    for (const auto& rounding : roundings) {
+        mpfrxx::set_default_rounding_mode(rounding.mode);
 
-        mpfr_t ref;
-        mpfr_init2(ref, precision);
-        apply_fused_submul_ref(ref, a, b, c, MPFR_RNDN);
-        a -= b * c;
-        assert_same_signed_zero(a, ref);
-        mpfr_clear(ref);
+        {
+            mpfrxx::mpfr_class a = mpfrxx::mpfr_class::with_precision(precision);
+            mpfrxx::mpfr_class b = mpfrxx::mpfr_class::with_precision(precision);
+            mpfrxx::mpfr_class c("1", precision);
+            mpfr_set_zero(a.mpfr_data(), 1);
+            mpfr_set_zero(b.mpfr_data(), 1);
+
+            mpfr_t ref;
+            mpfr_init2(ref, precision);
+            apply_fused_submul_ref(ref, a, b, c, rounding.mode);
+            a -= b * c;
+            assert_same_signed_zero(a, ref);
+            assert((mpfr_signbit(a.mpfr_data()) != 0) == rounding.negative_zero);
+            mpfr_clear(ref);
+        }
+
+        {
+            mpfrxx::mpfr_class a("1", precision);
+            const mpfrxx::mpfr_class b("1", precision);
+            const mpfrxx::mpfr_class c("1", precision);
+
+            mpfr_t ref;
+            mpfr_init2(ref, precision);
+            apply_fused_submul_ref(ref, a, b, c, rounding.mode);
+            a -= b * c;
+            assert_same_signed_zero(a, ref);
+            assert((mpfr_signbit(a.mpfr_data()) != 0) == rounding.negative_zero);
+            mpfr_clear(ref);
+        }
     }
 
     mpfrxx::set_default_rounding_mode(old_rnd);
