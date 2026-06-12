@@ -21,6 +21,7 @@ add_phase0_test(test_mpfrxx_mkII mpcxx_mkII)
 add_phase0_test(test_abi_fingerprint gmpfrxx_mkII)
 add_phase0_test(test_alias_safety gmpfrxx_mkII)
 add_phase0_test(test_temporary_expression_lifetime gmpfrxx_mkII)
+add_phase0_test(test_leaf_single_rounding gmpfrxx_mkII)
 add_phase0_test(test_expr_unary_move_folding gmpfrxx_mkII)
 add_phase0_test(test_comparisons gmpxx_mkII)
 add_phase0_test(test_compound_assign gmpxx_mkII)
@@ -267,41 +268,52 @@ add_test(
         -o "${CMAKE_CURRENT_BINARY_DIR}/compile_pass_harness_control.o"
 )
 
-function(add_compile_fail_test name target)
+function(add_compile_fail_test name expected_diagnostic)
     set(source "${CMAKE_CURRENT_SOURCE_DIR}/compile_fail/${name}.cpp")
     set(output "${CMAKE_CURRENT_BINARY_DIR}/${name}.o")
+    set(include_dirs
+        "${CMAKE_SOURCE_DIR}/include"
+        "${CMAKE_BINARY_DIR}/generated"
+        "${GMP_INCLUDE_DIR}"
+        "${MPFR_INCLUDE_DIR}"
+        "${MPC_INCLUDE_DIR}")
     add_test(
         NAME compile_fail_${name}
-        COMMAND ${CMAKE_CXX_COMPILER}
-            -std=c++17
-            -I${CMAKE_SOURCE_DIR}/include
-            -I${CMAKE_BINARY_DIR}/generated
-            -I${GMP_INCLUDE_DIR}
-            -I${MPFR_INCLUDE_DIR}
-            -I${MPC_INCLUDE_DIR}
-            -c "${source}"
-            -o "${output}"
+        COMMAND ${CMAKE_COMMAND}
+            -DCXX_COMPILER=${CMAKE_CXX_COMPILER}
+            "-DINCLUDE_DIRS=${include_dirs}"
+            -DSOURCE=${source}
+            -DOUTPUT=${output}
+            "-DEXPECTED_DIAGNOSTIC=${expected_diagnostic}"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/compile_fail_driver.cmake"
     )
-    set_tests_properties(compile_fail_${name} PROPERTIES WILL_FAIL TRUE)
 endfunction()
 
-add_compile_fail_test(mpfr_header_must_not_expose_mpf mpfrxx_mkII)
-add_compile_fail_test(mpfr_header_must_not_expose_mpfc mpfrxx_mkII)
-add_compile_fail_test(mpfr_header_must_not_expose_mpc mpfrxx_mkII)
-add_compile_fail_test(gmp_header_must_not_expose_mpfr_or_mpc gmpxx_mkII)
-add_compile_fail_test(test_bool_scalar mpfrxx_mkII)
-add_compile_fail_test(test_long_double_scalar mpfrxx_mkII)
-add_compile_fail_test(test_int128_scalar mpfrxx_mkII)
-add_compile_fail_test(test_scalar_scalar_et_operator mpfrxx_mkII)
-add_compile_fail_test(test_mpf_precision_guard_frozen_env gmpxx_mkII)
-add_compile_fail_test(test_mpf_plus_mpfr gmpfrxx_mkII)
-add_compile_fail_test(test_mpfr_plus_mpf gmpfrxx_mkII)
-add_compile_fail_test(test_mpf_plus_mpc gmpfrxx_mkII)
-add_compile_fail_test(test_mpc_plus_mpf gmpfrxx_mkII)
-add_compile_fail_test(test_mpfc_plus_mpfr gmpfrxx_mkII)
-add_compile_fail_test(test_mpfr_plus_mpfc gmpfrxx_mkII)
-add_compile_fail_test(test_mpfc_plus_mpc gmpfrxx_mkII)
-add_compile_fail_test(test_mpc_plus_mpfc gmpfrxx_mkII)
+set(COMPILE_FAIL_HEADER_DIAGNOSTIC "not.*member|has not been declared|does not name|unknown type name|undeclared|incomplete type")
+set(COMPILE_FAIL_OPERATOR_DIAGNOSTIC "no match|invalid operands|no viable|no matching|deleted")
+set(COMPILE_FAIL_SCALAR_DIAGNOSTIC "no match|invalid operands|no viable|no matching")
+set(COMPILE_FAIL_GUARD_DIAGNOSTIC "default_mpf_precision_guard|not.*member|not.*declared|no matching|deleted")
+
+add_compile_fail_test(mpfr_header_must_not_expose_mpf "${COMPILE_FAIL_HEADER_DIAGNOSTIC}")
+add_compile_fail_test(mpfr_header_must_not_expose_mpfc "${COMPILE_FAIL_HEADER_DIAGNOSTIC}")
+add_compile_fail_test(mpfr_header_must_not_expose_mpc "${COMPILE_FAIL_HEADER_DIAGNOSTIC}")
+add_compile_fail_test(gmp_header_must_not_expose_mpfr_or_mpc "${COMPILE_FAIL_HEADER_DIAGNOSTIC}")
+add_compile_fail_test(test_bool_scalar "${COMPILE_FAIL_SCALAR_DIAGNOSTIC}")
+add_compile_fail_test(test_wchar_scalar "${COMPILE_FAIL_SCALAR_DIAGNOSTIC}")
+add_compile_fail_test(test_char16_scalar "${COMPILE_FAIL_SCALAR_DIAGNOSTIC}")
+add_compile_fail_test(test_char32_scalar "${COMPILE_FAIL_SCALAR_DIAGNOSTIC}")
+add_compile_fail_test(test_long_double_scalar "${COMPILE_FAIL_SCALAR_DIAGNOSTIC}")
+add_compile_fail_test(test_int128_scalar "${COMPILE_FAIL_SCALAR_DIAGNOSTIC}")
+add_compile_fail_test(test_scalar_scalar_et_operator "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
+add_compile_fail_test(test_mpf_precision_guard_frozen_env "${COMPILE_FAIL_GUARD_DIAGNOSTIC}")
+add_compile_fail_test(test_mpf_plus_mpfr "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
+add_compile_fail_test(test_mpfr_plus_mpf "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
+add_compile_fail_test(test_mpf_plus_mpc "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
+add_compile_fail_test(test_mpc_plus_mpf "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
+add_compile_fail_test(test_mpfc_plus_mpfr "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
+add_compile_fail_test(test_mpfr_plus_mpfc "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
+add_compile_fail_test(test_mpfc_plus_mpc "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
+add_compile_fail_test(test_mpc_plus_mpfc "${COMPILE_FAIL_OPERATOR_DIAGNOSTIC}")
 
 add_test(
     NAME link_fail_mpf_external_provider_missing

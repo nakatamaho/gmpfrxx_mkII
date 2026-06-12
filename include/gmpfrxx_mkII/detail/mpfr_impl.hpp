@@ -2327,11 +2327,24 @@ void mpfr_evaluate(
     }
 
     if (mpfr_expression_references(dest, expr)) {
-        scoped_mpfr_temporary lhs(eval_precision);
-        scoped_mpfr_temporary rhs(eval_precision);
-        mpfr_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
-        mpfr_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
-        mpfr_apply_binary<Op>(dest, lhs.get(), rhs.get(), rnd);
+        if constexpr (is_mpfr_object_leaf_v<Lhs> &&
+                      is_mpfr_object_leaf_v<Rhs>) {
+            mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), expr.rhs().get().mpfr_data(), rnd);
+        } else if constexpr (is_mpfr_object_leaf_v<Rhs>) {
+            scoped_mpfr_temporary lhs(eval_precision);
+            mpfr_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
+            mpfr_apply_binary<Op>(dest, lhs.get(), expr.rhs().get().mpfr_data(), rnd);
+        } else if constexpr (is_mpfr_object_leaf_v<Lhs>) {
+            scoped_mpfr_temporary rhs(eval_precision);
+            mpfr_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
+            mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), rhs.get(), rnd);
+        } else {
+            scoped_mpfr_temporary lhs(eval_precision);
+            scoped_mpfr_temporary rhs(eval_precision);
+            mpfr_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
+            mpfr_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
+            mpfr_apply_binary<Op>(dest, lhs.get(), rhs.get(), rnd);
+        }
         return;
     }
 
@@ -2354,8 +2367,7 @@ void mpfr_evaluate(
     } else if constexpr (is_mpfr_object_leaf_v<Rhs>) {
         mpfr_evaluate(dest, expr.lhs(), eval_precision, rnd);
         mpfr_apply_binary<Op>(dest, dest, expr.rhs().get().mpfr_data(), rnd);
-    } else if constexpr (is_mpfr_object_leaf_v<Lhs> &&
-                         (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
+    } else if constexpr (is_mpfr_object_leaf_v<Lhs>) {
         mpfr_evaluate(dest, expr.rhs(), eval_precision, rnd);
         mpfr_apply_binary<Op>(dest, expr.lhs().get().mpfr_data(), dest, rnd);
     } else {

@@ -1810,11 +1810,24 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
         return;
     } else {
         if (mpf_expression_references(dest, expr)) {
-            scoped_mpf_temporary lhs(eval_precision);
-            scoped_mpf_temporary rhs(eval_precision);
-            mpf_evaluate(lhs.get(), expr.lhs(), eval_precision);
-            mpf_evaluate(rhs.get(), expr.rhs(), eval_precision);
-            mpf_apply_binary<Op>(dest, lhs.get(), rhs.get());
+            if constexpr (is_mpf_class_leaf_v<Lhs> &&
+                          is_mpf_class_leaf_v<Rhs>) {
+                mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), expr.rhs().get().mpf_data());
+            } else if constexpr (is_mpf_class_leaf_v<Rhs>) {
+                scoped_mpf_temporary lhs(eval_precision);
+                mpf_evaluate(lhs.get(), expr.lhs(), eval_precision);
+                mpf_apply_binary<Op>(dest, lhs.get(), expr.rhs().get().mpf_data());
+            } else if constexpr (is_mpf_class_leaf_v<Lhs>) {
+                scoped_mpf_temporary rhs(eval_precision);
+                mpf_evaluate(rhs.get(), expr.rhs(), eval_precision);
+                mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), rhs.get());
+            } else {
+                scoped_mpf_temporary lhs(eval_precision);
+                scoped_mpf_temporary rhs(eval_precision);
+                mpf_evaluate(lhs.get(), expr.lhs(), eval_precision);
+                mpf_evaluate(rhs.get(), expr.rhs(), eval_precision);
+                mpf_apply_binary<Op>(dest, lhs.get(), rhs.get());
+            }
             return;
         }
 
@@ -1824,8 +1837,7 @@ void mpf_evaluate(mpf_t dest, const binary_expr<Op, Lhs, Rhs, Result>& expr, mp_
         } else if constexpr (is_mpf_class_leaf_v<Rhs>) {
             mpf_evaluate(dest, expr.lhs(), eval_precision);
             mpf_apply_binary<Op>(dest, dest, expr.rhs().get().mpf_data());
-        } else if constexpr (is_mpf_class_leaf_v<Lhs> &&
-                             (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
+        } else if constexpr (is_mpf_class_leaf_v<Lhs>) {
             mpf_evaluate(dest, expr.rhs(), eval_precision);
             mpf_apply_binary<Op>(dest, expr.lhs().get().mpf_data(), dest);
         } else {

@@ -240,8 +240,11 @@ storage when relocation cost matters.
 ## Compile-Time Fast-Path Options
 
 Fast-path options are compile-time contracts. They must be enabled deliberately
-for a translation unit or benchmark target; they are not environment variables
-and they must not silently change the default precision policy.
+for a whole final linked image or for a benchmark target that builds one
+self-contained executable; they are not environment variables and they must not
+silently change the default precision policy. Mixing different values of these
+macros across translation units linked into the same program is an ODR violation
+and is outside the supported contract.
 
 | Option | Applies to | Required caller contract | Optimization class |
 |--------|------------|--------------------------|--------------------|

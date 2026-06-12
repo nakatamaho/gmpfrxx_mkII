@@ -173,6 +173,9 @@ void require_expression_common_types()
     using detail_unary_expr = decltype(-z);
     using detail_binary_expr = decltype(z + z);
 
+    static_assert(std::is_same_v<std::common_type_t<detail_object_leaf, int&>, gmpxx::mpz_class>);
+    static_assert(std::is_same_v<std::common_type_t<int&, detail_object_leaf>, gmpxx::mpz_class>);
+
     require_common_type<gmpxx::mpz_class, detail_unary_expr, detail_object_leaf>();
     require_common_type<gmpxx::mpz_class, detail_unary_expr, detail_borrowed_leaf>();
     require_common_type<gmpxx::mpz_class, detail_unary_expr, detail_scalar_leaf>();

@@ -209,7 +209,7 @@ inline auto operator-(unary_expr<pos_op, Expr, Result>&& expr)
 
 template <typename T>
 struct common_type_result {
-    using type = T;
+    using type = std::decay_t<T>;
 };
 
 template <typename T>

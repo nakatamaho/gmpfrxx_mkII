@@ -1446,11 +1446,24 @@ void mpc_evaluate(
     }
 
     if (mpc_expression_references(dest, expr)) {
-        scoped_mpc_temporary lhs(eval_precision);
-        scoped_mpc_temporary rhs(eval_precision);
-        mpc_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
-        mpc_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
-        mpc_apply_binary<Op>(dest, lhs.get(), rhs.get(), rnd);
+        if constexpr (is_mpc_class_leaf_v<Lhs> &&
+                      is_mpc_class_leaf_v<Rhs>) {
+            mpc_apply_binary<Op>(dest, expr.lhs().get().mpc_data(), expr.rhs().get().mpc_data(), rnd);
+        } else if constexpr (is_mpc_class_leaf_v<Rhs>) {
+            scoped_mpc_temporary lhs(eval_precision);
+            mpc_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
+            mpc_apply_binary<Op>(dest, lhs.get(), expr.rhs().get().mpc_data(), rnd);
+        } else if constexpr (is_mpc_class_leaf_v<Lhs>) {
+            scoped_mpc_temporary rhs(eval_precision);
+            mpc_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
+            mpc_apply_binary<Op>(dest, expr.lhs().get().mpc_data(), rhs.get(), rnd);
+        } else {
+            scoped_mpc_temporary lhs(eval_precision);
+            scoped_mpc_temporary rhs(eval_precision);
+            mpc_evaluate(lhs.get(), expr.lhs(), eval_precision, rnd);
+            mpc_evaluate(rhs.get(), expr.rhs(), eval_precision, rnd);
+            mpc_apply_binary<Op>(dest, lhs.get(), rhs.get(), rnd);
+        }
         return;
     }
 
@@ -1460,8 +1473,7 @@ void mpc_evaluate(
     } else if constexpr (is_mpc_class_leaf_v<Rhs>) {
         mpc_evaluate(dest, expr.lhs(), eval_precision, rnd);
         mpc_apply_binary<Op>(dest, dest, expr.rhs().get().mpc_data(), rnd);
-    } else if constexpr (is_mpc_class_leaf_v<Lhs> &&
-                         (std::is_same_v<Op, add_op> || std::is_same_v<Op, mul_op>)) {
+    } else if constexpr (is_mpc_class_leaf_v<Lhs>) {
         mpc_evaluate(dest, expr.rhs(), eval_precision, rnd);
         mpc_apply_binary<Op>(dest, expr.lhs().get().mpc_data(), dest, rnd);
     } else {

@@ -322,7 +322,10 @@ variables:
 
 The fixed-precision option must not be used as a general optimization flag; it is
 only valid for programs or benchmark kernels that maintain fixed precision
-discipline. The FMA option is separate because it can change rounding semantics.
+discipline. These compile-time options are per final linked image: mixing
+different values across translation units in one program is an ODR violation and
+is unsupported. The FMA option is separate because it can change rounding
+semantics.
 GMP MPF has no fused operation option; its direct `a += b * c` and `a -= b * c`
 paths still follow MPF two-step rounding.
 

@@ -23938,3 +23938,48 @@ Pass/fail result:
 Known issues:
 - Wine printed `XDG_RUNTIME_DIR is invalid or not set in the environment` during startup, but the test suite completed successfully.
 - The validation used local `file://` tarballs rather than network downloads.
+
+
+## Phase: Review issue fixes for leaf single-rounding, compile-fail diagnostics, and fast-path contracts
+
+Implemented features:
+- Fixed MPFR, MPF, and MPC binary expression evaluation so object-leaf left operands are passed directly to backend subtraction and division instead of being pre-rounded into the destination before the operation.
+- Updated aliasing fallback paths for MPFR, MPF, and MPC binary expressions so object leaves are not unnecessarily materialized into evaluation-precision temporaries before the final backend operation.
+- Added `test_leaf_single_rounding` to cover MPFR, MPF, and MPC leaf-left subtraction mirror cases.
+- Replaced the compile-fail harness with a CMake driver that requires both a compiler failure and an expected diagnostic regex.
+- Added compile-fail coverage for `wchar_t`, `char16_t`, and `char32_t` scalar operands.
+- Documented that compile-time fast-path options are per final linked image, and that mixing macro values across translation units is unsupported ODR-violating use.
+- Decayed the fallback `common_type_result<T>` path and added an `int&` common-type regression for expression leaf handling.
+- Verified the default network auto-fetch URLs and SHA256 values by forcing the dependency fallback path and building GMP 6.3.0, MPFR 4.2.2, and MPC 1.4.1 from the configured HTTPS URLs.
+
+Missing features:
+- The compile-fail harness still uses GCC/Clang-style `-std=c++17` command-line flags; a future MSVC-specific command adapter or `try_compile` harness would be needed for native MSVC support.
+- The `std::common_type` partial-specialization surface remains broad; this phase only made the fallback result decay-aware and added regression coverage for a non-decayed argument.
+
+Tests added:
+- `tests/test_leaf_single_rounding.cpp`
+- `tests/compile_fail/test_wchar_scalar.cpp`
+- `tests/compile_fail/test_char16_scalar.cpp`
+- `tests/compile_fail/test_char32_scalar.cpp`
+- `tests/compile_fail_driver.cmake`
+
+Exact commands run:
+- `cmake -S . -B build_issue_review_smoke -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF`
+- `cmake --build build_issue_review_smoke --target test_leaf_single_rounding test_common_type -j`
+- `ctest --test-dir build_issue_review_smoke --output-on-failure -R "test_leaf_single_rounding|test_common_type|compile_fail"`
+- `cmake -S . -B build_issue_review_smoke -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF && ctest --test-dir build_issue_review_smoke --output-on-failure -R "test_leaf_single_rounding|test_common_type|compile_fail"`
+- `cmake -S . -B build_issue_review_smoke -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF && cmake --build build_issue_review_smoke -j`
+- `ctest --test-dir build_issue_review_smoke --output-on-failure`
+- `cmake -S . -B build_autofetch_network_check -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF -DGMPFRXX_MKII_DEPS_BUILD_JOBS=4 -DCMAKE_IGNORE_PATH=/usr/include\;/usr/local/include\;/usr/lib\;/usr/local/lib\;/usr/lib/x86_64-linux-gnu\;/lib\;/lib/x86_64-linux-gnu`
+- `cmake --build build_autofetch_network_check --target test_leaf_single_rounding -j && ctest --test-dir build_autofetch_network_check --output-on-failure -R test_leaf_single_rounding`
+
+Pass/fail result:
+- Focused leaf single-rounding/common-type/compile-fail CTest: PASS; 22/22 tests passed after switching compile-fail checks to the explicit CMake driver.
+- Full smoke build with examples and benchmarks disabled: PASS.
+- Full smoke CTest: PASS; 148/148 tests passed.
+- Network auto-fetch configure: PASS; default GMP, MPFR, and MPC URLs downloaded successfully with the configured SHA256 checks and built static dependencies.
+- Network auto-fetch regression smoke: PASS; `test_leaf_single_rounding` built and passed against the auto-fetched dependencies.
+
+Known issues:
+- The network auto-fetch validation used the current machine and network environment; it is not yet encoded as a persistent CI job because this repository currently has no `.github/workflows` directory.
+- Some file edits required sandbox escalation because `apply_patch` failed with `bwrap: loopback: Failed RTM_NEWADDR`.
