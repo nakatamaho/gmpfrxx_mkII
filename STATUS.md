@@ -23911,3 +23911,30 @@ Known issues:
 - The normal full top-level build still defaults to building examples and benchmarks; use the new options to disable them for package smoke builds.
 - The install smoke used the host system GMP/MPFR/MPC packages via installed Find modules.
 - Some file-edit and install commands required sandbox escalation because sandboxed execution failed with `bwrap: loopback: Failed RTM_NEWADDR`.
+
+
+## Phase: MinGW cross-build and Wine CTest check
+
+Implemented features:
+- No product code changes in this phase.
+- Verified the MinGW cross-build path with the CMake auto-fetch fallback for GMP, MPFR, and MPC.
+- Verified the generated Windows executables under Wine via the full CTest suite.
+
+Missing features:
+- None for this verification phase.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `GMPFRXX_MKII_DEPS_GMP_URL=file:///home/docker/mplapack/external/gmp/download/gmp-6.3.0.tar.xz GMPFRXX_MKII_DEPS_MPFR_URL=file:///home/docker/mplapack/external/mpfr/download/mpfr-4.2.2.tar.bz2 GMPFRXX_MKII_DEPS_MPC_URL=file:///home/docker/mplapack/external/mpc/download/mpc-1.4.1.tar.xz scripts/test_mingw64_wine.sh build-mingw64-wine-check`
+
+Pass/fail result:
+- MinGW auto-fetch configure/build: PASS.
+- Dependency fallback: PASS; the prebuilt MinGW prefixes were absent, so GMP 6.3.0, MPFR 4.2.2, and MPC 1.4.1 were fetched from local `file://` tarballs and built as static MinGW dependencies.
+- Wine CTest: PASS; 177 tests passed, 0 failed.
+- Windows-disabled tests: `test_mpf_scalar_alloc_count` and `test_mpfr_scalar_alloc_count` did not run, as expected.
+
+Known issues:
+- Wine printed `XDG_RUNTIME_DIR is invalid or not set in the environment` during startup, but the test suite completed successfully.
+- The validation used local `file://` tarballs rather than network downloads.
