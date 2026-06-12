@@ -97,6 +97,10 @@ accepted as an MPC scalar operand. It promotes with `mpfrxx::mpc_class` to
 `mpfrxx::mpc_class` because the result has a complex component. This support is
 MPC-only and must not make `mpfrxx_mkII.h` depend on GNU MPC by itself.
 
+## String Parsing Defaults
+
+String parsing defaults are backend-specific. `gmpxx::mpf_class(const char*)` and string assignment parse with base 10 by default, following the GMP MPF family; hexadecimal prefixes such as `0x10` are rejected unless an explicit base is supplied through the relevant constructor or `set_str` overload. `mpfrxx::mpfr_class(const char*)` and its string constructors use MPFR base 0 auto-detection, so MPFR hexadecimal forms such as `0x1p+5` are accepted. `mpfr_class::set_str` defaults to base 10 unless a base argument is passed.
+
 ## MPQ Stream Input and Arithmetic Readiness
 
 `gmpxx::mpq_class` and raw `mpq_ptr` stream extraction intentionally follow

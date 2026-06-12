@@ -60,6 +60,18 @@ int main()
         std::abort();
     }
 
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "+256", 1);
+    mpfrxx::reload_mpfr_defaults_from_environment();
+    if (mpfrxx::default_precision_bits() != 512) {
+        std::abort();
+    }
+
+    gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", " 256", 1);
+    mpfrxx::reload_mpfr_defaults_from_environment();
+    if (mpfrxx::default_precision_bits() != 512) {
+        std::abort();
+    }
+
     gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_PRECISION_BITS", "96", 1);
     gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMIN", "-200", 1);
     gmpfrxx_mkII_tests::set_environment_variable("MPFRXX_DEFAULT_EMAX", "200", 1);

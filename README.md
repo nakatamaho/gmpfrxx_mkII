@@ -85,6 +85,8 @@ expression scalar leaves or common-type promotion backdoors. Direct
 `gmpxx::mpz_class` support for `__int128` is separate from the expression scalar
 contract.
 
+String constructors intentionally follow their backend families. `gmpxx::mpf_class(const char*)` and string assignment parse with base 10 by default, matching GMP MPF and rejecting prefixes such as `0x10` unless an explicit base is supplied. `mpfrxx::mpfr_class(const char*)` and its string constructors use MPFR base 0 auto-detection, so hexadecimal MPFR forms such as `0x1p+5` are accepted; `mpfr_class::set_str` still defaults to base 10 unless a base is passed.
+
 `gmpxx::mpq_class` and raw `mpq_ptr` stream extraction intentionally follow
 upstream `gmpxx.h` raw input behavior: extraction uses `mpq_set_str`-compatible
 semantics and does not call `mpq_canonicalize`. Inputs such as `2/4` remain

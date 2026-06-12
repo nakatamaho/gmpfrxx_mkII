@@ -96,7 +96,9 @@ inline void require_valid_mpfr_precision(mpfr_prec_t precision)
 
 inline bool parse_mpfr_precision(const char* text, mpfr_prec_t& out) noexcept
 {
-    if (text == nullptr || *text == '\0' || *text == '-') {
+    // Require a leading decimal digit so strtoull cannot silently accept
+    // leading whitespace or '+', matching the strict GMP MPF parser.
+    if (text == nullptr || *text < '0' || *text > '9') {
         return false;
     }
     errno = 0;
@@ -314,6 +316,20 @@ inline bool mpfr_default_state_is_library_initial() noexcept
            mpfr_get_emax() == MPFR_EMAX_DEFAULT;
 }
 
+inline bool mpfr_runtime_tls_supported() noexcept
+{
+    static const bool supported = [] {
+        const bool ok = mpfr_buildopt_tls_p() != 0;
+        if (!ok) {
+            std::fprintf(stderr,
+                         "gmpfrxx_mkII: libmpfr was built without TLS support; "
+                         "per-thread MPFR default state is unavailable\n");
+        }
+        return ok;
+    }();
+    return supported;
+}
+
 inline void initialize_mpfr_defaults_for_current_thread() noexcept
 {
     auto& initialized = mpfr_defaults_initialized_storage();
@@ -321,6 +337,8 @@ inline void initialize_mpfr_defaults_for_current_thread() noexcept
         return;
     }
     initialized = true;
+
+    (void)mpfr_runtime_tls_supported();
 
     // The flag is intentionally DSO-local TLS, matching the wrapper's stable
     // rounding cache. It keeps hot evaluation-context reads from repeatedly

@@ -2219,9 +2219,17 @@ void mpfr_compound_submul_fma_apply(
     const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
     mpfr_rnd_t rnd)
 {
-    mpfr_thread_scratch negated_lhs(expr.lhs().get().precision());
-    mpfr_neg(negated_lhs.get(), expr.lhs().get().mpfr_data(), MPFR_RNDN);
-    mpfr_fma(dest, negated_lhs.get(), expr.rhs().get().mpfr_data(), dest, rnd);
+    // Thread-local scratch is part of the fixed-precision fast path;
+    // FMA-only builds use an ordinary scoped temporary.
+    if constexpr (build_options::fast_fixed_precision) {
+        mpfr_thread_scratch negated_lhs(expr.lhs().get().precision());
+        mpfr_neg(negated_lhs.get(), expr.lhs().get().mpfr_data(), MPFR_RNDN);
+        mpfr_fma(dest, negated_lhs.get(), expr.rhs().get().mpfr_data(), dest, rnd);
+    } else {
+        scoped_mpfr_temporary negated_lhs(expr.lhs().get().precision());
+        mpfr_neg(negated_lhs.get(), expr.lhs().get().mpfr_data(), MPFR_RNDN);
+        mpfr_fma(dest, negated_lhs.get(), expr.rhs().get().mpfr_data(), dest, rnd);
+    }
 }
 
 template <typename Lhs, typename Rhs>

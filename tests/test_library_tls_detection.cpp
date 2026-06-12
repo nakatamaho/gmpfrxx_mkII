@@ -27,6 +27,7 @@
  */
 
 #include <gmpfrxx_mkII/detail/config.hpp>
+#include <gmpfrxx_mkII/detail/environment.hpp>
 
 #include <cstdlib>
 
@@ -62,6 +63,10 @@ int main()
         std::abort();
     }
 #endif
+
+    if (!::gmpfrxx_mkII::detail::mpfr_runtime_tls_supported()) {
+        std::abort();
+    }
 
     return 0;
 }

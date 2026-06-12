@@ -23983,3 +23983,41 @@ Pass/fail result:
 Known issues:
 - The network auto-fetch validation used the current machine and network environment; it is not yet encoded as a persistent CI job because this repository currently has no `.github/workflows` directory.
 - Some file edits required sandbox escalation because `apply_patch` failed with `bwrap: loopback: Failed RTM_NEWADDR`.
+
+
+## Phase: Follow-up review fixes for FMA scratch, dist suffix, MPFR TLS runtime warning, and parser policy
+
+Implemented features:
+- Restricted MPFR compound submul FMA temporary handling so `GMPFRXX_MKII_ENABLE_FMA` alone uses a scoped MPFR temporary, while `GMPFRXX_MKII_FAST_FIXED_PREC` uses the thread-local scratch pool.
+- Made the release archive suffix configurable through `GMPFRXX_MKII_DIST_SUFFIX`; the default remains `-rc1`, and final releases can configure an empty suffix.
+- Added a runtime `mpfr_runtime_tls_supported()` diagnostic path for header-only use that bypasses the CMake MPFR TLS requirement check.
+- Tightened MPFR and MPC precision environment parsing by requiring the first character to be a decimal digit, matching the strict GMP MPF parser policy.
+- Documented MPF and MPFR string parsing defaults: MPF defaults to base 10, while MPFR string constructors use base 0 auto-detection.
+
+Missing features:
+- The broad `std::common_type` partial-specialization surface remains a follow-up design issue. Restricting open-ended `U` to a wrapper/scalar whitelist was not done in this phase.
+- There is still no CI job for a non-TLS MPFR build; the new runtime TLS helper is smoke-tested only on the TLS-enabled host MPFR.
+
+Tests added:
+- Added invalid `MPFRXX_DEFAULT_PRECISION_BITS` checks for `+256` and leading-space values to `test_mpfr_environment_invalid`.
+- Added `mpfr_runtime_tls_supported()` coverage to `test_library_tls_detection`.
+
+Exact commands run:
+- `git diff --check`
+- `cmake -S . -B build_issue_followup_smoke -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF`
+- `cmake --build build_issue_followup_smoke --target test_mpfr_environment_invalid test_library_tls_detection test_mpf_string_io test_mpfr_string_io -j`
+- `ctest --test-dir build_issue_followup_smoke --output-on-failure -R "test_mpfr_compound_assign|test_mpfr_environment_invalid|test_library_tls_detection|test_mpf_string_io|test_mpfr_string_io"`
+- `cmake --build build_issue_followup_smoke -j`
+- `ctest --test-dir build_issue_followup_smoke --output-on-failure`
+- `cmake -S . -B build_issue_followup_suffix -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF -DGMPFRXX_MKII_DIST_SUFFIX=`
+
+Pass/fail result:
+- Whitespace check: PASS.
+- Focused MPFR FMA/environment/TLS/string CTest: PASS; 5/5 tests passed.
+- Full smoke build with examples and benchmarks disabled: PASS.
+- Full smoke CTest: PASS; 148/148 tests passed.
+- Empty dist suffix configure smoke: PASS.
+
+Known issues:
+- `apply_patch` still fails in this sandbox with `bwrap: loopback: Failed RTM_NEWADDR`; exact replacements were used and verified with `git diff --check`.
+- Header-only use with an MPFR header that lacks `mpfr_buildopt_tls_p()` remains unsupported, matching the project requirement that MPFR provide the TLS probe API.
