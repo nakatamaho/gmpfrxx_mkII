@@ -24021,3 +24021,30 @@ Pass/fail result:
 Known issues:
 - `apply_patch` still fails in this sandbox with `bwrap: loopback: Failed RTM_NEWADDR`; exact replacements were used and verified with `git diff --check`.
 - Header-only use with an MPFR header that lacks `mpfr_buildopt_tls_p()` remains unsupported, matching the project requirement that MPFR provide the TLS probe API.
+
+
+## Phase: MPFR submul FMA signed-zero review
+
+Implemented features:
+- Documented why MPFR compound submul FMA keeps an explicitly negated multiplicand instead of rewriting to `mpfr_fms` plus exact negation.
+- Verified that the `mpfr_fms` plus dual-rounding transform matches nonzero rounding behavior but flips exact-zero signs in cases such as `+0 - +0 * 1` and `1 - 1 * 1` under RNDN/RNDZ/RNDA.
+
+Missing features:
+- No implementation change was made because the scratch-free `mpfr_fms` form is not signed-zero equivalent to the current fused submul semantics.
+
+Tests added:
+- None; the existing `test_mpfr_compound_assign` signed-zero coverage already protects this behavior.
+
+Exact commands run:
+- Temporary MPFR C API probe source was piped on stdin to `g++ -std=c++17 -x c++ - -o /tmp/mpfr_fms_probe -lmpfr -lgmp`, then run with `/tmp/mpfr_fms_probe`; the probe compared `mpfr_fma(-lhs, rhs, dest, rnd)` with `-mpfr_fms(lhs, rhs, dest, dual(rnd))` across RNDN/RNDZ/RNDU/RNDD/RNDA and signed-zero cases.
+- `cmake --build build_issue_followup_smoke --target test_mpfr_compound_assign -j`
+- `ctest --test-dir build_issue_followup_smoke --output-on-failure -R test_mpfr_compound_assign`
+- `git diff --check`
+
+Pass/fail result:
+- MPFR signed-zero probe: the `mpfr_fms` rewrite is not equivalent for exact-zero results.
+- Focused MPFR compound assignment CTest: PASS; 1/1 test passed.
+- Whitespace check: PASS.
+
+Known issues:
+- None for this review phase.

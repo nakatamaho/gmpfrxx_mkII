@@ -2219,6 +2219,13 @@ void mpfr_compound_submul_fma_apply(
     const binary_expr<mul_op, Lhs, Rhs, mpfrxx::mpfr_class>& expr,
     mpfr_rnd_t rnd)
 {
+    // Do not rewrite this as fms(lhs, rhs, dest) followed by exact
+    // negation. The dual-rounding transform matches nonzero values, but
+    // exact-zero results can get the opposite signed zero: MPFR fma with
+    // an explicitly negated multiplicand returns +0 for cases such as
+    // +0 - +0 * 1 or 1 - 1 * 1 under RNDN/RNDZ/RNDA, while negating
+    // fms(lhs, rhs, dest) would produce -0. Keep the explicit negated
+    // multiplicand to preserve MPFR fused submul signed-zero behavior.
     // Thread-local scratch is part of the fixed-precision fast path;
     // FMA-only builds use an ordinary scoped temporary.
     if constexpr (build_options::fast_fixed_precision) {
