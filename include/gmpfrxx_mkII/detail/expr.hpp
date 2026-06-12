@@ -207,75 +207,83 @@ inline auto operator-(unary_expr<pos_op, Expr, Result>&& expr)
     return unary_expr<neg_op, Expr, Result>(std::move(expr).expr());
 }
 
+template <typename T>
+struct common_type_result {
+    using type = T;
+};
+
+template <typename T>
+struct common_type_result<object_leaf<T>> {
+    using type = T;
+};
+
+template <typename T>
+struct common_type_result<borrowed_object_leaf<T>> {
+    using type = T;
+};
+
+template <typename T, typename Result>
+struct common_type_result<scalar_leaf<T, Result>> {
+    using type = Result;
+};
+
+template <typename Op, typename Expr, typename Result>
+struct common_type_result<unary_expr<Op, Expr, Result>> {
+    using type = Result;
+};
+
+template <typename Op, typename Lhs, typename Rhs, typename Result>
+struct common_type_result<binary_expr<Op, Lhs, Rhs, Result>> {
+    using type = Result;
+};
+
+template <typename T>
+using common_type_result_t = typename common_type_result<T>::type;
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
 namespace std {
 
-template <typename T>
-struct common_type<gmpfrxx_mkII::detail::object_leaf<T>> {
-    using type = T;
-};
-
-template <typename T>
-struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>> {
-    using type = T;
-};
-
-template <typename T, typename Result>
-struct common_type<gmpfrxx_mkII::detail::scalar_leaf<T, Result>> {
-    using type = Result;
-};
-
-template <typename Op, typename Expr, typename Result>
-struct common_type<gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>> {
-    using type = Result;
-};
-
-template <typename Op, typename Lhs, typename Rhs, typename Result>
-struct common_type<gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>> {
-    using type = Result;
-};
-
 template <typename T, typename U>
 struct common_type<gmpfrxx_mkII::detail::object_leaf<T>, U>
-    : common_type<T, typename common_type<U>::type> {};
+    : common_type<T, gmpfrxx_mkII::detail::common_type_result_t<U>> {};
 
 template <typename T, typename U>
 struct common_type<U, gmpfrxx_mkII::detail::object_leaf<T>>
-    : common_type<typename common_type<U>::type, T> {};
+    : common_type<gmpfrxx_mkII::detail::common_type_result_t<U>, T> {};
 
 template <typename T, typename U>
 struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>, U>
-    : common_type<T, typename common_type<U>::type> {};
+    : common_type<T, gmpfrxx_mkII::detail::common_type_result_t<U>> {};
 
 template <typename T, typename U>
 struct common_type<U, gmpfrxx_mkII::detail::borrowed_object_leaf<T>>
-    : common_type<typename common_type<U>::type, T> {};
+    : common_type<gmpfrxx_mkII::detail::common_type_result_t<U>, T> {};
 
 template <typename T, typename Result, typename U>
 struct common_type<gmpfrxx_mkII::detail::scalar_leaf<T, Result>, U>
-    : common_type<Result, typename common_type<U>::type> {};
+    : common_type<Result, gmpfrxx_mkII::detail::common_type_result_t<U>> {};
 
 template <typename T, typename Result, typename U>
 struct common_type<U, gmpfrxx_mkII::detail::scalar_leaf<T, Result>>
-    : common_type<typename common_type<U>::type, Result> {};
+    : common_type<gmpfrxx_mkII::detail::common_type_result_t<U>, Result> {};
 
 template <typename Op, typename Expr, typename Result, typename U>
 struct common_type<gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>, U>
-    : common_type<Result, typename common_type<U>::type> {};
+    : common_type<Result, gmpfrxx_mkII::detail::common_type_result_t<U>> {};
 
 template <typename Op, typename Expr, typename Result, typename U>
 struct common_type<U, gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>>
-    : common_type<typename common_type<U>::type, Result> {};
+    : common_type<gmpfrxx_mkII::detail::common_type_result_t<U>, Result> {};
 
 template <typename Op, typename Lhs, typename Rhs, typename Result, typename U>
 struct common_type<gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>, U>
-    : common_type<Result, typename common_type<U>::type> {};
+    : common_type<Result, gmpfrxx_mkII::detail::common_type_result_t<U>> {};
 
 template <typename Op, typename Lhs, typename Rhs, typename Result, typename U>
 struct common_type<U, gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>>
-    : common_type<typename common_type<U>::type, Result> {};
+    : common_type<gmpfrxx_mkII::detail::common_type_result_t<U>, Result> {};
 
 template <typename T, typename U>
 struct common_type<gmpfrxx_mkII::detail::object_leaf<T>,
@@ -321,6 +329,66 @@ template <typename T, typename U, typename RightResult>
 struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>,
                    gmpfrxx_mkII::detail::scalar_leaf<U, RightResult>>
     : common_type<T, RightResult> {};
+
+template <typename Op, typename Expr, typename Result, typename T>
+struct common_type<gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>,
+                   gmpfrxx_mkII::detail::object_leaf<T>>
+    : common_type<Result, T> {};
+
+template <typename T, typename Op, typename Expr, typename Result>
+struct common_type<gmpfrxx_mkII::detail::object_leaf<T>,
+                   gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>>
+    : common_type<T, Result> {};
+
+template <typename Op, typename Expr, typename Result, typename T>
+struct common_type<gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>,
+                   gmpfrxx_mkII::detail::borrowed_object_leaf<T>>
+    : common_type<Result, T> {};
+
+template <typename T, typename Op, typename Expr, typename Result>
+struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>,
+                   gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>>
+    : common_type<T, Result> {};
+
+template <typename Op, typename Expr, typename Result, typename T, typename LeafResult>
+struct common_type<gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>,
+                   gmpfrxx_mkII::detail::scalar_leaf<T, LeafResult>>
+    : common_type<Result, LeafResult> {};
+
+template <typename T, typename LeafResult, typename Op, typename Expr, typename Result>
+struct common_type<gmpfrxx_mkII::detail::scalar_leaf<T, LeafResult>,
+                   gmpfrxx_mkII::detail::unary_expr<Op, Expr, Result>>
+    : common_type<LeafResult, Result> {};
+
+template <typename Op, typename Lhs, typename Rhs, typename Result, typename T>
+struct common_type<gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>,
+                   gmpfrxx_mkII::detail::object_leaf<T>>
+    : common_type<Result, T> {};
+
+template <typename T, typename Op, typename Lhs, typename Rhs, typename Result>
+struct common_type<gmpfrxx_mkII::detail::object_leaf<T>,
+                   gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>>
+    : common_type<T, Result> {};
+
+template <typename Op, typename Lhs, typename Rhs, typename Result, typename T>
+struct common_type<gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>,
+                   gmpfrxx_mkII::detail::borrowed_object_leaf<T>>
+    : common_type<Result, T> {};
+
+template <typename T, typename Op, typename Lhs, typename Rhs, typename Result>
+struct common_type<gmpfrxx_mkII::detail::borrowed_object_leaf<T>,
+                   gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>>
+    : common_type<T, Result> {};
+
+template <typename Op, typename Lhs, typename Rhs, typename Result, typename T, typename LeafResult>
+struct common_type<gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>,
+                   gmpfrxx_mkII::detail::scalar_leaf<T, LeafResult>>
+    : common_type<Result, LeafResult> {};
+
+template <typename T, typename LeafResult, typename Op, typename Lhs, typename Rhs, typename Result>
+struct common_type<gmpfrxx_mkII::detail::scalar_leaf<T, LeafResult>,
+                   gmpfrxx_mkII::detail::binary_expr<Op, Lhs, Rhs, Result>>
+    : common_type<LeafResult, Result> {};
 
 template <typename LeftOp, typename LeftExpr, typename LeftResult,
           typename RightOp, typename RightExpr, typename RightResult>

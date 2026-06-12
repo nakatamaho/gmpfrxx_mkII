@@ -23842,3 +23842,72 @@ Pass/fail result:
 
 Known issues:
 - CMake reported that `CMAKE_C_COMPILER` was manually specified but unused by this C++-only project.
+
+## Phase: MinGW auto-fetch clean cross-build rerun
+
+Implemented features:
+- No product code changes in this phase.
+- Re-ran the MinGW/Wine auto-fetch path from a clean `build-mingw64-wine-clean` directory.
+- Verified again that the runner uses the CMake auto-fetch fallback when the prebuilt GMP, MPFR, and MPC prefixes are absent.
+
+Missing features:
+- None for this verification phase.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `rm -rf build-mingw64-wine-clean`
+- `GMPFRXX_MKII_DEPS_GMP_URL=file:///home/docker/mplapack/external/gmp/download/gmp-6.3.0.tar.xz GMPFRXX_MKII_DEPS_MPFR_URL=file:///home/docker/mplapack/external/mpfr/download/mpfr-4.2.2.tar.bz2 GMPFRXX_MKII_DEPS_MPC_URL=file:///home/docker/mplapack/external/mpc/download/mpc-1.4.1.tar.xz scripts/test_mingw64_wine.sh build-mingw64-wine-clean`
+
+Pass/fail result:
+- Clean directory removal: PASS after rerunning outside the sandbox.
+- MinGW auto-fetch configure/build/CTest: PASS.
+- Dependency fallback: PASS; `HAVE_PREBUILT_DEPS=0`, and GMP 6.3.0, MPFR 4.2.2, and MPC 1.4.1 were fetched from local `file://` tarballs and built as static MinGW dependencies.
+- CTest: PASS; 176 tests passed, 0 failed, and 2 Windows-disabled exact allocation-count tests did not run.
+
+Known issues:
+- The validation used local `file://` tarballs rather than network downloads.
+- The clean build and cleanup needed sandbox escalation because sandboxed execution failed with `bwrap: loopback: Failed RTM_NEWADDR`.
+
+## Phase: Review issue fixes for common_type, install export, and documentation
+
+Implemented features:
+- Added explicit `std::common_type` two-argument specializations for expression-node and leaf pairs to remove ambiguous partial-specialization matches.
+- Replaced non-conforming single-argument expression/leaf `std::common_type` specializations with an internal `common_type_result` helper.
+- Added regression coverage for unary/binary expression nodes paired with object, borrowed-object, and scalar leaves in both argument orders.
+- Added CMake install/export rules for public headers, generated headers, package config files, Find modules, and exported interface targets.
+- Added `GMPFRXX_MKII_BUILD_EXAMPLES` and `GMPFRXX_MKII_BUILD_BENCHMARKS` options, defaulting to ON only for top-level builds.
+- Added MPFR/MPC TLS probe override cache variables for cross-builds where `try_run` cannot execute.
+- Added a compile-pass harness control and included the generated build-config directory in compile-fail command lines.
+- Added guard bits and corrected comments for the Windows MPC scaled finite division workaround.
+- Updated README, SPECIFICATIONS, PROMPTS, CHANGELOG, and AGENTS documentation for current header roles, install consumption, MPF transcendental status, MPC override TLS state, assignment intermediate precision, and move semantics caveats.
+
+Missing features:
+- Compile-fail tests still use direct compiler invocations rather than a full `try_compile` or `ctest --build-and-test` harness with diagnostic string matching.
+- The Windows MPC division workaround still is not a correctly-rounded `mpc_div` replacement; the specification now states this explicitly.
+
+Tests added:
+- `tests/compile_pass_harness_control.cpp`
+- Additional `tests/test_common_type.cpp` static assertions for expression-node and leaf common-type pairs.
+
+Exact commands run:
+- `cmake -S . -B build_issue_review_smoke -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF`
+- `cmake --build build_issue_review_smoke --target test_common_type -j`
+- `cmake -S . -B build_issue_review_smoke -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF && cmake --build build_issue_review_smoke -j`
+- `ctest --test-dir build_issue_review_smoke --output-on-failure`
+- `cmake --install build_issue_review_smoke --prefix /tmp/gmpfrxx_mkII_install_smoke`
+- downstream smoke: configure and build a temporary consumer with `find_package(gmpfrxx_mkII REQUIRED)` and `target_link_libraries(consumer PRIVATE gmpfrxx_mkII::gmpfrxx_mkII)`, then run the executable.
+
+Pass/fail result:
+- Configure with examples and benchmarks disabled: PASS.
+- Targeted `test_common_type` build: PASS.
+- Full smoke build with examples and benchmarks disabled: PASS.
+- CTest: PASS; 144 tests passed, 0 failed.
+- Install smoke: PASS; headers, generated config headers, exported targets, package config files, and Find modules were installed under `/tmp/gmpfrxx_mkII_install_smoke`.
+- Downstream `find_package(gmpfrxx_mkII)` smoke: PASS; the consumer configured, built, linked against `gmpfrxx_mkII::gmpfrxx_mkII`, and ran successfully.
+
+Known issues:
+- The normal full top-level build still defaults to building examples and benchmarks; use the new options to disable them for package smoke builds.
+- The install smoke used the host system GMP/MPFR/MPC packages via installed Find modules.
+- Some file-edit and install commands required sandbox escalation because sandboxed execution failed with `bwrap: loopback: Failed RTM_NEWADDR`.

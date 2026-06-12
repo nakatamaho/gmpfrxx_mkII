@@ -1262,7 +1262,8 @@ inline int mpc_div_scaled_finite_workaround(mpc_t dest, mpc_srcptr lhs, mpc_srcp
 {
     const mpfr_prec_t real_precision = mpfr_get_prec(mpc_realref(dest));
     const mpfr_prec_t imag_precision = mpfr_get_prec(mpc_imagref(dest));
-    const mpfr_prec_t work_precision = std::max(real_precision, imag_precision);
+    constexpr mpfr_prec_t guard_bits = 32;
+    const mpfr_prec_t work_precision = std::max(real_precision, imag_precision) + guard_bits;
     const mpfr_rnd_t real_rounding = MPC_RND_RE(rnd);
     const mpfr_rnd_t imag_rounding = MPC_RND_IM(rnd);
     const mpfr_rnd_t work_rounding = MPFR_RNDN;
@@ -1329,6 +1330,8 @@ void mpc_apply_binary(mpc_t dest, const mpc_t lhs, const mpc_t rhs, mpc_rnd_t rn
         if (mpc_division_scaled_workaround_is_applicable(lhs, rhs)) {
             // Work around MinGW MPC builds where mpc_div can overflow near the
             // 32-bit MPFR exponent limit even when the exact quotient is small.
+            // Guard bits reduce cancellation error in the scaled fallback, but
+            // this path is still not a correctly-rounded replacement for mpc_div.
             inex = mpc_div_scaled_finite_workaround(dest, lhs, rhs, rnd);
         } else
 #endif

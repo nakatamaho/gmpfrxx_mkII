@@ -170,8 +170,10 @@ auto r = mpfrxx::mpfr_class::with_precision(256);
 auto c = mpfrxx::mpc_class::with_precision(256, 320);
 ```
 
-Existing-object assignment preserves destination precision. New expression
-materialization uses the maximum relevant leaf precision.
+Existing-object assignment preserves destination precision. Assignment and
+compound assignment evaluate expression intermediates at the destination
+precision. New expression materialization uses the maximum relevant leaf
+precision.
 
 ### GMP MPF Default Context
 
@@ -404,7 +406,21 @@ mpcxx_mkII       -> GMP + MPFR + MPC
 gmpfrxx_mkII     -> GMP + MPFR + MPC
 ```
 
-The build also compiles examples and the GMP/MPFR benchmark families.
+When this repository is the top-level CMake project, the build also compiles
+examples and the GMP/MPFR benchmark families. Use
+`-DGMPFRXX_MKII_BUILD_EXAMPLES=OFF` and
+`-DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF` for package or downstream smoke builds.
+
+Install and downstream consumption use the generated package config:
+
+```sh
+cmake --install build --prefix /path/to/prefix
+cmake -S consumer -B consumer-build -DCMAKE_PREFIX_PATH=/path/to/prefix
+```
+
+The installed package exports `gmpxx_mkII::gmpxx_mkII`,
+`mpfrxx_mkII::mpfrxx_mkII`, `mpcxx_mkII::mpcxx_mkII`,
+`gmpfrxx_mkII::gmpfrxx_mkII`, and `gmpxx_mkII::default_context_provider`.
 
 ## Benchmarks
 
@@ -420,9 +436,10 @@ benchmarks/common/run_benchmarks.sh build 128 8 8 4 4 3 3 3
 
 ## Known Limitations
 
-- `gmpxx::mpfc_class` math APIs are present, but the current MPF transcendental
-  helpers are GMP-only double-backed approximations. Full arbitrary-precision
-  MPF transcendental algorithms are still future work.
+- `gmpxx::mpfc_class` math APIs are present, and the MPF transcendental
+  helpers use GMP-backed arbitrary-precision algorithms. They are not
+  correctly rounded MPFR replacements; they target faithful high-precision
+  evaluation suitable for the MPF backend.
 - GMP `mpf_t` does not carry signed-zero state, so MPF-backed `atan2` cannot
   distinguish the four IEEE-754 `atan2(+-0, +-0)` cases. `gmpxx::atan2(0, 0)`
   returns `+0`.

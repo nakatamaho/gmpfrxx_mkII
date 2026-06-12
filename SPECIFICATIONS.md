@@ -209,6 +209,9 @@ stride caused by a wrapper-side `bool valid_` and padding. Likewise,
 Move construction keeps the moved-from source as a valid backend object by
 initializing destination storage and swapping backend values. This may allocate,
 but it avoids wrapper-side ownership metadata and keeps dense-array layout.
+Throwing custom GMP allocation hooks are outside the nothrow-move contract;
+under the default GMP allocator, allocation failure follows the backend abort
+semantics rather than propagating a C++ exception.
 
 Move assignment to a valid destination preserves the left-hand-side precision in normal builds.
 This matches ordinary assignment semantics for existing objects.
@@ -486,9 +489,12 @@ wrapper first-use initialization boundary.  Applications may establish that
 boundary explicitly with `mpfrxx::initialize_thread_defaults()` before applying
 raw MPFR default-state overrides.
 
-For MPC, default precision and rounding are represented by the same MPFR
-thread-local default state used by `mpfrxx::mpfr_class`; there is no separate
-wrapper-owned MPC default TLS state.
+For MPC, default precision and rounding inherit the same MPFR thread-local
+default state used by `mpfrxx::mpfr_class` until an MPC-specific override is
+installed. MPC-specific precision and rounding overrides are stored in
+wrapper-owned thread-local state because MPC has two component precisions and
+two component rounding modes. That override storage is linked-image-local and
+therefore does not cross DSO boundaries automatically.
 
 ## MPFR Default State
 
@@ -617,6 +623,9 @@ mpfrxx::set_default_exponent_range(...)
 
 They affect only subsequently constructed objects in the calling thread.
 Assignment to an existing object preserves the destination object's precision.
+Assignment and compound assignment to an existing `mpfr_class` evaluate all
+expression intermediates at the destination precision. Construction from an
+expression is the path that uses the expression's effective leaf precision.
 
 `mpfrxx::initialize_thread_defaults()` runs the wrapper one-shot first-use
 default initialization for the calling thread without constructing an MPFR
@@ -746,15 +755,17 @@ imaginary input components are finite MPFR numbers, the divisor is not
 of the current MPFR `emin` or `emax`.  In that case the implementation performs
 componentwise max-scaling in MPFR temporaries: all input components are divided
 by `max(abs(real(divisor)), abs(imag(divisor)))` before forming the bounded
-denominator `cr^2 + di^2`.  The final real and imaginary components are rounded
-using the requested MPC rounding mode. Non-Windows builds call `mpc_div`
-directly.
+denominator `cr^2 + di^2`. The intermediate temporaries use the destination
+component precision plus guard bits, and the final real and imaginary components
+are rounded using the requested MPC rounding mode. Non-Windows builds call
+`mpc_div` directly.
 
-This workaround is not a separate mathematical semantics for complex division.
-It is a platform compatibility path intended to avoid spurious exponent-edge
-failure.  Last-bit differences from a direct `mpc_div` path are possible because
-the scaled path uses finite MPFR temporaries and then applies the requested
-component rounding.
+This workaround is not a separate mathematical semantics for complex division
+and is not a correctly-rounded replacement for `mpc_div`. It is a platform
+compatibility path intended to avoid spurious exponent-edge failure. Cancellation
+in the scaled finite path can still lose more than one last bit, and the returned
+inexact flags reflect the final component divisions rather than a complete
+MPC-level exactness proof for every intermediate operation.
 
 MPC environment variables follow the same rule:
 

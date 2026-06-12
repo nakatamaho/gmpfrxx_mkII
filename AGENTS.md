@@ -33,7 +33,7 @@ gmpxx_mkII.h
     gmpxx::mpz_class
     gmpxx::mpq_class
     gmpxx::mpf_class
-    optionally later: gmpxx::mpfc_class
+    gmpxx::mpfc_class
   Depends on:
     GMP only
   Must not include:
@@ -96,7 +96,7 @@ gmpfrxx_mkII.h
     gmpxx::mpz_class
     gmpxx::mpq_class
     gmpxx::mpf_class
-    optionally later: gmpxx::mpfc_class
+    gmpxx::mpfc_class
     mpfrxx::mpfr_class
     mpfrxx::mpc_class
   Depends on:

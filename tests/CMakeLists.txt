@@ -254,6 +254,19 @@ target_compile_definitions(test_mpc_alloc_count PRIVATE
 )
 set_tests_properties(test_mpc_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 
+add_test(
+    NAME compile_pass_harness_control
+    COMMAND ${CMAKE_CXX_COMPILER}
+        -std=c++17
+        -I${CMAKE_SOURCE_DIR}/include
+        -I${CMAKE_BINARY_DIR}/generated
+        -I${GMP_INCLUDE_DIR}
+        -I${MPFR_INCLUDE_DIR}
+        -I${MPC_INCLUDE_DIR}
+        -c "${CMAKE_CURRENT_SOURCE_DIR}/compile_pass_harness_control.cpp"
+        -o "${CMAKE_CURRENT_BINARY_DIR}/compile_pass_harness_control.o"
+)
+
 function(add_compile_fail_test name target)
     set(source "${CMAKE_CURRENT_SOURCE_DIR}/compile_fail/${name}.cpp")
     set(output "${CMAKE_CURRENT_BINARY_DIR}/${name}.o")
@@ -262,6 +275,7 @@ function(add_compile_fail_test name target)
         COMMAND ${CMAKE_CXX_COMPILER}
             -std=c++17
             -I${CMAKE_SOURCE_DIR}/include
+            -I${CMAKE_BINARY_DIR}/generated
             -I${GMP_INCLUDE_DIR}
             -I${MPFR_INCLUDE_DIR}
             -I${MPC_INCLUDE_DIR}

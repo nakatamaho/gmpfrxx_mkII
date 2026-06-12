@@ -1,0 +1,15 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+
+find_dependency(GMP)
+find_dependency(MPFR)
+find_dependency(MPC)
+
+include("${CMAKE_CURRENT_LIST_DIR}/gmpxx_mkIITargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/mpfrxx_mkIITargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/mpcxx_mkIITargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/gmpfrxx_mkIITargets.cmake")
+
+check_required_components(gmpfrxx_mkII)

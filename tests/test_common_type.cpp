@@ -167,6 +167,19 @@ void require_expression_common_types()
     require_common_type<gmpxx::mpq_class, decltype(-z), decltype(-q)>();
     require_common_type<gmpxx::mpf_class, decltype(-z), decltype(-f)>();
     require_common_type<gmpxx::mpf_class, decltype(-q), decltype(-f)>();
+    using detail_object_leaf = gmpfrxx_mkII::detail::object_leaf<gmpxx::mpz_class>;
+    using detail_borrowed_leaf = gmpfrxx_mkII::detail::borrowed_object_leaf<gmpxx::mpz_class>;
+    using detail_scalar_leaf = gmpfrxx_mkII::detail::scalar_leaf<std::int64_t, gmpxx::mpz_class>;
+    using detail_unary_expr = decltype(-z);
+    using detail_binary_expr = decltype(z + z);
+
+    require_common_type<gmpxx::mpz_class, detail_unary_expr, detail_object_leaf>();
+    require_common_type<gmpxx::mpz_class, detail_unary_expr, detail_borrowed_leaf>();
+    require_common_type<gmpxx::mpz_class, detail_unary_expr, detail_scalar_leaf>();
+    require_common_type<gmpxx::mpz_class, detail_binary_expr, detail_object_leaf>();
+    require_common_type<gmpxx::mpz_class, detail_binary_expr, detail_borrowed_leaf>();
+    require_common_type<gmpxx::mpz_class, detail_binary_expr, detail_scalar_leaf>();
+
     require_common_type<gmpxx::mpz_class, decltype(-z), int>();
     require_common_type<gmpxx::mpq_class, decltype(-q), int>();
     require_common_type<gmpxx::mpf_class, decltype(-f), double>();

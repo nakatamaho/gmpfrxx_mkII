@@ -1,7 +1,7 @@
 
 # PROMPTS.md — MPFR/MPC in mpfrxx_mkII / Namespace-split / Scratch / ET-first Plan
 
-This prompt set rebuilds `gmpfrxx_mkII` from scratch.
+This prompt set rebuilds `gmpfrxx_mkII` from scratch. AGENTS.md is the current normative source for header roles; this file is historical guidance and must not contradict AGENTS.md.
 
 Public namespaces:
 
@@ -22,7 +22,8 @@ Header roles:
 
 ```text
 gmpxx_mkII.h    = GMP only
-mpfrxx_mkII.h   = GMP + MPFR + MPC
+mpfrxx_mkII.h   = GMP + MPFR
+mpcxx_mkII.h    = GMP + MPFR + MPC
 gmpfrxx_mkII.h  = full combined aggregator
 ```
 
@@ -33,17 +34,20 @@ gmpxx_mkII.h:
   gmpxx::mpz_class
   gmpxx::mpq_class
   gmpxx::mpf_class
-  optional gmpxx::mpfc_class
+  gmpxx::mpfc_class
 
 mpfrxx_mkII.h:
   mpfrxx::mpz_class  // alias to gmpxx::mpz_class
   mpfrxx::mpq_class  // alias to gmpxx::mpq_class
   mpfrxx::mpfr_class
+
+mpcxx_mkII.h:
   mpfrxx::mpc_class
+  includes mpfrxx_mkII.h
 
 gmpfrxx_mkII.h:
   full aggregator
-  includes gmpxx_mkII.h and mpfrxx_mkII.h
+  includes gmpxx_mkII.h, mpfrxx_mkII.h, and mpcxx_mkII.h
 ```
 
 Implementation order:
@@ -100,7 +104,8 @@ Do not use public namespace gmpfrxx.
 
 Respect header roles:
   gmpxx_mkII.h    = GMP only
-  mpfrxx_mkII.h   = GMP + MPFR + MPC
+  mpfrxx_mkII.h   = GMP + MPFR
+  mpcxx_mkII.h    = GMP + MPFR + MPC
   gmpfrxx_mkII.h  = full combined aggregator
 
 Do not bridge to an existing gmpxx_mkII.h implementation.
@@ -213,14 +218,14 @@ Requirements:
    - `mpfrxx::mpz_class` as alias to `gmpxx::mpz_class`
    - `mpfrxx::mpq_class` as alias to `gmpxx::mpq_class`
    - `mpfrxx::mpfr_class`
-   - `mpfrxx::mpc_class`
-5. `mpfrxx_mkII.h` includes `<gmp.h>`, `<mpfr.h>`, and `<mpc.h>`.
-6. `mpfrxx_mkII.h` must not expose `gmpxx::mpf_class` or `gmpxx::mpfc_class`.
+5. `mpfrxx_mkII.h` includes `<gmp.h>` and `<mpfr.h>`, but not `<mpc.h>`.
+6. `mpfrxx_mkII.h` must not expose `gmpxx::mpf_class`, `gmpxx::mpfc_class`, or `mpfrxx::mpc_class`.
 7. `gmpxx_mkII.h` must not include `<mpfr.h>` or `<mpc.h>`.
-8. `gmpfrxx_mkII.h` may include both public headers.
+8. `gmpfrxx_mkII.h` may include all public headers.
 9. Define CMake interface targets:
     - `gmpxx_mkII` links GMP only.
-    - `mpfrxx_mkII` links GMP, MPFR, and MPC.
+    - `mpfrxx_mkII` links GMP and MPFR only.
+    - `mpcxx_mkII` links GMP, MPFR, and MPC.
     - `gmpfrxx_mkII` links GMP, MPFR, and MPC.
 10. Add compile-fail tests proving header boundaries.
 11. Add namespace tests proving:
@@ -402,7 +407,7 @@ Do not proceed to Phase 4.
 
 Goal:
 
-Add exact `gmpxx::mpz_class` and `gmpxx::mpq_class` wrappers so `mpfrxx_mkII.h` exposes `mpz/mpq/mpfr/mpc`.
+Add exact `gmpxx::mpz_class` and `gmpxx::mpq_class` wrappers so `mpfrxx_mkII.h` exposes `mpz/mpq/mpfr`.
 
 Expose them in `mpfrxx` by alias only:
 
@@ -478,7 +483,7 @@ Goal:
 
 Implement MPC-backed `mpfrxx::mpc_class`.
 
-`mpc_class` belongs to `mpfrxx_mkII.h` and `gmpfrxx_mkII.h`.
+`mpc_class` belongs to `mpcxx_mkII.h` and `gmpfrxx_mkII.h`.
 
 Wrap `mpc_t`.
 
@@ -636,8 +641,7 @@ include <mpfrxx_mkII.h> alone:
   mpfrxx::mpz_class
   mpfrxx::mpq_class
   mpfrxx::mpfr_class
-  mpfrxx::mpc_class
-  no mpf/mpfc exposure
+  no mpc/mpf/mpfc exposure
 
 include <gmpxx_mkII.h> alone:
   gmpxx::mpz_class
@@ -742,13 +746,14 @@ no gmpxx.h
 no libgmpxx
 header roles:
   gmpxx_mkII.h    = GMP only
-  mpfrxx_mkII.h   = GMP + MPFR + MPC
+  mpfrxx_mkII.h   = GMP + MPFR
+  mpcxx_mkII.h    = GMP + MPFR + MPC
   gmpfrxx_mkII.h  = full combined aggregator
 namespace split:
   gmpxx
   mpfrxx
 internal namespace:
   gmpfrxx_mkII::detail
-mpfrxx::mpc_class is MPC-backed and exposed by mpfrxx_mkII.h
+mpfrxx::mpc_class is MPC-backed and exposed by mpcxx_mkII.h and gmpfrxx_mkII.h
 gmpxx::mpfc_class, if present, is GMP-only and separate from mpfrxx::mpc_class
 ```

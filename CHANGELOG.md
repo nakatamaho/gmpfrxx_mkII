@@ -2,7 +2,9 @@
 
 ## 1.0.0 - 2026-06-03
 
-Initial stable release of `gmpfrxx_mkII`.
+Initial stable API release of `gmpfrxx_mkII`. The first public source
+archive is distributed as `gmpfrxx_mkII.1.0.0-rc1.tar.xz`; the runtime version
+APIs still report `1.0.0`.
 
 ### Public API
 
