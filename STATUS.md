@@ -1,3 +1,46 @@
+## Phase: benchmark disassembly equivalence regression
+
+Implemented features:
+- Added `benchmarks/check_disasm_equivalence.py`, a regression checker that
+  disassembles representative benchmark binaries with `objdump -Cd
+  --no-show-raw-insn` and verifies that C native and wrapper hot-loop backend
+  call classes match the benchmark README equivalence tables.
+- Covered GMP and MPFR representatives under `00_Rdot`, `01_Raxpy`,
+  `02_Rgemv`, and `03_Rgemm`.
+- Limited the parser and CTest registration to Linux amd64 objdump output,
+  where direct backend calls appear as `call` or `callq`.
+- Added per-binary forbidden-call checks for selected no-temporary hotpath
+  representatives so accidental `mpfr_init2`/`mpfr_clear` calls are reported
+  as regressions where they are not legitimate setup/teardown.
+- Included OpenMP representative checks for `02_Rgemv`, where the arithmetic
+  hot loop is emitted in the OpenMP outlined function.
+- Registered the checker as `benchmark_disasm_equivalence` only for Linux
+  amd64 benchmark builds when Python 3 and `objdump` are available.
+
+Missing features:
+- The checker intentionally compares backend call subsequences, not byte-level
+  instruction identity. Address values and prologue/control-flow details remain
+  build-specific. macOS, Windows, and non-amd64 Linux disassembly formats are
+  intentionally out of scope for this lightweight regression.
+
+Tests added:
+- `benchmark_disasm_equivalence` CTest entry in Linux amd64 benchmark-enabled builds.
+- Forbidden-call assertion for the MPFR Raxpy FMA expression wrapper representative.
+
+Exact commands run:
+- `cmake -S . -B build_bench_release -DCMAKE_BUILD_TYPE=Release`
+- `ctest --test-dir build_bench_release -R benchmark_disasm_equivalence --output-on-failure`
+- `ctest --test-dir build_bench_release -R benchmark_disasm_equivalence -V`
+
+Pass/fail result:
+- Release benchmark configure: PASS.
+- Linux amd64 CTest `benchmark_disasm_equivalence`: PASS, 1/1 tests passed.
+- Verbose CTest output confirmed the MPFR Raxpy FMA wrapper reports
+  `forbidden absent: mpfr_init2, mpfr_clear`.
+
+Known issues:
+- The disassembly regression is intentionally limited to Linux amd64. Other OS/ISA combinations should use manual README disassembly review or a future platform-specific checker.
+
 ## Phase: mpfc scalar helper declaration and example namespace cleanup
 
 Implemented features:

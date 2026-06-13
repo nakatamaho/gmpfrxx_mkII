@@ -71,6 +71,8 @@ else()
     message(STATUS "OpenMP benchmark targets disabled; OpenMP_CXX was not found")
 endif()
 find_library(BENCHMARK_GMPXX_LIBRARY NAMES gmpxx)
+find_package(Python3 COMPONENTS Interpreter QUIET)
+find_program(GMPFRXX_MKII_OBJDUMP_EXECUTABLE objdump)
 
 option(GMPFRXX_MKII_BENCHMARK_COUNT_MPF_OPERATIONS
     "Count mpf_init, mpf_clear, and selected mpf arithmetic calls in instrumented GMP benchmarks"
@@ -663,3 +665,19 @@ add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_05.cpp
                     Rgemm_gmp_kernel_openmp_05)
 add_kernel_variants(gmp/03_Rgemm Rgemm_gmp_kernel_openmp_06.cpp
                     Rgemm_gmp_kernel_openmp_06)
+
+if(Python3_Interpreter_FOUND
+   AND GMPFRXX_MKII_OBJDUMP_EXECUTABLE
+   AND CMAKE_SYSTEM_NAME STREQUAL "Linux"
+   AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$")
+    add_test(
+        NAME benchmark_disasm_equivalence
+        COMMAND
+            "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/check_disasm_equivalence.py"
+            --build-dir "${CMAKE_CURRENT_BINARY_DIR}"
+            --objdump "${GMPFRXX_MKII_OBJDUMP_EXECUTABLE}"
+    )
+    set_tests_properties(benchmark_disasm_equivalence PROPERTIES
+        LABELS "benchmark;disasm")
+endif()
