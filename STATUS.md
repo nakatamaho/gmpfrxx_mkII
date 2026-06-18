@@ -24120,3 +24120,30 @@ Pass/fail result:
 
 Known issues:
 - None for this phase.
+
+
+## Phase: MinGW/Wine build and CTest verification
+
+Implemented features:
+- Verified the existing MinGW-w64 Wine cross-build runner against the current tree.
+- Built Windows executables with `x86_64-w64-mingw32-g++` using prebuilt GMP, MPFR, and MPC dependencies from `/home/docker/mplapack/external/i`.
+- Ran the generated test suite under Wine through CTest.
+
+Missing features:
+- No implementation changes were made in this verification phase.
+
+Tests added:
+- None; this phase re-ran the existing MinGW/Wine build and test suite.
+
+Exact commands run:
+- `scripts/test_mingw64_wine.sh build-mingw64-wine`
+
+Pass/fail result:
+- MinGW/Wine configure: PASS.
+- MinGW/Wine build: PASS.
+- Wine CTest: PASS; 181/181 runnable tests passed, 0 failed.
+- Windows-disabled tests: `test_mpf_scalar_alloc_count` and `test_mpfr_scalar_alloc_count` did not run, as expected.
+
+Known issues:
+- Wine printed `XDG_RUNTIME_DIR is invalid or not set in the environment` during startup, but the build and CTest run completed successfully.
+- The local MPC install does not provide `mpc_buildopt_tls_p()`, reported by CMake as `has API=0`; this was not fatal and matches the existing runner behavior.
