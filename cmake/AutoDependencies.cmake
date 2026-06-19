@@ -265,51 +265,55 @@ function(gmpfrxx_mkii_find_or_build_dependencies)
         find_package(GMP REQUIRED)
     endif()
 
-    find_package(MPFR QUIET)
-    if(NOT MPFR_FOUND)
-        gmpfrxx_mkii_require_auto_fetch(MPFR)
-        gmpfrxx_mkii_library_dir(_gmp_library_dir "${GMP_LIBRARY}")
-        set(_mpfr_prefix "${GMPFRXX_MKII_DEPS_PREFIX}/MPFR")
-        gmpfrxx_mkii_build_autotools_dependency(MPFR
-            URL "${GMPFRXX_MKII_DEPS_MPFR_URL}"
-            SHA256 "${GMPFRXX_MKII_DEPS_MPFR_SHA256}"
-            SOURCE_SUBDIR "${GMPFRXX_MKII_DEPS_MPFR_SOURCE_SUBDIR}"
-            PREFIX "${_mpfr_prefix}"
-            INSTALL_HEADER "mpfr.h"
-            INSTALL_LIBRARY "libmpfr.a"
-            CONFIGURE_ARGS
-                --enable-static
-                --disable-shared
-                --enable-thread-safe
-                "--with-gmp-include=${GMP_INCLUDE_DIR}"
-                "--with-gmp-lib=${_gmp_library_dir}"
-        )
-        gmpfrxx_mkii_cache_dependency_paths(MPFR "${_mpfr_prefix}" "libmpfr.a")
-        find_package(MPFR REQUIRED)
+    if(GMPFRXX_MKII_ENABLE_MPFR)
+        find_package(MPFR QUIET)
+        if(NOT MPFR_FOUND)
+            gmpfrxx_mkii_require_auto_fetch(MPFR)
+            gmpfrxx_mkii_library_dir(_gmp_library_dir "${GMP_LIBRARY}")
+            set(_mpfr_prefix "${GMPFRXX_MKII_DEPS_PREFIX}/MPFR")
+            gmpfrxx_mkii_build_autotools_dependency(MPFR
+                URL "${GMPFRXX_MKII_DEPS_MPFR_URL}"
+                SHA256 "${GMPFRXX_MKII_DEPS_MPFR_SHA256}"
+                SOURCE_SUBDIR "${GMPFRXX_MKII_DEPS_MPFR_SOURCE_SUBDIR}"
+                PREFIX "${_mpfr_prefix}"
+                INSTALL_HEADER "mpfr.h"
+                INSTALL_LIBRARY "libmpfr.a"
+                CONFIGURE_ARGS
+                    --enable-static
+                    --disable-shared
+                    --enable-thread-safe
+                    "--with-gmp-include=${GMP_INCLUDE_DIR}"
+                    "--with-gmp-lib=${_gmp_library_dir}"
+            )
+            gmpfrxx_mkii_cache_dependency_paths(MPFR "${_mpfr_prefix}" "libmpfr.a")
+            find_package(MPFR REQUIRED)
+        endif()
     endif()
 
-    find_package(MPC QUIET)
-    if(NOT MPC_FOUND)
-        gmpfrxx_mkii_require_auto_fetch(MPC)
-        gmpfrxx_mkii_library_dir(_gmp_library_dir "${GMP_LIBRARY}")
-        gmpfrxx_mkii_library_dir(_mpfr_library_dir "${MPFR_LIBRARY}")
-        set(_mpc_prefix "${GMPFRXX_MKII_DEPS_PREFIX}/MPC")
-        gmpfrxx_mkii_build_autotools_dependency(MPC
-            URL "${GMPFRXX_MKII_DEPS_MPC_URL}"
-            SHA256 "${GMPFRXX_MKII_DEPS_MPC_SHA256}"
-            SOURCE_SUBDIR "${GMPFRXX_MKII_DEPS_MPC_SOURCE_SUBDIR}"
-            PREFIX "${_mpc_prefix}"
-            INSTALL_HEADER "mpc.h"
-            INSTALL_LIBRARY "libmpc.a"
-            CONFIGURE_ARGS
-                --enable-static
-                --disable-shared
-                "--with-gmp-include=${GMP_INCLUDE_DIR}"
-                "--with-gmp-lib=${_gmp_library_dir}"
-                "--with-mpfr-include=${MPFR_INCLUDE_DIR}"
-                "--with-mpfr-lib=${_mpfr_library_dir}"
-        )
-        gmpfrxx_mkii_cache_dependency_paths(MPC "${_mpc_prefix}" "libmpc.a")
-        find_package(MPC REQUIRED)
+    if(GMPFRXX_MKII_ENABLE_MPC)
+        find_package(MPC QUIET)
+        if(NOT MPC_FOUND)
+            gmpfrxx_mkii_require_auto_fetch(MPC)
+            gmpfrxx_mkii_library_dir(_gmp_library_dir "${GMP_LIBRARY}")
+            gmpfrxx_mkii_library_dir(_mpfr_library_dir "${MPFR_LIBRARY}")
+            set(_mpc_prefix "${GMPFRXX_MKII_DEPS_PREFIX}/MPC")
+            gmpfrxx_mkii_build_autotools_dependency(MPC
+                URL "${GMPFRXX_MKII_DEPS_MPC_URL}"
+                SHA256 "${GMPFRXX_MKII_DEPS_MPC_SHA256}"
+                SOURCE_SUBDIR "${GMPFRXX_MKII_DEPS_MPC_SOURCE_SUBDIR}"
+                PREFIX "${_mpc_prefix}"
+                INSTALL_HEADER "mpc.h"
+                INSTALL_LIBRARY "libmpc.a"
+                CONFIGURE_ARGS
+                    --enable-static
+                    --disable-shared
+                    "--with-gmp-include=${GMP_INCLUDE_DIR}"
+                    "--with-gmp-lib=${_gmp_library_dir}"
+                    "--with-mpfr-include=${MPFR_INCLUDE_DIR}"
+                    "--with-mpfr-lib=${_mpfr_library_dir}"
+            )
+            gmpfrxx_mkii_cache_dependency_paths(MPC "${_mpc_prefix}" "libmpc.a")
+            find_package(MPC REQUIRED)
+        endif()
     endif()
 endfunction()

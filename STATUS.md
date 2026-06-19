@@ -24147,3 +24147,46 @@ Pass/fail result:
 Known issues:
 - Wine printed `XDG_RUNTIME_DIR is invalid or not set in the environment` during startup, but the build and CTest run completed successfully.
 - The local MPC install does not provide `mpc_buildopt_tls_p()`, reported by CMake as `has API=0`; this was not fatal and matches the existing runner behavior.
+
+
+## Phase: Component-selectable CMake builds
+
+Implemented features:
+- Added `GMPFRXX_MKII_COMPONENTS`, accepting comma- or semicolon-separated component lists such as `GMP`, `GMP,MPFR`, and the default `GMP,MPFR,MPC`.
+- Added validation so GMP is always required, unknown component names are rejected, and MPC cannot be enabled without MPFR.
+- Made dependency discovery, dependency auto-build, TLS capability probes, interface targets, install exports, examples, and test registration conditional on the enabled components.
+- Added component build test subsets so GMP-only builds exercise GMP headers, MPF/MPFC, MPZ/MPQ, examples, and GMP promotion behavior, while GMP+MPFR builds also exercise MPFR tests and examples without requiring MPC.
+
+Missing features:
+- Component subset builds do not register the compile-fail tests; the full default build still covers the required compile-fail suite.
+- GMP-only installs still install the shared include tree, including disabled public headers, although disabled targets and dependency exports are not generated.
+
+Tests added:
+- Conditional component test registration for GMP-only and GMP+MPFR configurations.
+- Conditional example registration based on available interface targets.
+
+Exact commands run:
+- `cmake -S . -B build_components_gmp -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_COMPONENTS=GMP -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build_components_gmp -j`
+- `ctest --test-dir build_components_gmp --output-on-failure`
+- `cmake -S . -B build_components_gmp_mpfr -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_COMPONENTS=GMP,MPFR -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build_components_gmp_mpfr -j`
+- `ctest --test-dir build_components_gmp_mpfr --output-on-failure`
+- `cmake -S . -B build_components_full_smoke -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build_components_full_smoke -j`
+- `ctest --test-dir build_components_full_smoke --output-on-failure`
+- `cmake -S . -B build_components_invalid -DGMPFRXX_MKII_COMPONENTS=GMP,MPC -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF`
+- `git diff --check`
+
+Pass/fail result:
+- GMP-only configure/build: PASS.
+- GMP-only CTest: PASS; 62/62 tests passed.
+- GMP+MPFR configure/build: PASS.
+- GMP+MPFR CTest: PASS; 122/122 tests passed.
+- Full default configure/build: PASS.
+- Full default CTest: PASS; 183/183 tests passed.
+- Invalid `GMP,MPC` configure: PASS as a negative test; CMake rejected it with `GMPFRXX_MKII_COMPONENTS=MPC requires MPFR`.
+- Whitespace check: PASS.
+
+Known issues:
+- System GMP/MPFR/MPC packages were not found in this container, so these component build directories used the existing auto-fetch dependency path.
