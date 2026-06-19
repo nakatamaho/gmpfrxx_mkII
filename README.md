@@ -9,7 +9,13 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 ## News
 
 - 2026-06-19: Released `v1.0.0` as the first stable source archive,
-  `gmpfrxx_mkII.1.0.0.tar.xz`.
+  `gmpfrxx_mkII.1.0.0.tar.xz`
+  (`sha256: 2cad4fd5dc71b6170af2ff382391dc3c2a622730308f80d5510e5ee98eaf26c6`).
+  This release includes component-selectable CMake builds with
+  `GMPFRXX_MKII_COMPONENTS=GMP`, `GMP,MPFR`, or `GMP,MPFR,MPC`.
+  Final release verification passed on Linux (183/183 CTest tests) and
+  MinGW/Wine (181/181 runnable CTest tests; the two allocation-counter tests
+  are Windows-disabled).
 - 2026-06-03: Released the `1.0.0-rc1` source archive,
   `gmpfrxx_mkII.1.0.0-rc1.tar.xz`.
 
