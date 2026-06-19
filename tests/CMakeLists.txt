@@ -422,10 +422,17 @@ target_compile_definitions(test_mpc_alloc_count PRIVATE
 )
 set_tests_properties(test_mpc_alloc_count PROPERTIES RUN_SERIAL TRUE LABELS alloc-count)
 
+set(GMPFRXX_MKII_MANUAL_COMPILE_FLAGS)
+if(APPLE AND CMAKE_OSX_SYSROOT)
+    list(APPEND GMPFRXX_MKII_MANUAL_COMPILE_FLAGS
+        -isysroot "${CMAKE_OSX_SYSROOT}")
+endif()
+
 add_test(
     NAME compile_pass_harness_control
     COMMAND ${CMAKE_CXX_COMPILER}
         -std=c++17
+        ${GMPFRXX_MKII_MANUAL_COMPILE_FLAGS}
         -I${CMAKE_SOURCE_DIR}/include
         -I${CMAKE_BINARY_DIR}/generated
         -I${GMP_INCLUDE_DIR}
@@ -448,6 +455,7 @@ function(add_compile_fail_test name expected_diagnostic)
         NAME compile_fail_${name}
         COMMAND ${CMAKE_COMMAND}
             -DCXX_COMPILER=${CMAKE_CXX_COMPILER}
+            "-DCXX_FLAGS=${GMPFRXX_MKII_MANUAL_COMPILE_FLAGS}"
             "-DINCLUDE_DIRS=${include_dirs}"
             -DSOURCE=${source}
             -DOUTPUT=${output}
@@ -456,7 +464,7 @@ function(add_compile_fail_test name expected_diagnostic)
     )
 endfunction()
 
-set(COMPILE_FAIL_HEADER_DIAGNOSTIC "not.*member|has not been declared|does not name|unknown type name|undeclared|incomplete type")
+set(COMPILE_FAIL_HEADER_DIAGNOSTIC "not.*member|has not been declared|does not name|no type named|unknown type name|undeclared|incomplete type")
 set(COMPILE_FAIL_OPERATOR_DIAGNOSTIC "no match|invalid operands|no viable|no matching|deleted")
 set(COMPILE_FAIL_SCALAR_DIAGNOSTIC "no match|invalid operands|no viable|no matching")
 set(COMPILE_FAIL_GUARD_DIAGNOSTIC "default_mpf_precision_guard|not.*member|not.*declared|no matching|deleted")

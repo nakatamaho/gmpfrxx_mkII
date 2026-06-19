@@ -14639,6 +14639,107 @@ Pass/fail result:
 Known issues:
 - None for this phase.
 
+
+## Phase: Pre-fix clean checkout final compiler check
+
+Implemented features:
+- Created a clean clone under `/private/tmp/gmpfrxx_mkII_final_check_clone` from pre-fix HEAD `9c5cf4f028b0fefa7b3f9c14f2f796e5c6c26aa6`.
+- Rechecked the project with AppleClang and MacPorts GCC 15 from the clean checkout.
+
+Missing features:
+- None added in this phase; this was a verification-only pass.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `git clone --no-hardlinks /Users/maho/gmpfrxx_mkII /private/tmp/gmpfrxx_mkII_final_check_clone`
+- `git status --short`
+- `/opt/local/bin/cmake --version`
+- `/opt/local/bin/g++-mp-15 --version`
+- `/opt/local/bin/cmake -S . -B build_clang -DCMAKE_BUILD_TYPE=Debug`
+- `/opt/local/bin/cmake --build build_clang -j`
+- `/opt/local/bin/ctest --test-dir build_clang --output-on-failure`
+- `/opt/local/bin/cmake -S . -B build_gcc15 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=/opt/local/bin/g++-mp-15`
+- `/opt/local/bin/cmake --build build_gcc15 -j`
+- `/opt/local/bin/ctest --test-dir build_gcc15 --output-on-failure`
+
+Pass/fail result:
+- Clean checkout status: PASS; no local modifications.
+- AppleClang configure/build: PASS; compiler was AppleClang 21.0.0.21000099.
+- AppleClang CTest: FAIL; 162/183 tests passed, 21 compile-pass/compile-fail manual compile tests failed because direct test compiler invocations did not receive the configured macOS SDK sysroot, causing `/opt/local/include/gmp.h` to fail on missing `<iosfwd>`.
+- GCC 15 configure/build: PASS; compiler was `/opt/local/bin/g++-mp-15`, version 15.2.0.
+- GCC 15 CTest: PASS; 183/183 tests passed.
+
+Known issues:
+- The pre-fix clean checkout fails AppleClang manual compile tests on this macOS setup unless the manual compile harness propagates the CMake sysroot flags.
+
+
+## Phase: macOS manual compile test harness check
+
+Implemented features:
+- Fixed the CTest manual compile harness so direct compile-pass and compile-fail commands inherit the CMake-detected macOS sysroot.
+- Allowed AppleClang's `no type named ... in namespace` diagnostic wording in header-boundary compile-fail tests.
+
+Missing features:
+- None for this harness fix.
+
+Tests added:
+- No new test cases were added; existing compile-pass and compile-fail tests now run with the same sysroot context as the normal CMake targets.
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug` (failed because `cmake` is not on PATH)
+- `/opt/local/bin/cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `/opt/local/bin/cmake --build build -j`
+- `/opt/local/bin/ctest --test-dir build --output-on-failure` (initial run failed 21 manual compile tests before the harness fix)
+- `/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -std=c++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk -Iinclude -Ibuild/generated -I/opt/local/include -c tests/compile_pass_harness_control.cpp -o build/tests/manual_compile_pass_harness_control.o`
+- `/opt/local/bin/cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `/opt/local/bin/ctest --test-dir build --output-on-failure -R "compile_(pass|fail)"` (intermediate run failed 2 header-boundary diagnostic regex checks)
+- `/opt/local/bin/cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `/opt/local/bin/ctest --test-dir build --output-on-failure -R "compile_(pass|fail)"`
+- `/opt/local/bin/cmake --build build -j`
+- `/opt/local/bin/ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Configure: PASS with `/opt/local/bin/cmake`.
+- Build: PASS.
+- Focused compile-pass/fail CTest: PASS; 21/21 tests passed.
+- Full CTest: PASS; 183/183 tests passed.
+
+Known issues:
+- The build emits repeated AppleClang deprecation warnings for user-defined literal declarations written as `operator"" _suffix`; this phase did not change literal declarations.
+
+
+## Phase: GCC 15 build and test check
+
+Implemented features:
+- No implementation changes were made in this phase.
+- Verified the full project build and CTest suite with MacPorts GCC 15.
+
+Missing features:
+- None for this verification phase.
+
+Tests added:
+- None.
+
+Exact commands run:
+- `which g++-mp-15` (not found on PATH)
+- `g++-mp-15 --version` (not found on PATH)
+- `ls /opt/local/bin/g++-mp-15`
+- `/opt/local/bin/g++-mp-15 --version`
+- `/opt/local/bin/cmake -S . -B build_gcc15 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=/opt/local/bin/g++-mp-15`
+- `/opt/local/bin/cmake --build build_gcc15 -j`
+- `/opt/local/bin/ctest --test-dir build_gcc15 --output-on-failure`
+
+Pass/fail result:
+- Compiler: `/opt/local/bin/g++-mp-15`, MacPorts gcc15 15.2.0.
+- Configure: PASS.
+- Build: PASS.
+- Full CTest: PASS; 183/183 tests passed.
+
+Known issues:
+- `g++-mp-15` is not on the shell PATH in this environment; the absolute path `/opt/local/bin/g++-mp-15` was used.
+
 Post-phase MPFR round-to-integer helpers:
 DONE
 
