@@ -1,10 +1,10 @@
 # Changelog
 
-## 1.0.0 - 2026-06-03
+## 1.0.0 - 2026-06-19
 
-Initial stable API release of `gmpfrxx_mkII`. The first public source
-archive is distributed as `gmpfrxx_mkII.1.0.0-rc1.tar.xz`; the runtime version
-APIs still report `1.0.0`.
+Initial stable API release of `gmpfrxx_mkII`. The public source archive is
+distributed as `gmpfrxx_mkII.1.0.0.tar.xz`; the runtime version APIs report
+`1.0.0`.
 
 ### Public API
 
@@ -14,6 +14,8 @@ APIs still report `1.0.0`.
 - Provides MPC complex wrappers through the opt-in `mpcxx_mkII.h` header.
 - Keeps `gmpxx_mkII.h` GMP-only, `mpfrxx_mkII.h` GMP+MPFR-only, and
   `gmpfrxx_mkII.h` as the full GMP+MPFR+MPC aggregator.
+- Supports component-selectable CMake builds with `GMPFRXX_MKII_COMPONENTS=GMP`,
+  `GMP,MPFR`, or `GMP,MPFR,MPC`.
 - Provides version APIs through `gmpxx::version()`, `mpfrxx::version()`,
   `gmpxx::git_commit_hash()`, and `mpfrxx::git_commit_hash()`.
 

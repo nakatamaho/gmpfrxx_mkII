@@ -167,7 +167,7 @@ int main() { return mpc_buildopt_tls_p() ? 0 : 1; }
     message(STATUS "MPC buildopt TLS probe: has API=${GMPFRXX_MKII_MPC_HAS_BUILDOPT_TLS_P}, tls=${GMPFRXX_MKII_MPC_BUILDOPT_TLS}")
 endif()
 
-set(GMPFRXX_MKII_DIST_SUFFIX "-rc1" CACHE STRING
+set(GMPFRXX_MKII_DIST_SUFFIX "" CACHE STRING
     "Suffix appended to the dist archive basename; set to empty for final releases")
 set(GMPFRXX_MKII_DIST_BASENAME "${PROJECT_NAME}.${PROJECT_VERSION}${GMPFRXX_MKII_DIST_SUFFIX}")
 set(GMPFRXX_MKII_DIST_TAR "${CMAKE_CURRENT_BINARY_DIR}/${GMPFRXX_MKII_DIST_BASENAME}.tar")

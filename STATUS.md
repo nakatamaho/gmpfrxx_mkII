@@ -24291,3 +24291,46 @@ Pass/fail result:
 
 Known issues:
 - System GMP/MPFR/MPC packages were not found in this container, so these component build directories used the existing auto-fetch dependency path.
+
+
+## Phase: v1.0.0 final release verification
+
+Implemented features:
+- Updated final release metadata from the `v1.0.0-rc1` source archive to the final `v1.0.0` source archive.
+- Set the default dist archive suffix to empty so the release archive basename is `gmpfrxx_mkII.1.0.0`.
+- Updated README.md, CHANGELOG.md, and the manual release macros for the June 19, 2026 final release.
+
+Missing features:
+- None for the release metadata phase.
+
+Tests added:
+- None; this phase re-ran the existing Linux and MinGW/Wine release verification suites.
+
+Exact commands run:
+- `cmake -S . -B build_release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build_release -j`
+- `ctest --test-dir build_release --output-on-failure`
+- `scripts/test_mingw64_wine.sh build-mingw64-wine`
+- `cmake -S . -B build_release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF` after the release metadata commit
+- `cmake --build build_release -j` after the release metadata commit
+- `ctest --test-dir build_release --output-on-failure` after the release metadata commit
+- `cmake --build build_release --target dist`
+- `ls -lh build_release/gmpfrxx_mkII.1.0.0.tar.xz`
+- `tar -tf build_release/gmpfrxx_mkII.1.0.0.tar.xz | sed -n '1,12p'`
+
+Pass/fail result:
+- Verified base commit: `2fdfda4` (`Fix macOS manual compile test sysroot`).
+- Linux Release configure: PASS.
+- Linux Release build: PASS.
+- Linux Release CTest: PASS; 183/183 tests passed.
+- Post-release-metadata Linux Release configure/build/CTest: PASS; 183/183 tests passed.
+- Final source archive creation: PASS; `build_release/gmpfrxx_mkII.1.0.0.tar.xz` was created with top-level prefix `gmpfrxx_mkII.1.0.0/`.
+- MinGW/Wine configure: PASS.
+- MinGW/Wine build: PASS.
+- MinGW/Wine CTest: PASS; 181/181 runnable tests passed, 0 failed.
+- Windows-disabled tests: `test_mpf_scalar_alloc_count` and `test_mpfr_scalar_alloc_count` did not run, as expected.
+
+Known issues:
+- Wine printed `XDG_RUNTIME_DIR is invalid or not set in the environment` during startup, but the build and CTest run completed successfully.
+- The MinGW/Wine MPC install does not provide `mpc_buildopt_tls_p()`, reported by CMake as `has API=0`; this was not fatal and matches the existing runner behavior.
+- The Linux Release build used the auto-fetch dependency path because system GMP/MPFR/MPC packages were not found in this container.
