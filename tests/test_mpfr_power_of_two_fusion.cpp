@@ -158,6 +158,28 @@ int main()
         mpfr_ui_div(ref.get_mpfr_t(), 8, a.get_mpfr_t(), mpfrxx::default_rounding_mode());
         require_equal(got, ref);
     }
+    {
+        auto shifted_left = mpfrxx::ldexp(a, 4);
+        static_assert(std::is_same_v<decltype(shifted_left), mpfrxx::mpfr_class>);
+        if (shifted_left.precision() != a.precision()) {
+            std::abort();
+        }
+        check_mul_2ui(shifted_left, a, 4, false);
+
+        auto shifted_right = mpfrxx::ldexp(a, -3);
+        static_assert(std::is_same_v<decltype(shifted_right), mpfrxx::mpfr_class>);
+        if (shifted_right.precision() != a.precision()) {
+            std::abort();
+        }
+        check_div_2ui(shifted_right, a, 3, false);
+
+        auto expr_shifted = mpfrxx::ldexp(a + a, -1);
+        static_assert(std::is_same_v<decltype(expr_shifted), mpfrxx::mpfr_class>);
+        auto ref = mpfrxx::mpfr_class::with_precision(expr_shifted.precision());
+        mpfr_add(ref.get_mpfr_t(), a.get_mpfr_t(), a.get_mpfr_t(), mpfrxx::default_rounding_mode());
+        mpfr_div_2ui(ref.get_mpfr_t(), ref.get_mpfr_t(), 1, mpfrxx::default_rounding_mode());
+        require_equal(expr_shifted, ref);
+    }
     check_checked_mpfr_shift_count_apply();
     {
         auto r = mpfrxx::mpfr_class::with_precision(128, 1.5);

@@ -3701,6 +3701,18 @@ template <
     std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
                          gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
                      int> = 0>
+inline mpfr_class ldexp(const Expr& expr, long exponent)
+{
+    return detail::unary_mpfr_math(expr, [exponent](mpfr_t rop, mpfr_srcptr op, mpfr_rnd_t rnd) {
+        mpfr_mul_2si(rop, op, exponent, rnd);
+    });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
 inline std::pair<mpfr_class, int> lgamma(const Expr& expr)
 {
     const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);

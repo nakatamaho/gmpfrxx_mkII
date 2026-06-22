@@ -1513,6 +1513,25 @@ inline mpf_class gamma_spouge_positive(const mpf_class& x, mp_bitcnt_t target_pr
 
 } // namespace mpf_math_detail
 
+inline mpf_class ldexp(const mpf_class& value, long exponent)
+{
+    mpf_class result(value);
+    using unsigned_long = std::make_unsigned_t<long>;
+    const unsigned_long magnitude =
+        exponent >= 0 ? static_cast<unsigned_long>(exponent)
+                      : static_cast<unsigned_long>(-(exponent + 1)) + unsigned_long{1};
+    if (magnitude > static_cast<unsigned_long>(std::numeric_limits<mp_bitcnt_t>::max())) {
+        throw std::overflow_error("ldexp exponent magnitude is too large for mpf_class");
+    }
+    const auto bits = static_cast<mp_bitcnt_t>(magnitude);
+    if (exponent >= 0) {
+        result.mul_2exp(bits);
+    } else {
+        result.div_2exp(bits);
+    }
+    return result;
+}
+
 inline mpf_class pi(mp_bitcnt_t target_precision)
 {
     return mpf_math_detail::pi(target_precision);
@@ -2005,6 +2024,15 @@ template <
 inline mpf_class abs(const Expr& expr)
 {
     return abs(mpf_class(expr));
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
+inline mpf_class ldexp(const Expr& expr, long exponent)
+{
+    return ldexp(mpf_class(expr), exponent);
 }
 
 template <

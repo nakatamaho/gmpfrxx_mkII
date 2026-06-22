@@ -31,6 +31,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <limits>
+#include <type_traits>
 
 namespace {
 
@@ -98,6 +99,30 @@ int main()
         mpf_init2(ref, got.precision());
         mpf_ui_div(ref, 8, a.get_mpf_t());
         require_equal(got, ref);
+        mpf_clear(ref);
+    }
+    {
+        auto shifted_left = gmpxx::ldexp(a, 4);
+        static_assert(std::is_same_v<decltype(shifted_left), gmpxx::mpf_class>);
+        if (shifted_left.precision() != a.precision()) {
+            std::abort();
+        }
+        check_mul_2exp(shifted_left, a, 4, false);
+
+        auto shifted_right = gmpxx::ldexp(a, -3);
+        static_assert(std::is_same_v<decltype(shifted_right), gmpxx::mpf_class>);
+        if (shifted_right.precision() != a.precision()) {
+            std::abort();
+        }
+        check_div_2exp(shifted_right, a, 3, false);
+
+        auto expr_shifted = gmpxx::ldexp(a + a, -1);
+        static_assert(std::is_same_v<decltype(expr_shifted), gmpxx::mpf_class>);
+        mpf_t ref;
+        mpf_init2(ref, expr_shifted.precision());
+        mpf_add(ref, a.get_mpf_t(), a.get_mpf_t());
+        mpf_div_2exp(ref, ref, 1);
+        require_equal(expr_shifted, ref);
         mpf_clear(ref);
     }
     {

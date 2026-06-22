@@ -1,3 +1,46 @@
+## Phase: GMP and MPFR ldexp helpers
+
+Implemented features:
+- Added `gmpxx::ldexp(const mpf_class&, long)` for GMP `mpf_class` power-of-two scaling.
+- Added expression-node overload support for `gmpxx::ldexp(expr, long)` when the expression result is `gmpxx::mpf_class`.
+- Added `mpfrxx::ldexp(expr, long)` for MPFR operands and MPFR expression nodes, implemented through `mpfr_mul_2si` with the current wrapper rounding policy.
+- Preserved destination result precision by materializing into the operand/expression precision and using existing `mpf_class` shift checks for GMP exponent overflow/underflow.
+
+Missing features:
+- No `ldexp` overloads were added for `mpz_class`, `mpq_class`, `mpc_class`, or `mpfc_class`.
+
+Tests added:
+- Extended `test_mpf_power_of_two_fusion` with positive exponent, negative exponent, expression operand, result type, and precision-preservation checks for `gmpxx::ldexp`.
+- Extended `test_mpfr_power_of_two_fusion` with positive exponent, negative exponent, expression operand, result type, and precision-preservation checks for `mpfrxx::ldexp`.
+
+Exact commands run:
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`
+- `cmake -S . -B build_release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build_release --target test_mpf_power_of_two_fusion test_mpfr_power_of_two_fusion -j`
+- `ctest --test-dir build_release -R "test_(mpf|mpfr)_power_of_two_fusion" --output-on-failure`
+- `cmake --build build_release -j`
+- `ctest --test-dir build_release --output-on-failure`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMP_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/include -DGMP_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/lib/libgmp.a -DMPFR_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/include -DMPFR_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/lib/libmpfr.a -DMPC_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPC/include -DMPC_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPC/lib/libmpc.a`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMP_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/include -DGMP_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/lib/libgmp.a -DMPFR_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/include -DMPFR_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/lib/libmpfr.a -DMPC_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPC/include -DMPC_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPC/lib/libmpc.a`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+
+Pass/fail result:
+- Initial Debug configure with default auto-fetch: FAIL, GMP source download from `gmplib.org` was refused by the network.
+- Release configure with cached dependencies: PASS.
+- Focused Release build and CTest for `test_mpf_power_of_two_fusion` and `test_mpfr_power_of_two_fusion`: PASS, 2/2 tests passed.
+- Full Release build: PASS.
+- Full Release CTest: PASS, 183/183 tests passed.
+- Debug configure/build with cached dependencies and benchmarks enabled: PASS build; CTest FAIL only in `benchmark_disasm_equivalence` because Debug benchmark binaries did not expose the optimized backend call sequences expected by that benchmark regression checker.
+- Debug configure/build with cached dependencies and benchmarks disabled: PASS.
+- Full Debug CTest with benchmarks disabled: PASS, 183/183 tests passed.
+
+Known issues:
+- The default Debug configure still depends on network auto-fetch when no system/package-manager dependencies are found. For this run, local cached dependencies from `build_release/_deps/gmpfrxx_mkii/` were used with `GMPFRXX_MKII_DEPS_AUTO_FETCH=OFF`.
+- `benchmark_disasm_equivalence` is intended for benchmark-enabled optimized builds; it failed in the intermediate Debug benchmark-enabled configuration and was not part of the final Debug library CTest pass.
+
 ## Phase: benchmark disassembly equivalence regression
 
 Implemented features:
