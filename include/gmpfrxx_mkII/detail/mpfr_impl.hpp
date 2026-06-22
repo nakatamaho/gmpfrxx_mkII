@@ -3408,6 +3408,18 @@ inline mpfr_class quaternary_mpfr_math(const A& a, const B& b, const C& c, const
     return result;
 }
 
+inline mpfr_exp_t mpfr_ilogb_regular_exponent(const mpfr_class& operand, const char* function_name)
+{
+    if (mpfr_regular_p(operand.mpfr_data()) == 0) {
+        throw std::domain_error(std::string(function_name) + " requires regular nonzero mpfr_class input");
+    }
+    const mpfr_exp_t raw_exponent = mpfr_get_exp(operand.mpfr_data());
+    if (raw_exponent == std::numeric_limits<mpfr_exp_t>::min()) {
+        throw std::overflow_error(std::string(function_name) + " exponent is too small for mpfr_exp_t");
+    }
+    return static_cast<mpfr_exp_t>(raw_exponent - 1);
+}
+
 } // namespace detail
 
 template <
@@ -3706,6 +3718,62 @@ inline mpfr_class ldexp(const Expr& expr, long exponent)
     return detail::unary_mpfr_math(expr, [exponent](mpfr_t rop, mpfr_srcptr op, mpfr_rnd_t rnd) {
         mpfr_mul_2si(rop, op, exponent, rnd);
     });
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class frexp(const Expr& expr, mpfr_exp_t* exponent)
+{
+    if (exponent == nullptr) {
+        throw std::invalid_argument("frexp exponent pointer must not be null");
+    }
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class result = mpfr_class::with_precision(operand.precision());
+    mpfr_frexp(exponent, result.mpfr_data(), operand.mpfr_data(), mpfr_class::default_rounding());
+    return result;
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_exp_t ilogb(const Expr& expr)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    return detail::mpfr_ilogb_regular_exponent(operand, "ilogb");
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class logb(const Expr& expr)
+{
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    return mpfr_class(detail::mpfr_ilogb_regular_exponent(operand, "logb"), operand.precision());
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpfr_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpfr_object_or_node_v<Expr>,
+                     int> = 0>
+inline mpfr_class modf(const Expr& expr, mpfr_class* integer_part)
+{
+    if (integer_part == nullptr) {
+        throw std::invalid_argument("modf integer-part pointer must not be null");
+    }
+    const mpfr_class operand = detail::materialize_mpfr_math_operand(expr);
+    mpfr_class integer_work = mpfr_class::with_precision(operand.precision());
+    mpfr_class fractional = mpfr_class::with_precision(operand.precision());
+    mpfr_modf(integer_work.mpfr_data(), fractional.mpfr_data(), operand.mpfr_data(), mpfr_class::default_rounding());
+    mpfr_set(integer_part->mpfr_data(), integer_work.mpfr_data(), mpfr_class::default_rounding());
+    return fractional;
 }
 
 template <

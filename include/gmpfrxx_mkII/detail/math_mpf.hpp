@@ -1532,6 +1532,63 @@ inline mpf_class ldexp(const mpf_class& value, long exponent)
     return result;
 }
 
+inline mpf_class frexp(const mpf_class& value, mp_exp_t* exponent)
+{
+    if (exponent == nullptr) {
+        throw std::invalid_argument("frexp exponent pointer must not be null");
+    }
+    if (mpf_sgn(value.mpf_data()) == 0) {
+        *exponent = 0;
+        return mpf_class::with_precision(value.precision());
+    }
+
+    mp_exp_t raw_exponent = 0;
+    mpf_get_d_2exp(&raw_exponent, value.mpf_data());
+    *exponent = raw_exponent;
+
+    mpf_class result(value);
+    const mp_bitcnt_t bits = mpf_math_detail::checked_mp_exp_magnitude(raw_exponent);
+    if (raw_exponent > 0) {
+        result.div_2exp(bits);
+    } else if (raw_exponent < 0) {
+        result.mul_2exp(bits);
+    }
+    return result;
+}
+
+inline mp_exp_t ilogb(const mpf_class& value)
+{
+    if (mpf_sgn(value.mpf_data()) == 0) {
+        throw std::domain_error("ilogb requires nonzero mpf_class input");
+    }
+    mp_exp_t raw_exponent = 0;
+    mpf_get_d_2exp(&raw_exponent, value.mpf_data());
+    if (raw_exponent == std::numeric_limits<mp_exp_t>::min()) {
+        throw std::overflow_error("ilogb exponent is too small for mp_exp_t");
+    }
+    return static_cast<mp_exp_t>(raw_exponent - 1);
+}
+
+inline mpf_class logb(const mpf_class& value)
+{
+    return mpf_class(ilogb(value), value.precision());
+}
+
+inline mpf_class modf(const mpf_class& value, mpf_class* integer_part)
+{
+    if (integer_part == nullptr) {
+        throw std::invalid_argument("modf integer-part pointer must not be null");
+    }
+
+    mpf_class integer_work = mpf_class::with_precision(value.precision());
+    mpf_trunc(integer_work.mpf_data(), value.mpf_data());
+
+    mpf_class fractional = mpf_class::with_precision(value.precision());
+    mpf_sub(fractional.mpf_data(), value.mpf_data(), integer_work.mpf_data());
+    mpf_set(integer_part->mpf_data(), integer_work.mpf_data());
+    return fractional;
+}
+
 inline mpf_class pi(mp_bitcnt_t target_precision)
 {
     return mpf_math_detail::pi(target_precision);
@@ -2033,6 +2090,42 @@ template <
 inline mpf_class ldexp(const Expr& expr, long exponent)
 {
     return ldexp(mpf_class(expr), exponent);
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
+inline mpf_class frexp(const Expr& expr, mp_exp_t* exponent)
+{
+    return frexp(mpf_class(expr), exponent);
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
+inline mp_exp_t ilogb(const Expr& expr)
+{
+    return ilogb(mpf_class(expr));
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
+inline mpf_class logb(const Expr& expr)
+{
+    return logb(mpf_class(expr));
+}
+
+template <
+    typename Expr,
+    typename = std::enable_if_t<gmpfrxx_mkII::detail::is_expression_node_v<std::decay_t<Expr>> &&
+                                std::is_same_v<typename std::decay_t<Expr>::result_type, mpf_class>>>
+inline mpf_class modf(const Expr& expr, mpf_class* integer_part)
+{
+    return modf(mpf_class(expr), integer_part);
 }
 
 template <

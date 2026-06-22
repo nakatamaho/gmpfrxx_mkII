@@ -1,3 +1,49 @@
+## Phase: GMP and MPFR decomposition helpers
+
+Implemented features:
+- Added `gmpxx::frexp`, `gmpxx::ilogb`, `gmpxx::logb`, and `gmpxx::modf` for GMP `mpf_class`.
+- Added expression-node overload support for those GMP decomposition helpers when the expression result is `gmpxx::mpf_class`.
+- Added `mpfrxx::frexp`, `mpfrxx::ilogb`, `mpfrxx::logb`, and `mpfrxx::modf` for MPFR operands and MPFR expression nodes.
+- Preserved source precision for returned fractional/logb values and preserved destination precision for the `modf` integer-part output.
+- Registered the new tests in full builds and in `GMP` / `GMP,MPFR` component builds.
+
+Missing features:
+- No decomposition overloads were added for `mpz_class`, `mpq_class`, `mpc_class`, or `mpfc_class`.
+- No C `int*` exponent overloads were added; GMP uses `mp_exp_t*` and MPFR uses `mpfr_exp_t*`.
+
+Tests added:
+- Added `test_mpf_decomposition_functions` for GMP `frexp`, `ilogb`, `logb`, and `modf` object/expression operands, precision preservation, zero handling, and error cases.
+- Added `test_mpfr_decomposition_functions` for MPFR `frexp`, `ilogb`, `logb`, and `modf` object/expression operands, precision preservation, zero handling, NaN exponent-domain checks, and error cases.
+
+Exact commands run:
+- `cmake -S . -B build_release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build_release --target test_mpf_decomposition_functions test_mpfr_decomposition_functions -j`
+- `ctest --test-dir build_release -R "test_(mpf|mpfr)_decomposition_functions" --output-on-failure`
+- `cmake --build build_release -j`
+- `ctest --test-dir build_release --output-on-failure`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMP_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/include -DGMP_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/lib/libgmp.a -DMPFR_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/include -DMPFR_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/lib/libmpfr.a -DMPC_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPC/include -DMPC_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPC/lib/libmpc.a`
+- `cmake --build build -j`
+- `ctest --test-dir build --output-on-failure`
+- `cmake -S . -B build_components_gmp -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_COMPONENTS=GMP -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMP_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/include -DGMP_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/lib/libgmp.a`
+- `cmake --build build_components_gmp --target test_mpf_decomposition_functions -j`
+- `ctest --test-dir build_components_gmp -R test_mpf_decomposition_functions --output-on-failure`
+- `cmake -S . -B build_components_gmp_mpfr -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_COMPONENTS=GMP,MPFR -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMP_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/include -DGMP_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/lib/libgmp.a -DMPFR_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/include -DMPFR_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/lib/libmpfr.a`
+- `cmake --build build_components_gmp_mpfr --target test_mpf_decomposition_functions test_mpfr_decomposition_functions -j`
+- `ctest --test-dir build_components_gmp_mpfr -R "test_(mpf|mpfr)_decomposition_functions" --output-on-failure`
+
+Pass/fail result:
+- Focused Release build and CTest for `test_mpf_decomposition_functions` and `test_mpfr_decomposition_functions`: PASS, 2/2 tests passed.
+- Full Release build: PASS.
+- Full Release CTest: PASS, 185/185 tests passed.
+- Full Debug configure/build with cached dependencies and benchmarks disabled: PASS.
+- Full Debug CTest with benchmarks disabled: PASS, 185/185 tests passed.
+- GMP-only component configure/build/focused CTest: PASS, 1/1 tests passed.
+- GMP+MPFR component configure/build/focused CTest: PASS, 2/2 tests passed.
+
+Known issues:
+- The default dependency auto-fetch path is still unsuitable for this restricted network environment, so cached dependencies from `build_release/_deps/gmpfrxx_mkii/` were used with `GMPFRXX_MKII_DEPS_AUTO_FETCH=OFF`.
+- `ilogb` and `logb` throw `std::domain_error` for zero and non-regular MPFR values instead of returning C floating-point sentinel values.
+
 ## Phase: GMP and MPFR ldexp helpers
 
 Implemented features:
