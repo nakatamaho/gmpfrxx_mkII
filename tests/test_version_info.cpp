@@ -45,7 +45,7 @@ int main()
     const char* mpfrxx_version = mpfrxx::version();
     assert(gmp_version != nullptr);
     assert(mpfrxx_version != nullptr);
-    assert(std::strcmp(gmp_version, "1.0.0") == 0);
+    assert(std::strcmp(gmp_version, "1.0.1") == 0);
     assert(std::strcmp(gmp_version, mpfrxx_version) == 0);
     assert(std::strcmp(gmp_version, GMPFRXX_MKII_VERSION) == 0);
 

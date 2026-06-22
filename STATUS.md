@@ -1,3 +1,38 @@
+## Phase: 1.0.1 release preparation
+
+Implemented features:
+- Bumped the project version metadata from `1.0.0` to `1.0.1`.
+- Renamed `CHANGELOG.md` to `CHANGES.1.0.0.md`.
+- Added `CHANGES.1.0.1.md` for the `ldexp` and decomposition-helper maintenance release.
+- Updated README News and manual release metadata for `v1.0.1`.
+- Updated `test_version_info` to expect runtime version `1.0.1`.
+
+Missing features:
+- None for release preparation.
+
+Tests added:
+- None; this phase updates release metadata and release notes.
+
+Exact commands run:
+- `git mv CHANGELOG.md CHANGES.1.0.0.md`
+- `cmake -S . -B build_release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMP_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/include -DGMP_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/GMP/lib/libgmp.a -DMPFR_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/include -DMPFR_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPFR/lib/libmpfr.a -DMPC_INCLUDE_DIR=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPC/include -DMPC_LIBRARY=/home/docker/gmpfrxx_mkII/build_release/_deps/gmpfrxx_mkii/MPC/lib/libmpc.a`
+- `cmake --build build_release -j`
+- `ctest --test-dir build_release --output-on-failure`
+- `cmake --build build-mingw64-wine -j`
+- `ctest --test-dir build-mingw64-wine --output-on-failure`
+- `env XDG_RUNTIME_DIR=/tmp/gmpfrxx-wine-runtime WINEPATH=Z:\home\docker\gmpfrxx_mkII\build-mingw64-wine;Z:\usr\lib\gcc\x86_64-w64-mingw32\13-win32;Z:\home\docker\mplapack\external\i\GMP\bin;Z:\home\docker\mplapack\external\i\MPFR\bin;Z:\home\docker\mplapack\external\i\MPC\bin ctest --test-dir build-mingw64-wine -R "example16_mpf_thread_context|test_mpf_external_provider" --output-on-failure`
+
+Pass/fail result:
+- Release configure/build: PASS.
+- Full Linux Release CTest: PASS, 185/185 tests passed.
+- MinGW/Wine build: PASS.
+- MinGW/Wine CTest with default Wine DLL search path: FAIL, 181/183 runnable tests passed, 2 tests failed because `libgmpxx_mkII_default_context_provider.dll` was not on Wine DLL search path, and 2 allocation-counter tests were disabled.
+- Focused MinGW/Wine rerun with provider DLL and MinGW runtime directories on `WINEPATH`: PASS, 2/2 tests passed.
+
+Known issues:
+- The MinGW/Wine external-provider tests require Wine to see `libgmpxx_mkII_default_context_provider.dll` and its MinGW runtime dependencies on `WINEPATH` when the test working directory is not the build root.
+- The dependency auto-fetch path remains unsuitable for the restricted network environment; cached dependencies were used for Linux Release verification.
+
 ## Phase: GMP and MPFR decomposition helpers
 
 Implemented features:
