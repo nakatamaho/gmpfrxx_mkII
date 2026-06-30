@@ -1,3 +1,55 @@
+## Phase: C++ standard dialect compatibility check
+
+Implemented features:
+- Changed top-level CMake standard selection so user-provided `CMAKE_CXX_STANDARD` and `CMAKE_CXX_EXTENSIONS` values are respected.
+- Verified GNU dialect modes `gnu++17`, `gnu++20`, and `gnu++23`.
+- Verified non-GNU standard modes `c++17`, `c++20`, and `c++23`.
+
+Missing features:
+- No source-code compatibility changes were needed beyond the CMake configurability fix.
+- Non-GNU compiler families such as Clang/MSVC were not checked in this phase; the check covered GNU g++ dialect and strict-standard modes.
+
+Tests added:
+- None; existing full CTest coverage was reused across all six dialect configurations.
+
+Exact commands run:
+- `g++ --version`
+- `cmake --version`
+- `cmake -S . -B build-stdcheck-cxx17 -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_EXTENSIONS=OFF -DGMP_INCLUDE_DIR=/home/docker/mplapack/external/i/GMP/include -DGMP_LIBRARY=/home/docker/mplapack/external/i/GMP/lib/libgmp.a -DMPFR_INCLUDE_DIR=/home/docker/mplapack/external/i/MPFR/include -DMPFR_LIBRARY=/home/docker/mplapack/external/i/MPFR/lib/libmpfr.a -DMPC_INCLUDE_DIR=/home/docker/mplapack/external/i/MPC/include -DMPC_LIBRARY=/home/docker/mplapack/external/i/MPC/lib/libmpc.a`
+- `cmake --build build-stdcheck-cxx17 -j`
+- `ctest --test-dir build-stdcheck-cxx17 --output-on-failure`
+- `cmake -S . -B build-stdcheck-cxx20 ... -DCMAKE_CXX_STANDARD=20 -DCMAKE_CXX_EXTENSIONS=OFF ...`
+- `cmake --build build-stdcheck-cxx20 -j`
+- `ctest --test-dir build-stdcheck-cxx20 --output-on-failure`
+- `cmake -S . -B build-stdcheck-cxx23 ... -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_EXTENSIONS=OFF ...`
+- `cmake --build build-stdcheck-cxx23 -j`
+- `ctest --test-dir build-stdcheck-cxx23 --output-on-failure`
+- `cmake -S . -B build-stdcheck-gnu17 ... -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_EXTENSIONS=ON ...`
+- `cmake --build build-stdcheck-gnu17 -j`
+- `ctest --test-dir build-stdcheck-gnu17 --output-on-failure`
+- `cmake -S . -B build-stdcheck-gnu20 ... -DCMAKE_CXX_STANDARD=20 -DCMAKE_CXX_EXTENSIONS=ON ...`
+- `cmake --build build-stdcheck-gnu20 -j`
+- `ctest --test-dir build-stdcheck-gnu20 --output-on-failure`
+- `cmake -S . -B build-stdcheck-gnu23 ... -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_EXTENSIONS=ON ...`
+- `cmake --build build-stdcheck-gnu23 -j`
+- `ctest --test-dir build-stdcheck-gnu23 --output-on-failure`
+- `rg -o -- "-std=(gnu\+\+|c\+\+)[0-9a-z]+" build-stdcheck-*/compile_commands.json`
+
+Pass/fail result:
+- Compiler: GNU g++ 15.2.0.
+- CMake: 4.2.3.
+- `c++17`: PASS, compiled with `-std=c++17`, full CTest PASS, 185/185 tests passed.
+- `c++20`: PASS, compiled with `-std=c++20`, full CTest PASS, 185/185 tests passed.
+- `c++23`: PASS, compiled with `-std=c++23`, full CTest PASS, 185/185 tests passed.
+- `gnu++17`: PASS, compiled with `-std=gnu++17`, full CTest PASS, 185/185 tests passed.
+- `gnu++20`: PASS, compiled with `-std=gnu++20`, full CTest PASS, 185/185 tests passed.
+- `gnu++23`: PASS, compiled with `-std=gnu++23`, full CTest PASS, 185/185 tests passed.
+
+Known issues:
+- The original top-level CMake file pinned `CMAKE_CXX_STANDARD=17` and `CMAKE_CXX_EXTENSIONS=OFF`, so command-line standard/dialect overrides were not reliably honored before this fix.
+- The first attempted compatibility configure used stale dependency paths under `build_release/_deps`; the successful checks used `/home/docker/mplapack/external/i/{GMP,MPFR,MPC}`.
+- The dependency auto-fetch path remains unsuitable for the restricted network environment.
+
 ## Phase: 1.0.1 release preparation
 
 Implemented features:

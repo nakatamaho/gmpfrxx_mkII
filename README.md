@@ -9,12 +9,15 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 ## News
 
 - 2026-06-22: Released `v1.0.1` as a source archive,
-  `gmpfrxx_mkII.1.0.1.tar.xz`.
-  This maintenance release adds GMP/MPFR `ldexp`, `frexp`, `ilogb`,
-  `logb`, and `modf` helpers for floating-point wrappers and expression
-  operands. Release verification passed on Linux (185/185 CTest tests) and
-  MinGW/Wine (183/183 runnable CTest tests with the provider DLL path
-  configured; two allocation-counter tests are Windows-disabled).
+  `gmpfrxx_mkII.1.0.1.tar.xz`
+  (`sha256: c0816b3538b6b77009f714bb391cebe11abb2fdb69e07aa3bb305ff822764afb`).
+  This maintenance release adds GMP/MPFR `ldexp` helpers and floating-point
+  decomposition helpers, `frexp`, `ilogb`, `logb`, and `modf`, for direct
+  wrapper values and expression operands. Returned decomposition values
+  preserve source precision, and `modf` preserves the destination precision of
+  the integer-part output. Release verification passed on Linux (185/185 CTest
+  tests) and MinGW/Wine (183/183 runnable CTest tests with the provider DLL
+  path configured; two allocation-counter tests are Windows-disabled).
 
 - 2026-06-19: Released `v1.0.0` as the first stable source archive,
   `gmpfrxx_mkII.1.0.0.tar.xz`
