@@ -40,6 +40,7 @@ void require_below_binary64_components(const mpfrxx::mpc_class& actual,
     require(mpfr_cmp_d(mpc_imagref(actual.mpc_data()), imag_high) > 0);
 }
 
+// COMPLEX-DOUBLE
 void test_complex_double()
 {
     const std::complex<double> source(1.25, -2.5);
@@ -47,6 +48,7 @@ void test_complex_double()
     require_components(target, source.real(), source.imag());
 }
 
+// COMPLEX-DD
 void test_complex_dd()
 {
     dd_complex source;
@@ -57,6 +59,7 @@ void test_complex_dd()
     require_below_binary64_components(target, 1.0, -2.0);
 }
 
+// COMPLEX-QD
 void test_complex_qd()
 {
     qd_complex source;
@@ -68,6 +71,7 @@ void test_complex_qd()
     require_below_binary64_components(target, 3.0, -4.0);
 }
 
+// COMPLEX-BINARY80
 void test_complex_binary80()
 {
 #if MPLAPACK_BINARY80_MODE == MPLAPACK_BINARY80_MODE_FLOAT64X
@@ -86,6 +90,7 @@ void test_complex_binary80()
 #endif
 }
 
+// COMPLEX-BINARY128
 void test_complex_binary128()
 {
 #if MPLAPACK_BINARY128_MODE == MPLAPACK_BINARY128_MODE_FLOAT128
@@ -105,6 +110,7 @@ void test_complex_binary128()
 #endif
 }
 
+// COMPLEX-GMP
 void test_complex_gmp()
 {
     gmpxx::mpf_class real;

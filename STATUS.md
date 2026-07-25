@@ -24510,3 +24510,17 @@ Known issues:
 - Wine printed `XDG_RUNTIME_DIR is invalid or not set in the environment` during startup, but the build and CTest run completed successfully.
 - The MinGW/Wine MPC install does not provide `mpc_buildopt_tls_p()`, reported by CMake as `has API=0`; this was not fatal and matches the existing runner behavior.
 - The Linux Release build used the auto-fetch dependency path because system GMP/MPFR/MPC packages were not found in this container.
+
+## Phase: MPLAPACK P2B complex comparison embeddings
+
+- Added explicit one-way construction/assignment of `mpfrxx::mpc_class` from
+  the six REQUIRED complex source families.
+- Reused the accepted P2A real component imports for dd, qd, binary80,
+  binary128, and GMP MPF components.
+- Added below-binary64 checks in both component positions, plus directed
+  component-order and negative-component checks.
+- Added a reproducible P2B gate and installed-package consumer.
+- Configured with dependency auto-fetch OFF, built with `-j32`, and passed the
+  complete `190/190` CTest suite.
+- No reverse conversion, mixed arithmetic, precision metadata handling, EDD,
+  TD, or P2C utility work was added.

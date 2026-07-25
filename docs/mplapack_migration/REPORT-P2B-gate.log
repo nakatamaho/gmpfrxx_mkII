@@ -1,0 +1,2240 @@
+-- gmpfrxx_mkII enabled components: GMP;MPFR;MPC
+-- MPFR buildopt TLS probe: has API=1, tls=1
+-- MPC buildopt TLS probe: has API=0, tls=0
+-- OpenMP benchmark targets enabled
+-- Configuring done (0.4s)
+-- Generating done (1.2s)
+-- Build files have been written to: /home/docker/gmpfrxx_mkII-p2a-clean.wbx83b/build-p2b
+[  0%] Building CXX object CMakeFiles/gmpxx_mkII_default_context_provider.dir/src/gmpxx_mkII_default_context_provider.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example02_mpfr.dir/example02_mpfr.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example02_mpf.dir/example02_mpf.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example03_mpf.dir/example03_mpf.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example01.dir/example01.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example04_mpf.dir/example04_mpf.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example05_mpfr.dir/example05_mpfr.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example03_mpfr.dir/example03_mpfr.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example10_mpfr.dir/example10_mpfr.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example02_mpc.dir/example02_mpc.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example04_mpfr.dir/example04_mpfr.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example08_mpfc.dir/example08_mpfc.cpp.o
+[  0%] Building CXX object examples/CMakeFiles/example05_mpf.dir/example05_mpf.cpp.o
+[  1%] Building CXX object examples/CMakeFiles/example03_mpfc.dir/example03_mpfc.cpp.o
+[  2%] Building CXX object examples/CMakeFiles/example06_mpc.dir/example06_mpc.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example09_mpc.dir/example09_mpc.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example06_mpfc.dir/example06_mpfc.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example07_mpfc.dir/example07_mpfc.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example08_mpc.dir/example08_mpc.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example12_mpf.dir/example12_mpf.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example11_mpfr.dir/example11_mpfr.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example13_mpf.dir/example13_mpf.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example07_mpc.dir/example07_mpc.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example09_mpfc.dir/example09_mpfc.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example13_mpfr.dir/example13_mpfr.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example14_mpfr.dir/example14_mpfr.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example10_mpf.dir/example10_mpf.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example11_mpf.dir/example11_mpf.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example14_mpf.dir/example14_mpf.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example12_mpfr.dir/example12_mpfr.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example15_mpfr.dir/example15_mpfr.cpp.o
+[  3%] Building CXX object examples/CMakeFiles/example15_mpf.dir/example15_mpf.cpp.o
+[  3%] Linking CXX shared library libgmpxx_mkII_default_context_provider.so
+[  3%] Built target gmpxx_mkII_default_context_provider
+[  3%] Building CXX object examples/CMakeFiles/example16_mpfr_thread_context.dir/example16_mpfr_thread_context.cpp.o
+[  3%] Linking CXX executable example01
+[  3%] Linking CXX executable example02_mpf
+[  3%] Linking CXX executable example02_mpfr
+[  3%] Linking CXX executable example02_mpc
+[  3%] Built target example02_mpf
+[  3%] Built target example01
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_01.dir/gmp/00_Rdot/Rdot_gmp_C_native_01.cpp.o
+[  3%] Built target example02_mpc
+[  3%] Built target example02_mpfr
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_02.dir/gmp/00_Rdot/Rdot_gmp_C_native_02.cpp.o
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_04.dir/gmp/00_Rdot/Rdot_gmp_C_native_04.cpp.o
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_03.dir/gmp/00_Rdot/Rdot_gmp_C_native_03.cpp.o
+[  3%] Linking CXX executable example03_mpf
+[  3%] Linking CXX executable example11_mpf
+[  3%] Linking CXX executable example07_mpfc
+[  3%] Built target example11_mpf
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_05.dir/gmp/00_Rdot/Rdot_gmp_C_native_05.cpp.o
+[  3%] Built target example03_mpf
+[  3%] Built target example07_mpfc
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_06.dir/gmp/00_Rdot/Rdot_gmp_C_native_06.cpp.o
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_openmp_01.dir/gmp/00_Rdot/Rdot_gmp_C_native_openmp_01.cpp.o
+[  3%] Linking CXX executable example03_mpfr
+[  3%] Linking CXX executable example11_mpfr
+[  3%] Linking CXX executable example10_mpf
+[  3%] Built target example03_mpfr
+[  3%] Linking CXX executable example04_mpf
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_openmp_02.dir/gmp/00_Rdot/Rdot_gmp_C_native_openmp_02.cpp.o
+[  3%] Linking CXX executable example03_mpfc
+[  3%] Built target example11_mpfr
+[  3%] Built target example10_mpf
+[  3%] Built target example04_mpf
+[  3%] Linking CXX executable example13_mpf
+[  3%] Linking CXX executable example10_mpfr
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_openmp_03.dir/gmp/00_Rdot/Rdot_gmp_C_native_openmp_03.cpp.o
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_openmp_05.dir/gmp/00_Rdot/Rdot_gmp_C_native_openmp_05.cpp.o
+[  3%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_openmp_04.dir/gmp/00_Rdot/Rdot_gmp_C_native_openmp_04.cpp.o
+[  3%] Linking CXX executable example16_mpfr_thread_context
+[  3%] Linking CXX executable example07_mpc
+[  3%] Linking CXX executable example04_mpfr
+[  3%] Built target example13_mpf
+[  4%] Linking CXX executable example12_mpf
+[  4%] Linking CXX executable example12_mpfr
+[  4%] Built target example03_mpfc
+[  4%] Built target example10_mpfr
+[  4%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_C_native_openmp_06.dir/gmp/00_Rdot/Rdot_gmp_C_native_openmp_06.cpp.o
+[  5%] Linking CXX executable example15_mpf
+[  5%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_01_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp.o
+[  6%] Built target Rdot_gmp_kernel_01_orig
+[  6%] Built target example16_mpfr_thread_context
+[  7%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_02
+[  7%] Built target example07_mpc
+[  7%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_01.cpp.o
+[  7%] Built target Rdot_gmp_kernel_02_orig
+[  7%] Linking CXX executable example14_mpfr
+[  7%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_04
+[  7%] Built target example04_mpfr
+[  7%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_02_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp.o
+[  7%] Built target example12_mpfr
+[  7%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_02.cpp.o
+[  7%] Built target example12_mpf
+[  7%] Built target example15_mpf
+[  8%] Built target Rdot_gmp_kernel_03_orig
+[  8%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_03_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp.o
+[  8%] Built target Rdot_gmp_C_native_02
+[  8%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_03.cpp.o
+[  8%] Built target Rdot_gmp_kernel_04_orig
+[  8%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_04_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp.o
+[  8%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_04.cpp.o
+[  8%] Built target Rdot_gmp_C_native_04
+[  9%] Built target Rdot_gmp_kernel_05_orig
+[  9%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_05.cpp.o
+[  9%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_05_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_05.cpp.o
+[  9%] Built target example14_mpfr
+[  9%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_01
+[  9%] Built target Rdot_gmp_kernel_06_orig
+[  9%] Linking CXX executable example08_mpc
+[  9%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_06_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_06.cpp.o
+[  9%] Linking CXX executable example05_mpfr
+[  9%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_03
+[  9%] Built target Rdot_gmp_C_native_01
+[  9%] Built target example08_mpc
+[  9%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_06.cpp.o
+[  9%] Linking CXX executable example09_mpfc
+[  9%] Linking CXX executable example05_mpf
+[ 10%] Built target Rdot_gmp_kernel_openmp_01_orig
+[ 10%] Linking CXX executable example15_mpfr
+[ 10%] Built target example05_mpfr
+[ 10%] Built target Rdot_gmp_C_native_03
+[ 10%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_01_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01.cpp.o
+[ 10%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_01.cpp.o
+[ 10%] Built target Rdot_gmp_kernel_openmp_02_orig
+[ 10%] Linking CXX executable example14_mpf
+[ 10%] Linking CXX executable example06_mpc
+[ 10%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_02_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02.cpp.o
+[ 10%] Built target example05_mpf
+[ 10%] Built target example09_mpfc
+[ 10%] Linking CXX executable example13_mpfr
+[ 10%] Built target example15_mpfr
+[ 11%] Built target Rdot_gmp_kernel_openmp_03_orig
+[ 11%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_02.cpp.o
+[ 11%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_03_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03.cpp.o
+[ 11%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_05
+[ 11%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_03.cpp.o
+[ 11%] Built target example14_mpf
+[ 11%] Built target Rdot_gmp_kernel_openmp_04_orig
+[ 11%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_openmp_01
+[ 11%] Built target example06_mpc
+[ 11%] Built target example13_mpfr
+[ 11%] Built target Rdot_gmp_C_native_05
+[ 11%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_04_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04.cpp.o
+[ 11%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_04.cpp.o
+[ 11%] Built target Rdot_gmp_kernel_openmp_05_orig
+[ 11%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_05_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05.cpp.o
+[ 11%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_05.cpp.o
+[ 12%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_openmp_02
+[ 12%] Linking CXX executable example09_mpc
+[ 12%] Built target Rdot_gmp_C_native_openmp_01
+[ 12%] Built target Rdot_gmp_kernel_openmp_06_orig
+[ 12%] Built target Rdot_gmp_C_native_openmp_02
+[ 12%] Built target example09_mpc
+[ 13%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_06_mkII.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06.cpp.o
+[ 13%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_06
+[ 13%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_openmp_05
+[ 13%] Building CXX object benchmarks/CMakeFiles/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/00_Rdot/Rdot_gmp_kernel_openmp_06.cpp.o
+[ 13%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_openmp_03
+[ 13%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_01.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_01.cpp.o
+[ 13%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_openmp_04
+[ 13%] Linking CXX executable example08_mpfc
+[ 13%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_01_mkII
+[ 13%] Built target Rdot_gmp_C_native_openmp_05
+[ 13%] Linking CXX executable example06_mpfc
+[ 13%] Built target Rdot_gmp_C_native_06
+[ 13%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_C_native_openmp_06
+[ 13%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_02.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_02.cpp.o
+[ 13%] Built target Rdot_gmp_C_native_openmp_03
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_03.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_03.cpp.o
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_02_mkII
+[ 14%] Built target example08_mpfc
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_04.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_04.cpp.o
+[ 14%] Built target Rdot_gmp_C_native_openmp_04
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_05.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_05.cpp.o
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_05_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_05_FMA.cpp.o
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_03_mkII
+[ 14%] Built target Rdot_gmp_kernel_01_mkII
+[ 14%] Built target example06_mpfc
+[ 14%] Built target Rdot_gmp_C_native_openmp_06
+[ 14%] Built target Rdot_gmp_kernel_02_mkII
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_06.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_06.cpp.o
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_06_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_06_FMA.cpp.o
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_01_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA.cpp.o
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_01.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01.cpp.o
+[ 14%] Built target Rdot_gmp_kernel_03_mkII
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_02.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02.cpp.o
+[ 14%] Built target Rdot_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_03.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03.cpp.o
+[ 14%] Built target Rdot_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_06_mkII
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_04.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04.cpp.o
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_05_mkII
+[ 14%] Built target Rdot_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_05.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05.cpp.o
+[ 14%] Built target Rdot_gmp_kernel_06_mkII
+[ 14%] Built target Rdot_gmp_kernel_05_mkII
+[ 14%] Built target Rdot_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_05_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05_FMA.cpp.o
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_06.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06.cpp.o
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_06_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06_FMA.cpp.o
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_04_mkII
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Built target Rdot_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Built target Rdot_gmp_kernel_04_mkII
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_C_native_openmp_01_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA.cpp.o
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_01.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_01.cpp.o
+[ 14%] Built target Rdot_gmp_kernel_openmp_02_mkII
+[ 14%] Built target Rdot_gmp_kernel_openmp_01_mkII
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_01_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_01.cpp.o
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_01_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING.cpp.o
+[ 14%] Built target Rdot_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Built target Rdot_gmp_kernel_openmp_03_mkII
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_01_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING.cpp.o
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_02.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_02.cpp.o
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Built target Rdot_gmp_kernel_openmp_04_mkII
+[ 14%] Built target Rdot_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_05_mkII
+[ 14%] Built target Rdot_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_02_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_02.cpp.o
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_02_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_02_ROUNDING.cpp.o
+[ 14%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_02_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_02_ROUNDING.cpp.o
+[ 14%] Built target Rdot_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH
+[ 14%] Built target Rdot_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH
+[ 15%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_03.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_03.cpp.o
+[ 15%] Built target Rdot_gmp_kernel_openmp_05_mkII
+[ 15%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_03_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_03.cpp.o
+[ 15%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_03_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_03_ROUNDING.cpp.o
+[ 15%] Built target Rdot_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH
+[ 15%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH
+[ 15%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_03_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_03_ROUNDING.cpp.o
+[ 15%] Built target Rdot_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH
+[ 15%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_04.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_04.cpp.o
+[ 15%] Linking CXX executable gmp/00_Rdot/Rdot_gmp_kernel_openmp_06_mkII
+[ 15%] Built target Rdot_gmp_kernel_openmp_06_mkII
+[ 15%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_05
+[ 15%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_04_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_04.cpp.o
+[ 15%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_05_FMA
+[ 15%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_01
+[ 15%] Built target Rdot_mpfr_C_native_05
+[ 15%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_01_FMA
+[ 15%] Built target Rdot_mpfr_C_native_01
+[ 16%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_04_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_04_ROUNDING.cpp.o
+[ 16%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_03
+[ 16%] Built target Rdot_mpfr_C_native_05_FMA
+[ 16%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_04_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_04_ROUNDING.cpp.o
+[ 16%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_05.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp.o
+[ 16%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_02
+[ 16%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_03
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_02
+[ 17%] Built target Rdot_mpfr_C_native_03
+[ 17%] Built target Rdot_mpfr_C_native_01_FMA
+[ 17%] Built target Rdot_mpfr_C_native_openmp_02
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_05_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp.o
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_05_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING.cpp.o
+[ 17%] Built target Rdot_mpfr_C_native_openmp_03
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_04
+[ 17%] Built target Rdot_mpfr_C_native_openmp_01
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_05_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING.cpp.o
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_04
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_06.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_06.cpp.o
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_06_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_06.cpp.o
+[ 17%] Built target Rdot_mpfr_C_native_02
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_06_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_06_ROUNDING.cpp.o
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_06
+[ 17%] Built target Rdot_mpfr_C_native_04
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_06_FMA
+[ 17%] Built target Rdot_mpfr_C_native_openmp_05
+[ 17%] Built target Rdot_mpfr_C_native_openmp_04
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_06_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_06_ROUNDING.cpp.o
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_01_ROUNDING_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING.cpp.o
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_01_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_01.cpp.o
+[ 17%] Built target Rdot_mpfr_C_native_openmp_06
+[ 17%] Built target Rdot_mpfr_C_native_06
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_05_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_05.cpp.o
+[ 17%] Built target Rdot_mpfr_C_native_06_FMA
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING.cpp.o
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_06_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_06.cpp.o
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_01_FMA
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_06_FMA
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_02
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_01
+[ 17%] Built target Rdot_mpfr_C_native_openmp_01_FMA
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_06_ROUNDING_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_06_ROUNDING.cpp.o
+[ 17%] Built target Rdot_mpfr_kernel_02
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_02_ROUNDING_PRECISION
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_01_PRECISION
+[ 17%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_01.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01.cpp.o
+[ 17%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_02_PRECISION
+[ 17%] Built target Rdot_mpfr_C_native_openmp_06_FMA
+[ 18%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_C_native_openmp_05_FMA
+[ 18%] Built target Rdot_mpfr_kernel_01
+[ 18%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_01_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01.cpp.o
+[ 18%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_01_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 18%] Built target Rdot_mpfr_kernel_01_PRECISION
+[ 18%] Built target Rdot_mpfr_kernel_02_PRECISION
+[ 18%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_03_PRECISION
+[ 18%] Built target Rdot_mpfr_kernel_02_ROUNDING_PRECISION
+[ 18%] Built target Rdot_mpfr_C_native_openmp_05_FMA
+[ 18%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 18%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_02.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02.cpp.o
+[ 18%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_02_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02.cpp.o
+[ 18%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_02_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_ROUNDING.cpp.o
+[ 18%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_03_ROUNDING
+[ 18%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_02_ROUNDING
+[ 18%] Built target Rdot_mpfr_kernel_03_PRECISION
+[ 18%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_02_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_ROUNDING.cpp.o
+[ 18%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_03
+[ 19%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING
+[ 19%] Built target Rdot_mpfr_kernel_03_ROUNDING
+[ 19%] Built target Rdot_mpfr_kernel_02_ROUNDING
+[ 19%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_03.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03.cpp.o
+[ 20%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_03_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03.cpp.o
+[ 20%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING_PRECISION
+[ 20%] Built target Rdot_mpfr_kernel_01_ROUNDING
+[ 20%] Built target Rdot_mpfr_kernel_03
+[ 20%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_03_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_ROUNDING.cpp.o
+[ 20%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_03_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_ROUNDING.cpp.o
+[ 20%] Built target Rdot_mpfr_kernel_01_ROUNDING_PRECISION
+[ 20%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_04.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04.cpp.o
+[ 20%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_03_ROUNDING_PRECISION
+[ 20%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_04_ROUNDING_PRECISION
+[ 20%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_04_PRECISION
+[ 20%] Built target Rdot_mpfr_kernel_03_ROUNDING_PRECISION
+[ 20%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_04
+[ 20%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_05_PRECISION
+[ 20%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_04_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04.cpp.o
+[ 20%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_01_ROUNDING_PRECISION_FMA
+[ 21%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING_PRECISION
+[ 21%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_01_PRECISION_FMA
+[ 21%] Built target Rdot_mpfr_kernel_04_PRECISION
+[ 21%] Built target Rdot_mpfr_kernel_04_ROUNDING_PRECISION
+[ 21%] Built target Rdot_mpfr_kernel_04
+[ 21%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_06_PRECISION
+[ 21%] Built target Rdot_mpfr_kernel_05_PRECISION
+[ 21%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_06_ROUNDING
+[ 21%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_04_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_ROUNDING.cpp.o
+[ 22%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_04_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_ROUNDING.cpp.o
+[ 22%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_05.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05.cpp.o
+[ 22%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_05_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05.cpp.o
+[ 22%] Built target Rdot_mpfr_kernel_01_ROUNDING_PRECISION_FMA
+[ 22%] Built target Rdot_mpfr_kernel_05_ROUNDING_PRECISION
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_06_ROUNDING_PRECISION
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_06
+[ 23%] Built target Rdot_mpfr_kernel_01_PRECISION_FMA
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_05_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_ROUNDING.cpp.o
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_ROUNDING.cpp.o
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_06.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06.cpp.o
+[ 23%] Built target Rdot_mpfr_kernel_06_ROUNDING
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_04_ROUNDING
+[ 23%] Built target Rdot_mpfr_kernel_06_PRECISION
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_06_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06.cpp.o
+[ 23%] Built target Rdot_mpfr_kernel_06_ROUNDING_PRECISION
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_06_ROUNDING.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_ROUNDING.cpp.o
+[ 23%] Built target Rdot_mpfr_kernel_06
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_05
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_ROUNDING.cpp.o
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_01_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01.cpp.o
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_06_PRECISION_FMA
+[ 23%] Built target Rdot_mpfr_kernel_04_ROUNDING
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 23%] Built target Rdot_mpfr_kernel_05
+[ 23%] Built target Rdot_mpfr_kernel_06_PRECISION_FMA
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_05_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05.cpp.o
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_ROUNDING.cpp.o
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_05_ROUNDING
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_ROUNDING
+[ 23%] Built target Rdot_mpfr_kernel_05_ROUNDING_PRECISION_FMA
+[ 23%] Built target Rdot_mpfr_kernel_05_ROUNDING
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_06_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06.cpp.o
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_PRECISION
+[ 23%] Building CXX object benchmarks/CMakeFiles/Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION_FMA.dir/mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_ROUNDING.cpp.o
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_06_ROUNDING_PRECISION_FMA
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_05_PRECISION_FMA
+[ 23%] Built target Rdot_mpfr_kernel_openmp_01_ROUNDING
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_ROUNDING_PRECISION
+[ 23%] Built target Rdot_mpfr_kernel_openmp_02_PRECISION
+[ 23%] Built target Rdot_mpfr_kernel_openmp_01
+[ 23%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_01.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01.cpp.o
+[ 23%] Built target Rdot_mpfr_kernel_06_ROUNDING_PRECISION_FMA
+[ 23%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_02.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_02.cpp.o
+[ 23%] Built target Rdot_mpfr_kernel_05_PRECISION_FMA
+[ 23%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_03.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_03.cpp.o
+[ 23%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_04.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_04.cpp.o
+[ 23%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_01_FMA.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA.cpp.o
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_PRECISION
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02_ROUNDING
+[ 23%] Built target Rdot_mpfr_kernel_openmp_02_ROUNDING_PRECISION
+[ 23%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_02
+[ 23%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_packed_custom_layout_FMA.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA.cpp.o
+[ 23%] Built target Rdot_mpfr_kernel_openmp_01_PRECISION
+[ 23%] Built target Rdot_mpfr_kernel_openmp_02_ROUNDING
+[ 24%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_openmp_01.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01.cpp.o
+[ 24%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_openmp_02.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_02.cpp.o
+[ 24%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_PRECISION
+[ 24%] Built target Rdot_mpfr_kernel_openmp_02
+[ 24%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04
+[ 24%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_ROUNDING_PRECISION
+[ 24%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03_ROUNDING
+[ 24%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_openmp_03.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_03.cpp.o
+[ 24%] Built target Rdot_mpfr_kernel_openmp_03_ROUNDING_PRECISION
+[ 24%] Built target Rdot_mpfr_kernel_openmp_04
+[ 24%] Built target Rdot_mpfr_kernel_openmp_03_PRECISION
+[ 24%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_03
+[ 24%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_openmp_04.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_04.cpp.o
+[ 25%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION
+[ 25%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_C_native_openmp_01_FMA.dir/mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA.cpp.o
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_01.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01.cpp.o
+[ 26%] Built target Rdot_mpfr_kernel_openmp_03_ROUNDING
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_01_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01.cpp.o
+[ 26%] Built target Rdot_mpfr_kernel_openmp_03
+[ 26%] Built target Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_ROUNDING_PRECISION
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_01_ROUNDING.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_ROUNDING.cpp.o
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_01_ROUNDING_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_ROUNDING.cpp.o
+[ 26%] Built target Rdot_mpfr_kernel_openmp_04_ROUNDING_PRECISION
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_ROUNDING
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_ROUNDING
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_01_PRECISION_FMA.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01.cpp.o
+[ 26%] Built target Rdot_mpfr_kernel_openmp_04_ROUNDING
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION_FMA
+[ 26%] Built target Rdot_mpfr_kernel_openmp_05_ROUNDING
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_01_ROUNDING_PRECISION_FMA.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_ROUNDING.cpp.o
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_02.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02.cpp.o
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06
+[ 26%] Built target Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_ROUNDING
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_02_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02.cpp.o
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_01_PRECISION_FMA
+[ 26%] Built target Rdot_mpfr_kernel_openmp_01_ROUNDING_PRECISION_FMA
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_PRECISION
+[ 26%] Built target Rdot_mpfr_kernel_openmp_06_ROUNDING
+[ 26%] Built target Rdot_mpfr_kernel_openmp_06
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_02_ROUNDING.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_ROUNDING.cpp.o
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_02_ROUNDING_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_ROUNDING.cpp.o
+[ 26%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_03.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03.cpp.o
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION
+[ 26%] Built target Rdot_mpfr_kernel_openmp_01_PRECISION_FMA
+[ 26%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_04_PRECISION
+[ 26%] Built target Rdot_mpfr_kernel_openmp_06_PRECISION
+[ 27%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_PRECISION
+[ 27%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION_FMA
+[ 27%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_03_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03.cpp.o
+[ 27%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_03_ROUNDING.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_ROUNDING.cpp.o
+[ 27%] Built target Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION
+[ 27%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_02
+[ 27%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_04
+[ 27%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_03_ROUNDING_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_ROUNDING.cpp.o
+[ 27%] Built target Rdot_mpfr_kernel_openmp_04_PRECISION
+[ 27%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_04.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04.cpp.o
+[ 27%] Built target Rdot_mpfr_kernel_openmp_06_ROUNDING_PRECISION_FMA
+[ 27%] Built target Raxpy_mpfr_C_native_02
+[ 27%] Built target Rdot_mpfr_kernel_openmp_05_PRECISION
+[ 27%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_06_PRECISION_FMA
+[ 27%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_04_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04.cpp.o
+[ 27%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05
+[ 27%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_04_ROUNDING.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_ROUNDING.cpp.o
+[ 27%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_03
+[ 27%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_04_ROUNDING_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_ROUNDING.cpp.o
+[ 27%] Built target Raxpy_mpfr_C_native_04
+[ 27%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_01.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01.cpp.o
+[ 27%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_01
+[ 27%] Built target Rdot_mpfr_kernel_openmp_05
+[ 27%] Built target Raxpy_mpfr_C_native_03
+[ 28%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION_FMA
+[ 29%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_01_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01.cpp.o
+[ 29%] Linking CXX executable mpfr/00_Rdot/Rdot_mpfr_kernel_openmp_05_PRECISION_FMA
+[ 29%] Built target Rdot_mpfr_kernel_openmp_06_PRECISION_FMA
+[ 29%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_01_ROUNDING.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 29%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_packed_custom_layout_FMA
+[ 29%] Built target Raxpy_mpfr_C_native_01
+[ 29%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_01_ROUNDING_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 29%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_02
+[ 29%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_01_PRECISION_FMA.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01.cpp.o
+[ 29%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_03
+[ 29%] Built target Rdot_mpfr_kernel_openmp_05_ROUNDING_PRECISION_FMA
+[ 29%] Built target Rdot_mpfr_kernel_openmp_05_PRECISION_FMA
+[ 29%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_01_ROUNDING_PRECISION_FMA.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 29%] Built target Raxpy_mpfr_C_native_packed_custom_layout_FMA
+[ 29%] Built target Raxpy_mpfr_C_native_openmp_02
+[ 29%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_02.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02.cpp.o
+[ 29%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_PRECISION
+[ 29%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_01_FMA
+[ 30%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_02_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02.cpp.o
+[ 30%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_02_ROUNDING.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_ROUNDING.cpp.o
+[ 30%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01_FMA
+[ 30%] Built target Raxpy_mpfr_C_native_openmp_03
+[ 30%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_02_ROUNDING_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_ROUNDING.cpp.o
+[ 30%] Built target Raxpy_mpfr_kernel_01_PRECISION
+[ 30%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_01
+[ 30%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_03.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03.cpp.o
+[ 30%] Built target Raxpy_mpfr_C_native_01_FMA
+[ 30%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_01
+[ 30%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_03_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03.cpp.o
+[ 30%] Built target Raxpy_mpfr_C_native_openmp_01_FMA
+[ 30%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_C_native_openmp_04
+[ 30%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_03_ROUNDING.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_ROUNDING.cpp.o
+[ 30%] Built target Raxpy_mpfr_C_native_openmp_01
+[ 30%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_ROUNDING
+[ 30%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_ROUNDING_PRECISION
+[ 31%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_03_ROUNDING_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_ROUNDING.cpp.o
+[ 31%] Built target Raxpy_mpfr_kernel_01
+[ 31%] Built target Raxpy_mpfr_C_native_openmp_04
+[ 31%] Built target Raxpy_mpfr_kernel_01_ROUNDING
+[ 31%] Built target Raxpy_mpfr_kernel_01_ROUNDING_PRECISION
+[ 31%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_04.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04.cpp.o
+[ 31%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_ROUNDING_PRECISION_FMA
+[ 31%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_04_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04.cpp.o
+[ 31%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_04_ROUNDING.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_ROUNDING.cpp.o
+[ 32%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_02
+[ 32%] Building CXX object benchmarks/CMakeFiles/Raxpy_mpfr_kernel_openmp_04_ROUNDING_PRECISION.dir/mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_ROUNDING.cpp.o
+[ 32%] Built target Raxpy_mpfr_kernel_01_ROUNDING_PRECISION_FMA
+[ 32%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_01.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01.cpp.o
+[ 32%] Built target Raxpy_mpfr_kernel_02
+[ 32%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_01_PRECISION_FMA
+[ 32%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_01_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_01_FMA.cpp.o
+[ 32%] Built target Raxpy_mpfr_kernel_01_PRECISION_FMA
+[ 32%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_02.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02.cpp.o
+[ 32%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_PRECISION
+[ 32%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_ROUNDING_PRECISION
+[ 32%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_ROUNDING
+[ 32%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_ROUNDING_PRECISION
+[ 32%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_04
+[ 32%] Built target Raxpy_mpfr_kernel_02_ROUNDING_PRECISION
+[ 32%] Built target Raxpy_mpfr_kernel_02_ROUNDING
+[ 32%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_ROUNDING_PRECISION
+[ 32%] Built target Raxpy_mpfr_kernel_03_PRECISION
+[ 32%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_02_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA.cpp.o
+[ 32%] Built target Raxpy_mpfr_kernel_03_ROUNDING_PRECISION
+[ 32%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_03.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_03.cpp.o
+[ 32%] Built target Raxpy_mpfr_kernel_04
+[ 32%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_04.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_04.cpp.o
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_03_ROUNDING
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_ROUNDING
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_01.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01.cpp.o
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_01_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01_FMA.cpp.o
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_02_PRECISION
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_ROUNDING
+[ 33%] Built target Raxpy_mpfr_kernel_04_ROUNDING_PRECISION
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_02.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02.cpp.o
+[ 33%] Built target Raxpy_mpfr_kernel_03_ROUNDING
+[ 33%] Built target Raxpy_mpfr_kernel_04_ROUNDING
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_04_PRECISION
+[ 33%] Built target Raxpy_mpfr_kernel_openmp_01_ROUNDING
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_02_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02_FMA.cpp.o
+[ 33%] Built target Raxpy_mpfr_kernel_02_PRECISION
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_03.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_03.cpp.o
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_04.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_04.cpp.o
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_ROUNDING_PRECISION
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_04_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_04_FMA.cpp.o
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_03
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_ROUNDING_PRECISION_FMA
+[ 33%] Built target Raxpy_mpfr_kernel_04_PRECISION
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_ROUNDING
+[ 33%] Built target Raxpy_mpfr_kernel_openmp_01_ROUNDING_PRECISION
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_05.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_05.cpp.o
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_05_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_05_FMA.cpp.o
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01
+[ 33%] Built target Raxpy_mpfr_kernel_03
+[ 33%] Built target Raxpy_mpfr_kernel_openmp_01_ROUNDING_PRECISION_FMA
+[ 33%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_06.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_06.cpp.o
+[ 33%] Built target Raxpy_mpfr_kernel_openmp_02_ROUNDING
+[ 33%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_PRECISION_FMA
+[ 34%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_06_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_06_FMA.cpp.o
+[ 34%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_07.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07.cpp.o
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_ROUNDING
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03
+[ 34%] Built target Raxpy_mpfr_kernel_openmp_01
+[ 34%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_C_native_openmp_07_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07_FMA.cpp.o
+[ 34%] Built target Raxpy_mpfr_kernel_openmp_01_PRECISION_FMA
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_PRECISION
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_03_ROUNDING_PRECISION
+[ 34%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_01.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01.cpp.o
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_01_PRECISION
+[ 34%] Built target Raxpy_mpfr_kernel_openmp_03_ROUNDING
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_PRECISION
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04
+[ 34%] Built target Raxpy_mpfr_kernel_openmp_03
+[ 34%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_01_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01.cpp.o
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_PRECISION
+[ 34%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_01_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_ROUNDING.cpp.o
+[ 34%] Built target Raxpy_mpfr_kernel_openmp_03_PRECISION
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02_ROUNDING_PRECISION
+[ 34%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_ROUNDING_PRECISION
+[ 34%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_01_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_ROUNDING.cpp.o
+[ 34%] Built target Raxpy_mpfr_kernel_openmp_01_PRECISION
+[ 34%] Built target Raxpy_mpfr_kernel_openmp_03_ROUNDING_PRECISION
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_ROUNDING_FMA_CAPTURE.cpp.o
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_ROUNDING_FMA_CAPTURE.cpp.o
+[ 35%] Built target Raxpy_mpfr_kernel_openmp_02_PRECISION
+[ 35%] Built target Raxpy_mpfr_kernel_openmp_04
+[ 35%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_02
+[ 35%] Built target Raxpy_mpfr_kernel_openmp_02_ROUNDING_PRECISION
+[ 35%] Built target Raxpy_mpfr_kernel_openmp_04_ROUNDING_PRECISION
+[ 35%] Built target Raxpy_mpfr_kernel_openmp_04_PRECISION
+[ 35%] Linking CXX executable mpfr/01_Raxpy/Raxpy_mpfr_kernel_openmp_04_ROUNDING
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_02.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02.cpp.o
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_02_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02.cpp.o
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE.cpp.o
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_02_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING.cpp.o
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_02_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING.cpp.o
+[ 35%] Built target Raxpy_mpfr_kernel_openmp_04_ROUNDING
+[ 35%] Built target Raxpy_mpfr_kernel_openmp_02
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE.cpp.o
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_03.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03.cpp.o
+[ 35%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_02
+[ 35%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_01
+[ 35%] Built target Rgemv_mpfr_C_native_02
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_03_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03.cpp.o
+[ 35%] Built target Rgemv_mpfr_C_native_01
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_03_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING.cpp.o
+[ 35%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_01_FMA
+[ 35%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_04
+[ 35%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01
+[ 35%] Built target Rgemv_mpfr_C_native_01_FMA
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_03_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING.cpp.o
+[ 35%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_01_FMA
+[ 35%] Built target Rgemv_mpfr_C_native_04
+[ 35%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE.cpp.o
+[ 36%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02_FMA
+[ 36%] Built target Rgemv_mpfr_C_native_openmp_01
+[ 36%] Built target Rgemv_mpfr_C_native_openmp_01_FMA
+[ 36%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE.cpp.o
+[ 36%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_03
+[ 36%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_04.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04.cpp.o
+[ 36%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_05
+[ 36%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_02
+[ 36%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_03
+[ 36%] Built target Rgemv_mpfr_C_native_openmp_02_FMA
+[ 37%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_02_FMA
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_04_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04.cpp.o
+[ 37%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_05_FMA
+[ 37%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_06
+[ 37%] Built target Rgemv_mpfr_C_native_openmp_03
+[ 37%] Built target Rgemv_mpfr_C_native_openmp_02
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_04_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_ROUNDING.cpp.o
+[ 37%] Built target Rgemv_mpfr_C_native_03
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_04_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_ROUNDING.cpp.o
+[ 37%] Built target Rgemv_mpfr_C_native_openmp_05
+[ 37%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_04_FMA
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_04_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_ROUNDING_FMA_CAPTURE.cpp.o
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_04_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_ROUNDING_FMA_CAPTURE.cpp.o
+[ 37%] Built target Rgemv_mpfr_C_native_02_FMA
+[ 37%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_04
+[ 37%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_06_FMA
+[ 37%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07
+[ 37%] Built target Rgemv_mpfr_C_native_openmp_05_FMA
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_01.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01.cpp.o
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_01_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01.cpp.o
+[ 37%] Built target Rgemv_mpfr_C_native_openmp_06
+[ 37%] Built target Rgemv_mpfr_C_native_openmp_04_FMA
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_01_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 37%] Built target Rgemv_mpfr_C_native_openmp_04
+[ 37%] Built target Rgemv_mpfr_C_native_openmp_07
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_01_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 37%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE.cpp.o
+[ 37%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_C_native_openmp_07_FMA
+[ 38%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE.cpp.o
+[ 38%] Built target Rgemv_mpfr_C_native_openmp_06_FMA
+[ 38%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_ROUNDING_PRECISION
+[ 38%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_02.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02.cpp.o
+[ 38%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_ROUNDING
+[ 38%] Built target Rgemv_mpfr_C_native_openmp_07_FMA
+[ 38%] Built target Rgemv_mpfr_kernel_01_ROUNDING_PRECISION
+[ 38%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_02_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02.cpp.o
+[ 38%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_02_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_ROUNDING.cpp.o
+[ 38%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_PRECISION
+[ 38%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_02
+[ 39%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_FMA
+[ 39%] Built target Rgemv_mpfr_kernel_01_ROUNDING
+[ 39%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 39%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_01
+[ 39%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_02_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_ROUNDING.cpp.o
+[ 39%] Built target Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_FMA
+[ 39%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_FMA
+[ 39%] Built target Rgemv_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 39%] Built target Rgemv_mpfr_kernel_02
+[ 39%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_02_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_ROUNDING_FMA_CAPTURE.cpp.o
+[ 39%] Built target Rgemv_mpfr_kernel_01_PRECISION
+[ 39%] Built target Rgemv_mpfr_kernel_01
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_ROUNDING_FMA_CAPTURE.cpp.o
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_03.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03.cpp.o
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_03_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03.cpp.o
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_03_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_ROUNDING.cpp.o
+[ 40%] Built target Rgemv_mpfr_kernel_01_ROUNDING_FMA_CAPTURE_FMA
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_03_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_ROUNDING.cpp.o
+[ 40%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING_PRECISION
+[ 40%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_PRECISION
+[ 40%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 40%] Built target Rgemv_mpfr_kernel_02_ROUNDING_PRECISION
+[ 40%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_ROUNDING
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_03_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_ROUNDING_FMA_CAPTURE.cpp.o
+[ 40%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_02_PRECISION
+[ 40%] Built target Rgemv_mpfr_kernel_03_PRECISION
+[ 40%] Built target Rgemv_mpfr_kernel_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 40%] Built target Rgemv_mpfr_kernel_02_ROUNDING
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_ROUNDING_FMA_CAPTURE.cpp.o
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_04_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04.cpp.o
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_04.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04.cpp.o
+[ 40%] Built target Rgemv_mpfr_kernel_02_PRECISION
+[ 40%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING
+[ 40%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_03
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_04_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING.cpp.o
+[ 40%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING_PRECISION
+[ 40%] Built target Rgemv_mpfr_kernel_03
+[ 40%] Built target Rgemv_mpfr_kernel_03_ROUNDING
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_04_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING.cpp.o
+[ 40%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE.cpp.o
+[ 41%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE_FMA
+[ 41%] Built target Rgemv_mpfr_kernel_03_ROUNDING_PRECISION
+[ 41%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 41%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE.cpp.o
+[ 41%] Built target Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE_FMA
+[ 41%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_05.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05.cpp.o
+[ 41%] Built target Rgemv_mpfr_kernel_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 41%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_04
+[ 41%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_ROUNDING
+[ 41%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 41%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_05_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05.cpp.o
+[ 42%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_ROUNDING_FMA_CAPTURE_FMA
+[ 42%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_PRECISION
+[ 42%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_04_ROUNDING_PRECISION
+[ 42%] Built target Rgemv_mpfr_kernel_04_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 42%] Built target Rgemv_mpfr_kernel_04
+[ 42%] Built target Rgemv_mpfr_kernel_04_ROUNDING
+[ 42%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01
+[ 42%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_05_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_ROUNDING.cpp.o
+[ 42%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_05_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_ROUNDING.cpp.o
+[ 42%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_05_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_ROUNDING_FMA_CAPTURE.cpp.o
+[ 42%] Built target Rgemv_mpfr_kernel_04_PRECISION
+[ 42%] Built target Rgemv_mpfr_kernel_04_ROUNDING_PRECISION
+[ 42%] Built target Rgemv_mpfr_kernel_04_ROUNDING_FMA_CAPTURE_FMA
+[ 42%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_05_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_ROUNDING_FMA_CAPTURE.cpp.o
+[ 42%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_06.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06.cpp.o
+[ 42%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_06_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06.cpp.o
+[ 42%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_FMA
+[ 42%] Built target Rgemv_mpfr_kernel_openmp_01
+[ 42%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 42%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_ROUNDING_PRECISION
+[ 42%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_06_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_ROUNDING.cpp.o
+[ 42%] Built target Rgemv_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_FMA
+[ 43%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_06_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_ROUNDING.cpp.o
+[ 43%] Built target Rgemv_mpfr_kernel_openmp_01_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 43%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_ROUNDING
+[ 43%] Built target Rgemv_mpfr_kernel_openmp_01_ROUNDING_PRECISION
+[ 43%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_06_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_ROUNDING_FMA_CAPTURE.cpp.o
+[ 43%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_06_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_ROUNDING_FMA_CAPTURE.cpp.o
+[ 43%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02
+[ 43%] Built target Rgemv_mpfr_kernel_openmp_01_ROUNDING
+[ 43%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_07.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07.cpp.o
+[ 43%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_PRECISION
+[ 43%] Built target Rgemv_mpfr_kernel_openmp_02
+[ 43%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_01_PRECISION
+[ 43%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_07_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07.cpp.o
+[ 43%] Built target Rgemv_mpfr_kernel_openmp_02_PRECISION
+[ 43%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_ROUNDING_PRECISION
+[ 43%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_07_ROUNDING.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING.cpp.o
+[ 43%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 43%] Built target Rgemv_mpfr_kernel_openmp_01_PRECISION
+[ 44%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_07_ROUNDING_PRECISION.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING.cpp.o
+[ 44%] Built target Rgemv_mpfr_kernel_openmp_03_ROUNDING_PRECISION
+[ 44%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_ROUNDING_FMA_CAPTURE_FMA
+[ 44%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_ROUNDING_FMA_CAPTURE_FMA
+[ 44%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE.cpp.o
+[ 44%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_PRECISION
+[ 44%] Built target Rgemv_mpfr_kernel_openmp_02_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 44%] Built target Rgemv_mpfr_kernel_openmp_02_ROUNDING_FMA_CAPTURE_FMA
+[ 44%] Building CXX object benchmarks/CMakeFiles/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA.dir/mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE.cpp.o
+[ 44%] Built target Rgemv_mpfr_kernel_openmp_03_ROUNDING_FMA_CAPTURE_FMA
+[ 44%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_ROUNDING
+[ 44%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_01.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_01.cpp.o
+[ 44%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_01.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_01.cpp.o
+[ 44%] Built target Rgemv_mpfr_kernel_openmp_03_PRECISION
+[ 44%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_ROUNDING
+[ 45%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_02.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_02.cpp.o
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_03_ROUNDING
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_02.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_02.cpp.o
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_02_ROUNDING_PRECISION
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_02_ROUNDING
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_PRECISION
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_03_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_03.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_03.cpp.o
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_02_ROUNDING_PRECISION
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_04.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_04.cpp.o
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_03.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_03.cpp.o
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_04_ROUNDING
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_03
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_04_PRECISION
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_04.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_04.cpp.o
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_05.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_05.cpp.o
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE_FMA
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_03
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_05.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_05.cpp.o
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING_PRECISION
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE_FMA
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_06.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_06.cpp.o
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_ROUNDING_FMA_CAPTURE_FMA
+[ 46%] Built target Rgemv_mpfr_kernel_openmp_04_ROUNDING_PRECISION
+[ 46%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05
+[ 46%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_06.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_06.cpp.o
+[ 47%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 47%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_ROUNDING
+[ 47%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06
+[ 47%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_ROUNDING_PRECISION
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_04
+[ 47%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_ROUNDING
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_05_ROUNDING_FMA_CAPTURE_FMA
+[ 47%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_03_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_03_FMA.cpp.o
+[ 47%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_PRECISION
+[ 47%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_03_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_03_FMA.cpp.o
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_04_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_05
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_06
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_05_ROUNDING
+[ 47%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_04_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_04_FMA.cpp.o
+[ 47%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_04_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_04_FMA.cpp.o
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_05_ROUNDING_PRECISION
+[ 47%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_ROUNDING_FMA_CAPTURE_FMA
+[ 47%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_05_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_05_FMA.cpp.o
+[ 47%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_05_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_05_FMA.cpp.o
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_06_ROUNDING
+[ 47%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_06_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_06_FMA.cpp.o
+[ 47%] Built target Rgemv_mpfr_kernel_openmp_05_PRECISION
+[ 47%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_C_native_openmp_06_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_06_FMA.cpp.o
+[ 48%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_01_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_01.cpp.o
+[ 48%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 48%] Built target Rgemv_mpfr_kernel_openmp_06_ROUNDING_FMA_CAPTURE_FMA
+[ 48%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_01_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_01.cpp.o
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_05_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 49%] Built target Rgemv_mpfr_kernel_openmp_06_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_PRECISION
+[ 49%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_01_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_01_ROUNDING.cpp.o
+[ 49%] Built target Rgemv_mpfr_kernel_openmp_05_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 49%] Built target Rgemv_mpfr_kernel_openmp_06_PRECISION
+[ 49%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_01_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_01_ROUNDING.cpp.o
+[ 49%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_01_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_01.cpp.o
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_06_ROUNDING_PRECISION
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_PRECISION
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_FMA
+[ 49%] Built target Rgemv_mpfr_kernel_openmp_06_ROUNDING_PRECISION
+[ 49%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_01
+[ 49%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_01_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_01.cpp.o
+[ 49%] Built target Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_PRECISION_FMA
+[ 49%] Built target Rgemv_mpfr_kernel_openmp_07_ROUNDING_PRECISION
+[ 49%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_01_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 49%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_01_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_01_ROUNDING.cpp.o
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07
+[ 49%] Built target Rgemm_mpfr_C_native_01
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_PRECISION
+[ 49%] Built target Rgemv_mpfr_kernel_openmp_07_ROUNDING_FMA_CAPTURE_FMA
+[ 49%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_02_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_02.cpp.o
+[ 49%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_02_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_02.cpp.o
+[ 49%] Linking CXX executable mpfr/02_Rgemv/Rgemv_mpfr_kernel_openmp_07_ROUNDING
+[ 49%] Built target Rgemv_mpfr_kernel_openmp_07
+[ 50%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_02_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_02_ROUNDING.cpp.o
+[ 50%] Built target Rgemv_mpfr_kernel_openmp_07_PRECISION
+[ 50%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_02
+[ 50%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_02_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_02_ROUNDING.cpp.o
+[ 50%] Built target Rgemv_mpfr_kernel_openmp_07_ROUNDING
+[ 50%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_02_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_02.cpp.o
+[ 50%] Built target Rgemm_mpfr_C_native_02
+[ 50%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_01
+[ 51%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_02_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_02.cpp.o
+[ 51%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_04
+[ 51%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_03
+[ 51%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_05
+[ 51%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_02
+[ 51%] Built target Rgemm_mpfr_C_native_openmp_01
+[ 51%] Built target Rgemm_mpfr_C_native_04
+[ 51%] Built target Rgemm_mpfr_C_native_openmp_03
+[ 51%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_02_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_02_ROUNDING.cpp.o
+[ 51%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_02_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_02_ROUNDING.cpp.o
+[ 51%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_03_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03.cpp.o
+[ 51%] Built target Rgemm_mpfr_C_native_05
+[ 51%] Built target Rgemm_mpfr_C_native_openmp_02
+[ 51%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_03_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03.cpp.o
+[ 51%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_03_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_ROUNDING.cpp.o
+[ 51%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_03
+[ 51%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_05
+[ 51%] Built target Rgemm_mpfr_C_native_03
+[ 51%] Built target Rgemm_mpfr_C_native_openmp_05
+[ 52%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_ROUNDING.cpp.o
+[ 52%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_03_mkII_ROUNDING_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_ROUNDING_FMA.cpp.o
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_04
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_03_FMA
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_06
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_06
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_04_FMA
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_04_FMA
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_01_mkII
+[ 52%] Built target Rgemm_mpfr_C_native_openmp_04
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_05_FMA
+[ 52%] Built target Rgemm_mpfr_C_native_06
+[ 52%] Built target Rgemm_mpfr_C_native_03_FMA
+[ 52%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_ROUNDING_FMA.cpp.o
+[ 52%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_03_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03.cpp.o
+[ 52%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_03_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03.cpp.o
+[ 52%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_06_FMA
+[ 52%] Built target Rgemm_mpfr_C_native_openmp_06
+[ 52%] Built target Rgemm_mpfr_C_native_04_FMA
+[ 52%] Built target Rgemm_mpfr_C_native_openmp_04_FMA
+[ 52%] Built target Rgemm_mpfr_kernel_01_mkII
+[ 52%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_ROUNDING.cpp.o
+[ 52%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_ROUNDING.cpp.o
+[ 53%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_ROUNDING_FMA.cpp.o
+[ 53%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_PRECISION_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_ROUNDING_FMA.cpp.o
+[ 53%] Built target Rgemm_mpfr_C_native_06_FMA
+[ 53%] Built target Rgemm_mpfr_C_native_openmp_05_FMA
+[ 53%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_04_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_04.cpp.o
+[ 53%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_04_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_04.cpp.o
+[ 53%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_06_FMA
+[ 53%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_01_mkII_PRECISION
+[ 53%] Built target Rgemm_mpfr_C_native_openmp_06_FMA
+[ 53%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_04_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_ROUNDING.cpp.o
+[ 53%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_01_mkII_ROUNDING
+[ 53%] Built target Rgemm_mpfr_kernel_01_mkII_PRECISION
+[ 53%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_ROUNDING.cpp.o
+[ 53%] Built target Rgemm_mpfr_kernel_01_mkII_ROUNDING
+[ 54%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_openmp_03_FMA
+[ 54%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_04_mkII_ROUNDING_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_ROUNDING_FMA.cpp.o
+[ 54%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_01_mkII_ROUNDING
+[ 54%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_01_mkII_ROUNDING_PRECISION
+[ 54%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_02_mkII_PRECISION
+[ 54%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_02_mkII
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_C_native_05_FMA
+[ 55%] Built target Rgemm_mpfr_C_native_openmp_03_FMA
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_01_mkII
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_01_mkII_ROUNDING
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_ROUNDING_FMA.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_02_mkII_PRECISION
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_01_mkII_ROUNDING_PRECISION
+[ 55%] Built target Rgemm_mpfr_C_native_05_FMA
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_04_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04.cpp.o
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_ROUNDING.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_02_mkII
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_04_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04.cpp.o
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_ROUNDING.cpp.o
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_01_mkII_PRECISION
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_02_mkII_ROUNDING
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_ROUNDING_FMA.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_01_mkII
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_01_mkII_ROUNDING_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_ROUNDING_FMA.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_02_mkII_ROUNDING
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_01_mkII_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_05_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_05.cpp.o
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_05_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_05.cpp.o
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_02_mkII_ROUNDING_PRECISION
+[ 55%] Built target Rgemm_mpfr_kernel_01_mkII_ROUNDING_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_05_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_ROUNDING.cpp.o
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_02_mkII
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_02_mkII_ROUNDING
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_02_mkII
+[ 55%] Built target Rgemm_mpfr_kernel_02_mkII_ROUNDING_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_ROUNDING.cpp.o
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_05_mkII_ROUNDING_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_ROUNDING_FMA.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_02_mkII_ROUNDING
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_02_mkII_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_ROUNDING_FMA.cpp.o
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII_PRECISION
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_02_mkII_ROUNDING_PRECISION
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_02_mkII_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_05_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05.cpp.o
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII_ROUNDING_FMA
+[ 55%] Built target Rgemm_mpfr_kernel_03_mkII_PRECISION
+[ 55%] Built target Rgemm_mpfr_kernel_03_mkII
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_05_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05.cpp.o
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_ROUNDING.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_03_mkII_ROUNDING_FMA
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_02_mkII_ROUNDING_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_ROUNDING.cpp.o
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_ROUNDING_FMA.cpp.o
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII_ROUNDING
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_mkII
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING
+[ 55%] Built target Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION_FMA
+[ 55%] Built target Rgemm_mpfr_kernel_03_mkII_ROUNDING_PRECISION
+[ 55%] Built target Rgemm_mpfr_kernel_03_mkII_ROUNDING
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_ROUNDING_FMA.cpp.o
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_06_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_06.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_03_mkII
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_FMA
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_06_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_06.cpp.o
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_06_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_ROUNDING.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_ROUNDING.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_FMA
+[ 55%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_mkII_PRECISION
+[ 55%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_06_mkII_ROUNDING_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_ROUNDING_FMA.cpp.o
+[ 55%] Built target Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_PRECISION
+[ 56%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_ROUNDING_FMA.cpp.o
+[ 56%] Built target Rgemm_mpfr_kernel_openmp_03_mkII_PRECISION
+[ 56%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_06_mkII.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06.cpp.o
+[ 56%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_mkII_PRECISION
+[ 56%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_PRECISION_FMA
+[ 56%] Built target Rgemm_mpfr_kernel_04_mkII_PRECISION
+[ 56%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_06_mkII_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06.cpp.o
+[ 56%] Built target Rgemm_mpfr_kernel_openmp_03_mkII_ROUNDING_PRECISION_FMA
+[ 56%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_ROUNDING.cpp.o
+[ 56%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION_FMA
+[ 56%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_mkII_ROUNDING_FMA
+[ 56%] Built target Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION_FMA
+[ 57%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_ROUNDING.cpp.o
+[ 57%] Built target Rgemm_mpfr_kernel_04_mkII_ROUNDING_FMA
+[ 57%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_ROUNDING_FMA.cpp.o
+[ 57%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION
+[ 57%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION_FMA
+[ 57%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING
+[ 58%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_FMA
+[ 58%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_mkII
+[ 58%] Built target Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION
+[ 58%] Built target Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_PRECISION_FMA
+[ 58%] Built target Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING
+[ 58%] Built target Rgemm_mpfr_kernel_openmp_04_mkII_ROUNDING_FMA
+[ 58%] Building CXX object benchmarks/CMakeFiles/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA.dir/mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_ROUNDING_FMA.cpp.o
+[ 58%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_mkII
+[ 58%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_C_native_01.dir/gmp/01_Raxpy/Raxpy_gmp_C_native_01.cpp.o
+[ 58%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_C_native_02.dir/gmp/01_Raxpy/Raxpy_gmp_C_native_02.cpp.o
+[ 58%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_C_native_03.dir/gmp/01_Raxpy/Raxpy_gmp_C_native_03.cpp.o
+[ 58%] Built target Rgemm_mpfr_kernel_04_mkII
+[ 58%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_C_native_04.dir/gmp/01_Raxpy/Raxpy_gmp_C_native_04.cpp.o
+[ 58%] Built target Rgemm_mpfr_kernel_openmp_04_mkII
+[ 58%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_mkII
+[ 58%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_04_mkII_PRECISION
+[ 58%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_C_native_openmp_01.dir/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01.cpp.o
+[ 58%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_mkII_PRECISION
+[ 58%] Built target Rgemm_mpfr_kernel_05_mkII
+[ 58%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_mkII_ROUNDING
+[ 58%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_C_native_openmp_02.dir/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02.cpp.o
+[ 58%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_mkII_ROUNDING
+[ 58%] Built target Rgemm_mpfr_kernel_openmp_04_mkII_PRECISION
+[ 58%] Built target Rgemm_mpfr_kernel_05_mkII_PRECISION
+[ 59%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION
+[ 60%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_C_native_openmp_03.dir/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03.cpp.o
+[ 60%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_C_native_openmp_04.dir/gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04.cpp.o
+[ 60%] Built target Rgemm_mpfr_kernel_05_mkII_ROUNDING
+[ 60%] Built target Rgemm_mpfr_kernel_04_mkII_ROUNDING
+[ 60%] Built target Raxpy_gmp_kernel_01_orig
+[ 60%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_mkII_ROUNDING_FMA
+[ 60%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_01_mkII.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_01.cpp.o
+[ 60%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_01.cpp.o
+[ 60%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING
+[ 60%] Built target Rgemm_mpfr_kernel_04_mkII_ROUNDING_PRECISION
+[ 60%] Built target Raxpy_gmp_kernel_02_orig
+[ 60%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_02_mkII.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_02.cpp.o
+[ 60%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION_FMA
+[ 60%] Built target Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING
+[ 60%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION
+[ 60%] Built target Rgemm_mpfr_kernel_05_mkII_ROUNDING_FMA
+[ 61%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_02.cpp.o
+[ 61%] Built target Raxpy_gmp_kernel_03_orig
+[ 61%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_03_mkII.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_03.cpp.o
+[ 61%] Built target Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION_FMA
+[ 61%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_03.cpp.o
+[ 62%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION
+[ 62%] Built target Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION
+[ 62%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_mkII_ROUNDING
+[ 62%] Built target Raxpy_gmp_kernel_04_orig
+[ 62%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_mkII_ROUNDING_FMA
+[ 62%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_04_mkII.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_04.cpp.o
+[ 62%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION
+[ 63%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_FMA
+[ 63%] Built target Rgemm_mpfr_kernel_06_mkII_ROUNDING
+[ 63%] Built target Rgemm_mpfr_kernel_05_mkII_ROUNDING_PRECISION
+[ 63%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION_FMA
+[ 63%] Built target Rgemm_mpfr_kernel_06_mkII_ROUNDING_FMA
+[ 63%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_04.cpp.o
+[ 63%] Built target Raxpy_gmp_kernel_openmp_01_orig
+[ 63%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_openmp_01_mkII.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01.cpp.o
+[ 63%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01.cpp.o
+[ 63%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_mkII
+[ 63%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_mkII
+[ 63%] Built target Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_PRECISION_FMA
+[ 63%] Built target Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION
+[ 63%] Built target Rgemm_mpfr_kernel_openmp_05_mkII_ROUNDING_FMA
+[ 63%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_C_native_04
+[ 63%] Built target Raxpy_gmp_kernel_openmp_02_orig
+[ 63%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_C_native_01
+[ 63%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_openmp_02_mkII.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02.cpp.o
+[ 63%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02.cpp.o
+[ 63%] Built target Raxpy_gmp_kernel_openmp_03_orig
+[ 63%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_openmp_03_mkII.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03.cpp.o
+[ 63%] Built target Raxpy_gmp_C_native_04
+[ 63%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_01
+[ 63%] Built target Rgemm_mpfr_kernel_06_mkII
+[ 63%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_05_mkII_PRECISION
+[ 63%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03.cpp.o
+[ 63%] Built target Rgemm_mpfr_kernel_openmp_05_mkII
+[ 64%] Built target Raxpy_gmp_kernel_openmp_04_orig
+[ 64%] Built target Raxpy_gmp_C_native_01
+[ 64%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_openmp_04_mkII.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04.cpp.o
+[ 64%] Building CXX object benchmarks/CMakeFiles/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04.cpp.o
+[ 64%] Built target Raxpy_gmp_C_native_openmp_01
+[ 64%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_01.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_01.cpp.o
+[ 64%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_C_native_03
+[ 64%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_C_native_02
+[ 64%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION_FMA
+[ 64%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_02.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_02.cpp.o
+[ 64%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_mkII
+[ 64%] Built target Rgemm_mpfr_kernel_openmp_05_mkII_PRECISION
+[ 64%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_04
+[ 64%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_03.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_03.cpp.o
+[ 64%] Built target Raxpy_gmp_C_native_03
+[ 64%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING
+[ 64%] Built target Raxpy_gmp_C_native_02
+[ 64%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_06_mkII_PRECISION
+[ 64%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_04.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_04.cpp.o
+[ 65%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_openmp_01.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01.cpp.o
+[ 65%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_03
+[ 65%] Built target Rgemm_mpfr_kernel_06_mkII_ROUNDING_PRECISION_FMA
+[ 65%] Built target Raxpy_gmp_C_native_openmp_04
+[ 65%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII
+[ 65%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_openmp_02.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02.cpp.o
+[ 65%] Built target Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING
+[ 65%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_openmp_03.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03.cpp.o
+[ 65%] Built target Rgemm_mpfr_kernel_openmp_06_mkII
+[ 65%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_openmp_04.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04.cpp.o
+[ 65%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII
+[ 65%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_openmp_05.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05.cpp.o
+[ 65%] Built target Raxpy_gmp_kernel_01_mkII
+[ 65%] Built target Rgemm_mpfr_kernel_06_mkII_PRECISION
+[ 65%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_C_native_openmp_02
+[ 65%] Built target Raxpy_gmp_C_native_openmp_03
+[ 66%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_openmp_07.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07.cpp.o
+[ 66%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_C_native_openmp_06.dir/gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06.cpp.o
+[ 66%] Built target Rgemv_gmp_kernel_01_orig
+[ 66%] Built target Raxpy_gmp_kernel_02_mkII
+[ 66%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA
+[ 66%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_01_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_01.cpp.o
+[ 66%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_01.cpp.o
+[ 66%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
+[ 66%] Built target Raxpy_gmp_C_native_openmp_02
+[ 66%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_FMA
+[ 67%] Built target Rgemv_gmp_kernel_02_orig
+[ 67%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_mkII_PRECISION
+[ 67%] Linking CXX executable mpfr/03_Rgemm/Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION
+[ 67%] Built target Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION_FMA
+[ 67%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_02_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_02.cpp.o
+[ 67%] Built target Raxpy_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
+[ 67%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_02.cpp.o
+[ 67%] Built target Rgemv_gmp_kernel_03_orig
+[ 67%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH
+[ 67%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH
+[ 67%] Built target Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_FMA
+[ 67%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_03_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_03.cpp.o
+[ 67%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII
+[ 67%] Built target Rgemm_mpfr_kernel_openmp_06_mkII_PRECISION
+[ 67%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_03.cpp.o
+[ 67%] Built target Rgemm_mpfr_kernel_openmp_06_mkII_ROUNDING_PRECISION
+[ 68%] Built target Rgemv_gmp_kernel_04_orig
+[ 68%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_04_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_04.cpp.o
+[ 68%] Built target Raxpy_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH
+[ 68%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_04.cpp.o
+[ 68%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_03_mkII
+[ 68%] Built target Raxpy_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH
+[ 68%] Built target Rgemv_gmp_kernel_openmp_01_orig
+[ 68%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_01_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01.cpp.o
+[ 68%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01.cpp.o
+[ 68%] Built target Raxpy_gmp_kernel_04_mkII
+[ 68%] Built target Rgemv_gmp_kernel_openmp_02_orig
+[ 68%] Built target Raxpy_gmp_kernel_03_mkII
+[ 68%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_02_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp.o
+[ 68%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII
+[ 68%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02.cpp.o
+[ 68%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII
+[ 68%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII
+[ 68%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII
+[ 69%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH
+[ 69%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH
+[ 69%] Built target Raxpy_gmp_kernel_openmp_02_mkII
+[ 69%] Built target Raxpy_gmp_kernel_openmp_01_mkII
+[ 69%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+[ 69%] Built target Rgemv_gmp_kernel_openmp_03_orig
+[ 70%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_03_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03.cpp.o
+[ 70%] Built target Raxpy_gmp_kernel_openmp_03_mkII
+[ 70%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03.cpp.o
+[ 70%] Built target Raxpy_gmp_kernel_openmp_04_mkII
+[ 71%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH
+[ 71%] Built target Rgemv_gmp_kernel_openmp_04_orig
+[ 71%] Built target Raxpy_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH
+[ 71%] Built target Raxpy_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH
+[ 71%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_04_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04.cpp.o
+[ 71%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04.cpp.o
+[ 71%] Built target Rgemv_gmp_kernel_openmp_05_orig
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_05_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05.cpp.o
+[ 72%] Built target Raxpy_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05.cpp.o
+[ 72%] Built target Raxpy_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_02
+[ 72%] Linking CXX executable gmp/01_Raxpy/Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH
+[ 72%] Built target Rgemv_gmp_kernel_openmp_06_orig
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_06_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06.cpp.o
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06.cpp.o
+[ 72%] Built target Rgemv_gmp_C_native_02
+[ 72%] Built target Rgemv_gmp_kernel_openmp_07_orig
+[ 72%] Built target Raxpy_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_07_mkII.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07.cpp.o
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07.cpp.o
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_04
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_05
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_02
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_01
+[ 72%] Built target Rgemv_gmp_C_native_openmp_04
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_07
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII
+[ 72%] Built target Rgemv_gmp_C_native_openmp_02
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_01.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_01.cpp.o
+[ 72%] Built target Rgemv_gmp_C_native_01
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_02.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_02.cpp.o
+[ 72%] Built target Rgemv_gmp_C_native_openmp_05
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_03.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_03.cpp.o
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_03
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_04.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_04.cpp.o
+[ 72%] Built target Rgemv_gmp_C_native_openmp_07
+[ 72%] Built target Rgemv_gmp_kernel_01_mkII
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_05.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_05.cpp.o
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_06.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_06.cpp.o
+[ 72%] Built target Rgemv_gmp_C_native_03
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_06
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_03
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_openmp_01.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_01.cpp.o
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_04
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_C_native_openmp_01
+[ 72%] Built target Rgemv_gmp_kernel_02_mkII
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_openmp_02.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_02.cpp.o
+[ 72%] Built target Rgemv_gmp_C_native_openmp_03
+[ 72%] Built target Rgemv_gmp_C_native_04
+[ 72%] Built target Rgemv_gmp_C_native_openmp_01
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_openmp_03.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_03.cpp.o
+[ 72%] Built target Rgemv_gmp_C_native_openmp_06
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_openmp_04.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_04.cpp.o
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_openmp_05.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_05.cpp.o
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH
+[ 72%] Built target Rgemv_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
+[ 72%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_C_native_openmp_06.dir/gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_06.cpp.o
+[ 72%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII
+[ 72%] Built target Rgemm_gmp_kernel_01_orig
+[ 73%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_01_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_01.cpp.o
+[ 73%] Built target Rgemv_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH
+[ 73%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_01.cpp.o
+[ 73%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_03_mkII
+[ 73%] Built target Rgemv_gmp_kernel_openmp_01_mkII
+[ 73%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII
+[ 73%] Built target Rgemm_gmp_kernel_02_orig
+[ 73%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_02_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_02.cpp.o
+[ 73%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH
+[ 73%] Built target Rgemv_gmp_kernel_03_mkII
+[ 73%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH
+[ 73%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH
+[ 73%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_02.cpp.o
+[ 73%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH
+[ 73%] Built target Rgemv_gmp_kernel_openmp_02_mkII
+[ 73%] Built target Rgemm_gmp_kernel_03_orig
+[ 73%] Built target Rgemv_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH
+[ 73%] Built target Rgemv_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_03_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_03.cpp.o
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_03.cpp.o
+[ 74%] Built target Rgemv_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Built target Rgemm_gmp_kernel_04_orig
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII
+[ 74%] Built target Rgemv_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_04_mkII
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_04_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_04.cpp.o
+[ 74%] Built target Rgemm_gmp_kernel_05_orig
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_04.cpp.o
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_05_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_05.cpp.o
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Built target Rgemv_gmp_kernel_openmp_04_mkII
+[ 74%] Built target Rgemv_gmp_kernel_openmp_05_mkII
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Built target Rgemv_gmp_kernel_04_mkII
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_05.cpp.o
+[ 74%] Built target Rgemm_gmp_kernel_06_orig
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_03_mkII
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_06_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_06.cpp.o
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_06.cpp.o
+[ 74%] Built target Rgemv_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Built target Rgemm_gmp_kernel_openmp_01_orig
+[ 74%] Built target Rgemv_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_01_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_01.cpp.o
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_01.cpp.o
+[ 74%] Built target Rgemv_gmp_kernel_openmp_03_mkII
+[ 74%] Built target Rgemm_gmp_kernel_openmp_02_orig
+[ 74%] Built target Rgemv_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_02_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_02.cpp.o
+[ 74%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_02.cpp.o
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_06_mkII
+[ 74%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH
+[ 75%] Linking CXX executable gmp/02_Rgemv/Rgemv_gmp_kernel_openmp_07_mkII
+[ 75%] Built target Rgemv_gmp_kernel_openmp_06_mkII
+[ 75%] Built target Rgemv_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH
+[ 75%] Built target Rgemm_gmp_kernel_openmp_03_orig
+[ 75%] Built target Rgemv_gmp_kernel_openmp_07_mkII_FIXED_PRECISION_FASTPATH
+[ 75%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_03_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_03.cpp.o
+[ 75%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_02
+[ 75%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_03.cpp.o
+[ 75%] Built target Rgemm_gmp_kernel_openmp_04_orig
+[ 75%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_04_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04.cpp.o
+[ 75%] Built target Rgemv_gmp_kernel_openmp_07_mkII
+[ 75%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_01
+[ 75%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04.cpp.o
+[ 75%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_05
+[ 75%] Built target Rgemm_gmp_C_native_02
+[ 75%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_04
+[ 75%] Built target Rgemm_gmp_C_native_01
+[ 75%] Built target Rgemm_gmp_kernel_openmp_05_orig
+[ 75%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_05_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05.cpp.o
+[ 76%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05.cpp.o
+[ 76%] Built target Rgemm_gmp_C_native_05
+[ 76%] Built target Rgemm_gmp_C_native_04
+[ 76%] Built target Rgemm_gmp_kernel_openmp_06_orig
+[ 76%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_03
+[ 76%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_05
+[ 76%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_06_mkII.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_06.cpp.o
+[ 76%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_03
+[ 76%] Building CXX object benchmarks/CMakeFiles/Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH.dir/gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_06.cpp.o
+[ 77%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_06
+[ 77%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_01_mkII
+[ 77%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_02
+[ 77%] Built target Rgemm_gmp_C_native_03
+[ 77%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_04
+[ 77%] Built target Rgemm_gmp_C_native_openmp_05
+[ 77%] Building CXX object tests/CMakeFiles/test_gmp_header_smoke.dir/test_gmp_header_smoke.cpp.o
+[ 77%] Built target Rgemm_gmp_C_native_openmp_03
+[ 77%] Building CXX object tests/CMakeFiles/test_mpfr_header_smoke.dir/test_mpfr_header_smoke.cpp.o
+[ 77%] Built target Rgemm_gmp_C_native_06
+[ 77%] Building CXX object tests/CMakeFiles/test_mpc_header_smoke.dir/test_mpc_header_smoke.cpp.o
+[ 77%] Built target Rgemm_gmp_C_native_openmp_02
+[ 77%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_06
+[ 77%] Built target Rgemm_gmp_C_native_openmp_04
+[ 78%] Building CXX object tests/CMakeFiles/test_dd_real_adapter.dir/test_dd_real_adapter.cpp.o
+[ 78%] Built target Rgemm_gmp_kernel_01_mkII
+[ 78%] Building CXX object tests/CMakeFiles/test_qd_real_adapter.dir/test_qd_real_adapter.cpp.o
+[ 78%] Building CXX object tests/CMakeFiles/test_mpf_binary_real_adapters.dir/test_mpf_binary_real_adapters.cpp.o
+[ 78%] Building CXX object tests/CMakeFiles/test_complex_compare_adapters.dir/test_complex_compare_adapters.cpp.o
+[ 78%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_C_native_openmp_01
+[ 78%] Built target Rgemm_gmp_C_native_openmp_06
+[ 78%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
+[ 78%] Built target Rgemm_gmp_C_native_openmp_01
+[ 78%] Building CXX object tests/CMakeFiles/test_aggregator_header_smoke.dir/test_aggregator_header_smoke.cpp.o
+[ 78%] Building CXX object tests/CMakeFiles/test_namespace_aliases.dir/test_namespace_aliases.cpp.o
+[ 78%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_02_mkII
+[ 78%] Built target Rgemm_gmp_kernel_01_mkII_FIXED_PRECISION_FASTPATH
+[ 78%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH
+[ 78%] Building CXX object tests/CMakeFiles/test_header_boundaries.dir/test_header_boundaries.cpp.o
+[ 78%] Built target Rgemm_gmp_kernel_02_mkII
+[ 78%] Built target Rgemm_gmp_kernel_02_mkII_FIXED_PRECISION_FASTPATH
+[ 78%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_04_mkII
+[ 78%] Building CXX object tests/CMakeFiles/test_version_info.dir/test_version_info.cpp.o
+[ 78%] Building CXX object tests/CMakeFiles/test_library_tls_detection.dir/test_library_tls_detection.cpp.o
+[ 78%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_03_mkII
+[ 78%] Built target Rgemm_gmp_kernel_04_mkII
+[ 78%] Built target Rgemm_gmp_kernel_03_mkII
+[ 78%] Building CXX object tests/CMakeFiles/test_integer_model_diagnostics.dir/test_integer_model_diagnostics.cpp.o
+[ 78%] Building CXX object tests/CMakeFiles/test_gmpxx_mkII.dir/test_gmpxx_mkII.cpp.o
+[ 78%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH
+[ 78%] Linking CXX executable test_mpc_header_smoke
+[ 79%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_01_mkII
+[ 79%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_02_mkII
+[ 79%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_06_mkII
+[ 79%] Built target Rgemm_gmp_kernel_03_mkII_FIXED_PRECISION_FASTPATH
+[ 79%] Built target test_mpc_header_smoke
+[ 79%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH
+[ 79%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH
+[ 80%] Building CXX object tests/CMakeFiles/test_mpfrxx_mkII.dir/test_mpfrxx_mkII.cpp.o
+[ 80%] Building CXX object tests/CMakeFiles/test_abi_fingerprint.dir/test_abi_fingerprint.cpp.o
+[ 80%] Built target Rgemm_gmp_kernel_openmp_02_mkII
+[ 80%] Linking CXX executable test_library_tls_detection
+[ 80%] Built target Rgemm_gmp_kernel_openmp_01_mkII
+[ 80%] Built target Rgemm_gmp_kernel_06_mkII
+[ 81%] Building CXX object tests/CMakeFiles/test_alias_safety.dir/test_alias_safety.cpp.o
+[ 82%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_05_mkII
+[ 82%] Building CXX object tests/CMakeFiles/test_leaf_single_rounding.dir/test_leaf_single_rounding.cpp.o
+[ 82%] Building CXX object tests/CMakeFiles/test_temporary_expression_lifetime.dir/test_temporary_expression_lifetime.cpp.o
+[ 83%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_03_mkII
+[ 83%] Built target Rgemm_gmp_kernel_04_mkII_FIXED_PRECISION_FASTPATH
+[ 83%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Linking CXX executable test_mpfr_header_smoke
+[ 84%] Built target Rgemm_gmp_kernel_openmp_01_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Built target test_library_tls_detection
+[ 84%] Built target test_expr_unary_move_folding
+[ 84%] Linking CXX executable test_dd_real_adapter
+[ 84%] Building CXX object tests/CMakeFiles/test_common_type.dir/test_common_type.cpp.o
+[ 84%] Building CXX object tests/CMakeFiles/test_comparisons.dir/test_comparisons.cpp.o
+[ 84%] Linking CXX executable test_gmp_header_smoke
+[ 84%] Building CXX object tests/CMakeFiles/test_compound_assign.dir/test_compound_assign.cpp.o
+[ 84%] Built target Rgemm_gmp_kernel_openmp_03_mkII
+[ 84%] Built target Rgemm_gmp_kernel_05_mkII
+[ 84%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Building CXX object tests/CMakeFiles/test_exception_support.dir/test_exception_support.cpp.o
+[ 84%] Built target Rgemm_gmp_kernel_openmp_02_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04_mkII
+[ 84%] Building CXX object tests/CMakeFiles/test_random.dir/test_random.cpp.o
+[ 84%] Built target test_mpfr_header_smoke
+[ 84%] Linking CXX executable test_mpf_binary_real_adapters
+[ 84%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Building CXX object tests/CMakeFiles/test_type_conversions.dir/test_type_conversions.cpp.o
+[ 84%] Building CXX object tests/CMakeFiles/test_mpq_floating_conversion.dir/test_mpq_floating_conversion.cpp.o
+[ 84%] Linking CXX executable test_namespace_aliases
+[ 84%] Built target test_dd_real_adapter
+[ 84%] Built target test_gmp_header_smoke
+[ 84%] Linking CXX executable test_qd_real_adapter
+[ 84%] Built target Rgemm_gmp_kernel_06_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Building CXX object tests/CMakeFiles/test_unary_minus_simplification.dir/test_unary_minus_simplification.cpp.o
+[ 84%] Building CXX object tests/CMakeFiles/test_user_defined_literals.dir/test_user_defined_literals.cpp.o
+[ 84%] Built target test_namespace_aliases
+[ 84%] Building CXX object tests/CMakeFiles/test_et_contract_mpfr.dir/test_et_contract_mpfr.cpp.o
+[ 84%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Built target test_mpf_binary_real_adapters
+[ 84%] Built target Rgemm_gmp_kernel_05_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_06_mkII
+[ 84%] Built target Rgemm_gmp_kernel_openmp_04_mkII
+[ 84%] Building CXX object tests/CMakeFiles/test_mpfr_user_defined_literals.dir/test_mpfr_user_defined_literals.cpp.o
+[ 84%] Building CXX object tests/CMakeFiles/test_mpfr_expression_eval.dir/test_mpfr_expression_eval.cpp.o
+[ 84%] Building CXX object tests/CMakeFiles/test_mpfr_precision_policy.dir/test_mpfr_precision_policy.cpp.o
+[ 84%] Building CXX object tests/CMakeFiles/test_mpfr_aliasing.dir/test_mpfr_aliasing.cpp.o
+[ 84%] Built target test_qd_real_adapter
+[ 84%] Built target Rgemm_gmp_kernel_openmp_03_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Building CXX object tests/CMakeFiles/test_mpfr_random.dir/test_mpfr_random.cpp.o
+[ 84%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH
+[ 84%] Building CXX object tests/CMakeFiles/test_et_contract_mpfr_scalar.dir/test_et_contract_mpfr_scalar.cpp.o
+[ 84%] Built target Rgemm_gmp_kernel_openmp_06_mkII
+[ 85%] Linking CXX executable test_header_boundaries
+[ 85%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH
+[ 85%] Linking CXX executable test_integer_model_diagnostics
+[ 86%] Building CXX object tests/CMakeFiles/test_mpfr_scalar_eval.dir/test_mpfr_scalar_eval.cpp.o
+[ 86%] Linking CXX executable test_version_info
+[ 86%] Built target Rgemm_gmp_kernel_openmp_05_mkII_FIXED_PRECISION_FASTPATH
+[ 86%] Built target test_header_boundaries
+[ 86%] Built target test_integer_model_diagnostics
+[ 86%] Linking CXX executable test_aggregator_header_smoke
+[ 86%] Building CXX object tests/CMakeFiles/test_mpfr_long_width_dispatch.dir/test_mpfr_long_width_dispatch.cpp.o
+[ 86%] Building CXX object tests/CMakeFiles/test_mpfr_alloc_count.dir/test_mpfr_alloc_count.cpp.o
+[ 86%] Building CXX object tests/CMakeFiles/test_mpfr_fixed_precision_materialization.dir/test_mpfr_fixed_precision_materialization.cpp.o
+[ 86%] Built target test_version_info
+[ 86%] Built target Rgemm_gmp_kernel_openmp_06_mkII_FIXED_PRECISION_FASTPATH
+[ 86%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH
+[ 86%] Building CXX object tests/CMakeFiles/test_mpfr_fixed_precision_fma_alloc_count.dir/test_mpfr_fixed_precision_fma_alloc_count.cpp.o
+[ 86%] Building CXX object tests/CMakeFiles/test_mpfr_fixed_precision_tls_scratch.dir/test_mpfr_fixed_precision_tls_scratch.cpp.o
+[ 86%] Linking CXX executable gmp/03_Rgemm/Rgemm_gmp_kernel_openmp_05_mkII
+[ 86%] Built target test_aggregator_header_smoke
+[ 86%] Building CXX object tests/CMakeFiles/test_mpfr_type_conversions.dir/test_mpfr_type_conversions.cpp.o
+[ 86%] Built target Rgemm_gmp_kernel_openmp_04_mkII_FIXED_PRECISION_FASTPATH
+[ 86%] Built target Rgemm_gmp_kernel_openmp_05_mkII
+[ 86%] Building CXX object tests/CMakeFiles/test_mpfr_comparisons.dir/test_mpfr_comparisons.cpp.o
+[ 87%] Building CXX object tests/CMakeFiles/test_mpfr_compound_assign.dir/test_mpfr_compound_assign.cpp.o
+[ 87%] Linking CXX executable test_abi_fingerprint
+[ 87%] Linking CXX executable test_complex_compare_adapters
+[ 87%] Linking CXX executable test_et_contract_mpfr
+[ 87%] Built target test_complex_compare_adapters
+[ 87%] Built target test_abi_fingerprint
+[ 87%] Linking CXX executable test_compound_assign
+[ 87%] Building CXX object tests/CMakeFiles/test_mpfr_rounding_context.dir/test_mpfr_rounding_context.cpp.o
+[ 87%] Building CXX object tests/CMakeFiles/test_mpfr_rounding_context_fixed_precision.dir/test_mpfr_rounding_context.cpp.o
+[ 87%] Built target test_et_contract_mpfr
+[ 87%] Building CXX object tests/CMakeFiles/test_mpfr_rounding_scope.dir/test_mpfr_rounding_scope.cpp.o
+[ 87%] Linking CXX executable test_et_contract_mpfr_scalar
+[ 87%] Built target test_compound_assign
+[ 87%] Linking CXX executable test_comparisons
+[ 87%] Building CXX object tests/CMakeFiles/test_mpfr_rounding_scope_stable.dir/test_mpfr_rounding_scope.cpp.o
+[ 88%] Linking CXX executable test_random
+[ 88%] Built target test_et_contract_mpfr_scalar
+[ 88%] Linking CXX executable test_user_defined_literals
+[ 89%] Linking CXX executable test_mpfr_precision_policy
+[ 89%] Built target test_comparisons
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_exception_support.dir/test_mpfr_exception_support.cpp.o
+[ 89%] Linking CXX executable test_alias_safety
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_defaults.dir/test_mpfr_defaults.cpp.o
+[ 89%] Linking CXX executable test_mpfr_expression_eval
+[ 89%] Built target test_random
+[ 89%] Linking CXX executable test_leaf_single_rounding
+[ 89%] Built target test_user_defined_literals
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_initialization_sentinel.dir/test_mpfr_initialization_sentinel.cpp.o
+[ 89%] Linking CXX executable test_mpfr_long_width_dispatch
+[ 89%] Built target test_mpfr_precision_policy
+[ 89%] Linking CXX executable test_mpfr_aliasing
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_environment.dir/test_mpfr_environment.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_environment_first_use.dir/test_mpfr_environment_first_use.cpp.o
+[ 89%] Linking CXX executable test_temporary_expression_lifetime
+[ 89%] Linking CXX executable test_mpfr_fixed_precision_fma_alloc_count
+[ 89%] Built target test_mpfr_expression_eval
+[ 89%] Linking CXX executable test_mpfr_fixed_precision_tls_scratch
+[ 89%] Built target test_leaf_single_rounding
+[ 89%] Built target test_alias_safety
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_environment_first_use_stable.dir/test_mpfr_environment_first_use.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_environment_invalid.dir/test_mpfr_environment_invalid.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_string_io.dir/test_mpfr_string_io.cpp.o
+[ 89%] Built target test_mpfr_aliasing
+[ 89%] Built target test_mpfr_long_width_dispatch
+[ 89%] Linking CXX executable test_type_conversions
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_math.dir/test_mpfr_math.cpp.o
+[ 89%] Built target test_temporary_expression_lifetime
+[ 89%] Linking CXX executable test_mpfr_alloc_count
+[ 89%] Built target test_mpfr_fixed_precision_fma_alloc_count
+[ 89%] Built target test_mpfr_fixed_precision_tls_scratch
+[ 89%] Building CXX object tests/CMakeFiles/test_mpfr_transcendent_functions.dir/test_mpfr_transcendent_functions.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_et_contract_mpf.dir/test_et_contract_mpf.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_basic.dir/test_mpf_basic.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_precision_policy.dir/test_mpf_precision_policy.cpp.o
+[ 89%] Built target test_type_conversions
+[ 89%] Linking CXX executable test_unary_minus_simplification
+[ 89%] Built target test_mpfr_alloc_count
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_default_precision_env.dir/test_mpf_default_precision_env.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_default_precision_invalid_env.dir/test_mpf_default_precision_invalid_env.cpp.o
+[ 89%] Built target test_unary_minus_simplification
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_external_provider.dir/test_mpf_external_provider.cpp.o
+[ 89%] Linking CXX executable test_exception_support
+[ 89%] Linking CXX executable test_common_type
+[ 89%] Linking CXX executable test_mpfr_fixed_precision_materialization
+[ 89%] Linking CXX executable test_mpfr_random
+[ 89%] Built target test_exception_support
+[ 89%] Linking CXX executable test_mpfr_rounding_scope_stable
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_aliasing.dir/test_mpf_aliasing.cpp.o
+[ 89%] Built target test_common_type
+[ 89%] Linking CXX executable test_mpfr_user_defined_literals
+[ 89%] Linking CXX executable test_mpfr_rounding_context_fixed_precision
+[ 89%] Linking CXX executable test_mpq_floating_conversion
+[ 89%] Built target test_mpfr_random
+[ 89%] Built target test_mpfr_fixed_precision_materialization
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_string_io.dir/test_mpf_string_io.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_alloc_count.dir/test_mpf_alloc_count.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_scalar_alloc_count.dir/test_mpf_scalar_alloc_count.cpp.o
+[ 89%] Built target test_mpfr_rounding_scope_stable
+[ 89%] Built target test_mpfr_user_defined_literals
+[ 89%] Built target test_mpq_floating_conversion
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_fixed_precision_materialization.dir/test_mpf_fixed_precision_materialization.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_fixed_precision_tls_scratch.dir/test_mpf_fixed_precision_tls_scratch.cpp.o
+[ 89%] Linking CXX executable test_mpfr_rounding_context
+[ 89%] Built target test_mpfr_rounding_context_fixed_precision
+[ 89%] Linking CXX executable test_mpfr_initialization_sentinel
+[ 89%] Linking CXX executable test_mpfr_rounding_scope
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_long_width_dispatch.dir/test_mpf_long_width_dispatch.cpp.o
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_numeric_equivalence.dir/test_mpf_numeric_equivalence.cpp.o
+[ 89%] Linking CXX executable test_mpfr_defaults
+[ 89%] Built target test_mpfr_initialization_sentinel
+[ 89%] Built target test_mpfr_rounding_context
+[ 89%] Linking CXX executable test_mpfr_environment
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_power_of_two_fusion.dir/test_mpf_power_of_two_fusion.cpp.o
+[ 89%] Linking CXX executable test_mpfr_environment_first_use
+[ 89%] Building CXX object tests/CMakeFiles/test_mpf_decomposition_functions.dir/test_mpf_decomposition_functions.cpp.o
+[ 89%] Built target test_mpfr_defaults
+[ 89%] Built target test_mpfr_rounding_scope
+[ 89%] Linking CXX executable test_mpfr_environment_first_use_stable
+[ 90%] Linking CXX executable test_mpfr_environment_invalid
+[ 90%] Building CXX object tests/CMakeFiles/test_mpf_pi.dir/test_mpf_pi.cpp.o
+[ 90%] Building CXX object tests/CMakeFiles/test_mpf_thread_safety.dir/test_mpf_thread_safety.cpp.o
+[ 90%] Linking CXX executable test_et_contract_mpf
+[ 90%] Built target test_mpfr_environment_first_use
+[ 90%] Built target test_mpfr_environment_first_use_stable
+[ 90%] Built target test_mpfr_environment
+[ 90%] Built target test_mpfr_environment_invalid
+[ 90%] Building CXX object tests/CMakeFiles/test_mpf_transcendent_functions.dir/test_mpf_transcendent_functions.cpp.o
+[ 90%] Building CXX object tests/CMakeFiles/test_mpf_extended_transcendent_functions.dir/test_mpf_extended_transcendent_functions.cpp.o
+[ 90%] Building CXX object tests/CMakeFiles/test_mpf_math_functions.dir/test_mpf_math_functions.cpp.o
+[ 90%] Building CXX object tests/CMakeFiles/test_construction_copy.dir/test_construction_copy.cpp.o
+[ 90%] Linking CXX executable test_mpfr_exception_support
+[ 90%] Built target test_et_contract_mpf
+[ 90%] Building CXX object tests/CMakeFiles/test_et_contract_mpfc.dir/test_et_contract_mpfc.cpp.o
+[ 90%] Linking CXX executable test_mpfr_compound_assign
+[ 90%] Built target test_mpfr_exception_support
+[ 90%] Linking CXX executable test_mpf_default_precision_env
+[ 90%] Building CXX object tests/CMakeFiles/test_mpfc_basic.dir/test_mpfc_basic.cpp.o
+[ 90%] Linking CXX executable test_mpf_external_provider
+[ 90%] Linking CXX executable test_mpfr_comparisons
+[ 90%] Built target test_mpf_default_precision_env
+[ 91%] Linking CXX executable test_mpf_precision_policy
+[ 91%] Building CXX object tests/CMakeFiles/test_mpfc_precision_policy.dir/test_mpfc_precision_policy.cpp.o
+[ 91%] Built target test_mpfr_compound_assign
+[ 91%] Building CXX object tests/CMakeFiles/test_mpfc_header_boundary.dir/test_mpfc_header_boundary.cpp.o
+[ 91%] Built target test_mpf_external_provider
+[ 91%] Built target test_mpfr_comparisons
+[ 91%] Built target test_mpf_precision_policy
+[ 91%] Linking CXX executable test_mpfr_type_conversions
+[ 91%] Linking CXX executable test_mpf_default_precision_invalid_env
+[ 91%] Building CXX object tests/CMakeFiles/test_mpfc_math.dir/test_mpfc_math.cpp.o
+[ 92%] Building CXX object tests/CMakeFiles/test_mpfc_io.dir/test_mpfc_io.cpp.o
+[ 92%] Building CXX object tests/CMakeFiles/test_et_contract_zq_mpf.dir/test_et_contract_zq_mpf.cpp.o
+[ 92%] Linking CXX executable test_mpf_aliasing
+[ 92%] Built target test_mpfr_type_conversions
+[ 92%] Linking CXX executable test_mpf_fixed_precision_materialization
+[ 92%] Built target test_mpf_default_precision_invalid_env
+[ 93%] Linking CXX executable test_mpf_fixed_precision_tls_scratch
+[ 93%] Building CXX object tests/CMakeFiles/test_mixed_zq_mpf_promotion.dir/test_mixed_zq_mpf_promotion.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_mixed_type_arithmetic.dir/test_mixed_type_arithmetic.cpp.o
+[ 93%] Linking CXX executable test_mpf_long_width_dispatch
+[ 93%] Built target test_mpf_aliasing
+[ 93%] Linking CXX executable test_mpf_scalar_alloc_count
+[ 93%] Linking CXX executable test_mpf_alloc_count
+[ 93%] Built target test_mpf_fixed_precision_tls_scratch
+[ 93%] Building CXX object tests/CMakeFiles/test_et_contract_zq_mpfr.dir/test_et_contract_zq_mpfr.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_mpz_basic.dir/test_mpz_basic.cpp.o
+[ 93%] Built target test_mpf_fixed_precision_materialization
+[ 93%] Built target test_mpf_scalar_alloc_count
+[ 93%] Built target test_mpf_long_width_dispatch
+[ 93%] Building CXX object tests/CMakeFiles/test_mpz_arithmetic.dir/test_mpz_arithmetic.cpp.o
+[ 93%] Built target test_mpf_alloc_count
+[ 93%] Building CXX object tests/CMakeFiles/test_mpz_addmul_fusion.dir/test_mpz_addmul_fusion.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_mpz_addmul_alloc_count.dir/test_mpz_addmul_alloc_count.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_mpq_basic.dir/test_mpq_basic.cpp.o
+[ 93%] Linking CXX executable test_mpf_power_of_two_fusion
+[ 93%] Linking CXX executable test_mpfr_scalar_eval
+[ 93%] Linking CXX executable test_mpf_numeric_equivalence
+[ 93%] Linking CXX executable test_et_contract_mpfc
+[ 93%] Linking CXX executable test_mpf_thread_safety
+[ 93%] Built target test_mpf_power_of_two_fusion
+[ 93%] Building CXX object tests/CMakeFiles/test_mpq_arithmetic.dir/test_mpq_arithmetic.cpp.o
+[ 93%] Built target test_mpfr_scalar_eval
+[ 93%] Built target test_mpf_numeric_equivalence
+[ 93%] Built target test_et_contract_mpfc
+[ 93%] Building CXX object tests/CMakeFiles/test_mpq_canonicalization.dir/test_mpq_canonicalization.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_zq_string_io.dir/test_zq_string_io.cpp.o
+[ 93%] Building CXX object tests/CMakeFiles/test_mpz_mpq_alloc_count.dir/test_mpz_mpq_alloc_count.cpp.o
+[ 93%] Linking CXX executable test_mpfc_header_boundary
+[ 93%] Built target test_mpf_thread_safety
+[ 93%] Building CXX object tests/CMakeFiles/test_mixed_zq_mpfr_promotion.dir/test_mixed_zq_mpfr_promotion.cpp.o
+[ 93%] Linking CXX executable test_mpfr_string_io
+[ 94%] Linking CXX executable test_mpf_decomposition_functions
+[ 94%] Linking CXX executable test_mpf_string_io
+[ 94%] Linking CXX executable test_mpf_pi
+[ 94%] Built target test_mpfc_header_boundary
+[ 94%] Building CXX object tests/CMakeFiles/test_mixed_zq_mpfr_exact_subexpression.dir/test_mixed_zq_mpfr_exact_subexpression.cpp.o
+[ 94%] Built target test_mpfr_string_io
+[ 95%] Linking CXX executable test_et_contract_zq_mpf
+[ 95%] Built target test_mpf_pi
+[ 95%] Building CXX object tests/CMakeFiles/test_mpfr_numeric_equivalence.dir/test_mpfr_numeric_equivalence.cpp.o
+[ 95%] Linking CXX executable test_mpfrxx_mkII
+[ 95%] Built target test_mpf_decomposition_functions
+[ 95%] Building CXX object tests/CMakeFiles/test_mpfr_power_of_two_fusion.dir/test_mpfr_power_of_two_fusion.cpp.o
+[ 95%] Built target test_mpf_string_io
+[ 95%] Building CXX object tests/CMakeFiles/test_mpfr_decomposition_functions.dir/test_mpfr_decomposition_functions.cpp.o
+[ 95%] Built target test_et_contract_zq_mpf
+[ 95%] Building CXX object tests/CMakeFiles/test_mpfr_scalar_alloc_count.dir/test_mpfr_scalar_alloc_count.cpp.o
+[ 95%] Building CXX object tests/CMakeFiles/test_mpfr_thread_safety.dir/test_mpfr_thread_safety.cpp.o
+[ 95%] Linking CXX executable test_et_contract_zq_mpfr
+[ 95%] Built target test_mpfrxx_mkII
+[ 95%] Linking CXX executable test_mpf_math_functions
+[ 95%] Building CXX object tests/CMakeFiles/test_et_contract_mpc.dir/test_et_contract_mpc.cpp.o
+[ 95%] Linking CXX executable test_mpfr_transcendent_functions
+[ 95%] Linking CXX executable test_mpz_addmul_alloc_count
+[ 95%] Built target test_et_contract_zq_mpfr
+[ 95%] Building CXX object tests/CMakeFiles/test_mpc_basic.dir/test_mpc_basic.cpp.o
+[ 95%] Built target test_mpf_math_functions
+[ 95%] Building CXX object tests/CMakeFiles/test_mpc_aliasing.dir/test_mpc_aliasing.cpp.o
+[ 95%] Linking CXX executable test_mpq_basic
+[ 96%] Linking CXX executable test_mpz_addmul_fusion
+[ 96%] Built target test_mpfr_transcendent_functions
+[ 96%] Built target test_mpz_addmul_alloc_count
+[ 96%] Linking CXX executable test_construction_copy
+[ 96%] Linking CXX executable test_mixed_zq_mpf_promotion
+[ 96%] Building CXX object tests/CMakeFiles/test_mpc_defaults.dir/test_mpc_defaults.cpp.o
+[ 96%] Building CXX object tests/CMakeFiles/test_mpc_environment.dir/test_mpc_environment.cpp.o
+[ 96%] Built target test_mpq_basic
+[ 96%] Linking CXX executable test_mpf_basic
+[ 97%] Building CXX object tests/CMakeFiles/test_mpc_environment_first_use.dir/test_mpc_environment_first_use.cpp.o
+[ 97%] Built target test_mpz_addmul_fusion
+[ 97%] Built target test_mixed_zq_mpf_promotion
+[ 97%] Building CXX object tests/CMakeFiles/test_mpc_environment_invalid.dir/test_mpc_environment_invalid.cpp.o
+[ 97%] Built target test_construction_copy
+[ 97%] Building CXX object tests/CMakeFiles/test_mpc_precision_policy.dir/test_mpc_precision_policy.cpp.o
+[ 97%] Building CXX object tests/CMakeFiles/test_mpc_evaluation_context.dir/test_mpc_evaluation_context.cpp.o
+[ 97%] Built target test_mpf_basic
+[ 97%] Building CXX object tests/CMakeFiles/test_mpc_evaluation_context_fixed_precision.dir/test_mpc_evaluation_context.cpp.o
+[ 97%] Linking CXX executable test_mpq_canonicalization
+[ 97%] Linking CXX executable test_mpfr_math
+[ 97%] Linking CXX executable test_mixed_zq_mpfr_promotion
+[ 97%] Linking CXX executable test_mpz_mpq_alloc_count
+[ 97%] Built target test_mpq_canonicalization
+[ 97%] Built target test_mixed_zq_mpfr_promotion
+[ 97%] Building CXX object tests/CMakeFiles/test_mpc_io.dir/test_mpc_io.cpp.o
+[ 98%] Linking CXX executable test_mixed_zq_mpfr_exact_subexpression
+[ 98%] Built target test_mpz_mpq_alloc_count
+[ 98%] Built target test_mpfr_math
+[ 99%] Building CXX object tests/CMakeFiles/test_mpc_math.dir/test_mpc_math.cpp.o
+[ 99%] Linking CXX executable test_mpf_extended_transcendent_functions
+[ 99%] Building CXX object tests/CMakeFiles/test_mpc_alloc_count.dir/test_mpc_alloc_count.cpp.o
+[ 99%] Building CXX object examples/CMakeFiles/example16_mpf_thread_context.dir/example16_mpf_thread_context.cpp.o
+[ 99%] Linking CXX executable test_mpfr_scalar_alloc_count
+[ 99%] Linking CXX executable test_mpfc_io
+[ 99%] Built target test_mixed_zq_mpfr_exact_subexpression
+[ 99%] Built target test_mpf_extended_transcendent_functions
+[ 99%] Built target test_mpfr_scalar_alloc_count
+[ 99%] Built target test_mpfc_io
+[100%] Linking CXX executable test_zq_string_io
+[100%] Linking CXX executable test_mpfr_numeric_equivalence
+[100%] Built target test_zq_string_io
+[100%] Linking CXX executable test_mpz_basic
+[100%] Built target test_mpfr_numeric_equivalence
+[100%] Linking CXX executable test_mpq_arithmetic
+[100%] Built target test_mpz_basic
+[100%] Linking CXX executable test_et_contract_mpc
+[100%] Linking CXX executable test_mpc_environment_invalid
+[100%] Built target test_mpq_arithmetic
+[100%] Linking CXX executable test_mpc_environment_first_use
+[100%] Built target test_et_contract_mpc
+[100%] Built target test_mpc_environment_invalid
+[100%] Linking CXX executable test_mpfc_basic
+[100%] Linking CXX executable test_mpc_aliasing
+[100%] Built target test_mpc_environment_first_use
+[100%] Linking CXX executable test_mixed_type_arithmetic
+[100%] Built target test_mpfc_basic
+[100%] Linking CXX executable test_mpc_defaults
+[100%] Built target test_mpc_aliasing
+[100%] Linking CXX executable test_mpfc_precision_policy
+[100%] Linking CXX executable test_mpfr_power_of_two_fusion
+[100%] Linking CXX executable test_mpfr_thread_safety
+[100%] Linking CXX executable test_mpc_evaluation_context_fixed_precision
+[100%] Built target test_mixed_type_arithmetic
+[100%] Linking CXX executable test_gmpxx_mkII
+[100%] Built target test_mpc_defaults
+[100%] Linking CXX executable test_mpfr_decomposition_functions
+[100%] Linking CXX executable test_mpc_evaluation_context
+[100%] Built target test_mpfc_precision_policy
+[100%] Built target test_mpc_evaluation_context_fixed_precision
+[100%] Built target test_mpfr_thread_safety
+[100%] Built target test_mpfr_power_of_two_fusion
+[100%] Built target test_mpfr_decomposition_functions
+[100%] Built target test_gmpxx_mkII
+[100%] Built target test_mpc_evaluation_context
+[100%] Linking CXX executable test_mpfc_math
+[100%] Linking CXX executable test_mpc_environment
+[100%] Built target test_mpfc_math
+[100%] Linking CXX executable test_mpc_alloc_count
+[100%] Built target test_mpc_environment
+[100%] Linking CXX executable test_mpc_precision_policy
+[100%] Built target test_mpc_alloc_count
+[100%] Built target test_mpc_precision_policy
+[100%] Linking CXX executable test_mpz_arithmetic
+[100%] Built target test_mpz_arithmetic
+[100%] Linking CXX executable test_mpc_basic
+[100%] Linking CXX executable test_mpf_transcendent_functions
+[100%] Linking CXX executable example16_mpf_thread_context
+[100%] Built target test_mpc_basic
+[100%] Linking CXX executable test_mpc_math
+[100%] Built target test_mpf_transcendent_functions
+[100%] Built target example16_mpf_thread_context
+[100%] Built target test_mpc_math
+[100%] Linking CXX executable test_mpc_io
+[100%] Built target test_mpc_io
+Test project /home/docker/gmpfrxx_mkII-p2a-clean.wbx83b/build-p2b
+        Start   1: example01
+  1/190 Test   #1: example01 ...............................................................   Passed    0.00 sec
+        Start   2: example02_mpf
+  2/190 Test   #2: example02_mpf ...........................................................   Passed    0.00 sec
+        Start   3: example02_mpfr
+  3/190 Test   #3: example02_mpfr ..........................................................   Passed    0.00 sec
+        Start   4: example02_mpc
+  4/190 Test   #4: example02_mpc ...........................................................   Passed    0.00 sec
+        Start   5: example03_mpf
+  5/190 Test   #5: example03_mpf ...........................................................   Passed    0.00 sec
+        Start   6: example03_mpfr
+  6/190 Test   #6: example03_mpfr ..........................................................   Passed    0.00 sec
+        Start   7: example03_mpfc
+  7/190 Test   #7: example03_mpfc ..........................................................   Passed    0.00 sec
+        Start   8: example04_mpf
+  8/190 Test   #8: example04_mpf ...........................................................   Passed    0.00 sec
+        Start   9: example04_mpfr
+  9/190 Test   #9: example04_mpfr ..........................................................   Passed    0.00 sec
+        Start  10: example05_mpf
+ 10/190 Test  #10: example05_mpf ...........................................................   Passed    0.01 sec
+        Start  11: example05_mpfr
+ 11/190 Test  #11: example05_mpfr ..........................................................   Passed    0.01 sec
+        Start  12: example06_mpfc
+ 12/190 Test  #12: example06_mpfc ..........................................................   Passed    0.01 sec
+        Start  13: example06_mpc
+ 13/190 Test  #13: example06_mpc ...........................................................   Passed    0.01 sec
+        Start  14: example07_mpfc
+ 14/190 Test  #14: example07_mpfc ..........................................................   Passed    0.01 sec
+        Start  15: example07_mpc
+ 15/190 Test  #15: example07_mpc ...........................................................   Passed    0.01 sec
+        Start  16: example08_mpfc
+ 16/190 Test  #16: example08_mpfc ..........................................................   Passed    0.01 sec
+        Start  17: example08_mpc
+ 17/190 Test  #17: example08_mpc ...........................................................   Passed    0.02 sec
+        Start  18: example09_mpfc
+ 18/190 Test  #18: example09_mpfc ..........................................................   Passed    0.02 sec
+        Start  19: example09_mpc
+ 19/190 Test  #19: example09_mpc ...........................................................   Passed    0.02 sec
+        Start  20: example10_mpf
+ 20/190 Test  #20: example10_mpf ...........................................................   Passed    0.00 sec
+        Start  21: example10_mpfr
+ 21/190 Test  #21: example10_mpfr ..........................................................   Passed    0.00 sec
+        Start  22: example11_mpf
+ 22/190 Test  #22: example11_mpf ...........................................................   Passed    0.01 sec
+        Start  23: example11_mpfr
+ 23/190 Test  #23: example11_mpfr ..........................................................   Passed    0.01 sec
+        Start  24: example12_mpf
+ 24/190 Test  #24: example12_mpf ...........................................................   Passed    0.01 sec
+        Start  25: example12_mpfr
+ 25/190 Test  #25: example12_mpfr ..........................................................   Passed    0.01 sec
+        Start  26: example13_mpf
+ 26/190 Test  #26: example13_mpf ...........................................................   Passed    0.47 sec
+        Start  27: example13_mpfr
+ 27/190 Test  #27: example13_mpfr ..........................................................   Passed    0.07 sec
+        Start  28: example14_mpf
+ 28/190 Test  #28: example14_mpf ...........................................................   Passed    0.60 sec
+        Start  29: example14_mpfr
+ 29/190 Test  #29: example14_mpfr ..........................................................   Passed    0.13 sec
+        Start  30: example15_mpf
+ 30/190 Test  #30: example15_mpf ...........................................................   Passed    0.00 sec
+        Start  31: example15_mpfr
+ 31/190 Test  #31: example15_mpfr ..........................................................   Passed    0.00 sec
+        Start  32: example16_mpf_thread_context
+ 32/190 Test  #32: example16_mpf_thread_context ............................................   Passed    0.00 sec
+        Start  33: example16_mpfr_thread_context
+ 33/190 Test  #33: example16_mpfr_thread_context ...........................................   Passed    0.00 sec
+        Start  34: example15_mpf_bbp
+ 34/190 Test  #34: example15_mpf_bbp .......................................................   Passed    0.00 sec
+        Start  35: example15_mpfr_bbp
+ 35/190 Test  #35: example15_mpfr_bbp ......................................................   Passed    0.00 sec
+        Start  36: benchmark_disasm_equivalence
+ 36/190 Test  #36: benchmark_disasm_equivalence ............................................   Passed    0.51 sec
+        Start  37: test_gmp_header_smoke
+ 37/190 Test  #37: test_gmp_header_smoke ...................................................   Passed    0.00 sec
+        Start  38: test_mpfr_header_smoke
+ 38/190 Test  #38: test_mpfr_header_smoke ..................................................   Passed    0.00 sec
+        Start  39: test_mpc_header_smoke
+ 39/190 Test  #39: test_mpc_header_smoke ...................................................   Passed    0.00 sec
+        Start  40: test_dd_real_adapter
+ 40/190 Test  #40: test_dd_real_adapter ....................................................   Passed    0.00 sec
+        Start  41: test_qd_real_adapter
+ 41/190 Test  #41: test_qd_real_adapter ....................................................   Passed    0.00 sec
+        Start  42: test_mpf_binary_real_adapters
+ 42/190 Test  #42: test_mpf_binary_real_adapters ...........................................   Passed    0.00 sec
+        Start  43: test_complex_compare_adapters
+ 43/190 Test  #43: test_complex_compare_adapters ...........................................   Passed    0.00 sec
+        Start  44: test_aggregator_header_smoke
+ 44/190 Test  #44: test_aggregator_header_smoke ............................................   Passed    0.00 sec
+        Start  45: test_namespace_aliases
+ 45/190 Test  #45: test_namespace_aliases ..................................................   Passed    0.00 sec
+        Start  46: test_header_boundaries
+ 46/190 Test  #46: test_header_boundaries ..................................................   Passed    0.00 sec
+        Start  47: test_library_tls_detection
+ 47/190 Test  #47: test_library_tls_detection ..............................................   Passed    0.00 sec
+        Start  48: test_version_info
+ 48/190 Test  #48: test_version_info .......................................................   Passed    0.00 sec
+        Start  49: test_integer_model_diagnostics
+ 49/190 Test  #49: test_integer_model_diagnostics ..........................................   Passed    0.00 sec
+        Start  50: test_gmpxx_mkII
+ 50/190 Test  #50: test_gmpxx_mkII .........................................................   Passed    0.00 sec
+        Start  51: test_mpfrxx_mkII
+ 51/190 Test  #51: test_mpfrxx_mkII ........................................................   Passed    0.00 sec
+        Start  52: test_abi_fingerprint
+ 52/190 Test  #52: test_abi_fingerprint ....................................................   Passed    0.00 sec
+        Start  53: test_alias_safety
+ 53/190 Test  #53: test_alias_safety .......................................................   Passed    0.00 sec
+        Start  54: test_temporary_expression_lifetime
+ 54/190 Test  #54: test_temporary_expression_lifetime ......................................   Passed    0.00 sec
+        Start  55: test_leaf_single_rounding
+ 55/190 Test  #55: test_leaf_single_rounding ...............................................   Passed    0.00 sec
+        Start  56: test_expr_unary_move_folding
+ 56/190 Test  #56: test_expr_unary_move_folding ............................................   Passed    0.00 sec
+        Start  57: test_comparisons
+ 57/190 Test  #57: test_comparisons ........................................................   Passed    0.00 sec
+        Start  58: test_compound_assign
+ 58/190 Test  #58: test_compound_assign ....................................................   Passed    0.00 sec
+        Start  59: test_common_type
+ 59/190 Test  #59: test_common_type ........................................................   Passed    0.00 sec
+        Start  60: test_exception_support
+ 60/190 Test  #60: test_exception_support ..................................................   Passed    0.00 sec
+        Start  61: test_random
+ 61/190 Test  #61: test_random .............................................................   Passed    0.01 sec
+        Start  62: test_type_conversions
+ 62/190 Test  #62: test_type_conversions ...................................................   Passed    0.00 sec
+        Start  63: test_mpq_floating_conversion
+ 63/190 Test  #63: test_mpq_floating_conversion ............................................   Passed    0.00 sec
+        Start  64: test_unary_minus_simplification
+ 64/190 Test  #64: test_unary_minus_simplification .........................................   Passed    0.00 sec
+        Start  65: test_user_defined_literals
+ 65/190 Test  #65: test_user_defined_literals ..............................................   Passed    0.00 sec
+        Start  66: test_et_contract_mpfr
+ 66/190 Test  #66: test_et_contract_mpfr ...................................................   Passed    0.00 sec
+        Start  67: test_mpfr_user_defined_literals
+ 67/190 Test  #67: test_mpfr_user_defined_literals .........................................   Passed    0.00 sec
+        Start  68: test_mpfr_expression_eval
+ 68/190 Test  #68: test_mpfr_expression_eval ...............................................   Passed    0.00 sec
+        Start  69: test_mpfr_precision_policy
+ 69/190 Test  #69: test_mpfr_precision_policy ..............................................   Passed    0.00 sec
+        Start  70: test_mpfr_aliasing
+ 70/190 Test  #70: test_mpfr_aliasing ......................................................   Passed    0.00 sec
+        Start  71: test_mpfr_random
+ 71/190 Test  #71: test_mpfr_random ........................................................   Passed    0.02 sec
+        Start  72: test_et_contract_mpfr_scalar
+ 72/190 Test  #72: test_et_contract_mpfr_scalar ............................................   Passed    0.00 sec
+        Start  73: test_mpfr_scalar_eval
+ 73/190 Test  #73: test_mpfr_scalar_eval ...................................................   Passed    0.00 sec
+        Start  74: test_mpfr_long_width_dispatch
+ 74/190 Test  #74: test_mpfr_long_width_dispatch ...........................................   Passed    0.00 sec
+        Start  75: test_mpfr_alloc_count
+ 75/190 Test  #75: test_mpfr_alloc_count ...................................................   Passed    0.00 sec
+        Start  76: test_mpfr_fixed_precision_materialization
+ 76/190 Test  #76: test_mpfr_fixed_precision_materialization ...............................   Passed    0.00 sec
+        Start  77: test_mpfr_fixed_precision_fma_alloc_count
+ 77/190 Test  #77: test_mpfr_fixed_precision_fma_alloc_count ...............................   Passed    0.00 sec
+        Start  78: test_mpfr_fixed_precision_tls_scratch
+ 78/190 Test  #78: test_mpfr_fixed_precision_tls_scratch ...................................   Passed    0.00 sec
+        Start  79: test_mpfr_type_conversions
+ 79/190 Test  #79: test_mpfr_type_conversions ..............................................   Passed    0.00 sec
+        Start  80: test_mpfr_comparisons
+ 80/190 Test  #80: test_mpfr_comparisons ...................................................   Passed    0.00 sec
+        Start  81: test_mpfr_compound_assign
+ 81/190 Test  #81: test_mpfr_compound_assign ...............................................   Passed    0.00 sec
+        Start  82: test_mpfr_rounding_context
+ 82/190 Test  #82: test_mpfr_rounding_context ..............................................   Passed    0.00 sec
+        Start  83: test_mpfr_rounding_context_fixed_precision
+ 83/190 Test  #83: test_mpfr_rounding_context_fixed_precision ..............................   Passed    0.00 sec
+        Start  84: test_mpfr_rounding_scope
+ 84/190 Test  #84: test_mpfr_rounding_scope ................................................   Passed    0.00 sec
+        Start  85: test_mpfr_rounding_scope_stable
+ 85/190 Test  #85: test_mpfr_rounding_scope_stable .........................................   Passed    0.00 sec
+        Start  86: test_mpfr_exception_support
+ 86/190 Test  #86: test_mpfr_exception_support .............................................   Passed    0.00 sec
+        Start  87: test_mpfr_defaults
+ 87/190 Test  #87: test_mpfr_defaults ......................................................   Passed    0.00 sec
+        Start  88: test_mpfr_initialization_sentinel
+ 88/190 Test  #88: test_mpfr_initialization_sentinel .......................................   Passed    0.00 sec
+        Start  89: test_mpfr_environment
+ 89/190 Test  #89: test_mpfr_environment ...................................................   Passed    0.00 sec
+        Start  90: test_mpfr_environment_first_use_with_precision
+ 90/190 Test  #90: test_mpfr_environment_first_use_with_precision ..........................   Passed    0.00 sec
+        Start  91: test_mpfr_environment_first_use_explicit_precision_constructor
+ 91/190 Test  #91: test_mpfr_environment_first_use_explicit_precision_constructor ..........   Passed    0.00 sec
+        Start  92: test_mpfr_environment_first_use_current_eval_context
+ 92/190 Test  #92: test_mpfr_environment_first_use_current_eval_context ....................   Passed    0.00 sec
+        Start  93: test_mpfr_environment_first_use_initialize_thread_defaults
+ 93/190 Test  #93: test_mpfr_environment_first_use_initialize_thread_defaults ..............   Passed    0.00 sec
+        Start  94: test_mpfr_environment_first_use_raw_rounding_preserved
+ 94/190 Test  #94: test_mpfr_environment_first_use_raw_rounding_preserved ..................   Passed    0.00 sec
+        Start  95: test_mpfr_environment_first_use_stable_with_precision
+ 95/190 Test  #95: test_mpfr_environment_first_use_stable_with_precision ...................   Passed    0.00 sec
+        Start  96: test_mpfr_environment_first_use_stable_explicit_precision_constructor
+ 96/190 Test  #96: test_mpfr_environment_first_use_stable_explicit_precision_constructor ...   Passed    0.00 sec
+        Start  97: test_mpfr_environment_first_use_stable_current_eval_context
+ 97/190 Test  #97: test_mpfr_environment_first_use_stable_current_eval_context .............   Passed    0.00 sec
+        Start  98: test_mpfr_environment_first_use_stable_initialize_thread_defaults
+ 98/190 Test  #98: test_mpfr_environment_first_use_stable_initialize_thread_defaults .......   Passed    0.00 sec
+        Start  99: test_mpfr_environment_first_use_stable_raw_rounding_preserved
+ 99/190 Test  #99: test_mpfr_environment_first_use_stable_raw_rounding_preserved ...........   Passed    0.00 sec
+        Start 100: test_mpfr_environment_invalid
+100/190 Test #100: test_mpfr_environment_invalid ...........................................   Passed    0.00 sec
+        Start 101: test_mpfr_string_io
+101/190 Test #101: test_mpfr_string_io .....................................................   Passed    0.00 sec
+        Start 102: test_mpfr_math
+102/190 Test #102: test_mpfr_math ..........................................................   Passed    0.03 sec
+        Start 103: test_mpfr_transcendent_functions
+103/190 Test #103: test_mpfr_transcendent_functions ........................................   Passed    0.04 sec
+        Start 104: test_et_contract_mpf
+104/190 Test #104: test_et_contract_mpf ....................................................   Passed    0.00 sec
+        Start 105: test_mpf_basic
+105/190 Test #105: test_mpf_basic ..........................................................   Passed    0.00 sec
+        Start 106: test_mpf_precision_policy
+106/190 Test #106: test_mpf_precision_policy ...............................................   Passed    0.00 sec
+        Start 107: test_mpf_default_precision_env
+107/190 Test #107: test_mpf_default_precision_env ..........................................   Passed    0.00 sec
+        Start 108: test_mpf_default_precision_invalid_env
+108/190 Test #108: test_mpf_default_precision_invalid_env ..................................   Passed    0.00 sec
+        Start 109: test_mpf_default_precision_overflow_env
+109/190 Test #109: test_mpf_default_precision_overflow_env .................................   Passed    0.00 sec
+        Start 110: test_mpf_external_provider
+110/190 Test #110: test_mpf_external_provider ..............................................   Passed    0.00 sec
+        Start 111: test_mpf_aliasing
+111/190 Test #111: test_mpf_aliasing .......................................................   Passed    0.00 sec
+        Start 112: test_mpf_string_io
+112/190 Test #112: test_mpf_string_io ......................................................   Passed    0.00 sec
+        Start 113: test_mpf_alloc_count
+113/190 Test #113: test_mpf_alloc_count ....................................................   Passed    0.00 sec
+        Start 114: test_mpf_scalar_alloc_count
+114/190 Test #114: test_mpf_scalar_alloc_count .............................................   Passed    0.00 sec
+        Start 115: test_mpf_fixed_precision_materialization
+115/190 Test #115: test_mpf_fixed_precision_materialization ................................   Passed    0.00 sec
+        Start 116: test_mpf_fixed_precision_tls_scratch
+116/190 Test #116: test_mpf_fixed_precision_tls_scratch ....................................   Passed    0.00 sec
+        Start 117: test_mpf_long_width_dispatch
+117/190 Test #117: test_mpf_long_width_dispatch ............................................   Passed    0.00 sec
+        Start 118: test_mpf_numeric_equivalence
+118/190 Test #118: test_mpf_numeric_equivalence ............................................   Passed    0.00 sec
+        Start 119: test_mpf_power_of_two_fusion
+119/190 Test #119: test_mpf_power_of_two_fusion ............................................   Passed    0.00 sec
+        Start 120: test_mpf_decomposition_functions
+120/190 Test #120: test_mpf_decomposition_functions ........................................   Passed    0.00 sec
+        Start 121: test_mpf_thread_safety
+121/190 Test #121: test_mpf_thread_safety ..................................................   Passed    0.00 sec
+        Start 122: test_mpf_pi
+122/190 Test #122: test_mpf_pi .............................................................   Passed    0.00 sec
+        Start 123: test_mpf_transcendent_functions
+123/190 Test #123: test_mpf_transcendent_functions .........................................   Passed    4.76 sec
+        Start 124: test_mpf_math_functions
+124/190 Test #124: test_mpf_math_functions .................................................   Passed    0.00 sec
+        Start 125: test_mpf_extended_transcendent_functions
+125/190 Test #125: test_mpf_extended_transcendent_functions ................................   Passed    0.11 sec
+        Start 126: test_construction_copy
+126/190 Test #126: test_construction_copy ..................................................   Passed    0.00 sec
+        Start 127: test_et_contract_mpfc
+127/190 Test #127: test_et_contract_mpfc ...................................................   Passed    0.00 sec
+        Start 128: test_mpfc_basic
+128/190 Test #128: test_mpfc_basic .........................................................   Passed    0.00 sec
+        Start 129: test_mpfc_precision_policy
+129/190 Test #129: test_mpfc_precision_policy ..............................................   Passed    0.00 sec
+        Start 130: test_mpfc_header_boundary
+130/190 Test #130: test_mpfc_header_boundary ...............................................   Passed    0.00 sec
+        Start 131: test_mpfc_math
+131/190 Test #131: test_mpfc_math ..........................................................   Passed    0.01 sec
+        Start 132: test_mpfc_io
+132/190 Test #132: test_mpfc_io ............................................................   Passed    0.00 sec
+        Start 133: test_et_contract_zq_mpf
+133/190 Test #133: test_et_contract_zq_mpf .................................................   Passed    0.00 sec
+        Start 134: test_mixed_zq_mpf_promotion
+134/190 Test #134: test_mixed_zq_mpf_promotion .............................................   Passed    0.00 sec
+        Start 135: test_mixed_type_arithmetic
+135/190 Test #135: test_mixed_type_arithmetic ..............................................   Passed    0.00 sec
+        Start 136: test_et_contract_zq_mpfr
+136/190 Test #136: test_et_contract_zq_mpfr ................................................   Passed    0.00 sec
+        Start 137: test_mpz_basic
+137/190 Test #137: test_mpz_basic ..........................................................   Passed    0.00 sec
+        Start 138: test_mpz_arithmetic
+138/190 Test #138: test_mpz_arithmetic .....................................................   Passed    0.00 sec
+        Start 139: test_mpz_addmul_fusion
+139/190 Test #139: test_mpz_addmul_fusion ..................................................   Passed    0.00 sec
+        Start 140: test_mpz_addmul_alloc_count
+140/190 Test #140: test_mpz_addmul_alloc_count .............................................   Passed    0.00 sec
+        Start 141: test_mpq_basic
+141/190 Test #141: test_mpq_basic ..........................................................   Passed    0.00 sec
+        Start 142: test_mpq_arithmetic
+142/190 Test #142: test_mpq_arithmetic .....................................................   Passed    0.00 sec
+        Start 143: test_mpq_canonicalization
+143/190 Test #143: test_mpq_canonicalization ...............................................   Passed    0.00 sec
+        Start 144: test_zq_string_io
+144/190 Test #144: test_zq_string_io .......................................................   Passed    0.00 sec
+        Start 145: test_mpz_mpq_alloc_count
+145/190 Test #145: test_mpz_mpq_alloc_count ................................................   Passed    0.00 sec
+        Start 146: test_mixed_zq_mpfr_promotion
+146/190 Test #146: test_mixed_zq_mpfr_promotion ............................................   Passed    0.00 sec
+        Start 147: test_mixed_zq_mpfr_exact_subexpression
+147/190 Test #147: test_mixed_zq_mpfr_exact_subexpression ..................................   Passed    0.00 sec
+        Start 148: test_mpfr_numeric_equivalence
+148/190 Test #148: test_mpfr_numeric_equivalence ...........................................   Passed    0.00 sec
+        Start 149: test_mpfr_power_of_two_fusion
+149/190 Test #149: test_mpfr_power_of_two_fusion ...........................................   Passed    0.00 sec
+        Start 150: test_mpfr_decomposition_functions
+150/190 Test #150: test_mpfr_decomposition_functions .......................................   Passed    0.00 sec
+        Start 151: test_mpfr_scalar_alloc_count
+151/190 Test #151: test_mpfr_scalar_alloc_count ............................................   Passed    0.00 sec
+        Start 152: test_mpfr_thread_safety
+152/190 Test #152: test_mpfr_thread_safety .................................................   Passed    0.01 sec
+        Start 153: test_et_contract_mpc
+153/190 Test #153: test_et_contract_mpc ....................................................   Passed    0.00 sec
+        Start 154: test_mpc_basic
+154/190 Test #154: test_mpc_basic ..........................................................   Passed    0.01 sec
+        Start 155: test_mpc_aliasing
+155/190 Test #155: test_mpc_aliasing .......................................................   Passed    0.00 sec
+        Start 156: test_mpc_defaults
+156/190 Test #156: test_mpc_defaults .......................................................   Passed    0.00 sec
+        Start 157: test_mpc_environment
+157/190 Test #157: test_mpc_environment ....................................................   Passed    0.00 sec
+        Start 158: test_mpc_environment_first_use_share_mpfr
+158/190 Test #158: test_mpc_environment_first_use_share_mpfr ...............................   Passed    0.00 sec
+        Start 159: test_mpc_environment_first_use_mpc_env
+159/190 Test #159: test_mpc_environment_first_use_mpc_env ..................................   Passed    0.00 sec
+        Start 160: test_mpc_environment_first_use_component_env
+160/190 Test #160: test_mpc_environment_first_use_component_env ............................   Passed    0.00 sec
+        Start 161: test_mpc_environment_first_use_asymmetric_override
+161/190 Test #161: test_mpc_environment_first_use_asymmetric_override ......................   Passed    0.00 sec
+        Start 162: test_mpc_environment_invalid
+162/190 Test #162: test_mpc_environment_invalid ............................................   Passed    0.00 sec
+        Start 163: test_mpc_precision_policy
+163/190 Test #163: test_mpc_precision_policy ...............................................   Passed    0.00 sec
+        Start 164: test_mpc_evaluation_context
+164/190 Test #164: test_mpc_evaluation_context .............................................   Passed    0.00 sec
+        Start 165: test_mpc_evaluation_context_fixed_precision
+165/190 Test #165: test_mpc_evaluation_context_fixed_precision .............................   Passed    0.00 sec
+        Start 166: test_mpc_io
+166/190 Test #166: test_mpc_io .............................................................   Passed    0.00 sec
+        Start 167: test_mpc_math
+167/190 Test #167: test_mpc_math ...........................................................   Passed    0.00 sec
+        Start 168: test_mpc_alloc_count
+168/190 Test #168: test_mpc_alloc_count ....................................................   Passed    0.00 sec
+        Start 169: compile_pass_harness_control
+169/190 Test #169: compile_pass_harness_control ............................................   Passed    0.66 sec
+        Start 170: compile_fail_mpfr_header_must_not_expose_mpf
+170/190 Test #170: compile_fail_mpfr_header_must_not_expose_mpf ............................   Passed    0.46 sec
+        Start 171: compile_fail_mpfr_header_must_not_expose_mpfc
+171/190 Test #171: compile_fail_mpfr_header_must_not_expose_mpfc ...........................   Passed    0.46 sec
+        Start 172: compile_fail_mpfr_header_must_not_expose_mpc
+172/190 Test #172: compile_fail_mpfr_header_must_not_expose_mpc ............................   Passed    0.46 sec
+        Start 173: compile_fail_gmp_header_must_not_expose_mpfr_or_mpc
+173/190 Test #173: compile_fail_gmp_header_must_not_expose_mpfr_or_mpc .....................   Passed    0.54 sec
+        Start 174: compile_fail_test_bool_scalar
+174/190 Test #174: compile_fail_test_bool_scalar ...........................................   Passed    0.46 sec
+        Start 175: compile_fail_test_wchar_scalar
+175/190 Test #175: compile_fail_test_wchar_scalar ..........................................   Passed    0.46 sec
+        Start 176: compile_fail_test_char16_scalar
+176/190 Test #176: compile_fail_test_char16_scalar .........................................   Passed    0.46 sec
+        Start 177: compile_fail_test_char32_scalar
+177/190 Test #177: compile_fail_test_char32_scalar .........................................   Passed    0.45 sec
+        Start 178: compile_fail_test_long_double_scalar
+178/190 Test #178: compile_fail_test_long_double_scalar ....................................   Passed    0.46 sec
+        Start 179: compile_fail_test_int128_scalar
+179/190 Test #179: compile_fail_test_int128_scalar .........................................   Passed    0.45 sec
+        Start 180: compile_fail_test_scalar_scalar_et_operator
+180/190 Test #180: compile_fail_test_scalar_scalar_et_operator .............................   Passed    0.46 sec
+        Start 181: compile_fail_test_mpf_precision_guard_frozen_env
+181/190 Test #181: compile_fail_test_mpf_precision_guard_frozen_env ........................   Passed    0.54 sec
+        Start 182: compile_fail_test_mpf_plus_mpfr
+182/190 Test #182: compile_fail_test_mpf_plus_mpfr .........................................   Passed    0.65 sec
+        Start 183: compile_fail_test_mpfr_plus_mpf
+183/190 Test #183: compile_fail_test_mpfr_plus_mpf .........................................   Passed    0.64 sec
+        Start 184: compile_fail_test_mpf_plus_mpc
+184/190 Test #184: compile_fail_test_mpf_plus_mpc ..........................................   Passed    0.64 sec
+        Start 185: compile_fail_test_mpc_plus_mpf
+185/190 Test #185: compile_fail_test_mpc_plus_mpf ..........................................   Passed    0.64 sec
+        Start 186: compile_fail_test_mpfc_plus_mpfr
+186/190 Test #186: compile_fail_test_mpfc_plus_mpfr ........................................   Passed    0.64 sec
+        Start 187: compile_fail_test_mpfr_plus_mpfc
+187/190 Test #187: compile_fail_test_mpfr_plus_mpfc ........................................   Passed    0.63 sec
+        Start 188: compile_fail_test_mpfc_plus_mpc
+188/190 Test #188: compile_fail_test_mpfc_plus_mpc .........................................   Passed    0.63 sec
+        Start 189: compile_fail_test_mpc_plus_mpfc
+189/190 Test #189: compile_fail_test_mpc_plus_mpfc .........................................   Passed    0.64 sec
+        Start 190: link_fail_mpf_external_provider_missing
+190/190 Test #190: link_fail_mpf_external_provider_missing .................................   Passed    0.59 sec
+
+100% tests passed, 0 tests failed out of 190
+
+Label Time Summary:
+alloc-count    =   0.03 sec*proc (11 tests)
+benchmark      =   0.51 sec*proc (1 test)
+disasm         =   0.51 sec*proc (1 test)
+
+Total Test time (real) =  19.45 sec
+-- Install configuration: "Release"
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/qd_complex.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/mpfc_complex.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/qd_real.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/dd_real.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/dd_complex.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/binary80_real.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/mpf_real.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/binary128_real.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/detail
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/detail/binary_float.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/detail/real_components.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/detail/complex_components.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/binary128_complex.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/adapters/binary80_complex.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/expr.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/math_mpf.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/integer_conversion.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/type_traits.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/environment.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/mpfr_impl.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/common_type_macros.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/config.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/math_mpfc.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/zq_impl.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/gmp_default_context.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/mpfc_impl.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/eval_context.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/mpc_impl.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/mpf_impl.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/mpc_environment.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/mpfrxx_mkII.h
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpxx_mkII.h
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII.h
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/mpcxx_mkII.h
+-- Up-to-date: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include
+-- Up-to-date: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII
+-- Up-to-date: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/version.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/include/gmpfrxx_mkII/detail/build_config.hpp
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/libgmpxx_mkII_default_context_provider.so
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/gmpxx_mkIITargets.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/gmpxx_mkIITargets-release.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/mpfrxx_mkIITargets.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/mpcxx_mkIITargets.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/gmpfrxx_mkIITargets.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/gmpfrxx_mkIIConfig.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/gmpfrxx_mkIIConfigVersion.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/FindGMP.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/FindMPFR.cmake
+-- Installing: /tmp/gmpfrxx-mkII-p2b-gate-install.7u0YOS/lib/cmake/gmpfrxx_mkII/FindMPC.cmake
+-- The CXX compiler identification is GNU 15.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found GMP: /usr/lib/x86_64-linux-gnu/libgmp.so
+-- Found MPFR: /usr/lib/x86_64-linux-gnu/libmpfr.so
+-- Found MPC: /usr/lib/x86_64-linux-gnu/libmpc.so
+-- Configuring done (0.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/gmpfrxx-mkII-p2b-consumer-build.wlEQbq
+[ 50%] Building CXX object CMakeFiles/p2b_consumer.dir/main.cpp.o
+[100%] Linking CXX executable p2b_consumer
+[100%] Built target p2b_consumer
+P2B gate: PASS
