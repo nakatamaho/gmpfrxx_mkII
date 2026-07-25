@@ -198,6 +198,15 @@ inline bool mpc_has_nan_component(mpc_srcptr value)
            mpfr_nan_p(mpc_imagref(value)) != 0;
 }
 
+template <typename T, typename = void>
+struct external_mpc_complex_traits {
+    static constexpr bool enabled = false;
+};
+
+template <typename T>
+inline constexpr bool is_external_mpc_complex_v =
+    external_mpc_complex_traits<std::remove_cv_t<std::remove_reference_t<T>>>::enabled;
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -291,6 +300,18 @@ public:
                     mpfrxx::default_mpc_imag_precision_bits())
     {
         set_complex_value(value);
+    }
+
+    template <typename External,
+              std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpc_complex_v<External>, int> = 0>
+    explicit mpc_class(const External& value)
+        : mpc_class(precision_tag{},
+                    mpfrxx::default_mpc_real_precision_bits(),
+                    mpfrxx::default_mpc_imag_precision_bits())
+    {
+        using external_type = std::remove_cv_t<std::remove_reference_t<External>>;
+        gmpfrxx_mkII::detail::external_mpc_complex_traits<external_type>::set(
+            value_, value, default_rounding());
     }
 
     template <
@@ -439,6 +460,16 @@ public:
     mpc_class& operator=(const std::complex<double>& value)
     {
         set_complex_value(value);
+        return *this;
+    }
+
+    template <typename External,
+              std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpc_complex_v<External>, int> = 0>
+    mpc_class& operator=(const External& value)
+    {
+        using external_type = std::remove_cv_t<std::remove_reference_t<External>>;
+        gmpfrxx_mkII::detail::external_mpc_complex_traits<external_type>::set(
+            value_, value, default_rounding());
         return *this;
     }
 
