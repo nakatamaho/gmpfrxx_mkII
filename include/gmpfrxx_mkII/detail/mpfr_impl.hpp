@@ -145,6 +145,12 @@ private:
     bool active_{true};
 };
 
+template <typename T, typename = void>
+struct external_mpfr_real_traits { static constexpr bool enabled = false; };
+template <typename T>
+inline constexpr bool is_external_mpfr_real_v =
+    external_mpfr_real_traits<std::remove_cv_t<std::remove_reference_t<T>>>::enabled;
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -197,6 +203,18 @@ public:
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
         gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value.mpq_data());
         mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
+        init_guard.release();
+    }
+
+    template <typename External, std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpfr_real_v<External>, int> = 0>
+    mpfr_class(const External& value) : mpfr_class(value, default_precision()) {}
+
+    template <typename External, std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpfr_real_v<External>, int> = 0>
+    mpfr_class(const External& value, mpfr_prec_t precision)
+    {
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
+        using T = std::remove_cv_t<std::remove_reference_t<External>>;
+        gmpfrxx_mkII::detail::external_mpfr_real_traits<T>::set(value_, value, gmpfrxx_mkII::detail::current_eval_context(precision).rounding_mode);
         init_guard.release();
     }
 
@@ -293,6 +311,14 @@ public:
             const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
             mpfr_set(value_, other.value_, context.rounding_mode);
         }
+        return *this;
+    }
+
+    template <typename External, std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpfr_real_v<External>, int> = 0>
+    mpfr_class& operator=(const External& value)
+    {
+        using T = std::remove_cv_t<std::remove_reference_t<External>>;
+        gmpfrxx_mkII::detail::external_mpfr_real_traits<T>::set(value_, value, gmpfrxx_mkII::detail::current_eval_context(precision()).rounding_mode);
         return *this;
     }
 
