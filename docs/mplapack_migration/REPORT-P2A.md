@@ -1,45 +1,43 @@
 # P2A Real Comparison Embeddings
 
-- MPLAPACK P1: 
-- Locked upstream base: 
-- Clean clone: 
-- Branch: 
-- Dirty evidence snapshot: 
-- Snapshot SHA256SUMS: 
+- MPLAPACK P1: `2ebf798fd0081ecdc5c1b53fc117431c406bf884`
+- Locked upstream base: `2f06785c3f1b62f92e1e2026c2c975df73d1e426`
+- Clean clone: `/home/docker/gmpfrxx_mkII-p2a-clean.wbx83b`
+- Branch: `topic/mplapack-compare-embed-real`
+- Dirty evidence snapshot: `/home/docker/gmpfrxx_mkII-prototype-snapshot-p2a-retry.F58Geq`
+- Snapshot SHA256SUMS: `6a9fc4d4ab1fbe4ad71a1c5f40657ff6efcb24519edcf093bf`
 
-The failed tar capture was caused by placing  after file operands. The old
-partial snapshot was preserved. No dirty-clone files were transplanted. The
-external  and all complex/EDD/TD work were
-excluded.
+The failed tar capture was caused by placing `-C` after file operands. The old partial snapshot was preserved untouched. The corrected retry snapshot is read-only. No dirty-clone source file or patch was transplanted; the externally added `tests/test_mpf_mpfc_adapter.cpp`, MPFC, complex, EDD, and TD work were excluded.
 
 ## Rows and API
 
- uses the existing  path. 
-and  use opt-in explicit constructors backed by direct MPFR component
-sums.  uses  through an explicit adapter type.
- uses native .  uses direct
- from .
+The selected API is explicit construction/assignment to an owning `mpfrxx::mpfr_class`.
 
-The minimal public API is explicit construction/assignment to an owning
-; no reverse conversion or mixed operators were added.
-No precision metadata is inspected or negotiated.
+| REQUIRED row | Status | Route |
+|---|---|---|
+| double -> mpfr_class | implemented | existing MPFR import constructor |
+| dd real -> mpfr_class | implemented | direct MPFR sum of stored components |
+| qd real -> mpfr_class | implemented | direct MPFR sum of stored components |
+| binary80 real -> mpfr_class | implemented | native `mpfr_set_ld` |
+| binary128 real -> mpfr_class | implemented | native `mpfr_set_float128` |
+| GMP MPF -> mpfr_class | implemented | direct `mpfr_set_f` |
 
-## Tests
+No source or destination precision metadata is inspected, compared, negotiated, or preserved. No reverse conversion or mixed arithmetic was added.
 
-Configuration and build:
+## Tests and gate
 
--- The CXX compiler identification is GNU 15.2.0
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Configuring incomplete, errors occurred!
-Test project /home/docker/build-p2a
+Automatic dependency fetching was disabled. The complete relevant commands were:
 
-Result: 189/189 tests passed. New tests cover dd, qd, GMP MPF, binary80, and
-binary128; dd/qd/binary sentinels retain information below binary64. Existing
-fresh-process default tests cover the 512-bit defaults.
+```text
+cmake -S . -B build-p2a -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF
+cmake --build build-p2a -j32
+ctest --test-dir build-p2a --output-on-failure
+```
 
-No MPFC, complex interop, reverse conversion, mixed arithmetic, precision
-sweeps, rounding sweeps, EDD, or TD work was added.
+Result: **189/189 tests passed**. New tests cover dd, qd, GMP MPF, binary80, and binary128. The dd sentinel retains a component around `2^-100`; qd, binary80, binary128, and GMP MPF retain information beyond binary64. Existing fresh-process tests cover the accepted 512-bit defaults.
+
+The gate is `docs/mplapack_migration/gate-P2A.sh`; it checks imported hashes, the immutable forensic snapshot hash, native routes, forbidden APIs, an installed-header syntax consumer, and the full suite.
+
+No MPFC, complex interop, reverse conversion, mixed arithmetic, precision or rounding sweeps, EDD, or TD work was added. The implementation was independently written in the clean clone; read-only prototype inspection only informed component and native-import choices. No dirty file was copied wholesale.
+
+Deviations/blockers: none. The live dirty worktree is informational only after the frozen snapshot and was not used subsequently.
