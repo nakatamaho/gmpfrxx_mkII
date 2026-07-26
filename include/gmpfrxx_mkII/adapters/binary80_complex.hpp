@@ -6,7 +6,7 @@
 
 #include <complex>
 
-#if defined(__FLT64X_MANT_DIG__) && __FLT64X_MANT_DIG__ == 64
+#if GMPFRXX_MKII_ADAPTERS_HAVE_BINARY80
 
 namespace gmpfrxx_mkII {
 namespace detail {

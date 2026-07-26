@@ -6,7 +6,7 @@
 
 #include <complex>
 
-#if GMPFRXX_MKII_ADAPTERS_HAVE_BINARY128 && defined(__FLT128_MANT_DIG__)
+#if GMPFRXX_MKII_ADAPTERS_HAVE_BINARY128
 
 namespace gmpfrxx_mkII {
 namespace detail {

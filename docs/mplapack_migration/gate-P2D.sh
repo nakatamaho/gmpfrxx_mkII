@@ -108,20 +108,20 @@ rg -q 'set_mpfr_from_real_components<dd_real, 2>' \
     include/gmpfrxx_mkII/adapters/dd_real.hpp
 rg -q 'set_mpfr_from_real_components<qd_real, 4>' \
     include/gmpfrxx_mkII/adapters/qd_real.hpp
-! rg -n 'get_d\\(|mpf_get_d\\(|mpfr_get_d\\(' \
+! rg -n 'get_d\(|mpf_get_d\(|mpfr_get_d\(' \
     include/gmpfrxx_mkII/adapters
 ! rg -n 'cast_(mpfr|mpc|mpf)_to_|set_mpf_from_binary|get_mpfr_component|mpfr_get_float128' \
     include/gmpfrxx_mkII/adapters
-! rg -n 'mpfr_get_prec\\(dest\\)|adapter_accumulator_precision' \
+! rg -n 'mpfr_get_prec\(dest\)|adapter_accumulator_precision' \
     include/gmpfrxx_mkII/adapters
-! rg -n 'mpfr_class\\(const External& value, mpfr_prec_t precision\\)' \
+! rg -n 'mpfr_class\(const External& value, mpfr_prec_t precision\)' \
     include/gmpfrxx_mkII/detail/mpfr_impl.hpp
-! rg -n '#include .*mplapack|\\bmplapackint\\b' include
-! rg -n '\\b(libgmpxx|gmpxx\\.h)\\b' CMakeLists.txt cmake include
+! rg -n '#include .*mplapack|\bmplapackint\b' include
+! rg -n '\b(libgmpxx|gmpxx\.h)\b' CMakeLists.txt cmake include
 test -z "$(git diff --unified=0 "$base" -- include |
-    rg '^\\+.*(castREAL_|castINTEGER_|\\bsign\\(|\\bnint\\(|\\biceil\\(|\\bcabs1\\(|\\bpow2\\(|\\bpow4\\(|sprintnum|sprinthex)' || true)"
+    rg '^\+.*(castREAL_|castINTEGER_|\bsign\(|\bnint\(|\biceil\(|\bcabs1\(|\bpow2\(|\bpow4\(|sprintnum|sprinthex)' || true)"
 test -z "$(git diff --name-only "$base" -- include tests |
-    rg '(^|/)(edd|td)(_|/|\\.)' || true)"
+    rg '(^|/)(edd|td)(_|/|\.)' || true)"
 
 echo "== expression lifetime scanner =="
 scanner=docs/mplapack_migration/tools/scan_expression_lifetimes.py
@@ -154,6 +154,10 @@ configure_build_test()
     local build_dir="$work/build-$name"
     local install_dir="$work/install-$name"
     rm -rf "$build_dir" "$install_dir"
+    local benchmarks=ON
+    case "$name" in
+        component-*) benchmarks=OFF ;;
+    esac
     cmake -S "$root" -B "$build_dir" \
         -DCMAKE_BUILD_TYPE="$build_type" \
         -DCMAKE_CXX_COMPILER="$compiler" \
@@ -163,7 +167,7 @@ configure_build_test()
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
         -DBUILD_TESTING=ON \
         -DGMPFRXX_MKII_BUILD_EXAMPLES=ON \
-        -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF \
+        -DGMPFRXX_MKII_BUILD_BENCHMARKS="$benchmarks" \
         -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF \
         -DGMPFRXX_MKII_COMPONENTS="$components"
     rg -q '^GMPFRXX_MKII_DEPS_AUTO_FETCH:BOOL=OFF$' "$build_dir/CMakeCache.txt"
@@ -242,7 +246,7 @@ cmake -S "$p2a_work" -B "$p2a_work/build-p2a" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_FLAGS="-I$qd_include" \
     -DBUILD_TESTING=ON \
-    -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF \
+    -DGMPFRXX_MKII_BUILD_BENCHMARKS=ON \
     -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF \
     -DGMPFRXX_MKII_COMPONENTS=GMP,MPFR,MPC
 cmake --build "$p2a_work/build-p2a" -j"$jobs"
@@ -303,7 +307,7 @@ cmp -s "$archive_path" "$archive_dir/one.tar.xz"
 
 tar -tf "$archive_path" > "$archive_dir/file-list.txt"
 rg -q "^gmpfrxx_mkII\\.$version/CMakeLists.txt$" "$archive_dir/file-list.txt"
-! rg -n '(^|/)(\\.git|CMakeCache\\.txt|CMakeFiles|build[^/]*|docs/mplapack_migration)(/|$)|\\.(o|a|so|dylib|dll)$' \
+! rg -n '(^|/)(\.git|CMakeCache\.txt|CMakeFiles|build[^/]*|docs/mplapack_migration)(/|$)|\.(o|a|so|dylib|dll)$' \
     "$archive_dir/file-list.txt"
 
 clean_src="$work/archive-source"
@@ -322,7 +326,7 @@ cmake -S "$clean_src" -B "$clean_build" \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DBUILD_TESTING=ON \
     -DGMPFRXX_MKII_BUILD_EXAMPLES=ON \
-    -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF \
+    -DGMPFRXX_MKII_BUILD_BENCHMARKS=ON \
     -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF \
     -DGMPFRXX_MKII_COMPONENTS=GMP,MPFR,MPC
 rg -q '^GMPFRXX_MKII_DEPS_AUTO_FETCH:BOOL=OFF$' "$clean_build/CMakeCache.txt"
