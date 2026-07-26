@@ -5,7 +5,7 @@
 - Clean clone: `/home/docker/gmpfrxx_mkII-p2a-clean.wbx83b`
 - Branch: `topic/mplapack-compare-embed-real`
 - Dirty evidence snapshot: `/home/docker/gmpfrxx_mkII-prototype-snapshot-p2a-retry.F58Geq`
-- Snapshot SHA256SUMS: `6a9fc4d4ab1fbe4ad71a1c5f40657ff6efcb24519edcf093bf`
+- Snapshot SHA256SUMS: `6a9fc4d4ab1fbe4ad71a1c5f40657ff6efcb24519edcf09341729b5d4e2c8ad3`
 
 The failed tar capture was caused by placing `-C` after file operands. The old partial snapshot was preserved untouched. The corrected retry snapshot is read-only. No dirty-clone source file or patch was transplanted; the externally added `tests/test_mpf_mpfc_adapter.cpp`, MPFC, complex, EDD, and TD work were excluded.
 
