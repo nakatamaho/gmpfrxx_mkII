@@ -190,11 +190,16 @@ configure_build_test()
         -DGMPFRXX_MKII_COMPONENTS="$components"
     rg -q '^GMPFRXX_MKII_DEPS_AUTO_FETCH:BOOL=OFF$' "$build_dir/CMakeCache.txt"
     cmake --build "$build_dir" -j"$jobs"
+    local ctest_args=(--test-dir "$build_dir" --output-on-failure)
+    if test "$name" != gcc-release; then
+        # The disassembly contract describes optimized release binaries.
+        ctest_args+=(-E '^benchmark_disasm_equivalence$')
+    fi
     if test "$name" = clang-sanitize; then
         ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=print_stacktrace=1 \
-            ctest --test-dir "$build_dir" --output-on-failure
+            ctest "${ctest_args[@]}"
     else
-        ctest --test-dir "$build_dir" --output-on-failure
+        ctest "${ctest_args[@]}"
     fi
     cmake --install "$build_dir" --prefix "$install_dir"
 }
@@ -327,7 +332,7 @@ cmp -s "$archive_path" "$archive_dir/one.tar.xz"
 tar -tf "$archive_path" > "$archive_dir/file-list.txt"
 rg -q "^gmpfrxx_mkII\\.$version/CMakeLists.txt$" "$archive_dir/file-list.txt"
 reject_matches -n \
-    '(^|/)(\.git|CMakeCache\.txt|CMakeFiles|build[^/]*|docs/mplapack_migration)(/|$)|\.(o|a|so|dylib|dll)$' \
+    '(^|/)(\.git|CMakeCache\.txt|CMakeFiles|build(-[^/]*)?|docs/mplapack_migration)(/|$)|\.(o|a|so|dylib|dll)$' \
     "$archive_dir/file-list.txt"
 
 clean_src="$work/archive-source"
@@ -365,6 +370,8 @@ while IFS= read -r status_line; do
     path=${status_line:3}
     case "$path" in
         .gitattributes|CMakeLists.txt|README.md|SPECIFICATIONS.md|STATUS.md|\
+        cmake/toolchains/mingw64-wine.cmake|\
+        scripts/test_mingw64_wine.sh|\
         CHANGES.1.1.0.md|manual/gmpfrxx_mkII_manual.tex|tests/test_version_info.cpp|\
         include/gmpfrxx_mkII/adapters/detail/binary_float.hpp|\
         include/gmpfrxx_mkII/adapters/detail/real_components.hpp|\

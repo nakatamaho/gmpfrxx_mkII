@@ -6,12 +6,12 @@ BUILD_DIR=${1:-build-mingw64-wine}
 CTEST_REGEX=${2:-${GMPFRXX_MKII_MINGW_CTEST_REGEX:-}}
 BUILD_TYPE=${GMPFRXX_MKII_MINGW_BUILD_TYPE:-Debug}
 BUILD_TARGET=${GMPFRXX_MKII_MINGW_BUILD_TARGET:-all}
-DEPS_ROOT=${GMPFRXX_MKII_MINGW_DEPS_ROOT:-/home/docker/mplapack/external/i}
 TOOLCHAIN=${GMPFRXX_MKII_MINGW_TOOLCHAIN:-${ROOT_DIR}/cmake/toolchains/mingw64-wine.cmake}
 
 if [[ ${BUILD_DIR} != /* ]]; then
     BUILD_DIR=${ROOT_DIR}/${BUILD_DIR}
 fi
+DEPS_ROOT=${GMPFRXX_MKII_MINGW_DEPS_ROOT:-${BUILD_DIR}/mingw-deps}
 
 require_command() {
     local name=$1

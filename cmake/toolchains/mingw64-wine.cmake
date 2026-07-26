@@ -1,14 +1,14 @@
 # Toolchain for cross-building Win64 binaries on Linux and running them with Wine.
 #
 # Override GMPFRXX_MKII_MINGW_DEPS_ROOT when GMP/MPFR/MPC are installed
-# somewhere other than /home/docker/mplapack/external/i.
+# outside the build tree.
 
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_PROCESSOR x86_64)
 
 set(GMPFRXX_MKII_MINGW_TRIPLE "x86_64-w64-mingw32" CACHE STRING
     "MinGW-w64 target triple")
-set(GMPFRXX_MKII_MINGW_DEPS_ROOT "/home/docker/mplapack/external/i" CACHE PATH
+set(GMPFRXX_MKII_MINGW_DEPS_ROOT "${CMAKE_BINARY_DIR}/mingw-deps" CACHE PATH
     "Root containing GMP, MPFR, and MPC MinGW installations")
 set(GMPFRXX_MKII_DEPS_HOST "${GMPFRXX_MKII_MINGW_TRIPLE}" CACHE STRING
     "Autotools --host value for auto-built MinGW dependencies")
