@@ -1,0 +1,17 @@
+archive_filename=gmpfrxx_mkII.1.1.0.tar.xz
+archive_sha256=e0f3b813463b7a45dd493a818c60a17530075e0e647ea02227b75501c1984c73
+archive_size=15169540
+source_sha=429fd1b35e1927ebaccc9fda5aa2801300b45bf5
+version=1.1.0
+archive_path=/home/docker/gmpfrxx_mkII-p2d-artifacts/gmpfrxx_mkII.1.1.0.tar.xz
+generation_command=cmake --build /tmp/gmpfrxx-p2d-dist-portable-one --target dist -j32
+archive_entries=806
+first_generation_sha256=e0f3b813463b7a45dd493a818c60a17530075e0e647ea02227b75501c1984c73
+second_generation_sha256=e0f3b813463b7a45dd493a818c60a17530075e0e647ea02227b75501c1984c73
+byte_for_byte_reproducible=yes
+archive_clean_room_build=PASS
+archive_clean_room_tests=PASS:192/192
+archive_clean_room_install=PASS
+archive_installed_consumers=PASS
+package_relocation=PASS
+forbidden_path_audit=PASS
