@@ -1,2 +1,3 @@
 # Exclude Markdown development and benchmark report files from git-archive source distributions.
 *.md export-ignore
+docs/mplapack_migration export-ignore

@@ -207,14 +207,12 @@ public:
     }
 
     template <typename External, std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpfr_real_v<External>, int> = 0>
-    mpfr_class(const External& value) : mpfr_class(value, default_precision()) {}
-
-    template <typename External, std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpfr_real_v<External>, int> = 0>
-    mpfr_class(const External& value, mpfr_prec_t precision)
+    mpfr_class(const External& value)
     {
-        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, precision);
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, default_precision());
         using T = std::remove_cv_t<std::remove_reference_t<External>>;
-        gmpfrxx_mkII::detail::external_mpfr_real_traits<T>::set(value_, value, gmpfrxx_mkII::detail::current_eval_context(precision).rounding_mode);
+        gmpfrxx_mkII::detail::external_mpfr_real_traits<T>::set(
+            value_, value, default_rounding());
         init_guard.release();
     }
 
@@ -318,7 +316,8 @@ public:
     mpfr_class& operator=(const External& value)
     {
         using T = std::remove_cv_t<std::remove_reference_t<External>>;
-        gmpfrxx_mkII::detail::external_mpfr_real_traits<T>::set(value_, value, gmpfrxx_mkII::detail::current_eval_context(precision()).rounding_mode);
+        gmpfrxx_mkII::detail::external_mpfr_real_traits<T>::set(
+            value_, value, default_rounding());
         return *this;
     }
 

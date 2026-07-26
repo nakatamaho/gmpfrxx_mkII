@@ -32,7 +32,6 @@
 #include <gmpxx_mkII.h>
 #include <mpfrxx_mkII.h>
 
-#include <algorithm>
 #include <cstddef>
 #include <type_traits>
 
@@ -50,41 +49,19 @@ inline void set_mpfr_from_component(mpfr_t dest, Component value, mpfr_rnd_t rou
     }
 }
 
-template <typename Component>
-inline Component get_mpfr_component(mpfr_srcptr source, mpfr_rnd_t rounding_mode)
-{
-    using component_type = std::remove_cv_t<std::remove_reference_t<Component>>;
-    if constexpr (std::is_same_v<component_type, double>) {
-        return mpfr_get_d(source, rounding_mode);
-    } else {
-        return static_cast<component_type>(mpfr_get_ld(source, rounding_mode));
-    }
-}
-
-inline mpfr_prec_t adapter_accumulator_precision(mpfr_prec_t destination_precision)
-{
-    return destination_precision < 256 ? 256 : destination_precision;
-}
-
 template <typename Real, std::size_t Components>
 inline void set_mpfr_from_real_components(mpfr_t dest, const Real& value, mpfr_rnd_t rounding_mode)
 {
-    const mpfr_prec_t accumulator_precision = adapter_accumulator_precision(mpfr_get_prec(dest));
-
-    mpfr_t accumulator;
     mpfr_t component;
-    mpfr_init2(accumulator, accumulator_precision);
-    mpfr_init2(component, accumulator_precision);
-    mpfr_set_zero(accumulator, 0);
+    mpfr_init2(component, 64);
+    set_mpfr_from_component(dest, value.x[0], rounding_mode);
 
-    for (std::size_t i = 0; i < Components; ++i) {
+    for (std::size_t i = 1; i < Components; ++i) {
         set_mpfr_from_component(component, value.x[i], MPFR_RNDN);
-        mpfr_add(accumulator, accumulator, component, MPFR_RNDN);
+        mpfr_add(dest, dest, component, rounding_mode);
     }
 
-    mpfr_set(dest, accumulator, rounding_mode);
     mpfr_clear(component);
-    mpfr_clear(accumulator);
 }
 
 } // namespace detail

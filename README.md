@@ -8,6 +8,18 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 
 ## News
 
+- 2026-07-26: Prepared the `1.1.0` release candidate with opt-in one-way
+  comparison embeddings for MPLAPACK. Finite double, dd, qd, binary80,
+  binary128, GMP MPF, and corresponding complex results can be explicitly
+  materialized as owning MPFR/MPC wrapper objects. Extended sources use direct
+  component or native imports and never pass through binary64. The ordinary
+  MPFR and GMP MPF defaults remain 512 binary bits.
+
+  These adapters do not provide reverse conversion, mixed-backend arithmetic,
+  precision negotiation, edd/td support, or MPLAPACK-specific utilities.
+  See [MPLAPACK comparison adapters](docs/mplapack_comparison_adapters.md) for
+  the exact headers, supported directions, and numerical scope.
+
 - 2026-06-22: Released `v1.0.1` as a source archive,
   `gmpfrxx_mkII.1.0.1.tar.xz`
   (`sha256: c0816b3538b6b77009f714bb391cebe11abb2fdb69e07aa3bb305ff822764afb`).

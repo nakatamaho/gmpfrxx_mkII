@@ -1,0 +1,36 @@
+requirement_id	source_phase	public_header	public_symbol_or_expression	installed_test	source_tree_test	status	notes
+REAL-DOUBLE	P2A	mpfrxx_mkII.h	mpfrxx::mpfr_class(double)	p2d_consumer	test_dd_real_adapter	PASS	ordinary MPFR double import
+REAL-DD	P2A	gmpfrxx_mkII/adapters/dd_real.hpp	mpfrxx::mpfr_class(dd_real)	p2d_consumer	test_dd_real_adapter	PASS	direct two-component sum
+REAL-QD	P2A	gmpfrxx_mkII/adapters/qd_real.hpp	mpfrxx::mpfr_class(qd_real)	p2d_consumer	test_qd_real_adapter	PASS	direct four-component sum
+REAL-BINARY80	P2A	gmpfrxx_mkII/adapters/binary80_real.hpp	mpfrxx::mpfr_class(binary80_real)	p2d_consumer	test_mpf_binary_real_adapters	PASS	raw MPLAPACK value is explicitly wrapped; native mpfr_set_ld
+REAL-BINARY128	P2A	gmpfrxx_mkII/adapters/binary128_real.hpp	mpfrxx::mpfr_class(binary128_real)	p2d_consumer	test_mpf_binary_real_adapters	PASS	raw MPLAPACK value is explicitly wrapped; native mpfr_set_float128
+REAL-GMP	P2A	gmpfrxx_mkII/adapters/mpf_real.hpp	mpfrxx::mpfr_class(gmpxx::mpf_class)	p2d_consumer	test_mpf_binary_real_adapters	PASS	direct mpfr_set_f
+COMPLEX-DOUBLE	P2B	mpcxx_mkII.h	mpfrxx::mpc_class(std::complex<double>)	p2d_consumer	test_complex_compare_adapters	PASS	ordinary MPC double component import
+COMPLEX-DD	P2B	gmpfrxx_mkII/adapters/dd_complex.hpp	mpfrxx::mpc_class(dd_complex)	p2d_consumer	test_complex_compare_adapters	PASS	reuses accepted dd real component import
+COMPLEX-QD	P2B	gmpfrxx_mkII/adapters/qd_complex.hpp	mpfrxx::mpc_class(qd_complex)	p2d_consumer	test_complex_compare_adapters	PASS	reuses accepted qd real component import
+COMPLEX-BINARY80	P2B	gmpfrxx_mkII/adapters/binary80_complex.hpp	mpfrxx::mpc_class(std::complex<mplapack_binary80_t>)	p2d_consumer	test_complex_compare_adapters	PASS	native import of both components
+COMPLEX-BINARY128	P2B	gmpfrxx_mkII/adapters/binary128_complex.hpp	mpfrxx::mpc_class(std::complex<mplapack_binary128_t>)	p2d_consumer	test_complex_compare_adapters	PASS	native import of both components
+COMPLEX-GMP	P2B	gmpfrxx_mkII/adapters/mpfc_complex.hpp	mpfrxx::mpc_class(gmpxx::mpfc_class)	p2d_consumer	test_complex_compare_adapters	PASS	direct mpfr_set_f for both components
+DEFAULT-MPFR	P2C	gmpfrxx_mkII.h	mpfrxx::mpfr_class()	p2d_consumer	test_mplapack_default_512	PASS	fresh-process default is 512 bits
+DEFAULT-GMP	P2C	gmpfrxx_mkII.h	gmpxx::mpf_class()	p2d_consumer	test_mplapack_default_512	PASS	fresh-process default is 512 bits
+SAME-MPFR	P2C	gmpfrxx_mkII.h	mpfrxx::mpfr_class result = a * b + sqrt(a)	p2d_consumer	test_mplapack_wrapper_compat	PASS	owning materialization
+SAME-MPC	P2C	gmpfrxx_mkII.h	mpfrxx::mpc_class result = z * z + z	p2d_consumer	test_mplapack_wrapper_compat	PASS	owning materialization
+SAME-MPF	P2C	gmpfrxx_mkII.h	gmpxx::mpf_class result = f * g + f	p2d_consumer	test_mplapack_wrapper_compat	PASS	owning materialization
+SAME-MPFC	P2C	gmpfrxx_mkII.h	gmpxx::mpfc_class result = c * c + c	p2d_consumer	test_mplapack_wrapper_compat	PASS	owning materialization
+UTILITY-MPFR-MATH	P2C	gmpfrxx_mkII.h	sqrt(real) and abs(complex)	p2d_consumer	test_mplapack_wrapper_compat	PASS	generic upstream math
+UTILITY-MPFR-DECIMAL	P2C	gmpfrxx_mkII.h	operator<< decimal output	p2d_consumer	test_mplapack_wrapper_compat	PASS	generic stream output
+UTILITY-MPFR-HEX	P2C	gmpfrxx_mkII.h	operator<< std::hexfloat output	p2d_consumer	test_mplapack_wrapper_compat	PASS	generic stream output
+LEGACY-NAME-COLLISION	P2C	gmpfrxx_mkII.h	qualified wrapper complex names coexist	p2d_consumer	test_header_boundaries	PASS	namespace boundaries preserved
+LIFETIME-MPFR	P2C	gmpfrxx_mkII.h	owning materialization of nested MPFR expression	p2d_consumer	test_mplapack_wrapper_compat	PASS	no borrowing node escapes
+LIFETIME-MPC	P2C	gmpfrxx_mkII.h	owning materialization of nested MPC expression	p2d_consumer	test_mplapack_wrapper_compat	PASS	no borrowing node escapes
+MPLAPACK-MPFR-POW2	P2C	none	pow2(mpfrxx::mpfr_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P3 utility
+MPLAPACK-MPFR-SIGN	P2C	none	sign(mpfrxx::mpfr_class,mpfrxx::mpfr_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P3 utility
+MPLAPACK-MPFR-NINT	P2C	none	nint(mpfrxx::mpfr_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P3 utility
+MPLAPACK-MPFR-PI	P2C	none	pi(mpfrxx::mpfr_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P3 utility
+MPLAPACK-MPFR-SPRINTNUM	P2C	none	sprintnum(char*,mpfrxx::mpfr_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P3 utility
+MPLAPACK-MPFR-SPRINTHEX	P2C	none	sprinthex_mpfr_fixed(char*,size_t,mpfrxx::mpfr_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P3 utility
+MPLAPACK-GMP-POW2	P2C	none	pow2(gmpxx::mpf_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P4 utility
+MPLAPACK-GMP-SIGN	P2C	none	sign(gmpxx::mpf_class,gmpxx::mpf_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P4 utility
+MPLAPACK-GMP-NINT	P2C	none	nint(gmpxx::mpf_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P4 utility
+MPLAPACK-GMP-PI	P2C	none	pi(gmpxx::mpf_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P4 utility
+MPLAPACK-GMP-SPRINTNUM	P2C	none	sprintnum(char*,gmpxx::mpf_class)	not_applicable	test_mplapack_wrapper_compat	NOT_APPLICABLE	downstream P4 utility

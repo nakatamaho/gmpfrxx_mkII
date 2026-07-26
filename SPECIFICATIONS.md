@@ -817,3 +817,47 @@ state. Requiring MPFR TLS support makes per-thread defaults well-defined. The
 only wrapper responsibility is to apply the wrapper's initial environment
 policy to each thread's MPFR TLS state before that thread observes or mutates
 the defaults.
+
+## Opt-in MPLAPACK comparison embeddings
+
+The headers under `gmpfrxx_mkII/adapters/` provide explicit, one-way
+materialization into owning MPFR/MPC wrappers. They are not expression scalar
+leaves and do not add cross-backend arithmetic.
+
+Accepted real source families materialize into `mpfrxx::mpfr_class`:
+
+- `double` through the ordinary MPFR constructor;
+- `dd_real` and `qd_real` by direct MPFR summation of stored components;
+- binary80 and binary128 boundary wrappers through `mpfr_set_ld` and
+  `mpfr_set_float128`;
+- `gmpxx::mpf_class` through `mpfr_set_f`.
+
+Accepted complex source families materialize into `mpfrxx::mpc_class`:
+
+- `std::complex<double>`;
+- `dd_complex` and `qd_complex`;
+- the binary80 and binary128 complex source wrappers;
+- `gmpxx::mpfc_class`.
+
+Both complex components are imported independently through the corresponding
+real route. Subsequent comparison arithmetic is performed entirely in
+MPFR/MPC.
+
+The normal default is 512 binary bits for `mpfrxx::mpfr_class` and
+`gmpxx::mpf_class`; complex defaults use the corresponding ordinary component
+defaults. Adapter conversion and assignment do not inspect, compare,
+negotiate, transfer, or preserve source/destination precision metadata.
+
+Finite normalized values ordinarily produced by MPLAPACK backends are in
+scope. The dd/qd component sums are practical comparison embeddings, not
+correct-rounding or arbitrary noncanonical-expansion guarantees. Extended
+source paths must not pass through binary64.
+
+The following are not part of the adapter contract:
+
+- reverse MPFR/MPC conversion or MPFR-to-GMP conversion;
+- mixed-backend arithmetic, both operand orders, or compound assignment;
+- round-trip identity, ULP-perfect conversion, or arbitrary-precision
+  correct-rounding claims;
+- edd or td MPLAPACK support;
+- MPLAPACK headers, types, or project-specific utility functions.

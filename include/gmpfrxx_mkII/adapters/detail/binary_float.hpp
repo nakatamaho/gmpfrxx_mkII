@@ -58,7 +58,6 @@
 #if GMPFRXX_MKII_ADAPTERS_HAVE_BINARY128
 extern "C" {
 __MPFR_DECLSPEC int mpfr_set_float128(mpfr_ptr, mpfr_float128, mpfr_rnd_t);
-__MPFR_DECLSPEC mpfr_float128 mpfr_get_float128(mpfr_srcptr, mpfr_rnd_t);
 }
 #endif
 
@@ -148,32 +147,6 @@ inline void set_mpfr_from_binary80(mpfr_t dest,
     mpfr_set_ld(dest, value.value, rounding_mode);
 }
 
-inline void set_mpf_from_binary80(mpf_t dest,
-                                  const gmpfrxx_mkII::adapters::binary80_real& value)
-{
-    mpfr_t temp;
-    mpfr_init2(temp, static_cast<mpfr_prec_t>(mpf_get_prec(dest)));
-    set_mpfr_from_binary80(temp, value, MPFR_RNDN);
-    mpfr_get_f(dest, temp, MPFR_RNDN);
-    mpfr_clear(temp);
-}
-
-inline gmpfrxx_mkII::adapters::binary80_real
-cast_mpfr_to_binary80(const mpfrxx::mpfr_class& value)
-{
-    return gmpfrxx_mkII::adapters::binary80_real(
-        mpfr_get_ld(value.mpfr_data(), mpfrxx::mpfr_class::default_rounding()));
-}
-
-inline gmpfrxx_mkII::adapters::binary80_real
-cast_mpf_to_binary80(const gmpxx::mpf_class& value)
-{
-    mpfrxx::mpfr_class temp = mpfrxx::mpfr_class::with_precision(
-        static_cast<mpfr_prec_t>(mpf_get_prec(value.mpf_data())));
-    mpfr_set_f(temp.mpfr_data(), value.mpf_data(), MPFR_RNDN);
-    return cast_mpfr_to_binary80(temp);
-}
-
 #endif // GMPFRXX_MKII_ADAPTERS_HAVE_BINARY80
 
 #if GMPFRXX_MKII_ADAPTERS_HAVE_BINARY128
@@ -183,32 +156,6 @@ inline void set_mpfr_from_binary128(mpfr_t dest,
                                     mpfr_rnd_t rounding_mode)
 {
     mpfr_set_float128(dest, value.value, rounding_mode);
-}
-
-inline void set_mpf_from_binary128(mpf_t dest,
-                                   const gmpfrxx_mkII::adapters::binary128_real& value)
-{
-    mpfr_t temp;
-    mpfr_init2(temp, static_cast<mpfr_prec_t>(mpf_get_prec(dest)));
-    set_mpfr_from_binary128(temp, value, MPFR_RNDN);
-    mpfr_get_f(dest, temp, MPFR_RNDN);
-    mpfr_clear(temp);
-}
-
-inline gmpfrxx_mkII::adapters::binary128_real
-cast_mpfr_to_binary128(const mpfrxx::mpfr_class& value)
-{
-    return gmpfrxx_mkII::adapters::binary128_real(
-        mpfr_get_float128(value.mpfr_data(), mpfrxx::mpfr_class::default_rounding()));
-}
-
-inline gmpfrxx_mkII::adapters::binary128_real
-cast_mpf_to_binary128(const gmpxx::mpf_class& value)
-{
-    mpfrxx::mpfr_class temp = mpfrxx::mpfr_class::with_precision(
-        static_cast<mpfr_prec_t>(mpf_get_prec(value.mpf_data())));
-    mpfr_set_f(temp.mpfr_data(), value.mpf_data(), MPFR_RNDN);
-    return cast_mpfr_to_binary128(temp);
 }
 
 #endif // GMPFRXX_MKII_ADAPTERS_HAVE_BINARY128
