@@ -10,6 +10,7 @@ PATH	9203f6636ae17052966879811f2a4f5fde4685e7	docs/mplapack_migration/REPORT-P2D
 PATH	FINALIZATION	STATUS.md	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Repository phase record excluded by the Markdown export-ignore rule
 PATH	FINALIZATION	docs/mplapack_migration/P2D_RELEASE_ARTIFACTS.txt	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Final release-target reference excluded by export-ignore
 PATH	FINALIZATION	docs/mplapack_migration/P2D_RELEASE_TARGET_AUDIT.md	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Release-target audit excluded by export-ignore
+PATH	GATE_REPAIR	docs/mplapack_migration/P2D_GATE_SELF_MODIFICATION_AUDIT.md	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Gate idempotence audit excluded by export-ignore
 PATH	FINALIZATION	docs/mplapack_migration/P2D_RELEASE_TARGET_CLASSIFICATION.tsv	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Machine-readable classification excluded by export-ignore
 PATH	FINALIZATION	docs/mplapack_migration/RELEASE_TARGET.json	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Machine-readable release target excluded by export-ignore
 PATH	FINALIZATION	docs/mplapack_migration/REPORT-P2D-release-target-gate.log	GENERATED_EVIDENCE_ONLY	no	FOLLOWS	Generated release-target gate output excluded by export-ignore

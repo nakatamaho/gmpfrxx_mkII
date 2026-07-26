@@ -2,15 +2,33 @@
 set -euo pipefail
 
 root=$(cd "$(dirname "$0")/../.." && pwd)
-log="$root/docs/mplapack_migration/REPORT-P2D-release-target-gate.log"
-
-if test "${P2D_RELEASE_TARGET_GATE_INNER:-0}" != 1; then
-    set +e
-    P2D_RELEASE_TARGET_GATE_INNER=1 bash "$0" "$@" 2>&1 | tee "$log"
-    exit "${PIPESTATUS[0]}"
-fi
-
 cd "$root"
+
+start_head=$(git rev-parse HEAD)
+start_status=$(git status --porcelain=v1 --untracked-files=all)
+start_tree=$(git rev-parse HEAD^{tree})
+start_index_tree=$(git write-tree)
+index_file=$(git rev-parse --git-path index)
+start_index_sha=$(sha256sum "$index_file" | cut -d' ' -f1)
+test -z "$start_status"
+test "$start_index_tree" = "$start_tree"
+
+runtime_dir=$(mktemp -d \
+    "${TMPDIR:-/tmp}/gmpfrxx-p2d-release-gate.XXXXXX")
+nested_p2d=
+
+cleanup()
+{
+    local status=$?
+    trap - EXIT INT TERM
+    if test -n "$nested_p2d" && test -d "$nested_p2d"; then
+        git -C "$root" worktree remove --force "$nested_p2d" \
+            >/dev/null 2>&1 || true
+    fi
+    rm -rf "$runtime_dir"
+    exit "$status"
+}
+trap cleanup EXIT INT TERM
 
 base=6c7bce42494e2d6196ade9b90b89223436b2fe43
 previous=9203f6636ae17052966879811f2a4f5fde4685e7
@@ -21,7 +39,7 @@ expected_sha=e0f3b813463b7a45dd493a818c60a17530075e0e647ea02227b75501c1984c73
 expected_size=15169540
 jobs=${P2D_JOBS:-32}
 qd_include=${P2D_QD_INCLUDE_DIR:-/home/docker/MPLAPACK/include}
-work=${P2D_RELEASE_TARGET_WORK_ROOT:-/tmp/gmpfrxx-mkII-p2d-release-target-gate}
+work="$runtime_dir/release-target"
 record=docs/mplapack_migration/RELEASE_TARGET.json
 classification=docs/mplapack_migration/P2D_RELEASE_TARGET_CLASSIFICATION.tsv
 artifact=/home/docker/gmpfrxx_mkII-p2d-artifacts/gmpfrxx_mkII.1.1.0.tar.xz
@@ -72,6 +90,42 @@ run_consumer()
     reject_matches -q "$root/include|/generated" "$depfile"
 }
 
+write_gate_report_manifest()
+{
+    local destination=$1
+    git ls-files \
+        'docs/mplapack_migration/gate-*.sh' \
+        'docs/mplapack_migration/REPORT-*' |
+        LC_ALL=C sort |
+        while IFS= read -r path; do
+            sha256sum "$path"
+        done > "$destination"
+}
+
+verify_historical_gate_logs()
+{
+    while IFS=$'\t' read -r expected path marker; do
+        test "$(sha256sum "$path" | cut -d' ' -f1)" = "$expected"
+        git ls-files --error-unmatch "$path" >/dev/null
+        rg -q "$marker" "$path"
+    done <<'EOF'
+10ba70c0488a644acc452a28e097f234a39e299514c1808ae954ee049552ab8f	docs/mplapack_migration/REPORT-P2B-gate.log	P2B gate: PASS
+07aee31da0e810da9b880ea7a694265ffab56e7d5bf22aa5c0126f9fc45b046c	docs/mplapack_migration/REPORT-P2C-gate.log	P2C gate: PASS
+11c49904cf7dc957be6b8adc99e9790c28f048d1124a0c9d864474e73ff8c3d1	docs/mplapack_migration/REPORT-P2D-gate.log	P2D gate: PASS
+b98488a689ad8a0fb798315b38c1446cab906c055c07a4bbd251066ad0f2b4ae	docs/mplapack_migration/REPORT-P2D-release-target-gate.log	P2D release-target gate: PASS
+EOF
+    git diff --check HEAD -- \
+        docs/mplapack_migration/REPORT-P2B-gate.log \
+        docs/mplapack_migration/REPORT-P2C-gate.log \
+        docs/mplapack_migration/REPORT-P2D-gate.log \
+        docs/mplapack_migration/REPORT-P2D-release-target-gate.log
+}
+
+manifest_before="$runtime_dir/gate-report-before.sha256"
+manifest_after="$runtime_dir/gate-report-after.sha256"
+write_gate_report_manifest "$manifest_before"
+verify_historical_gate_logs
+
 echo "== repository and publication baseline =="
 test "$(git branch --show-current)" = topic/mplapack-release-hardening
 test "$(git merge-base HEAD "$base")" = "$base"
@@ -104,6 +158,25 @@ for sha in \
     test "$(awk -F '\t' -v sha="$sha" \
         'NR > 1 && $1 == "COMMIT" && $2 == sha {n++} END {print n+0}' \
         "$classification")" = 1
+done
+for sha in $(git rev-list --reverse "$previous"..HEAD); do
+    while IFS= read -r path; do
+        test -n "$path"
+        count=$(awk -F '\t' -v path="$path" \
+            'NR > 1 && $1 == "PATH" && $3 == path {n++} END {print n+0}' \
+            "$classification")
+        test "$count" -ge 1
+        class=$(awk -F '\t' -v path="$path" \
+            'NR > 1 && $1 == "PATH" && $3 == path {print $4; exit}' \
+            "$classification")
+        case "$class" in
+            MIGRATION_EVIDENCE_ONLY|GENERATED_EVIDENCE_ONLY) ;;
+            *)
+                echo "Post-P2D evidence commit has an unclassified path: $sha $path" >&2
+                exit 1
+                ;;
+        esac
+    done < <(git diff-tree --no-commit-id --name-only -r "$sha")
 done
 
 rm -rf "$work"
@@ -271,9 +344,18 @@ find "$clean_src/include" "$clean_src/tests" -type f -print |
     reject_matches '(^|/)(edd|td)(_|/|\.)'
 
 echo "== accepted P2A/P2B/P2C and P2D gates =="
-P2D_GATE_INNER=1 P2D_JOBS="$jobs" \
-    P2D_WORK_ROOT="$work/p2d-gate" \
-    bash docs/mplapack_migration/gate-P2D.sh
+nested_root="$runtime_dir/worktrees"
+mkdir -p "$nested_root"
+nested_p2d="$nested_root/p2d"
+git worktree add --detach "$nested_p2d" "$start_head"
+(
+    cd "$nested_p2d"
+    P2D_GATE_INNER=1 P2D_JOBS="$jobs" \
+        P2D_WORK_ROOT="$runtime_dir/p2d-gate" \
+        bash docs/mplapack_migration/gate-P2D.sh
+)
+git worktree remove --force "$nested_p2d"
+nested_p2d=
 
 echo "== no publication and classified worktree =="
 test "$(json_value tag_created)" = False
@@ -286,6 +368,15 @@ remote_branch_after=$(git ls-remote --heads origin \
     topic/mplapack-release-hardening)
 test "$remote_branch_after" = "$remote_branch_before"
 
+github_release_probe="$runtime_dir/github-release.txt"
+set +e
+gh api -i repos/nakatamaho/gmpfrxx_mkII/releases/tags/"$tag_name" \
+    >"$github_release_probe" 2>&1
+github_release_status=$?
+set -e
+test "$github_release_status" -ne 0
+rg -q '404|Not Found' "$github_release_probe"
+
 final_paths="$work/final-status-paths.txt"
 git status --porcelain=v1 --untracked-files=all | cut -c4- |
     LC_ALL=C sort -u > "$final_paths"
@@ -296,6 +387,19 @@ while IFS= read -r path; do
         "$classification")
     test "$count" -ge 1
 done < "$final_paths"
+
+write_gate_report_manifest "$manifest_after"
+cmp -s "$manifest_before" "$manifest_after"
+test "$(git rev-parse HEAD)" = "$start_head"
+test "$(git write-tree)" = "$start_index_tree"
+test "$(git write-tree)" = "$start_tree"
+test -z "$(git status --porcelain=v1 --untracked-files=all)"
+test "$(sha256sum "$index_file" | cut -d' ' -f1)" = \
+    "$start_index_sha"
 git diff --check
 
+echo "release_target_sha=$target"
+echo "archive_filename=gmpfrxx_mkII.$version.tar.xz"
+echo "archive_size_bytes=$expected_size"
+echo "archive_sha256=$expected_sha"
 echo "P2D release-target gate: PASS"
