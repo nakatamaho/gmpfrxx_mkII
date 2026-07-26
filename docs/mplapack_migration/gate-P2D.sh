@@ -29,6 +29,21 @@ artifact_value()
         END {if (!found) exit 1}' "$artifact_record"
 }
 
+reject_matches()
+{
+    local status
+    if rg "$@"; then
+        echo "Forbidden match found: rg $*" >&2
+        return 1
+    else
+        status=$?
+    fi
+    if test "$status" -ne 1; then
+        echo "Forbidden-match scan failed: rg $*" >&2
+        return "$status"
+    fi
+}
+
 cleanup_worktrees()
 {
     for path in "${p2a_work:-}" "${p2c_work:-}"; do
@@ -108,20 +123,23 @@ rg -q 'set_mpfr_from_real_components<dd_real, 2>' \
     include/gmpfrxx_mkII/adapters/dd_real.hpp
 rg -q 'set_mpfr_from_real_components<qd_real, 4>' \
     include/gmpfrxx_mkII/adapters/qd_real.hpp
-! rg -n 'get_d\(|mpf_get_d\(|mpfr_get_d\(' \
+reject_matches -n 'get_d\(|mpf_get_d\(|mpfr_get_d\(' \
     include/gmpfrxx_mkII/adapters
-! rg -n 'cast_(mpfr|mpc|mpf)_to_|set_mpf_from_binary|get_mpfr_component|mpfr_get_float128' \
+reject_matches -n \
+    'cast_(mpfr|mpc|mpf)_to_|set_mpf_from_binary|get_mpfr_component|mpfr_get_float128' \
     include/gmpfrxx_mkII/adapters
-! rg -n 'mpfr_get_prec\(dest\)|adapter_accumulator_precision' \
+reject_matches -n 'mpfr_get_prec\(dest\)|adapter_accumulator_precision' \
     include/gmpfrxx_mkII/adapters
-! rg -n 'mpfr_class\(const External& value, mpfr_prec_t precision\)' \
+reject_matches -n 'mpfr_class\(const External& value, mpfr_prec_t precision\)' \
     include/gmpfrxx_mkII/detail/mpfr_impl.hpp
-! rg -n '#include .*mplapack|\bmplapackint\b' include
-! rg -n '\b(libgmpxx|gmpxx\.h)\b' CMakeLists.txt cmake include
-test -z "$(git diff --unified=0 "$base" -- include |
-    rg '^\+.*(castREAL_|castINTEGER_|\bsign\(|\bnint\(|\biceil\(|\bcabs1\(|\bpow2\(|\bpow4\(|sprintnum|sprinthex)' || true)"
-test -z "$(git diff --name-only "$base" -- include tests |
-    rg '(^|/)(edd|td)(_|/|\.)' || true)"
+reject_matches -n '#include .*mplapack|\bmplapackint\b' include
+reject_matches -n \
+    '#include[[:space:]]*[<"]gmpxx\.h[>"]|(^|[[:space:]])-lgmpxx([[:space:]]|$)|\blibgmpxx\b' \
+    CMakeLists.txt cmake include
+git diff --unified=0 "$base" -- include |
+    reject_matches '^\+.*(castREAL_|castINTEGER_|\bsign\(|\bnint\(|\biceil\(|\bcabs1\(|\bpow2\(|\bpow4\(|sprintnum|sprinthex)'
+git diff --name-only "$base" -- include tests |
+    reject_matches '(^|/)(edd|td)(_|/|\.)'
 
 echo "== expression lifetime scanner =="
 scanner=docs/mplapack_migration/tools/scan_expression_lifetimes.py
@@ -205,11 +223,11 @@ run_consumer()
         "$consumer_dir/p2d_consumer"
     fi
     rg -q "$prefix/include" "$consumer_dir/compile_commands.json"
-    ! rg -q "$root/include|/generated" "$consumer_dir/compile_commands.json"
+    reject_matches -q "$root/include|/generated" "$consumer_dir/compile_commands.json"
     depfile=$(find "$consumer_dir" -type f -name '*.d' -print -quit)
     test -n "$depfile"
     rg -q "$prefix/include/gmpfrxx_mkII" "$depfile"
-    ! rg -q "$root/include|/generated" "$depfile"
+    reject_matches -q "$root/include|/generated" "$depfile"
 }
 
 echo "== GCC Debug matrix =="
@@ -274,7 +292,8 @@ relocated="$work/relocated-install"
 rm -rf "$relocated"
 cp -a "$work/install-gcc-release" "$relocated"
 run_consumer relocated "$relocated" g++ ""
-! rg -n "$root|$work/build-gcc-release|/home/docker/gmpfrxx_mkII-p2a-clean" \
+reject_matches -n \
+    "$root|$work/build-gcc-release|/home/docker/gmpfrxx_mkII-p2a-clean" \
     "$relocated/lib/cmake"
 
 echo "== release archive =="
@@ -307,7 +326,8 @@ cmp -s "$archive_path" "$archive_dir/one.tar.xz"
 
 tar -tf "$archive_path" > "$archive_dir/file-list.txt"
 rg -q "^gmpfrxx_mkII\\.$version/CMakeLists.txt$" "$archive_dir/file-list.txt"
-! rg -n '(^|/)(\.git|CMakeCache\.txt|CMakeFiles|build[^/]*|docs/mplapack_migration)(/|$)|\.(o|a|so|dylib|dll)$' \
+reject_matches -n \
+    '(^|/)(\.git|CMakeCache\.txt|CMakeFiles|build[^/]*|docs/mplapack_migration)(/|$)|\.(o|a|so|dylib|dll)$' \
     "$archive_dir/file-list.txt"
 
 clean_src="$work/archive-source"
@@ -317,7 +337,7 @@ rm -rf "$clean_src" "$clean_build" "$clean_install"
 mkdir -p "$clean_src"
 tar -xf "$archive_path" -C "$clean_src" --strip-components=1
 test ! -e "$clean_src/.git"
-! rg -a -n '/home/docker|gmpfrxx_mkII-p2a-clean|prototype-snapshot' \
+reject_matches -a -n '/home/docker|gmpfrxx_mkII-p2a-clean|prototype-snapshot' \
     "$clean_src" \
     --glob '!reference/upstream/**'
 cmake -S "$clean_src" -B "$clean_build" \
@@ -334,7 +354,8 @@ cmake --build "$clean_build" -j"$jobs"
 ctest --test-dir "$clean_build" --output-on-failure
 cmake --install "$clean_build" --prefix "$clean_install"
 run_consumer archive "$clean_install" g++ ""
-! rg -n "$clean_src|$clean_build|$root|/home/docker" "$clean_install/lib/cmake"
+reject_matches -n "$clean_src|$clean_build|$root|/home/docker" \
+    "$clean_install/lib/cmake"
 rg -q "set\\(PACKAGE_VERSION \"$version\"\\)" \
     "$clean_install/lib/cmake/gmpfrxx_mkII/gmpfrxx_mkIIConfigVersion.cmake"
 
