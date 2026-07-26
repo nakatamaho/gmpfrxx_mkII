@@ -1,0 +1,18 @@
+record_type	commit_sha	path	classification	release_affecting	relation_to_release_target	purpose
+COMMIT	94f49e61c359d65508e4c126049e70e4ed7bb681	-	RELEASE_CODE	yes	PRECEDES	P2D 1.1.0 API, version, package, tests, and release documentation
+COMMIT	518934363d9b0f3fbab36f9c99c2fddb7d9ebf7c	-	PUBLIC_HEADER	yes	PRECEDES	Clang adapter guards and P2D compiler/gate coverage
+COMMIT	6ea737d47c064a4231945fd2f18b95b297bfb046	-	RELEASE_TEST	yes	PRECEDES	Fail-closed P2D forbidden scans
+COMMIT	429fd1b35e1927ebaccc9fda5aa2801300b45bf5	-	PACKAGE_OR_DIST_METADATA	yes	TARGET	Portable MinGW paths and release gate/archive hygiene
+COMMIT	9203f6636ae17052966879811f2a4f5fde4685e7	-	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	P2D artifact record, full gate log, and report
+PATH	9203f6636ae17052966879811f2a4f5fde4685e7	docs/mplapack_migration/P2D_RELEASE_ARTIFACTS.txt	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Machine-readable P2D artifact evidence excluded by export-ignore
+PATH	9203f6636ae17052966879811f2a4f5fde4685e7	docs/mplapack_migration/REPORT-P2D-gate.log	GENERATED_EVIDENCE_ONLY	no	FOLLOWS	Generated P2D gate output excluded by export-ignore
+PATH	9203f6636ae17052966879811f2a4f5fde4685e7	docs/mplapack_migration/REPORT-P2D.md	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	P2D audit report excluded by export-ignore
+PATH	FINALIZATION	STATUS.md	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Repository phase record excluded by the Markdown export-ignore rule
+PATH	FINALIZATION	docs/mplapack_migration/P2D_RELEASE_ARTIFACTS.txt	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Final release-target reference excluded by export-ignore
+PATH	FINALIZATION	docs/mplapack_migration/P2D_RELEASE_TARGET_AUDIT.md	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Release-target audit excluded by export-ignore
+PATH	FINALIZATION	docs/mplapack_migration/P2D_RELEASE_TARGET_CLASSIFICATION.tsv	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Machine-readable classification excluded by export-ignore
+PATH	FINALIZATION	docs/mplapack_migration/RELEASE_TARGET.json	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Machine-readable release target excluded by export-ignore
+PATH	FINALIZATION	docs/mplapack_migration/REPORT-P2D-release-target-gate.log	GENERATED_EVIDENCE_ONLY	no	FOLLOWS	Generated release-target gate output excluded by export-ignore
+PATH	FINALIZATION	docs/mplapack_migration/REPORT-P2D.md	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Final target reference in migration report excluded by export-ignore
+PATH	FINALIZATION	docs/mplapack_migration/gate-P2D-release-target.sh	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Release-target audit gate excluded by export-ignore
+PATH	FINALIZATION	docs/mplapack_migration/gate-P2D.sh	MIGRATION_EVIDENCE_ONLY	no	FOLLOWS	Source-hygiene allowlist update only; excluded by export-ignore

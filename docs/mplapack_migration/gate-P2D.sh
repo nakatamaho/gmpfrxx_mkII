@@ -380,10 +380,15 @@ while IFS= read -r status_line; do
         docs/mplapack_comparison_adapters.md|\
         docs/mplapack_migration/P2A_REPAIR_AUDIT.md|\
         docs/mplapack_migration/P2D_API_AUDIT.tsv|\
+        docs/mplapack_migration/P2D_RELEASE_TARGET_AUDIT.md|\
+        docs/mplapack_migration/P2D_RELEASE_TARGET_CLASSIFICATION.tsv|\
         docs/mplapack_migration/P2D_RELEASE_ARTIFACTS.txt|\
+        docs/mplapack_migration/RELEASE_TARGET.json|\
         docs/mplapack_migration/RELEASE_VERSION.txt|\
+        docs/mplapack_migration/REPORT-P2D-release-target-gate.log|\
         docs/mplapack_migration/REPORT-P2D.md|\
         docs/mplapack_migration/REPORT-P2D-gate.log|\
+        docs/mplapack_migration/gate-P2D-release-target.sh|\
         docs/mplapack_migration/gate-P2D.sh|\
         docs/mplapack_migration/tools/p2d_consumer/CMakeLists.txt|\
         docs/mplapack_migration/tools/p2d_consumer/main.cpp|\

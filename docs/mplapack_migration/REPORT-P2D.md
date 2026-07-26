@@ -279,6 +279,13 @@ provider has no `libgmpxx` dynamic dependency.
 - Generation:
   `cmake --build /tmp/gmpfrxx-p2d-dist-portable-one --target dist -j32`
 
+The finalized release-target audit selected Case A. The future annotated tag
+`v1.1.0` and this archive both target
+`429fd1b35e1927ebaccc9fda5aa2801300b45bf5`. The later branch tip contains
+only export-ignored migration evidence. Two additional fresh-clone
+reproductions matched the recorded archive byte-for-byte. See
+`RELEASE_TARGET.json` and `P2D_RELEASE_TARGET_AUDIT.md`.
+
 The tarball is an external release-candidate artifact and is not committed.
 No tag or release was created.
 
@@ -359,4 +366,6 @@ expected final `git status --short` is empty.
 
 The accepted P2C branch was pushed. The P2D candidate is local only. No P2D
 push, tag, GitHub Release, publication, MPLAPACK repository modification, or
-P1R work was performed.
+P1R work was performed. The finalized future tag target is the release-source
+commit `429fd1b35e1927ebaccc9fda5aa2801300b45bf5`, not the later
+evidence-only branch tip.

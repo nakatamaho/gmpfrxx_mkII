@@ -24524,3 +24524,32 @@ Known issues:
   complete `190/190` CTest suite.
 - No reverse conversion, mixed arithmetic, precision metadata handling, EDD,
   TD, or P2C utility work was added.
+
+## Phase: MPLAPACK P2D release-target finalization
+
+Implemented features:
+- Audited every P2D commit and every path after the release-source commit.
+- Selected Case A: the existing release source `429fd1b35e1927ebaccc9fda5aa2801300b45bf5` remains valid.
+- Recorded future annotated tag `v1.1.0`, its exact target, archive digest, and archive size in `RELEASE_TARGET.json`.
+- Added a reproducible release-target gate and machine-readable classification.
+
+Missing features:
+- No release publication work was performed. The future tag and GitHub Release remain intentionally absent.
+
+Tests added:
+- Two independent fresh-clone archive reproductions.
+- Clean-room archive build, complete suite, install, relocation, installed consumer, package metadata, and forbidden-path checks.
+- Release-target provenance, classification, tag-convention, and no-push checks.
+
+Exact acceptance command:
+
+```sh
+P2D_JOBS=32 bash docs/mplapack_migration/gate-P2D-release-target.sh
+```
+
+Pass/fail result:
+- The authoritative archive remained byte-for-byte reproducible with SHA-256 `e0f3b813463b7a45dd493a818c60a17530075e0e647ea02227b75501c1984c73`.
+- The release target is not the evidence-only branch tip; the future tag target is `429fd1b35e1927ebaccc9fda5aa2801300b45bf5`.
+
+Known issues:
+- None. Push, tag creation, publication, and MPLAPACK P1R remain out of scope.
