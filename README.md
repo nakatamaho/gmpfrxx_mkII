@@ -18,6 +18,17 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
   when QD headers and libqd are available. Linux standalone verification passed
   with `GMPFRXX_MKII_COMPONENTS=GMP,MPFR,MPC` and 154/154 CTest tests.
 
+- 2026-07-26: Released `v1.1.0` as a source archive,
+  `gmpfrxx_mkII.1.1.0.tar.xz`
+  (`sha256: e0f3b813463b7a45dd493a818c60a17530075e0e647ea02227b75501c1984c73`).
+  This MPLAPACK migration release adds explicit one-way comparison embeddings
+  into `mpfrxx::mpfr_class` and `mpfrxx::mpc_class` from double, DD, QD,
+  binary80, binary128, and GMP MPF/MPFC values. Extended-precision comparison
+  paths avoid binary64 fallback, complex components are imported independently,
+  and the installed CMake package target `gmpfrxx_mkII::gmpfrxx_mkII` is
+  provided. The release deliberately avoids reverse MPFR/MPC-to-GMP or
+  general mixed-backend arithmetic.
+
 - 2026-06-22: Released `v1.0.1` as a source archive,
   `gmpfrxx_mkII.1.0.1.tar.xz`
   (`sha256: c0816b3538b6b77009f714bb391cebe11abb2fdb69e07aa3bb305ff822764afb`).
