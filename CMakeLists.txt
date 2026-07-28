@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(gmpfrxx_mkII VERSION 1.0.1 LANGUAGES CXX)
+project(gmpfrxx_mkII VERSION 1.2.0 LANGUAGES CXX)
 
 if(NOT DEFINED CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 17)
@@ -198,10 +198,16 @@ if(Git_FOUND)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} rev-parse --short=12 HEAD
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        OUTPUT_VARIABLE GMPFRXX_MKII_GIT_COMMIT_HASH
+        OUTPUT_VARIABLE _gmpfrxx_mkII_git_commit_hash
+        RESULT_VARIABLE _gmpfrxx_mkII_git_result
         OUTPUT_STRIP_TRAILING_WHITESPACE
         ERROR_QUIET
     )
+    if(_gmpfrxx_mkII_git_result EQUAL 0 AND
+       NOT _gmpfrxx_mkII_git_commit_hash STREQUAL "")
+        set(GMPFRXX_MKII_GIT_COMMIT_HASH
+            "${_gmpfrxx_mkII_git_commit_hash}")
+    endif()
 endif()
 
 configure_file(

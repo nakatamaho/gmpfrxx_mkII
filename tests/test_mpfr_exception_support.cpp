@@ -80,7 +80,7 @@ void test_mpfr_string_constructors_and_assignment()
 
 void test_random_argument_exceptions()
 {
-    mpfrxx::gmp_randclass rng;
+    mpfrxx::mpfr_randclass rng;
     require_throws<std::invalid_argument>([&] {
         (void)rng.get_z_bits(mpfrxx::mpz_class(-1));
     });

@@ -92,7 +92,7 @@ int main()
     destination = low + high;
     assert(destination.precision() == destination_precision);
 
-    mpfrxx::gmp_randclass random_state(gmp_randinit_default);
+    mpfrxx::mpfr_randclass random_state(gmp_randinit_default);
     const mpfrxx::mpfr_class random_value(random_state.get_fr(288));
     assert(random_value.precision() == 288);
 

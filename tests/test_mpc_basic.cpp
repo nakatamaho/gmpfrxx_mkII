@@ -144,8 +144,16 @@ int main()
     static_assert(std::is_assignable_v<mpfrxx::mpc_class&, std::string>);
     static_assert(!std::is_constructible_v<mpfrxx::mpc_class, bool>);
     static_assert(!std::is_assignable_v<mpfrxx::mpc_class&, bool>);
-    static_assert(!has_real_member_accessor<mpfrxx::mpc_class>::value,
-                  "mpc_class must not expose mutable real()/imag() component accessors");
+    static_assert(has_real_member_accessor<mpfrxx::mpc_class>::value,
+                  "mpc_class must expose value-returning real()/imag() accessors");
+    static_assert(std::is_same_v<
+                  decltype(std::declval<const mpfrxx::mpc_class&>().real()),
+                  mpfrxx::mpfr_class>);
+    static_assert(std::is_same_v<
+                  decltype(std::declval<const mpfrxx::mpc_class&>().imag()),
+                  mpfrxx::mpfr_class>);
+    require_close(constructed.real().get_d(), 1.25);
+    require_close(constructed.imag().get_d(), -2.5);
     require_close(constructed.real_to_double(), 1.25);
     require_close(constructed.imag_to_double(), -2.5);
     if (constructed.real_precision() != 192 || constructed.imag_precision() != 224) {
@@ -168,7 +176,7 @@ int main()
     require_close(from_mpz.real_to_double(), 5.0);
     require_close(from_mpz.imag_to_double(), 0.0);
 
-    mpfrxx::gmp_randclass random_state(gmp_randinit_default);
+    mpfrxx::mpfr_randclass random_state(gmp_randinit_default);
     random_state.seed(2029ul);
     const auto zero_for_random = mpfrxx::mpc_class::with_precision(96, 96, 0.0, 0.0);
     mpfrxx::mpc_class from_random_mpz = zero_for_random + random_state.get_z_bits(static_cast<mp_bitcnt_t>(32));

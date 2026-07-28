@@ -118,11 +118,15 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_si()), signed long>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_u64()), std::uint64_t>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_i64()), std::int64_t>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_integer<std::int32_t>()), std::int32_t>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const gmpxx::mpf_class&>().get_integer<std::int64_t>()), std::int64_t>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_d()), double>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_ui()), unsigned long>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_si()), signed long>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_u64()), std::uint64_t>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_i64()), std::int64_t>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_integer<std::int32_t>()), std::int32_t>::value, "");
+    static_assert(std::is_same<decltype(std::declval<const gmpxx::mpz_class&>().get_integer<std::int64_t>()), std::int64_t>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpq_class&>().get_d()), double>::value, "");
     static_assert(std::is_same<decltype(std::declval<gmpxx::mpq_class&>().get_num_mpz_t()), mpz_ptr>::value, "");
     static_assert(std::is_same<decltype(std::declval<const gmpxx::mpq_class&>().get_num_mpz_t()), mpz_srcptr>::value, "");
@@ -169,7 +173,20 @@ void test_mpz_integer_double_and_string_assignment()
         std::abort();
     }
     if (gmpxx::mpz_class(std::numeric_limits<std::int64_t>::min()).get_i64() !=
-        std::numeric_limits<std::int64_t>::min()) {
+        std::numeric_limits<std::int64_t>::min() ||
+        gmpxx::mpz_class(std::numeric_limits<std::int32_t>::min()).get_integer<std::int32_t>() !=
+        std::numeric_limits<std::int32_t>::min() ||
+        gmpxx::mpz_class(std::numeric_limits<std::int32_t>::max()).get_integer<std::int32_t>() !=
+        std::numeric_limits<std::int32_t>::max()) {
+        std::abort();
+    }
+    bool integer_overflow = false;
+    try {
+        (void)gmpxx::mpz_class("2147483648").get_integer<std::int32_t>();
+    } catch (const std::overflow_error&) {
+        integer_overflow = true;
+    }
+    if (!integer_overflow) {
         std::abort();
     }
 
@@ -422,7 +439,18 @@ void test_accessors_fit_queries_and_bool()
         std::abort();
     }
     if (gmpxx::mpf_class("-123.456").get_si() != -123L ||
+        gmpxx::mpf_class("2147483647").get_integer<std::int32_t>() !=
+            std::numeric_limits<std::int32_t>::max() ||
         gmpxx::mpf_class("999999999999999999999999999999").fits_sint_p()) {
+        std::abort();
+    }
+    bool integer_overflow = false;
+    try {
+        (void)gmpxx::mpf_class("2147483648").get_integer<std::int32_t>();
+    } catch (const std::overflow_error&) {
+        integer_overflow = true;
+    }
+    if (!integer_overflow) {
         std::abort();
     }
 

@@ -59,6 +59,7 @@ void test_compile_time_surface()
     static_assert(!std::is_copy_assignable_v<gmpxx::gmp_randclass>);
     static_assert(!std::is_move_constructible_v<gmpxx::gmp_randclass>);
     static_assert(!std::is_move_assignable_v<gmpxx::gmp_randclass>);
+    static_assert(std::is_base_of_v<gmpfrxx_mkII::random_state, gmpxx::gmp_randclass>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<gmpxx::random_mpz_expr>);
     static_assert(std::is_same_v<gmpxx::random_mpz_expr::result_type, gmpxx::mpz_class>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<gmpxx::random_mpf_expr>);
@@ -84,6 +85,19 @@ void test_deterministic_seed_with_ui()
     assert_mpf_equal(f1, f2);
     assert(mpf_sgn(f1.get_mpf_t()) >= 0);
     assert(mpf_cmp_ui(f1.get_mpf_t(), 1) < 0);
+}
+
+void test_deterministic_seed_with_u64()
+{
+    gmpxx::gmp_randclass r1;
+    gmpxx::gmp_randclass r2;
+    constexpr std::uint64_t seed = UINT64_C(0x123456789abcdef0);
+    r1.seed_u64(seed);
+    r2.seed_u64(seed);
+
+    const gmpxx::mpf_class f1 = r1.get_f(static_cast<mp_bitcnt_t>(160));
+    const gmpxx::mpf_class f2 = r2.get_f(static_cast<mp_bitcnt_t>(160));
+    assert_mpf_equal(f1, f2);
 }
 
 void test_deterministic_seed_with_mpz()
@@ -337,6 +351,7 @@ int main()
 {
     test_compile_time_surface();
     test_deterministic_seed_with_ui();
+    test_deterministic_seed_with_u64();
     test_deterministic_seed_with_mpz();
     test_z_range();
     test_z_bits_from_mpz();

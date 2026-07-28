@@ -144,6 +144,18 @@ public:
 
     Result eval() const { return Result(*this); }
 
+    template <typename R = Result>
+    auto real() const -> std::decay_t<decltype(std::declval<const R&>().real())>
+    {
+        return eval().real();
+    }
+
+    template <typename R = Result>
+    auto imag() const -> std::decay_t<decltype(std::declval<const R&>().imag())>
+    {
+        return eval().imag();
+    }
+
 private:
     Expr expr_;
 };
@@ -162,6 +174,18 @@ public:
     const Rhs& rhs() const noexcept { return rhs_; }
 
     Result eval() const { return Result(*this); }
+
+    template <typename R = Result>
+    auto real() const -> std::decay_t<decltype(std::declval<const R&>().real())>
+    {
+        return eval().real();
+    }
+
+    template <typename R = Result>
+    auto imag() const -> std::decay_t<decltype(std::declval<const R&>().imag())>
+    {
+        return eval().imag();
+    }
 
 private:
     Lhs lhs_;

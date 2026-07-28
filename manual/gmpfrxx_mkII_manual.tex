@@ -38,9 +38,9 @@
 }
 
 \newcommand{\code}[1]{\lstinline!#1!}
-\newcommand{\manualversion}{1.0.1}
-\newcommand{\manualreleasetag}{v1.0.1}
-\newcommand{\manualreleasedate}{June 19, 2026}
+\newcommand{\manualversion}{1.2.0}
+\newcommand{\manualreleasetag}{v1.2.0}
+\newcommand{\manualreleasedate}{July 28, 2026}
 
 \titleformat{\section}{\Large\bfseries}{\thesection}{0.7em}{}
 \titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.7em}{}
@@ -460,7 +460,7 @@ make a saved node lifetime-safe.
 Random getters follow the same policy as upstream \code{gmpxx.h}: they return
 generator expression nodes, not value snapshots. This includes
 \code{get_z_bits}, \code{get_z_range}, \code{get_f} on \code{gmpxx::gmp_randclass},
-the matching getters on \code{mpfrxx::gmp_randclass}, and the MPFR floating
+the matching getters on \code{mpfrxx::mpfr_randclass}, and the MPFR floating
 getters such as \code{get_fr(...)}. Evaluating such a node consumes the
 associated \code{gmp_randstate_t} and may produce a fresh value.
 
@@ -472,7 +472,7 @@ mpfrxx::mpfr_class r = state.get_fr(prec);
 mpfrxx::mpfr_class y = r + r;     // reuses one draw
 \end{lstlisting}
 
-\code{gmp_randclass} generation is not internally synchronized. Use a state from
+Random-state generation is not internally synchronized. Use a state from
 one thread at a time, or protect it with an external mutex.
 
 % ======================================================================
@@ -490,6 +490,28 @@ and \code{__int128} are intentionally outside the scalar-leaf contract and must
 not become common-type promotion backdoors. (Direct \code{mpz_class}
 construction from \code{__int128} is supported where the compiler provides it,
 but \code{__int128} is still rejected as an expression scalar leaf.)
+
+\subsection{Explicit fixed-binary import adapters}
+
+Binary80 and binary128 name numeric formats, not stable C++ native types.
+The adapter layer therefore uses semantic wrappers parameterized by the
+consumer-selected native type:
+
+\begin{lstlisting}
+auto r80 = gmpfrxx_mkII::adapters::make_binary80_source(value80);
+auto r128 = gmpfrxx_mkII::adapters::make_binary128_source(value128);
+mpfrxx::mpfr_class x80(r80);
+mpfrxx::mpfr_class x128(r128);
+\end{lstlisting}
+
+The corresponding \code{make_binary80_complex_source(real, imag)} and
+\code{make_binary128_complex_source(real, imag)} wrappers import components
+without depending on extended \code{std::complex} support.  Supported native
+types are selected by capability traits: binary80 accepts a verified
+\code{long double} or \code{_Float64x} representation; binary128 accepts
+\code{_Float128}, \code{__float128}, or a verified binary128
+\code{long double}.  Generic \code{long double} scalar promotion remains
+disabled, so the semantic wrapper is required.
 
 When \code{mpcxx_mkII.h} or \code{gmpfrxx_mkII.h} is included,
 \code{std::complex<double>} is accepted as an MPC scalar operand. It promotes

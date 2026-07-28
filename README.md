@@ -8,6 +8,16 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 
 ## News
 
+- 2026-07-28: Released `v1.2.0` as a source archive,
+  `gmpfrxx_mkII.1.2.0.tar.xz`
+  (`sha256: 2691a29b3c9cfac9f7a57dc9e194afaebe568c820e82db89dee12cf9c26ba20b`).
+  This MPLAPACK integration release adds MPFR/MPC accessors, typed integer
+  extraction helpers, MPFR exponent-range support, random-state compatibility,
+  and explicit external-value adapters for GMP, binary80, binary128, DD, and QD
+  real or complex-like values. QD/DD adapter tests remain optional and run only
+  when QD headers and libqd are available. Linux standalone verification passed
+  with `GMPFRXX_MKII_COMPONENTS=GMP,MPFR,MPC` and 154/154 CTest tests.
+
 - 2026-06-22: Released `v1.0.1` as a source archive,
   `gmpfrxx_mkII.1.0.1.tar.xz`
   (`sha256: c0816b3538b6b77009f714bb391cebe11abb2fdb69e07aa3bb305ff822764afb`).

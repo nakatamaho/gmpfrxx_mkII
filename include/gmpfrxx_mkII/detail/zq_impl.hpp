@@ -246,6 +246,27 @@ inline std::int64_t mpz_get_int64_checked(mpz_srcptr value)
     return static_cast<std::int64_t>(raw);
 }
 
+template <typename Integer,
+          std::enable_if_t<is_supported_expression_integral_v<Integer>, int> = 0>
+inline Integer mpz_get_integer_checked(mpz_srcptr value)
+{
+    using result_type = std::remove_cv_t<Integer>;
+    if constexpr (std::is_signed_v<result_type>) {
+        const std::int64_t converted = mpz_get_int64_checked(value);
+        if (converted < static_cast<std::int64_t>(std::numeric_limits<result_type>::min()) ||
+            converted > static_cast<std::int64_t>(std::numeric_limits<result_type>::max())) {
+            throw std::overflow_error("mpz value does not fit in requested integer type");
+        }
+        return static_cast<result_type>(converted);
+    } else {
+        const std::uint64_t converted = mpz_get_uint64_checked(value);
+        if (converted > static_cast<std::uint64_t>(std::numeric_limits<result_type>::max())) {
+            throw std::overflow_error("mpz value does not fit in requested integer type");
+        }
+        return static_cast<result_type>(converted);
+    }
+}
+
 inline bool gmp_read_digits_for_base(std::istream& in, std::string& token, int base)
 {
     bool saw_digit = false;
@@ -459,6 +480,92 @@ inline double mpq_get_d_checked(mpq_srcptr value)
 }
 
 } // namespace detail
+
+class random_state {
+public:
+    random_state()
+        : state_(std::make_shared<detail::gmp_randstate_holder>())
+    {
+        gmp_randinit_default(state_->state);
+        state_->mark_initialized();
+    }
+
+    explicit random_state(void (*randinit)(gmp_randstate_t))
+        : state_(std::make_shared<detail::gmp_randstate_holder>())
+    {
+        randinit(state_->state);
+        state_->mark_initialized();
+    }
+
+    random_state(int (*randinit)(gmp_randstate_t, mp_bitcnt_t), mp_bitcnt_t size)
+        : state_(std::make_shared<detail::gmp_randstate_holder>())
+    {
+        if (randinit(state_->state, size) == 0) {
+            throw std::length_error("gmp_randinit_lc_2exp_size failed");
+        }
+        state_->mark_initialized();
+    }
+
+    random_state(
+        void (*randinit)(gmp_randstate_t, const mpz_t, unsigned long, mp_bitcnt_t),
+        mpz_srcptr a,
+        unsigned long c,
+        mp_bitcnt_t m2exp)
+        : state_(std::make_shared<detail::gmp_randstate_holder>())
+    {
+        randinit(state_->state, a, c, m2exp);
+        state_->mark_initialized();
+    }
+
+    random_state(gmp_randalg_t alg, mp_bitcnt_t size)
+        : state_(std::make_shared<detail::gmp_randstate_holder>())
+    {
+        if (alg == GMP_RAND_ALG_DEFAULT || alg == GMP_RAND_ALG_LC ||
+            alg == static_cast<gmp_randalg_t>(0)) {
+            if (gmp_randinit_lc_2exp_size(state_->state, size) == 0) {
+                throw std::length_error("gmp_randinit_lc_2exp_size failed");
+            }
+            state_->mark_initialized();
+        } else {
+            throw std::invalid_argument("unsupported GMP random algorithm");
+        }
+    }
+
+    ~random_state() = default;
+
+    random_state(const random_state&) = delete;
+    random_state& operator=(const random_state&) = delete;
+    random_state(random_state&&) = delete;
+    random_state& operator=(random_state&&) = delete;
+
+    void seed(unsigned long value)
+    {
+        gmp_randseed_ui(state_->state, value);
+    }
+
+    void seed_u64(std::uint64_t value)
+    {
+        mpz_t seed_value;
+        mpz_init(seed_value);
+        mpz_import(seed_value, 1, 1, sizeof(value), 0, 0, &value);
+        gmp_randseed(state_->state, seed_value);
+        mpz_clear(seed_value);
+    }
+
+protected:
+    void seed_mpz(mpz_srcptr value)
+    {
+        gmp_randseed(state_->state, value);
+    }
+
+    const std::shared_ptr<detail::gmp_randstate_holder>& shared_state() const noexcept
+    {
+        return state_;
+    }
+
+private:
+    std::shared_ptr<detail::gmp_randstate_holder> state_;
+};
 } // namespace gmpfrxx_mkII
 
 namespace gmpxx {
@@ -730,12 +837,21 @@ public:
 
     std::uint64_t get_u64() const
     {
-        return gmpfrxx_mkII::detail::mpz_get_uint64_checked(value_);
+        return get_integer<std::uint64_t>();
     }
 
     std::int64_t get_i64() const
     {
-        return gmpfrxx_mkII::detail::mpz_get_int64_checked(value_);
+        return get_integer<std::int64_t>();
+    }
+
+    template <typename Integer,
+              std::enable_if_t<
+                  gmpfrxx_mkII::detail::is_supported_expression_integral_v<Integer>,
+                  int> = 0>
+    Integer get_integer() const
+    {
+        return gmpfrxx_mkII::detail::mpz_get_integer_checked<Integer>(value_);
     }
 
     explicit operator bool() const noexcept

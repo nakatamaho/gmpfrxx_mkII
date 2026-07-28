@@ -359,16 +359,23 @@ public:
 
     std::uint64_t get_u64() const
     {
-        gmpfrxx_mkII::detail::scoped_mpz_t integer;
-        mpz_set_f(integer.get(), value_);
-        return gmpfrxx_mkII::detail::mpz_get_uint64_checked(integer.get());
+        return get_integer<std::uint64_t>();
     }
 
     std::int64_t get_i64() const
     {
+        return get_integer<std::int64_t>();
+    }
+
+    template <typename Integer,
+              std::enable_if_t<
+                  gmpfrxx_mkII::detail::is_supported_expression_integral_v<Integer>,
+                  int> = 0>
+    Integer get_integer() const
+    {
         gmpfrxx_mkII::detail::scoped_mpz_t integer;
         mpz_set_f(integer.get(), value_);
-        return gmpfrxx_mkII::detail::mpz_get_int64_checked(integer.get());
+        return gmpfrxx_mkII::detail::mpz_get_integer_checked<Integer>(integer.get());
     }
 
     void set_prec(mp_bitcnt_t precision)
@@ -1037,54 +1044,20 @@ inline mpq_class& mpq_class::operator=(const mpf_class& value)
     return *this;
 }
 
-class gmp_randclass {
+class gmp_randclass : public gmpfrxx_mkII::random_state {
 public:
-    gmp_randclass()
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
-    {
-        gmp_randinit_default(state_->state);
-        state_->mark_initialized();
-    }
+    using gmpfrxx_mkII::random_state::random_state;
+    using gmpfrxx_mkII::random_state::seed;
 
-    explicit gmp_randclass(void (*randinit)(gmp_randstate_t))
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
-    {
-        randinit(state_->state);
-        state_->mark_initialized();
-    }
-
-    gmp_randclass(int (*randinit)(gmp_randstate_t, mp_bitcnt_t), mp_bitcnt_t size)
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
-    {
-        if (randinit(state_->state, size) == 0) {
-            throw std::length_error("gmp_randinit_lc_2exp_size failed");
-        }
-        state_->mark_initialized();
-    }
+    gmp_randclass() = default;
 
     gmp_randclass(
         void (*randinit)(gmp_randstate_t, const mpz_t, unsigned long, mp_bitcnt_t),
         const mpz_class& a,
         unsigned long c,
         mp_bitcnt_t m2exp)
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
+        : gmpfrxx_mkII::random_state(randinit, a.mpz_data(), c, m2exp)
     {
-        randinit(state_->state, a.mpz_data(), c, m2exp);
-        state_->mark_initialized();
-    }
-
-    gmp_randclass(gmp_randalg_t alg, mp_bitcnt_t size)
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
-    {
-        if (alg == GMP_RAND_ALG_DEFAULT || alg == GMP_RAND_ALG_LC ||
-            alg == static_cast<gmp_randalg_t>(0)) {
-            if (gmp_randinit_lc_2exp_size(state_->state, size) == 0) {
-                throw std::length_error("gmp_randinit_lc_2exp_size failed");
-            }
-            state_->mark_initialized();
-        } else {
-            throw std::invalid_argument("unsupported GMP random algorithm");
-        }
     }
 
     ~gmp_randclass() = default;
@@ -1094,19 +1067,14 @@ public:
     gmp_randclass(gmp_randclass&&) = delete;
     gmp_randclass& operator=(gmp_randclass&&) = delete;
 
-    void seed(unsigned long value)
-    {
-        gmp_randseed_ui(state_->state, value);
-    }
-
     void seed(const mpz_class& value)
     {
-        gmp_randseed(state_->state, value.mpz_data());
+        seed_mpz(value.mpz_data());
     }
 
     random_mpz_expr get_z_bits(mp_bitcnt_t bits)
     {
-        return random_mpz_expr(state_, bits);
+        return random_mpz_expr(shared_state(), bits);
     }
 
     random_mpz_expr get_z_bits(const mpz_class& bits)
@@ -1125,26 +1093,23 @@ public:
         if (mpz_sgn(limit.mpz_data()) <= 0) {
             throw std::invalid_argument("random range limit must be positive");
         }
-        return random_mpz_expr(state_, limit);
+        return random_mpz_expr(shared_state(), limit);
     }
 
     random_mpf_expr get_f() noexcept
     {
-        return random_mpf_expr(state_, 0, false);
+        return random_mpf_expr(shared_state(), 0, false);
     }
 
     random_mpf_expr get_f(mp_bitcnt_t precision) noexcept
     {
-        return random_mpf_expr(state_, precision, true);
+        return random_mpf_expr(shared_state(), precision, precision != 0);
     }
 
     random_mpf_expr get_f(const mpf_class& prototype) noexcept
     {
         return get_f(prototype.precision());
     }
-
-private:
-    std::shared_ptr<gmpfrxx_mkII::detail::gmp_randstate_holder> state_;
 };
 
 inline void random_mpf_expr::generate(mpf_t dest, mp_bitcnt_t destination_precision) const

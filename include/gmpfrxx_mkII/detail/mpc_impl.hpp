@@ -198,6 +198,15 @@ inline bool mpc_has_nan_component(mpc_srcptr value)
            mpfr_nan_p(mpc_imagref(value)) != 0;
 }
 
+template <typename T, typename = void>
+struct external_mpc_complex_traits {
+    static constexpr bool enabled = false;
+};
+
+template <typename T>
+inline constexpr bool is_external_mpc_complex_v =
+    external_mpc_complex_traits<std::remove_cv_t<std::remove_reference_t<T>>>::enabled;
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -245,7 +254,7 @@ public:
         init_guard.release();
     }
 
-    explicit mpc_class(const mpfr_class& real)
+    mpc_class(const mpfr_class& real)
     {
         mpc_init3(value_, real.precision(), real.precision());
         try {
@@ -256,7 +265,7 @@ public:
         }
     }
 
-    explicit mpc_class(const gmpxx::mpz_class& real)
+    mpc_class(const gmpxx::mpz_class& real)
         : mpc_class(precision_tag{},
                     mpfrxx::default_mpc_real_precision_bits(),
                     mpfrxx::default_mpc_imag_precision_bits())
@@ -264,7 +273,7 @@ public:
         set_real_value(real);
     }
 
-    explicit mpc_class(const gmpxx::mpq_class& real)
+    mpc_class(const gmpxx::mpq_class& real)
         : mpc_class(precision_tag{},
                     mpfrxx::default_mpc_real_precision_bits(),
                     mpfrxx::default_mpc_imag_precision_bits())
@@ -277,7 +286,7 @@ public:
         typename = std::enable_if_t<gmpfrxx_mkII::detail::is_supported_expression_integral_v<Scalar> ||
                                     std::is_same_v<std::remove_cv_t<Scalar>, float> ||
                                     std::is_same_v<std::remove_cv_t<Scalar>, double>>>
-    explicit mpc_class(Scalar real)
+    mpc_class(Scalar real)
         : mpc_class(precision_tag{},
                     mpfrxx::default_mpc_real_precision_bits(),
                     mpfrxx::default_mpc_imag_precision_bits())
@@ -291,6 +300,18 @@ public:
                     mpfrxx::default_mpc_imag_precision_bits())
     {
         set_complex_value(value);
+    }
+
+    template <typename External,
+              std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpc_complex_v<External>, int> = 0>
+    explicit mpc_class(const External& value)
+        : mpc_class(precision_tag{},
+                    mpfrxx::default_mpc_real_precision_bits(),
+                    mpfrxx::default_mpc_imag_precision_bits())
+    {
+        using external_type = std::remove_cv_t<std::remove_reference_t<External>>;
+        gmpfrxx_mkII::detail::external_mpc_complex_traits<external_type>::set(
+            value_, value, default_rounding());
     }
 
     template <
@@ -442,6 +463,16 @@ public:
         return *this;
     }
 
+    template <typename External,
+              std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpc_complex_v<External>, int> = 0>
+    mpc_class& operator=(const External& value)
+    {
+        using external_type = std::remove_cv_t<std::remove_reference_t<External>>;
+        gmpfrxx_mkII::detail::external_mpc_complex_traits<external_type>::set(
+            value_, value, default_rounding());
+        return *this;
+    }
+
     mpc_class& operator=(const char* text)
     {
         if (set_str(text, 0) != 0) {
@@ -525,6 +556,24 @@ public:
     double imag_get_d() const
     {
         return imag_to_double();
+    }
+
+    mpfr_class real() const
+    {
+        mpfr_class result = mpfr_class::with_precision(real_precision());
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(real_precision());
+        const int inex = mpc_real(result.mpfr_data(), value_, context.rounding_mode);
+        mpfr_check_range(result.mpfr_data(), inex, context.rounding_mode);
+        return result;
+    }
+
+    mpfr_class imag() const
+    {
+        mpfr_class result = mpfr_class::with_precision(imag_precision());
+        const auto context = gmpfrxx_mkII::detail::current_eval_context(imag_precision());
+        const int inex = mpc_imag(result.mpfr_data(), value_, context.rounding_mode);
+        mpfr_check_range(result.mpfr_data(), inex, context.rounding_mode);
+        return result;
     }
 
     int set_str(const char* text, int base = 0)

@@ -53,12 +53,13 @@ void assert_mpfr_equal(const mpfrxx::mpfr_class& lhs, const mpfrxx::mpfr_class& 
 
 void test_compile_time_surface()
 {
-    static_assert(std::is_default_constructible_v<mpfrxx::gmp_randclass>);
-    static_assert(std::is_constructible_v<mpfrxx::gmp_randclass, void (*)(gmp_randstate_t)>);
-    static_assert(!std::is_copy_constructible_v<mpfrxx::gmp_randclass>);
-    static_assert(!std::is_copy_assignable_v<mpfrxx::gmp_randclass>);
-    static_assert(!std::is_move_constructible_v<mpfrxx::gmp_randclass>);
-    static_assert(!std::is_move_assignable_v<mpfrxx::gmp_randclass>);
+    static_assert(std::is_default_constructible_v<mpfrxx::mpfr_randclass>);
+    static_assert(std::is_constructible_v<mpfrxx::mpfr_randclass, void (*)(gmp_randstate_t)>);
+    static_assert(!std::is_copy_constructible_v<mpfrxx::mpfr_randclass>);
+    static_assert(!std::is_copy_assignable_v<mpfrxx::mpfr_randclass>);
+    static_assert(!std::is_move_constructible_v<mpfrxx::mpfr_randclass>);
+    static_assert(!std::is_move_assignable_v<mpfrxx::mpfr_randclass>);
+    static_assert(std::is_base_of_v<gmpfrxx_mkII::random_state, mpfrxx::mpfr_randclass>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<gmpxx::random_mpz_expr>);
     static_assert(std::is_same_v<gmpxx::random_mpz_expr::result_type, mpfrxx::mpz_class>);
     static_assert(gmpfrxx_mkII::detail::is_expression_node_v<mpfrxx::random_mpfr_expr>);
@@ -67,8 +68,8 @@ void test_compile_time_surface()
 
 void test_deterministic_seed_with_ui()
 {
-    mpfrxx::gmp_randclass r1(gmp_randinit_default);
-    mpfrxx::gmp_randclass r2(gmp_randinit_default);
+    mpfrxx::mpfr_randclass r1(gmp_randinit_default);
+    mpfrxx::mpfr_randclass r2(gmp_randinit_default);
 
     r1.seed(12345ul);
     r2.seed(12345ul);
@@ -86,10 +87,25 @@ void test_deterministic_seed_with_ui()
     assert(mpfr_cmp_ui(f1.mpfr_data(), 1) < 0);
 }
 
+void test_deterministic_seed_with_u64_and_explicit_assignment_precision()
+{
+    mpfrxx::mpfr_randclass r1;
+    mpfrxx::mpfr_randclass r2;
+    constexpr std::uint64_t seed = UINT64_C(0x123456789abcdef0);
+    r1.seed_u64(seed);
+    r2.seed_u64(seed);
+
+    mpfrxx::mpfr_class assigned = mpfrxx::mpfr_class::with_precision(320);
+    assigned = r1.get_fr(static_cast<mpfr_prec_t>(96));
+    const mpfrxx::mpfr_class expected = r2.get_fr(static_cast<mpfr_prec_t>(96));
+    assert(assigned.get_prec() == 320);
+    assert_mpfr_equal(assigned, expected);
+}
+
 void test_deterministic_seed_with_mpz()
 {
-    mpfrxx::gmp_randclass r1;
-    mpfrxx::gmp_randclass r2;
+    mpfrxx::mpfr_randclass r1;
+    mpfrxx::mpfr_randclass r2;
     const mpfrxx::mpz_class seed("123456789012345678901234567890");
 
     r1.seed(seed);
@@ -102,7 +118,7 @@ void test_deterministic_seed_with_mpz()
 
 void test_z_range_and_bits()
 {
-    mpfrxx::gmp_randclass r(gmp_randinit_mt);
+    mpfrxx::mpfr_randclass r(gmp_randinit_mt);
     r.seed(7ul);
 
     const mpfrxx::mpz_class limit("1000000000000000000000000000000");
@@ -135,8 +151,8 @@ void test_z_range_and_bits()
 
 void test_fr_precision_forms()
 {
-    mpfrxx::gmp_randclass r1;
-    mpfrxx::gmp_randclass r2;
+    mpfrxx::mpfr_randclass r1;
+    mpfrxx::mpfr_randclass r2;
     r1.seed(17ul);
     r2.seed(17ul);
 
@@ -149,13 +165,13 @@ void test_fr_precision_forms()
     assert_mpfr_equal(by_object, by_prec);
 
     mpfrxx::set_default_precision_bits(512);
-    mpfrxx::gmp_randclass r_default;
+    mpfrxx::mpfr_randclass r_default;
     r_default.seed(19ul);
     const mpfrxx::mpfr_class by_default = r_default.get_fr();
     assert(by_default.get_prec() == mpfrxx::default_precision_bits());
 
-    mpfrxx::gmp_randclass r3;
-    mpfrxx::gmp_randclass r4;
+    mpfrxx::mpfr_randclass r3;
+    mpfrxx::mpfr_randclass r4;
     r3.seed(23ul);
     r4.seed(23ul);
 
@@ -166,7 +182,7 @@ void test_fr_precision_forms()
     assert(assigned.get_prec() == expected.get_prec());
     assert_mpfr_equal(assigned, expected);
 
-    mpfrxx::gmp_randclass r5;
+    mpfrxx::mpfr_randclass r5;
     r5.seed(431ul);
     mpfrxx::mpfr_class assigned_from_prec;
     const mpfr_prec_t assigned_old_prec = assigned_from_prec.get_prec();
@@ -179,7 +195,7 @@ void test_fr_precision_forms()
 
 void test_distribution_entry_points()
 {
-    mpfrxx::gmp_randclass r;
+    mpfrxx::mpfr_randclass r;
     r.seed(37ul);
 
     const mpfrxx::mpfr_class urandomb = r.get_fr(static_cast<mpfr_prec_t>(192));
@@ -200,8 +216,8 @@ void test_distribution_entry_points()
     assert(exponential.get_prec() == 192);
     assert(mpfr_sgn(exponential.mpfr_data()) >= 0);
 
-    mpfrxx::gmp_randclass alias_a;
-    mpfrxx::gmp_randclass alias_b;
+    mpfrxx::mpfr_randclass alias_a;
+    mpfrxx::mpfr_randclass alias_b;
     alias_a.seed(41ul);
     alias_b.seed(41ul);
     assert_mpfr_equal(
@@ -229,40 +245,40 @@ void test_distribution_entry_points()
 
 void test_lc_constructors()
 {
-    mpfrxx::gmp_randclass by_default_function(gmp_randinit_default);
+    mpfrxx::mpfr_randclass by_default_function(gmp_randinit_default);
     by_default_function.seed(37ul);
     const mpfrxx::mpz_class default_value = by_default_function.get_z_bits(static_cast<mp_bitcnt_t>(43));
     assert(mpz_sgn(default_value.mpz_data()) >= 0);
 
-    mpfrxx::gmp_randclass by_mt(gmp_randinit_mt);
+    mpfrxx::mpfr_randclass by_mt(gmp_randinit_mt);
     by_mt.seed(41ul);
     const mpfrxx::mpz_class mt_value = by_mt.get_z_bits(static_cast<mp_bitcnt_t>(47));
     assert(mpz_sgn(mt_value.mpz_data()) >= 0);
 
-    mpfrxx::gmp_randclass by_size(gmp_randinit_lc_2exp_size, static_cast<mp_bitcnt_t>(48));
+    mpfrxx::mpfr_randclass by_size(gmp_randinit_lc_2exp_size, static_cast<mp_bitcnt_t>(48));
     by_size.seed(43ul);
     const mpfrxx::mpz_class size_value = by_size.get_z_bits(static_cast<mp_bitcnt_t>(29));
     assert(mpz_sgn(size_value.mpz_data()) >= 0);
 
     const mpfrxx::mpz_class a = z(9);
-    mpfrxx::gmp_randclass by_params(gmp_randinit_lc_2exp, a, 7ul, static_cast<mp_bitcnt_t>(40));
+    mpfrxx::mpfr_randclass by_params(gmp_randinit_lc_2exp, a, 7ul, static_cast<mp_bitcnt_t>(40));
     by_params.seed(47ul);
     const mpfrxx::mpz_class params_value = by_params.get_z_bits(static_cast<mp_bitcnt_t>(31));
     assert(mpz_sgn(params_value.mpz_data()) >= 0);
 
-    mpfrxx::gmp_randclass obsolete(GMP_RAND_ALG_LC, static_cast<mp_bitcnt_t>(56));
+    mpfrxx::mpfr_randclass obsolete(GMP_RAND_ALG_LC, static_cast<mp_bitcnt_t>(56));
     obsolete.seed(53ul);
     const mpfrxx::mpz_class obsolete_value = obsolete.get_z_bits(static_cast<mp_bitcnt_t>(37));
     assert(mpz_sgn(obsolete_value.mpz_data()) >= 0);
 
-    mpfrxx::gmp_randclass obsolete_default(GMP_RAND_ALG_DEFAULT, static_cast<mp_bitcnt_t>(64));
+    mpfrxx::mpfr_randclass obsolete_default(GMP_RAND_ALG_DEFAULT, static_cast<mp_bitcnt_t>(64));
     obsolete_default.seed(59ul);
     const mpfrxx::mpz_class obsolete_default_value = obsolete_default.get_z_bits(static_cast<mp_bitcnt_t>(41));
     assert(mpz_sgn(obsolete_default_value.mpz_data()) >= 0);
 
     bool threw = false;
     try {
-        mpfrxx::gmp_randclass too_large(gmp_randinit_lc_2exp_size, static_cast<mp_bitcnt_t>(129));
+        mpfrxx::mpfr_randclass too_large(gmp_randinit_lc_2exp_size, static_cast<mp_bitcnt_t>(129));
         (void)too_large;
     } catch (const std::length_error&) {
         threw = true;
@@ -277,7 +293,7 @@ void test_z_range_statistics()
     constexpr double expected_mean = (range - 1.0) / 2.0;
     constexpr double expected_variance = (range * range - 1.0) / 12.0;
 
-    mpfrxx::gmp_randclass r(gmp_randinit_mt);
+    mpfrxx::mpfr_randclass r(gmp_randinit_mt);
     r.seed(2028ul);
     const mpfrxx::mpz_class limit(1000);
 
@@ -304,7 +320,7 @@ void test_uniform_statistics()
     constexpr double expected_mean = 0.5;
     constexpr double expected_variance = 1.0 / 12.0;
 
-    mpfrxx::gmp_randclass r(gmp_randinit_mt);
+    mpfrxx::mpfr_randclass r(gmp_randinit_mt);
     r.seed(2029ul);
 
     double sum = 0.0;
@@ -330,7 +346,7 @@ void test_normal_statistics()
     constexpr double expected_mean = 0.0;
     constexpr double expected_variance = 1.0;
 
-    mpfrxx::gmp_randclass r(gmp_randinit_mt);
+    mpfrxx::mpfr_randclass r(gmp_randinit_mt);
     r.seed(2030ul);
 
     double sum = 0.0;
@@ -355,7 +371,7 @@ void test_exponential_statistics()
     constexpr double expected_mean = 1.0;
     constexpr double expected_variance = 1.0;
 
-    mpfrxx::gmp_randclass r(gmp_randinit_mt);
+    mpfrxx::mpfr_randclass r(gmp_randinit_mt);
     r.seed(2031ul);
 
     double sum = 0.0;
@@ -376,8 +392,8 @@ void test_exponential_statistics()
 
 void test_random_mpz_expr_is_generative()
 {
-    mpfrxx::gmp_randclass r1(gmp_randinit_default);
-    mpfrxx::gmp_randclass r2(gmp_randinit_default);
+    mpfrxx::mpfr_randclass r1(gmp_randinit_default);
+    mpfrxx::mpfr_randclass r2(gmp_randinit_default);
     r1.seed(2029ul);
     r2.seed(2029ul);
 
@@ -397,7 +413,7 @@ void test_random_mpz_expr_is_generative()
 void test_random_mpz_expr_outlives_randclass()
 {
     auto expr = [] {
-        mpfrxx::gmp_randclass r(gmp_randinit_default);
+        mpfrxx::mpfr_randclass r(gmp_randinit_default);
         r.seed(31337ul);
         return r.get_z_bits(static_cast<mp_bitcnt_t>(192));
     }();
@@ -409,7 +425,7 @@ void test_random_mpz_expr_outlives_randclass()
 void test_random_mpfr_expr_outlives_randclass()
 {
     auto expr = [] {
-        mpfrxx::gmp_randclass r(gmp_randinit_default);
+        mpfrxx::mpfr_randclass r(gmp_randinit_default);
         r.seed(4242ul);
         return r.get_fr(static_cast<mpfr_prec_t>(192));
     }();
@@ -426,6 +442,7 @@ int main()
 {
     test_compile_time_surface();
     test_deterministic_seed_with_ui();
+    test_deterministic_seed_with_u64_and_explicit_assignment_precision();
     test_deterministic_seed_with_mpz();
     test_z_range_and_bits();
     test_fr_precision_forms();

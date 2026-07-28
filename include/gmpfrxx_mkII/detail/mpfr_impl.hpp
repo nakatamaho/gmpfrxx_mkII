@@ -145,6 +145,12 @@ private:
     bool active_{true};
 };
 
+template <typename T, typename = void>
+struct external_mpfr_real_traits { static constexpr bool enabled = false; };
+template <typename T>
+inline constexpr bool is_external_mpfr_real_v =
+    external_mpfr_real_traits<std::remove_cv_t<std::remove_reference_t<T>>>::enabled;
+
 } // namespace detail
 } // namespace gmpfrxx_mkII
 
@@ -197,6 +203,16 @@ public:
         const auto context = gmpfrxx_mkII::detail::current_eval_context(precision);
         gmpfrxx_mkII::detail::mpq_require_arithmetic_ready(value.mpq_data());
         mpfr_set_q(value_, value.mpq_data(), context.rounding_mode);
+        init_guard.release();
+    }
+
+    template <typename External, std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpfr_real_v<External>, int> = 0>
+    mpfr_class(const External& value)
+    {
+        gmpfrxx_mkII::detail::scoped_mpfr_init init_guard(value_, default_precision());
+        using T = std::remove_cv_t<std::remove_reference_t<External>>;
+        gmpfrxx_mkII::detail::external_mpfr_real_traits<T>::set(
+            value_, value, default_rounding());
         init_guard.release();
     }
 
@@ -293,6 +309,15 @@ public:
             const auto context = gmpfrxx_mkII::detail::current_eval_context(this->precision());
             mpfr_set(value_, other.value_, context.rounding_mode);
         }
+        return *this;
+    }
+
+    template <typename External, std::enable_if_t<gmpfrxx_mkII::detail::is_external_mpfr_real_v<External>, int> = 0>
+    mpfr_class& operator=(const External& value)
+    {
+        using T = std::remove_cv_t<std::remove_reference_t<External>>;
+        gmpfrxx_mkII::detail::external_mpfr_real_traits<T>::set(
+            value_, value, default_rounding());
         return *this;
     }
 
@@ -394,6 +419,16 @@ public:
         return precision();
     }
 
+    static mpfr_exp_t get_emin() noexcept
+    {
+        return mpfr_get_emin();
+    }
+
+    static mpfr_exp_t get_emax() noexcept
+    {
+        return mpfr_get_emax();
+    }
+
     double to_double() const
     {
         return mpfr_get_d(value_, default_rounding());
@@ -416,16 +451,23 @@ public:
 
     std::uint64_t get_u64() const
     {
-        gmpfrxx_mkII::detail::scoped_mpz_t integer;
-        mpfr_get_z(integer.get(), value_, default_rounding());
-        return gmpfrxx_mkII::detail::mpz_get_uint64_checked(integer.get());
+        return get_integer<std::uint64_t>();
     }
 
     std::int64_t get_i64() const
     {
+        return get_integer<std::int64_t>();
+    }
+
+    template <typename Integer,
+              std::enable_if_t<
+                  gmpfrxx_mkII::detail::is_supported_expression_integral_v<Integer>,
+                  int> = 0>
+    Integer get_integer() const
+    {
         gmpfrxx_mkII::detail::scoped_mpz_t integer;
         mpfr_get_z(integer.get(), value_, default_rounding());
-        return gmpfrxx_mkII::detail::mpz_get_int64_checked(integer.get());
+        return gmpfrxx_mkII::detail::mpz_get_integer_checked<Integer>(integer.get());
     }
 
     bool fits_sint_p() const
@@ -599,6 +641,11 @@ public:
         }
 
         return result;
+    }
+
+    explicit operator mpfr_ptr() noexcept
+    {
+        return value_;
     }
 
     const mpfr_t& mpfr_data() const noexcept
@@ -1261,7 +1308,7 @@ inline std::istream& operator>>(std::istream& in, mpfr_class& value)
     return in;
 }
 
-class gmp_randclass;
+class mpfr_randclass;
 
 enum class random_mpfr_distribution {
     urandomb,
@@ -1300,76 +1347,37 @@ private:
     bool has_requested_precision_;
 };
 
-class gmp_randclass {
+class mpfr_randclass : public gmpfrxx_mkII::random_state {
 public:
-    gmp_randclass()
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
-    {
-        gmp_randinit_default(state_->state);
-        state_->mark_initialized();
-    }
+    using gmpfrxx_mkII::random_state::random_state;
+    using gmpfrxx_mkII::random_state::seed;
 
-    explicit gmp_randclass(void (*randinit)(gmp_randstate_t))
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
-    {
-        randinit(state_->state);
-        state_->mark_initialized();
-    }
+    mpfr_randclass() = default;
 
-    gmp_randclass(int (*randinit)(gmp_randstate_t, mp_bitcnt_t), mp_bitcnt_t size)
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
-    {
-        if (randinit(state_->state, size) == 0) {
-            throw std::length_error("gmp_randinit_lc_2exp_size failed");
-        }
-        state_->mark_initialized();
-    }
-
-    gmp_randclass(
+    mpfr_randclass(
         void (*randinit)(gmp_randstate_t, const mpz_t, unsigned long, mp_bitcnt_t),
         const gmpxx::mpz_class& a,
         unsigned long c,
         mp_bitcnt_t m2exp)
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
+        : gmpfrxx_mkII::random_state(randinit, a.mpz_data(), c, m2exp)
     {
-        randinit(state_->state, a.mpz_data(), c, m2exp);
-        state_->mark_initialized();
     }
 
-    gmp_randclass(gmp_randalg_t alg, mp_bitcnt_t size)
-        : state_(std::make_shared<gmpfrxx_mkII::detail::gmp_randstate_holder>())
-    {
-        if (alg == GMP_RAND_ALG_DEFAULT || alg == GMP_RAND_ALG_LC ||
-            alg == static_cast<gmp_randalg_t>(0)) {
-            if (gmp_randinit_lc_2exp_size(state_->state, size) == 0) {
-                throw std::length_error("gmp_randinit_lc_2exp_size failed");
-            }
-            state_->mark_initialized();
-        } else {
-            throw std::invalid_argument("unsupported GMP random algorithm");
-        }
-    }
+    ~mpfr_randclass() = default;
 
-    ~gmp_randclass() = default;
-
-    gmp_randclass(const gmp_randclass&) = delete;
-    gmp_randclass& operator=(const gmp_randclass&) = delete;
-    gmp_randclass(gmp_randclass&&) = delete;
-    gmp_randclass& operator=(gmp_randclass&&) = delete;
-
-    void seed(unsigned long value)
-    {
-        gmp_randseed_ui(state_->state, value);
-    }
+    mpfr_randclass(const mpfr_randclass&) = delete;
+    mpfr_randclass& operator=(const mpfr_randclass&) = delete;
+    mpfr_randclass(mpfr_randclass&&) = delete;
+    mpfr_randclass& operator=(mpfr_randclass&&) = delete;
 
     void seed(const gmpxx::mpz_class& value)
     {
-        gmp_randseed(state_->state, value.mpz_data());
+        seed_mpz(value.mpz_data());
     }
 
     gmpxx::random_mpz_expr get_z_bits(mp_bitcnt_t bits)
     {
-        return gmpxx::random_mpz_expr(state_, bits);
+        return gmpxx::random_mpz_expr(shared_state(), bits);
     }
 
     gmpxx::random_mpz_expr get_z_bits(const gmpxx::mpz_class& bits)
@@ -1388,17 +1396,17 @@ public:
         if (mpz_sgn(limit.mpz_data()) <= 0) {
             throw std::invalid_argument("random range limit must be positive");
         }
-        return gmpxx::random_mpz_expr(state_, limit);
+        return gmpxx::random_mpz_expr(shared_state(), limit);
     }
 
     random_mpfr_expr get_fr() noexcept
     {
-        return random_mpfr_expr(state_, random_mpfr_distribution::urandomb, 0, false);
+        return random_mpfr_expr(shared_state(), random_mpfr_distribution::urandomb, 0, false);
     }
 
     random_mpfr_expr get_fr(mpfr_prec_t precision) noexcept
     {
-        return random_mpfr_expr(state_, random_mpfr_distribution::urandomb, precision, true);
+        return random_mpfr_expr(shared_state(), random_mpfr_distribution::urandomb, precision, precision != 0);
     }
 
     random_mpfr_expr get_fr(const mpfr_class& prototype) noexcept
@@ -1418,12 +1426,12 @@ public:
 
     random_mpfr_expr get_fr_uniform() noexcept
     {
-        return random_mpfr_expr(state_, random_mpfr_distribution::uniform, 0, false);
+        return random_mpfr_expr(shared_state(), random_mpfr_distribution::uniform, 0, false);
     }
 
     random_mpfr_expr get_fr_uniform(mpfr_prec_t precision) noexcept
     {
-        return random_mpfr_expr(state_, random_mpfr_distribution::uniform, precision, true);
+        return random_mpfr_expr(shared_state(), random_mpfr_distribution::uniform, precision, precision != 0);
     }
 
     random_mpfr_expr get_fr_urandom() noexcept
@@ -1438,12 +1446,12 @@ public:
 
     random_mpfr_expr get_fr_normal() noexcept
     {
-        return random_mpfr_expr(state_, random_mpfr_distribution::normal, 0, false);
+        return random_mpfr_expr(shared_state(), random_mpfr_distribution::normal, 0, false);
     }
 
     random_mpfr_expr get_fr_normal(mpfr_prec_t precision) noexcept
     {
-        return random_mpfr_expr(state_, random_mpfr_distribution::normal, precision, true);
+        return random_mpfr_expr(shared_state(), random_mpfr_distribution::normal, precision, precision != 0);
     }
 
     random_mpfr_expr get_fr_nrandom() noexcept
@@ -1458,12 +1466,12 @@ public:
 
     random_mpfr_expr get_fr_exponential() noexcept
     {
-        return random_mpfr_expr(state_, random_mpfr_distribution::exponential, 0, false);
+        return random_mpfr_expr(shared_state(), random_mpfr_distribution::exponential, 0, false);
     }
 
     random_mpfr_expr get_fr_exponential(mpfr_prec_t precision) noexcept
     {
-        return random_mpfr_expr(state_, random_mpfr_distribution::exponential, precision, true);
+        return random_mpfr_expr(shared_state(), random_mpfr_distribution::exponential, precision, precision != 0);
     }
 
     random_mpfr_expr get_fr_erandom() noexcept
@@ -1475,29 +1483,38 @@ public:
     {
         return get_fr_exponential(precision);
     }
-
-private:
-    std::shared_ptr<gmpfrxx_mkII::detail::gmp_randstate_holder> state_;
 };
 
 inline void random_mpfr_expr::generate(mpfr_t dest, mpfr_rnd_t rnd) const
 {
-    switch (distribution_) {
-    case random_mpfr_distribution::urandomb:
-        if (mpfr_urandomb(dest, state_->state) != 0) {
-            throw std::runtime_error("mpfr_urandomb failed");
+    const auto generate_into = [&](mpfr_ptr target) {
+        switch (distribution_) {
+        case random_mpfr_distribution::urandomb:
+            if (mpfr_urandomb(target, state_->state) != 0) {
+                throw std::runtime_error("mpfr_urandomb failed");
+            }
+            break;
+        case random_mpfr_distribution::uniform:
+            mpfr_urandom(target, state_->state, rnd);
+            break;
+        case random_mpfr_distribution::normal:
+            mpfr_nrandom(target, state_->state, rnd);
+            break;
+        case random_mpfr_distribution::exponential:
+            mpfr_erandom(target, state_->state, rnd);
+            break;
         }
-        break;
-    case random_mpfr_distribution::uniform:
-        mpfr_urandom(dest, state_->state, rnd);
-        break;
-    case random_mpfr_distribution::normal:
-        mpfr_nrandom(dest, state_->state, rnd);
-        break;
-    case random_mpfr_distribution::exponential:
-        mpfr_erandom(dest, state_->state, rnd);
-        break;
+    };
+
+    if (has_requested_precision_ && mpfr_get_prec(dest) != requested_precision_) {
+        gmpfrxx_mkII::detail::require_valid_mpfr_precision(requested_precision_);
+        mpfr_t value;
+        gmpfrxx_mkII::detail::scoped_mpfr_init value_guard(value, requested_precision_);
+        generate_into(value);
+        mpfr_set(dest, value, rnd);
+        return;
     }
+    generate_into(dest);
 }
 
 } // namespace mpfrxx
