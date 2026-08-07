@@ -139,10 +139,10 @@ void test_complex_binary128()
 #if GMPFRXX_MKII_ADAPTERS_LDBL_IS_BINARY128
     test_complex_binary128_native<long double>();
 #endif
-#if GMPFRXX_MKII_ADAPTERS_HAVE_ISO_FLOAT128
+#if GMPFRXX_MKII_ADAPTERS_HAVE_ISO_FLOAT128 && GMPFRXX_MKII_ADAPTERS_HAVE_MPFR_FLOAT128
     test_complex_binary128_native<_Float128>();
 #endif
-#if GMPFRXX_MKII_ADAPTERS_HAVE_GNU_FLOAT128
+#if GMPFRXX_MKII_ADAPTERS_HAVE_GNU_FLOAT128 && GMPFRXX_MKII_ADAPTERS_HAVE_MPFR_FLOAT128
     test_complex_binary128_native<__float128>();
 #endif
 }

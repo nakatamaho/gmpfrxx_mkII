@@ -46,7 +46,7 @@ int main()
     }
 #endif
 
-#if GMPFRXX_MKII_ADAPTERS_HAVE_GNU_FLOAT128
+#if GMPFRXX_MKII_ADAPTERS_HAVE_GNU_FLOAT128 && GMPFRXX_MKII_ADAPTERS_HAVE_MPFR_FLOAT128
     {
         const __float128 value = static_cast<__float128>(1.0L) +
                                  static_cast<__float128>(0x1p-100L);
@@ -57,7 +57,7 @@ int main()
     }
 #endif
 
-#if GMPFRXX_MKII_ADAPTERS_HAVE_ISO_FLOAT128
+#if GMPFRXX_MKII_ADAPTERS_HAVE_ISO_FLOAT128 && GMPFRXX_MKII_ADAPTERS_HAVE_MPFR_FLOAT128
     {
         const _Float128 value = static_cast<_Float128>(1.0L) +
                                 static_cast<_Float128>(0x1p-100L);

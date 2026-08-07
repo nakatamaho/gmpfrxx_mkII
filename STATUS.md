@@ -1,3 +1,43 @@
+## Phase: 1.3.0 release preparation
+
+Implemented features:
+- Bumped release metadata from `1.2.0` to `1.3.0`.
+- Integrated MPLAPACK's local binary128 adapter test guard into upstream tests.
+- Guarded `_Float128` and `__float128` binary128 adapter test cases with
+  `GMPFRXX_MKII_ADAPTERS_HAVE_MPFR_FLOAT128`.
+- Added `CHANGES.1.3.0.md` for the maintenance release.
+
+Missing features:
+- No public API additions are included in this release.
+- No binary128 conversion fallback is added when MPFR does not provide
+  `mpfr_set_float128` / `mpfr_get_float128`; tests now avoid instantiating
+  unsupported conversion paths.
+
+Tests added:
+- No new test executables were added; existing binary adapter tests were
+  hardened with feature guards.
+
+Exact commands run:
+- `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build-release -j$(nproc)`
+- `ctest --test-dir build-release --output-on-failure`
+- `cmake -S . -B build-no-mpfr-float128 -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMP_INCLUDE_DIR=$PWD/build-release/_deps/gmpfrxx_mkii/GMP/include -DGMP_LIBRARY=$PWD/build-release/_deps/gmpfrxx_mkii/GMP/lib/libgmp.a -DMPFR_INCLUDE_DIR=$PWD/build-release/_deps/gmpfrxx_mkii/MPFR/include -DMPFR_LIBRARY=$PWD/build-release/_deps/gmpfrxx_mkii/MPFR/lib/libmpfr.a -DMPC_INCLUDE_DIR=$PWD/build-release/_deps/gmpfrxx_mkii/MPC/include -DMPC_LIBRARY=$PWD/build-release/_deps/gmpfrxx_mkii/MPC/lib/libmpc.a -DCMAKE_CXX_FLAGS='-U__SIZEOF_FLOAT128__'`
+- `cmake --build build-no-mpfr-float128 --target test_mpf_binary_real_adapters test_complex_compare_adapters -j$(nproc)`
+- `ctest --test-dir build-no-mpfr-float128 -R 'test_(mpf_binary_real_adapters|complex_compare_adapters)' --output-on-failure`
+
+Pass/fail result:
+- Release configure/build: PASS.
+- Full Release CTest: PASS, 189/189 tests passed.
+- Focused no-`__SIZEOF_FLOAT128__` adapter CTest: PASS, 2/2 tests passed.
+
+Known issues:
+- The default dependency auto-fetch path was used for the first Release
+  configure because this host does not have GMP/MPFR/MPC development headers
+  installed.
+- The no-`__SIZEOF_FLOAT128__` check simulates the unsupported MPFR float128
+  adapter-test path; platform release jobs remain the final cross-environment
+  check.
+
 ## Phase: C++ standard dialect compatibility check
 
 Implemented features:
