@@ -24,11 +24,22 @@ Exact commands run:
 - `cmake -S . -B build-no-mpfr-float128 -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMP_INCLUDE_DIR=$PWD/build-release/_deps/gmpfrxx_mkii/GMP/include -DGMP_LIBRARY=$PWD/build-release/_deps/gmpfrxx_mkii/GMP/lib/libgmp.a -DMPFR_INCLUDE_DIR=$PWD/build-release/_deps/gmpfrxx_mkii/MPFR/include -DMPFR_LIBRARY=$PWD/build-release/_deps/gmpfrxx_mkii/MPFR/lib/libmpfr.a -DMPC_INCLUDE_DIR=$PWD/build-release/_deps/gmpfrxx_mkii/MPC/include -DMPC_LIBRARY=$PWD/build-release/_deps/gmpfrxx_mkii/MPC/lib/libmpc.a -DCMAKE_CXX_FLAGS='-U__SIZEOF_FLOAT128__'`
 - `cmake --build build-no-mpfr-float128 --target test_mpf_binary_real_adapters test_complex_compare_adapters -j$(nproc)`
 - `ctest --test-dir build-no-mpfr-float128 -R 'test_(mpf_binary_real_adapters|complex_compare_adapters)' --output-on-failure`
+- `cmake --build build-release --target dist`
+- `sha256sum build-release/gmpfrxx_mkII.1.3.0.tar.xz`
+- `git push origin main`
+- `git tag -a v1.3.0 0dc97b9 -m "gmpfrxx_mkII 1.3.0"`
+- `git push origin v1.3.0`
+- `gh release create v1.3.0 build-release/gmpfrxx_mkII.1.3.0.tar.xz --repo nakatamaho/gmpfrxx_mkII --title "gmpfrxx_mkII 1.3.0" --notes-file CHANGES.1.3.0.md`
+- `gh release download v1.3.0 --repo nakatamaho/gmpfrxx_mkII --dir "$tmp" --pattern 'gmpfrxx_mkII.1.3.0.tar.xz'`
+- `sha256sum "$tmp/gmpfrxx_mkII.1.3.0.tar.xz"`
 
 Pass/fail result:
 - Release configure/build: PASS.
 - Full Release CTest: PASS, 189/189 tests passed.
 - Focused no-`__SIZEOF_FLOAT128__` adapter CTest: PASS, 2/2 tests passed.
+- Source archive creation: PASS,
+  `sha256: 268b2eac0442f0a704adb3cd51ae90930e66b7c38518e7422ff361a09949c4bd`.
+- GitHub release upload/download checksum verification: PASS.
 
 Known issues:
 - The default dependency auto-fetch path was used for the first Release

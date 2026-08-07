@@ -8,6 +8,15 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 
 ## News
 
+- 2026-08-07: Released `v1.3.0` as a source archive,
+  `gmpfrxx_mkII.1.3.0.tar.xz`
+  (`sha256: 268b2eac0442f0a704adb3cd51ae90930e66b7c38518e7422ff361a09949c4bd`).
+  This MPLAPACK integration maintenance release guards binary128 adapter tests
+  so `_Float128` and `__float128` paths are not instantiated when the compiler
+  exposes native binary128 types but the linked MPFR build does not provide
+  `mpfr_set_float128` / `mpfr_get_float128`. Linux Release verification passed
+  with `GMPFRXX_MKII_COMPONENTS=GMP,MPFR,MPC` and 189/189 CTest tests.
+
 - 2026-07-28: Released `v1.2.0` as a source archive,
   `gmpfrxx_mkII.1.2.0.tar.xz`
   (`sha256: 2691a29b3c9cfac9f7a57dc9e194afaebe568c820e82db89dee12cf9c26ba20b`).
