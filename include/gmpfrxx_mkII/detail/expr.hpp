@@ -29,6 +29,7 @@
 #ifndef GMPFRXX_MKII_DETAIL_EXPR_HPP
 #define GMPFRXX_MKII_DETAIL_EXPR_HPP
 
+#include <gmpfrxx_mkII/detail/config.hpp>
 #include <gmpfrxx_mkII/detail/type_traits.hpp>
 
 #include <optional>
@@ -57,7 +58,7 @@ struct shr_op {};
 // are included together.
 
 template <typename T>
-class object_leaf {
+class GMPFRXX_MKII_HIDDEN object_leaf {
 public:
     using result_type = T;
 
@@ -104,7 +105,7 @@ private:
 };
 
 template <typename T>
-class borrowed_object_leaf {
+class GMPFRXX_MKII_HIDDEN borrowed_object_leaf {
 public:
     using result_type = T;
 
@@ -117,7 +118,7 @@ private:
 };
 
 template <typename T, typename Result>
-class scalar_leaf {
+class GMPFRXX_MKII_HIDDEN scalar_leaf {
 public:
     using value_type = T;
     using result_type = Result;
@@ -131,7 +132,7 @@ private:
 };
 
 template <typename Op, typename Expr, typename Result>
-class [[nodiscard]] unary_expr {
+class [[nodiscard]] GMPFRXX_MKII_HIDDEN unary_expr {
 public:
     using op_type = Op;
     using expr_type = Expr;
@@ -161,7 +162,7 @@ private:
 };
 
 template <typename Op, typename Lhs, typename Rhs, typename Result>
-class [[nodiscard]] binary_expr {
+class [[nodiscard]] GMPFRXX_MKII_HIDDEN binary_expr {
 public:
     using op_type = Op;
     using lhs_type = Lhs;

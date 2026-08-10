@@ -24561,3 +24561,37 @@ Known issues:
 - Wine printed `XDG_RUNTIME_DIR is invalid or not set in the environment` during startup, but the build and CTest run completed successfully.
 - The MinGW/Wine MPC install does not provide `mpc_buildopt_tls_p()`, reported by CMake as `has API=0`; this was not fatal and matches the existing runner behavior.
 - The Linux Release build used the auto-fetch dependency path because system GMP/MPFR/MPC packages were not found in this container.
+## Phase: 1.3.1 release preparation
+
+Implemented features:
+- Added portable hidden visibility for internal expression-template node types.
+- Applied hidden visibility to expression-building operators for the GMP, MPFR,
+  and MPC-backed numeric families.
+- Bumped release metadata from `1.3.0` to `1.3.1`.
+- Added `CHANGES.1.3.1.md` for the shared-library compatibility release.
+
+Missing features:
+- No public API additions are included in this release.
+- MSVC has no equivalent annotation in this change; the portability macro is
+  empty there because the Mach-O/ELF weak-export issue does not apply directly.
+
+Tests added:
+- No new test executable was added; the complete existing CTest suite and the
+  MPLAPACK integration reproducer are used for release verification.
+
+Exact commands run:
+- `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_COMPONENTS=GMP,MPFR,MPC ...`
+- `cmake --build build-release -j8`
+- `ctest --test-dir build-release --output-on-failure -j8`
+- `cmake --build build-release --target dist`
+
+Pass/fail result:
+- Standalone AppleClang 17 Release build: PASS.
+- Full Release CTest: PASS, 189/189 tests passed.
+- Version 1.3.1 manual PDF generation: PASS.
+- Source archive creation and checksum verification: pending.
+- Git tag and GitHub release publication: pending.
+
+Known issues:
+- The local GitHub CLI is unavailable; release publication may require the
+  GitHub REST API or installation of `gh` after the tag and archive are pushed.

@@ -48,6 +48,14 @@
 #define GMPXX_MKII_API
 #endif
 
+#ifndef GMPFRXX_MKII_HIDDEN
+#if defined(__GNUC__) || defined(__clang__)
+#define GMPFRXX_MKII_HIDDEN __attribute__((visibility("hidden")))
+#else
+#define GMPFRXX_MKII_HIDDEN
+#endif
+#endif
+
 #ifndef GMPFRXX_MKII_ALWAYS_INLINE
 #if defined(_MSC_VER)
 #define GMPFRXX_MKII_ALWAYS_INLINE __forceinline
@@ -66,7 +74,7 @@
 #if __has_include(<gmpfrxx_mkII/detail/version.hpp>)
 #include <gmpfrxx_mkII/detail/version.hpp>
 #else
-#define GMPFRXX_MKII_VERSION "1.3.0"
+#define GMPFRXX_MKII_VERSION "1.3.1"
 #define GMPFRXX_MKII_GIT_COMMIT_HASH "unknown"
 
 namespace gmpfrxx_mkII {
