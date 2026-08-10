@@ -8,6 +8,16 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 
 ## News
 
+- 2026-08-10: Released `v1.3.1` as a source archive,
+  `gmpfrxx_mkII.1.3.1.tar.xz`
+  (`sha256: 31232bb11c11e0b2c36d82e7564971bcad5077cc5d3de3361111461e36baafb0`).
+  This shared-library compatibility release gives internal expression nodes and
+  expression-building operators portable hidden visibility. It prevents weak
+  expression-template instantiations from being coalesced across Mach-O dylib
+  boundaries while leaving the public numeric APIs unchanged. AppleClang 17
+  Release verification passed 189/189 CTest tests, and MPLAPACK's GMP SVD
+  reproducer completed all 10,260 tests without the previous crash.
+
 - 2026-08-07: Released `v1.3.0` as a source archive,
   `gmpfrxx_mkII.1.3.0.tar.xz`
   (`sha256: 268b2eac0442f0a704adb3cd51ae90930e66b7c38518e7422ff361a09949c4bd`).

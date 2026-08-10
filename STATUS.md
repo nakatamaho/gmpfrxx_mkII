@@ -24584,13 +24584,20 @@ Exact commands run:
 - `cmake --build build-release -j8`
 - `ctest --test-dir build-release --output-on-failure -j8`
 - `cmake --build build-release --target dist`
+- `shasum -a 256 build-release/gmpfrxx_mkII.1.3.1.tar.xz`
+- `git push origin main`
+- `git tag -a v1.3.1 3e7a0a2 -m "gmpfrxx_mkII 1.3.1"`
+- `git push origin v1.3.1`
 
 Pass/fail result:
 - Standalone AppleClang 17 Release build: PASS.
 - Full Release CTest: PASS, 189/189 tests passed.
 - Version 1.3.1 manual PDF generation: PASS.
-- Source archive creation and checksum verification: pending.
-- Git tag and GitHub release publication: pending.
+- Source archive creation: PASS,
+  `sha256: 31232bb11c11e0b2c36d82e7564971bcad5077cc5d3de3361111461e36baafb0`.
+- Release commit and annotated Git tag publication: PASS.
+- GitHub Release asset publication: pending because this host has SSH GitHub
+  authentication but no GitHub API token or GitHub CLI.
 
 Known issues:
 - The local GitHub CLI is unavailable; release publication may require the
