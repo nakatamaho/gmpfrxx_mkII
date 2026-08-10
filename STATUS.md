@@ -24588,6 +24588,9 @@ Exact commands run:
 - `git push origin main`
 - `git tag -a v1.3.1 3e7a0a2 -m "gmpfrxx_mkII 1.3.1"`
 - `git push origin v1.3.1`
+- `gh release create v1.3.1 build-release/gmpfrxx_mkII.1.3.1.tar.xz --repo nakatamaho/gmpfrxx_mkII --title "gmpfrxx_mkII 1.3.1" --notes-file CHANGES.1.3.1.md --verify-tag`
+- `gh release download v1.3.1 --repo nakatamaho/gmpfrxx_mkII --dir "$tmp" --pattern "gmpfrxx_mkII.1.3.1.tar.xz"`
+- `shasum -a 256 "$tmp/gmpfrxx_mkII.1.3.1.tar.xz"`
 
 Pass/fail result:
 - Standalone AppleClang 17 Release build: PASS.
@@ -24596,9 +24599,11 @@ Pass/fail result:
 - Source archive creation: PASS,
   `sha256: 31232bb11c11e0b2c36d82e7564971bcad5077cc5d3de3361111461e36baafb0`.
 - Release commit and annotated Git tag publication: PASS.
-- GitHub Release asset publication: pending because this host has SSH GitHub
-  authentication but no GitHub API token or GitHub CLI.
+- GitHub Release publication and asset upload: PASS.
+- Downloaded GitHub Release asset checksum verification: PASS,
+  `sha256: 31232bb11c11e0b2c36d82e7564971bcad5077cc5d3de3361111461e36baafb0`.
 
 Known issues:
-- The local GitHub CLI is unavailable; release publication may require the
-  GitHub REST API or installation of `gh` after the tag and archive are pushed.
+- GitHub CLI was not installed system-wide, so the official `gh` v2.97.0
+  binary was downloaded under `/tmp` and authenticated with device login for
+  release publication.
