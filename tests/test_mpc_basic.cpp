@@ -75,6 +75,10 @@ void require_close(double actual, double expected)
 
 void check_mpc_division_near_32bit_exponent_edge()
 {
+    if (std::numeric_limits<mpfr_exp_t>::digits <= 31) {
+        return;
+    }
+
     constexpr mpfr_exp_t edge_emax = 1073741759;
     constexpr mpfr_exp_t edge_emin = -1073741759;
     if (mpfr_get_emax_max() < edge_emax || mpfr_get_emin_min() > edge_emin) {

@@ -38,6 +38,9 @@ namespace {
 
 std::atomic<int> alloc_count{0};
 
+constexpr int signed_int64_scalar_eval_allocations =
+    std::numeric_limits<long>::digits >= 63 ? 0 : 1;
+
 void* count_alloc(std::size_t n)
 {
     ++alloc_count;
@@ -93,15 +96,15 @@ int main()
 
     alloc_count = 0;
     dst = a + 5LL;
-    require_alloc_count(0);
+    require_alloc_count(signed_int64_scalar_eval_allocations);
 
     alloc_count = 0;
     dst = a + b + 5LL;
-    require_alloc_count(1);
+    require_alloc_count(1 + signed_int64_scalar_eval_allocations);
 
     alloc_count = 0;
     dst += 5LL;
-    require_alloc_count(1);
+    require_alloc_count(1 + signed_int64_scalar_eval_allocations);
 
     alloc_count = 0;
     dst = a << 7;

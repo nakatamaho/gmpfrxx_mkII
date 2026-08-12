@@ -1,3 +1,39 @@
+## Phase: 1.3.2 i386 portability release
+
+Implemented features:
+- Bumped release metadata from `1.3.1` to `1.3.2`.
+- Fixed GCC 12/i386 expression-template class declarations by avoiding the
+  problematic `[[nodiscard]]` plus hidden-visibility attribute combination on
+  `unary_expr` and `binary_expr`.
+- Adjusted MPF/MPFR signed 64-bit scalar allocation-count expectations for
+  ILP32 targets.
+- Skipped the MPC near-32-bit exponent-edge regression on actual 32-bit
+  `mpfr_exp_t` targets.
+- Gated the `__int128` compile-fail scalar test on the CMake `__int128` probe.
+
+Missing features:
+- No public API changes are included in this release.
+
+Tests added:
+- No new test executables were added; existing portability tests were hardened
+  for i386.
+
+Exact commands run:
+- `docker run --rm -v /home/maho/gmpfrxx_mkII:/work/gmpfrxx_mkII -w /work/gmpfrxx_mkII mplapack-tier1-debian-i386:latest bash -lc '... CXX=g++-12 cmake -S /work/gmpfrxx_mkII -B /tmp/gmpfrxx-132-g++-12 ...'`
+- `cmake --build /tmp/gmpfrxx-132-g++-12 -j2`
+- `ctest --test-dir /tmp/gmpfrxx-132-g++-12 --output-on-failure`
+- `docker run --rm -v /home/maho/gmpfrxx_mkII:/work/gmpfrxx_mkII -w /work/gmpfrxx_mkII mplapack-tier1-debian-i386:latest bash -lc '... CXX=g++ cmake -S /work/gmpfrxx_mkII -B /tmp/gmpfrxx-132-g++ ...'`
+- `cmake --build /tmp/gmpfrxx-132-g++ -j2`
+- `ctest --test-dir /tmp/gmpfrxx-132-g++ --output-on-failure`
+- `pdflatex -interaction=nonstopmode -halt-on-error -output-directory=/tmp/gmpfrxx-manual-build manual/gmpfrxx_mkII_manual.tex` (twice, inside `mplapack-tier1-debian-i386`)
+
+Pass/fail result:
+- GCC 12.4.0 i386 full CTest: PASS, 153/153 tests passed.
+- GCC 14.2.0 i386 full CTest: PASS, 153/153 tests passed.
+
+Known issues:
+- None for this maintenance release.
+
 ## Phase: 1.3.0 release preparation
 
 Implemented features:
