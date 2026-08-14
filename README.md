@@ -9,7 +9,8 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 ## News
 
 - 2026-08-14: Released `v1.4.0` as a source archive,
-  `gmpfrxx_mkII.1.4.0.tar.xz`.
+  `gmpfrxx_mkII.1.4.0.tar.xz`
+  (`sha256: 0a19e6d09c5c0b8e9b4335ee71f3e7385d7cbe471a1ff86990e182916b6782b4`).
   This maintenance release routes comparisons between materialized GMP MPF
   values directly through GMP's native `mpf_cmp`, avoiding expression-template
   evaluation for values with extreme exponents. It also keeps expression

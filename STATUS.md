@@ -28,7 +28,9 @@ Pass/fail result:
 - Release configure/build: PASS.
 - Full Release CTest: PASS, 188/188 tests passed.
 - Manual PDF generation: PASS.
-- Source archive creation and checksum: pending release commit/tag.
+- Source archive creation: PASS,
+  `build-release/gmpfrxx_mkII.1.4.0.tar.xz`.
+- SHA-256: `0a19e6d09c5c0b8e9b4335ee71f3e7385d7cbe471a1ff86990e182916b6782b4`.
 
 Known issues:
 - None known beyond platform-specific verification performed separately by
