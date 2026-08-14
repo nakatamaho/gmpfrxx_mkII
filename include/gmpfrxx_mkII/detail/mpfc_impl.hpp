@@ -1088,7 +1088,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpfc_object_or_node_v<Lhs> ||
                                          is_mpfc_object_or_node_v<Rhs>),
                                     long> = 0>
-inline auto operator+(Lhs&& lhs, Rhs&& rhs)
+static inline auto operator+(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpfc_operand(std::forward<Lhs>(lhs));
     auto right = make_mpfc_operand(std::forward<Rhs>(rhs));
@@ -1102,7 +1102,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpfc_object_or_node_v<Lhs> ||
                                          is_mpfc_object_or_node_v<Rhs>),
                                     long> = 0>
-inline auto operator-(Lhs&& lhs, Rhs&& rhs)
+static inline auto operator-(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpfc_operand(std::forward<Lhs>(lhs));
     auto right = make_mpfc_operand(std::forward<Rhs>(rhs));
@@ -1116,7 +1116,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpfc_object_or_node_v<Lhs> ||
                                          is_mpfc_object_or_node_v<Rhs>),
                                     long> = 0>
-inline auto operator*(Lhs&& lhs, Rhs&& rhs)
+static inline auto operator*(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpfc_operand(std::forward<Lhs>(lhs));
     auto right = make_mpfc_operand(std::forward<Rhs>(rhs));
@@ -1130,7 +1130,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpfc_object_or_node_v<Lhs> ||
                                          is_mpfc_object_or_node_v<Rhs>),
                                     long> = 0>
-inline auto operator/(Lhs&& lhs, Rhs&& rhs)
+static inline auto operator/(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpfc_operand(std::forward<Lhs>(lhs));
     auto right = make_mpfc_operand(std::forward<Rhs>(rhs));
@@ -1139,14 +1139,14 @@ inline auto operator/(Lhs&& lhs, Rhs&& rhs)
 }
 
 template <typename Expr, std::enable_if_t<is_mpfc_expression_operand_v<Expr> && is_mpfc_object_or_node_v<Expr>, long> = 0>
-inline auto operator+(Expr&& expr)
+static inline auto operator+(Expr&& expr)
 {
     auto operand = make_mpfc_operand(std::forward<Expr>(expr));
     return unary_expr<pos_op, decltype(operand), gmpxx::mpfc_class>(std::move(operand));
 }
 
 template <typename Expr, std::enable_if_t<is_mpfc_expression_operand_v<Expr> && is_mpfc_object_or_node_v<Expr>, long> = 0>
-inline auto operator-(Expr&& expr)
+static inline auto operator-(Expr&& expr)
 {
     auto operand = make_mpfc_operand(std::forward<Expr>(expr));
     return unary_expr<neg_op, decltype(operand), gmpxx::mpfc_class>(std::move(operand));

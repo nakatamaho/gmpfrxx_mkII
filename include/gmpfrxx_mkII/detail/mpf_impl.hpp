@@ -1554,7 +1554,7 @@ bool mpf_expression_references(const mpf_t target, const binary_expr<Op, Lhs, Rh
 }
 
 template <typename Op>
-void mpf_apply_binary(mpf_t dest, const mpf_t lhs, const mpf_t rhs)
+static inline void mpf_apply_binary(mpf_t dest, const mpf_t lhs, const mpf_t rhs)
 {
     if constexpr (std::is_same_v<Op, add_op>) {
         mpf_add(dest, lhs, rhs);
@@ -1892,7 +1892,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpf_object_or_node_v<Lhs> ||
                                          is_mpf_object_or_node_v<Rhs>),
                                     long> = 0>
-inline auto operator+(Lhs&& lhs, Rhs&& rhs)
+static inline auto operator+(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = make_mpf_operand(std::forward<Rhs>(rhs));
@@ -1906,7 +1906,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpf_object_or_node_v<Lhs> ||
                                          is_mpf_object_or_node_v<Rhs>),
                                     long> = 0>
-inline auto operator-(Lhs&& lhs, Rhs&& rhs)
+static inline auto operator-(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = make_mpf_operand(std::forward<Rhs>(rhs));
@@ -1920,7 +1920,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpf_object_or_node_v<Lhs> ||
                                          is_mpf_object_or_node_v<Rhs>),
                                     long> = 0>
-inline auto operator*(Lhs&& lhs, Rhs&& rhs)
+static inline auto operator*(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = make_mpf_operand(std::forward<Rhs>(rhs));
@@ -1934,7 +1934,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpf_object_or_node_v<Lhs> ||
                                          is_mpf_object_or_node_v<Rhs>),
                                     long> = 0>
-inline auto operator/(Lhs&& lhs, Rhs&& rhs)
+static inline auto operator/(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = make_mpf_operand(std::forward<Rhs>(rhs));
@@ -1943,14 +1943,14 @@ inline auto operator/(Lhs&& lhs, Rhs&& rhs)
 }
 
 template <typename Expr, std::enable_if_t<is_mpf_expression_operand_v<Expr> && is_mpf_object_or_node_v<Expr>, long> = 0>
-inline auto operator+(Expr&& expr)
+static inline auto operator+(Expr&& expr)
 {
     auto operand = make_mpf_operand(std::forward<Expr>(expr));
     return unary_expr<pos_op, decltype(operand), gmpxx::mpf_class>(std::move(operand));
 }
 
 template <typename Expr, std::enable_if_t<is_mpf_expression_operand_v<Expr> && is_mpf_object_or_node_v<Expr>, long> = 0>
-inline auto operator-(Expr&& expr)
+static inline auto operator-(Expr&& expr)
 {
     auto operand = make_mpf_operand(std::forward<Expr>(expr));
     return unary_expr<neg_op, decltype(operand), gmpxx::mpf_class>(std::move(operand));
@@ -1960,7 +1960,7 @@ template <typename Lhs, typename Bits, std::enable_if_t<
                                     is_mpf_object_or_node_v<Lhs> &&
                                         is_supported_expression_integral_v<std::decay_t<Bits>>,
                                     int> = 0>
-inline auto operator<<(Lhs&& lhs, Bits bits)
+static inline auto operator<<(Lhs&& lhs, Bits bits)
 {
     if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
         if (bits < 0) {
@@ -1977,7 +1977,7 @@ template <typename Lhs, typename Bits, std::enable_if_t<
                                     is_mpf_object_or_node_v<Lhs> &&
                                         is_supported_expression_integral_v<std::decay_t<Bits>>,
                                     int> = 0>
-inline auto operator>>(Lhs&& lhs, Bits bits)
+static inline auto operator>>(Lhs&& lhs, Bits bits)
 {
     if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
         if (bits < 0) {
@@ -2084,7 +2084,7 @@ struct is_mpf_comparison_pair
            is_mpf_comparison_non_scalar<Rhs>::value)> {};
 
 template <typename Expr>
-inline void mpf_compare_evaluate(
+static inline void mpf_compare_evaluate(
     mpf_t dest,
     const Expr& expr,
     mp_bitcnt_t precision)
@@ -2115,8 +2115,16 @@ private:
 };
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
-inline int cmp(Lhs&& lhs, Rhs&& rhs)
+static inline int cmp(Lhs&& lhs, Rhs&& rhs)
 {
+    // Comparing two materialized MPF values does not require expression
+    // evaluation.  Besides avoiding unnecessary temporaries, this keeps the
+    // common gmpxx-compatible path in GMP's native comparator.
+    if constexpr (std::is_same_v<std::decay_t<Lhs>, mpf_class> &&
+                  std::is_same_v<std::decay_t<Rhs>, mpf_class>) {
+        return mpf_cmp(lhs.mpf_data(), rhs.mpf_data());
+    }
+
     auto left = gmpfrxx_mkII::detail::make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = gmpfrxx_mkII::detail::make_mpf_operand(std::forward<Rhs>(rhs));
     mp_bitcnt_t precision = std::max(
@@ -2134,37 +2142,37 @@ inline int cmp(Lhs&& lhs, Rhs&& rhs)
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
-inline bool operator==(Lhs&& lhs, Rhs&& rhs)
+static inline bool operator==(Lhs&& lhs, Rhs&& rhs)
 {
     return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) == 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
-inline bool operator!=(Lhs&& lhs, Rhs&& rhs)
+static inline bool operator!=(Lhs&& lhs, Rhs&& rhs)
 {
     return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) != 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
-inline bool operator<(Lhs&& lhs, Rhs&& rhs)
+static inline bool operator<(Lhs&& lhs, Rhs&& rhs)
 {
     return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) < 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
-inline bool operator<=(Lhs&& lhs, Rhs&& rhs)
+static inline bool operator<=(Lhs&& lhs, Rhs&& rhs)
 {
     return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) <= 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
-inline bool operator>(Lhs&& lhs, Rhs&& rhs)
+static inline bool operator>(Lhs&& lhs, Rhs&& rhs)
 {
     return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) > 0;
 }
 
 template <typename Lhs, typename Rhs, std::enable_if_t<is_mpf_comparison_pair<Lhs, Rhs>::value, int> = 0>
-inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
+static inline bool operator>=(Lhs&& lhs, Rhs&& rhs)
 {
     return cmp(std::forward<Lhs>(lhs), std::forward<Rhs>(rhs)) >= 0;
 }

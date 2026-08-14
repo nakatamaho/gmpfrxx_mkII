@@ -8,6 +8,14 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 
 ## News
 
+- 2026-08-14: Released `v1.4.0` as a source archive,
+  `gmpfrxx_mkII.1.4.0.tar.xz`.
+  This maintenance release routes comparisons between materialized GMP MPF
+  values directly through GMP's native `mpf_cmp`, avoiding expression-template
+  evaluation for values with extreme exponents. It also keeps expression
+  operators internal to each translation unit and adds a regression test for
+  finite MPF values whose binary64 conversion overflows.
+
 - 2026-08-12: Released `v1.3.2` as a source archive,
   `gmpfrxx_mkII.1.3.2.tar.xz`
   (`sha256: 03bd25c6ab2d39e9288e605d5a2371dd8a634d5e708f2a788dadcf3a62ecb419`).
@@ -17,7 +25,6 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
   `__int128` compile-fail scalar test where the target has no C++ `__int128`.
   Release verification passed 153/153 CTest tests in the MPLAPACK
   `mplapack-tier1-debian-i386` image with both GCC 12.4.0 and GCC 14.2.0.
-
 - 2026-08-10: Released `v1.3.1` as a source archive,
   `gmpfrxx_mkII.1.3.1.tar.xz`
   (`sha256: 31232bb11c11e0b2c36d82e7564971bcad5077cc5d3de3361111461e36baafb0`).

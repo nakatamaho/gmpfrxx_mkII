@@ -1,3 +1,39 @@
+## Phase: 1.4.0 release preparation
+
+Implemented features:
+- Bumped project and runtime version metadata from `1.3.1` to `1.4.0`.
+- Added a direct `mpf_cmp` fast path for comparisons of materialized GMP MPF
+  values, avoiding expression evaluation for extreme exponents.
+- Kept expression operators and internal expression helpers local while leaving
+  public numeric classes and their ABI boundary unchanged.
+- Added a regression test for finite MPF values whose binary64 conversion
+  overflows.
+- Added `CHANGES.1.4.0.md` and updated the README and manual release metadata.
+
+Missing features:
+- None for this release.
+
+Tests added:
+- `test_large_mpf_comparisons` in `tests/test_comparisons.cpp`.
+
+Exact commands run:
+- `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF`
+- `cmake --build build-release -j8`
+- `ctest --test-dir build-release --output-on-failure`
+- `make -C manual`
+- `cmake --build build-release --target dist`
+- `shasum -a 256 build-release/gmpfrxx_mkII.1.4.0.tar.xz`
+
+Pass/fail result:
+- Release configure/build: PASS.
+- Full Release CTest: PASS, 188/188 tests passed.
+- Manual PDF generation: PASS.
+- Source archive creation and checksum: pending release commit/tag.
+
+Known issues:
+- None known beyond platform-specific verification performed separately by
+  downstream MPLAPACK builds.
+
 ## Phase: 1.3.2 i386 portability release
 
 Implemented features:

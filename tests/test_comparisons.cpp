@@ -119,6 +119,25 @@ void test_expression_comparisons()
     check_consistency(one_point_two_five + one_point_two_five, two_point_five);
 }
 
+void test_large_mpf_comparisons()
+{
+    // Keep the values finite in GMP's MPF representation while making their
+    // double conversion overflow.  This is the path used by LAPACK scaling
+    // checks and must compare through mpf_cmp without materializing another
+    // expression tree.
+    gmpxx::mpf_class value(1, 256);
+    mpf_mul_2exp(value.mpf_data(), value.mpf_data(), 100000);
+    gmpxx::mpf_class same(value);
+    gmpxx::mpf_class larger(value);
+    mpf_mul_2exp(larger.mpf_data(), larger.mpf_data(), 1);
+
+    assert(value == same);
+    assert(value < larger);
+    assert(larger > value);
+    check_consistency(value, same);
+    check_consistency(value, larger);
+}
+
 void test_mpf_comparison_exception_path()
 {
     const gmpxx::mpf_class value("1.25", 128);
@@ -197,6 +216,7 @@ int main()
 {
     test_exact_and_mpf_objects();
     test_expression_comparisons();
+    test_large_mpf_comparisons();
     test_mpf_comparison_exception_path();
     test_scalar_comparisons();
     return 0;
