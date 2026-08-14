@@ -24643,3 +24643,35 @@ Known issues:
 - GitHub CLI was not installed system-wide, so the official `gh` v2.97.0
   binary was downloaded under `/tmp` and authenticated with device login for
   release publication.
+## Phase: Darwin expression-operator visibility fix
+
+Implemented features:
+- Removed `GMPFRXX_MKII_HIDDEN` from the expression-template arithmetic
+  operators in the GMP, MPFR, and MPC implementation headers.
+- Made those operators explicitly `inline`, keeping expression leaf types and
+  internal evaluation helpers hidden.
+- This prevents Darwin/GCC private-external lazy-binding and cross-DSO weak
+  operator interposition while preserving the existing expression-node API.
+
+Missing features:
+- No platform-specific linker workaround is required by this change.
+- A native macOS shared-library reproduction is still to be added to CI.
+
+Tests added:
+- No new executable; existing expression and compile-fail coverage exercises
+  all affected operator families.
+
+Exact commands run:
+- `cmake --build build-release -j8`
+- `ctest --test-dir build-release --output-on-failure`
+- `nm -C build-release/tests/test_mpf_numeric_equivalence | rg 'gmpfrxx_mkII::detail::operator[+*/-]'`
+
+Pass/fail result:
+- Release build: PASS.
+- Full CTest: PASS, 189/189 tests passed.
+- The optimized test executable contains no emitted expression arithmetic
+  operator symbols; the operators are inlined at their call sites.
+
+Known issues:
+- The fix must be included in the next gmpfrxx_mkII release consumed by
+  MPLAPACK; changing `GMPFRXX_MKII_HIDDEN` globally remains unsupported.

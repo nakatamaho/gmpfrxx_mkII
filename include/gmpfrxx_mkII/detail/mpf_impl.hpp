@@ -1892,7 +1892,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpf_object_or_node_v<Lhs> ||
                                          is_mpf_object_or_node_v<Rhs>),
                                     long> = 0>
-GMPFRXX_MKII_HIDDEN auto operator+(Lhs&& lhs, Rhs&& rhs)
+inline auto operator+(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = make_mpf_operand(std::forward<Rhs>(rhs));
@@ -1906,7 +1906,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpf_object_or_node_v<Lhs> ||
                                          is_mpf_object_or_node_v<Rhs>),
                                     long> = 0>
-GMPFRXX_MKII_HIDDEN auto operator-(Lhs&& lhs, Rhs&& rhs)
+inline auto operator-(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = make_mpf_operand(std::forward<Rhs>(rhs));
@@ -1920,7 +1920,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpf_object_or_node_v<Lhs> ||
                                          is_mpf_object_or_node_v<Rhs>),
                                     long> = 0>
-GMPFRXX_MKII_HIDDEN auto operator*(Lhs&& lhs, Rhs&& rhs)
+inline auto operator*(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = make_mpf_operand(std::forward<Rhs>(rhs));
@@ -1934,7 +1934,7 @@ template <typename Lhs, typename Rhs, std::enable_if_t<
                                         (is_mpf_object_or_node_v<Lhs> ||
                                          is_mpf_object_or_node_v<Rhs>),
                                     long> = 0>
-GMPFRXX_MKII_HIDDEN auto operator/(Lhs&& lhs, Rhs&& rhs)
+inline auto operator/(Lhs&& lhs, Rhs&& rhs)
 {
     auto left = make_mpf_operand(std::forward<Lhs>(lhs));
     auto right = make_mpf_operand(std::forward<Rhs>(rhs));
@@ -1943,14 +1943,14 @@ GMPFRXX_MKII_HIDDEN auto operator/(Lhs&& lhs, Rhs&& rhs)
 }
 
 template <typename Expr, std::enable_if_t<is_mpf_expression_operand_v<Expr> && is_mpf_object_or_node_v<Expr>, long> = 0>
-GMPFRXX_MKII_HIDDEN auto operator+(Expr&& expr)
+inline auto operator+(Expr&& expr)
 {
     auto operand = make_mpf_operand(std::forward<Expr>(expr));
     return unary_expr<pos_op, decltype(operand), gmpxx::mpf_class>(std::move(operand));
 }
 
 template <typename Expr, std::enable_if_t<is_mpf_expression_operand_v<Expr> && is_mpf_object_or_node_v<Expr>, long> = 0>
-GMPFRXX_MKII_HIDDEN auto operator-(Expr&& expr)
+inline auto operator-(Expr&& expr)
 {
     auto operand = make_mpf_operand(std::forward<Expr>(expr));
     return unary_expr<neg_op, decltype(operand), gmpxx::mpf_class>(std::move(operand));
@@ -1960,7 +1960,7 @@ template <typename Lhs, typename Bits, std::enable_if_t<
                                     is_mpf_object_or_node_v<Lhs> &&
                                         is_supported_expression_integral_v<std::decay_t<Bits>>,
                                     int> = 0>
-GMPFRXX_MKII_HIDDEN auto operator<<(Lhs&& lhs, Bits bits)
+inline auto operator<<(Lhs&& lhs, Bits bits)
 {
     if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
         if (bits < 0) {
@@ -1977,7 +1977,7 @@ template <typename Lhs, typename Bits, std::enable_if_t<
                                     is_mpf_object_or_node_v<Lhs> &&
                                         is_supported_expression_integral_v<std::decay_t<Bits>>,
                                     int> = 0>
-GMPFRXX_MKII_HIDDEN auto operator>>(Lhs&& lhs, Bits bits)
+inline auto operator>>(Lhs&& lhs, Bits bits)
 {
     if constexpr (std::is_signed_v<std::decay_t<Bits>>) {
         if (bits < 0) {
