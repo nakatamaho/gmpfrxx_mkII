@@ -23,6 +23,11 @@ Exact commands run:
 - `make -C manual`
 - `cmake --build build-release --target dist`
 - `shasum -a 256 build-release/gmpfrxx_mkII.1.4.0.tar.xz`
+- `git tag -a v1.4.0 -m "gmpfrxx_mkII 1.4.0"`
+- `git push origin main`
+- `git push origin v1.4.0`
+- `gh release create v1.4.0 build-release/gmpfrxx_mkII.1.4.0.tar.xz --repo nakatamaho/gmpfrxx_mkII --title "gmpfrxx_mkII 1.4.0" --notes-file CHANGES.1.4.0.md --verify-tag`
+- `gh release download v1.4.0 --repo nakatamaho/gmpfrxx_mkII --pattern 'gmpfrxx_mkII.1.4.0.tar.xz'`
 
 Pass/fail result:
 - Release configure/build: PASS.
@@ -31,6 +36,7 @@ Pass/fail result:
 - Source archive creation: PASS,
   `build-release/gmpfrxx_mkII.1.4.0.tar.xz`.
 - SHA-256: `0a19e6d09c5c0b8e9b4335ee71f3e7385d7cbe471a1ff86990e182916b6782b4`.
+- GitHub Release upload/download and checksum verification: PASS.
 
 Known issues:
 - None known beyond platform-specific verification performed separately by
