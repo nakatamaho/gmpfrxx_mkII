@@ -1,3 +1,54 @@
+## Phase: 1.4.1 MPFC LLP64 division maintenance release
+
+Implemented features:
+- Bumped project, source-tree fallback, generated runtime, and manual release
+  metadata from `1.4.0` to `1.4.1`.
+- Replaced the GMP MPF magnitude comparison used by MPFC Smith division.  The
+  branch selector now compares MPF exponent metadata and limbs directly,
+  without `mpf_get_d_2exp()`, binary64 conversion, or a temporary allocation.
+- Added the dedicated `test_mpfc_division_smoke` CTest executable and registered
+  it in both GMP-only and full GMP/MPFR/MPC test configurations.
+- Added `CHANGES.1.4.1.md` and refreshed the README and manual release metadata.
+
+Missing features:
+- None for this maintenance release.
+- The MPLAPACK integration remains on `gmpfrxx_mkII` 1.4.0 by design.
+
+Tests added:
+- `tests/test_mpfc_division_smoke.cpp`, including a 3,000,000,000-bit MPF
+  exponent case and exact branch-comparison assertions.
+
+Exact commands run:
+- `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF`
+- `cmake --build build-release --target test_mpfc_division_smoke test_mpfc_basic test_version_info -j8`
+- `ctest --test-dir build-release --output-on-failure -R 'test_mpfc_division_smoke|test_mpfc_basic|test_version_info'`
+- `cmake --build build-release -j8`
+- `ctest --test-dir build-release --output-on-failure`
+- `docker run --rm -v /tmp/gmpfrxx-141-mingw-host:/tmp/gmpfrxx-141-mingw -w /tmp/gmpfrxx-141-mingw/tests mplapack-tier1-mingw64-amd64:latest bash -lc 'mkdir -p /tmp/gmpfrxx-wine-runtime; export XDG_RUNTIME_DIR=/tmp/gmpfrxx-wine-runtime; export WINEPATH="$(winepath -w /tmp/gmpfrxx-141-mingw);$(winepath -w /usr/lib/gcc/x86_64-w64-mingw32/13-posix);$(winepath -w /usr/x86_64-w64-mingw32/bin)"; WINEDEBUG=-all wine test_version_info.exe; WINEDEBUG=-all wine test_mpfc_basic.exe; WINEDEBUG=-all wine test_mpfc_division_smoke.exe'`
+  (MinGW/Wine direct execution of the three focused executables after the
+  CMake build.)
+- `docker run --rm -v /home/maho/gmpfrxx_mkII:/work/gmpfrxx_mkII -w /work/gmpfrxx_mkII debian:12 bash -lc 'export DEBIAN_FRONTEND=noninteractive; apt-get update -qq; apt-get install -y -qq make texlive-latex-extra >/tmp/gmpfrxx-texlive-install.log 2>&1; make -C manual'`
+- `cmake --build build-release --target dist -j2`
+- `sha256sum build-release/gmpfrxx_mkII.1.4.1.tar.xz`
+
+Pass/fail result:
+- Focused native CTest: PASS, 3/3 tests passed.
+- Full native Release CTest: PASS, 189/189 tests passed.
+- MinGW 64 LLP64 build: PASS.  The three focused executables passed when
+  launched from the build's `tests` directory under Wine with the MinGW
+  runtime DLL path configured.
+- Manual PDF generation: PASS in the Debian 12 container.
+- Source archive creation: PASS.  The final archive contains
+  `tests/test_mpfc_division_smoke.cpp`; the release changelog remains tracked
+  in Git and follows the existing `*.md export-ignore` archive policy.
+
+Known issues:
+- This host lacks `pdflatex`; manual generation uses the Debian 12 container.
+- The MinGW CMake/Wine emulator in the supplied image passes a POSIX absolute
+  executable path to Wine and does not run it reliably.  Direct relative-path
+  Wine execution passes; this is a test harness issue, not a test failure.
+- No remote push or GitHub Release upload is performed in this change.
+
 ## Phase: 1.4.0 release preparation
 
 Implemented features:

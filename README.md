@@ -8,6 +8,13 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 
 ## News
 
+- 2026-08-27: Released `v1.4.1` as a source archive,
+  `gmpfrxx_mkII.1.4.1.tar.xz`.  This maintenance release makes the GMP-only
+  `mpfc_class` Smith-division branch selection compare MPF exponent metadata
+  and limbs directly, avoiding the binary64/`long` conversion path on Windows
+  LLP64.  It also adds the dedicated `test_mpfc_division_smoke` regression
+  test for a 3,000,000,000-bit exponent.
+
 - 2026-08-14: Released `v1.4.0` as a source archive,
   `gmpfrxx_mkII.1.4.0.tar.xz`
   (`sha256: 0a19e6d09c5c0b8e9b4335ee71f3e7385d7cbe471a1ff86990e182916b6782b4`).

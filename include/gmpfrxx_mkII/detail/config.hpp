@@ -74,7 +74,7 @@
 #if __has_include(<gmpfrxx_mkII/detail/version.hpp>)
 #include <gmpfrxx_mkII/detail/version.hpp>
 #else
-#define GMPFRXX_MKII_VERSION "1.4.0"
+#define GMPFRXX_MKII_VERSION "1.4.1"
 #define GMPFRXX_MKII_GIT_COMMIT_HASH "unknown"
 
 namespace gmpfrxx_mkII {

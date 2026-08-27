@@ -34,7 +34,6 @@
 #include <gmpfrxx_mkII/detail/mpf_impl.hpp>
 
 #include <algorithm>
-#include <cmath>
 #include <istream>
 #include <ostream>
 #include <stdexcept>
@@ -866,21 +865,32 @@ inline int mpfc_compare_abs_for_division(mpf_srcptr lhs, mpf_srcptr rhs)
         return lhs_sign == 0 ? -1 : 1;
     }
 
-    long lhs_exponent = 0;
-    long rhs_exponent = 0;
-    const double lhs_mantissa = std::fabs(mpf_get_d_2exp(&lhs_exponent, lhs));
-    const double rhs_mantissa = std::fabs(mpf_get_d_2exp(&rhs_exponent, rhs));
-    if (lhs_exponent < rhs_exponent) {
+    /*
+     * Do not use mpf_get_d_2exp() here.  Its exponent result is an mp_exp_t,
+     * which is a 32-bit long on Windows LLP64, while the MPF limb exponent
+     * can still distinguish values far beyond that binary exponent range.
+     * Comparing the normalized MPF representation keeps the branch choice
+     * exact without a temporary allocation or a binary64 conversion.
+     */
+    const int lhs_size = lhs->_mp_size < 0 ? -lhs->_mp_size : lhs->_mp_size;
+    const int rhs_size = rhs->_mp_size < 0 ? -rhs->_mp_size : rhs->_mp_size;
+    if (lhs->_mp_exp < rhs->_mp_exp) {
         return -1;
     }
-    if (lhs_exponent > rhs_exponent) {
+    if (lhs->_mp_exp > rhs->_mp_exp) {
         return 1;
     }
-    if (lhs_mantissa < rhs_mantissa) {
-        return -1;
-    }
-    if (lhs_mantissa > rhs_mantissa) {
-        return 1;
+
+    const int common_size = std::max(lhs_size, rhs_size);
+    for (int offset = 0; offset < common_size; ++offset) {
+        const mp_limb_t lhs_limb = offset < lhs_size ? lhs->_mp_d[lhs_size - 1 - offset] : 0;
+        const mp_limb_t rhs_limb = offset < rhs_size ? rhs->_mp_d[rhs_size - 1 - offset] : 0;
+        if (lhs_limb < rhs_limb) {
+            return -1;
+        }
+        if (lhs_limb > rhs_limb) {
+            return 1;
+        }
     }
     return 0;
 }
