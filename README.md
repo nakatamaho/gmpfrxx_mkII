@@ -8,6 +8,12 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 
 ## News
 
+- 2026-09-18: Prepared `v1.4.2` as a source archive,
+  `gmpfrxx_mkII.1.4.2.tar.xz`.  This portability maintenance release fixes
+  binary adapter headers on targets without binary80 support, including arm64
+  systems where `long double` is binary128, and adds an adapter-header smoke
+  test.
+
 - 2026-08-27: Released `v1.4.1` as a source archive,
   `gmpfrxx_mkII.1.4.1.tar.xz`.  This maintenance release makes the GMP-only
   `mpfc_class` Smith-division branch selection compare MPF exponent metadata

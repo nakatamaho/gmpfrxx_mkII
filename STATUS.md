@@ -24770,3 +24770,41 @@ Pass/fail result:
 Known issues:
 - The fix must be included in the next gmpfrxx_mkII release consumed by
   MPLAPACK; changing `GMPFRXX_MKII_HIDDEN` globally remains unsupported.
+
+## Phase: 1.4.2 binary adapter portability maintenance release
+
+Implemented features:
+- Made the unsupported binary80 trait diagnostic dependent on its native type,
+  so binary128 adapter headers can be included when binary80 is unavailable.
+- Bumped project and source-tree fallback version metadata to 1.4.2.
+- Added an adapter-header smoke test for the binary128 include path.
+
+Missing features:
+- None for this maintenance release.
+
+Tests added:
+- `tests/test_binary_adapter_headers.cpp`.
+
+Exact commands run:
+- `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF`
+- `cmake --build build-release --target test_binary_adapter_headers test_complex_compare_adapters test_mpf_binary_real_adapters test_version_info -j32`
+- `ctest --test-dir build-release --output-on-failure -R 'test_binary_adapter_headers|test_complex_compare_adapters|test_mpf_binary_real_adapters|test_version_info'`
+- `cmake --build build-release -j32`
+- `ctest --test-dir build-release --output-on-failure`
+- `docker run --platform linux/amd64 --rm -v /home/maho/gmpfrxx_mkII:/work/gmpfrxx_mkII -w /work/gmpfrxx_mkII/manual debian:12 bash -lc 'export DEBIAN_FRONTEND=noninteractive; apt-get update -qq; apt-get install -y -qq make texlive-latex-extra; make clean; make'`
+- `cmake --build build-release --target dist -j2`
+- `sha256sum build-release/gmpfrxx_mkII.1.4.2.tar.xz`
+
+Pass/fail result:
+- Focused native CTest: PASS, 4/4 tests passed.
+- Full native Release CTest: PASS, 190/190 tests passed.
+- Full native Release build: PASS.
+- Manual PDF generation: PASS in a native amd64 Debian 12 container.
+- Source archive creation and checksum: PASS,
+  `build-release/gmpfrxx_mkII.1.4.2.tar.xz`.
+- The final archive SHA-256 is recorded in the release handoff after the
+  release commit is finalized.
+
+Known issues:
+- The MPLAPACK bundled dependency must be updated to the resulting 1.4.2
+  archive after this release is verified.

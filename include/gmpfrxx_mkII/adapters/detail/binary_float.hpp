@@ -125,8 +125,12 @@ struct binary80_native_traits {
 
     static void set(mpfr_t dest, native_type value, mpfr_rnd_t rounding_mode)
     {
-        static_assert(enabled, "unsupported native type for binary80 import");
-        mpfr_set_ld(dest, static_cast<long double>(value), rounding_mode);
+        if constexpr (!enabled) {
+            static_assert(binary_import_dependent_false<native_type>::value,
+                          "unsupported native type for binary80 import");
+        } else {
+            mpfr_set_ld(dest, static_cast<long double>(value), rounding_mode);
+        }
     }
 };
 
