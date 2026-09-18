@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(gmpfrxx_mkII VERSION 1.4.2 LANGUAGES CXX)
+project(gmpfrxx_mkII VERSION 1.4.3 LANGUAGES CXX)
 
 if(NOT DEFINED CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 17)

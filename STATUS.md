@@ -24808,3 +24808,39 @@ Pass/fail result:
 Known issues:
 - The MPLAPACK bundled dependency must be updated to the resulting 1.4.2
   archive after this release is verified.
+
+## Phase: 1.4.3 release
+
+Implemented features:
+- Release the binary adapter portability fix as gmpfrxx_mkII 1.4.3.
+- Update project, fallback, manual, README, and changelog release metadata.
+
+Tests added:
+- Reuse `tests/test_binary_adapter_headers.cpp` from the 1.4.2 development
+  cycle as the regression test for this release.
+
+Exact commands run:
+- `git switch -c release/1.4.3`
+- `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF`
+- `cmake --build build-release -j32`
+- `ctest --test-dir build-release --output-on-failure`
+- `docker run --platform linux/amd64 --rm -v /home/maho/gmpfrxx_mkII:/work/gmpfrxx_mkII -w /work/gmpfrxx_mkII/manual debian:12 bash -lc 'export DEBIAN_FRONTEND=noninteractive; apt-get update -qq; apt-get install -y -qq make texlive-latex-extra; make clean; make'`
+- `make -C manual clean`
+- `cmake --build build-release --target dist -j2`
+- `sha256sum build-release/gmpfrxx_mkII.1.4.3.tar.xz`
+- Tarball smoke configure with dependency auto-fetch enabled, followed by
+  `test_binary_adapter_headers`, `test_complex_compare_adapters`,
+  `test_mpf_binary_real_adapters`, and `test_version_info` build and CTest.
+
+Pass/fail result:
+- Release configure: PASS.
+- Full Release build: PASS.
+- Full Release CTest: PASS, 190/190 tests passed.
+- Manual PDF generation: PASS in a native amd64 Debian 12 container.
+- Source archive creation: PASS,
+  `build-release/gmpfrxx_mkII.1.4.3.tar.xz`.
+- Tarball smoke configure/build/test: PASS, 4/4 focused tests passed.
+- The final archive SHA-256 is recorded in the release handoff.
+
+Known issues:
+- None known for this release.
