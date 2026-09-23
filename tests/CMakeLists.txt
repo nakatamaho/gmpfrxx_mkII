@@ -1,8 +1,21 @@
 find_path(GMPFRXX_MKII_TEST_QD_INCLUDE_DIR NAMES qd/dd_real.h qd/qd_real.h)
+find_path(GMPFRXX_MKII_TEST_QD_DS_INCLUDE_DIR NAMES qd/ds_real.h)
+find_path(GMPFRXX_MKII_TEST_QD_TS_INCLUDE_DIR NAMES qd/ts_real.h)
+find_path(GMPFRXX_MKII_TEST_QD_QS_INCLUDE_DIR NAMES qd/qs_real.h)
+find_path(GMPFRXX_MKII_TEST_QD_TD_INCLUDE_DIR NAMES qd/td_real.h)
+find_path(GMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR NAMES qd/qd_config.h)
 find_library(GMPFRXX_MKII_TEST_QD_LIBRARY NAMES qd)
 set(GMPFRXX_MKII_TEST_QD_FOUND OFF)
 if(GMPFRXX_MKII_TEST_QD_INCLUDE_DIR AND GMPFRXX_MKII_TEST_QD_LIBRARY)
     set(GMPFRXX_MKII_TEST_QD_FOUND ON)
+endif()
+set(GMPFRXX_MKII_TEST_QD_SINGLE_FOUND OFF)
+if(GMPFRXX_MKII_TEST_QD_DS_INCLUDE_DIR AND
+   GMPFRXX_MKII_TEST_QD_TS_INCLUDE_DIR AND
+   GMPFRXX_MKII_TEST_QD_QS_INCLUDE_DIR AND
+   GMPFRXX_MKII_TEST_QD_TD_INCLUDE_DIR AND
+   GMPFRXX_MKII_TEST_QD_LIBRARY)
+    set(GMPFRXX_MKII_TEST_QD_SINGLE_FOUND ON)
 endif()
 
 function(add_phase0_test name target)
@@ -14,7 +27,23 @@ endfunction()
 function(add_qd_phase0_test name target)
     if(GMPFRXX_MKII_TEST_QD_FOUND)
         add_phase0_test(${name} ${target})
-        target_include_directories(${name} PRIVATE "${GMPFRXX_MKII_TEST_QD_INCLUDE_DIR}")
+        target_include_directories(${name} PRIVATE
+            "${GMPFRXX_MKII_TEST_QD_INCLUDE_DIR}"
+            "${GMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR}")
+        target_link_libraries(${name} PRIVATE "${GMPFRXX_MKII_TEST_QD_LIBRARY}")
+    endif()
+endfunction()
+
+function(add_qd_single_phase0_test name target)
+    if(GMPFRXX_MKII_TEST_QD_SINGLE_FOUND)
+        add_phase0_test(${name} ${target})
+        target_include_directories(${name} PRIVATE
+            "${GMPFRXX_MKII_TEST_QD_INCLUDE_DIR}"
+            "${GMPFRXX_MKII_TEST_QD_DS_INCLUDE_DIR}"
+            "${GMPFRXX_MKII_TEST_QD_TS_INCLUDE_DIR}"
+            "${GMPFRXX_MKII_TEST_QD_QS_INCLUDE_DIR}"
+            "${GMPFRXX_MKII_TEST_QD_TD_INCLUDE_DIR}"
+            "${GMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR}")
         target_link_libraries(${name} PRIVATE "${GMPFRXX_MKII_TEST_QD_LIBRARY}")
     endif()
 endfunction()
@@ -22,12 +51,15 @@ endfunction()
 function(enable_qd_for_phase0_test name)
     if(GMPFRXX_MKII_TEST_QD_FOUND)
         target_compile_definitions(${name} PRIVATE GMPFRXX_MKII_TEST_HAVE_QD=1)
-        target_include_directories(${name} PRIVATE "${GMPFRXX_MKII_TEST_QD_INCLUDE_DIR}")
+        target_include_directories(${name} PRIVATE
+            "${GMPFRXX_MKII_TEST_QD_INCLUDE_DIR}"
+            "${GMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR}")
         target_link_libraries(${name} PRIVATE "${GMPFRXX_MKII_TEST_QD_LIBRARY}")
     endif()
 endfunction()
 
 function(add_gmp_component_tests)
+    add_qd_single_phase0_test(test_qd_single_real_no_mpfr gmpxx_mkII)
     add_phase0_test(test_gmp_header_smoke gmpxx_mkII)
     add_phase0_test(test_integer_model_diagnostics gmpxx_mkII)
     add_phase0_test(test_gmpxx_mkII gmpxx_mkII)
@@ -100,6 +132,7 @@ endfunction()
 function(add_mpfr_component_tests)
     add_qd_phase0_test(test_dd_real_adapter mpfrxx_mkII)
     add_qd_phase0_test(test_qd_real_adapter mpfrxx_mkII)
+    add_qd_single_phase0_test(test_single_real_adapters mpfrxx_mkII)
     add_phase0_test(test_mpfr_header_smoke mpfrxx_mkII)
     add_phase0_test(test_namespace_aliases mpfrxx_mkII)
     add_phase0_test(test_et_contract_mpfr mpfrxx_mkII)
@@ -199,11 +232,13 @@ if(NOT GMPFRXX_MKII_ENABLE_MPC)
     return()
 endif()
 
+add_qd_single_phase0_test(test_qd_single_real_no_mpfr gmpxx_mkII)
 add_phase0_test(test_gmp_header_smoke gmpxx_mkII)
 add_phase0_test(test_mpfr_header_smoke mpfrxx_mkII)
 add_phase0_test(test_mpc_header_smoke mpcxx_mkII)
 add_qd_phase0_test(test_dd_real_adapter mpfrxx_mkII)
 add_qd_phase0_test(test_qd_real_adapter mpfrxx_mkII)
+add_qd_single_phase0_test(test_single_real_adapters mpfrxx_mkII)
 add_phase0_test(test_mpf_binary_real_adapters mpfrxx_mkII)
 add_phase0_test(test_complex_compare_adapters gmpfrxx_mkII)
 	enable_qd_for_phase0_test(test_complex_compare_adapters)

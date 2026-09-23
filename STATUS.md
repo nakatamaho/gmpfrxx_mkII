@@ -35,6 +35,63 @@ Known issues:
   because that test expects GMP version string `1.4.0` while this tree reports
   `1.4.1`; the focused log2 tests pass.
 
+## Phase: libQD3 ds/ts/qs/td/edd adapter integration
+
+Implemented features:
+- Added thin MPFR conversion adapters for libQD3 `ds_real`, `ts_real`,
+  `qs_real`, `td_real`, and optional `edd_real`.
+- Added `gmpfrxx_mkII/adapters/single_real.hpp` as an umbrella header; EDD is
+  included only when libQD3 was configured with EDD support.
+- Added a GMP-only libQD3 smoke test to verify the single-real types compile and
+  run without an MPFR dependency.
+- Added generated libQD3 include-directory handling to the optional adapter
+  tests so source and configured libQD3 trees can be tested together.
+- Strengthened adapter tests to populate and compare all available limbs:
+  `qd_real` uses all four limbs, `td_real` all three, and `ds_real`,
+  `ts_real`, `qs_real`, and `edd_real` use all of their available limbs.
+
+Missing features:
+- No complex adapters for the new libQD3 single-real types; this phase only
+  covers real-to-`mpfrxx::mpfr_class` conversion.
+- No installed-package discovery target for libQD3; the integration remains an
+  explicit header/library path in the test configuration.
+
+Tests added:
+- `tests/test_qd_single_real_no_mpfr.cpp`
+- `tests/test_single_real_adapters.cpp`
+- Strengthened `tests/test_qd_real_adapter.cpp` with an all-four-limb expected-value comparison.
+
+Exact commands run:
+- `cmake -S ../libQD3 -B ../libQD3/build -DQD_BUILD_TESTS=OFF -DQD_BUILD_EXAMPLES=OFF -DQD_BUILD_BENCHMARKS=OFF -DCMAKE_BUILD_TYPE=Debug`
+- `cmake --build ../libQD3/build -j2`
+- `ctest --test-dir ../libQD3/build --output-on-failure`
+- `cmake -S ../libQD3 -B ../libQD3/build-mpfr -DCMAKE_BUILD_TYPE=Debug -DQD3_ENABLE_MPFR_TESTS=ON -DQD3_ENABLE_MPC_TESTS=OFF -DQD_ENABLE_EDD_REAL=ON -DBUILD_SHARED_LIBS=ON -DQD_BUILD_STATIC=ON`
+- `cmake --build ../libQD3/build-mpfr -j2`
+- `ctest --test-dir ../libQD3/build-mpfr --output-on-failure`
+- `cmake -S . -B build-gmp-qd -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_COMPONENTS=GMP -DGMPFRXX_MKII_TEST_QD_INCLUDE_DIR=$PWD/../libQD3/include -DGMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR=$PWD/../libQD3/build/include -DGMPFRXX_MKII_TEST_QD_LIBRARY=$PWD/../libQD3/build/libqd.so -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build-gmp-qd -j2`
+- `LD_LIBRARY_PATH=$PWD/../libQD3/build ctest --test-dir build-gmp-qd --output-on-failure`
+- `cmake -S . -B build-qd -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_COMPONENTS=GMP,MPFR -DGMPFRXX_MKII_TEST_QD_INCLUDE_DIR=$PWD/../libQD3/include -DGMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR=$PWD/../libQD3/build/include -DGMPFRXX_MKII_TEST_QD_LIBRARY=$PWD/../libQD3/build/libqd.so -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build-qd -j2`
+- `LD_LIBRARY_PATH=$PWD/../libQD3/build ctest --test-dir build-qd --output-on-failure`
+- `cmake -S . -B build-qd-mpfrqd -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_COMPONENTS=GMP,MPFR -DGMPFRXX_MKII_TEST_QD_INCLUDE_DIR=$PWD/../libQD3/include -DGMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR=$PWD/../libQD3/build-mpfr/include -DGMPFRXX_MKII_TEST_QD_LIBRARY=$PWD/../libQD3/build-mpfr/libqd.so -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF`
+- `cmake --build build-qd-mpfrqd --target test_qd_single_real_no_mpfr test_single_real_adapters test_dd_real_adapter test_qd_real_adapter -j2`
+- `LD_LIBRARY_PATH=$PWD/../libQD3/build-mpfr ctest --test-dir build-qd-mpfrqd -R 'qd_single_real_no_mpfr|single_real_adapters|dd_real_adapter|qd_real_adapter' --output-on-failure`
+- `cmake --build build-qd --target test_dd_real_adapter test_qd_real_adapter test_single_real_adapters -j2`
+- `LD_LIBRARY_PATH=$PWD/../libQD3/build ctest --test-dir build-qd -R 'dd_real_adapter|qd_real_adapter|single_real_adapters' --output-on-failure`
+- `cmake --build build-gmp-qd --target test_qd_single_real_no_mpfr -j2`
+- `LD_LIBRARY_PATH=$PWD/../libQD3/build ctest --test-dir build-gmp-qd -R qd_single_real_no_mpfr --output-on-failure`
+
+Pass/fail result:
+- libQD3 without MPFR oracle support: PASS, 14/14 tests passed.
+- libQD3 with MPFR oracle support: PASS, 52/52 tests passed, including DS/TS/QS and EDD coverage.
+- gmpfrxx_mkII GMP-only configuration: PASS, 47/47 tests passed.
+- gmpfrxx_mkII GMP+MPFR configuration: PASS, 99/99 tests passed, including all five new/existing real adapters.
+
+Known issues:
+- The adapter tests require the libQD3 source include directory, generated
+  include directory, and library to be supplied when libQD3 is not installed.
+
 ## Phase: 1.4.1 MPFC LLP64 division maintenance release
 
 Implemented features:
