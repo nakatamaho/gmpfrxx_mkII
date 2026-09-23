@@ -1,3 +1,40 @@
+## Phase: MPC 1.3/1.4 log2 compatibility
+
+Implemented features:
+- Added `mpfrxx::log2(const mpc_class&)` and expression-input support.
+- Selected the native `mpc_log2` API when `MPC_VERSION >=
+  MPC_VERSION_NUM(1, 4, 0)`.
+- Kept an MPC 1.3.1-compatible fallback using `mpc_log` followed by
+  `mpc_div_fr` and an MPFR-computed `log(2)` constant.
+- Updated the MPC math test to exercise the native 1.4 path and the composed
+  1.3 path independently.
+
+Missing features:
+- MPC 1.3.1 has no native `mpc_log2`; it necessarily uses the fallback.
+
+Tests updated:
+- `tests/test_mpc_math.cpp` with version-conditional API and value checks.
+
+Exact commands run:
+- `cmake --build build-mpc131 --target test_mpc_math -j2`
+- `ctest --test-dir build-mpc131 -R test_mpc_math --output-on-failure`
+- `cmake -S . -B build-mpc141 -DCMAKE_BUILD_TYPE=Debug -DGMPFRXX_MKII_COMPONENTS=GMP,MPFR,MPC -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMPFRXX_MKII_BUILD_EXAMPLES=OFF -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DMPC_INCLUDE_DIR=$HOME/MPLAPACK/include -DMPC_LIBRARY=$HOME/MPLAPACK/lib/libmpc.so.3.4.1`
+- `cmake --build build-mpc141 --target test_mpc_math -j2`
+- `LD_LIBRARY_PATH=$HOME/MPLAPACK/lib ctest --test-dir build-mpc141 -R test_mpc_math --output-on-failure`
+- `nm -D --defined-only $HOME/MPLAPACK/lib/libmpc.so.3.4.1 | grep ' mpc_log2$'`
+- `git diff --check`
+
+Pass/fail result:
+- System `/usr/include/mpc.h` MPC 1.3.1: PASS, `test_mpc_math` 1/1.
+- `$HOME/MPLAPACK/include/mpc.h` and `$HOME/MPLAPACK/lib/libmpc.so.3.4.1` MPC 1.4.1: PASS, `test_mpc_math` 1/1.
+- The MPC 1.4.1 library exports `mpc_log2`.
+- `git diff --check`: PASS.
+
+Known issues:
+- The full MPC 1.3.1 CTest run has a pre-existing `test_version_info` failure
+  because that test expects GMP version string `1.4.0` while this tree reports
+  `1.4.1`; the focused log2 tests pass.
+
 ## Phase: 1.4.1 MPFC LLP64 division maintenance release
 
 Implemented features:

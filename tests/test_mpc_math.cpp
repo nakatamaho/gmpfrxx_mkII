@@ -136,6 +136,7 @@ void test_compile_time_surface()
     static_assert(std::is_same<decltype(mpfrxx::sqrt(std::declval<const mpc_class&>())), mpc_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::exp(std::declval<const mpc_class&>())), mpc_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::log(std::declval<const mpc_class&>())), mpc_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::log2(std::declval<const mpc_class&>())), mpc_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::log10(std::declval<const mpc_class&>())), mpc_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::sin(std::declval<const mpc_class&>())), mpc_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::cos(std::declval<const mpc_class&>())), mpc_class>::value);
@@ -173,6 +174,7 @@ void test_compile_time_surface()
 
     static_assert(std::is_same<decltype(mpfrxx::sqrt(std::declval<expr_type>())), mpc_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::exp(std::declval<expr_type>())), mpc_class>::value);
+    static_assert(std::is_same<decltype(mpfrxx::log2(std::declval<expr_type>())), mpc_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::sin(std::declval<expr_type>())), mpc_class>::value);
     static_assert(std::is_same<decltype(mpfrxx::pow(std::declval<expr_type>(),
                                                     std::declval<const mpc_class&>())),
@@ -200,6 +202,33 @@ void test_unary_functions_against_mpc()
         check_unary(value, mpc_proj, mpfrxx::proj);
         check_unary(value, mpc_exp, mpfrxx::exp);
         check_unary(value, mpc_log, mpfrxx::log);
+#if defined(MPC_VERSION) && defined(MPC_VERSION_NUM) && \
+    MPC_VERSION >= MPC_VERSION_NUM(1, 4, 0)
+        check_unary(value, mpc_log2, mpfrxx::log2);
+#else
+        const mpfr_prec_t target_precision = std::max(value.real_precision(), value.imag_precision());
+        constexpr mpfr_prec_t guard_bits = 32;
+        const mpfr_prec_t constant_precision =
+            target_precision <= MPFR_PREC_MAX - guard_bits
+                ? target_precision + guard_bits
+                : target_precision;
+        mpfr_t log_two;
+        mpfr_init2(log_two, constant_precision);
+        mpfr_const_log2(log_two, MPFR_RNDN);
+        mpc_t logarithm;
+        mpc_t expected_log2;
+        mpc_init3(logarithm, value.real_precision(), value.imag_precision());
+        mpc_init3(expected_log2, value.real_precision(), value.imag_precision());
+        mpc_log(logarithm, value.mpc_data(), mpfrxx::mpc_class::default_rounding());
+        mpc_div_fr(expected_log2,
+                   logarithm,
+                   log_two,
+                   mpfrxx::mpc_class::default_rounding());
+        assert_same_mpc_value(mpfrxx::log2(value), expected_log2);
+        mpc_clear(expected_log2);
+        mpc_clear(logarithm);
+        mpfr_clear(log_two);
+#endif
         check_unary(value, mpc_log10, mpfrxx::log10);
         check_unary(value, mpc_sin, mpfrxx::sin);
         check_unary(value, mpc_cos, mpfrxx::cos);

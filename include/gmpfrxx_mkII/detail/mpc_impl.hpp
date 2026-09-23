@@ -2198,6 +2198,49 @@ template <
     std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
                          gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
                      int> = 0>
+inline mpc_class log2(const Expr& expr)
+{
+#if defined(MPC_VERSION) && defined(MPC_VERSION_NUM) && \
+    MPC_VERSION >= MPC_VERSION_NUM(1, 4, 0)
+    // mpc_log2 was added after MPC 1.3.1.
+    return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
+        return mpc_log2(rop, op, rnd);
+    });
+#else
+    // MPC 1.3.1 has mpc_log and mpc_div_fr, but no mpc_log2.
+    const mpc_class operand = detail::materialize_mpc_math_operand(expr);
+    const mpfr_prec_t real_precision = operand.real_precision();
+    const mpfr_prec_t imag_precision = operand.imag_precision();
+    const mpfr_prec_t target_precision = std::max(real_precision, imag_precision);
+    constexpr mpfr_prec_t guard_bits = 32;
+    const mpfr_prec_t constant_precision =
+        target_precision <= MPFR_PREC_MAX - guard_bits
+            ? target_precision + guard_bits
+            : target_precision;
+
+    mpc_class logarithm = mpc_class::with_precision(real_precision, imag_precision);
+    mpc_class result = mpc_class::with_precision(real_precision, imag_precision);
+    const auto context =
+        gmpfrxx_mkII::detail::current_mpc_eval_context(real_precision, imag_precision);
+    const mpc_rnd_t rnd = context.rounding_mode;
+
+    mpfr_t log_two;
+    mpfr_init2(log_two, constant_precision);
+    mpfr_const_log2(log_two, MPFR_RNDN);
+    mpc_log(logarithm.mpc_data(), operand.mpc_data(), rnd);
+    const int inex = mpc_div_fr(result.mpc_data(), logarithm.mpc_data(), log_two, rnd);
+    mpfr_clear(log_two);
+
+    gmpfrxx_mkII::detail::mpc_check_component_ranges(result.mpc_data(), rnd, inex);
+    return result;
+#endif
+}
+
+template <
+    typename Expr,
+    std::enable_if_t<gmpfrxx_mkII::detail::is_mpc_expression_operand_v<Expr> &&
+                         gmpfrxx_mkII::detail::is_mpc_object_or_node_v<Expr>,
+                     int> = 0>
 inline mpc_class log10(const Expr& expr)
 {
     return detail::unary_mpc_math(expr, [](mpc_t rop, const mpc_t op, mpc_rnd_t rnd) {
