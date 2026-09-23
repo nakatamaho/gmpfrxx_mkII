@@ -8,6 +8,13 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 
 ## News
 
+- 2026-09-23: Released `v1.5.0` as a source archive,
+  `gmpfrxx_mkII.1.5.0.tar.xz`.  This feature release adds MPFR adapters for
+  libQD3 `ds_real`, `ts_real`, `qs_real`, `td_real`, and optional `edd_real`
+  values, with all-limb conversion coverage.  It also adds MPC 1.3/1.4
+  compatibility for `log2`: MPC 1.4 and newer use `mpc_log2`, while MPC 1.3
+  uses a compatible `mpc_log`/`mpc_div_fr` fallback.
+
 - 2026-08-27: Released `v1.4.1` as a source archive,
   `gmpfrxx_mkII.1.4.1.tar.xz`.  This maintenance release makes the GMP-only
   `mpfc_class` Smith-division branch selection compare MPF exponent metadata

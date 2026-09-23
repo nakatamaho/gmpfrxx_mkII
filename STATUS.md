@@ -1,3 +1,38 @@
+## Phase: 1.5.0 release preparation
+
+Implemented features:
+- Bumped project, source-tree fallback, generated runtime, and manual release
+  metadata to `1.5.0`.
+- Added `CHANGES.1.5.0.md` release notes and updated the README release news.
+- Regenerated the tracked manual PDF for version `1.5.0`.
+- Included the libQD3 single-real adapters and MPC 1.3/1.4 `log2`
+  compatibility from the preceding development phases.
+
+Missing features:
+- None for the source release contents.
+
+Tests added:
+- No new test executable in this release-preparation phase; the preceding
+  adapter and MPC compatibility phases added the release regression coverage.
+
+Exact commands run:
+- `git diff --check`
+- `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMPFRXX_MKII_TEST_QD_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_DS_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_TS_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_QS_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_TD_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR=\"$PWD/../libQD3/build-mpfr/include\" -DGMPFRXX_MKII_TEST_QD_LIBRARY=\"$PWD/../libQD3/build-mpfr/libqd.so\"`
+- `cmake --build build-release -j2`
+- `LD_LIBRARY_PATH=\"$PWD/../libQD3/build-mpfr\" ctest --test-dir build-release --output-on-failure`
+- `make -C manual clean && make -C manual`
+
+Pass/fail result:
+- Release configure: PASS.
+- Release build: PASS.
+- Full Release CTest: PASS, 193/193 tests passed, including the libQD3
+  adapter tests and MPC math test.
+- Manual PDF generation: PASS.
+- Source archive, tag, and GitHub Release publication: pending.
+
+Known issues:
+- None known for the release contents.
+
 ## Phase: MPC 1.3/1.4 log2 compatibility
 
 Implemented features:
