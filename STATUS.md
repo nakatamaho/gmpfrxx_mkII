@@ -21,6 +21,18 @@ Exact commands run:
 - `cmake --build build-release -j2`
 - `LD_LIBRARY_PATH=\"$PWD/../libQD3/build-mpfr\" ctest --test-dir build-release --output-on-failure`
 - `make -C manual clean && make -C manual`
+- `cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DGMPFRXX_MKII_BUILD_EXAMPLES=ON -DGMPFRXX_MKII_BUILD_BENCHMARKS=OFF -DGMPFRXX_MKII_DEPS_AUTO_FETCH=OFF -DGMPFRXX_MKII_TEST_QD_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_DS_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_TS_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_QS_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_TD_INCLUDE_DIR=\"$PWD/../libQD3/include\" -DGMPFRXX_MKII_TEST_QD_GENERATED_INCLUDE_DIR=\"$PWD/../libQD3/build-mpfr/include\" -DGMPFRXX_MKII_TEST_QD_LIBRARY=\"$PWD/../libQD3/build-mpfr/libqd.so\"`
+- `cmake --build build-release -j2`
+- `LD_LIBRARY_PATH=\"$PWD/../libQD3/build-mpfr\" ctest --test-dir build-release --output-on-failure`
+- `cmake --build build-release --target dist -j2`
+- `sha256sum build-release/gmpfrxx_mkII.1.5.0.tar.xz`
+- `git tag -a v1.5.0 -m \"gmpfrxx_mkII 1.5.0\"`
+- `git push origin main`
+- `git push origin v1.5.0`
+- `/tmp/gh-2.101.0/bin/gh release create v1.5.0 build-release/gmpfrxx_mkII.1.5.0.tar.xz --repo nakatamaho/gmpfrxx_mkII --title \"gmpfrxx_mkII 1.5.0\" --notes-file CHANGES.1.5.0.md --verify-tag`
+- `curl -fL -H \"Authorization: token $(/tmp/gh-2.101.0/bin/gh auth token)\" -H 'Accept: application/octet-stream' https://github.com/nakatamaho/gmpfrxx_mkII/releases/download/v1.5.0/gmpfrxx_mkII.1.5.0.tar.xz -o /tmp/gmpfrxx-mkII-1.5.0-download/gmpfrxx_mkII.1.5.0.tar.xz`
+- `sha256sum /tmp/gmpfrxx-mkII-1.5.0-download/gmpfrxx_mkII.1.5.0.tar.xz`
+- `cmp build-release/gmpfrxx_mkII.1.5.0.tar.xz /tmp/gmpfrxx-mkII-1.5.0-download/gmpfrxx_mkII.1.5.0.tar.xz`
 
 Pass/fail result:
 - Release configure: PASS.
@@ -28,7 +40,13 @@ Pass/fail result:
 - Full Release CTest: PASS, 193/193 tests passed, including the libQD3
   adapter tests and MPC math test.
 - Manual PDF generation: PASS.
-- Source archive, tag, and GitHub Release publication: pending.
+- Source archive creation: PASS,
+  `build-release/gmpfrxx_mkII.1.5.0.tar.xz`.
+- SHA-256: `dad1378ee62354a3c5fe8d68c3abcc3766ada00d1f5ffe2edf6c4d08d5f790a9`.
+- Annotated tag and GitHub push: PASS.
+- GitHub Release publication: PASS; release URL is
+  `https://github.com/nakatamaho/gmpfrxx_mkII/releases/tag/v1.5.0`.
+- Downloaded GitHub Release asset matches the local archive: PASS.
 
 Known issues:
 - None known for the release contents.

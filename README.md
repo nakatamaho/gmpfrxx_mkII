@@ -9,7 +9,9 @@ The implementation uses the GMP, MPFR, and MPC C APIs directly.
 ## News
 
 - 2026-09-23: Released `v1.5.0` as a source archive,
-  `gmpfrxx_mkII.1.5.0.tar.xz`.  This feature release adds MPFR adapters for
+  `gmpfrxx_mkII.1.5.0.tar.xz`
+  (`sha256: dad1378ee62354a3c5fe8d68c3abcc3766ada00d1f5ffe2edf6c4d08d5f790a9`).
+  This feature release adds MPFR adapters for
   libQD3 `ds_real`, `ts_real`, `qs_real`, `td_real`, and optional `edd_real`
   values, with all-limb conversion coverage.  It also adds MPC 1.3/1.4
   compatibility for `log2`: MPC 1.4 and newer use `mpc_log2`, while MPC 1.3
